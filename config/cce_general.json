@@ -1,0 +1,34 @@
+{
+    "method" : "gcce", // Possible options : cce | gcce | dsj | itb | dsjitb | pcce
+    "QUAntity" : "coherence", // Possible options : coherence | dm | noise
+    // "bfield": 100.0, // Magnetic field (Unit : gauss) , bfield_z
+    "bfield" : [40.0, 20.0, 100.0], // Magnetic field (Unit : gauss) bfield_vector
+    "rbath": 1.0,
+    "rdip": 2.0,
+    "deltat": 3.0,
+    "nstep": 4,
+    "rbathcut": 5.0,
+    "rdipcut": 6.0,
+    "nstate": 7,
+    "seed": 10, 
+    "order" : 3,
+
+    // "method" : "hash",
+    "nk" : [0,0,0,100],
+    "addsubclus" : false,
+
+    // files 
+    "qubitfile" : "./../config/qubitfile",
+    "gyrofile" : "./../config/gyrofile",
+    "bathfile" : ["./../config/bathfile1", "./../config/bathfile2"],
+    "bathadjust" : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+
+    "hf_readmode" : 1,
+    "hf_tensorfile" : "./../config/hf_tensorfile",
+    "hf_cutoff" : 0.1,
+    "hf_ignore_oor" : 1,
+
+    "qd_readmode" : 2,
+    "qd_tensorfile" : "./../config/qd_tensorfile",
+    "qd_tensorfile_woqubit" : "./../config/qd_tensorfile_woqubit"
+}
