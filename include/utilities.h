@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include <mpi.h>
+#include <unistd.h>
 
 #define EIGEN_USE_MKL_ALL
 #define _USE_MATH_DEFINES

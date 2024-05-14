@@ -19,8 +19,6 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein); // pulse.h
 void cJSON_readOptionOutput(Output* output, char* fccein); // output.h
 void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein); // defect.h
 
-
-
 char* cJSON_ReadFccein(char* fccein);
 char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_value);
 char* cJSON_ReadString(cJSON* root, char* key, bool _default, char* default_value);

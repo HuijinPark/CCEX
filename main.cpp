@@ -41,16 +41,16 @@ int main(int argc, char* argv[]){
     //=======================================================
 
     // Input file (cce.in)
-    char* fccein = allocChar1d(MAX_FILEPATH);
+    char* fccein = NULL; 
 
     //Simulation objects
-    Config*     cnf = Config_init();
-    QubitArray* qa  = QubitArray_init();
-    Cluster*    cls = Cluster_init();
-    BathArray*  ba  = BathArray_init();
+    Config*      cnf = Config_init();
+    QubitArray*  qa  = QubitArray_init();
+    Cluster*     cls = Cluster_init();
+    BathArray*   ba  = BathArray_init();
     DefectArray* dfa = DefectArray_init();
-    Pulse*      pls = Pulse_init();
-    Output*     op  = Output_init();
+    Pulse*       pls = Pulse_init();
+    Output*      op  = Output_init();
 
     //=======================================================
     // Read options
@@ -59,10 +59,12 @@ int main(int argc, char* argv[]){
     int nbathfiles_fromfccein = 0;
     int nbathfiles_current = 0;
     int nstate_current = 0;
+
     while ((c = getopt(argc, argv, "hvf:m:q:I:s:N:S:a:B:o:")) != -1) {
         switch (c) {
             case 'f':
-     
+                
+                fccein = allocChar1d(MAX_FILEPATH); 
                 strcpy(fccein,optarg);
 
                 // check if the file exists
@@ -71,12 +73,12 @@ int main(int argc, char* argv[]){
                     exit(EXIT_FAILURE);
                 }
                 
-                cJSON_readOptionConfig(cnf, fccein); // general.h
-                cJSON_readOptionQubitArray(qa, fccein); //qubit.h
-                cJSON_readOptionDefectArray(dfa, fccein); // defect.h
-                cJSON_readOptionCluster(cls, fccein); // cluster.h
-                cJSON_readOptionPulse(pls, fccein); // pulse.h
-                cJSON_readOptionOutput(op, fccein); // output.h
+                cJSON_readOptionConfig      (cnf, fccein); // general.h
+                cJSON_readOptionQubitArray  (qa,  fccein); //qubit.h
+                cJSON_readOptionDefectArray (dfa, fccein); // defect.h
+                cJSON_readOptionCluster     (cls, fccein); // cluster.h
+                cJSON_readOptionPulse       (pls, fccein); // pulse.h
+                cJSON_readOptionOutput      (op,  fccein); // output.h
 
                 nbathfiles_fromfccein = Config_getNbathfiles(cnf);
                 nbathfiles_current += nbathfiles_fromfccein;
@@ -143,6 +145,11 @@ int main(int argc, char* argv[]){
         }   
     }
     
+    if (fccein == NULL){
+        fprintf(stderr, "Error: input file is required\n");
+        exit(EXIT_FAILURE);
+    }
+
     if (nbathfiles_current != nbathfiles_fromfccein){
         fprintf(stderr, "Error: number of bath files is not consistent\n");
         fprintf(stderr, "nbathfiles_fromfccein = %d\n", nbathfiles_fromfccein);

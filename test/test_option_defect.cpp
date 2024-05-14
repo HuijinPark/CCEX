@@ -49,7 +49,7 @@ int main(int argc, char* argv[]){
             printf("  detuning[%d]: %lf\n",iax,dfa->defect[idf]->detuning[iax]);
         }
     }
-    DefectArray_free(dfa);
+    DefectArray_freeAll(dfa);
 
     return 0;
 }

@@ -10,7 +10,7 @@ Cluster* Cluster_init(){
     Cluster* cls = (Cluster*)allocArray1d(1,sizeof(Cluster));
     Cluster_setOrder(cls, 0);
     Cluster_setAddsubclus(cls, false);
-    Cluster_setNk(cls, NULL);
+    cls->nk = NULL;
     cls->method[0] = '\0';
     cls->clusinfo = NULL;
     
