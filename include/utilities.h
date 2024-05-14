@@ -2,6 +2,7 @@
 #define __CCEX_UTILITIES_UTILITIES_H_
 
 #include <Eigen/Dense>
+#include <iostream>
 #include <mpi.h>
 
 #define EIGEN_USE_MKL_ALL
@@ -106,6 +107,7 @@ MatrixXcd kron(MatrixXcd a, MatrixXcd b);
 MatrixXcd partialtrace(MatrixXcd Mij, int dimrow, int dimcol);
 double calNorm(MatrixXcd m);
 int normalize(MatrixXcd* m);
+float findZbasisSubLevel(MatrixXcd spinor);
 
 MatrixXcd powMatrixXcdElementWise(MatrixXcd a, int n);
 MatrixXcd mulMatrixXcdElementWise(MatrixXcd a, MatrixXcd b);
@@ -125,6 +127,7 @@ void printLine();
 void printLineSection();
 void printTitle(char* title);
 void printSubTitle(char* title);
+void printMessage(char* message);
 
 /* Find index ---------------------------------------------------*/
 int findIndexInt(int* array, int ista, int iend, int val); // find in the range of ista <= i <= iend
@@ -142,6 +145,8 @@ void Swap(int** d_Array, int a, int b);
 /* MPI ---------------------------------------------------------*/
 void para_range(int n1,int n2, int nprocs, int myrank, int*ista, int *iend);
 int min(int x, int y);
+int*** MPI_getLocalClusters(int order, int*** clusters);
+// MatrixXcd* MPI_reduceLocalResult(int nstep, MatrixXcd* local);
 
 #endif // __CCEX_UTILITIES_UTILITIES_H_
 

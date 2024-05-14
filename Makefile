@@ -13,6 +13,7 @@ BIN_DIR=./bin
 TARGET = $(BIN_DIR)/main.out
 
 SRCS=$(wildcard $(SRC_DIR)/*.cpp)
+SRCS += main.cpp
 OBJS=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 INCLUDE_MPICH = -I/opt/homebrew/Cellar/mpich/4.2.1/include/

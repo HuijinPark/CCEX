@@ -179,6 +179,7 @@ void        QubitArray_reportQubit_i(QubitArray* qa, int i);
 void        QubitArray_reportIntmap(QubitArray* qa);
 void        QubitArray_reportPsiaPsib(QubitArray* qa);
 void        QubitArray_reportPsi0(QubitArray* qa);
+void        QubitArray_reportQubit_overhaus(QubitArray* qa);
 
 // alloc
 void        QubitArray_allocQubit(QubitArray* qa);      // length = nqubit

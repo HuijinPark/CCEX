@@ -1,5 +1,6 @@
 #include "../include/hamiltonian.h"
 #include "../include/memory.h"
+#include <iostream>
 
 /*! @brief point-dipole interaction tensor
  * @param[in] xyz1 position of spin 1
@@ -276,13 +277,22 @@ MatrixXcd expandHamiltonian(MatrixXcd** Pmats, MatrixXcd Hi, int nSpin, int iSpi
 */
 MatrixXcd calHamiltonianSingleInt(MatrixXcd Vector, MatrixXcd* Pmat1){
 
+    if (Vector.rows() == 1 && Vector.cols() == 3){//1x3
+        ;
+    }else if (Vector.rows() == 3 && Vector.cols() == 1){ //3x1
+        Vector = Vector.transpose();
+    }else{
+        perror("Error(calHamiltonianSingleInt): Dimension of Vector is not matched");
+        exit(EXIT_FAILURE);       
+    }
+
     int dimrow = Pmat1[0].rows();
     int dimcol = Pmat1[0].cols();
 
     MatrixXcd H = MatrixXcd::Zero(dimrow,dimcol);
 
     for (int i=0; i<3; i++){
-        H += Vector(0,i) * Pmat1[i+1];
+        H += Vector(0,i) * Pmat1[i+1]; //Px, Py, Pz
     }
 
     return H;

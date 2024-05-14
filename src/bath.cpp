@@ -20,7 +20,7 @@ void BathArray_setBathHypfs(BathArray* ba, QubitArray* qa){
             double* spxyz = BathArray_getBath_i_xyz(ba,ispin);
             MatrixXcd A = BathArray_getBath_i_hypf_j(ba,ispin,iqubit);
             if (A.rows() == 0 && A.cols() == 0){
-                MatrixXcd Adip = calPointDipoleTensor(qxyz, spxyz, qgyro, spgyro);                
+                MatrixXcd Adip = calPointDipoleTensor(qxyz, spxyz, qgyro, spgyro); // radkHz            
                 BathArray_setBath_i_hypf_j(ba, Adip, ispin, iqubit);    
             }
         }
@@ -89,7 +89,7 @@ double BathArray_getBath_i_disorder_j(BathArray* ba, int isp, int jsp){
     }else if (isp == jsp){
         return 0.0;
 
-    }else if (isp > jsp){
+    }else{ // (isp > jsp)
         double Jzz = BathArray_int_i_j(ba,jsp,isp)(2,2).real();
         return Jzz * mj;
     }
@@ -180,7 +180,7 @@ int  BathSpin_dim(BathSpin* bs){
 int BathArray_dim(BathArray* ba){
 
     if (ba==NULL){
-        return 0;
+        return 1;
     }
 
     int nspin = BathArray_getNspin(ba);
@@ -199,21 +199,73 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
         exit(EXIT_FAILURE);
     }
 
-    int mainspidx1 = BathArray_getBath_i_mainspidx(ba,i);
-    int mainspidx2 = BathArray_getBath_i_mainspidx(ba,j);
-    MatrixXcd hypf_sub_1 = BathArray_getBath_i_hypf_sub(ba,i);
-    MatrixXcd hypf_sub_2 = BathArray_getBath_i_hypf_sub(ba,j);
+    ///////////////////////////////////////////////////////////
+    // Check if i-th, j-th spin are sharing the same mainspin
+    ///////////////////////////////////////////////////////////
+    int ib_mainspidx = BathArray_getBath_i_mainspidx(ba,i);
+    int jb_mainspidx = BathArray_getBath_i_mainspidx(ba,j);
+    
+    if (ib_mainspidx==jb_mainspidx && (ib_mainspidx != -1 && jb_mainspidx != -1)){
 
-    if (i==mainspidx2){ // i : main - j : sub
-        if (hypf_sub_2.rows() != 0){
-            return hypf_sub_2;
+        // Check mainspin or subspin
+        bool ib_is_subspin = false;
+        bool jb_is_subspin = false;
+        char* ib_name = BathArray_getBath_i_name(ba,i);
+        char* jb_name = BathArray_getBath_i_name(ba,j);
+
+
+        // if subspin, then the name would be "main_type"
+        char ib_name_[MAX_CHARARRAY_LENGTH] = "";
+        char jb_name_[MAX_CHARARRAY_LENGTH] = "";
+        sprintf(ib_name_,"%s_",ib_name);
+        sprintf(jb_name_,"%s_",jb_name);
+
+        // Check if ib is subspin
+        if (strstr(ib_name,jb_name_) != NULL){
+            ib_is_subspin = true;
         }
-    }else if (mainspidx1==j){ // i : sub - j : main
-        if (hypf_sub_1.rows() != 0){
-            return hypf_sub_1;
+
+        // Check if jb is subspin
+        if (strstr(jb_name,ib_name_) != NULL){
+            jb_is_subspin = true;
+        }
+        
+        if (ib_is_subspin && jb_is_subspin){
+            ; // sub - sub > point-dipole
+
+        }else if (ib_is_subspin && !jb_is_subspin){
+
+            // sub - main
+
+            // Check summation of hypf_sub
+            MatrixXcd ib_hypf_sub = BathArray_getBath_i_hypf_sub(ba,i);
+
+            // if the summation of hypf_sub is not zero, then point-dipole
+            if (!ib_hypf_sub.isZero(FLT_EPSILON)){
+                return ib_hypf_sub;
+            }
+            
+        }else if (!ib_is_subspin && jb_is_subspin){
+
+            // main - sub
+
+            // Check summation of hypf_sub
+            MatrixXcd jb_hypf_sub = BathArray_getBath_i_hypf_sub(ba,j);
+
+            // if the summation of hypf_sub is not zero, then point-dipole
+            if (!jb_hypf_sub.isZero(FLT_EPSILON)){
+                return jb_hypf_sub;
+            }
+
+        }else{
+            // main - main
+            fprintf(stderr,"Error(BathArray_int_i_j): i=%d and j=%d are both main spins\n",i,j);
+            fprintf(stderr,"Error(BathArray_int_i_j): They should have different mainspidx\n");
+            exit(EXIT_FAILURE);
         }
     }
-
+    ///////////////////////////////////////////////////////////
+    
     // Both are the main spins
     double* xyz1 = BathArray_getBath_i_xyz(ba,i);
     double* xyz2 = BathArray_getBath_i_xyz(ba,j);
@@ -361,6 +413,7 @@ MatrixXcd** BathArray_PauliOperators(BathArray* ba){
 
     // Pauli operators
     MatrixXcd** sigmas = new MatrixXcd*[nspin];
+
     for (int ib=0; ib<nspin; ib++){
         int dimB = BathArray_dimBath_i(ba,ib);
         sigmas[ib] = getPauliOperators(dimB);
@@ -375,7 +428,7 @@ MatrixXcd BathArray_Rho0(BathArray* ba, bool isEnsemble){
     int dimBA = BathArray_dim(ba);
 
     if (isEnsemble){
-        return MatrixXcd::Identity(dimBA,dimBA);
+        return MatrixXcd::Identity(dimBA,dimBA) * (1.0/(double)dimBA);
     }else{
         MatrixXcd psi0 = BathArray_Psi0(ba);
         return psi0 * psi0.adjoint();
@@ -437,9 +490,11 @@ void BathArray_reportBath(BathArray* ba){
     printLine();
 
     for (int i=0; i<nspin; i++){
-        if (!verbosity && (i<3 || i>nspin-3)){
+        
+        if (verbosity || (i<3 || i>nspin-3)){ 
             BathArray_reportBath_i_props(ba,i);
         }
+
         if (!verbosity && i==3){
             printf("         :\n");
         }
@@ -447,6 +502,7 @@ void BathArray_reportBath(BathArray* ba){
     printf("\n");
     printLine();
 }
+
 
 void BathArray_reportBath_i_props(BathArray* ba, int i){
     char* name = BathArray_getBath_i_name(ba,i);
@@ -459,7 +515,7 @@ void BathArray_reportBath_i_props(BathArray* ba, int i){
 void BathArray_reportBath_states(BathArray* ba){
     int nspin = BathArray_getNspin(ba);
     for (int i=0; i<nspin; i++){
-        if (!verbosity && (i<3 || i>nspin-3)){
+        if (verbosity || (i<3 || i>nspin-3)){ 
             float state = BathArray_getBath_i_state(ba,i);
             printf("      [%3d] state = %2.1f\n",i,state);
         }
@@ -470,11 +526,13 @@ void BathArray_reportBath_states(BathArray* ba){
 }
 
 void BathArray_reportBath_detunings(BathArray* ba){
+
+    printSubTitle("Bath Detunings");
     int nspin = BathArray_getNspin(ba);
     for (int i=0; i<nspin; i++){
-        if (!verbosity && (i<3 || i>nspin-3)){
+        if (verbosity || (i<3 || i>nspin-3)){ 
             double detuning = BathArray_getBath_i_detuning(ba,i);
-            printf("      [%3d] detuning = %7.3lf\n",i,detuning);
+            printf("      [%3d] detuning = %7.3g\n",i,detuning);
         }
         if (!verbosity && i==3){
             printf("         :\n");
@@ -483,11 +541,14 @@ void BathArray_reportBath_detunings(BathArray* ba){
 }
 
 void BathArray_reportBath_disorders(BathArray* ba){
+
+    printSubTitle("Bath Disorders (radkHz)");
     int nspin = BathArray_getNspin(ba);
     for (int i=0; i<nspin; i++){
-        if (!verbosity && (i<3 || i>nspin-3)){
-            double disorder = BathArray_getBath_i_disorder(ba,i);
-        printf("      [%3d] disorder = %7.3lf\n",i,disorder);
+        if (verbosity || (i<3 || i>nspin-3)){ 
+            char message [100];
+            snprintf(message,100,"Bath[%d].disorder",i);
+            printStructElementDouble(message,BathArray_getBath_i_disorder(ba,i));
         }
         if (!verbosity && i==3){
             printf("         :\n");
@@ -499,7 +560,7 @@ void BathArray_reportBath_hypf(BathArray* ba, int nqubit){
 
     int nspin = BathArray_getNspin(ba);
     for (int i=0; i<nspin; i++){
-        if (!verbosity && (i<3 || i>nspin-3)){
+        if (verbosity || (i<3 || i>nspin-3)){ 
             for (int iq=0; iq<nqubit; iq++){
             char key[100];
             sprintf(key,"hypf[%d][%d]",i,iq);
@@ -509,7 +570,7 @@ void BathArray_reportBath_hypf(BathArray* ba, int nqubit){
             printf("\n");
         }
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("         :\n\n");
         }
     }
 }
@@ -518,7 +579,7 @@ void BathArray_reportBath_quad(BathArray* ba){
 
     int nspin = BathArray_getNspin(ba);
     for (int i=0; i<nspin; i++){
-        if (!verbosity && (i<3 || i>nspin-3)){
+        if (verbosity || (i<3 || i>nspin-3)){ 
             char key[100];
             snprintf(key,100,"quad[%d]",i);
             MatrixXcd quad = BathArray_getBath_i_quad(ba,i);
@@ -534,7 +595,7 @@ void BathArray_reportBath_hypf_sub(BathArray* ba){
 
     int nspin = BathArray_getNspin(ba);
     for (int i=0; i<nspin; i++){
-        if (!verbosity && (i<3 || i>nspin-3)){
+        if (verbosity || (i<3 || i>nspin-3)){ 
             MatrixXcd hypf_sub = BathArray_getBath_i_hypf_sub(ba,i);
             int mainspidx = BathArray_getBath_i_mainspidx(ba,i);
 
@@ -564,6 +625,8 @@ void BathArray_allocBath(BathArray* ba, int nqubit){
         BathArray_setBath_i_state(ba,0.0,i);
         BathArray_setBath_i_detuning(ba,0.0,i);
         BathArray_setBath_i_disorder(ba,0.0,i);
+
+        BathArray_setBath_i_quad(ba,MatrixXcd::Zero(3,3),i);
     }
 }
 
@@ -586,6 +649,8 @@ void BathArray_reallocBath(BathArray* ba, int old_length, int new_length, int nq
         BathArray_setBath_i_state(ba,0.0,i);
         BathArray_setBath_i_detuning(ba,0.0,i);
         BathArray_setBath_i_disorder(ba,0.0,i);
+
+        BathArray_setBath_i_quad(ba,MatrixXcd::Zero(3,3),i);
     }
 }
 
@@ -629,6 +694,7 @@ void BathArray_setBath_i(BathArray* ba, const BathSpin* bath, int i, int nqubit)
     BathArray_setBath_i_state(ba,bath->state,i);
     BathArray_setBath_i_detuning(ba,bath->detuning,i);
     BathArray_setBath_i_disorder(ba,bath->disorder,i);
+
     BathArray_setBath_i_hypf_sub(ba,bath->hypf_sub,i);
     BathArray_setBath_i_mainspidx(ba,bath->mainspidx,i);
     BathArray_setBath_i_quad(ba,bath->quad,i);
@@ -702,6 +768,9 @@ void BathArray_setProp_spins_i(BathArray* ba, const float spin, const int i){
 
 // get
 int BathArray_getNspin(BathArray* ba){
+    if (ba == NULL){
+        return 0;
+    }
     return ba->nspin;
 }
 
@@ -775,28 +844,182 @@ void BathArray_freeAll(BathArray* ba){
     BathArray_freeProp_gyros(ba);
     BathArray_freeProp_spins(ba);
     BathArray_freeBath(ba);
-    freeArray1d(ba);
+    freeArray1d((void**)&ba);
 }
 
 void BathArray_freeProp_names(BathArray* ba){
-    freeChar2d(ba->prop_names,ba->prop_nspecies);
+    freeChar2d(&(ba->prop_names),ba->prop_nspecies);
 }
 
 void BathArray_freeProp_gyros(BathArray* ba){
-    freeDouble1d(ba->prop_gyros);
+    freeDouble1d(&(ba->prop_gyros));
 }
 
 void BathArray_freeProp_spins(BathArray* ba){
-    freeFloat1d(ba->prop_spins);
+    freeFloat1d(&(ba->prop_spins));
 }
 
 void BathArray_freeBath(BathArray* ba){
     for (int i=0; i<ba->nspin; i++){
         BathArray_freeBath_i_hypf(ba,i);
-        freeArray1d(ba->bath[i]);
+        freeArray1d((void**)&(ba->bath[i]));
     }
 }
 
 void BathArray_freeBath_i_hypf(BathArray* ba, int i){
     delete[] ba->bath[i]->hypf;
+}
+
+////////////////////////////////////////////////////////////////
+// BathSpin
+
+void 
+BathSpin_setName(BathSpin* bs, char* name){
+    strcpy(bs->name,name);
+}
+
+void       
+BathSpin_setName_withType(BathSpin* bs, char* name, char* type){
+    char name_type[MAX_CHARARRAY_LENGTH];
+    snprintf(name_type,MAX_CHARARRAY_LENGTH,"%s_%s",name,type);
+    BathSpin_setName(bs,name_type);
+}
+
+void 
+BathSpin_setSpin(BathSpin* bs, float spin){
+    bs->spin = spin;
+}
+
+void 
+BathSpin_setGyro(BathSpin* bs, double gyro){
+    bs->gyro = gyro;
+}
+
+void 
+BathSpin_setXyz(BathSpin* bs, double* xyz){
+    bs->xyz[0] = xyz[0];
+    bs->xyz[1] = xyz[1];
+    bs->xyz[2] = xyz[2];
+}
+
+void
+BathSpin_setXyz_fromRxyz(BathSpin* bs, double* xyz0, double* rxyz){
+    bs->xyz[0] = xyz0[0] + rxyz[0];
+    bs->xyz[1] = xyz0[1] + rxyz[1];
+    bs->xyz[2] = xyz0[2] + rxyz[2];
+}
+
+void 
+BathSpin_setState(BathSpin* bs, float state){
+    bs->state = state;
+}
+
+void 
+BathSpin_setDetuning(BathSpin* bs, double detuning){
+    bs->detuning = detuning;
+}
+
+void 
+BathSpin_setDisorder(BathSpin* bs, double disorder){
+    bs->disorder = disorder;
+}
+
+void 
+BathSpin_setHypf_i(BathSpin* bs, MatrixXcd hypf, int iq){
+    bs->hypf[iq] = hypf;
+}
+
+void 
+BathSpin_setQuad(BathSpin* bs, MatrixXcd quad){
+    bs->quad = quad;
+}
+
+void 
+BathSpin_setQuad_fromEFG(BathSpin* bs, MatrixXcd efg, double eq, float spin){
+    // efg : Hartree/Bohr^2
+    // eq : 10e-30 m^2
+
+    // plank constant
+    double h = 4.135667*pow(10,-15); // eV * sec
+
+    // Unit conversion factors
+    double Hatress2eV = 27.211386; // 1Hatree = 27.211386eV
+    double BohrRadius2m = 0.5291772*pow(10,-10); // 1Bohr_raidus = 5.29177E-11 m
+    double BohrRadiusSq2mSq = pow(BohrRadius2m,2);  // 1Bohr_raidus^2 = (5.29177E-11 m)^2
+    double Hz2MHz = pow(10,-6); // 1Hz = 10^-6 MHz
+    double UnitConversion = Hatress2eV/BohrRadiusSq2mSq*Hz2MHz;
+
+    // Conversion
+    efg = UnitConversion * efg; // Hartree/Bohr^2 -> MHz
+    eq = eq * 1.0e-30; // 10e-30 m^2 -> m^2
+
+    // Quadrupole (radkHz)
+    bs->quad = MHZ_TO_RADKHZ((eq)/(2.0*spin*(2.0*spin-1.0))/h * efg);
+}
+
+
+void 
+BathSpin_setHypfSub(BathSpin* bs, MatrixXcd hypf_sub){
+    bs->hypf_sub = hypf_sub;
+}
+
+void 
+BathSpin_setMainspidx(BathSpin* bs, int mainspidx){
+    bs->mainspidx = mainspidx;
+}
+
+
+char*      
+BathSpin_getName(BathSpin* bs){
+    return bs->name;
+}
+
+float      
+BathSpin_getSpin(BathSpin* bs){
+    return bs->spin;
+}
+
+double     
+BathSpin_getGyro(BathSpin* bs){
+    return bs->gyro;
+}
+
+double*    
+BathSpin_getXyz(BathSpin* bs){
+    return bs->xyz;
+}
+
+float      
+BathSpin_getState(BathSpin* bs){
+    return bs->state;
+}
+
+double     
+BathSpin_getDetuning(BathSpin* bs){
+    return bs->detuning;
+}
+
+double     
+BathSpin_getDisorder(BathSpin* bs){
+    return bs->disorder;
+}
+
+MatrixXcd  
+BathSpin_getHypf_i(BathSpin* bs, int iq){
+    return bs->hypf[iq];
+}
+
+MatrixXcd  
+BathSpin_getQuad(BathSpin* bs){
+    return bs->quad;
+}
+
+MatrixXcd  
+BathSpin_getHypfSub(BathSpin* bs){
+    return bs->hypf_sub;
+}
+
+int        
+BathSpin_getMainspidx(BathSpin* bs){
+    return bs->mainspidx;
 }

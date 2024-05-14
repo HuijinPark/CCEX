@@ -43,37 +43,72 @@ void Config_allocQd_tensorfile_woqubit(Config* cnf){
     cnf->qd_tensorfile_woqubit = allocChar1d(MAX_FILEPATH);
 }
 
+void Config_allocAvaaxfile(Config* cnf){
+    cnf->avaaxfile = allocChar1d(MAX_FILEPATH);
+}
+
+void Config_allocStatefile(Config* cnf){
+    cnf->statefile = allocChar1d(MAX_FILEPATH);
+}
+
+void Config_allocExstatefile(Config* cnf){
+    cnf->exstatefile = allocChar1d(MAX_FILEPATH);
+}
+
 // free
 void Config_freeAll(Config* cnf){
-    freeArray1d((cnf));
+    Config_freeBathfiles(cnf);
+    Config_freeBathadjust(cnf);
+    Config_freeGyrofile(cnf);
+    Config_freeQubitfile(cnf);
+    Config_freeAvaaxfile(cnf);
+    Config_freeStatefile(cnf);
+    Config_freeExstatefile(cnf);
+    Config_freeHf_tensorfile(cnf);
+    Config_freeQd_tensorfile(cnf);
+    Config_freeQd_tensorfile_woqubit(cnf);
+    freeInt1d(&(cnf->_flines));
+    freeArray1d((void**)&(cnf));
 }
 
 void Config_freeBathfiles(Config* cnf){
-    freeChar2d(cnf->bathfiles,cnf->nbathfiles);
+    freeChar2d(&(cnf->bathfiles),cnf->nbathfiles);
 }
 
 void Config_freeBathadjust(Config* cnf){
-    freeDouble2d(cnf->bathadjust,cnf->nbathfiles);
+    freeDouble2d(&(cnf->bathadjust),cnf->nbathfiles);
 }
 
 void Config_freeGyrofile(Config* cnf){
-    freeChar1d(cnf->gyrofile);
+    freeChar1d(&(cnf->gyrofile));
 }
 
 void Config_freeQubitfile(Config* cnf){
-    freeChar1d(cnf->qubitfile);
+    freeChar1d(&(cnf->qubitfile));
+}
+
+void Config_freeAvaaxfile(Config* cnf){
+    freeChar1d(&(cnf->avaaxfile));
+}
+
+void Config_freeStatefile(Config* cnf){
+    freeChar1d(&(cnf->statefile));
+}
+
+void Config_freeExstatefile(Config* cnf){
+    freeChar1d(&(cnf->exstatefile));
 }
 
 void Config_freeHf_tensorfile(Config* cnf){
-    freeChar1d(cnf->hf_tensorfile);
+    freeChar1d(&(cnf->hf_tensorfile));
 }
 
 void Config_freeQd_tensorfile(Config* cnf){
-    freeChar1d(cnf->qd_tensorfile);
+    freeChar1d(&(cnf->qd_tensorfile));
 }
 
 void Config_freeQd_tensorfile_woqubit(Config* cnf){
-    freeChar1d(cnf->qd_tensorfile_woqubit);
+    freeChar1d(&(cnf->qd_tensorfile_woqubit));
 }
 
 /* Low level ---------------------------------------------------------*/
@@ -145,6 +180,18 @@ char*   Config_getBathfiles_i(Config* cnf,int i){
 
 double* Config_getBathadjust_i(Config* cnf,int i){
     return cnf->bathadjust[i];
+}
+
+char*   Config_getAvaaxfile(Config* cnf){
+    return cnf->avaaxfile;
+}
+
+char*   Config_getStatefile(Config* cnf){
+    return cnf->statefile;
+}
+
+char*   Config_getExstatefile(Config* cnf){
+    return cnf->exstatefile;
 }
 
 double  Config_getDefectTotSpin(Config* cnf){
@@ -294,7 +341,7 @@ void Config_setNstate(Config* cnf, int nstate){
 void Config_setSeed(Config* cnf, int seed){
 
     if (seed < 0) {
-        fprintf(stderr, "Error: current seed (%d < 0) is not available\n",seed);
+        fprintf(stderr, "Error: current seed(%d) ( < 0) is not available\n",seed);
         exit(EXIT_FAILURE);
     }
     cnf->seed = seed;
@@ -344,6 +391,36 @@ void Config_setBathadjust_i(Config* cnf, double* bathadjust, int i){
         exit(EXIT_FAILURE);
     }
     copyDouble1d(cnf->bathadjust[i],bathadjust,3);
+}
+
+void Config_setAvaaxfile(Config* cnf, char* avaaxfile){
+
+    if (cnf->avaaxfile == NULL){
+        fprintf(stderr, "Error: the memory for avaaxfile should be allocated\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(cnf->avaaxfile,avaaxfile);
+}
+
+void Config_setStatefile(Config* cnf, char* statefile){
+
+    if (cnf->statefile == NULL){
+        fprintf(stderr, "Error: the memory for statefile should be allocated\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(cnf->statefile,statefile);
+}
+
+void Config_setExstatefile(Config* cnf, char* exstatefile){
+
+    if (cnf->exstatefile == NULL){
+        fprintf(stderr, "Error: the memory for exstatefile should be allocated\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(cnf->exstatefile,exstatefile);
 }
 
 void Config_setDefectTotSpin(Config* cnf, double DefectTotSpin){
@@ -412,7 +489,7 @@ void Config_setQd_tensorfile_woqubit(Config* cnf, char* qd_tensorfile_woqubit){
 void Config_setQd_readmode(Config* cnf, int qd_readmode){
 
     if (qd_readmode < 0 && qd_readmode > 2) {
-        fprintf(stderr, "Error: possible qd_readmode is 0, 1, 2\n",qd_readmode);
+        fprintf(stderr, "Error: possible qd_readmode is 0, 1, 2\n");
         exit(EXIT_FAILURE);
     }
     cnf->qd_readmode = qd_readmode;
@@ -446,20 +523,24 @@ void Config_report(Config* cnf){
         printStructElementDouble1d("bathadjust",Config_getBathadjust_i(cnf,i),3);
     }
 
+    printStructElementChar("avaaxfile",Config_getAvaaxfile(cnf));
+    printStructElementChar("statefile",Config_getStatefile(cnf));
+    printStructElementChar("exstatefile",Config_getExstatefile(cnf));
+
     printStructElementDouble("DefectTotSpin",Config_getDefectTotSpin(cnf));
     printStructElementDouble("CorrTotSpin",Config_getCorrTotSpin(cnf));
 
-    printStructElementChar("hf_tensorfile",Config_getHf_tensorfile(cnf));
-    printStructElementDouble("hf_cutoff",Config_getHf_cutoff(cnf));
-    printStructElementInt("hf_ignore_oor",Config_getHf_ignore_oor(cnf));
     printStructElementInt("hf_readmode",Config_getHf_readmode(cnf));
+    if (Config_getHf_readmode(cnf)!=0){
+        printStructElementChar("hf_tensorfile",Config_getHf_tensorfile(cnf));
+        printStructElementDouble("hf_cutoff",Config_getHf_cutoff(cnf));
+        printStructElementInt("hf_ignore_oor",Config_getHf_ignore_oor(cnf));
+    }
 
-    printStructElementChar("qd_tensorfile",Config_getQd_tensorfile(cnf));
-    printStructElementChar("qd_tensorfile_woqubit",Config_getQd_tensorfile_woqubit(cnf));
     printStructElementInt("qd_readmode",Config_getQd_readmode(cnf));
-    
-
-
-    
+    if (Config_getQd_readmode(cnf)!=0){
+        printStructElementChar("qd_tensorfile",Config_getQd_tensorfile(cnf));
+        printStructElementChar("qd_tensorfile_woqubit",Config_getQd_tensorfile_woqubit(cnf));
+    }    
     printLineSection();
 }

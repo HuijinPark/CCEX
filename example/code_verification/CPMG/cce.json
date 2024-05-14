@@ -1,0 +1,51 @@
+{
+    "method" : "gcce",
+    "quantity" : "coherence",
+
+    "gyrofile" : "./gyro",
+    "bathfile" : ["./bath_1"],
+
+    "hf_readmode" : 3,
+    "hf_tensorfile" : "./Atensor",
+
+
+    "Qubit" : {
+        "nqubit" : 1,
+        "qubit" : 
+        [
+            {
+                "name": "qubit1",
+                "spin": 1.0,
+                "gyro": -17608.597050,
+                "xyz": [0.0, 0.0, 0.0],
+                "alpha" : -1,
+                "beta" : 0,
+                "detuning": [0.0]
+            }
+        ],
+        "intmap": //["qubit1", "qubit2", [1,2,3,4,5,6,7,8,9]] Change!!
+        [
+            {
+                "between": ["qubit1", "qubit1"],
+                "tensor": [
+                    [-960000, 0,0],
+                    [0,-960000,0],
+                    [0,0,1920000] //kHz
+                ]
+            }
+        ]
+    },
+
+
+    "order" : 1,
+    "npulse" : 32,
+    "bfield" : 448.84,
+    "deltat": 0.00001,
+    "nstep": 50, //100
+
+    "rbath": 10,
+    "rdip": 10,
+    
+    "outfile" : "./CPMG_result"
+
+}

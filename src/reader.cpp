@@ -13,11 +13,21 @@ void readQubitfile(QubitArray* qa, Config* cnf){
 
     data    =   fopen(fname,"r");
 
-    if (data == NULL){
+    if (data == NULL && QubitArray_getNqubit(qa) == 0){
         perror("Error(readQubitFile): Cannot open the qubit file\n");
         printf("Current WRONG qubitfile name : %s\n",fname);
         printf("Check if the qubit file exists\n");
         exit(EXIT_FAILURE);
+    }else if (data == NULL && QubitArray_getNqubit(qa) != 0){
+        if (rank==0){printMessage("QubitArray already set with option ...\n");}
+        return;
+    }else{
+        if (rank==0){
+            char message[MAX_FILEPATH];
+            sprintf(message,"Read QubitFile : %s ... ",fname);
+            printMessage(message);
+        }
+        
     }
 
     // read xyz from QubitFile
@@ -29,10 +39,16 @@ void readQubitfile(QubitArray* qa, Config* cnf){
         count = sscanf(lline, "%lf %lf %lf\n", &(xyz[0]), &(xyz[1]), &(xyz[2]));
         if (count == 3){
             fclose(data);
+
+            if (rank==0){
+                printStructElementDouble1d("  Qubit[0].xyz ", xyz, 3);
+                printf("\n");
+            }
             return;
         }
     }
     fclose(data);
+
     // if no data
     perror("Error(readQubitFile): Cannot read the qubit file\n");
     printf("Current WRONG qubitfile name : %s\n",fname);
@@ -62,6 +78,10 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
         char*   fname       = Config_getBathfiles_i(cnf,i);
         double* bathadjust  = Config_getBathadjust_i(cnf,i);
 
+        // Find the lines that the bath spin is written
+        // int fline = 1;
+        // int fidx = 0;
+
         // file open        
         data = fopen(fname,"r");
         if(data==NULL){
@@ -84,10 +104,18 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
             xyz[0] += bathadjust[0];
             xyz[1] += bathadjust[1];
             xyz[2] += bathadjust[2];
+            // fline++;
 
             if (count == 4){
                 double r = QubitArray_mindist(xyz, qa);
                 if ((r <= rbath) && (r >= rbathcut)){
+
+                    ////////////////////////////////
+                    // Check the line
+                    // reallocInt1d(&(cnf->_flines), fidx+1);
+                    // cnf->_flines[fidx] = fline;
+                    // fidx++;
+                    ////////////////////////////////
 
                     // increase the number of spins
                     nspin++;
@@ -124,11 +152,61 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
             }
         }
         fclose(data);
-        if(rank==0){printf("Read BathFile[%d] : %s\n",i,fname);}
-        if(rank==0){printf("Current nspin = %d \n",nspin);}
+        if(rank==0){printf("        Read BathFile[%d] : %s\n",i,fname);}
+        if(rank==0){printf("        Current nspin = %d \n",nspin);}
+        if(rank==0){printf("\n");}
     }
+    
+    // cnf->_flines[0] = fidx;
+    // if (fidx != nspin+1){
+    //     fprintf(stderr,"Error(readBathFile): The number of bath spins is not consistent\n");
+    //     fprintf(stderr,"The number of bath spins from the file : %d\n",nspin);
+    //     fprintf(stderr,"The number of bath spins from the file line : %d - 1\n",fidx);
+    //     exit(EXIT_FAILURE);
+    // }
 
 }
+
+// void readStatefile(BathArray* ba, Config* cnf, int i){
+
+
+//     char* fname_tmp = Config_getStatefile(cnf);
+//     int nspin = BathArray_getNspin(ba);
+
+//     // Set file name
+//     char* fname = allocChar1d(MAX_FILEPATH);
+//     sprintf(fname, "%s_%d", fname_tmp, i);
+
+//     //
+    
+
+//     FILE* data;
+//     data = fopen(fname,"r");
+
+//     if(data==NULL){
+//         printf("    Warning (readStateFile): Cannot open the state file (%s) \n",fname);
+//         printf("    The state is randomly generated ... \n");
+//     }else{
+  
+//         // read state from StateFile
+//         int count = 0;
+//         int fline = 1;
+//         int fidx = 1;
+//         while(!feof(data)){
+//             float state = 0.0;
+//             count = fscanf(data, "%f\n", &state);
+//             fline++;
+//             if (cnf->_flines[fidx] == fline){
+//                 BathArray_setState(ba, state);
+//                 fidx++;
+//             }
+//         }
+//         fclose(data);
+
+//     }
+
+// }
+
 
 void readGyrofile(BathArray* ba, Config* cnf){
     
@@ -169,8 +247,9 @@ void readGyrofile(BathArray* ba, Config* cnf){
         }
     }
     fclose(data);
-    if(rank==0){printf("Read GyroFile : %s\n",fname);}
-    if(rank==0){printf("Current nspecies = %d \n",nspecies);}
+    if(rank==0){printf("        Read GyroFile : %s\n",fname);}
+    if(rank==0){printf("        Current nspecies = %d \n",nspecies);}
+    if(rank==0){printf("\n");}
 }
 
 void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
@@ -269,7 +348,7 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
 
         for (int iqubit=0; iqubit<nqubit; iqubit++){
             for (int ispin=0; ispin<nspin; ispin++){
-            
+
                 // resultant paramter
                 double fc = 0.0;
                 MatrixXcd Adip = MatrixXcd::Zero(3,3);
@@ -348,7 +427,7 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
                         Atot = Adip + fc * MatrixXcd::Identity(3,3);
                     }
                     BathArray_setBath_i_hypf_j(ba, Atot, ispin, iqubit);
-                    
+
                 }else if (isExist && !isFound){
                     if (hf_ignore_oor==0){
                         //not Ignore the mis-match
@@ -371,12 +450,17 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
         int length_AtensorArray = (int)AtensorArray[0][0];
         int length_others = nspecies+1;
         
-        freeDouble1d(A_Gfactor);
-        freeDouble2d(A_Etc,length_others);
-        freeDouble2d(AtensorArray, length_AtensorArray);
-        freeDouble2d(A_vertex, 8);
-        freeDouble2d(A_center, 8);
-        freeDouble2d(A_normal, 8);
+        freeDouble1d(&A_Gfactor);
+        freeDouble2d(&A_Etc,length_others);
+        freeDouble2d(&AtensorArray, length_AtensorArray);
+
+        if (isVertex){
+            freeDouble2d(&A_vertex, 8);
+            freeDouble2d(&A_center, 8);
+            freeDouble2d(&A_normal, 8);
+        }
+
+        printf("        Read the Hyperfine interaction from DFT inputfile... Done\n");
     }
 }
 

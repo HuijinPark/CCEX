@@ -26,16 +26,16 @@ void reallocInt3d(int ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t
     reallocArray3d((void****)ptr,oldrow,newrow,col1,col2,sizeof(int));
 }
 
-void freeInt1d(int *ptr) {
-    freeArray1d(ptr);
+void freeInt1d(int **ptr) {
+    freeArray1d((void**)ptr);
 }
 
-void freeInt2d(int **ptr, size_t m) {
-    freeArray2d((void**)ptr, m);
+void freeInt2d(int ***ptr, size_t m) {
+    freeArray2d((void***)ptr, m);
 }
 
-void freeInt3d(int ***ptr, size_t m, size_t n) {
-    freeArray3d((void***)ptr, m, n);
+void freeInt3d(int ****ptr, size_t m, size_t n) {
+    freeArray3d((void****)ptr, m, n);
 }
 
 // memory allocation for double
@@ -63,16 +63,16 @@ void reallocDouble3d(double ****ptr, size_t oldrow, size_t newrow, size_t col1, 
     reallocArray3d((void****)ptr,oldrow,newrow,col1,col2,sizeof(double));
 }
 
-void freeDouble1d(double *ptr) {
-    freeArray1d(ptr);
+void freeDouble1d(double **ptr) {
+    freeArray1d((void**)ptr);
 }
 
-void freeDouble2d(double **ptr, size_t m) {
-    freeArray2d((void**)ptr, m);
+void freeDouble2d(double ***ptr, size_t m) {
+    freeArray2d((void***)ptr, m);
 }
 
-void freeDouble3d(double ***ptr, size_t m, size_t n) {
-    freeArray3d((void***)ptr, m, n);
+void freeDouble3d(double ****ptr, size_t m, size_t n) {
+    freeArray3d((void****)ptr, m, n);
 }
 
 // memory allocation for float
@@ -100,16 +100,16 @@ void reallocFloat3d(float ****ptr, size_t oldrow, size_t newrow, size_t col1, si
     reallocArray3d((void****)ptr,oldrow,newrow,col1,col2,sizeof(float));
 }
 
-void freeFloat1d(float *ptr) {
-    freeArray1d(ptr);
+void freeFloat1d(float **ptr) {
+    freeArray1d((void**)ptr);
 }
 
-void freeFloat2d(float **ptr, size_t m) {
-    freeArray2d((void**)ptr, m);
+void freeFloat2d(float ***ptr, size_t m) {
+    freeArray2d((void***)ptr, m);
 }
 
-void freeFloat3d(float ***ptr, size_t m, size_t n) {
-    freeArray3d((void***)ptr, m, n);
+void freeFloat3d(float ****ptr, size_t m, size_t n) {
+    freeArray3d((void****)ptr, m, n);
 }
 
 // memory allocation for char
@@ -137,17 +137,68 @@ void reallocChar3d(char ****ptr, size_t oldrow, size_t newrow, size_t col1, size
     reallocArray3d((void****)ptr,oldrow,newrow,col1,col2,sizeof(char));
 }
 
-void freeChar1d(char *ptr) {
-    freeArray1d(ptr);
+void freeChar1d(char **ptr) {
+    freeArray1d((void**)ptr);
 }
 
-void freeChar2d(char **ptr, size_t m) {
-    freeArray2d((void**)ptr, m);
+void freeChar2d(char ***ptr, size_t m) {
+    freeArray2d((void***)ptr, m);
 }
 
-void freeChar3d(char ***ptr, size_t m, size_t n) {
-    freeArray3d((void***)ptr, m, n);
+void freeChar3d(char ****ptr, size_t m, size_t n) {
+    freeArray3d((void****)ptr, m, n);
 }
+
+// MatrixXcd
+MatrixXcd* allocMatrixXcd1d(size_t m) {
+    MatrixXcd* array = new MatrixXcd[m];
+    return array;
+}
+
+MatrixXcd** allocMatrixXcd2d(size_t m, size_t n) {
+    MatrixXcd** array = new MatrixXcd*[m];
+    for (size_t i = 0; i < m; i++) {
+        array[i] = new MatrixXcd[n];
+    }
+    return array;
+}
+
+MatrixXcd*** allocMatrixXcd3d(size_t m, size_t n, size_t l) {
+    MatrixXcd*** array = new MatrixXcd**[m];
+    for (size_t i = 0; i < m; i++) {
+        array[i] = new MatrixXcd*[n];
+        for (size_t j = 0; j < n; j++) {
+            array[i][j] = new MatrixXcd[l];
+        }
+    }
+    return array;
+}
+
+void freeMatrixXcd1d(MatrixXcd **ptr) {
+    if (!ptr) return;
+    delete [] *ptr;
+}
+
+void freeMatrixXcd2d(MatrixXcd ***ptr, size_t m) {
+    if (!ptr) return;
+    for (size_t i = 0; i < m; i++) {
+        delete [] (*ptr)[i];
+    }
+    delete [] *ptr;
+}
+
+void freeMatrixXcd3d(MatrixXcd ****ptr, size_t m, size_t n) {
+    if (!ptr) return;
+    for (size_t i = 0; i < m; i++) {
+        for (size_t j = 0; j < n; j++) {
+            delete [] (*ptr)[i][j];
+        }
+        delete [] (*ptr)[i];
+    }
+    delete [] *ptr;
+}
+
+
 
 // DoubleTensor
 DoubleTensor* allocDoubleTensor1d(size_t m){
@@ -182,18 +233,18 @@ void reallocDoubleTensor3d(DoubleTensor ****ptr, size_t oldrow, size_t newrow, s
 
 
 
-void freeDoubleTensor1d(DoubleTensor *ptr){
-    freeArray1d(ptr);
+void freeDoubleTensor1d(DoubleTensor **ptr){
+    freeArray1d((void**)ptr);
 }
 
 
-void freeDoubleTensor2d(DoubleTensor **ptr, size_t m){
-    freeArray2d((void**)ptr, m);
+void freeDoubleTensor2d(DoubleTensor ***ptr, size_t m){
+    freeArray2d((void***)ptr, m);
 }
 
 
-void freeDoubleTensor3d(DoubleTensor ***ptr, size_t m, size_t n){
-    freeArray3d((void***)ptr, m, n);
+void freeDoubleTensor3d(DoubleTensor ****ptr, size_t m, size_t n){
+    freeArray3d((void****)ptr, m, n);
 }
 
 
@@ -230,18 +281,18 @@ void reallocDoubleComplex3d(DoubleComplex ****ptr, size_t oldrow, size_t newrow,
 
 
 
-void freeDoubleComplex1d(DoubleComplex *ptr){
-    freeArray1d(ptr);
+void freeDoubleComplex1d(DoubleComplex **ptr){
+    freeArray1d((void**)ptr);
 }
 
 
-void freeDoubleComplex2d(DoubleComplex **ptr, size_t m){
-    freeArray2d((void**)ptr, m);
+void freeDoubleComplex2d(DoubleComplex ***ptr, size_t m){
+    freeArray2d((void***)ptr, m);
 }
 
 
-void freeDoubleComplex3d(DoubleComplex ***ptr, size_t m, size_t n){
-    freeArray3d((void***)ptr, m, n);
+void freeDoubleComplex3d(DoubleComplex ****ptr, size_t m, size_t n){
+    freeArray3d((void****)ptr, m, n);
 }
 
 
@@ -317,36 +368,38 @@ void reallocArray3d(void**** ptr, size_t oldrow, size_t newrow, size_t col1, siz
 }
 
 //free memory 1d array
-void freeArray1d(void *ptr) {
-    if (ptr==NULL) {
+void freeArray1d(void **ptr) {
+    if (ptr==NULL || *ptr==NULL) {
         return;
     }
-    free(ptr);
-    ptr=NULL;
+    free(*ptr);
+    *ptr=NULL;
 }
 
+
+
 //free memory 2d array
-void freeArray2d(void **ptr, size_t m) {
-    if (ptr==NULL) {
+void freeArray2d(void ***ptr, size_t m) {
+    if (ptr == NULL || *ptr == NULL) {
         return;
     }
     for (size_t i = 0; i < m; i++) {
-        free(ptr[i]);
+        freeArray1d(&((*ptr)[i]));
     }
-    free(ptr);
-    ptr=NULL;
+    free(*ptr);
+    *ptr = NULL;
 }
 
 //free memory 3d array
-void freeArray3d(void ***ptr, size_t m, size_t n) {
-    if (ptr==NULL) {
+void freeArray3d(void ****ptr, size_t m, size_t n) {
+    if (ptr==NULL || *ptr==NULL) {
         return;
     }
     for (size_t i = 0; i < m; i++) {
-        freeArray2d(ptr[i], n);
+        freeArray2d(&((*ptr)[i]), n);
     }
-    free(ptr);
-    ptr=NULL;
+    free(*ptr);
+    *ptr=NULL;
 }
 
 /* Copy dynamically allocated array ------------------------*/

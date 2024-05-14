@@ -1,9 +1,8 @@
-#ifndef __CCEX_SIMULATOR_DEFECT_H_
-#define __CCEX_SIMULATOR_DEFECT_H_
+#ifndef __CCEX_DEFECT_H_
+#define __CCEX_DEFECT_H_
 
-#ifndef __CCEX_SIMULATOR_SIMULATOR_H_
-    #include "simulator.h"
-#endif
+#include "utilities.h"
+#include "bath.h"
 
 /**
  * @struct Defect
@@ -12,200 +11,139 @@
 typedef struct{
 
     /* Defect information */
-    char dfname[MAX_CAHRARRAY_LENGTH];
+    char dfname[MAX_CHARARRAY_LENGTH];
     bool apprx;
     
     /* Defect' spin information */
-    int  nspin;
-    char* spname[MAX_CAHRARRAY_LENGTH]; // spname[n]
-    float* spin; // spin[n]
-    double* gyro; // gyro[n]
-    double* eq; // eq[n]
+    int  naddspin;
+    char** types; // spname[n]
+    float* spins; // spin[n]
+    double* gyros; // gyro[n]
+    double* eqs; // eq[n]  //quadrupole memomts eq in "milibarn * 10e+1" m^2 = 10e-30 m^2
 
     /* Defect' spin interaction information */
     // changes for avaax, spin
 
-    int avaax; // possible number of principal axis
+    int navaax; // possible number of principal axis
 
-    double** rxyz[3]; // rxyz[n][m]
-    DoubleTensor** hypf; // hypf[n][m]
-    DoubleTensor** quad; // quad[n][m]
-    DoubleTensor** zfs ; // zfs[n][m]
-    double** detuning; // detuning[n][m]
+    double*** rxyzs; // rxyz[n+1][m][k] : n: avaax(1~navaax), m : addspin type , k : x,y,z
+    MatrixXcd** hypf; // hypf[n+1][m] // (MHz)
+    MatrixXcd** efg; // quad[n+1][m] // (Hartree/Bohr^2)
+    MatrixXcd* zfs ; // zfs[n+1]  // (MHz)
+    double* detuning; // detuning[n+1] //  (MHz)
 
-    // n : sub spin index
-    // m : available axis
+    // n : available axis
+    // m : addspin type
 
 } Defect;
 
-
-// /**
-//  * @brief DefectArray
-// */
-// typedef struct {
-//     int      dfname[MAX_CHARARRAY_LENGTH];
-//     char     apprx[MAX_CHARARRAY_LENGTH];
-//     int      naddspin   = 0;
-//     char**   types      = NULL;
-//     float*   spins      = NULL;
-//     float*   eqs        = NULL;
-//     double*  gyros      = NULL;
-//     int      avaax      = 0;
-//     double** rxyzs      = NULL; // (avaax*naddspin,5)
-//     double** hyperfine  = NULL; // (avaax*naddspin,11)
-//     double** zerofield  = NULL; // (avaax,11)
-//     double** detuning   = NULL; // (avaax,3)
-//     double** quadrupole = NULL; // (avaax*naddspin,11)
-// }DefectProp;
-
-// typedef struct {
-//     int nspecies;
-//     DefectProp* defect;
-// } DefectPropArray;
-
-
 typedef struct{
-        
-    /* Input files */
-    // char* _substatefile;
-    // char* _avaaxfile;
 
-    /* Defect information */
+    int nbathspin;
+    int* naddspins; // naddspin[nbathspin]
+    BathSpin*** subbath; // bspin[nbathspin][naddspin]
+
+    int* paxes; // avaax[nbathspin] (Fix for the configuration)
+
     int ndefect;
     Defect** defect;
 
-    /* Defect' spin information */
-    int nbathspin;
-    float** states; // states[b][defect.nspin]
+}DefectArray;
 
 
-    /* Principal axis (Essential only for &Defect) */
 
-    /**
-     * @brief Principal axis of defect (Unit : radkHz) 
-     * @details Value is obtained from &Bath -> "avaaxfile" and &Defect -> "davaax" (default : 0)
-     *          - avaax = 0 : The bath doesn't have defects.
-     *          - avaax > 1 : The bath has defects.
-    */
-    int* paxes; // avaax[b] 
+// Update BathArray (input : Defect_i, paxis(index), BathSpin)
+// (1) mainspinidx = self-index
+// (2) quad (zfs) = check paxis, replace the quad as zfs(axis)
+// (3) detuning = check paxis, add +=detuning(axis)
+void updateMainSpins_fromDefectArray(DefectArray* dfa, BathArray* ba);
+void updateDisorder_main_sub(DefectArray* dfa, BathArray* ba);
+void updateDisorder_sub_sub(DefectArray* dfa);
+void updateOverhaus_qubit_sub(DefectArray* dfa, QubitArray* ba);
 
-    // b : bath spin index 
-    // n : sub spin index 
-
-} DefectArray;
+/* Low level functions ------------------------------------------------ */
 
 // init
-DefectArray* initDefectArray();
+DefectArray* DefectArray_init();
 
-// set
-void setDefectArray(DefectArray* dfa, Options* options);
+// set defect information
+void DefectArray_setNdefect(DefectArray* dfa, int ndefect);
+void DefectArray_setDefect_idf_dfname(DefectArray* dfa, int idf, char* dfname);
+void DefectArray_setDefect_idf_apprx(DefectArray* dfa, int idf, bool apprx);
+void DefectArray_setDefect_idf_naddspin(DefectArray* dfa, int idf, int naddspin);
+void DefectArray_setDefect_idf_types(DefectArray* dfa, int idf, char** types);
+void DefectArray_setDefect_idf_spins(DefectArray* dfa, int idf, float* spins);
+void DefectArray_setDefect_idf_gyros(DefectArray* dfa, int idf, double* gyros);
+void DefectArray_setDefect_idf_eqs(DefectArray* dfa, int idf, double* eqs);
+void DefectArray_setDefect_idf_navaax(DefectArray* dfa, int idf, int navaax);
+void DefectArray_setDefect_idf_iax_isp_rxyz(DefectArray* dfa, int idf, int iax, int isp, double* rxyzs);
+void DefectArray_setDefect_idf_iax_isp_hypf(DefectArray* dfa, int idf, int iax, int isp, MatrixXcd hypf);
+void DefectArray_setDefect_idf_iax_isp_efg(DefectArray* dfa, int idf, int iax, int isp, MatrixXcd efg);
+void DefectArray_setDefect_idf_iax_zfs(DefectArray* dfa, int idf, int iax, MatrixXcd zfs);
+void DefectArray_setDefect_idf_iax_detuning(DefectArray* dfa, int idf, int iax, double detuning);
 
-// void setDefectArray_substatefile(DefectArray* dfa, Options* options);
-// void setDefectArray_avaaxfile(DefectArray* dfa, Options* options);
+// find defect index from name
+int DefectArray_findDefectIndex(DefectArray* dfa, char* dfname);
 
-void setDefectArrayNdefect(DefectArray* dfa, Options* options);
-void setDefectArrayDefect(DefectArray* dfa, Options* options);
-void setDefectArrayDefect_idf(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_dfname(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_apprx(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_nspin(DefectArray* dfa, Options* options, int idf); // n
-void setDefectArrayDefect_idf_spname(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_spin(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_gyro(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_eq(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_avaax(DefectArray* dfa, Options* options, int idf); // m
-void setDefectArrayDefect_idf_rxyz(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_hypf(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_quad(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_zfs(DefectArray* dfa, Options* options, int idf);
-void setDefectArrayDefect_idf_detuning(DefectArray* dfa, Options* options, int idf);
+// get defect information
+int DefectArray_getNdefect(DefectArray* dfa);
+char* DefectArray_getDefect_idf_dfname(DefectArray* dfa, int idf);
+bool DefectArray_getDefect_idf_apprx(DefectArray* dfa, int idf);
+int DefectArray_getDefect_idf_naddspin(DefectArray* dfa, int idf);
+char* DefectArray_getDefect_idf_isp_types(DefectArray* dfa, int idf, int isp);
+float DefectArray_getDefect_idf_isp_spins(DefectArray* dfa, int idf, int isp);
+double DefectArray_getDefect_idf_isp_gyros(DefectArray* dfa, int idf, int isp);
+double DefectArray_getDefect_idf_isp_eqs(DefectArray* dfa, int idf, int isp);
+int DefectArray_getDefect_idf_navaax(DefectArray* dfa, int idf);
+double* DefectArray_getDefect_idf_iax_isp_rxyz(DefectArray* dfa, int idf, int iax, int isp);
+MatrixXcd DefectArray_getDefect_idf_iax_isp_hypf(DefectArray* dfa, int idf, int iax, int isp);
+MatrixXcd DefectArray_getDefect_idf_iax_isp_efg(DefectArray* dfa, int idf, int iax, int isp);
+MatrixXcd DefectArray_getDefect_idf_iax_isp_zfs(DefectArray* dfa, int idf, int iax);
+double DefectArray_getDefect_idf_iax_detuning(DefectArray* dfa, int idf, int iax);
 
-void setDefectArrayStates_random(DefectArray* dfa, BathArray* ba);
-void setDefectArrayPaxes_random(DefectArray* dfa, BathArray* ba);
+// alloc defect information
+void DefectArray_allocDefect(DefectArray* dfa); // defect : ndefect
+void DefectArray_allocDefect_idf(DefectArray* dfa, int idf, int navaax, int naddspin);
 
-// find index of defectname
-int findDefectIndex(DefectArray* dfa, char* dfname);
+// set subspin information
+void DefectArray_setPaxesRandom(DefectArray* dfa, BathArray* ba); // nbathspin (// before calculate)
+void DefectArray_setSubbathStatesRandom(DefectArray* dfa, BathArray* ba); // subbath->staets
+void DefectArray_setNaddspins(DefectArray* dfa, BathArray* ba); // before calculate
+void DefectArray_setSubbath(DefectArray* dfa, BathArray* ba, QubitArray* qa);
 
-// alloc
-void allocDefectArray(DefectArray* dfa);
-void allocDefectArrayDefect(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_spname(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_spin(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_gyro(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_eq(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_rxyz(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_hypf(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_quad(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_zfs(DefectArray* dfa, int idf);
-void allocDefectArrayDefect_idf_detuning(DefectArray* dfa, int idf);
-void allocDefectArrayStates(DefectArray* dfa, BathArray* ba);
-void allocDefectArrayPaxes(DefectArray* dfa, BathArray* ba);
+// alloc subspin information
+void DefectArray_allocPaxes(DefectArray* dfa, int nbathspin);
+void DefectArray_allocNaddspins(DefectArray* dfa, int nbathspin); // before calculate
+void DefectArray_allocSubbath(DefectArray* dfa, BathArray* ba, int nqubit);
 
-// free
-void freeDefectArray(DefectArray* dfa);
-void freeDefectArrayDefect(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_spname(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_spin(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_gyro(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_eq(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_rxyz(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_hypf(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_quad(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_zfs(DefectArray* dfa, int idf);
-void freeDefectArrayDefect_idf_detuning(DefectArray* dfa, int idf);
-void freeDefectArrayStates(DefectArray* dfa, BathArray* ba);
-void freeDefectArrayPaxes(DefectArray* dfa, BathArray* ba);
+// get subspin information
+int DefectArray_getNbathspin(DefectArray* dfa);
+int DefectArray_getPaxes_i(DefectArray* dfa, int ibs);
+int DefectArray_getNaddspins_i(DefectArray* dfa, int ibs);
+BathSpin* DefectArray_getSubbath_i_isp(DefectArray* dfa, int ibs, int isp); // control this with BathSpin_get/set functions
+
+// free 
+void DefectArray_freePaxes(DefectArray* dfa);
+void DefectArray_freeNaddspins(DefectArray* dfa);
+void DefectArray_freeSubbath(DefectArray* dfa);
+void DefectArray_freeAll(DefectArray* dfa);
+
+
+
 
 // report
+void DefectArray_reportAll(DefectArray* dfa);
 
-// get
-int getDefectArrayNdefect(DefectArray* dfa);
-Defect** getDefectArrayDefect(DefectArray* dfa);
-Defect* getDefectArrayDefect_idf(DefectArray* dfa, int idf);
-char* getDefectArrayDefect_idf_dfname(DefectArray* dfa, int idf);
-bool getDefectArrayDefect_idf_apprx(DefectArray* dfa, int idf);
-int getDefectArrayDefect_idf_nspin(DefectArray* dfa, int idf);
-char** getDefectArrayDefect_idf_spname(DefectArray* dfa, int idf);
-float* getDefectArrayDefect_idf_spin(DefectArray* dfa, int idf);
-double* getDefectArrayDefect_idf_gyro(DefectArray* dfa, int idf);
-double* getDefectArrayDefect_idf_eq(DefectArray* dfa, int idf);
-int getDefectArrayDefect_idf_avaax(DefectArray* dfa, int idf);
-double*** getDefectArrayDefect_idf_rxyz(DefectArray* dfa, int idf);
-DoubleTensor** getDefectArrayDefect_idf_hypf(DefectArray* dfa, int idf);
-DoubleTensor** getDefectArrayDefect_idf_quad(DefectArray* dfa, int idf);
-DoubleTensor** getDefectArrayDefect_idf_zfs(DefectArray* dfa, int idf);
-double** getDefectArrayDefect_idf_detuning(DefectArray* dfa, int idf);
+void DefectArray_reportSubbath_props(DefectArray* dfa); // name, spin, gyro, xyz, mainspidx
+void DefectArray_reportSubbath_states(DefectArray* dfa); // state 
+void DefectArray_reportSubbath_hypfs(DefectArray* dfa, int nqubit); // hypf
+void DefectArray_reportSubbath_quads(DefectArray* dfa); //quad
+void DefectArray_reportSubbath_hypf_subs(DefectArray* dfa); // hypf_sub
+void DefectArray_reportSubbath_disorders(DefectArray* dfa); // disorder
+//, detuning (detuning is not implemented yet)
 
-char* getDefectArrayDefect_idf_isp_spname(DefectArray* dfa, int idf, int isp);
-float getDefectArrayDefect_idf_isp_spin(DefectArray* dfa, int idf, int isp);
-double getDefectArrayDefect_idf_isp_gyro(DefectArray* dfa, int idf, int isp);
-double getDefectArrayDefect_idf_isp_eq(DefectArray* dfa, int idf, int isp);
+void DefectArray_reportDefect_idf(DefectArray* dfa, int idf);
+void DefectArray_reportPaxes(DefectArray* dfa);
+void DefectArray_reportNaddspins(DefectArray* dfa);
 
-double* getDefectArrayDefect_idf_isp_iax_rxyz(DefectArray* dfa, int idf, int isp, int iax);
-DoubleTensor getDefectArrayDefect_idf_isp_iax_hypf(DefectArray* dfa, int idf, int isp, int iax);
-DoubleTensor getDefectArrayDefect_idf_isp_iax_quad(DefectArray* dfa, int idf, int isp, int iax);
-DoubleTensor getDefectArrayDefect_idf_isp_iax_zfs(DefectArray* dfa, int idf, int isp, int iax);
-double getDefectArrayDefect_idf_isp_iax_detuning(DefectArray* dfa, int idf, int isp, int iax);
-
-// BathSpin -> Expand as DefectSpin
-int makeBathSpins_fromdefect(BathSpin*** bspin_new, BathSpin* bspin, DefectArray* dfa); // return nspin
-//    bathspin w paxis  ->      subspin
-//         name         -> name = name_[spname]
-//         spin         -> spin = [spin]
-//         gyro         -> gyro = [gyro]
-//         eq           -> eq   = [eq]
-//         xyz          -> xyz  = xyz + [rxyz of spin, paxis]
-//        state         -> state = [substate]
-//       detuning       -> detuning = detuning 
-//       disorder       -> disorder = disorder // only think electron spin' mf (in &Defect)
-//      hypf(intqb)     -> hypf = pd apprx with qubit
-//     quad(intself)    -> quad = [quad of spin, paxis] or [zfs of spin, paxis]
-//      defect_hypf     -> defect_hypf(0.0) => hypf (hypf of spin, paxis)
-//
-
-void freeBathSpins_fromdefect(BathSpin*** bspin_new, int nspin);
-
-
-
-
-#endif //__CCEX_SIMULATOR_DEFECT_H_
+#endif //__CCEX_DEFECT_H_

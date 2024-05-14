@@ -2,12 +2,6 @@
 #include "../include/utilities.h"
 #include "../include/memory.h"
 #include "../include/cluster_hash.h"
-// #include "mpi.h"
-
-// init
-// clusterize
-// free
-// report
 
 /* High Level --------------------------------------------------------*/
 
@@ -21,125 +15,6 @@ Cluster* Cluster_init(){
     cls->clusinfo = NULL;
     
     return cls;
-}
-
-int*** Clsuter_getLocalClusters_MPI(Cluster* cls){
-    
-    int order = Cluster_getOrder(cls);
-    int*** clusters = Cluster_getClusinfo(cls);
-
-    MPI_Request req; 
-    MPI_Status status;
-
-    MPI_Barrier(MPI_COMM_WORLD);
-    // get the number of clusters for each order
-    int MPI_size[order+1];
-
-    for (int n=0; n<order+1; n++){
-        if (n==0){
-            // The number of cluster = 1#
-            MPI_size[n] = 1;
-        }
-        else{
-            // The number of cluster
-            MPI_size[n] = clusters[n][0][0];
-        }
-    }
-
-    MPI_Barrier(MPI_COMM_WORLD);
-    // get sendcount, ista, iend for each order and each rank
-    int MPI_sendcount[order+1][nprocess];
-    int MPI_ista[order+1][nprocess];
-    int MPI_iend[order+1][nprocess];
-
-    for (int irank=0; irank<nprocess; irank++){
-        for (int n=0; n<order+1; n++){
-            if (n==0){
-                MPI_sendcount[n][irank] = 1;
-                MPI_ista[n][irank] = 0;
-                MPI_iend[n][irank] = 0;
-            }
-            else{
-                int ista, iend;
-                para_range(2, MPI_size[n], nprocess, irank, &(ista) ,&(iend));
-                MPI_Barrier(MPI_COMM_WORLD);
-                //if (rank==0){
-                //    printf("rank%d, size(ncluster)=%d, ista=%d , iend=%d\n",irank,MPI_size[n],ista,iend);
-                //    printf("rank%d, sendcount%d \n",irank,iend-ista+1);
-                //}
-                // cluster : ista - 1 <= i < iend
-                // 9# , 0 , 1 ... , 8 , rank = 0 .. 7
-                // rank==0~7 then, sendcount = 1 ista=2, iend=1
-                // else, sendcount = 0
-                MPI_sendcount[n][irank] = iend - ista + 1;
-                MPI_ista[n][irank] = ista - 1;
-                MPI_iend[n][irank] = iend;
-                
-                // case : ista - 1 = iend
-                // case : ista - 1 > iend
-                if (ista-1 >= iend){
-                    MPI_iend[n][irank] = MPI_ista[n][irank];
-                    MPI_sendcount[n][irank] = 0;
-                }
-                MPI_Barrier(MPI_COMM_WORLD);
-            }
-        }
-    }
-
-    //if (rank==0){
-    //    printf("nprocess : %d\n",nprocess);
-    //    for (int n=0; n<order+1; n++){
-    //        printf("size[%d] : %d\n",n,MPI_size[n]);
-    //        for (int ir=0; ir<nprocess; ir++){
-    //            printf("ista[%d][%d] : %d\n",n,ir,MPI_ista[n][ir]);
-    //            printf("iend[%d][%d] : %d\n",n,ir,MPI_iend[n][ir]);
-    //            printf("sendcount[%d][%d] : %d\n",n,ir,MPI_sendcount[n][ir]);
-    //        }
-    //    }
-    //}
-
-    MPI_Barrier(MPI_COMM_WORLD);
-
-
-    // make local clusters for each rank
-    int*** localClusters = (int***)calloc(order+1,sizeof(int**));
-
-    // zeroth cluster 
-    localClusters[0] = (int**)calloc(1,sizeof(int*));
-    localClusters[0][0] = (int*)calloc(1,sizeof(int));
-    localClusters[0][0][0] = clusters[0][0][0]; // = 1
-    if (rank!=0){
-        localClusters[0][0][0] = 0;
-    } 
-    MPI_Barrier(MPI_COMM_WORLD);
-
-    // n > 0 clusters
-    for (int n=1; n<order+1; n++){
-
-        int size = MPI_sendcount[n][rank] + 1;
-        localClusters[n] = (int**)allocArray2d(size,n+1,sizeof(int));
-        localClusters[n][0][0] = size;
-
-        int rootClusterista = MPI_ista[n][rank];
-        int rootClusteriend = MPI_iend[n][rank];
-        int iroot = rootClusterista - 1;
-        for (int i=1; i<size; i++){
-            iroot = rootClusterista + i - 1;
-            //printf("rank[%d] : iroot = %d\n",rank,iroot);
-            for (int j=0; j<n+1; j++){
-                localClusters[n][i][j] = clusters[n][iroot][j];
-            }
-        }
-
-        if (iroot != rootClusteriend-1 ){
-            printf("rank[%d] : iroot = %d, rootClusteriend = %d\n",rank,iroot,rootClusteriend);
-            perror("iroot != rootClusteriend");
-            exit(1);
-        }        
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-
-    return localClusters;
 }
 
 void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
@@ -196,9 +71,9 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
             exit(1);
         }
 
-        freeInt2d(cmap,nspin);
-        freeInt2d(spmap,nspin);
-        freeFloat2d(stmap,nspin);
+        freeInt2d(&cmap,nspin);
+        freeInt2d(&spmap,nspin);
+        freeFloat2d(&stmap,nspin); 
 
     }else{
         fprintf(stderr,"Error: Cluster_clusterize: order(%d) is not defined\n",order);
@@ -217,15 +92,15 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
         freeHashCluster(&hashClusters, order);
     }
 
-    if (strcasecmp(method, "cce")){
-        Cluster_setClusinfo_chgiter(cls, 0, 1, 0);
+    if (strcasecmp(method, "gcce")!=0){
+        Cluster_setClusinfo_chgiter(cls, 0, 0, 0);
     }
 }
 
 
 // free
 void Cluster_freeAll(Cluster* cls){
-    freeArray1d(cls);
+    freeArray1d((void**)&cls);
 }
 
 /* Low Level --------------------------------------------------------*/
@@ -298,6 +173,41 @@ void Cluster_reportClusinfo(Cluster* cls){
     }
 }
 
+void reportClusinfo(int*** clusinfo, int order){
+ 
+    // 0-th order
+    int iter_0th = clusinfo[0][0][0];
+    int ncluster_0th = 1;
+    printf("%10s 0-th order ... \n"," ");
+    printf("%10s Cluster[0][%5d] : %3d (Iter)\n"," ",0,iter_0th);
+    printf("\n%10s Total 0-Cluster # :  %d # \n\n\n"," ",ncluster_0th);
+
+    for (int i = 1; i <= order; i++){
+        printf("\n%10s %d-th order ... \n"," ",i);
+        int ncluster = clusinfo[i][0][0]-1;
+
+        for (int j = 1; j<= ncluster; j++){
+
+            if (verbosity || (j<5 || j>ncluster-4)){
+                
+                int* itercluster = &(clusinfo[i][j][0]);
+                int iter = itercluster[0];
+
+                printf("%10s Cluster[%d][%5d] : %3d ["," ",i,j,iter);
+                for (int k = 1; k <= i; k++){
+                    printf("%-3d",itercluster[k]);
+                    if (k != i){ printf(", ");} else { printf(" ]\n");}
+                }
+            }
+            
+            if (!verbosity && j==5){
+                printf("%10s      : \n"," ");
+            }
+        }
+        printf("\n%10s Total %d-Cluster # :  %d # \n\n\n"," ",i,ncluster);
+    }
+}
+
 /* Low Level --------------------------------------------------------*/
 
 // alloc
@@ -306,25 +216,25 @@ void Cluster_allocNk(Cluster* cls){ // 0:0-th ... k:k-th order
     cls->nk = allocInt1d(length);
 }
 
-void Cluster_allocClusinfo(Cluster* CCE, int order){
-    CCE->clusinfo = (int***)allocArray1d(order+1,sizeof(int**));
+void Cluster_allocClusinfo(Cluster* cls, int order){
+    cls->clusinfo = (int***)allocArray1d(order+1,sizeof(int**));
 
     for (int i=0; i<=order; i++){
-        CCE->clusinfo[i] = CCE->clusinfo[i] = (int**)allocArray1d(1,sizeof(int*));
-        CCE->clusinfo[i][0] = (int*)allocArray1d(1,sizeof(int));
-        CCE->clusinfo[i][0][0] = 1;
+        cls->clusinfo[i] = cls->clusinfo[i] = (int**)allocArray1d(1,sizeof(int*));
+        cls->clusinfo[i][0] = (int*)allocArray1d(1,sizeof(int));
+        cls->clusinfo[i][0][0] = 1;
     }
 
 }
 
-int Cluster_setClusinfo_addcluster(Cluster* CCE, int order, int iter, int* cluster){
+int Cluster_setClusinfo_addcluster(Cluster* cls, int order, int iter, int* cluster){
 
     if (order==0){
         printf("Error: Cluster_setClusinfo_addcluster: at 0-th order, you cannot add cluster\n");
         exit(1);
     }
 
-    if (CCE->clusinfo==NULL){
+    if (cls->clusinfo==NULL){
         printf("Error: Cluster_setClusinfo_addcluster: clusinfo is not allocated\n");
         exit(1);
     }
@@ -333,84 +243,84 @@ int Cluster_setClusinfo_addcluster(Cluster* CCE, int order, int iter, int* clust
         printf("Warning: Cluster_setClusinfo_addcluster: iter is not 1 when you add new cluster ... \n");
     }
 
-    int ncluster_old = CCE->clusinfo[order][0][0];
+    int ncluster_old = cls->clusinfo[order][0][0];
     int ncluster_new = ncluster_old + 1;
     int ic = ncluster_new - 1; // new cluster index
 
     // set the number of cluster at order
-    CCE->clusinfo[order][0][0] = ncluster_new;
+    cls->clusinfo[order][0][0] = ncluster_new;
 
     // realloc
-    reallocInt2d(&(CCE->clusinfo[order]),ncluster_old,ncluster_new, order+1);
+    reallocInt2d(&(cls->clusinfo[order]),ncluster_old,ncluster_new, order+1);
 
     // set new cluster
-    copyInt1d(&(CCE->clusinfo[order][ic][1]),cluster,order+1);
+    copyInt1d(&(cls->clusinfo[order][ic][1]),cluster,order+1);
 
     // set iter at 0-th element (It is the number how many it will calculated)
-    CCE->clusinfo[order][ic][0] = iter;
+    cls->clusinfo[order][ic][0] = iter;
 
     return ic;
 }
 
-void Cluster_setClusinfo_chgcluster(Cluster* CCE, int order, int* cluster, int ic){
+void Cluster_setClusinfo_chgcluster(Cluster* cls, int order, int* cluster, int ic){
     if (order==0){
         printf("Error : Cluster_setClusinfo_chgcluster : at 0-th order, you cannot change cluster information\n");
         printf("For the 0th order, you can only change iter\n");
         exit(1);
     }
-    copyInt1d(&(CCE->clusinfo[order][ic][1]),cluster,order);
+    copyInt1d(&(cls->clusinfo[order][ic][1]),cluster,order);
 }
 
-void Cluster_setClusinfo_chgiter(Cluster* CCE, int order, int iter, int ic){
+void Cluster_setClusinfo_chgiter(Cluster* cls, int order, int iter, int ic){
     if (order!=0 && ic==0){
         printf("Error : Cluster_setClusinfo_chgiter : order!=0, ic=0 is not the cluster index\n");
         exit(1);
     }
-    CCE->clusinfo[order][ic][0] = iter;
+    cls->clusinfo[order][ic][0] = iter;
 }
 
 
-int Cluster_getClusinfo_ncluster(Cluster* CCE, int order){
+int Cluster_getClusinfo_ncluster(Cluster* cls, int order){
     if (order==0){
         return 1;
     }
-    return CCE->clusinfo[order][0][0]-1;
+    return cls->clusinfo[order][0][0]-1;
 }
 
-int* Cluster_getClusinfo_itercluster(Cluster* CCE, int order, int ic){
+int* Cluster_getClusinfo_itercluster(Cluster* cls, int order, int ic){
     if (order!=0 && ic==0){
         printf("Error : Cluster_getClusinfo_cluster : order!=0, ic=0 is not the cluster index\n");
         exit(1);
     }
-    return CCE->clusinfo[order][ic];
+    return cls->clusinfo[order][ic];
 }
 
-int Cluster_getClusinfo_iter(Cluster* CCE, int order, int ic){
+int Cluster_getClusinfo_iter(Cluster* cls, int order, int ic){
     if (order!=0 && ic==0){
         printf("Error : Cluster_getClusinfo_cluster : order!=0, ic=0 is not the cluster index\n");
         exit(1);
     }
-    return CCE->clusinfo[order][ic][0];
+    return cls->clusinfo[order][ic][0];
 }
 
-int* Cluster_getClusinfo_cluster_copy(Cluster* CCE, int order, int ic){
+int* Cluster_getClusinfo_cluster_copy(Cluster* cls, int order, int ic){
     if (order==0){
         printf("Error : Cluster_getClusinfo_cluster_copy : at 0-th order, you cannot get cluster information\n");
         exit(1);
     }
     int* cluster = allocInt1d(order);
-    copyInt1d(cluster,&(CCE->clusinfo[order][ic][1]),order);
+    copyInt1d(cluster,&(cls->clusinfo[order][ic][1]),order);
     return cluster;
 }
 
-int*** Cluster_getClusinfo(Cluster* CCE){
-    return CCE->clusinfo;
+int*** Cluster_getClusinfo(Cluster* cls){
+    return cls->clusinfo;
 }
 
 // get 
 
-char* Cluster_getMethod(Cluster* CCE){
-    return CCE->method;
+char* Cluster_getMethod(Cluster* cls){
+    return cls->method;
 }
 
 int Cluster_getOrder(Cluster* cls){
@@ -453,7 +363,7 @@ void Cluster_setNk(Cluster* cls, int* nk){
 
 // free
 void Cluster_freeNk(Cluster* cls){
-    freeInt1d(cls->nk);
+    freeInt1d(&(cls->nk));
 }
 
 void Cluster_freeClusinfo(Cluster* cls){
@@ -466,10 +376,10 @@ void Cluster_freeClusinfo(Cluster* cls){
             int ncluster = Cluster_getClusinfo_ncluster(cls,i);
 
             if (i==0){
-                freeArray2d((void**)cls->clusinfo[i],1);
+                freeArray2d((void***)&(cls->clusinfo[i]),1);
             }
             else{
-                freeArray2d((void**)cls->clusinfo[i],ncluster);
+                freeArray2d((void***)&(cls->clusinfo[i]),ncluster);
             }
         }
         free(cls->clusinfo);

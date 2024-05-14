@@ -127,6 +127,7 @@ void Cluster_freeAll(Cluster* cls);
 void Cluster_report(Cluster* cls);
 void Cluster_reportNk(Cluster* cls);
 void Cluster_reportClusinfo(Cluster* cls);
+void reportClusinfo(int*** clusinfo, int order);
 
 /* Low Level --------------------------------------------------------*/
 

@@ -1,0 +1,39 @@
+#!/bin/sh
+
+module purge 
+module load icc18 icc18.impi fftw mkl2018 
+export LD_LIBRARY_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD_LIBRARY_PATH
+
+node_process=20
+
+#option input
+CodePath="/home/huijin/scrp/CCE_Code/17.5.4.1.version11_randomStateTest/CCEXv12.out"
+
+# inputfiles
+option_input="./cce.in"
+
+# outfiles
+outFile="./CCE2_DiaP1_1ppm_1"
+
+#time checking
+startTime=$(date +%s.%N)
+startTime_string=`date`
+#############################################################################
+#about CCE2 calculation 
+
+ mpirun -n ${node_process} ${CodePath} -f ${option_input} -o ${outFile} -v > "Process_1"
+
+
+
+#############################################################################$
+endTime=$(date +%s.%N)
+endTime_string=`date`
+
+elapsed=`echo "($endTime-$startTime)" |bc`
+htime=`echo "$elapsed/3600"|bc`
+mtime=`echo "($elapsed/60)-($htime*60)"|bc`
+stime=`echo "$elapsed-(($elapsed/60)*60)"|bc`
+echo "Start time : $startTime_string"
+echo "End time   : $endTime_string"
+echo "Total time : ${htime}H ${mtime}M ${stime}S"
+#############################################

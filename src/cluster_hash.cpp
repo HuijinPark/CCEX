@@ -30,13 +30,15 @@ void clusterizeHash(Cluster* CCE, int nspin, int** spmap, float** stmap){
     // Higher order clusters
     makeHashClusterOn(&hashClusters,order,nspin,spmap,stmap,nks);
     updateNk(&(nks),order,hashClusters);
-    printClusters(hashClusters);
+    if (rank==0 && verbosity){
+        printClusters(hashClusters);
+    }
     //////////////////////////////////////////////////
     // Add all sub clusters
     //////////////////////////////////////////////////
     if (addsubclus) {
         for (int n=order; n>2; n--){
-            if (rank==0){printf("\n\t Add subclusters ... \n",n);}
+            if (rank==0){printf("\n\t Add subclusters ... \n");}
             addSubClusters(&hashClusters,nspin,stmap,n);
         }
         updateNk(&(nks),order,hashClusters);
@@ -49,44 +51,6 @@ void clusterizeHash(Cluster* CCE, int nspin, int** spmap, float** stmap){
     // to the CCE->clusinfo
     solveTilde(&hashClusters,CCE,nspin);
     //////////////////////////////////////////////////
-    // if (rank==0){
-    //     printf("\t\t~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
-    //     printf("\t\tCCE : \n\n");
-    //     printf("\n\t\tCCE[0][%5d] :  %3d \n\n\n",0,CCE->clusinfo[0][0][0]);
-    //     for (int n=1; n<CCE->order+1; n++){
-    //         if (CCE->clusinfo[n][0][0] > 7 && !verbosity){
-    //             for (int i=0; i<4; i++){
-    //                 printf("\t\tCCE[%d][%5d] : ",n,i);
-    //                 for (int j=0; j<n+1; j++){
-    //                     printf(" %3d",CCE->clusinfo[n][i][j]);
-    //                 }
-    //                 printf("\n");
-    //             }
-    
-    //             printf("\t\t : \n");
-    //             for (int i=((int)(CCE->clusinfo[n][0][0] - 3)); i<(int)(CCE->clusinfo[n][0][0]); i++){
-    //                 printf("\t\tCCE[%d][%5d] : ",n,i);
-    //                 for (int j=0; j<n+1; j++){
-    //                     printf(" %3d",CCE->clusinfo[n][i][j]);
-    //                 }
-    //                 printf("\n");
-    //             }
-    //             printf("\n\t\t Total %d-Cluster # :  %d - 1 # \n\n\n",n,CCE->clusinfo[n][0][0]);
-    //         }
-    //         else{
-    //             for (int i=0; i<CCE->clusinfo[n][0][0]; i++){
-    //                 printf("\t\tCCE[%d][%5d] : ",n,i);
-    //                 for (int j=0; j<n+1; j++){
-    //                     printf(" %3d",CCE->clusinfo[n][i][j]);
-    //                 }
-    //                 printf("\n");
-    //             }
-    //             printf("\n\t\t Total %d-Cluster # :  %d - 1 # \n\n\n",n,CCE->clusinfo[n][0][0]);
-    //         }
-    //     }
-    //     printf("\t\t~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
-    // }
-
     freeHashCluster(&hashClusters,order);
 }
 
@@ -479,7 +443,7 @@ void printProperties(Property* hashProperties)
     int nCluster = 0;
     int count = 0;
     HASH_ITER(hh, hashProperties, item2, tmp2) {
-        printf("$items[%15s] : ", item2->id);
+        printf("\t\t$items[%15s] : ", item2->id);
 
         int* clusterFromId = parseClusterIdToIntArray(item2->id,&count);
         for (int i =0; i<count; i++){
@@ -490,8 +454,8 @@ void printProperties(Property* hashProperties)
         free(clusterFromId);
     }
     printf("\n");
-    printf("Total %d-Cluster # :  %d\n",count,nCluster);
-    printf("_________________________________________________________\n");
+    printf("\t\tTotal %d-Cluster # :  %d\n",count,nCluster);
+    printf("\t\t_________________________________________________________\n");
     printf("\n\n");
     
 }

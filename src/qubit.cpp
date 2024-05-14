@@ -34,7 +34,7 @@ void QubitArray_freeAll(QubitArray* qa){
     QubitArray_freeQubit(qa);
     QubitArray_freeIntmap(qa);
     QubitArray_free_alphaidx_betaidx(qa);
-    freeArray1d(qa);
+    freeArray1d((void**)&qa);
 }
 
 // phyiscal properties
@@ -203,7 +203,7 @@ MatrixXcd QubitArray_TotalHamil(QubitArray* qa, MatrixXcd** sigmas, float* bfiel
 
     // Qubit Hamiltonian
     MatrixXcd HqTotal = MatrixXcd::Zero(dimQA,dimQA);
-
+    
     // Single Hamiltonian
     for (int iq=0; iq<nqubit; iq++){
         MatrixXcd Hqi = QubitArray_SingleHamil(qa,sigmas,iq,bfield);
@@ -226,7 +226,7 @@ MatrixXcd QubitArray_TotalHamil(QubitArray* qa, MatrixXcd** sigmas, float* bfiel
 MatrixXcd QubitArray_SingleHamil(QubitArray* qa, MatrixXcd** sigmas, int iq, float* bfield){
 
     // Single Hamiltonian
-    MatrixXcd Hqi_Zeeman = QubitArray_ZeemanHamil(qa,sigmas,iq,bfield);    
+    MatrixXcd Hqi_Zeeman = QubitArray_ZeemanHamil(qa,sigmas,iq,bfield);
     MatrixXcd Hqi_Detuning = QubitArray_DetuningHamil(qa,sigmas,iq);
     MatrixXcd Hqi_Overhaus = QubitArray_OverhausHamil(qa,sigmas,iq);
     MatrixXcd Hqi_ZFS = QubitArray_ZFSHamil(qa,sigmas,iq);
@@ -282,7 +282,6 @@ MatrixXcd QubitArray_OverhausHamil(QubitArray* qa, MatrixXcd** sigmas, int iq){
 MatrixXcd QubitArray_ZFSHamil(QubitArray* qa, MatrixXcd** sigmas, int iq){
 
     int nqubit = QubitArray_getNqubit(qa);
-
     if (iq >= nqubit){
         fprintf(stderr,"Error: QubitArray_ZFSHamil: iq = %d is out of range\n",iq);
         exit(EXIT_FAILURE);
@@ -452,7 +451,7 @@ void QubitArray_freeQubit(QubitArray* qa){
         return;
     }
     int nqubit = QubitArray_getNqubit(qa);
-    freeArray2d((void**)qa->qubit,nqubit);
+    freeArray2d((void***)&(qa->qubit),nqubit);
 }
 
 void QubitArray_freeIntmap(QubitArray* qa){
@@ -467,8 +466,8 @@ void QubitArray_freeIntmap(QubitArray* qa){
 }
 
 void QubitArray_free_alphaidx_betaidx(QubitArray* qa){
-    freeArray1d(qa->_alphaidx);
-    freeArray1d(qa->_betaidx);
+    freeArray1d((void**)&(qa->_alphaidx));
+    freeArray1d((void**)&(qa->_betaidx));
 }
 
 ////////////////////////////////////////////////////////////////
@@ -564,8 +563,8 @@ void QubitArray_reportQubit_i(QubitArray* qa, int i){
     printStructElementChar("qubit name",QubitArray_getQubit_i_name(qa,i));
     printStructElementFloat("spin",QubitArray_getQubit_i_spin(qa,i));
     printStructElementDouble("gyro (radkHz/G)",QubitArray_getQubit_i_gyro(qa,i));
-    printStructElementDouble("detuning (kHz)",QubitArray_getQubit_i_detuning(qa,i));
-    printStructElementDouble("overhaus (kHz)",QubitArray_getQubit_i_overhaus(qa,i));
+    printStructElementDouble("detuning (radkHz)",QubitArray_getQubit_i_detuning(qa,i));
+    printStructElementDouble("overhaus (radkHz)",QubitArray_getQubit_i_overhaus(qa,i));
     printStructElementDouble1d("xyz (A)",QubitArray_getQubit_i_xyz(qa,i),3);
 
     MatrixXcd alpha = QubitArray_getQubit_i_alpha(qa,i);
@@ -576,6 +575,8 @@ void QubitArray_reportQubit_i(QubitArray* qa, int i){
 }
 
 void QubitArray_reportIntmap(QubitArray* qa){
+
+    printSubTitle("Interactions (radkHz)");
     if (qa->intmap == NULL){
         return;
     }
@@ -598,6 +599,16 @@ void QubitArray_reportPsi0(QubitArray* qa){
     printInlineMatrixXcd("psi0",QubitArray_getPsi0(qa));
 }
 
+void QubitArray_reportQubit_overhaus(QubitArray* qa){
+
+    printSubTitle("Qubit overhaus (radkHz)");
+    int nqubit = QubitArray_getNqubit(qa);
+    for (int i=0; i<nqubit; i++){
+        char message[100] = "\0";
+        snprintf(message,100,"Qubit[%d].overhaus",i);
+        printStructElementDouble(message,QubitArray_getQubit_i_overhaus(qa,i));
+    }
+}
 
 void QubitArray_report(QubitArray* qa){
 
@@ -619,7 +630,6 @@ void QubitArray_report(QubitArray* qa){
     printf("\n");
     printLine();
     
-    printSubTitle("Interactions (kHz)");
     QubitArray_reportIntmap(qa);
     printf("\n");
 

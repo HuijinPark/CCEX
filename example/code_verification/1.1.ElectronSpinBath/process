@@ -1,0 +1,1417 @@
+        Read General Options ...
+
+        Read File Options ...
+
+        Read Qubit Options ...
+
+        Read Defect Options ...
+
+        Read Cluster Options ...
+
+        Read Pulse Options ...
+
+        Read Output Options ...
+
+
+    ===============================================================
+
+    < Structure Config > 
+
+      method            :   cce                  
+      quantity          :   coherence            
+      order             :   2                    
+      bfield            :   [ 0.00      , 0.00      , 500.00     ]
+      rbath             :   850                  
+      rdip              :   620                  
+      deltat            :   0.005                
+      nstep             :   300                  
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   1                    
+      seed              :   8805                 
+      qubitfile         :   ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_Defect
+      gyrofile          :   ./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro
+      nbathfiles        :   1                    
+      bathfiles         :   ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      avaaxfile         :   (null)               
+      statefile         :   (null)               
+      exstatefile       :   (null)               
+      DefectTotSpin     :   1                    
+      CorrTotSpin       :   0                    
+      hf_readmode       :   0                    
+      qd_readmode       :   0                    
+
+    ===============================================================
+
+
+    ===============================================================
+
+    < Structure QubitArray > 
+
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+      -------------------------------------------------
+
+      qubit name        :   q0                   
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      beta              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+
+      -------------------------------------------------
+
+    >> Interactions (radkHz)
+
+
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ===============================================================
+
+
+    ===============================================================
+
+    < Structure Cluster > 
+
+
+    >> General properties
+
+      order             :   2                    
+      method            :   cce                  
+      addsubclus        :   true                 
+
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0    ,   2 : 0     ]
+
+
+    ===============================================================
+
+
+    ===============================================================
+
+    < Structure Pulse > 
+
+      pulsename         :   HahnEcho             
+      npulse            :   1                    
+      pulseiter         :   false                
+                            * ture  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+
+    >> Sequence
+
+      -------------------------------------------------
+                        start      end     diff   index
+ 
+       sequence[0] :    0.000    0.500    0.500    0.000 
+       sequence[1] :    0.500    1.000    0.500    0.000 
+      -------------------------------------------------
+
+
+    ===============================================================
+
+
+    ===============================================================
+
+    < Structure Output > 
+
+      savemode          :   normal               
+      outfile           :   CCE2_ElectronSpinBath_1ppm_1
+
+
+    ===============================================================
+
+        Read QubitFile : ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_Defect ... 
+        Qubit[0].xyz    :   [ 1123.60   , 1124.86   , 1124.38    ]
+
+        Read GyroFile : ./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro
+        Current nspecies = 1 
+
+        Read BathFile[0] : ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1
+        Current nspin = 469 
+
+
+    ===============================================================
+
+    < BathArray > 
+
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   469                  
+      -------------------------------------------------
+      [  0]      P1 1634.321 942.118 1529.545   ( S = 0.5, gyro = -17608.597 )
+      [  1]      P1 583.866 1420.458 615.216   ( S = 0.5, gyro = -17608.597 )
+      [  2]      P1 1209.347 1819.439 1539.842   ( S = 0.5, gyro = -17608.597 )
+         :
+      [467]      P1 1063.065 1494.721 571.971   ( S = 0.5, gyro = -17608.597 )
+      [468]      P1 411.102 1105.205 1335.971   ( S = 0.5, gyro = -17608.597 )
+
+      -------------------------------------------------
+
+
+    ===============================================================
+
+      hypf[0][0]        :   [ -0.74j+0.00, 0.64j+0.00, -1.43j+0.00, 0.64j+0.00, 0.82j+0.00, 0.51j+0.00, -1.43j+0.00, 0.51j+0.00, -0.08j+0.00 ]
+
+      hypf[1][0]        :   [ -0.24j+0.00, 0.48j+0.00, -0.83j+0.00, 0.48j+0.00, 0.38j+0.00, 0.45j+0.00, -0.83j+0.00, 0.45j+0.00, -0.14j+0.00 ]
+
+      hypf[2][0]        :   [ 0.59j+0.00, -0.16j+0.00, -0.10j+0.00, -0.16j+0.00, -0.72j+0.00, -0.79j+0.00, -0.10j+0.00, -0.79j+0.00, 0.13j+0.00 ]
+
+         :
+
+      hypf[467][0]      :   [ 1.07j+0.00, 0.17j+0.00, -0.25j+0.00, 0.17j+0.00, 0.09j+0.00, 1.51j+0.00, -0.25j+0.00, 1.51j+0.00, -1.16j+0.00 ]
+
+      hypf[468][0]      :   [ -1.40j+0.00, -0.06j+0.00, 0.65j+0.00, -0.06j+0.00, 0.79j+0.00, 0.02j+0.00, 0.65j+0.00, 0.02j+0.00, 0.60j+0.00 ]
+
+
+	 CCE1 ... 
+		 update "Nk"
+		 0:0  1:469  2:0  
+
+
+	 CCE2 ... 
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+      clusinfo          :   
+
+           0-th order ... 
+           Cluster[0][    0] :   0 (Iter)
+
+           Total 0-Cluster # :  1 # 
+
+
+
+           1-th order ... 
+           Cluster[1][    1] : -101 [0   ]
+           Cluster[1][    2] : -73 [1   ]
+           Cluster[1][    3] : -80 [2   ]
+           Cluster[1][    4] : -138 [3   ]
+                : 
+           Cluster[1][  466] : -165 [465 ]
+           Cluster[1][  467] : -83 [466 ]
+           Cluster[1][  468] : -108 [467 ]
+           Cluster[1][  469] : -87 [468 ]
+
+           Total 1-Cluster # :  469 # 
+
+
+
+           2-th order ... 
+           Cluster[2][    1] :   1 [137, 362 ]
+           Cluster[2][    2] :   1 [163, 390 ]
+           Cluster[2][    3] :   1 [268, 431 ]
+           Cluster[2][    4] :   1 [192, 465 ]
+                : 
+           Cluster[2][25926] :   1 [334, 343 ]
+           Cluster[2][25927] :   1 [143, 257 ]
+           Cluster[2][25928] :   1 [269, 317 ]
+           Cluster[2][25929] :   1 [12 , 415 ]
+
+           Total 2-Cluster # :  25929 # 
+
+
+
+    ===============================================================
+
+    < MPI distribution for the clusters > 
+
+
+    ===============================================================
+
+    < CCE calculation > 
+
+
+    ===============================================================
+
+    < Main calculation loop > 
+
+      -------------------------------------------------
+        Single calculation
+      -------------------------------------------------
+
+        Iteration 1 : Update QubitArray, BathArray
+      -------------------------------------------------
+      [  0] state = 0.5
+      [  1] state = -0.5
+      [  2] state = -0.5
+         :
+      [467] state = 0.5
+      [468] state = 0.5
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   160                  
+      Bath[1].disorder  :   -232                 
+      Bath[2].disorder  :   98.9                 
+         :
+      Bath[467].disorder:   247                  
+      Bath[468].disorder:   -41.6                
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+      -------------------------------------------------
+
+    >> Calculate 1-th cluster...
+
+
+        At rank 0, 1 cluster (5%) is computed at 0.37 s
+        At rank 0, 2 cluster (10%) is computed at 0.39 s
+        At rank 0, 3 cluster (15%) is computed at 0.45 s
+        At rank 0, 4 cluster (20%) is computed at 0.56 s
+        At rank 0, 5 cluster (25%) is computed at 0.69 s
+        At rank 0, 6 cluster (30%) is computed at 0.73 s
+        At rank 0, 7 cluster (35%) is computed at 0.78 s
+        At rank 0, 8 cluster (40%) is computed at 0.79 s
+        At rank 0, 9 cluster (45%) is computed at 0.80 s
+        At rank 0, 10 cluster (50%) is computed at 0.93 s
+        At rank 0, 11 cluster (55%) is computed at 1.03 s
+        At rank 0, 12 cluster (60%) is computed at 1.04 s
+        At rank 0, 13 cluster (65%) is computed at 1.08 s
+        At rank 0, 14 cluster (70%) is computed at 1.14 s
+        At rank 0, 15 cluster (75%) is computed at 1.18 s
+        At rank 0, 16 cluster (80%) is computed at 1.23 s
+        At rank 0, 17 cluster (85%) is computed at 1.24 s
+        At rank 0, 18 cluster (90%) is computed at 1.32 s
+        At rank 0, 19 cluster (95%) is computed at 1.33 s
+        At rank 0, 20 cluster (100%) is computed at 1.38 s
+
+        # Wall time : 1.38[s]
+
+      -------------------------------------------------
+
+      -------------------------------------------------
+
+    >> Calculate 2-th cluster...
+
+
+        At rank 0, 1 cluster (0%) is computed at 1.56 s
+        At rank 0, 2 cluster (0%) is computed at 1.66 s
+        At rank 0, 3 cluster (0%) is computed at 1.77 s
+        At rank 0, 4 cluster (0%) is computed at 1.87 s
+        At rank 0, 5 cluster (0%) is computed at 1.98 s
+        At rank 0, 6 cluster (0%) is computed at 2.05 s
+        At rank 0, 7 cluster (0%) is computed at 2.25 s
+        At rank 0, 8 cluster (0%) is computed at 2.34 s
+        At rank 0, 9 cluster (0%) is computed at 2.46 s
+        At rank 0, 10 cluster (0%) is computed at 2.56 s
+        At rank 0, 11 cluster (1%) is computed at 2.63 s
+        At rank 0, 12 cluster (1%) is computed at 2.79 s
+        At rank 0, 13 cluster (1%) is computed at 2.87 s
+        At rank 0, 14 cluster (1%) is computed at 2.98 s
+        At rank 0, 15 cluster (1%) is computed at 3.06 s
+        At rank 0, 16 cluster (1%) is computed at 3.15 s
+        At rank 0, 17 cluster (1%) is computed at 3.32 s
+        At rank 0, 18 cluster (1%) is computed at 3.40 s
+        At rank 0, 19 cluster (1%) is computed at 3.51 s
+        At rank 0, 20 cluster (1%) is computed at 3.70 s
+        At rank 0, 21 cluster (1%) is computed at 3.77 s
+        At rank 0, 22 cluster (2%) is computed at 3.84 s
+        At rank 0, 23 cluster (2%) is computed at 3.98 s
+        At rank 0, 24 cluster (2%) is computed at 4.11 s
+        At rank 0, 25 cluster (2%) is computed at 4.20 s
+        At rank 0, 26 cluster (2%) is computed at 4.46 s
+        At rank 0, 27 cluster (2%) is computed at 4.54 s
+        At rank 0, 28 cluster (2%) is computed at 4.65 s
+        At rank 0, 29 cluster (2%) is computed at 4.80 s
+        At rank 0, 30 cluster (2%) is computed at 4.92 s
+        At rank 0, 31 cluster (2%) is computed at 5.02 s
+        At rank 0, 32 cluster (2%) is computed at 5.17 s
+        At rank 0, 33 cluster (3%) is computed at 5.32 s
+        At rank 0, 34 cluster (3%) is computed at 5.43 s
+        At rank 0, 35 cluster (3%) is computed at 5.53 s
+        At rank 0, 36 cluster (3%) is computed at 5.61 s
+        At rank 0, 37 cluster (3%) is computed at 5.67 s
+        At rank 0, 38 cluster (3%) is computed at 5.77 s
+        At rank 0, 39 cluster (3%) is computed at 5.86 s
+        At rank 0, 40 cluster (3%) is computed at 6.01 s
+        At rank 0, 41 cluster (3%) is computed at 6.12 s
+        At rank 0, 42 cluster (3%) is computed at 6.18 s
+        At rank 0, 43 cluster (3%) is computed at 6.30 s
+        At rank 0, 44 cluster (4%) is computed at 6.41 s
+        At rank 0, 45 cluster (4%) is computed at 6.47 s
+        At rank 0, 46 cluster (4%) is computed at 6.57 s
+        At rank 0, 47 cluster (4%) is computed at 6.68 s
+        At rank 0, 48 cluster (4%) is computed at 6.79 s
+        At rank 0, 49 cluster (4%) is computed at 6.91 s
+        At rank 0, 50 cluster (4%) is computed at 6.98 s
+        At rank 0, 51 cluster (4%) is computed at 7.08 s
+        At rank 0, 52 cluster (4%) is computed at 7.17 s
+        At rank 0, 53 cluster (4%) is computed at 7.33 s
+        At rank 0, 54 cluster (4%) is computed at 7.46 s
+        At rank 0, 55 cluster (5%) is computed at 7.54 s
+        At rank 0, 56 cluster (5%) is computed at 7.66 s
+        At rank 0, 57 cluster (5%) is computed at 7.78 s
+        At rank 0, 58 cluster (5%) is computed at 7.89 s
+        At rank 0, 59 cluster (5%) is computed at 7.97 s
+        At rank 0, 60 cluster (5%) is computed at 8.10 s
+        At rank 0, 61 cluster (5%) is computed at 8.18 s
+        At rank 0, 62 cluster (5%) is computed at 8.24 s
+        At rank 0, 63 cluster (5%) is computed at 8.34 s
+        At rank 0, 64 cluster (5%) is computed at 8.46 s
+        At rank 0, 65 cluster (6%) is computed at 8.61 s
+        At rank 0, 66 cluster (6%) is computed at 8.67 s
+        At rank 0, 67 cluster (6%) is computed at 8.82 s
+        At rank 0, 68 cluster (6%) is computed at 8.94 s
+        At rank 0, 69 cluster (6%) is computed at 9.01 s
+        At rank 0, 70 cluster (6%) is computed at 9.15 s
+        At rank 0, 71 cluster (6%) is computed at 9.26 s
+        At rank 0, 72 cluster (6%) is computed at 9.38 s
+        At rank 0, 73 cluster (6%) is computed at 9.46 s
+        At rank 0, 74 cluster (6%) is computed at 9.62 s
+        At rank 0, 75 cluster (6%) is computed at 9.74 s
+        At rank 0, 76 cluster (7%) is computed at 9.85 s
+        At rank 0, 77 cluster (7%) is computed at 9.99 s
+        At rank 0, 78 cluster (7%) is computed at 10.10 s
+        At rank 0, 79 cluster (7%) is computed at 10.28 s
+        At rank 0, 80 cluster (7%) is computed at 10.35 s
+        At rank 0, 81 cluster (7%) is computed at 10.52 s
+        At rank 0, 82 cluster (7%) is computed at 10.61 s
+        At rank 0, 83 cluster (7%) is computed at 10.73 s
+        At rank 0, 84 cluster (7%) is computed at 10.86 s
+        At rank 0, 85 cluster (7%) is computed at 11.00 s
+        At rank 0, 86 cluster (7%) is computed at 11.14 s
+        At rank 0, 87 cluster (8%) is computed at 11.24 s
+        At rank 0, 88 cluster (8%) is computed at 11.37 s
+        At rank 0, 89 cluster (8%) is computed at 11.50 s
+        At rank 0, 90 cluster (8%) is computed at 11.60 s
+        At rank 0, 91 cluster (8%) is computed at 11.71 s
+        At rank 0, 92 cluster (8%) is computed at 11.84 s
+        At rank 0, 93 cluster (8%) is computed at 11.92 s
+        At rank 0, 94 cluster (8%) is computed at 12.02 s
+        At rank 0, 95 cluster (8%) is computed at 12.15 s
+        At rank 0, 96 cluster (8%) is computed at 12.22 s
+        At rank 0, 97 cluster (8%) is computed at 12.37 s
+        At rank 0, 98 cluster (9%) is computed at 12.48 s
+        At rank 0, 99 cluster (9%) is computed at 12.59 s
+        At rank 0, 100 cluster (9%) is computed at 12.69 s
+        At rank 0, 101 cluster (9%) is computed at 12.82 s
+        At rank 0, 102 cluster (9%) is computed at 12.90 s
+        At rank 0, 103 cluster (9%) is computed at 13.02 s
+        At rank 0, 104 cluster (9%) is computed at 13.10 s
+        At rank 0, 105 cluster (9%) is computed at 13.22 s
+        At rank 0, 106 cluster (9%) is computed at 13.31 s
+        At rank 0, 107 cluster (9%) is computed at 13.45 s
+        At rank 0, 108 cluster (9%) is computed at 13.79 s
+        At rank 0, 109 cluster (10%) is computed at 13.88 s
+        At rank 0, 110 cluster (10%) is computed at 14.02 s
+        At rank 0, 111 cluster (10%) is computed at 14.16 s
+        At rank 0, 112 cluster (10%) is computed at 14.26 s
+        At rank 0, 113 cluster (10%) is computed at 14.31 s
+        At rank 0, 114 cluster (10%) is computed at 14.49 s
+        At rank 0, 115 cluster (10%) is computed at 14.60 s
+        At rank 0, 116 cluster (10%) is computed at 14.71 s
+        At rank 0, 117 cluster (10%) is computed at 14.80 s
+        At rank 0, 118 cluster (10%) is computed at 14.86 s
+        At rank 0, 119 cluster (11%) is computed at 15.01 s
+        At rank 0, 120 cluster (11%) is computed at 15.15 s
+        At rank 0, 121 cluster (11%) is computed at 15.28 s
+        At rank 0, 122 cluster (11%) is computed at 15.36 s
+        At rank 0, 123 cluster (11%) is computed at 15.48 s
+        At rank 0, 124 cluster (11%) is computed at 15.65 s
+        At rank 0, 125 cluster (11%) is computed at 15.82 s
+        At rank 0, 126 cluster (11%) is computed at 15.90 s
+        At rank 0, 127 cluster (11%) is computed at 15.99 s
+        At rank 0, 128 cluster (11%) is computed at 16.11 s
+        At rank 0, 129 cluster (11%) is computed at 16.20 s
+        At rank 0, 130 cluster (12%) is computed at 16.33 s
+        At rank 0, 131 cluster (12%) is computed at 16.41 s
+        At rank 0, 132 cluster (12%) is computed at 16.59 s
+        At rank 0, 133 cluster (12%) is computed at 16.82 s
+        At rank 0, 134 cluster (12%) is computed at 16.92 s
+        At rank 0, 135 cluster (12%) is computed at 17.07 s
+        At rank 0, 136 cluster (12%) is computed at 17.17 s
+        At rank 0, 137 cluster (12%) is computed at 17.30 s
+        At rank 0, 138 cluster (12%) is computed at 17.36 s
+        At rank 0, 139 cluster (12%) is computed at 17.48 s
+        At rank 0, 140 cluster (12%) is computed at 17.60 s
+        At rank 0, 141 cluster (13%) is computed at 17.76 s
+        At rank 0, 143 cluster (13%) is computed at 17.95 s
+        At rank 0, 144 cluster (13%) is computed at 18.04 s
+        At rank 0, 145 cluster (13%) is computed at 18.17 s
+        At rank 0, 146 cluster (13%) is computed at 18.38 s
+        At rank 0, 147 cluster (13%) is computed at 18.48 s
+        At rank 0, 148 cluster (13%) is computed at 18.59 s
+        At rank 0, 149 cluster (13%) is computed at 18.74 s
+        At rank 0, 150 cluster (13%) is computed at 18.87 s
+        At rank 0, 151 cluster (13%) is computed at 18.99 s
+        At rank 0, 152 cluster (14%) is computed at 19.08 s
+        At rank 0, 153 cluster (14%) is computed at 19.19 s
+        At rank 0, 154 cluster (14%) is computed at 19.29 s
+        At rank 0, 155 cluster (14%) is computed at 19.41 s
+        At rank 0, 156 cluster (14%) is computed at 19.53 s
+        At rank 0, 157 cluster (14%) is computed at 19.65 s
+        At rank 0, 158 cluster (14%) is computed at 19.77 s
+        At rank 0, 159 cluster (14%) is computed at 19.88 s
+        At rank 0, 160 cluster (14%) is computed at 19.95 s
+        At rank 0, 161 cluster (14%) is computed at 20.05 s
+        At rank 0, 162 cluster (14%) is computed at 20.12 s
+        At rank 0, 163 cluster (15%) is computed at 20.25 s
+        At rank 0, 164 cluster (15%) is computed at 20.35 s
+        At rank 0, 165 cluster (15%) is computed at 20.44 s
+        At rank 0, 166 cluster (15%) is computed at 20.54 s
+        At rank 0, 167 cluster (15%) is computed at 20.70 s
+        At rank 0, 168 cluster (15%) is computed at 20.78 s
+        At rank 0, 169 cluster (15%) is computed at 20.90 s
+        At rank 0, 170 cluster (15%) is computed at 21.04 s
+        At rank 0, 171 cluster (15%) is computed at 21.10 s
+        At rank 0, 172 cluster (15%) is computed at 21.20 s
+        At rank 0, 173 cluster (16%) is computed at 21.36 s
+        At rank 0, 174 cluster (16%) is computed at 21.53 s
+        At rank 0, 175 cluster (16%) is computed at 21.62 s
+        At rank 0, 176 cluster (16%) is computed at 21.79 s
+        At rank 0, 177 cluster (16%) is computed at 21.90 s
+        At rank 0, 178 cluster (16%) is computed at 21.98 s
+        At rank 0, 179 cluster (16%) is computed at 22.07 s
+        At rank 0, 180 cluster (16%) is computed at 22.20 s
+        At rank 0, 181 cluster (16%) is computed at 22.35 s
+        At rank 0, 182 cluster (16%) is computed at 22.50 s
+        At rank 0, 183 cluster (16%) is computed at 22.57 s
+        At rank 0, 184 cluster (17%) is computed at 22.71 s
+        At rank 0, 185 cluster (17%) is computed at 22.83 s
+        At rank 0, 186 cluster (17%) is computed at 22.97 s
+        At rank 0, 187 cluster (17%) is computed at 23.04 s
+        At rank 0, 188 cluster (17%) is computed at 23.28 s
+        At rank 0, 189 cluster (17%) is computed at 23.39 s
+        At rank 0, 190 cluster (17%) is computed at 23.45 s
+        At rank 0, 191 cluster (17%) is computed at 23.61 s
+        At rank 0, 192 cluster (17%) is computed at 23.79 s
+        At rank 0, 193 cluster (17%) is computed at 23.88 s
+        At rank 0, 194 cluster (17%) is computed at 24.01 s
+        At rank 0, 195 cluster (18%) is computed at 24.09 s
+        At rank 0, 196 cluster (18%) is computed at 24.19 s
+        At rank 0, 197 cluster (18%) is computed at 24.33 s
+        At rank 0, 198 cluster (18%) is computed at 24.48 s
+        At rank 0, 199 cluster (18%) is computed at 24.63 s
+        At rank 0, 200 cluster (18%) is computed at 24.77 s
+        At rank 0, 201 cluster (18%) is computed at 24.88 s
+        At rank 0, 202 cluster (18%) is computed at 25.01 s
+        At rank 0, 203 cluster (18%) is computed at 25.10 s
+        At rank 0, 204 cluster (18%) is computed at 25.23 s
+        At rank 0, 205 cluster (18%) is computed at 25.36 s
+        At rank 0, 206 cluster (19%) is computed at 25.45 s
+        At rank 0, 207 cluster (19%) is computed at 25.59 s
+        At rank 0, 208 cluster (19%) is computed at 25.70 s
+        At rank 0, 209 cluster (19%) is computed at 25.84 s
+        At rank 0, 210 cluster (19%) is computed at 25.97 s
+        At rank 0, 211 cluster (19%) is computed at 26.10 s
+        At rank 0, 212 cluster (19%) is computed at 26.25 s
+        At rank 0, 213 cluster (19%) is computed at 26.32 s
+        At rank 0, 214 cluster (19%) is computed at 26.46 s
+        At rank 0, 215 cluster (19%) is computed at 26.62 s
+        At rank 0, 216 cluster (19%) is computed at 26.79 s
+        At rank 0, 217 cluster (20%) is computed at 26.91 s
+        At rank 0, 218 cluster (20%) is computed at 27.06 s
+        At rank 0, 219 cluster (20%) is computed at 27.14 s
+        At rank 0, 220 cluster (20%) is computed at 27.33 s
+        At rank 0, 221 cluster (20%) is computed at 27.48 s
+        At rank 0, 222 cluster (20%) is computed at 27.62 s
+        At rank 0, 223 cluster (20%) is computed at 27.78 s
+        At rank 0, 224 cluster (20%) is computed at 27.88 s
+        At rank 0, 225 cluster (20%) is computed at 27.99 s
+        At rank 0, 226 cluster (20%) is computed at 28.10 s
+        At rank 0, 227 cluster (20%) is computed at 28.23 s
+        At rank 0, 228 cluster (21%) is computed at 28.32 s
+        At rank 0, 229 cluster (21%) is computed at 28.42 s
+        At rank 0, 230 cluster (21%) is computed at 28.52 s
+        At rank 0, 231 cluster (21%) is computed at 28.63 s
+        At rank 0, 232 cluster (21%) is computed at 28.70 s
+        At rank 0, 233 cluster (21%) is computed at 28.86 s
+        At rank 0, 234 cluster (21%) is computed at 28.93 s
+        At rank 0, 235 cluster (21%) is computed at 29.03 s
+        At rank 0, 236 cluster (21%) is computed at 29.21 s
+        At rank 0, 237 cluster (21%) is computed at 29.31 s
+        At rank 0, 238 cluster (22%) is computed at 29.40 s
+        At rank 0, 239 cluster (22%) is computed at 29.55 s
+        At rank 0, 240 cluster (22%) is computed at 29.61 s
+        At rank 0, 241 cluster (22%) is computed at 29.78 s
+        At rank 0, 242 cluster (22%) is computed at 29.91 s
+        At rank 0, 243 cluster (22%) is computed at 29.99 s
+        At rank 0, 244 cluster (22%) is computed at 30.16 s
+        At rank 0, 245 cluster (22%) is computed at 30.26 s
+        At rank 0, 246 cluster (22%) is computed at 30.39 s
+        At rank 0, 247 cluster (22%) is computed at 30.48 s
+        At rank 0, 248 cluster (22%) is computed at 30.66 s
+        At rank 0, 249 cluster (23%) is computed at 30.81 s
+        At rank 0, 250 cluster (23%) is computed at 30.96 s
+        At rank 0, 251 cluster (23%) is computed at 31.11 s
+        At rank 0, 252 cluster (23%) is computed at 31.25 s
+        At rank 0, 253 cluster (23%) is computed at 31.37 s
+        At rank 0, 254 cluster (23%) is computed at 31.54 s
+        At rank 0, 255 cluster (23%) is computed at 31.69 s
+        At rank 0, 256 cluster (23%) is computed at 31.79 s
+        At rank 0, 257 cluster (23%) is computed at 31.88 s
+        At rank 0, 258 cluster (23%) is computed at 32.04 s
+        At rank 0, 259 cluster (23%) is computed at 32.14 s
+        At rank 0, 260 cluster (24%) is computed at 32.25 s
+        At rank 0, 261 cluster (24%) is computed at 32.36 s
+        At rank 0, 262 cluster (24%) is computed at 32.52 s
+        At rank 0, 263 cluster (24%) is computed at 32.63 s
+        At rank 0, 264 cluster (24%) is computed at 32.76 s
+        At rank 0, 265 cluster (24%) is computed at 32.88 s
+        At rank 0, 266 cluster (24%) is computed at 32.98 s
+        At rank 0, 267 cluster (24%) is computed at 33.10 s
+        At rank 0, 268 cluster (24%) is computed at 33.22 s
+        At rank 0, 269 cluster (24%) is computed at 33.36 s
+        At rank 0, 270 cluster (24%) is computed at 33.46 s
+        At rank 0, 271 cluster (25%) is computed at 33.61 s
+        At rank 0, 272 cluster (25%) is computed at 33.72 s
+        At rank 0, 273 cluster (25%) is computed at 33.84 s
+        At rank 0, 274 cluster (25%) is computed at 33.94 s
+        At rank 0, 275 cluster (25%) is computed at 34.04 s
+        At rank 0, 276 cluster (25%) is computed at 34.14 s
+        At rank 0, 277 cluster (25%) is computed at 34.30 s
+        At rank 0, 278 cluster (25%) is computed at 34.41 s
+        At rank 0, 279 cluster (25%) is computed at 34.56 s
+        At rank 0, 280 cluster (25%) is computed at 34.73 s
+        At rank 0, 281 cluster (25%) is computed at 34.89 s
+        At rank 0, 282 cluster (26%) is computed at 35.05 s
+        At rank 0, 283 cluster (26%) is computed at 35.21 s
+        At rank 0, 285 cluster (26%) is computed at 35.49 s
+        At rank 0, 286 cluster (26%) is computed at 35.62 s
+        At rank 0, 287 cluster (26%) is computed at 35.77 s
+        At rank 0, 288 cluster (26%) is computed at 35.91 s
+        At rank 0, 289 cluster (26%) is computed at 36.04 s
+        At rank 0, 290 cluster (26%) is computed at 36.16 s
+        At rank 0, 291 cluster (26%) is computed at 36.24 s
+        At rank 0, 292 cluster (27%) is computed at 36.42 s
+        At rank 0, 293 cluster (27%) is computed at 36.57 s
+        At rank 0, 294 cluster (27%) is computed at 36.66 s
+        At rank 0, 295 cluster (27%) is computed at 36.82 s
+        At rank 0, 296 cluster (27%) is computed at 36.90 s
+        At rank 0, 297 cluster (27%) is computed at 37.01 s
+        At rank 0, 298 cluster (27%) is computed at 37.10 s
+        At rank 0, 299 cluster (27%) is computed at 37.19 s
+        At rank 0, 300 cluster (27%) is computed at 37.34 s
+        At rank 0, 301 cluster (27%) is computed at 37.51 s
+        At rank 0, 302 cluster (27%) is computed at 37.60 s
+        At rank 0, 303 cluster (28%) is computed at 37.74 s
+        At rank 0, 304 cluster (28%) is computed at 37.85 s
+        At rank 0, 305 cluster (28%) is computed at 38.02 s
+        At rank 0, 306 cluster (28%) is computed at 38.19 s
+        At rank 0, 307 cluster (28%) is computed at 38.27 s
+        At rank 0, 308 cluster (28%) is computed at 38.36 s
+        At rank 0, 309 cluster (28%) is computed at 38.51 s
+        At rank 0, 310 cluster (28%) is computed at 38.63 s
+        At rank 0, 311 cluster (28%) is computed at 38.77 s
+        At rank 0, 312 cluster (28%) is computed at 38.89 s
+        At rank 0, 313 cluster (28%) is computed at 39.05 s
+        At rank 0, 314 cluster (29%) is computed at 39.16 s
+        At rank 0, 315 cluster (29%) is computed at 39.32 s
+        At rank 0, 316 cluster (29%) is computed at 39.43 s
+        At rank 0, 317 cluster (29%) is computed at 39.56 s
+        At rank 0, 318 cluster (29%) is computed at 39.64 s
+        At rank 0, 319 cluster (29%) is computed at 39.75 s
+        At rank 0, 320 cluster (29%) is computed at 39.92 s
+        At rank 0, 321 cluster (29%) is computed at 40.02 s
+        At rank 0, 322 cluster (29%) is computed at 40.20 s
+        At rank 0, 323 cluster (29%) is computed at 40.40 s
+        At rank 0, 324 cluster (29%) is computed at 40.56 s
+        At rank 0, 325 cluster (30%) is computed at 40.70 s
+        At rank 0, 326 cluster (30%) is computed at 40.81 s
+        At rank 0, 327 cluster (30%) is computed at 40.99 s
+        At rank 0, 328 cluster (30%) is computed at 41.14 s
+        At rank 0, 329 cluster (30%) is computed at 41.18 s
+        At rank 0, 330 cluster (30%) is computed at 41.34 s
+        At rank 0, 331 cluster (30%) is computed at 41.46 s
+        At rank 0, 332 cluster (30%) is computed at 41.55 s
+        At rank 0, 333 cluster (30%) is computed at 41.68 s
+        At rank 0, 334 cluster (30%) is computed at 41.76 s
+        At rank 0, 335 cluster (30%) is computed at 41.89 s
+        At rank 0, 336 cluster (31%) is computed at 42.02 s
+        At rank 0, 337 cluster (31%) is computed at 42.10 s
+        At rank 0, 338 cluster (31%) is computed at 42.29 s
+        At rank 0, 339 cluster (31%) is computed at 42.39 s
+        At rank 0, 340 cluster (31%) is computed at 42.49 s
+        At rank 0, 341 cluster (31%) is computed at 42.63 s
+        At rank 0, 342 cluster (31%) is computed at 42.75 s
+        At rank 0, 343 cluster (31%) is computed at 42.86 s
+        At rank 0, 344 cluster (31%) is computed at 42.96 s
+        At rank 0, 345 cluster (31%) is computed at 43.07 s
+        At rank 0, 346 cluster (32%) is computed at 43.19 s
+        At rank 0, 347 cluster (32%) is computed at 43.29 s
+        At rank 0, 348 cluster (32%) is computed at 43.39 s
+        At rank 0, 349 cluster (32%) is computed at 43.55 s
+        At rank 0, 350 cluster (32%) is computed at 43.64 s
+        At rank 0, 351 cluster (32%) is computed at 43.76 s
+        At rank 0, 352 cluster (32%) is computed at 43.90 s
+        At rank 0, 353 cluster (32%) is computed at 44.02 s
+        At rank 0, 354 cluster (32%) is computed at 44.12 s
+        At rank 0, 355 cluster (32%) is computed at 44.27 s
+        At rank 0, 356 cluster (32%) is computed at 44.36 s
+        At rank 0, 357 cluster (33%) is computed at 44.51 s
+        At rank 0, 358 cluster (33%) is computed at 44.59 s
+        At rank 0, 359 cluster (33%) is computed at 44.72 s
+        At rank 0, 360 cluster (33%) is computed at 44.86 s
+        At rank 0, 361 cluster (33%) is computed at 44.96 s
+        At rank 0, 362 cluster (33%) is computed at 45.10 s
+        At rank 0, 363 cluster (33%) is computed at 45.21 s
+        At rank 0, 364 cluster (33%) is computed at 45.35 s
+        At rank 0, 365 cluster (33%) is computed at 45.48 s
+        At rank 0, 366 cluster (33%) is computed at 45.58 s
+        At rank 0, 367 cluster (33%) is computed at 45.70 s
+        At rank 0, 368 cluster (34%) is computed at 45.80 s
+        At rank 0, 369 cluster (34%) is computed at 45.95 s
+        At rank 0, 370 cluster (34%) is computed at 46.06 s
+        At rank 0, 371 cluster (34%) is computed at 46.18 s
+        At rank 0, 372 cluster (34%) is computed at 46.31 s
+        At rank 0, 373 cluster (34%) is computed at 46.43 s
+        At rank 0, 374 cluster (34%) is computed at 46.61 s
+        At rank 0, 375 cluster (34%) is computed at 46.73 s
+        At rank 0, 376 cluster (34%) is computed at 46.91 s
+        At rank 0, 377 cluster (34%) is computed at 47.00 s
+        At rank 0, 378 cluster (34%) is computed at 47.10 s
+        At rank 0, 379 cluster (35%) is computed at 47.22 s
+        At rank 0, 380 cluster (35%) is computed at 47.32 s
+        At rank 0, 381 cluster (35%) is computed at 47.45 s
+        At rank 0, 382 cluster (35%) is computed at 47.57 s
+        At rank 0, 383 cluster (35%) is computed at 47.68 s
+        At rank 0, 384 cluster (35%) is computed at 47.78 s
+        At rank 0, 385 cluster (35%) is computed at 47.92 s
+        At rank 0, 386 cluster (35%) is computed at 48.07 s
+        At rank 0, 387 cluster (35%) is computed at 48.16 s
+        At rank 0, 388 cluster (35%) is computed at 48.27 s
+        At rank 0, 389 cluster (35%) is computed at 48.39 s
+        At rank 0, 390 cluster (36%) is computed at 48.52 s
+        At rank 0, 391 cluster (36%) is computed at 48.60 s
+        At rank 0, 392 cluster (36%) is computed at 48.76 s
+        At rank 0, 393 cluster (36%) is computed at 48.95 s
+        At rank 0, 394 cluster (36%) is computed at 49.13 s
+        At rank 0, 395 cluster (36%) is computed at 49.26 s
+        At rank 0, 396 cluster (36%) is computed at 49.40 s
+        At rank 0, 397 cluster (36%) is computed at 49.56 s
+        At rank 0, 398 cluster (36%) is computed at 49.66 s
+        At rank 0, 399 cluster (36%) is computed at 49.75 s
+        At rank 0, 400 cluster (37%) is computed at 49.86 s
+        At rank 0, 401 cluster (37%) is computed at 50.00 s
+        At rank 0, 402 cluster (37%) is computed at 50.13 s
+        At rank 0, 403 cluster (37%) is computed at 50.22 s
+        At rank 0, 404 cluster (37%) is computed at 50.37 s
+        At rank 0, 405 cluster (37%) is computed at 50.45 s
+        At rank 0, 406 cluster (37%) is computed at 50.56 s
+        At rank 0, 407 cluster (37%) is computed at 50.69 s
+        At rank 0, 408 cluster (37%) is computed at 50.86 s
+        At rank 0, 409 cluster (37%) is computed at 50.96 s
+        At rank 0, 410 cluster (37%) is computed at 51.04 s
+        At rank 0, 411 cluster (38%) is computed at 51.16 s
+        At rank 0, 412 cluster (38%) is computed at 51.29 s
+        At rank 0, 413 cluster (38%) is computed at 51.40 s
+        At rank 0, 414 cluster (38%) is computed at 51.52 s
+        At rank 0, 415 cluster (38%) is computed at 51.66 s
+        At rank 0, 416 cluster (38%) is computed at 51.74 s
+        At rank 0, 417 cluster (38%) is computed at 51.87 s
+        At rank 0, 418 cluster (38%) is computed at 51.99 s
+        At rank 0, 419 cluster (38%) is computed at 52.08 s
+        At rank 0, 420 cluster (38%) is computed at 52.19 s
+        At rank 0, 421 cluster (38%) is computed at 52.31 s
+        At rank 0, 422 cluster (39%) is computed at 52.42 s
+        At rank 0, 423 cluster (39%) is computed at 52.52 s
+        At rank 0, 424 cluster (39%) is computed at 52.65 s
+        At rank 0, 425 cluster (39%) is computed at 52.80 s
+        At rank 0, 427 cluster (39%) is computed at 53.05 s
+        At rank 0, 428 cluster (39%) is computed at 53.21 s
+        At rank 0, 429 cluster (39%) is computed at 53.28 s
+        At rank 0, 430 cluster (39%) is computed at 53.38 s
+        At rank 0, 431 cluster (39%) is computed at 53.50 s
+        At rank 0, 432 cluster (39%) is computed at 53.62 s
+        At rank 0, 433 cluster (40%) is computed at 53.71 s
+        At rank 0, 434 cluster (40%) is computed at 53.86 s
+        At rank 0, 435 cluster (40%) is computed at 53.94 s
+        At rank 0, 436 cluster (40%) is computed at 54.04 s
+        At rank 0, 437 cluster (40%) is computed at 54.17 s
+        At rank 0, 438 cluster (40%) is computed at 54.28 s
+        At rank 0, 439 cluster (40%) is computed at 54.40 s
+        At rank 0, 440 cluster (40%) is computed at 54.50 s
+        At rank 0, 441 cluster (40%) is computed at 54.59 s
+        At rank 0, 442 cluster (40%) is computed at 54.72 s
+        At rank 0, 443 cluster (40%) is computed at 54.83 s
+        At rank 0, 444 cluster (41%) is computed at 54.92 s
+        At rank 0, 445 cluster (41%) is computed at 55.03 s
+        At rank 0, 446 cluster (41%) is computed at 55.15 s
+        At rank 0, 447 cluster (41%) is computed at 55.24 s
+        At rank 0, 448 cluster (41%) is computed at 55.34 s
+        At rank 0, 449 cluster (41%) is computed at 55.43 s
+        At rank 0, 450 cluster (41%) is computed at 55.58 s
+        At rank 0, 451 cluster (41%) is computed at 55.72 s
+        At rank 0, 452 cluster (41%) is computed at 55.81 s
+        At rank 0, 453 cluster (41%) is computed at 55.96 s
+        At rank 0, 454 cluster (41%) is computed at 56.05 s
+        At rank 0, 455 cluster (42%) is computed at 56.14 s
+        At rank 0, 456 cluster (42%) is computed at 56.29 s
+        At rank 0, 457 cluster (42%) is computed at 56.39 s
+        At rank 0, 458 cluster (42%) is computed at 56.49 s
+        At rank 0, 459 cluster (42%) is computed at 56.61 s
+        At rank 0, 460 cluster (42%) is computed at 56.74 s
+        At rank 0, 461 cluster (42%) is computed at 56.86 s
+        At rank 0, 462 cluster (42%) is computed at 56.96 s
+        At rank 0, 463 cluster (42%) is computed at 57.06 s
+        At rank 0, 464 cluster (42%) is computed at 57.22 s
+        At rank 0, 465 cluster (43%) is computed at 57.33 s
+        At rank 0, 466 cluster (43%) is computed at 57.44 s
+        At rank 0, 467 cluster (43%) is computed at 57.57 s
+        At rank 0, 468 cluster (43%) is computed at 57.70 s
+        At rank 0, 469 cluster (43%) is computed at 57.82 s
+        At rank 0, 470 cluster (43%) is computed at 57.93 s
+        At rank 0, 471 cluster (43%) is computed at 58.07 s
+        At rank 0, 472 cluster (43%) is computed at 58.19 s
+        At rank 0, 473 cluster (43%) is computed at 58.35 s
+        At rank 0, 474 cluster (43%) is computed at 58.46 s
+        At rank 0, 475 cluster (43%) is computed at 58.56 s
+        At rank 0, 476 cluster (44%) is computed at 58.64 s
+        At rank 0, 477 cluster (44%) is computed at 58.76 s
+        At rank 0, 478 cluster (44%) is computed at 58.87 s
+        At rank 0, 479 cluster (44%) is computed at 58.97 s
+        At rank 0, 480 cluster (44%) is computed at 59.16 s
+        At rank 0, 481 cluster (44%) is computed at 59.29 s
+        At rank 0, 482 cluster (44%) is computed at 59.41 s
+        At rank 0, 483 cluster (44%) is computed at 59.60 s
+        At rank 0, 484 cluster (44%) is computed at 59.71 s
+        At rank 0, 485 cluster (44%) is computed at 59.84 s
+        At rank 0, 486 cluster (44%) is computed at 59.96 s
+        At rank 0, 487 cluster (45%) is computed at 60.06 s
+        At rank 0, 488 cluster (45%) is computed at 60.20 s
+        At rank 0, 489 cluster (45%) is computed at 60.34 s
+        At rank 0, 490 cluster (45%) is computed at 60.49 s
+        At rank 0, 491 cluster (45%) is computed at 60.60 s
+        At rank 0, 492 cluster (45%) is computed at 60.70 s
+        At rank 0, 493 cluster (45%) is computed at 60.82 s
+        At rank 0, 494 cluster (45%) is computed at 60.95 s
+        At rank 0, 495 cluster (45%) is computed at 61.07 s
+        At rank 0, 496 cluster (45%) is computed at 61.23 s
+        At rank 0, 497 cluster (45%) is computed at 61.40 s
+        At rank 0, 498 cluster (46%) is computed at 61.52 s
+        At rank 0, 499 cluster (46%) is computed at 61.65 s
+        At rank 0, 500 cluster (46%) is computed at 61.77 s
+        At rank 0, 501 cluster (46%) is computed at 61.90 s
+        At rank 0, 502 cluster (46%) is computed at 62.00 s
+        At rank 0, 503 cluster (46%) is computed at 62.11 s
+        At rank 0, 504 cluster (46%) is computed at 62.21 s
+        At rank 0, 505 cluster (46%) is computed at 62.38 s
+        At rank 0, 506 cluster (46%) is computed at 62.50 s
+        At rank 0, 507 cluster (46%) is computed at 62.63 s
+        At rank 0, 508 cluster (46%) is computed at 62.75 s
+        At rank 0, 509 cluster (47%) is computed at 62.88 s
+        At rank 0, 510 cluster (47%) is computed at 63.01 s
+        At rank 0, 511 cluster (47%) is computed at 63.15 s
+        At rank 0, 512 cluster (47%) is computed at 63.30 s
+        At rank 0, 513 cluster (47%) is computed at 63.54 s
+        At rank 0, 514 cluster (47%) is computed at 63.68 s
+        At rank 0, 515 cluster (47%) is computed at 63.83 s
+        At rank 0, 516 cluster (47%) is computed at 63.93 s
+        At rank 0, 517 cluster (47%) is computed at 64.04 s
+        At rank 0, 518 cluster (47%) is computed at 64.19 s
+        At rank 0, 519 cluster (48%) is computed at 64.34 s
+        At rank 0, 520 cluster (48%) is computed at 64.52 s
+        At rank 0, 521 cluster (48%) is computed at 64.63 s
+        At rank 0, 522 cluster (48%) is computed at 64.71 s
+        At rank 0, 523 cluster (48%) is computed at 64.83 s
+        At rank 0, 524 cluster (48%) is computed at 64.96 s
+        At rank 0, 525 cluster (48%) is computed at 65.07 s
+        At rank 0, 526 cluster (48%) is computed at 65.19 s
+        At rank 0, 527 cluster (48%) is computed at 65.39 s
+        At rank 0, 528 cluster (48%) is computed at 65.53 s
+        At rank 0, 529 cluster (48%) is computed at 65.60 s
+        At rank 0, 530 cluster (49%) is computed at 65.82 s
+        At rank 0, 531 cluster (49%) is computed at 65.97 s
+        At rank 0, 532 cluster (49%) is computed at 66.15 s
+        At rank 0, 533 cluster (49%) is computed at 66.25 s
+        At rank 0, 534 cluster (49%) is computed at 66.40 s
+        At rank 0, 535 cluster (49%) is computed at 66.52 s
+        At rank 0, 536 cluster (49%) is computed at 66.71 s
+        At rank 0, 537 cluster (49%) is computed at 66.81 s
+        At rank 0, 538 cluster (49%) is computed at 66.95 s
+        At rank 0, 539 cluster (49%) is computed at 67.05 s
+        At rank 0, 540 cluster (49%) is computed at 67.15 s
+        At rank 0, 541 cluster (50%) is computed at 67.31 s
+        At rank 0, 542 cluster (50%) is computed at 67.45 s
+        At rank 0, 543 cluster (50%) is computed at 67.57 s
+        At rank 0, 544 cluster (50%) is computed at 67.71 s
+        At rank 0, 545 cluster (50%) is computed at 67.83 s
+        At rank 0, 546 cluster (50%) is computed at 67.95 s
+        At rank 0, 547 cluster (50%) is computed at 68.05 s
+        At rank 0, 548 cluster (50%) is computed at 68.17 s
+        At rank 0, 549 cluster (50%) is computed at 68.30 s
+        At rank 0, 550 cluster (50%) is computed at 68.43 s
+        At rank 0, 551 cluster (50%) is computed at 68.56 s
+        At rank 0, 552 cluster (51%) is computed at 68.65 s
+        At rank 0, 553 cluster (51%) is computed at 68.80 s
+        At rank 0, 554 cluster (51%) is computed at 68.91 s
+        At rank 0, 555 cluster (51%) is computed at 69.01 s
+        At rank 0, 556 cluster (51%) is computed at 69.15 s
+        At rank 0, 557 cluster (51%) is computed at 69.26 s
+        At rank 0, 558 cluster (51%) is computed at 69.41 s
+        At rank 0, 559 cluster (51%) is computed at 69.55 s
+        At rank 0, 560 cluster (51%) is computed at 69.66 s
+        At rank 0, 561 cluster (51%) is computed at 69.80 s
+        At rank 0, 562 cluster (51%) is computed at 69.91 s
+        At rank 0, 563 cluster (52%) is computed at 70.05 s
+        At rank 0, 564 cluster (52%) is computed at 70.17 s
+        At rank 0, 565 cluster (52%) is computed at 70.29 s
+        At rank 0, 566 cluster (52%) is computed at 70.45 s
+        At rank 0, 567 cluster (52%) is computed at 70.59 s
+        At rank 0, 569 cluster (52%) is computed at 70.95 s
+        At rank 0, 570 cluster (52%) is computed at 71.02 s
+        At rank 0, 571 cluster (52%) is computed at 71.12 s
+        At rank 0, 572 cluster (52%) is computed at 71.32 s
+        At rank 0, 573 cluster (53%) is computed at 71.49 s
+        At rank 0, 574 cluster (53%) is computed at 71.61 s
+        At rank 0, 575 cluster (53%) is computed at 71.75 s
+        At rank 0, 576 cluster (53%) is computed at 71.86 s
+        At rank 0, 577 cluster (53%) is computed at 72.06 s
+        At rank 0, 578 cluster (53%) is computed at 72.25 s
+        At rank 0, 579 cluster (53%) is computed at 72.35 s
+        At rank 0, 580 cluster (53%) is computed at 72.54 s
+        At rank 0, 581 cluster (53%) is computed at 72.73 s
+        At rank 0, 582 cluster (53%) is computed at 72.83 s
+        At rank 0, 583 cluster (53%) is computed at 72.97 s
+        At rank 0, 584 cluster (54%) is computed at 73.15 s
+        At rank 0, 585 cluster (54%) is computed at 73.25 s
+        At rank 0, 586 cluster (54%) is computed at 73.46 s
+        At rank 0, 587 cluster (54%) is computed at 73.60 s
+        At rank 0, 588 cluster (54%) is computed at 73.72 s
+        At rank 0, 589 cluster (54%) is computed at 73.82 s
+        At rank 0, 590 cluster (54%) is computed at 74.03 s
+        At rank 0, 591 cluster (54%) is computed at 74.09 s
+        At rank 0, 592 cluster (54%) is computed at 74.28 s
+        At rank 0, 593 cluster (54%) is computed at 74.40 s
+        At rank 0, 594 cluster (54%) is computed at 74.55 s
+        At rank 0, 595 cluster (55%) is computed at 74.67 s
+        At rank 0, 596 cluster (55%) is computed at 74.83 s
+        At rank 0, 597 cluster (55%) is computed at 74.95 s
+        At rank 0, 598 cluster (55%) is computed at 75.06 s
+        At rank 0, 599 cluster (55%) is computed at 75.22 s
+        At rank 0, 600 cluster (55%) is computed at 75.35 s
+        At rank 0, 601 cluster (55%) is computed at 75.50 s
+        At rank 0, 602 cluster (55%) is computed at 75.66 s
+        At rank 0, 603 cluster (55%) is computed at 75.76 s
+        At rank 0, 604 cluster (55%) is computed at 75.85 s
+        At rank 0, 605 cluster (55%) is computed at 76.00 s
+        At rank 0, 606 cluster (56%) is computed at 76.14 s
+        At rank 0, 607 cluster (56%) is computed at 76.26 s
+        At rank 0, 608 cluster (56%) is computed at 76.37 s
+        At rank 0, 609 cluster (56%) is computed at 76.55 s
+        At rank 0, 610 cluster (56%) is computed at 76.69 s
+        At rank 0, 611 cluster (56%) is computed at 76.89 s
+        At rank 0, 612 cluster (56%) is computed at 77.01 s
+        At rank 0, 613 cluster (56%) is computed at 77.11 s
+        At rank 0, 614 cluster (56%) is computed at 77.29 s
+        At rank 0, 615 cluster (56%) is computed at 77.43 s
+        At rank 0, 616 cluster (56%) is computed at 77.57 s
+        At rank 0, 617 cluster (57%) is computed at 77.69 s
+        At rank 0, 618 cluster (57%) is computed at 77.79 s
+        At rank 0, 619 cluster (57%) is computed at 77.88 s
+        At rank 0, 620 cluster (57%) is computed at 78.10 s
+        At rank 0, 621 cluster (57%) is computed at 78.24 s
+        At rank 0, 622 cluster (57%) is computed at 78.38 s
+        At rank 0, 623 cluster (57%) is computed at 78.51 s
+        At rank 0, 624 cluster (57%) is computed at 78.66 s
+        At rank 0, 625 cluster (57%) is computed at 78.80 s
+        At rank 0, 626 cluster (57%) is computed at 78.91 s
+        At rank 0, 627 cluster (58%) is computed at 79.04 s
+        At rank 0, 628 cluster (58%) is computed at 79.20 s
+        At rank 0, 629 cluster (58%) is computed at 79.35 s
+        At rank 0, 630 cluster (58%) is computed at 79.48 s
+        At rank 0, 631 cluster (58%) is computed at 79.61 s
+        At rank 0, 632 cluster (58%) is computed at 79.73 s
+        At rank 0, 633 cluster (58%) is computed at 79.85 s
+        At rank 0, 634 cluster (58%) is computed at 80.01 s
+        At rank 0, 635 cluster (58%) is computed at 80.15 s
+        At rank 0, 636 cluster (58%) is computed at 80.26 s
+        At rank 0, 637 cluster (58%) is computed at 80.41 s
+        At rank 0, 638 cluster (59%) is computed at 80.53 s
+        At rank 0, 639 cluster (59%) is computed at 80.68 s
+        At rank 0, 640 cluster (59%) is computed at 80.77 s
+        At rank 0, 641 cluster (59%) is computed at 80.94 s
+        At rank 0, 642 cluster (59%) is computed at 81.06 s
+        At rank 0, 643 cluster (59%) is computed at 81.24 s
+        At rank 0, 644 cluster (59%) is computed at 81.40 s
+        At rank 0, 645 cluster (59%) is computed at 81.52 s
+        At rank 0, 646 cluster (59%) is computed at 81.64 s
+        At rank 0, 647 cluster (59%) is computed at 81.72 s
+        At rank 0, 648 cluster (59%) is computed at 81.84 s
+        At rank 0, 649 cluster (60%) is computed at 81.93 s
+        At rank 0, 650 cluster (60%) is computed at 82.10 s
+        At rank 0, 651 cluster (60%) is computed at 82.22 s
+        At rank 0, 652 cluster (60%) is computed at 82.36 s
+        At rank 0, 653 cluster (60%) is computed at 82.51 s
+        At rank 0, 654 cluster (60%) is computed at 82.62 s
+        At rank 0, 655 cluster (60%) is computed at 82.76 s
+        At rank 0, 656 cluster (60%) is computed at 82.91 s
+        At rank 0, 657 cluster (60%) is computed at 83.06 s
+        At rank 0, 658 cluster (60%) is computed at 83.18 s
+        At rank 0, 659 cluster (60%) is computed at 83.35 s
+        At rank 0, 660 cluster (61%) is computed at 83.49 s
+        At rank 0, 661 cluster (61%) is computed at 83.62 s
+        At rank 0, 662 cluster (61%) is computed at 83.77 s
+        At rank 0, 663 cluster (61%) is computed at 83.86 s
+        At rank 0, 664 cluster (61%) is computed at 84.01 s
+        At rank 0, 665 cluster (61%) is computed at 84.13 s
+        At rank 0, 666 cluster (61%) is computed at 84.25 s
+        At rank 0, 667 cluster (61%) is computed at 84.33 s
+        At rank 0, 668 cluster (61%) is computed at 84.46 s
+        At rank 0, 669 cluster (61%) is computed at 84.56 s
+        At rank 0, 670 cluster (61%) is computed at 84.80 s
+        At rank 0, 671 cluster (62%) is computed at 84.92 s
+        At rank 0, 672 cluster (62%) is computed at 85.07 s
+        At rank 0, 673 cluster (62%) is computed at 85.23 s
+        At rank 0, 674 cluster (62%) is computed at 85.35 s
+        At rank 0, 675 cluster (62%) is computed at 85.54 s
+        At rank 0, 676 cluster (62%) is computed at 85.67 s
+        At rank 0, 677 cluster (62%) is computed at 85.78 s
+        At rank 0, 678 cluster (62%) is computed at 85.92 s
+        At rank 0, 679 cluster (62%) is computed at 86.07 s
+        At rank 0, 680 cluster (62%) is computed at 86.18 s
+        At rank 0, 681 cluster (62%) is computed at 86.31 s
+        At rank 0, 682 cluster (63%) is computed at 86.41 s
+        At rank 0, 683 cluster (63%) is computed at 86.55 s
+        At rank 0, 684 cluster (63%) is computed at 86.73 s
+        At rank 0, 685 cluster (63%) is computed at 86.86 s
+        At rank 0, 686 cluster (63%) is computed at 86.95 s
+        At rank 0, 687 cluster (63%) is computed at 87.07 s
+        At rank 0, 688 cluster (63%) is computed at 87.19 s
+        At rank 0, 689 cluster (63%) is computed at 87.31 s
+        At rank 0, 690 cluster (63%) is computed at 87.44 s
+        At rank 0, 691 cluster (63%) is computed at 87.59 s
+        At rank 0, 692 cluster (64%) is computed at 87.74 s
+        At rank 0, 693 cluster (64%) is computed at 87.88 s
+        At rank 0, 694 cluster (64%) is computed at 88.03 s
+        At rank 0, 695 cluster (64%) is computed at 88.16 s
+        At rank 0, 696 cluster (64%) is computed at 88.31 s
+        At rank 0, 697 cluster (64%) is computed at 88.45 s
+        At rank 0, 698 cluster (64%) is computed at 88.56 s
+        At rank 0, 699 cluster (64%) is computed at 88.69 s
+        At rank 0, 700 cluster (64%) is computed at 88.82 s
+        At rank 0, 701 cluster (64%) is computed at 88.94 s
+        At rank 0, 702 cluster (64%) is computed at 89.06 s
+        At rank 0, 703 cluster (65%) is computed at 89.18 s
+        At rank 0, 704 cluster (65%) is computed at 89.33 s
+        At rank 0, 705 cluster (65%) is computed at 89.43 s
+        At rank 0, 706 cluster (65%) is computed at 89.61 s
+        At rank 0, 707 cluster (65%) is computed at 89.77 s
+        At rank 0, 708 cluster (65%) is computed at 89.91 s
+        At rank 0, 709 cluster (65%) is computed at 90.08 s
+        At rank 0, 711 cluster (65%) is computed at 90.30 s
+        At rank 0, 712 cluster (65%) is computed at 90.41 s
+        At rank 0, 713 cluster (65%) is computed at 90.51 s
+        At rank 0, 714 cluster (66%) is computed at 90.63 s
+        At rank 0, 715 cluster (66%) is computed at 90.75 s
+        At rank 0, 716 cluster (66%) is computed at 90.85 s
+        At rank 0, 717 cluster (66%) is computed at 90.96 s
+        At rank 0, 718 cluster (66%) is computed at 91.09 s
+        At rank 0, 719 cluster (66%) is computed at 91.17 s
+        At rank 0, 720 cluster (66%) is computed at 91.28 s
+        At rank 0, 721 cluster (66%) is computed at 91.40 s
+        At rank 0, 722 cluster (66%) is computed at 91.54 s
+        At rank 0, 723 cluster (66%) is computed at 91.63 s
+        At rank 0, 724 cluster (66%) is computed at 91.75 s
+        At rank 0, 725 cluster (67%) is computed at 91.88 s
+        At rank 0, 726 cluster (67%) is computed at 91.98 s
+        At rank 0, 727 cluster (67%) is computed at 92.11 s
+        At rank 0, 728 cluster (67%) is computed at 92.23 s
+        At rank 0, 729 cluster (67%) is computed at 92.35 s
+        At rank 0, 730 cluster (67%) is computed at 92.46 s
+        At rank 0, 731 cluster (67%) is computed at 92.57 s
+        At rank 0, 732 cluster (67%) is computed at 92.66 s
+        At rank 0, 733 cluster (67%) is computed at 92.78 s
+        At rank 0, 734 cluster (67%) is computed at 92.90 s
+        At rank 0, 735 cluster (67%) is computed at 92.99 s
+        At rank 0, 736 cluster (68%) is computed at 93.13 s
+        At rank 0, 737 cluster (68%) is computed at 93.23 s
+        At rank 0, 738 cluster (68%) is computed at 93.32 s
+        At rank 0, 739 cluster (68%) is computed at 93.48 s
+        At rank 0, 740 cluster (68%) is computed at 93.59 s
+        At rank 0, 741 cluster (68%) is computed at 93.68 s
+        At rank 0, 742 cluster (68%) is computed at 95.15 s
+        At rank 0, 743 cluster (68%) is computed at 95.38 s
+        At rank 0, 744 cluster (68%) is computed at 95.67 s
+        At rank 0, 745 cluster (68%) is computed at 95.90 s
+        At rank 0, 746 cluster (69%) is computed at 96.01 s
+        At rank 0, 747 cluster (69%) is computed at 96.13 s
+        At rank 0, 748 cluster (69%) is computed at 96.29 s
+        At rank 0, 749 cluster (69%) is computed at 96.39 s
+        At rank 0, 750 cluster (69%) is computed at 96.54 s
+        At rank 0, 751 cluster (69%) is computed at 96.66 s
+        At rank 0, 752 cluster (69%) is computed at 96.79 s
+        At rank 0, 753 cluster (69%) is computed at 96.91 s
+        At rank 0, 754 cluster (69%) is computed at 97.03 s
+        At rank 0, 755 cluster (69%) is computed at 97.13 s
+        At rank 0, 756 cluster (69%) is computed at 97.26 s
+        At rank 0, 757 cluster (70%) is computed at 97.36 s
+        At rank 0, 758 cluster (70%) is computed at 97.47 s
+        At rank 0, 759 cluster (70%) is computed at 97.57 s
+        At rank 0, 760 cluster (70%) is computed at 97.67 s
+        At rank 0, 761 cluster (70%) is computed at 97.79 s
+        At rank 0, 762 cluster (70%) is computed at 97.90 s
+        At rank 0, 763 cluster (70%) is computed at 98.05 s
+        At rank 0, 764 cluster (70%) is computed at 98.22 s
+        At rank 0, 765 cluster (70%) is computed at 98.33 s
+        At rank 0, 766 cluster (70%) is computed at 98.41 s
+        At rank 0, 767 cluster (70%) is computed at 98.56 s
+        At rank 0, 768 cluster (71%) is computed at 98.63 s
+        At rank 0, 769 cluster (71%) is computed at 98.75 s
+        At rank 0, 770 cluster (71%) is computed at 98.88 s
+        At rank 0, 771 cluster (71%) is computed at 99.00 s
+        At rank 0, 772 cluster (71%) is computed at 99.11 s
+        At rank 0, 773 cluster (71%) is computed at 99.24 s
+        At rank 0, 774 cluster (71%) is computed at 99.32 s
+        At rank 0, 775 cluster (71%) is computed at 99.44 s
+        At rank 0, 776 cluster (71%) is computed at 99.64 s
+        At rank 0, 777 cluster (71%) is computed at 99.76 s
+        At rank 0, 778 cluster (71%) is computed at 99.86 s
+        At rank 0, 779 cluster (72%) is computed at 100.04 s
+        At rank 0, 780 cluster (72%) is computed at 100.17 s
+        At rank 0, 781 cluster (72%) is computed at 100.27 s
+        At rank 0, 782 cluster (72%) is computed at 100.38 s
+        At rank 0, 783 cluster (72%) is computed at 100.53 s
+        At rank 0, 784 cluster (72%) is computed at 100.63 s
+        At rank 0, 785 cluster (72%) is computed at 100.75 s
+        At rank 0, 786 cluster (72%) is computed at 100.85 s
+        At rank 0, 787 cluster (72%) is computed at 101.00 s
+        At rank 0, 788 cluster (72%) is computed at 101.10 s
+        At rank 0, 789 cluster (72%) is computed at 101.24 s
+        At rank 0, 790 cluster (73%) is computed at 101.34 s
+        At rank 0, 791 cluster (73%) is computed at 101.47 s
+        At rank 0, 792 cluster (73%) is computed at 101.63 s
+        At rank 0, 793 cluster (73%) is computed at 101.68 s
+        At rank 0, 794 cluster (73%) is computed at 101.81 s
+        At rank 0, 795 cluster (73%) is computed at 101.89 s
+        At rank 0, 796 cluster (73%) is computed at 102.01 s
+        At rank 0, 797 cluster (73%) is computed at 102.13 s
+        At rank 0, 798 cluster (73%) is computed at 102.22 s
+        At rank 0, 799 cluster (73%) is computed at 102.34 s
+        At rank 0, 800 cluster (74%) is computed at 102.47 s
+        At rank 0, 801 cluster (74%) is computed at 102.55 s
+        At rank 0, 802 cluster (74%) is computed at 102.70 s
+        At rank 0, 803 cluster (74%) is computed at 102.83 s
+        At rank 0, 804 cluster (74%) is computed at 102.93 s
+        At rank 0, 805 cluster (74%) is computed at 103.04 s
+        At rank 0, 806 cluster (74%) is computed at 103.14 s
+        At rank 0, 807 cluster (74%) is computed at 103.27 s
+        At rank 0, 808 cluster (74%) is computed at 103.38 s
+        At rank 0, 809 cluster (74%) is computed at 103.50 s
+        At rank 0, 810 cluster (74%) is computed at 103.60 s
+        At rank 0, 811 cluster (75%) is computed at 103.69 s
+        At rank 0, 812 cluster (75%) is computed at 103.81 s
+        At rank 0, 813 cluster (75%) is computed at 103.92 s
+        At rank 0, 814 cluster (75%) is computed at 104.05 s
+        At rank 0, 815 cluster (75%) is computed at 104.14 s
+        At rank 0, 816 cluster (75%) is computed at 104.29 s
+        At rank 0, 817 cluster (75%) is computed at 104.41 s
+        At rank 0, 818 cluster (75%) is computed at 104.53 s
+        At rank 0, 819 cluster (75%) is computed at 104.64 s
+        At rank 0, 820 cluster (75%) is computed at 104.78 s
+        At rank 0, 821 cluster (75%) is computed at 104.88 s
+        At rank 0, 822 cluster (76%) is computed at 105.02 s
+        At rank 0, 823 cluster (76%) is computed at 105.11 s
+        At rank 0, 824 cluster (76%) is computed at 105.24 s
+        At rank 0, 825 cluster (76%) is computed at 105.34 s
+        At rank 0, 826 cluster (76%) is computed at 105.44 s
+        At rank 0, 827 cluster (76%) is computed at 105.56 s
+        At rank 0, 828 cluster (76%) is computed at 105.66 s
+        At rank 0, 829 cluster (76%) is computed at 105.78 s
+        At rank 0, 830 cluster (76%) is computed at 105.92 s
+        At rank 0, 831 cluster (76%) is computed at 106.01 s
+        At rank 0, 832 cluster (76%) is computed at 106.15 s
+        At rank 0, 833 cluster (77%) is computed at 106.27 s
+        At rank 0, 834 cluster (77%) is computed at 106.37 s
+        At rank 0, 835 cluster (77%) is computed at 106.48 s
+        At rank 0, 836 cluster (77%) is computed at 106.57 s
+        At rank 0, 837 cluster (77%) is computed at 106.71 s
+        At rank 0, 838 cluster (77%) is computed at 106.82 s
+        At rank 0, 839 cluster (77%) is computed at 106.92 s
+        At rank 0, 840 cluster (77%) is computed at 107.05 s
+        At rank 0, 841 cluster (77%) is computed at 107.18 s
+        At rank 0, 842 cluster (77%) is computed at 107.30 s
+        At rank 0, 843 cluster (77%) is computed at 107.41 s
+        At rank 0, 844 cluster (78%) is computed at 107.51 s
+        At rank 0, 845 cluster (78%) is computed at 107.63 s
+        At rank 0, 846 cluster (78%) is computed at 107.74 s
+        At rank 0, 847 cluster (78%) is computed at 107.88 s
+        At rank 0, 848 cluster (78%) is computed at 108.04 s
+        At rank 0, 849 cluster (78%) is computed at 108.16 s
+        At rank 0, 850 cluster (78%) is computed at 108.25 s
+        At rank 0, 851 cluster (78%) is computed at 108.34 s
+        At rank 0, 853 cluster (78%) is computed at 108.58 s
+        At rank 0, 854 cluster (79%) is computed at 108.76 s
+        At rank 0, 855 cluster (79%) is computed at 108.87 s
+        At rank 0, 856 cluster (79%) is computed at 109.01 s
+        At rank 0, 857 cluster (79%) is computed at 109.14 s
+        At rank 0, 858 cluster (79%) is computed at 109.27 s
+        At rank 0, 859 cluster (79%) is computed at 109.39 s
+        At rank 0, 860 cluster (79%) is computed at 109.50 s
+        At rank 0, 861 cluster (79%) is computed at 109.62 s
+        At rank 0, 862 cluster (79%) is computed at 109.70 s
+        At rank 0, 863 cluster (79%) is computed at 109.83 s
+        At rank 0, 864 cluster (79%) is computed at 109.94 s
+        At rank 0, 865 cluster (80%) is computed at 110.04 s
+        At rank 0, 866 cluster (80%) is computed at 110.20 s
+        At rank 0, 867 cluster (80%) is computed at 110.30 s
+        At rank 0, 868 cluster (80%) is computed at 110.40 s
+        At rank 0, 869 cluster (80%) is computed at 110.52 s
+        At rank 0, 870 cluster (80%) is computed at 110.68 s
+        At rank 0, 871 cluster (80%) is computed at 110.78 s
+        At rank 0, 872 cluster (80%) is computed at 110.89 s
+        At rank 0, 873 cluster (80%) is computed at 111.00 s
+        At rank 0, 874 cluster (80%) is computed at 111.13 s
+        At rank 0, 875 cluster (80%) is computed at 111.21 s
+        At rank 0, 876 cluster (81%) is computed at 111.33 s
+        At rank 0, 877 cluster (81%) is computed at 111.44 s
+        At rank 0, 878 cluster (81%) is computed at 111.57 s
+        At rank 0, 879 cluster (81%) is computed at 111.67 s
+        At rank 0, 880 cluster (81%) is computed at 111.79 s
+        At rank 0, 881 cluster (81%) is computed at 111.90 s
+        At rank 0, 882 cluster (81%) is computed at 112.01 s
+        At rank 0, 883 cluster (81%) is computed at 112.14 s
+        At rank 0, 884 cluster (81%) is computed at 112.26 s
+        At rank 0, 885 cluster (81%) is computed at 112.35 s
+        At rank 0, 886 cluster (81%) is computed at 112.46 s
+        At rank 0, 887 cluster (82%) is computed at 112.66 s
+        At rank 0, 888 cluster (82%) is computed at 112.73 s
+        At rank 0, 889 cluster (82%) is computed at 112.86 s
+        At rank 0, 890 cluster (82%) is computed at 112.95 s
+        At rank 0, 891 cluster (82%) is computed at 113.06 s
+        At rank 0, 892 cluster (82%) is computed at 113.16 s
+        At rank 0, 893 cluster (82%) is computed at 113.28 s
+        At rank 0, 894 cluster (82%) is computed at 113.41 s
+        At rank 0, 895 cluster (82%) is computed at 113.53 s
+        At rank 0, 896 cluster (82%) is computed at 113.61 s
+        At rank 0, 897 cluster (82%) is computed at 113.73 s
+        At rank 0, 898 cluster (83%) is computed at 113.86 s
+        At rank 0, 899 cluster (83%) is computed at 113.97 s
+        At rank 0, 900 cluster (83%) is computed at 114.07 s
+        At rank 0, 901 cluster (83%) is computed at 114.19 s
+        At rank 0, 902 cluster (83%) is computed at 114.31 s
+        At rank 0, 903 cluster (83%) is computed at 114.43 s
+        At rank 0, 904 cluster (83%) is computed at 114.55 s
+        At rank 0, 905 cluster (83%) is computed at 114.62 s
+        At rank 0, 906 cluster (83%) is computed at 114.77 s
+        At rank 0, 907 cluster (83%) is computed at 114.86 s
+        At rank 0, 908 cluster (83%) is computed at 114.94 s
+        At rank 0, 909 cluster (84%) is computed at 115.06 s
+        At rank 0, 910 cluster (84%) is computed at 115.18 s
+        At rank 0, 911 cluster (84%) is computed at 115.30 s
+        At rank 0, 912 cluster (84%) is computed at 115.45 s
+        At rank 0, 913 cluster (84%) is computed at 115.59 s
+        At rank 0, 914 cluster (84%) is computed at 115.70 s
+        At rank 0, 915 cluster (84%) is computed at 115.80 s
+        At rank 0, 916 cluster (84%) is computed at 115.92 s
+        At rank 0, 917 cluster (84%) is computed at 116.04 s
+        At rank 0, 918 cluster (84%) is computed at 116.12 s
+        At rank 0, 919 cluster (85%) is computed at 116.26 s
+        At rank 0, 920 cluster (85%) is computed at 116.40 s
+        At rank 0, 921 cluster (85%) is computed at 116.49 s
+        At rank 0, 922 cluster (85%) is computed at 116.60 s
+        At rank 0, 923 cluster (85%) is computed at 116.70 s
+        At rank 0, 924 cluster (85%) is computed at 116.82 s
+        At rank 0, 925 cluster (85%) is computed at 116.91 s
+        At rank 0, 926 cluster (85%) is computed at 117.07 s
+        At rank 0, 927 cluster (85%) is computed at 117.17 s
+        At rank 0, 928 cluster (85%) is computed at 117.28 s
+        At rank 0, 929 cluster (85%) is computed at 117.41 s
+        At rank 0, 930 cluster (86%) is computed at 117.52 s
+        At rank 0, 931 cluster (86%) is computed at 117.62 s
+        At rank 0, 932 cluster (86%) is computed at 117.71 s
+        At rank 0, 933 cluster (86%) is computed at 117.89 s
+        At rank 0, 934 cluster (86%) is computed at 118.02 s
+        At rank 0, 935 cluster (86%) is computed at 118.13 s
+        At rank 0, 936 cluster (86%) is computed at 118.23 s
+        At rank 0, 937 cluster (86%) is computed at 118.35 s
+        At rank 0, 938 cluster (86%) is computed at 118.46 s
+        At rank 0, 939 cluster (86%) is computed at 118.59 s
+        At rank 0, 940 cluster (86%) is computed at 118.70 s
+        At rank 0, 941 cluster (87%) is computed at 118.79 s
+        At rank 0, 942 cluster (87%) is computed at 118.91 s
+        At rank 0, 943 cluster (87%) is computed at 119.02 s
+        At rank 0, 944 cluster (87%) is computed at 119.13 s
+        At rank 0, 945 cluster (87%) is computed at 119.23 s
+        At rank 0, 946 cluster (87%) is computed at 119.35 s
+        At rank 0, 947 cluster (87%) is computed at 119.44 s
+        At rank 0, 948 cluster (87%) is computed at 119.62 s
+        At rank 0, 949 cluster (87%) is computed at 119.73 s
+        At rank 0, 950 cluster (87%) is computed at 119.84 s
+        At rank 0, 951 cluster (87%) is computed at 119.97 s
+        At rank 0, 952 cluster (88%) is computed at 120.07 s
+        At rank 0, 953 cluster (88%) is computed at 120.18 s
+        At rank 0, 954 cluster (88%) is computed at 120.30 s
+        At rank 0, 955 cluster (88%) is computed at 120.41 s
+        At rank 0, 956 cluster (88%) is computed at 120.52 s
+        At rank 0, 957 cluster (88%) is computed at 120.63 s
+        At rank 0, 958 cluster (88%) is computed at 120.76 s
+        At rank 0, 959 cluster (88%) is computed at 120.88 s
+        At rank 0, 960 cluster (88%) is computed at 121.01 s
+        At rank 0, 961 cluster (88%) is computed at 121.11 s
+        At rank 0, 962 cluster (88%) is computed at 121.25 s
+        At rank 0, 963 cluster (89%) is computed at 121.36 s
+        At rank 0, 964 cluster (89%) is computed at 121.47 s
+        At rank 0, 965 cluster (89%) is computed at 121.56 s
+        At rank 0, 966 cluster (89%) is computed at 121.68 s
+        At rank 0, 967 cluster (89%) is computed at 121.80 s
+        At rank 0, 968 cluster (89%) is computed at 121.90 s
+        At rank 0, 969 cluster (89%) is computed at 122.03 s
+        At rank 0, 970 cluster (89%) is computed at 122.14 s
+        At rank 0, 971 cluster (89%) is computed at 122.25 s
+        At rank 0, 972 cluster (89%) is computed at 122.35 s
+        At rank 0, 973 cluster (90%) is computed at 122.48 s
+        At rank 0, 974 cluster (90%) is computed at 122.56 s
+        At rank 0, 975 cluster (90%) is computed at 122.67 s
+        At rank 0, 976 cluster (90%) is computed at 122.77 s
+        At rank 0, 977 cluster (90%) is computed at 122.89 s
+        At rank 0, 978 cluster (90%) is computed at 123.01 s
+        At rank 0, 979 cluster (90%) is computed at 123.13 s
+        At rank 0, 980 cluster (90%) is computed at 123.26 s
+        At rank 0, 981 cluster (90%) is computed at 123.35 s
+        At rank 0, 982 cluster (90%) is computed at 123.48 s
+        At rank 0, 983 cluster (90%) is computed at 123.57 s
+        At rank 0, 984 cluster (91%) is computed at 123.75 s
+        At rank 0, 985 cluster (91%) is computed at 142.22 s
+        At rank 0, 986 cluster (91%) is computed at 142.55 s
+        At rank 0, 987 cluster (91%) is computed at 142.63 s
+        At rank 0, 988 cluster (91%) is computed at 142.86 s
+        At rank 0, 989 cluster (91%) is computed at 142.88 s
+        At rank 0, 990 cluster (91%) is computed at 142.90 s
+        At rank 0, 991 cluster (91%) is computed at 143.10 s
+        At rank 0, 992 cluster (91%) is computed at 143.21 s
+        At rank 0, 993 cluster (91%) is computed at 143.27 s
+        At rank 0, 995 cluster (92%) is computed at 143.47 s
+        At rank 0, 996 cluster (92%) is computed at 143.56 s
+        At rank 0, 997 cluster (92%) is computed at 143.69 s
+        At rank 0, 998 cluster (92%) is computed at 143.79 s
+        At rank 0, 999 cluster (92%) is computed at 143.86 s
+        At rank 0, 1000 cluster (92%) is computed at 143.97 s
+        At rank 0, 1001 cluster (92%) is computed at 144.30 s
+        At rank 0, 1002 cluster (92%) is computed at 144.54 s
+        At rank 0, 1003 cluster (92%) is computed at 144.64 s
+        At rank 0, 1004 cluster (92%) is computed at 144.74 s
+        At rank 0, 1005 cluster (92%) is computed at 144.85 s
+        At rank 0, 1006 cluster (93%) is computed at 144.97 s
+        At rank 0, 1007 cluster (93%) is computed at 145.03 s
+        At rank 0, 1008 cluster (93%) is computed at 145.14 s
+        At rank 0, 1009 cluster (93%) is computed at 145.23 s
+        At rank 0, 1010 cluster (93%) is computed at 145.32 s
+        At rank 0, 1011 cluster (93%) is computed at 145.45 s
+        At rank 0, 1012 cluster (93%) is computed at 145.53 s
+        At rank 0, 1013 cluster (93%) is computed at 145.63 s
+        At rank 0, 1014 cluster (93%) is computed at 145.75 s
+        At rank 0, 1015 cluster (93%) is computed at 145.83 s
+        At rank 0, 1016 cluster (93%) is computed at 145.94 s
+        At rank 0, 1017 cluster (94%) is computed at 146.04 s
+        At rank 0, 1018 cluster (94%) is computed at 146.19 s
+        At rank 0, 1019 cluster (94%) is computed at 146.24 s
+        At rank 0, 1020 cluster (94%) is computed at 146.36 s
+        At rank 0, 1021 cluster (94%) is computed at 146.45 s
+        At rank 0, 1022 cluster (94%) is computed at 146.58 s
+        At rank 0, 1023 cluster (94%) is computed at 146.69 s
+        At rank 0, 1024 cluster (94%) is computed at 146.78 s
+        At rank 0, 1025 cluster (94%) is computed at 146.90 s
+        At rank 0, 1026 cluster (94%) is computed at 146.97 s
+        At rank 0, 1027 cluster (95%) is computed at 147.08 s
+        At rank 0, 1028 cluster (95%) is computed at 147.16 s
+        At rank 0, 1029 cluster (95%) is computed at 147.30 s
+        At rank 0, 1030 cluster (95%) is computed at 147.40 s
+        At rank 0, 1031 cluster (95%) is computed at 147.50 s
+        At rank 0, 1032 cluster (95%) is computed at 147.62 s
+        At rank 0, 1033 cluster (95%) is computed at 147.70 s
+        At rank 0, 1034 cluster (95%) is computed at 147.83 s
+        At rank 0, 1035 cluster (95%) is computed at 147.92 s
+        At rank 0, 1036 cluster (95%) is computed at 148.11 s
+        At rank 0, 1037 cluster (95%) is computed at 148.20 s
+        At rank 0, 1038 cluster (96%) is computed at 148.31 s
+        At rank 0, 1039 cluster (96%) is computed at 148.39 s
+        At rank 0, 1040 cluster (96%) is computed at 148.50 s
+        At rank 0, 1041 cluster (96%) is computed at 148.73 s
+        At rank 0, 1042 cluster (96%) is computed at 148.85 s
+        At rank 0, 1043 cluster (96%) is computed at 148.94 s
+        At rank 0, 1044 cluster (96%) is computed at 149.06 s
+        At rank 0, 1045 cluster (96%) is computed at 149.16 s
+        At rank 0, 1046 cluster (96%) is computed at 149.28 s
+        At rank 0, 1047 cluster (96%) is computed at 149.51 s
+        At rank 0, 1048 cluster (96%) is computed at 149.87 s
+        At rank 0, 1049 cluster (97%) is computed at 150.24 s
+        At rank 0, 1050 cluster (97%) is computed at 150.60 s
+        At rank 0, 1051 cluster (97%) is computed at 151.00 s
+        At rank 0, 1052 cluster (97%) is computed at 151.37 s
+        At rank 0, 1053 cluster (97%) is computed at 151.85 s
+        At rank 0, 1054 cluster (97%) is computed at 152.21 s
+        At rank 0, 1055 cluster (97%) is computed at 152.42 s
+        At rank 0, 1056 cluster (97%) is computed at 152.55 s
+        At rank 0, 1057 cluster (97%) is computed at 152.77 s
+        At rank 0, 1058 cluster (97%) is computed at 152.86 s
+        At rank 0, 1059 cluster (97%) is computed at 152.97 s
+        At rank 0, 1060 cluster (98%) is computed at 153.06 s
+        At rank 0, 1061 cluster (98%) is computed at 153.17 s
+        At rank 0, 1062 cluster (98%) is computed at 153.24 s
+        At rank 0, 1063 cluster (98%) is computed at 153.43 s
+        At rank 0, 1064 cluster (98%) is computed at 153.57 s
+        At rank 0, 1065 cluster (98%) is computed at 153.67 s
+        At rank 0, 1066 cluster (98%) is computed at 153.76 s
+        At rank 0, 1067 cluster (98%) is computed at 153.83 s
+        At rank 0, 1068 cluster (98%) is computed at 153.93 s
+        At rank 0, 1069 cluster (98%) is computed at 154.02 s
+        At rank 0, 1070 cluster (98%) is computed at 154.13 s
+        At rank 0, 1071 cluster (99%) is computed at 154.24 s
+        At rank 0, 1072 cluster (99%) is computed at 154.35 s
+        At rank 0, 1073 cluster (99%) is computed at 154.42 s
+        At rank 0, 1074 cluster (99%) is computed at 154.52 s
+        At rank 0, 1075 cluster (99%) is computed at 154.62 s
+        At rank 0, 1076 cluster (99%) is computed at 154.69 s
+        At rank 0, 1077 cluster (99%) is computed at 154.86 s
+        At rank 0, 1078 cluster (99%) is computed at 154.95 s
+        At rank 0, 1079 cluster (99%) is computed at 155.06 s
+        At rank 0, 1080 cluster (99%) is computed at 155.18 s
+        At rank 0, 1081 cluster (100%) is computed at 155.27 s
+
+        # Wall time : 155.28[s]
+
+      -------------------------------------------------
+
+
+    >> Product local results...
+
+
+    >> Gather the results (MPI)...
+
+
+    >> Save the results...
+
+
+    ===============================================================
+
+        JOB DONE : Wall time = 171.67457 s
+
+    ===============================================================
+
+

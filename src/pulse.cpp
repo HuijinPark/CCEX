@@ -186,12 +186,12 @@ void Pulse_allocSequence(Pulse* pulse){
 
 void Pulse_freeSequence(Pulse* pulse){
     int npulse = Pulse_getNpulse(pulse);
-    freeDouble2d(pulse->sequence, npulse+1);
+    freeDouble2d(&(pulse->sequence), npulse+1);
 }
 
 void Pulse_freeAll(Pulse* pulse){
     // Pulse_freeSequence(pulse);
-    freeArray1d(pulse);
+    freeArray1d((void**)&pulse);
 }
 
 

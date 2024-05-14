@@ -12,7 +12,9 @@
 #include "../include/qubit.h"
 
 
-int verbosity = false;
+bool verbosity = false;
+int rank = 0;
+int nprocess = 0;
 
 int main(int argc, char* argv[]){
 

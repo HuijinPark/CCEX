@@ -24,31 +24,20 @@ typedef struct {
     // char* OutputFileTail; /**< File name to save final result */
     // char* OutputFileHeadDisjoint; /**< File name to save final result */
     // char* OutputFileTailDisjoint; /**< File name to save final result */
-    char* outfilehead; // output file head (from input)
     char* outfile; // output file name with mode (auto generated)
 } Output;
 
 Output* Output_init();
-void Output_save(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, float deltat);
-void Output_save_all(Output* op, MatrixXcd* result, int nstep, float deltat);
-void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, float deltat, double Azx, double Azz, char* bathfile);
+void Output_save(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, float deltat, int istate);
+void Output_save_all(Output* op, MatrixXcd* result, int nstep, float deltat,int* cluster, int nspin, int istate);
+void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, float deltat, int istate, double Azx, double Azz, char* bathfile);
 
 void Output_setSavemode(Output* op, char* savemode);
 char* Output_getSavemode(Output* op);
 
 void Output_allocOutfile(Output* op);
 void Output_freeOutfile(Output* op);
-void Output_allocOutfilehead(Output* op);
-void Output_freeOutfilehead(Output* op);
-
-void Output_setOutfilehead(Output* op, char* outfilehead);
-char* Output_getOutfilehead(Output* op);
-
-// set outfile depending on the savemode
-void Output_setOutfile_all(Output* op, int* cluster, int nspin, int istate);
-void Output_setOutfile_avg(Output* op);
-void Output_setOutfile_normal(Output* op, int istate);
-void Output_setOutfile_info(Output* op, int istate);
+void Output_setOutfile(Output* op, char* outfile);
 char* Output_getOutfile(Output* op);
 
 void Output_report(Output* op);

@@ -1,6 +1,7 @@
 #include "../include/utilities.h"
 #include "../include/memory.h"
 #include <float.h>  // FLT_EPSILON
+#include "mpi.h"
 
 /* utils ---------------------------------------------------*/
 MatrixXcd Double1dToMatrixXcd(double* val, int n){
@@ -159,6 +160,35 @@ int normalize(MatrixXcd* m){
 
 }
 
+float findZbasisSubLevel(MatrixXcd spinor){
+    int n = spinor.rows();
+    float S = (float)(n-1)/2.0;
+    float ms = 0.0;
+    
+    bool chkms = false;
+    for (int i=0; i<n; i++){
+        double spinoriReal = spinor(i,0).real();
+        if (fabs(spinoriReal - 1.0) <= FLT_EPSILON){
+            ms = S-i;
+            if (!chkms){
+                chkms = true;
+            }
+            else{
+                perror("Error(findZbasisSubLevel): ms is not unique");
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+
+    if (chkms){
+        return ms;
+    }
+    else{
+        perror("Error(findMs): ms is not the sub level of S");
+        exit(EXIT_FAILURE);
+    }
+}
+
 MatrixXcd partialtrace(MatrixXcd Mij, int dimrow, int dimcol){
 
     // Mij : Full Matrix
@@ -283,7 +313,7 @@ void printStructElementInt1dIdx(char* key, int* val, int n){
 }
 
 void printStructElementFloat(char* key, float val){
-    printf("      %-18s:   %-21.1f\n", key, val);
+    printf("      %-18s:   %-21.6g\n", key, val);
 }
 
 void printStructElementFloat1d(char* key, float* val, int n){
@@ -299,7 +329,7 @@ void printStructElementFloat1d(char* key, float* val, int n){
 }
 
 void printStructElementDouble(char* key, double val){
-    printf("      %-18s:   %-21.3f\n", key, val);
+    printf("      %-18s:   %-21.3g\n", key, val);
 }
 
 void printStructElementDouble1d(char* key, double* val, int n){
@@ -332,6 +362,10 @@ void printTitle(char* title){
 
 void printSubTitle(char* title){
     printf("\n    >> %s\n\n",title);
+}
+
+void printMessage(char* title){
+    printf("        %s\n",title);
 }
 
 /* Find index ---------------------------------------------------*/
@@ -440,3 +474,157 @@ int min(int x, int y)
     else v = x;
     return v;
 }
+
+
+int*** MPI_getLocalClusters(int order, int*** clusters){
+
+    MPI_Request req; 
+    MPI_Status status;
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    // get the number of clusters for each order
+    int MPI_size[order+1];
+
+    for (int n=0; n<order+1; n++){
+        if (n==0){
+            // The number of cluster = 1#
+            MPI_size[n] = 1;
+        }
+        else{
+            // The number of cluster
+            MPI_size[n] = clusters[n][0][0];
+        }
+    }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    // get sendcount, ista, iend for each order and each rank
+    int MPI_sendcount[order+1][nprocess];
+    int MPI_ista[order+1][nprocess];
+    int MPI_iend[order+1][nprocess];
+
+    for (int irank=0; irank<nprocess; irank++){
+        for (int n=0; n<order+1; n++){
+            if (n==0){
+                MPI_sendcount[n][irank] = 1;
+                MPI_ista[n][irank] = 0;
+                MPI_iend[n][irank] = 0;
+            }
+            else{
+                int ista, iend;
+                para_range(2, MPI_size[n], nprocess, irank, &(ista) ,&(iend));
+                MPI_Barrier(MPI_COMM_WORLD);
+                //if (rank==0){
+                //    printf("rank%d, size(ncluster)=%d, ista=%d , iend=%d\n",irank,MPI_size[n],ista,iend);
+                //    printf("rank%d, sendcount%d \n",irank,iend-ista+1);
+                //}
+                // cluster : ista - 1 <= i < iend
+                // 9# , 0 , 1 ... , 8 , rank = 0 .. 7
+                // rank==0~7 then, sendcount = 1 ista=2, iend=1
+                // else, sendcount = 0
+                MPI_sendcount[n][irank] = iend - ista + 1;
+                MPI_ista[n][irank] = ista - 1;
+                MPI_iend[n][irank] = iend;
+                
+                // case : ista - 1 = iend
+                // case : ista - 1 > iend
+                if (ista-1 >= iend){
+                    MPI_iend[n][irank] = MPI_ista[n][irank];
+                    MPI_sendcount[n][irank] = 0;
+                }
+                MPI_Barrier(MPI_COMM_WORLD);
+            }
+        }
+    }
+
+    //if (rank==0){
+    //    printf("nprocess : %d\n",nprocess);
+    //    for (int n=0; n<order+1; n++){
+    //        printf("size[%d] : %d\n",n,MPI_size[n]);
+    //        for (int ir=0; ir<nprocess; ir++){
+    //            printf("ista[%d][%d] : %d\n",n,ir,MPI_ista[n][ir]);
+    //            printf("iend[%d][%d] : %d\n",n,ir,MPI_iend[n][ir]);
+    //            printf("sendcount[%d][%d] : %d\n",n,ir,MPI_sendcount[n][ir]);
+    //        }
+    //    }
+    //}
+
+    MPI_Barrier(MPI_COMM_WORLD);
+
+
+    // make local clusters for each rank
+    int*** localClusters = (int***)calloc(order+1,sizeof(int**));
+
+    // zeroth cluster 
+    localClusters[0] = (int**)calloc(1,sizeof(int*));
+    localClusters[0][0] = (int*)calloc(1,sizeof(int));
+    localClusters[0][0][0] = clusters[0][0][0]; // = 1
+    if (rank!=0){
+        localClusters[0][0][0] = 0;
+    } 
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    // n > 0 clusters
+    for (int n=1; n<order+1; n++){
+
+        int size = MPI_sendcount[n][rank] + 1;
+        localClusters[n] = (int**)allocArray2d(size,n+1,sizeof(int));
+        localClusters[n][0][0] = size;
+
+        int rootClusterista = MPI_ista[n][rank];
+        int rootClusteriend = MPI_iend[n][rank];
+        int iroot = rootClusterista - 1;
+        for (int i=1; i<size; i++){
+            iroot = rootClusterista + i - 1;
+            //printf("rank[%d] : iroot = %d\n",rank,iroot);
+            for (int j=0; j<n+1; j++){
+                localClusters[n][i][j] = clusters[n][iroot][j];
+            }
+        }
+
+        if (iroot != rootClusteriend-1 ){
+            printf("rank[%d] : iroot = %d, rootClusteriend = %d\n",rank,iroot,rootClusteriend);
+            perror("iroot != rootClusteriend");
+            exit(1);
+        }        
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    return localClusters;
+}
+
+// MatrixXcd* MPI_reduceLocalResult(int nstep, MatrixXcd* local){
+
+//     int dim = local[0].rows();
+
+//     // Initialize the result variable   
+//     MatrixXcd* result = new MatrixXcd[nstep];
+//     for (int istep=0; istep<nstep; istep++){
+//         result[istep] = MatrixXcd::Constant(dim,dim,doublec(1.0,0.0));
+//     }
+//     MPI_Barrier(MPI_COMM_WORLD);
+
+//     // Local data reduce to root
+
+//     if (rank==0){printf("Start MPI_Reduce ... \n");}
+//     int err;
+//     for (int istep=0; istep<nstep; istep++){
+//         //if (rank==0){printf("Start rank %d : MPI_Reduce istep = %d\n ... ",rank,istep);}
+//         //if (rank==10){printf("Start rank %d : MPI_Reduce istep = %d\n ... ",rank,istep);}
+//         err = MPI_Reduce(local[istep].data(),result[istep].data(),dim*dim,MPI_DOUBLE_COMPLEX,MPI_PROD,0,MPI_COMM_WORLD);
+//         //if (rank==0){printf("End rank %d : MPI_Reduce istep = %d\n ... ",rank,istep);}
+//         //if (rank==10){printf("End rank %d : MPI_Reduce istep = %d\n ... ",rank,istep);}
+//         MPI_Barrier(MPI_COMM_WORLD);
+//     }
+
+//     if (rank==0 && err == MPI_SUCCESS){printf("Succeed MPI_Reduce\n ... ");}
+//     MPI_Barrier(MPI_COMM_WORLD);
+
+//     if (rank!=0){
+//         delete[] result;
+//         return NULL;
+//     }else{
+//         return result;
+//     }
+
+//     //return result;
+// } 

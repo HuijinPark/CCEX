@@ -18,21 +18,24 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     ////////////////////////////////////////////////////////////////////////
     // General Options
     ////////////////////////////////////////////////////////////////////////
+    if (rank==0){ printMessage("Read General Options ...\n");}
+
     char methodDefault[MAX_CHARARRAY_LENGTH] = "cce";
     char* method = cJSON_ReadString(root,"method",true,methodDefault);
     Config_setMethod(cnf,method);
 
     char* quantity = cJSON_ReadString(root,"quantity",true,"coherence");
     Config_setQuantity(cnf,quantity);
-
+    
     int order = cJSON_ReadInt(root,"order",false,NULL);
     Config_setOrder(cnf,order);
 
     // Magnetic field can be set by [bx,by,bz] or bz
     float* bfield = cJSON_ReadFloat1d(root,"bfield",true,NULL,3);
+
     if (bfield != NULL){
         Config_setBfield(cnf,bfield);
-        freeFloat1d(bfield);
+        freeFloat1d(&bfield);
     }else{
         float bfieldtry[3] = {0.0,0.0,0.0};
         float bfield_z = cJSON_ReadFloat(root,"bfield",false,NULL);
@@ -57,44 +60,81 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     Config_setRbathcut(cnf,rbathcut);
 
     float rdipcutDefault = 0.0;
-    float rdipcut = cJSON_ReadFloat(root,"rdipcut",false,&rdipcutDefault);
+    float rdipcut = cJSON_ReadFloat(root,"rdipcut",true,&rdipcutDefault);
     Config_setRdipcut(cnf,rdipcut);
 
-    int nstate = cJSON_ReadInt(root,"nstate",false,NULL);
+    int nstateDefault = 0;
+    int nstate = cJSON_ReadInt(root,"nstate",true,&nstateDefault);
     Config_setNstate(cnf,nstate);
 
-    int seed = cJSON_ReadInt(root,"seed",false,NULL);
+    int seed = cJSON_ReadInt(root,"seed",true,NULL);
+    if (seed == -1) {
+        seed = time(NULL);
+    }
     Config_setSeed(cnf,seed);
+    srand(seed);
 
     ////////////////////////////////////////////////////////////////////////
     // Qubit and BathFiles
     ////////////////////////////////////////////////////////////////////////
+    if (rank==0){printMessage("Read File Options ...\n");}
 
     // qubitfile
     char* qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
-    Config_allocQubitfile(cnf);
-    Config_setQubitfile(cnf,qubitfile);
+    if (qubitfile != NULL) {
+        Config_allocQubitfile(cnf);
+        Config_setQubitfile(cnf,qubitfile);
+    }
+    
+
+    // gyrofile
+    char* gyrofile = cJSON_ReadFilePath(root,"gyrofile",true,NULL);
+    if (gyrofile != NULL) {
+        Config_allocGyrofile(cnf);
+        Config_setGyrofile(cnf,gyrofile);
+    }
 
     // bathfiles
     int length = 0;
     char** bathfiles = cJSON_ReadFilePath1d(&length, root, "bathfile", true, NULL); // get length
-    Config_setNbathfiles(cnf,length);
-    Config_allocBathfiles(cnf);
-    for (int i = 0; i < length; i++){
-        Config_setBathfiles_i(cnf,bathfiles[i],i);
+    if (bathfiles != NULL) {
+        Config_setNbathfiles(cnf,length);
+        Config_allocBathfiles(cnf);
+        Config_allocBathadjust(cnf);
+        for (int i = 0; i < length; i++){
+            Config_setBathfiles_i(cnf,bathfiles[i],i);
+        }        
+        freeChar2d(&bathfiles,length);
     }
-    freeChar2d(bathfiles,length);
-
+    
     // bathadjust
     double** bathadjustDefault = allocDouble2d(length,3); // all elements are 0.0
     double** bathadjust = cJSON_ReadDouble2d(root,"bathadjust",true,bathadjustDefault,length,3);
-
-    Config_allocBathadjust(cnf);
+    
     for (int i = 0; i < length; i++){
         Config_setBathadjust_i(cnf,bathadjust[i],i);
     }
-    freeDouble2d(bathadjustDefault,length);
-    freeDouble2d(bathadjust,length);
+
+    freeDouble2d(&bathadjustDefault,length);
+    freeDouble2d(&bathadjust,length);
+
+    // char* avaaxfile = cJSON_ReadFilePath(root,"avaaxfile",true,NULL);
+    // if (avaaxfile != NULL) {
+    //     Config_allocAvaaxfile(cnf);
+    //     Config_setAvaaxfile(cnf,avaaxfile);
+    // }
+
+    // char* statefile = cJSON_ReadFilePath(root,"statefile",true,NULL);
+    // if (statefile != NULL) {
+    //     Config_allocStatefile(cnf);
+    //     Config_setStatefile(cnf,statefile);
+    // }
+
+    // char* exstatefile = cJSON_ReadFilePath(root,"exstatefile",true,NULL);
+    // if (exstatefile != NULL) {
+    //     Config_allocExstatefile(cnf);
+    //     Config_setExstatefile(cnf,exstatefile);
+    // }
 
     ////////////////////////////////////////////////////////////////////////
     // Tensor file central spin option
@@ -147,7 +187,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     ////////////////////////////////////////////////////////////////////////
 
     cJSON_Delete(root);    
-    freeChar1d(data);
+    freeChar1d(&data);
 }
 
 /**
@@ -155,6 +195,8 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
  * @details Read &Qubit tag  options
 */
 void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
+
+    if (rank==0){printMessage("Read Qubit Options ...\n");}
 
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
@@ -176,7 +218,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
     
     // read qubitfile (priority)
     char* _qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
-
+    
     if (_qubitfile != NULL) {
         // when the qubitfile exist : doesn't read "Qubit section"
         // It is possible to read only one qubit
@@ -241,8 +283,8 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             float spin = cJSON_ReadFloat(qubit,"spin",true,&spinDefault);
             double gyro = cJSON_ReadDouble(qubit,"gyro",true,&gyroDefault);
             double* xyz = cJSON_ReadDouble1d(qubit,"xyz",false,NULL,3);
-            double detuning = cJSON_ReadDouble(qubit,"detuning",true,&detuningDefault);
-            float alphams = cJSON_ReadFloat(qubit,"alpha",true,&alphaDefault);
+            double detuning = cJSON_ReadDouble(qubit,"detuning",true,&detuningDefault); //kHz
+            float alphams = cJSON_ReadFloat(qubit,"alpha",true,&alphaDefault); 
             float betams = cJSON_ReadFloat(qubit,"beta",true,&betaDefault);
 
             // set qubit properties
@@ -250,11 +292,11 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             QubitArray_setQubit_i_spin(qa,spin,iqubit);
             QubitArray_setQubit_i_xyz(qa,xyz,iqubit);
             QubitArray_setQubit_i_gyro(qa,gyro,iqubit);
-            QubitArray_setQubit_i_detuning(qa,detuning,iqubit);
+            QubitArray_setQubit_i_detuning(qa,KHZ_TO_RADKHZ(detuning),iqubit); // radkHz
             QubitArray_setQubit_i_alpha_fromMs(qa,alphams,iqubit);
-            QubitArray_setQubit_i_beta_fromMs(qa,betams,iqubit);            
+            QubitArray_setQubit_i_beta_fromMs(qa,betams,iqubit);
             iqubit++;
-            freeDouble1d(xyz);
+            freeDouble1d(&xyz);
         }
         
         ////////////////////////////////////////////////////////////////////////
@@ -290,6 +332,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 
             // read tensor properties from the input file
             MatrixXcd tensor = cJSON_ReadTensor(intmap,"tensor",true,intmapDefault);
+            tensor = KHZ_TO_RADKHZ(tensor);
 
             // set Interaction map
             QubitArray_setIntmap_i_j(qa,tensor,qubit1_idx,qubit2_idx);
@@ -309,8 +352,8 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         if (psiamat != NULL && psibmat != NULL) {
             QubitArray_setPsia(qa,Double1dToMatrixXcd(psiamat,dim));
             QubitArray_setPsib(qa,Double1dToMatrixXcd(psibmat,dim));
-            freeDouble1d(psiamat);
-            freeDouble1d(psibmat);
+            freeDouble1d(&psiamat);
+            freeDouble1d(&psibmat);
         }else{
             QubitArray_setPsia(qa,psiDefault);
             QubitArray_setPsib(qa,psiDefault);
@@ -318,7 +361,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 
         if (psi0mat != NULL) {
             QubitArray_setPsi0(qa,Double1dToMatrixXcd(psi0mat,dim));
-            freeDouble1d(psi0mat);
+            freeDouble1d(&psi0mat);
         }else{
             QubitArray_setPsi0(qa,psiDefault);
         }
@@ -349,7 +392,9 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         }
     }    
     cJSON_Delete(root);
-    freeChar1d(data);
+    freeChar1d(&data);
+
+    QubitArray_report(qa);
 }
 
 /**
@@ -359,6 +404,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 */
 void cJSON_readOptionCluster(Cluster* clus, char* fccein){
 
+    if (rank==0){printMessage("Read Cluster Options ...\n");}
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
 
@@ -379,15 +425,16 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     if (nk!=NULL){
         Cluster_setNk(clus,nk);
     }else{;} 
-    freeInt1d(nk);
+    freeInt1d(&nk);
     // all element would be "0" in which we consider all pairs within rdip
 
     cJSON_Delete(root);
-    freeChar1d(data);
+    freeChar1d(&data);
 }
 
 void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
     
+    if (rank==0){printMessage("Read Pulse Options ...\n");}
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
 
@@ -439,15 +486,16 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
         exit(EXIT_FAILURE);
     }
 
-    freeDouble1d(sequenceinput);
+    freeDouble1d(&sequenceinput);
 
     cJSON_Delete(root);
-    freeChar1d(data);
+    freeChar1d(&data);
     
 }
 
 void cJSON_readOptionOutput(Output* op, char* fccein){
 
+    if (rank==0){printMessage("Read Output Options ...\n");}
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
 
@@ -455,13 +503,115 @@ void cJSON_readOptionOutput(Output* op, char* fccein){
     char* savemode = cJSON_ReadString(root,"savemode",true,savemodeDefault);
     Output_setSavemode(op,savemode);
 ;
-    char* outfileheadDefault = NULL;
-    char* outfilehead = cJSON_ReadString(root,"outfile",false,outfileheadDefault);
-    Output_allocOutfilehead(op);
-    Output_setOutfilehead(op,outfilehead);
+    char* outfileDefault = NULL;
+    char* outfile = cJSON_ReadString(root,"outfile",false,outfileDefault);
+    Output_allocOutfile(op);
+    Output_setOutfile(op,outfile);
 
     cJSON_Delete(root);
-    freeChar1d(data);
+    freeChar1d(&data);
+}
+
+
+/**
+ * @brief Read the option from the input file
+ * @details Read &Defect tag  options
+ * @note Unit of the input file :
+ * - rxyzs      : [Angstrom]
+ * - hypf       : [MHz]
+ * - efg        : [Hartree/Bohr^2]
+ * - zfs        : [MHz]
+ * - gyros      : [radkHz/G]
+ * - eqs        : [10^-30 m^2]
+ * - detuning   : [MHz]
+*/
+void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
+
+    if (rank==0){printMessage("Read Defect Options ...\n");}
+
+    char* data = cJSON_ReadFccein(fccein);
+    cJSON* root = cJSON_Parse(data);
+
+    int ndefect = 0;
+
+    cJSON* defectArray = cJSON_GetObjectItem(root,"Defect");
+    cJSON* defect;
+
+    // Read the number of defect information
+    cJSON_ArrayForEach(defect, defectArray){ndefect++;}
+
+    // // Allocate the defect array
+    DefectArray_setNdefect(dfa,ndefect);
+    DefectArray_allocDefect(dfa);
+
+    // Default values
+    bool apprxDefault = true; // do approximation (do not clusterize)
+    int naddspinDefault = 0;
+    int navaaxDefault = 0;
+
+    // Set the each defect information
+    int idf = 0;
+    int length = 0;
+    cJSON_ArrayForEach(defect,defectArray){
+
+        ////////////////////////////////////////////////////////////////////////
+        // General information && Allocation
+        ////////////////////////////////////////////////////////////////////////
+        int naddspin = cJSON_ReadInt(defect,"naddspin",true,&naddspinDefault);
+        int navaax = cJSON_ReadInt(defect,"navaax",true,&navaaxDefault);
+
+        DefectArray_setDefect_idf_naddspin(dfa,idf,naddspin);
+        DefectArray_setDefect_idf_navaax(dfa,idf,navaax+1); // 0th : main spin
+        DefectArray_allocDefect_idf(dfa,idf,navaax+1,naddspin);
+
+        char* dfname = cJSON_ReadString(defect,"dfname",false,NULL);
+        DefectArray_setDefect_idf_dfname(dfa,idf,dfname);
+
+        bool apprx = cJSON_ReadBool(defect,"apprx",true,apprxDefault);
+        DefectArray_setDefect_idf_apprx(dfa,idf,apprx);
+
+        ////////////////////////////////////////////////////////////////////////
+        // Spin information
+        ////////////////////////////////////////////////////////////////////////
+        char** types = cJSON_ReadString1d(defect,"types",true,NULL, naddspin);
+        DefectArray_setDefect_idf_types(dfa,idf,types);
+        freeChar2d(&types,naddspin);
+        
+        float* spins = cJSON_ReadFloat1d(defect,"spins",true,NULL,naddspin);    
+        DefectArray_setDefect_idf_spins(dfa,idf,spins);
+        freeFloat1d(&spins);
+
+
+        double* gyros = cJSON_ReadDouble1d(defect,"gyros",true,NULL,naddspin);        
+        DefectArray_setDefect_idf_gyros(dfa,idf,gyros);
+        freeDouble1d(&gyros);
+
+        double* eqs = cJSON_ReadDouble1d(defect,"eqs",true,NULL,naddspin);
+        DefectArray_setDefect_idf_eqs(dfa,idf,eqs);
+        freeDouble1d(&eqs);
+
+        ////////////////////////////////////////////////////////////////////////
+        // Relative position && tensor information for each axis/additional spins
+        ////////////////////////////////////////////////////////////////////////
+
+        // Read rxyzs other wise set 0.0
+        cJSON_ReadDefectInfo_IntCharDoubleArray(defect,"rxyzs",3,&(dfa->defect[idf]->rxyzs),dfa->defect[idf]->types,navaax+1,naddspin);
+
+        // Read hypf, otherwise set 0.0
+        cJSON_ReadDefectInfo_IntCharMatrixXcd2d(defect,"hypf",9,&(dfa->defect[idf]->hypf),dfa->defect[idf]->types,navaax+1,naddspin);
+
+        // Read quad, otherwise set 0.0
+        cJSON_ReadDefectInfo_IntCharMatrixXcd2d(defect,"efg",9,&(dfa->defect[idf]->efg),dfa->defect[idf]->types,navaax+1,naddspin);
+
+        // Read zfs, otherwise set 0.0
+        cJSON_ReadDefectInfo_IntCharMatrixXcd1d(defect,"zfs",9,&(dfa->defect[idf]->zfs),navaax+1);
+
+        // Read detuning, otherwise set 0.0
+        cJSON_ReadDefectInfo_IntCharDouble(defect,"detuning",&(dfa->defect[idf]->detuning),navaax+1);
+
+        // ////////////////////////////////////////////////////////////////////////
+        idf++;
+    }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -504,7 +654,7 @@ char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_va
         if (access(item->valuestring, R_OK) == 0) {
             return item->valuestring;
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s cannot open/read (%d)\n",key,access(item->valuestring, R_OK));
             fprintf(stderr, "Current path: %s\n",item->valuestring);
             return NULL;
         }
@@ -562,6 +712,35 @@ char* cJSON_ReadString(cJSON* root, char* key, bool _default, char* default_valu
     }else{
         if(_default){
             return default_value;
+        }else{
+            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+char** cJSON_ReadString1d(cJSON* root, char* key, bool _default, char** default_value, int size){
+
+    cJSON* item = cJSON_GetObjectItem(root, key);
+
+    if (cJSON_IsArray(item)) {
+        char** array = allocChar2d(size,MAX_CHARARRAY_LENGTH);
+        int i = 0;
+        cJSON* itemElement;
+        cJSON_ArrayForEach(itemElement, item){
+            if (i>=size){
+                fprintf(stderr, "Error: %s is too long in the input file\n",key);
+                exit(EXIT_FAILURE);
+            }else{
+                strcpy(array[i],itemElement->valuestring);
+            }
+            i++;
+        }
+        return array;
+    }else{
+        if(_default){
+            return default_value;
+            
         }else{
             fprintf(stderr, "Error: %s is not found in the input file\n",key);
             exit(EXIT_FAILURE);
@@ -667,10 +846,11 @@ double* cJSON_ReadDouble1d(cJSON* root, char* key, bool _default, double* defaul
 
 
 double** cJSON_ReadDouble2d(cJSON* root, char* key, bool _default, double** default_value, int row, int col){
+
     cJSON* item = cJSON_GetObjectItem(root, key);
-    
+    double** array = allocDouble2d(row,col);
+
     if (cJSON_IsArray(item)) {
-        double** array = allocDouble2d(row,col);
         int i = 0;
         cJSON* itemElement;
         cJSON_ArrayForEach(itemElement, item){
@@ -695,7 +875,8 @@ double** cJSON_ReadDouble2d(cJSON* root, char* key, bool _default, double** defa
         return array;
     }else{
         if(_default){
-            return default_value;
+            copyDouble2d(array,(const double**)default_value,row,col);
+            return array;
             
         }else{
             fprintf(stderr, "Error: %s is not found in the input file\n",key);
@@ -798,5 +979,244 @@ MatrixXcd cJSON_ReadTensor(cJSON* root, char* key, bool _default, MatrixXcd defa
             fprintf(stderr, "Error: %s is not found in the input file\n",key);
             exit(EXIT_FAILURE);
         }
+    }
+}
+
+void cJSON_ReadDefectInfo_IntCharDoubleArray(cJSON* root, char* key, int valuecount, double**** array, char** types, int navaax, int naddspin){
+
+    // itemArray2d : (int, char, doubleArray) * n
+    cJSON* itemArray2d = cJSON_GetObjectItem(root, key);
+
+    if (itemArray2d == NULL && (navaax == 0 && naddspin == 0)){
+        return;
+    }
+
+    // Initialize the array
+    for (int iax=0; iax<navaax; iax++){ 
+        for (int isp=0; isp<naddspin; isp++){
+            for (int j=0; j<valuecount; j++){
+                (*array)[iax][isp][j] = 0.0;
+            }
+        }
+    }
+
+    // set the array from the input file
+    int itemArray2dCount = cJSON_GetArraySize(itemArray2d);
+
+    for (int i = 0; i < itemArray2dCount; i++) {
+
+        // itemArray1d : int, char, doubleArray
+        cJSON* itemArray1d = cJSON_GetArrayItem(itemArray2d, i);
+
+        if (!cJSON_IsArray(itemArray1d) || cJSON_GetArraySize(itemArray1d) != 3) {
+            fprintf(stderr, "Each '%s[%d]' entry should be an array of three elements\n", key, i);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find axis index
+        int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
+        if (iax < 0 || iax > navaax) {
+            fprintf(stderr, "Error: %s[%d] is out of range\n", key, i);
+            exit(EXIT_FAILURE);
+        }
+        
+        // Find spin index
+        char* spname = cJSON_GetArrayItem(itemArray1d, 1)->valuestring;
+        int isp = findIndexChar(types,0,naddspin-1,spname);
+        if (isp == -1) {
+            fprintf(stderr, "Error: %s is not found in the input file\n",spname);
+            exit(EXIT_FAILURE);
+        }
+        
+        // Find double array values
+        cJSON* values = cJSON_GetArrayItem(itemArray1d, 2);
+
+        if (!cJSON_IsArray(values) || cJSON_GetArraySize(values) != valuecount) {
+            fprintf(stderr, "The third element of '%s[%d]' should be an array or the length is not %d\n", key, i,valuecount);
+            exit(EXIT_FAILURE);
+        }
+    
+        for (int j = 0; j < valuecount; j++) {
+            (*array)[iax][isp][j] = cJSON_GetArrayItem(values, j)->valuedouble;
+        }
+
+
+
+    }
+}
+
+void cJSON_ReadDefectInfo_IntCharMatrixXcd2d(cJSON* root, char* key, int valuecount, MatrixXcd*** array, char** types, int navaax, int naddspin){
+
+    if (valuecount != 9){
+        fprintf(stderr, "Error: valuecount should be 9\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // itemArray2d : (int, char, MatrixXcd) * n
+    cJSON* itemArray2d = cJSON_GetObjectItem(root, key);
+
+    if (itemArray2d == NULL && (navaax == 0 && naddspin == 0)){
+        return;
+    }
+
+    // Initialize the array
+    for (int iax=0; iax<navaax; iax++){ 
+        for (int isp=0; isp<naddspin; isp++){
+            (*array)[iax][isp] = MatrixXcd::Zero(3,3);
+        }
+    }
+
+
+
+    int itemArray2dCount = cJSON_GetArraySize(itemArray2d);
+
+    for (int i = 0; i < itemArray2dCount; i++) {
+
+        // itemArray1d : int, char, MatrixXcd
+        cJSON* itemArray1d = cJSON_GetArrayItem(itemArray2d, i);
+
+        if (!cJSON_IsArray(itemArray1d) || cJSON_GetArraySize(itemArray1d) != 3) {
+            fprintf(stderr, "Each '%s[%d]' entry should be an array of three elements\n", key, i);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find axis index
+        int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
+        if (iax < 0 || iax > navaax) {
+            fprintf(stderr, "Error: %s[%d] is out of range\n", key, i);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find spin index
+        char* spname = cJSON_GetArrayItem(itemArray1d, 1)->valuestring;
+        int isp = findIndexChar(types,0,naddspin-1,spname);
+        if (isp == -1) {
+            fprintf(stderr, "Error: %s is not found in the input file\n",spname);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find double array values
+        cJSON* values = cJSON_GetArrayItem(itemArray1d, 2);
+
+        if (!cJSON_IsArray(values) || cJSON_GetArraySize(values) != valuecount) {
+            fprintf(stderr, "The third element of '%s[%d]' should be an array or the length is not %d\n", key, i,valuecount);
+            exit(EXIT_FAILURE);
+        }
+
+        for (int j = 0; j < valuecount; j++) {
+            int row = j / 3;
+            int col = j % 3;
+            double value = cJSON_GetArrayItem(values, j)->valuedouble;
+            (*array)[iax][isp](row,col) = doublec(value,0.0);
+        }
+    }
+}
+
+void cJSON_ReadDefectInfo_IntCharMatrixXcd1d(cJSON* root, char* key, int valuecount, MatrixXcd** array, int navaax){
+
+    if (valuecount != 9){
+        fprintf(stderr, "Error: valuecount should be 9\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // itemArray2d : (int, char, MatrixXcd) * n
+    cJSON* itemArray2d = cJSON_GetObjectItem(root, key);
+
+    if (itemArray2d == NULL && (navaax == 0)){
+        return;
+    }
+
+    // Initialize the array
+    for (int iax=0; iax<navaax; iax++){ 
+        (*array)[iax] = MatrixXcd::Zero(3,3);
+    }
+
+    int itemArray2dCount = cJSON_GetArraySize(itemArray2d);
+
+    for (int i = 0; i < itemArray2dCount; i++) {
+
+        // itemArray1d : int, char, MatrixXcd
+        cJSON* itemArray1d = cJSON_GetArrayItem(itemArray2d, i);
+
+        if (!cJSON_IsArray(itemArray1d) || cJSON_GetArraySize(itemArray1d) != 3) {
+            fprintf(stderr, "Each '%s[%d]' entry should be an array of three elements\n", key, i);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find axis index
+        int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
+        if (iax < 0 || iax > navaax) {
+            fprintf(stderr, "Error: %s[%d] is out of range\n", key, i);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find spin index
+        char* spname = cJSON_GetArrayItem(itemArray1d, 1)->valuestring;
+        if (strcasecmp(spname,"e") != 0) {
+            fprintf(stderr, "Error: key : %s, %s is not found in the input file\n",key,spname);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find double array values
+        cJSON* values = cJSON_GetArrayItem(itemArray1d, 2);
+
+        if (!cJSON_IsArray(values) || cJSON_GetArraySize(values) != valuecount) {
+            fprintf(stderr, "The third element of '%s[%d]' should be an array or the length is not %d\n", key, i,valuecount);
+            exit(EXIT_FAILURE);
+        }
+
+        for (int j = 0; j < valuecount; j++) {
+            int row = j / 3;
+            int col = j % 3;
+            double value = cJSON_GetArrayItem(values, j)->valuedouble;
+            (*array)[iax](row,col) = doublec(value,0.0);
+        }
+    }
+}
+
+
+
+void cJSON_ReadDefectInfo_IntCharDouble(cJSON* root, char* key, double** array, int navaax){
+
+    // itemArray2d : (int, char, MatrixXcd) * n
+    cJSON* itemArray2d = cJSON_GetObjectItem(root, key);
+
+    if (itemArray2d == NULL && (navaax == 0)){
+        return;
+    }
+
+    // Initialize the array
+    for (int iax=0; iax<navaax; iax++){ 
+        (*array)[iax] = 0.0;
+    }
+
+    int itemArray2dCount = cJSON_GetArraySize(itemArray2d);
+
+    for (int i = 0; i < itemArray2dCount; i++) {
+
+        // itemArray1d : int, char, MatrixXcd
+        cJSON* itemArray1d = cJSON_GetArrayItem(itemArray2d, i);
+
+        if (!cJSON_IsArray(itemArray1d) || cJSON_GetArraySize(itemArray1d) != 3) {
+            fprintf(stderr, "Each '%s[%d]' entry should be an array of three elements\n", key, i);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find axis index
+        int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
+        if (iax < 0 || iax > navaax) {
+            fprintf(stderr, "Error: %s[%d] is out of range\n", key, i);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find spin index
+        char* spname = cJSON_GetArrayItem(itemArray1d, 1)->valuestring;
+        if (strcasecmp(spname,"e") != 0) {
+            fprintf(stderr, "Error: key : %s, %s is not found in the input file\n",key,spname);
+            exit(EXIT_FAILURE);
+        }
+
+        // Find double array values
+        (*array)[iax] = cJSON_GetArrayItem(itemArray1d, 2)->valuedouble;
     }
 }

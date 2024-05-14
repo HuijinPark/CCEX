@@ -160,9 +160,13 @@ double      BathArray_dist_i_j(BathArray* ba, int i, int j);
 void        BathArray_setBathHypfs(BathArray* ba, QubitArray* qa);
 
 void        BathArray_setBathDisorders(BathArray* ba);
+// ! update bath disorder if there is additional spins
+
 double      BathArray_getBath_i_disorder_j(BathArray* ba, int isp, int jsp);
 
 double      BathArray_getOverhaus(BathArray* ba, int iq); // overhaus field for i-th qubit
+// ! update bath overhausers if there is additional spins
+
 double      BathArray_getBath_i_overhaus_j(BathArray* ba, int isp, int iq); // overhaus field for i-th qubit
 
 // random state generator
@@ -255,5 +259,33 @@ void        BathArray_freeProp_gyros(BathArray* ba);
 void        BathArray_freeProp_spins(BathArray* ba);
 void        BathArray_freeBath(BathArray* ba);
 void        BathArray_freeBath_i_hypf(BathArray* ba, int i);
+
+// BathSpin
+void       BathSpin_setName(BathSpin* bs, char* name);
+void       BathSpin_setName_withType(BathSpin* bs, char* name, char* type); // name : mainspin name, type : subspin
+void       BathSpin_setSpin(BathSpin* bs, float spin);
+void       BathSpin_setGyro(BathSpin* bs, double gyro);
+void       BathSpin_setXyz(BathSpin* bs, double* xyz);
+void       BathSpin_setXyz_fromRxyz(BathSpin* bs, double* xyz0, double* rxyz); // Input : xyz0 : main spin position, rxyz : sub spin relative position, Output : xyz : sub spin position
+void       BathSpin_setState(BathSpin* bs, float state);
+void       BathSpin_setDetuning(BathSpin* bs, double detuning);
+void       BathSpin_setDisorder(BathSpin* bs, double disorder);
+void       BathSpin_setHypf_i(BathSpin* bs, MatrixXcd hypf, int iq);
+void       BathSpin_setQuad(BathSpin* bs, MatrixXcd quad);
+void       BathSpin_setQuad_fromEFG(BathSpin* bs, MatrixXcd efg, double eq, float spin); // Input : efg : Hartree/Bohr^2, eq : 10e-30 m^2 , spin number, Output : quad : radkHz
+void       BathSpin_setHypfSub(BathSpin* bs, MatrixXcd hypf_sub);
+void       BathSpin_setMainspidx(BathSpin* bs, int mainspidx);
+
+char*      BathSpin_getName(BathSpin* bs);
+float      BathSpin_getSpin(BathSpin* bs);
+double     BathSpin_getGyro(BathSpin* bs);
+double*    BathSpin_getXyz(BathSpin* bs);
+float      BathSpin_getState(BathSpin* bs);
+double     BathSpin_getDetuning(BathSpin* bs);
+double     BathSpin_getDisorder(BathSpin* bs);
+MatrixXcd  BathSpin_getHypf_i(BathSpin* bs, int iq);
+MatrixXcd  BathSpin_getQuad(BathSpin* bs);
+MatrixXcd  BathSpin_getHypfSub(BathSpin* bs);
+int        BathSpin_getMainspidx(BathSpin* bs);
 
 #endif // __CCEX_BATH_H_

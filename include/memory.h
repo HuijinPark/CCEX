@@ -18,9 +18,9 @@ void reallocInt1d(int **ptr, size_t newrow);
 void reallocInt2d(int ***ptr, size_t oldrow, size_t newrow, size_t col);
 void reallocInt3d(int ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2);
 
-void freeInt1d(int *ptr);
-void freeInt2d(int **ptr, size_t m);
-void freeInt3d(int ***ptr, size_t m, size_t n);
+void freeInt1d(int **ptr);
+void freeInt2d(int ***ptr, size_t m);
+void freeInt3d(int ****ptr, size_t m, size_t n);
 
 // double
 double* allocDouble1d(size_t m);
@@ -31,9 +31,9 @@ void reallocDouble1d(double **ptr, size_t newrow);
 void reallocDouble2d(double ***ptr, size_t oldrow, size_t newrow, size_t col);
 void reallocDouble3d(double ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2);
 
-void freeDouble1d(double *ptr);
-void freeDouble2d(double **ptr, size_t m);
-void freeDouble3d(double ***ptr, size_t m, size_t n);
+void freeDouble1d(double **ptr);
+void freeDouble2d(double ***ptr, size_t m);
+void freeDouble3d(double ****ptr, size_t m, size_t n);
 
 // float
 float* allocFloat1d(size_t m);
@@ -44,9 +44,9 @@ void reallocFloat1d(float **ptr, size_t newrow);
 void reallocFloat2d(float ***ptr, size_t oldrow, size_t newrow, size_t col);
 void reallocFloat3d(float ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2);
 
-void freeFloat1d(float *ptr);
-void freeFloat2d(float **ptr, size_t m);
-void freeFloat3d(float ***ptr, size_t m, size_t n);
+void freeFloat1d(float **ptr);
+void freeFloat2d(float ***ptr, size_t m);
+void freeFloat3d(float ****ptr, size_t m, size_t n);
 
 // char
 char* allocChar1d(size_t m);
@@ -57,9 +57,19 @@ void reallocChar1d(char **ptr, size_t newrow);
 void reallocChar2d(char ***ptr, size_t oldrow, size_t newrow, size_t col);
 void reallocChar3d(char ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2);
 
-void freeChar1d(char *ptr);
-void freeChar2d(char **ptr, size_t m);
-void freeChar3d(char ***ptr, size_t m, size_t n);
+void freeChar1d(char **ptr);
+void freeChar2d(char ***ptr, size_t m);
+void freeChar3d(char ****ptr, size_t m, size_t n);
+
+// MatrixXcd 
+MatrixXcd* allocMatrixXcd1d(size_t m);
+MatrixXcd** allocMatrixXcd2d(size_t m, size_t n);
+MatrixXcd*** allocMatrixXcd3d(size_t m, size_t n, size_t l);
+
+void freeMatrixXcd1d(MatrixXcd **ptr);
+void freeMatrixXcd2d(MatrixXcd ***ptr, size_t m);
+void freeMatrixXcd3d(MatrixXcd ****ptr, size_t m, size_t n);
+
 
 // DoubleTensor
 DoubleTensor* allocDoubleTensor1d(size_t m);
@@ -70,9 +80,9 @@ void reallocDoubleTensor1d(DoubleTensor **ptr, size_t newrow);
 void reallocDoubleTensor2d(DoubleTensor ***ptr, size_t oldrow, size_t newrow, size_t col);
 void reallocDoubleTensor3d(DoubleTensor ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2);
 
-void freeDoubleTensor1d(DoubleTensor *ptr);
-void freeDoubleTensor2d(DoubleTensor **ptr, size_t m);
-void freeDoubleTensor3d(DoubleTensor ***ptr, size_t m, size_t n);
+void freeDoubleTensor1d(DoubleTensor **ptr);
+void freeDoubleTensor2d(DoubleTensor ***ptr, size_t m);
+void freeDoubleTensor3d(DoubleTensor ****ptr, size_t m, size_t n);
 
 /* Basic Memory control ------------------------------------*/
 
@@ -87,9 +97,9 @@ void reallocArray2d(void ***ptr, size_t oldrow, size_t newrow, size_t col, size_
 void reallocArray3d(void ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2, size_t size);
 
 // basic memory free
-void freeArray1d(void *ptr);
-void freeArray2d(void **ptr, size_t m);
-void freeArray3d(void ***ptr, size_t m, size_t n);
+void freeArray1d(void **ptr);
+void freeArray2d(void ***ptr, size_t m);
+void freeArray3d(void ****ptr, size_t m, size_t n);
 
 
 /* Copy dynamically allocated array ------------------------*/

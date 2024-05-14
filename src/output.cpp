@@ -4,16 +4,22 @@
 Output* Output_init(){
     Output* op = (Output*)allocArray1d(1,sizeof(Output));
     op->savemode[0] = '\0';
-    op->outfilehead = NULL;
     op->outfile = NULL;
-
     return op;
-
 }
 
-void Output_save(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, float deltat){
+void Output_save(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, float deltat, int istate){
 
     char* outfile = Output_getOutfile(op);
+
+    // istate to string
+    char istate_str[10];
+    if (istate==0){
+        istate_str[0] = '\0';
+    }
+    else{
+        sprintf(istate_str, "_state%d", istate);
+    }
 
     int dim = result_wD[0].rows();
 
@@ -21,9 +27,11 @@ void Output_save(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nst
     char* outfile_nD = allocChar1d(MAX_FILEPATH);
 
     strcpy(outfile_wD, outfile);
+    strcat(outfile_wD, istate_str);
     strcat(outfile_wD, "_wiDiv");
 
     strcpy(outfile_nD, outfile);
+    strcat(outfile_nD, istate_str);
     strcat(outfile_nD, "_noDiv");
 
     FILE* fp_wD = fopen(outfile_wD, "w");
@@ -77,58 +85,58 @@ void Output_save(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nst
     fclose(fp_wD);
     fclose(fp_nD);
 
-    freeChar1d(outfile_wD);
-    freeChar1d(outfile_nD);
+    freeChar1d(&outfile_wD);
+    freeChar1d(&outfile_nD);
     
     return;
 }
 
-void Output_save_all(Output* op, MatrixXcd* result, int nstep, float deltat){
+void Output_save_all(Output* op, MatrixXcd* result, int nstep, float deltat, int* cluster, int nspin, int istate){
 
-    char* outfile = Output_getOutfile(op);
+    //////////////////////////////
+    // Save the original one
+    char* outfile_original = allocChar1d(MAX_FILEPATH);
+    strcpy(outfile_original, Output_getOutfile(op));
+    //////////////////////////////
 
-    int dim = result[0].rows();
+    //////////////////////////////
+    // Change outfile name
 
-    FILE* fp = fopen(outfile, "w");
-
-    if (fp == NULL){    
-        printf("Error: cannot open file %s\n", outfile);
-        exit(1);
+    // cluster to string
+    char cluster_str[100] = "";
+    for (int i=0; i<nspin; i++){
+        char spin_str[100];
+        sprintf(spin_str, "_%d", cluster[i]);
+        strcat(cluster_str, spin_str);
     }
 
-    // write format :
-    // for all nstate , write time dm00 dm01 dm02 ... dmnn (write only)
-    for (int i=0; i<nstep; i++){
-        int c = 0;
-        fprintf(fp, "%15g\t", (float)i*deltat);
-        for (int j=0; j<dim; j++){
-            for (int k=0; k<dim; k++){
-
-                fprintf(fp, "%+15.10lf", result[i](j,k).real());
-
-                if (std::isnan(result[i](j,k).imag())){
-                    fprintf(fp, "%+-4lfj%10s\t", result[i](j,k).imag()," ");
-                }else{
-                    fprintf(fp, "%+-13.10lfj\t", result[i](j,k).imag());
-                }
-
-                if ((c%3==2) && (j*k!=(dim-1)*(dim-1))){
-                    fprintf(fp, "\n");
-                    fprintf(fp, "%15s\t"," ");
-
-                }
-                c++;
-            }
-        }
-        fprintf(fp, "\n");
+    // istate to string
+    char istate_str[10];
+    if (istate==0){
+        istate_str[0] = '\0';
     }
+    else{
+        sprintf(istate_str, "_state%d", istate);
+    }
+       
+    // add string outfilehead, cluster, istate to outfile
+    strcat(op->outfile, cluster_str);
+    strcat(op->outfile, istate_str);  
+    
+    Output_save(op, result, result, nstep, deltat, istate);
+    //////////////////////////////
 
-    fclose(fp);
+    //////////////////////////////
+    // Restore outfile name
+    strcpy(op->outfile, outfile_original);
+    //////////////////////////////
+
+    freeChar1d(&outfile_original);
 
     return;
 }
 
-void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, float deltat, double Azx, double Azz, char* bathfile){
+void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, float deltat, int istate, double Azx, double Azz, char* bathfile){
 
     char* savemode = Output_getSavemode(op);
 
@@ -139,15 +147,27 @@ void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, in
 
     char* outfile = Output_getOutfile(op);
 
+    // istate to string
+    char istate_str[10];
+    if (istate==0){
+        istate_str[0] = '\0';
+    }
+    else{
+        sprintf(istate_str, "_state%d", istate);
+    }
+
+
     int dim = result_wD[0].rows();
 
     char* outfile_wD = allocChar1d(MAX_FILEPATH);
     char* outfile_nD = allocChar1d(MAX_FILEPATH);
 
     strcpy(outfile_wD, outfile);
+    strcat(outfile_wD, istate_str);
     strcat(outfile_wD, "_wiDiv");
 
     strcpy(outfile_nD, outfile);
+    strcat(outfile_nD, istate_str);
     strcat(outfile_nD, "_noDiv");
 
     FILE* fp_wD = fopen(outfile_wD, "w");
@@ -199,18 +219,15 @@ void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, in
     fclose(fp_wD);
     fclose(fp_nD);
     
-    freeChar1d(outfile_wD);
-    freeChar1d(outfile_nD);
+    freeChar1d(&outfile_wD);
+    freeChar1d(&outfile_nD);
     return;
 }
-
-
-
 
 void Output_setSavemode(Output* op, char* savemode){
 
     const int opsize = 4;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"all", "normal", "avg", "info"};
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"all", "normal", "info"};
     int idx = findIndexCharFix(options,0,opsize-1,savemode);
     if (idx == -1) {
         fprintf(stderr, "Error: current savemode options (%s) is not available\n",savemode);
@@ -223,109 +240,25 @@ char* Output_getSavemode(Output* op){
     return op->savemode;
 }
 
-
-void Output_allocOutfilehead(Output* op){
-    op->outfilehead = allocChar1d(MAX_FILEPATH);
-}  
-
 void Output_allocOutfile(Output* op){
     op->outfile = allocChar1d(MAX_FILEPATH);
 }
 
-void Output_freeOutfilehead(Output* op){
-    freeArray1d(op->outfilehead);
-}
-
 void Output_freeOutfile(Output* op){
-    freeArray1d(op->outfile);
+    freeArray1d((void**)&(op->outfile));
 }
 
-void Output_setOutfilehead(Output* op, char* outfilehead){
-    strcpy(op->outfilehead, outfilehead);
-}
-
-char* Output_getOutfilehead(Output* op){
-    return op->outfilehead;
-}
-
-
-// set outfile depending on the savemode
-void Output_setOutfile_all(Output* op, int* cluster, int nspin, int istate){
-
-    // Arguments :
-    // op : Output struct
-    // cluster : cluster[0] ~ cluster[nspin-1] : cluster information(spin index)
-    // nspin : number of spins
-    // istate : state index
-
-    // initialize outfile
-    strcpy(op->outfile, "\0");
-
-    // cluster to string
-    char cluster_str[100] = "";
-    for (int i=0; i<nspin; i++){
-        char spin_str[100];
-        sprintf(spin_str, "_%d", cluster[i]);
-        strcat(cluster_str, spin_str);
-    }
-
-    // istate to string
-    char istate_str[10];
-    if (istate==0){
-        istate_str[0] = '\0';
-    }
-    else{
-        sprintf(istate_str, "_state%d", istate);
-    }
-       
-    // add string outfilehead, cluster, istate to outfile
-    strcpy(op->outfile, op->outfilehead);
-    strcat(op->outfile, cluster_str);
-    strcat(op->outfile, istate_str);  
-}
-
-void Output_setOutfile_avg(Output* op){
-
-    // initialize outfile
-    strcpy(op->outfile, "\0");
-       
-    // add string outfilehead, avg to outfile
-    strcpy(op->outfile, op->outfilehead);
-    strcat(op->outfile, "_avg");
-}
-
-void Output_setOutfile_normal(Output* op, int istate){
-    
-    // initialize outfile
-    strcpy(op->outfile, "\0");
-
-    // istate to string
-    char istate_str[10];
-    if (istate==0){
-        istate_str[0] = '\0';
-    }
-    else{
-        sprintf(istate_str, "_%d", istate);
-    }
-    
-    // add string outfilehead, istate to outfile
-    strcpy(op->outfile, op->outfilehead);
-    strcat(op->outfile, istate_str);  
-}
-
-void Output_setOutfile_info(Output* op, int istate){
-    Output_setOutfile_normal(op, istate);
+void Output_setOutfile(Output* op, char* outfile){
+    strcpy(op->outfile, outfile);
 }
 
 char* Output_getOutfile(Output* op){
     return op->outfile;
 }
 
-
 void Output_freeAll(Output* op){
-    Output_freeOutfilehead(op);
     Output_freeOutfile(op);
-    freeArray1d(op);
+    freeArray1d((void**)&op);
 }
 
 void Output_report(Output* op){
@@ -334,7 +267,6 @@ void Output_report(Output* op){
     printTitle("Structure Output");
 
     printStructElementChar("savemode", op->savemode);
-    printStructElementChar("outfilehead", op->outfilehead);
     printStructElementChar("outfile", op->outfile);
     
     printf("\n");

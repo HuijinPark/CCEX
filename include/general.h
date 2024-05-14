@@ -33,6 +33,10 @@ typedef struct {
     int nbathfiles; /**< Number of bath files */
     char** bathfiles; /**< Bath file names */
     double** bathadjust; /**< Bath adjust values */
+    char* avaaxfile; /**< Available principal axis */
+    char* statefile; /**< State file */
+    char* exstatefile ; /**< extra spin' state file */
+    int* _flines; /**< file line number of each bath spins */
 
     // tensorfile-related
     double DefectTotSpin; /**< Total spin of defect : default : 1 */
@@ -108,6 +112,9 @@ char*   Config_getGyrofile(Config* cnf);
 int     Config_getNbathfiles(Config* cnf);
 char*   Config_getBathfiles_i(Config* cnf,int i);
 double* Config_getBathadjust_i(Config* cnf,int i);
+char*   Config_getAvaaxfile(Config* cnf);
+char*   Config_getStatefile(Config* cnf);
+char*   Config_getExstatefile(Config* cnf);
 double  Config_getDefectTotSpin(Config* cnf);
 double  Config_getCorrTotSpin(Config* cnf);
 char*   Config_getHf_tensorfile(Config* cnf);
@@ -137,6 +144,9 @@ void Config_setGyrofile(Config* cnf, char* gyrofile);
 void Config_setNbathfiles(Config* cnf, int nbathfiles);
 void Config_setBathfiles_i(Config* cnf, char* bathfiles, int i);
 void Config_setBathadjust_i(Config* cnf, double* bathadjust, int i);
+void Config_setAvaaxfile(Config* cnf, char* avaaxfile);
+void Config_setStatefile(Config* cnf, char* statefile);
+void Config_setExstatefile(Config* cnf, char* exstatefile);
 
 void Config_setDefectTotSpin(Config* cnf, double DefectTotSpin);
 void Config_setCorrTotSpin(Config* cnf, double CorrTotSpin);
@@ -154,6 +164,9 @@ void Config_reallocBathfiles(Config* cnf, int oldsize, int newsize);
 void Config_allocBathadjust(Config* cnf);
 void Config_allocGyrofile(Config* cnf);
 void Config_allocQubitfile(Config* cnf);
+void Config_allocAvaaxfile(Config* cnf);
+void Config_allocStatefile(Config* cnf);
+void Config_allocExstatefile(Config* cnf);
 void Config_allocHf_tensorfile(Config* cnf);
 void Config_allocQd_tensorfile(Config* cnf);
 void Config_allocQd_tensorfile_woqubit(Config* cnf);
@@ -164,6 +177,9 @@ void Config_freeBathfiles(Config* cnf);
 void Config_freeBathadjust(Config* cnf);
 void Config_freeGyrofile(Config* cnf);
 void Config_freeQubitfile(Config* cnf);
+void Config_freeAvaaxfile(Config* cnf);
+void Config_freeStatefile(Config* cnf);
+void Config_freeExstatefile(Config* cnf);
 void Config_freeHf_tensorfile(Config* cnf);
 void Config_freeQd_tensorfile(Config* cnf);
 void Config_freeQd_tensorfile_woqubit(Config* cnf);
