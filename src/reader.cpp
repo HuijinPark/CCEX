@@ -58,6 +58,8 @@ void readQubitfile(QubitArray* qa, Config* cnf){
 
 void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
 
+    char message[MAX_FILEPATH];
+
     int     nqubit      = QubitArray_getNqubit(qa);
     int     nbathfiles  = Config_getNbathfiles(cnf);
     double  rbath       = Config_getRbath(cnf);
@@ -78,10 +80,6 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
         char*   fname       = Config_getBathfiles_i(cnf,i);
         double* bathadjust  = Config_getBathadjust_i(cnf,i);
 
-        // Find the lines that the bath spin is written
-        // int fline = 1;
-        // int fidx = 0;
-
         // file open        
         data = fopen(fname,"r");
         if(data==NULL){
@@ -96,6 +94,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
         char name[100];
 
         // Read first line (the number of spins)
+        int fline = 1; // the first line is the number of spins
         fscanf(data, "%*lf %*lf %*lf %*s\n");
 
         while(!feof(data)){
@@ -104,33 +103,33 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
             xyz[0] += bathadjust[0];
             xyz[1] += bathadjust[1];
             xyz[2] += bathadjust[2];
-            // fline++;
+            fline++; // the line is started from 2
 
             if (count == 4){
                 double r = QubitArray_mindist(xyz, qa);
                 if ((r <= rbath) && (r >= rbathcut)){
 
-                    ////////////////////////////////
-                    // Check the line
-                    // reallocInt1d(&(cnf->_flines), fidx+1);
-                    // cnf->_flines[fidx] = fline;
-                    // fidx++;
-                    ////////////////////////////////
-
+                    //////////////////////////////
                     // increase the number of spins
                     nspin++;
                     BathArray_setNspin(ba, nspin);                
 
                     // allocate the BathArray->Bath
                     if (nspin == 0){
-                        BathArray_allocBath(ba, nqubit);
+                        BathArray_allocBath(ba, nqubit); // alloc bath spins
+                        Config_alloc_flines(cnf, nspin); // alloc fline
                     }else{
                         BathArray_reallocBath(ba, nspin-1, nspin, nqubit);
+                        Config_realloc_flines(cnf, nspin-1, nspin);
                     }
 
                     // set the bath
                     BathArray_setBath_i_name(ba, name, nspin-1);
                     BathArray_setBath_i_xyz(ba, xyz, nspin-1);
+
+                    // set fline
+                    Config_set_nflines(cnf, nspin);
+                    Config_set_flines_i(cnf, fline, nspin-1);
 
                     // set the bath spin properties
                     int ispeceis = findIndexChar(names,0,nspecies,name);
@@ -152,61 +151,328 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
             }
         }
         fclose(data);
-        if(rank==0){printf("        Read BathFile[%d] : %s\n",i,fname);}
-        if(rank==0){printf("        Current nspin = %d \n",nspin);}
-        if(rank==0){printf("\n");}
+
+        ////////////////////////////////////////////////////////////////////////
+        // Print
+        if(rank==0){
+            sprintf(message,"Read BathFile[%d] : %s\n",i,fname); printMessage(message);
+            for (int isp=0; isp<nspin; isp++){
+                if (verbosity || (isp<3 || isp>nspin-3)){ 
+                    printf("        ( fline %5d )",Config_get_flines_i(cnf,isp));
+                    // sprintf(message,"( fline %3d ) ",Config_get_flines_i(cnf,isp)); printMessage(message);
+                    BathArray_reportBath_i_props(ba, isp);
+                }
+                if (!verbosity && isp==3){
+                    sprintf(message,"   : \n"); printMessage(message);
+                }
+            }
+        }
+        ////////////////////////////////////////////////////////////////////////
     }
     
-    // cnf->_flines[0] = fidx;
-    // if (fidx != nspin+1){
-    //     fprintf(stderr,"Error(readBathFile): The number of bath spins is not consistent\n");
-    //     fprintf(stderr,"The number of bath spins from the file : %d\n",nspin);
-    //     fprintf(stderr,"The number of bath spins from the file line : %d - 1\n",fidx);
-    //     exit(EXIT_FAILURE);
-    // }
+    if (Config_get_nflines(cnf) != nspin){
+        fprintf(stderr,"Error(readBathFile): The number of bath spins is not consistent\n");
+        fprintf(stderr,"The number of bath spins from the file : %d\n",nspin);
+        fprintf(stderr,"The number of bath spins from the file line : %d\n",Config_get_nflines(cnf));
+        exit(EXIT_FAILURE);
+    }
 
 }
 
-// void readStatefile(BathArray* ba, Config* cnf, int i){
+void setBathStates(BathArray* ba, Config* cnf, int i){
+
+    /**
+     * @param ba : BathArray
+     * @param cnf : Config
+     * @param i : index of the state file ( 1 <= i <= nstate )
+     * @details 
+     *  If i is zero, this calculation is for the ensemble approach
+     *  Therefore, the bath states shouldn't be set
+    */
+
+    // Check the number of bath states if i is zero
+    if (i == 0){
+        // err
+        if (rank==0){
+            fprintf(stderr,"Error(setBathState): The index of the state file is zero\n");
+            fprintf(stderr,"This calculation is for the ensemble approach\n");
+            fprintf(stderr,"Therefore, the bath states shouldn't be set\n");
+        }
+        exit(EXIT_FAILURE);
+    }
+
+    // For print
+    char message[MAX_FILEPATH];
+
+    // Set filename as fname_i
+    char fname[MAX_FILEPATH];
+    sprintf(fname,"%s%d",Config_getStatefile(cnf),i);
+
+    // Read the state file
+    FILE* data;
+    data = fopen(fname,"r");
+
+    // Check the nbathfiles is larger than 1
+    int nbathfiles = Config_getNbathfiles(cnf);
+    if(data==NULL || nbathfiles > 1){
+        
+        if (rank==0){
+            if (data == NULL){
+                sprintf(message,"Warning(readStateFile): Cannot open the state file (%s)\n",fname); printMessage(message);
+            }
+            if (nbathfiles > 1){
+                sprintf(message,"Warning(readStateFile): The number of bathfiles is larger than 1\n"); printMessage(message);
+            }
+            sprintf(message,"The bath state is randomly generated\n"); printMessage(message);
+        }
+        BathArray_setBathStatesRandom(ba);
+        return;
+
+    }else{
+
+        // Read the number of lines
+        int idx = 0;
+        int count = fscanf(data, "%*s\n");
+        int fline = 1; // the first line is the length of the file
+
+        while(!feof(data)){
+
+            //Read the bath state from the file
+            //We will get the bath state at the same line of bathfile that we get the bath spins
+            fline++;
+            // Read the bath state
+            float state = 0.0;
+            count = fscanf(data, "%f\n", &state);
+
+            if (fline == Config_get_flines_i(cnf,idx)){
+                if (count == 1){
+                    BathArray_setBath_i_state(ba, state, idx);
+                    idx++;
+                }else{
+                    fprintf(stderr,"Error(readStateFile): StateFile format is NOT `float` \n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+        }
+        fclose(data);
+
+        int nspin = BathArray_getNspin(ba);
+        if (idx == nspin){
+            if (rank==0){
+                sprintf(message,"Read StateFile : %s\n",fname); printMessage(message);
+            }
+        }else{
+            fprintf(stderr,"Error(readStateFile): The number of bath spins is not consistent\n");
+            fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
+            fprintf(stderr,"The number of bath spins from the file line : %d\n",nspin);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    return;
+}
+
+void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
+
+    // For print
+    char message[MAX_FILEPATH];
+
+    // Read the state file
+    char* fname = Config_getAvaaxfile(cnf);
+    FILE* data;
+    data = fopen(fname,"r");
+
+    // Check the nbathfiles is larger than 1
+    int nbathfiles = Config_getNbathfiles(cnf);
+
+    if(data==NULL || nbathfiles > 1){
+        
+        if (rank==0){
+            if (data == NULL){
+                sprintf(message,"Warning(setPaxes): Cannot open the avaax file (%s)\n",fname); printMessage(message);
+            }
+            if (nbathfiles > 1){
+                sprintf(message,"Warning(setPaxes): The number of bathfiles is larger than 1\n"); printMessage(message);
+            }
+            sprintf(message,"The paxes is randomly generated\n"); printMessage(message);
+        }
+        DefectArray_setPaxesRandom(dfa, ba);
+        return;
+    }
+
+    // Read the number of lines
+    int idx = 0;
+    int count = fscanf(data, "%*s\n");
+    int fline = 1; // the first line is the length of the file
+
+    while(!feof(data)){
+
+        // Read the bath axes from the file
+        // We will get the bath axes at the same line of bathfile that we get the bath spins
+        fline++;
+        // Read the bath axes
+        int paxes = 0;
+        count = fscanf(data, "%d\n", &paxes);
+        if (fline == Config_get_flines_i(cnf,idx)){
+            
+            if (count == 1){
+                //////////////////////////////////////////////
+                char* dfname = BathArray_getBath_i_name(ba,idx);
+                int idf = DefectArray_findDefectIndex(dfa,dfname);
+                if (idf == -1){
+                    // err if the defect name is not found
+                    fprintf(stderr,"Error(setPaxes): Cannot find the defect name in the defect array\n");
+                    fprintf(stderr,"The bath spin[%d] is : %s \n",idx,dfname);
+                    exit(EXIT_FAILURE);
+                }
+                int navaax = DefectArray_getDefect_idf_navaax(dfa,idf);
+                if (paxes > navaax || paxes < 1){
+                    // err if the principal axis is out of range
+                    fprintf(stderr,"Error(setPaxes): The principal axis is out of range\n");
+                    fprintf(stderr,"The bath spin[%d] is : %s \n",idx,dfname);
+                    fprintf(stderr,"The number of principal axis : %d \n",navaax);
+                    fprintf(stderr,"The principal axis from the file : %d \n",paxes);
+                    exit(EXIT_FAILURE);
+                }
+                //////////////////////////////////////////////
+                DefectArray_setPaxes_i(dfa, idx, paxes);
+                idx++;
+            }else{
+                fprintf(stderr,"Error(setPaxes): AvaaxFile format is NOT `int` \n");
+                exit(EXIT_FAILURE);
+            }
+        }
+
+    }
+    fclose(data);
+
+    // Check if the number of bath spins is consistent
+    if (Config_get_nflines(cnf) == idx){
+        if (rank==0){
+            sprintf(message,"Read AvaaxFile : %s\n",fname); printMessage(message);
+        }
+    }else{
+        fprintf(stderr,"Error(setPaxes): The number of bath spins is not consistent\n");
+        fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
+        fprintf(stderr,"The number of bath spins from the file line : %d\n",Config_get_nflines(cnf));
+        exit(EXIT_FAILURE);
+    }
+
+    return;
+}
+
+void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
+
+    /**
+     * @param ba : BathArray
+     * @param dfa : DefectArray
+     * @param cnf : Config
+     * @param i : index of the state file ( 1 <= i <= nstate )
+     * @details 
+     *  If i is zero, this calculation is for the ensemble approach
+     *  Therefore, the bath states shouldn't be set
+    */
+
+    // Check the number of bath states if i is zero
+    if (i == 0){
+        // err
+        if (rank==0){
+            fprintf(stderr,"Error(setBathState): The index of the state file is zero\n");
+            fprintf(stderr,"This calculation is for the ensemble approach\n");
+            fprintf(stderr,"Therefore, the bath states shouldn't be set\n");
+        }
+        exit(EXIT_FAILURE);
+    }
+
+    // For print
+    char message[MAX_FILEPATH];
+
+    // File
+    char fname[MAX_FILEPATH];
+    sprintf(fname,"%s%d",Config_getExstatefile(cnf),i);
+
+    // Read the state file
+    FILE* data;
+    data = fopen(fname,"r");
+
+    // Check the nbathfiles is larger than 1
+    int nbathfiles = Config_getNbathfiles(cnf);
+    if (data == NULL || nbathfiles > 1){
+        
+        if (rank==0){
+            if (data == NULL){
+                sprintf(message,"Warning(setSubbathStates): Cannot open the exstate file (%s)\n",fname); printMessage(message);
+            }
+            if (nbathfiles > 1){
+                sprintf(message,"Warning(setSubbathStates): The number of bathfiles is larger than 1\n"); printMessage(message);
+            }
+            sprintf(message,"The subbath states are randomly generated\n"); printMessage(message);
+        }
+        DefectArray_setSubbathStatesRandom(dfa, ba);
+        return;
+    }else{
+            
+        // Read the number of lines
+        int idx = 0;
+        int count = fscanf(data, "%*s\n");
+        int fline = 1; // the first line is the length of the file
+
+        while(!feof(data)){
+
+            // Read the bath state from the file
+            // We will get the bath state at the same line of bathfile that we get the bath spins
+            fline++;
+            // Read the bath state
+            const int max = 1000;
+            char lline[max];
+            count = fscanf(data, "%s\n", lline);
+
+            if (fline == Config_get_flines_i(cnf,idx)){
+                int naddspin = DefectArray_getNaddspins_i(dfa,idx);
+
+                if (naddspin != 0){
+
+                    char* ptr = strtok(lline," ");
+                    int isp=0;
+                     
+                    while (ptr !=NULL){
+                        //state add & check
+                        float ms = float(atof(ptr));
+                        BathSpin* bs = DefectArray_getSubbath_i_isp(dfa,idx,isp);
+                        float  S  = BathSpin_getSpin(bs);
+                        BathSpin_setState(bs,ms); // Check if the state is valid in this function
+                        ptr = strtok(NULL," ");
+                        isp++;
+                    }
+
+                    if (isp != naddspin){
+                        fprintf(stderr,"Error(setSubbathStates): The number of subbath spins is not consistent\n");
+                        fprintf(stderr,"The number of subbath spins from the file line : %d\n",isp);
+                        fprintf(stderr,"The number of subbath spins from the defect array : %d\n",naddspin);
+                        exit(EXIT_FAILURE);
+                    }
+                }
+                idx++;
+            }
+        }
+        fclose(data);
+
+        int nspin = BathArray_getNspin(ba);
+        if (idx == nspin){
+            if (rank==0){
+                sprintf(message,"Read ExstateFile : %s\n",fname); printMessage(message);
+            }
+        }else{
+            fprintf(stderr,"Error(setSubbathStates): The number of bath spins is not consistent\n");
+            fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
+            fprintf(stderr,"The number of bath spins from the file line : %d\n",nspin);
+            exit(EXIT_FAILURE);
+        }
+    }
 
 
-//     char* fname_tmp = Config_getStatefile(cnf);
-//     int nspin = BathArray_getNspin(ba);
-
-//     // Set file name
-//     char* fname = allocChar1d(MAX_FILEPATH);
-//     sprintf(fname, "%s_%d", fname_tmp, i);
-
-//     //
-    
-
-//     FILE* data;
-//     data = fopen(fname,"r");
-
-//     if(data==NULL){
-//         printf("    Warning (readStateFile): Cannot open the state file (%s) \n",fname);
-//         printf("    The state is randomly generated ... \n");
-//     }else{
-  
-//         // read state from StateFile
-//         int count = 0;
-//         int fline = 1;
-//         int fidx = 1;
-//         while(!feof(data)){
-//             float state = 0.0;
-//             count = fscanf(data, "%f\n", &state);
-//             fline++;
-//             if (cnf->_flines[fidx] == fline){
-//                 BathArray_setState(ba, state);
-//                 fidx++;
-//             }
-//         }
-//         fclose(data);
-
-//     }
-
-// }
-
+    return;
+}
 
 void readGyrofile(BathArray* ba, Config* cnf){
     

@@ -722,7 +722,17 @@ void BathArray_setBath_i_xyz(BathArray* ba, const double* xyz, int i){
 }
 
 void BathArray_setBath_i_state(BathArray* ba, const float state, int i){
+
+    float S = BathArray_getBath_i_spin(ba,i);
+
+    if (!isSubLevel(S,state)){
+        fprintf(stderr,"Error(BathArray_setBath_i_state): S = %2.1f\n",S);
+        fprintf(stderr,"Error(BathArray_setBath_i_state): state = %2.1f is out of range\n",state);
+        exit(EXIT_FAILURE);
+    }
+
     ba->bath[i]->state = state;
+
 }
 
 void BathArray_setBath_i_detuning(BathArray* ba, const double detuning, int i){
@@ -738,6 +748,15 @@ void BathArray_setBath_i_hypf_j(BathArray* ba, const MatrixXcd hypf, int i, int 
 } 
  
 void BathArray_setBath_i_quad(BathArray* ba, const MatrixXcd quad, int i){
+
+    float S = BathArray_getBath_i_spin(ba,i);
+    if (S>0.5){
+        if (rank==0){
+            fprintf(stderr,"Warning(BathArray_setBath_i_quad): S = %2.1f\n",S);
+            fprintf(stderr,"Warning(BathArray_setBath_i_quad): You set the quadrupole but the spin number is larger than 0.5\n");
+            fprintf(stderr,"Warning(BathArray_setBath_i_quad): I hope you know what you do\n");
+        }
+    }
     ba->bath[i]->quad = quad;
 }
 
@@ -911,6 +930,12 @@ BathSpin_setXyz_fromRxyz(BathSpin* bs, double* xyz0, double* rxyz){
 
 void 
 BathSpin_setState(BathSpin* bs, float state){
+
+    if (!isSubLevel(bs->spin,state)){
+        fprintf(stderr,"Error(BathSpin_setState): S = %2.1f\n",bs->spin);
+        fprintf(stderr,"Error(BathSpin_setState): state = %2.1f is out of range\n",state);
+        exit(EXIT_FAILURE);
+    }
     bs->state = state;
 }
 

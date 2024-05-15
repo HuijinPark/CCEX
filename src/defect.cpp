@@ -162,6 +162,10 @@ int DefectArray_findDefectIndex(DefectArray* dfa, char* dfname){
     return -1;
 }
 
+void DefectArray_setPaxes_i(DefectArray* dfa, int ibs, int axis){
+    dfa->paxes[ibs] = axis;
+}
+
 int DefectArray_getNdefect(DefectArray* dfa){
     return dfa->ndefect;
 }

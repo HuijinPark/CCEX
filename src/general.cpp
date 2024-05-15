@@ -55,6 +55,14 @@ void Config_allocExstatefile(Config* cnf){
     cnf->exstatefile = allocChar1d(MAX_FILEPATH);
 }
 
+void Config_alloc_flines(Config* cnf, int size){
+    cnf->_flines = allocInt1d(size);
+
+}
+void Config_realloc_flines(Config* cnf, int oldsize, int newsize){
+    reallocInt1d(&(cnf->_flines),newsize);
+}
+
 // free
 void Config_freeAll(Config* cnf){
     Config_freeBathfiles(cnf);
@@ -67,7 +75,7 @@ void Config_freeAll(Config* cnf){
     Config_freeHf_tensorfile(cnf);
     Config_freeQd_tensorfile(cnf);
     Config_freeQd_tensorfile_woqubit(cnf);
-    freeInt1d(&(cnf->_flines));
+    Config_free_flines(cnf);
     freeArray1d((void**)&(cnf));
 }
 
@@ -97,6 +105,10 @@ void Config_freeStatefile(Config* cnf){
 
 void Config_freeExstatefile(Config* cnf){
     freeChar1d(&(cnf->exstatefile));
+}
+
+void Config_free_flines(Config* cnf){
+    freeInt1d(&(cnf->_flines));
 }
 
 void Config_freeHf_tensorfile(Config* cnf){
@@ -193,6 +205,19 @@ char*   Config_getStatefile(Config* cnf){
 char*   Config_getExstatefile(Config* cnf){
     return cnf->exstatefile;
 }
+
+int Config_get_nflines(Config* cnf){
+    return cnf->_nflines;
+}
+
+int* Config_get_flines(Config* cnf){
+    return cnf->_flines;
+}
+
+int  Config_get_flines_i(Config* cnf, int i){
+    return cnf->_flines[i];
+}
+
 
 double  Config_getDefectTotSpin(Config* cnf){
     return cnf->DefectTotSpin;
@@ -421,6 +446,14 @@ void Config_setExstatefile(Config* cnf, char* exstatefile){
     }
 
     strcpy(cnf->exstatefile,exstatefile);
+}
+
+void Config_set_nflines(Config* cnf, int nflines){
+    cnf->_nflines = nflines;
+}
+
+void Config_set_flines_i(Config* cnf, int fline, int i){
+    cnf->_flines[i] = fline;
 }
 
 void Config_setDefectTotSpin(Config* cnf, double DefectTotSpin){

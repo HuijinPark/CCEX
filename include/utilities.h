@@ -103,6 +103,7 @@ double sinPhi(double spin1[], double spin2[]);
 
 // spin state control
 float* substates(float S);
+bool isSubLevel(float S, float ms);
 MatrixXcd getSpinor(float S, float ms);
 MatrixXcd kron(MatrixXcd a, MatrixXcd b);
 MatrixXcd partialtrace(MatrixXcd Mij, int dimrow, int dimcol);
@@ -134,6 +135,7 @@ void printMessage(char* message);
 int findIndexInt(int* array, int ista, int iend, int val); // find in the range of ista <= i <= iend
 int findIndexCharFix(char array[][MAX_CHARARRAY_LENGTH], int ista, int iend, char* val); // find in the range of ista <= i <= iend, strcasecmp
 int findIndexChar(char** array, int ista, int iend, char* val); // find in the range of ista <= i <= iend, strcasecmp
+int findIndexFloat(float* array, int ista, int iend, float val); // find in the range of ista <= i <= iend
 
 /* Type checker ---------------------------------------------------*/
 int isStringDouble(char *s);

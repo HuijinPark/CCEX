@@ -67,6 +67,16 @@ float* substates(float S){
     return ms;
 }
 
+bool isSubLevel(float S, float ms){
+
+    for (int i=0; i<(int)(2*S+1); i++){
+        if (ms == S-i){
+            return true;
+        }
+    }
+    return false;
+}
+
 // Obtain the spinor array
 MatrixXcd getSpinor(float S, float ms){
 
@@ -390,6 +400,15 @@ int findIndexCharFix(char array[][MAX_CHARARRAY_LENGTH], int ista, int iend, cha
 int findIndexChar(char** array, int ista, int iend, char* val){
     for (int i = ista; i <= iend; i++){
         if (strcasecmp(array[i],val) == 0){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int findIndexFloat(float* array, int ista, int iend, float val){
+    for (int i = ista; i <= iend; i++){
+        if (array[i] == val){
             return i;
         }
     }

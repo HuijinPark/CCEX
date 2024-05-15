@@ -197,13 +197,13 @@ int main(int argc, char* argv[]){
     // readAvaaxfile(ba,cnf); // set available principal axis
     // readExstatefile(ba,cnf); // set extra spin states
 
-    if (rank==0){
-        printLineSection();
-        printTitle("BathArray");
-        BathArray_report(ba);
-        printf("\n");
-        printLineSection();
-    }
+    // if (rank==0){
+    //     printLineSection();
+    //     printTitle("BathArray");
+    //     BathArray_report(ba);
+    //     printf("\n");
+    //     printLineSection();
+    // }
 
     // point dipole approximation if no hyperfine tensor
     int nqubit = QubitArray_getNqubit(qa);
@@ -217,7 +217,8 @@ int main(int argc, char* argv[]){
 
         int nspin = BathArray_getNspin(ba);
         DefectArray_allocPaxes(dfa, nspin);
-        DefectArray_setPaxesRandom(dfa,ba);
+        // DefectArray_setPaxesRandom(dfa,ba);
+        setDefectPaxes(dfa,ba,cnf); // Read or random set
         if (rank==0){
             DefectArray_reportPaxes(dfa);
         }

@@ -118,23 +118,23 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     freeDouble2d(&bathadjustDefault,length);
     freeDouble2d(&bathadjust,length);
 
-    // char* avaaxfile = cJSON_ReadFilePath(root,"avaaxfile",true,NULL);
-    // if (avaaxfile != NULL) {
-    //     Config_allocAvaaxfile(cnf);
-    //     Config_setAvaaxfile(cnf,avaaxfile);
-    // }
+    char* avaaxfile = cJSON_ReadFilePath(root,"avaaxfile",true,NULL);
+    if (avaaxfile != NULL) {
+        Config_allocAvaaxfile(cnf);
+        Config_setAvaaxfile(cnf,avaaxfile);
+    }
 
-    // char* statefile = cJSON_ReadFilePath(root,"statefile",true,NULL);
-    // if (statefile != NULL) {
-    //     Config_allocStatefile(cnf);
-    //     Config_setStatefile(cnf,statefile);
-    // }
+    char* statefile = cJSON_ReadFilePath(root,"statefile",true,NULL);
+    if (statefile != NULL) {
+        Config_allocStatefile(cnf);
+        Config_setStatefile(cnf,statefile);
+    }
 
-    // char* exstatefile = cJSON_ReadFilePath(root,"exstatefile",true,NULL);
-    // if (exstatefile != NULL) {
-    //     Config_allocExstatefile(cnf);
-    //     Config_setExstatefile(cnf,exstatefile);
-    // }
+    char* exstatefile = cJSON_ReadFilePath(root,"exstatefile",true,NULL);
+    if (exstatefile != NULL) {
+        Config_allocExstatefile(cnf);
+        Config_setExstatefile(cnf,exstatefile);
+    }
 
     ////////////////////////////////////////////////////////////////////////
     // Tensor file central spin option
@@ -654,9 +654,9 @@ char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_va
         if (access(item->valuestring, R_OK) == 0) {
             return item->valuestring;
         }else{
-            fprintf(stderr, "Error: %s cannot open/read (%d)\n",key,access(item->valuestring, R_OK));
-            fprintf(stderr, "Current path: %s\n",item->valuestring);
-            return NULL;
+            // fprintf(stderr, "Warning: %s cannot open/read (%d)\n",key,access(item->valuestring, R_OK));
+            // fprintf(stderr, "Current path: %s\n",item->valuestring);
+            return item->valuestring;
         }
     }else{
         if(_default){

@@ -106,6 +106,7 @@ void DefectArray_allocDefect(DefectArray* dfa); // defect : ndefect
 void DefectArray_allocDefect_idf(DefectArray* dfa, int idf, int navaax, int naddspin);
 
 // set subspin information
+void DefectArray_setPaxes_i(DefectArray* dfa, int ibs, int axis); // paxes
 void DefectArray_setPaxesRandom(DefectArray* dfa, BathArray* ba); // nbathspin (// before calculate)
 void DefectArray_setSubbathStatesRandom(DefectArray* dfa, BathArray* ba); // subbath->staets
 void DefectArray_setNaddspins(DefectArray* dfa, BathArray* ba); // before calculate

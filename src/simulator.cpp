@@ -1,6 +1,7 @@
 #include "../include/simulator.h"
 #include "../include/hamiltonian.h"
 #include "../include/memory.h"
+#include "../include/reader.h"
 
 void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pulse* pls, Cluster* cls, Output* op){
 
@@ -100,10 +101,20 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
         if (istate>0){
 
             // Randomize bath states
-            BathArray_setBathStatesRandom(ba);
+            // BathArray_setBathStatesRandom(ba);
+            setBathStates(ba,cnf,istate); // Read or random set
             if (rank==0){
                 BathArray_reportBath_states(ba);
             }
+
+            // Set Subbath states
+            if (DefectArray_getNdefect(dfa)>0){
+                setSubbathStates(dfa,ba,cnf,istate); // Read or random set
+                if (rank==0){
+                    DefectArray_reportSubbath_states(dfa);
+                }
+            }
+            
 
             // Calculate bath disorders
             BathArray_setBathDisorders(ba);
@@ -124,8 +135,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             }
 
             if (DefectArray_getNdefect(dfa)>0){
-                // Randomize subbath states
-                DefectArray_setSubbathStatesRandom(dfa,ba);
                 // Update BathArray from DefectArray
                 updateMainSpins_fromDefectArray(dfa,ba);
                 updateDisorder_main_sub(dfa,ba);

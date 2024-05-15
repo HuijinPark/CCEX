@@ -36,6 +36,7 @@ typedef struct {
     char* avaaxfile; /**< Available principal axis */
     char* statefile; /**< State file */
     char* exstatefile ; /**< extra spin' state file */
+    int _nflines; /**< number of file lines */
     int* _flines; /**< file line number of each bath spins */
 
     // tensorfile-related
@@ -115,6 +116,9 @@ double* Config_getBathadjust_i(Config* cnf,int i);
 char*   Config_getAvaaxfile(Config* cnf);
 char*   Config_getStatefile(Config* cnf);
 char*   Config_getExstatefile(Config* cnf);
+int     Config_get_nflines(Config* cnf);
+int*    Config_get_flines(Config* cnf);
+int     Config_get_flines_i(Config* cnf, int i);
 double  Config_getDefectTotSpin(Config* cnf);
 double  Config_getCorrTotSpin(Config* cnf);
 char*   Config_getHf_tensorfile(Config* cnf);
@@ -147,6 +151,8 @@ void Config_setBathadjust_i(Config* cnf, double* bathadjust, int i);
 void Config_setAvaaxfile(Config* cnf, char* avaaxfile);
 void Config_setStatefile(Config* cnf, char* statefile);
 void Config_setExstatefile(Config* cnf, char* exstatefile);
+void Config_set_nflines(Config* cnf, int nflines);
+void Config_set_flines_i(Config* cnf, int fline, int i);
 
 void Config_setDefectTotSpin(Config* cnf, double DefectTotSpin);
 void Config_setCorrTotSpin(Config* cnf, double CorrTotSpin);
@@ -167,10 +173,11 @@ void Config_allocQubitfile(Config* cnf);
 void Config_allocAvaaxfile(Config* cnf);
 void Config_allocStatefile(Config* cnf);
 void Config_allocExstatefile(Config* cnf);
+void Config_alloc_flines(Config* cnf, int size);
+void Config_realloc_flines(Config* cnf, int oldsize, int newsize);
 void Config_allocHf_tensorfile(Config* cnf);
 void Config_allocQd_tensorfile(Config* cnf);
 void Config_allocQd_tensorfile_woqubit(Config* cnf);
-
 
 // free
 void Config_freeBathfiles(Config* cnf);
@@ -180,12 +187,9 @@ void Config_freeQubitfile(Config* cnf);
 void Config_freeAvaaxfile(Config* cnf);
 void Config_freeStatefile(Config* cnf);
 void Config_freeExstatefile(Config* cnf);
+void Config_free_flines(Config* cnf);
 void Config_freeHf_tensorfile(Config* cnf);
 void Config_freeQd_tensorfile(Config* cnf);
 void Config_freeQd_tensorfile_woqubit(Config* cnf);
-
-
-
-
 
 #endif // __CCEX_SIMULATOR_GENERAL_H_
