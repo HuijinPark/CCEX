@@ -10,9 +10,9 @@ module load icc18 icc18.impi fftw
 # $1 = mac
 
 if [ $# -ne 2 ]; then
-    echo "Usage: $0 arg1 arg2"
-    echo "idm/mac"
-    echo "filename (except test_ tag)"
+    echo "Error, no input value"
+    echo "[1] Server : idm / mac"
+    echo "[2] Filename (except test_ tag)"
     exit 1
 
 fi
