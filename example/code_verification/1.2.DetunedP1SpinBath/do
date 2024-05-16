@@ -1,0 +1,16 @@
+#!/bin/sh
+
+PwdDir="`pwd`"
+
+cd ../../../
+
+    make
+
+cd "${PwdDir}" 
+
+code="../../../bin/main.out"
+ccein="./cce.json"
+
+process=20
+
+mpirun -n ${process} ${code} -f ${ccein} -v > process

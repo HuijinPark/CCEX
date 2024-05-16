@@ -11,7 +11,7 @@ MatrixXcd HamilQubit(QubitArray* qa, BathArray* ba, MatrixXcd** sigmas, Config* 
 
     // Qubit Hamiltonian
     MatrixXcd Hq = MatrixXcd::Zero(qdim,qdim);
-
+    
     Hq = QubitArray_TotalHamil(qa, sigmas, bfield);
 
     // Subtract the double counted Overhauser fields

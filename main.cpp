@@ -182,9 +182,15 @@ int main(int argc, char* argv[]){
     srand(seed);
 
     // Qubit
+    if (rank == 0){
+        printSubTitle("Qubit File");
+    }
     readQubitfile(qa,cnf); // set qubit xyz position for nqubit=1
 
     // Bath
+    if (rank == 0){
+        printSubTitle("Bath related File");
+    }
     readGyrofile(ba,cnf); // set gyro, spin, name (properties)
     readBathfiles(ba,qa,cnf);  // set bath xyz position and properties
     readHftensorfile(ba,qa,cnf); // set hyperfine tensor only from file
@@ -214,6 +220,10 @@ int main(int argc, char* argv[]){
 
     // Defect
     if (DefectArray_getNdefect(dfa) > 0){
+
+        if (rank == 0){
+            printSubTitle("Defect Paxes File");
+        }
 
         int nspin = BathArray_getNspin(ba);
         DefectArray_allocPaxes(dfa, nspin);

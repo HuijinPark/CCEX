@@ -139,7 +139,9 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 updateMainSpins_fromDefectArray(dfa,ba);
                 updateDisorder_main_sub(dfa,ba);
                 updateDisorder_sub_sub(dfa);
-                updateOverhaus_qubit_sub(dfa,qa);
+                if (isOvh){
+                    updateOverhaus_qubit_sub(dfa,qa);
+                }
                 if (rank==0){
                     BathArray_reportBath_disorders(ba);
                     DefectArray_reportSubbath_disorders(dfa);
@@ -291,12 +293,12 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
                     if (rank==0){
                         steptime_end = MPI_Wtime();
-                        if (ic % 142){
-                            sprintf(message,"At rank 0, %d cluster (%d%%) is computed at %.2f s",ic, int(ic*100/ncluster), steptime_end-steptime_sta);
+                        if (ic % (5000/nprocess) == 0){
+                            sprintf(message,"At rank 0, %d-th cluster (%d%%) is computed at %.2f s",ic, int(ic*100/ncluster), steptime_end-steptime_sta);
                             printMessage(message);
 
                         }else if (ic == ncluster){
-                            sprintf(message,"At rank 0, %d cluster (%d%%) is computed at %.2f s",ic, int(ic*100/ncluster), steptime_end-steptime_sta);
+                            sprintf(message,"At rank 0, %d-th cluster (%d%%) is computed at %.2f s",ic, int(ic*100/ncluster), steptime_end-steptime_sta);
                             printMessage(message);
                         }
                     }

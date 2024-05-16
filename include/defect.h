@@ -98,7 +98,7 @@ int DefectArray_getDefect_idf_navaax(DefectArray* dfa, int idf);
 double* DefectArray_getDefect_idf_iax_isp_rxyz(DefectArray* dfa, int idf, int iax, int isp);
 MatrixXcd DefectArray_getDefect_idf_iax_isp_hypf(DefectArray* dfa, int idf, int iax, int isp);
 MatrixXcd DefectArray_getDefect_idf_iax_isp_efg(DefectArray* dfa, int idf, int iax, int isp);
-MatrixXcd DefectArray_getDefect_idf_iax_isp_zfs(DefectArray* dfa, int idf, int iax);
+MatrixXcd DefectArray_getDefect_idf_iax_zfs(DefectArray* dfa, int idf, int iax);
 double DefectArray_getDefect_idf_iax_detuning(DefectArray* dfa, int idf, int iax);
 
 // alloc defect information

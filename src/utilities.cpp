@@ -304,6 +304,7 @@ void printStructElementChar2d(char* key, char** val, int n){
             printf(" ]\n");
         }
     }
+    if (n==0){printf("]\n");}
 }
 
 void printStructElementInt(char* key, int val){
@@ -320,6 +321,7 @@ void printStructElementInt1dIdx(char* key, int* val, int n){
             printf(" ]\n");
         }
     }
+    if (n==0){printf("]\n");}
 }
 
 void printStructElementFloat(char* key, float val){
@@ -336,6 +338,7 @@ void printStructElementFloat1d(char* key, float* val, int n){
             printf(" ]\n");
         }
     }
+    if (n==0){printf("]\n");}
 }
 
 void printStructElementDouble(char* key, double val){
@@ -352,6 +355,7 @@ void printStructElementDouble1d(char* key, double* val, int n){
             printf(" ]\n");
         }
     }
+    if (n==0){printf("]\n");}
 }
 
 void printStructElementBool(char* key, bool val){

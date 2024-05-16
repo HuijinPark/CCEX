@@ -1,14 +1,16 @@
 #!/bin/sh
 
+PwdDir="`pwd`"
+
 cd ../../../
 
     make
 
-cd ./example/code_verification/1.1.ElectronSpinBath/
+cd "${PwdDir}" 
 
 code="../../../bin/main.out"
 ccein="./cce.json"
 
-process=24
+process=20
 
-mpirun -np ${process} ${code} -f ${ccein} > process
+mpirun -n ${process} ${code} -f ${ccein} > process

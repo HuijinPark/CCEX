@@ -38,7 +38,7 @@ SRCS += main.cpp
 OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
 
 #INCLUDE_MPICH = -I/opt/homebrew/Cellar/mpich/4.2.1/include/
-INCLUDE_EIGEN = -I./zlib/eigen-3.3.9/
+INCLUDE_EIGEN = -I./zlib/eigen-3.4.0/
 INCLUDE_UTHASH = -I./zlib/uthash/include/
 INCLUDE_MAIN = -I./include/
 

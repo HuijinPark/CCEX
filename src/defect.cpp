@@ -1,7 +1,7 @@
 #include "../include/defect.h"
 #include "../include/memory.h"
 #include "../include/hamiltonian.h"
-
+#include <float.h>
 
 
 void DefectArray_setPaxesRandom(DefectArray* dfa, BathArray* ba){
@@ -215,7 +215,7 @@ MatrixXcd DefectArray_getDefect_idf_iax_isp_efg(DefectArray* dfa, int idf, int i
     return dfa->defect[idf]->efg[iax][isp];
 }
 
-MatrixXcd DefectArray_getDefect_idf_iax_isp_zfs(DefectArray* dfa, int idf, int iax){
+MatrixXcd DefectArray_getDefect_idf_iax_zfs(DefectArray* dfa, int idf, int iax){
     return dfa->defect[idf]->zfs[iax];
 }
 
@@ -427,33 +427,45 @@ void DefectArray_setSubbath(DefectArray* dfa, BathArray* ba, QubitArray* qa){
 
 
 void updateMainSpins_fromDefectArray(DefectArray* dfa, BathArray* ba){
-    int nbathspin = BathArray_getNspin(ba);
 
+    int nbathspin = BathArray_getNspin(ba);
+    double gyro_elec = GAMMA_ELECTRON;
     for (int ibs=0; ibs<nbathspin; ibs++){
 
         char* name = BathArray_getBath_i_name(ba,ibs);
+        float spin = BathArray_getBath_i_spin(ba,ibs);
+        double gyro = BathArray_getBath_i_gyro(ba,ibs);
+        MatrixXcd quad = BathArray_getBath_i_quad(ba,ibs);
         int idf = DefectArray_findDefectIndex(dfa,name);
         int iax = DefectArray_getPaxes_i(dfa,ibs);
 
-        int naddspin = DefectArray_getNaddspins_i(dfa,ibs);
-        for (int isp=0; isp<naddspin; isp++){
-        
-            ////////////////////////////////////
-            // Update mainspin index
-            int mainspidx = ibs;
-            BathArray_setBath_i_mainspidx(ba,mainspidx,ibs);
-            ////////////////////////////////////
-            // Update quad(zfs) depending on principal axis
-            MatrixXcd zfs = DefectArray_getDefect_idf_iax_isp_zfs(dfa,idf,iax); //MHz
+        ////////////////////////////////////
+        // Update mainspin index
+        int mainspidx = ibs;
+        BathArray_setBath_i_mainspidx(ba,mainspidx,ibs);
+        ////////////////////////////////////
+        // Update quad(zfs) depending on principal axis
+        MatrixXcd zfs = DefectArray_getDefect_idf_iax_zfs(dfa,idf,iax); //MHz
+        if ((abs(gyro - gyro_elec) < 1.0) && (quad.isZero(FLT_EPSILON)) && (spin - 0.5 > FLT_EPSILON) ){
+            // If the main spin is electron spin 
+            // and the main spin doesn't hvae quadrupole tensor then, set the zfs tensor
             BathArray_setBath_i_quad(ba,MHZ_TO_RADKHZ(zfs),ibs); //radkHz
-            ////////////////////////////////////
-            // Update detuning depending on principal axis (add)
-            double current_detuning = BathArray_getBath_i_detuning(ba,ibs); //radkHz
-            double additional_detuning = DefectArray_getDefect_idf_iax_detuning(dfa,idf,iax); //MHz
-            additional_detuning = MHZ_TO_RADKHZ(additional_detuning); //radkHz
-            BathArray_setBath_i_detuning(ba,(current_detuning+additional_detuning),ibs); //radkHz
-            ////////////////////////////////////
+        }else{
+            if (!zfs.isZero(FLT_EPSILON)){
+                // If the main spin is not an electron spin 
+                // and quadrupole already exist and zfs is given, then err
+                fprintf(stderr,"Error (updateMainSpins_fromDefectArray) : the defect's zfs tensor cannot be set to BathArray quad.\n");
+                fprintf(stderr,"Error (updateMainSpins_fromDefectArray) : Check if the spin is electron spin and quadrupole is given \n");
+                exit(EXIT_FAILURE);
+            }
         }
+        ////////////////////////////////////
+        // Update detuning depending on principal axis (add)
+        double current_detuning = BathArray_getBath_i_detuning(ba,ibs); //radkHz
+        double additional_detuning = DefectArray_getDefect_idf_iax_detuning(dfa,idf,iax); //MHz
+        additional_detuning = MHZ_TO_RADKHZ(additional_detuning); //radkHz
+        BathArray_setBath_i_detuning(ba,(current_detuning+additional_detuning),ibs); //radkHz
+        ////////////////////////////////////
     }
 }
 
@@ -736,7 +748,7 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
         char message[100];
         MatrixXcd tensor;
         sprintf(message,"zfs[%d]",i);
-        tensor = DefectArray_getDefect_idf_iax_isp_zfs(dfa,idf,i);
+        tensor = DefectArray_getDefect_idf_iax_zfs(dfa,idf,i);
         if (tensor.rows() != 0){
             printInlineMatrixXcd(message,tensor);
 
@@ -889,6 +901,12 @@ void DefectArray_reportSubbath_quads(DefectArray* dfa){
 
     printSubTitle("SubBath Quadrupole tensors (Depending on principal axis)");
 
+    printMessage("SubBath[ibs][isp].quad (radkHz)");
+    printf("\n");
+    printMessage(" * ibs : BathSpin index (main spin)");
+    printMessage(" * isp : SubSpin index (sub spin)");
+    printf("\n");
+
     int nbathspin = DefectArray_getNbathspin(dfa);
     for (int ibs=0; ibs<nbathspin; ibs++){
         int naddspin = DefectArray_getNaddspins_i(dfa,ibs);
@@ -914,6 +932,13 @@ void DefectArray_reportSubbath_hypf_subs(DefectArray* dfa){
 
     printSubTitle("SubBath Hyperfine tensors (MainDefect-SubBath)");
 
+    printMessage("SubBath[ibs][isp].hypf_sub (radkHz)");
+    printf("\n");
+    printMessage(" * ibs : BathSpin index (main spin)");
+    printMessage(" * isp : SubSpin index (sub spin)");
+    printf("\n");
+
+
     int nbathspin = DefectArray_getNbathspin(dfa);
     for (int ibs=0; ibs<nbathspin; ibs++){
         int naddspin = DefectArray_getNaddspins_i(dfa,ibs);
@@ -938,6 +963,13 @@ void DefectArray_reportSubbath_hypf_subs(DefectArray* dfa){
 void DefectArray_reportSubbath_disorders(DefectArray* dfa){
 
     printSubTitle("SubBath Disorders");
+
+    printMessage("SubBath[ibs][isp].disorder (radkHz)");
+    printf("\n");
+    printMessage(" * ibs : BathSpin index (main spin)");
+    printMessage(" * isp : SubSpin index (sub spin)");
+    printf("\n");
+
 
     int nbathspin = DefectArray_getNbathspin(dfa);
     for (int ibs=0; ibs<nbathspin; ibs++){
@@ -967,18 +999,26 @@ void DefectArray_reportSubbath_props(DefectArray* dfa){
     int nbathspin = DefectArray_getNbathspin(dfa);
     printStructElementInt("nbathspin (#)",nbathspin);
     printLine();
+
+    bool isExist = false;
     for (int i=0; i<nbathspin; i++){
 
+        int naddspin = DefectArray_getNaddspins_i(dfa,i);
+        
         if (verbosity || (i<3 || i>nbathspin-3)){ 
-            int naddspin = DefectArray_getNaddspins_i(dfa,i);
             for (int j=0; j<naddspin; j++){
                 DefectArray_reportSubbath_i_props(dfa,i,j);
+                isExist = true;
             }
         }
 
         if (!verbosity && i==3){
             printf("         :\n");
         }
+    }
+
+    if (!isExist){
+        printf("       None  \n");
     }
 
     printf("\n");

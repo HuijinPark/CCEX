@@ -166,6 +166,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
                     sprintf(message,"   : \n"); printMessage(message);
                 }
             }
+            printf("\n");
         }
         ////////////////////////////////////////////////////////////////////////
     }
@@ -311,8 +312,10 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
         // We will get the bath axes at the same line of bathfile that we get the bath spins
         fline++;
         // Read the bath axes
+        float paxestmp = 0;
         int paxes = 0;
-        count = fscanf(data, "%d\n", &paxes);
+        count = fscanf(data, "%f\n", &paxestmp);
+        paxes = int(paxestmp);
         if (fline == Config_get_flines_i(cnf,idx)){
             
             if (count == 1){

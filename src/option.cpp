@@ -559,7 +559,7 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         ////////////////////////////////////////////////////////////////////////
         int naddspin = cJSON_ReadInt(defect,"naddspin",true,&naddspinDefault);
         int navaax = cJSON_ReadInt(defect,"navaax",true,&navaaxDefault);
-
+        
         DefectArray_setDefect_idf_naddspin(dfa,idf,naddspin);
         DefectArray_setDefect_idf_navaax(dfa,idf,navaax+1); // 0th : main spin
         DefectArray_allocDefect_idf(dfa,idf,navaax+1,naddspin);
@@ -573,20 +573,23 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         ////////////////////////////////////////////////////////////////////////
         // Spin information
         ////////////////////////////////////////////////////////////////////////
-        char** types = cJSON_ReadString1d(defect,"types",true,NULL, naddspin);
+        bool doForce = false;
+        if (naddspin > 0){doForce=true;}
+
+        char** types = cJSON_ReadString1d(defect,"types",doForce,NULL, naddspin);
         DefectArray_setDefect_idf_types(dfa,idf,types);
         freeChar2d(&types,naddspin);
         
-        float* spins = cJSON_ReadFloat1d(defect,"spins",true,NULL,naddspin);    
+        float* spins = cJSON_ReadFloat1d(defect,"spins",doForce,NULL,naddspin);    
         DefectArray_setDefect_idf_spins(dfa,idf,spins);
         freeFloat1d(&spins);
 
 
-        double* gyros = cJSON_ReadDouble1d(defect,"gyros",true,NULL,naddspin);        
+        double* gyros = cJSON_ReadDouble1d(defect,"gyros",doForce,NULL,naddspin);        
         DefectArray_setDefect_idf_gyros(dfa,idf,gyros);
         freeDouble1d(&gyros);
 
-        double* eqs = cJSON_ReadDouble1d(defect,"eqs",true,NULL,naddspin);
+        double* eqs = cJSON_ReadDouble1d(defect,"eqs",doForce,NULL,naddspin);
         DefectArray_setDefect_idf_eqs(dfa,idf,eqs);
         freeDouble1d(&eqs);
 

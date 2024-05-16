@@ -206,7 +206,6 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
     int jb_mainspidx = BathArray_getBath_i_mainspidx(ba,j);
     
     if (ib_mainspidx==jb_mainspidx && (ib_mainspidx != -1 && jb_mainspidx != -1)){
-
         // Check mainspin or subspin
         bool ib_is_subspin = false;
         bool jb_is_subspin = false;
@@ -348,7 +347,6 @@ MatrixXcd BathArray_DetuningHamil(BathArray* ba, MatrixXcd** sigmas, int ib){
 
     double detuning = BathArray_getBath_i_detuning(ba,ib);
     MatrixXcd vecDetuning = calDetuningVector(detuning);
-
     return calHamiltonianSingleInt(vecDetuning,sigmas[ib]);
 }
 
@@ -558,6 +556,8 @@ void BathArray_reportBath_disorders(BathArray* ba){
 
 void BathArray_reportBath_hypf(BathArray* ba, int nqubit){
 
+    printSubTitle("Bath Hyperfine tensors");
+
     int nspin = BathArray_getNspin(ba);
     for (int i=0; i<nspin; i++){
         if (verbosity || (i<3 || i>nspin-3)){ 
@@ -573,6 +573,8 @@ void BathArray_reportBath_hypf(BathArray* ba, int nqubit){
             printf("         :\n\n");
         }
     }
+
+    printLineSection();
 }
 
 void BathArray_reportBath_quad(BathArray* ba){
@@ -625,8 +627,8 @@ void BathArray_allocBath(BathArray* ba, int nqubit){
         BathArray_setBath_i_state(ba,0.0,i);
         BathArray_setBath_i_detuning(ba,0.0,i);
         BathArray_setBath_i_disorder(ba,0.0,i);
-
-        BathArray_setBath_i_quad(ba,MatrixXcd::Zero(3,3),i);
+        ba->bath[i]->quad = MatrixXcd::Zero(3,3);
+        //BathArray_setBath_i_quad(ba,MatrixXcd::Zero(3,3),i);
     }
 }
 
@@ -649,8 +651,8 @@ void BathArray_reallocBath(BathArray* ba, int old_length, int new_length, int nq
         BathArray_setBath_i_state(ba,0.0,i);
         BathArray_setBath_i_detuning(ba,0.0,i);
         BathArray_setBath_i_disorder(ba,0.0,i);
-
-        BathArray_setBath_i_quad(ba,MatrixXcd::Zero(3,3),i);
+        ba->bath[i]->quad = MatrixXcd::Zero(3,3);
+        //BathArray_setBath_i_quad(ba,MatrixXcd::Zero(3,3),i);
     }
 }
 
@@ -697,7 +699,8 @@ void BathArray_setBath_i(BathArray* ba, const BathSpin* bath, int i, int nqubit)
 
     BathArray_setBath_i_hypf_sub(ba,bath->hypf_sub,i);
     BathArray_setBath_i_mainspidx(ba,bath->mainspidx,i);
-    BathArray_setBath_i_quad(ba,bath->quad,i);
+    ba->bath[i]->quad = bath->quad;
+    //BathArray_setBath_i_quad(ba,bath->quad,i);
     for (int j=0; j<nqubit; j++){
         BathArray_setBath_i_hypf_j(ba,bath->hypf[j],i,j);
     }
@@ -750,11 +753,11 @@ void BathArray_setBath_i_hypf_j(BathArray* ba, const MatrixXcd hypf, int i, int 
 void BathArray_setBath_i_quad(BathArray* ba, const MatrixXcd quad, int i){
 
     float S = BathArray_getBath_i_spin(ba,i);
-    if (S>0.5){
+    if (S<1.0){
         if (rank==0){
-            fprintf(stderr,"Warning(BathArray_setBath_i_quad): S = %2.1f\n",S);
-            fprintf(stderr,"Warning(BathArray_setBath_i_quad): You set the quadrupole but the spin number is larger than 0.5\n");
-            fprintf(stderr,"Warning(BathArray_setBath_i_quad): I hope you know what you do\n");
+            printf("Warning(BathArray_setBath_i_quad): BathSpin[%d] S = %2.1f\n",i,S);
+            printf("Warning(BathArray_setBath_i_quad): You set the quadrupole but the spin number is larger than 0.5\n");
+            printf("Warning(BathArray_setBath_i_quad): I hope you know what you do\n");
         }
     }
     ba->bath[i]->quad = quad;
