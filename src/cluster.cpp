@@ -27,7 +27,7 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
     if (order==0){
         if (rank==0){printf("\n\t Clustering 0th order ... \n");}
     }
-    else if (order == 1){
+    else if (order == 1){ // For pCCE, + k=1 (order = n)
         
         if (rank==0){printf("\n\t Clustering 1st order ... \n");}
 
@@ -44,6 +44,14 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
         int** cmap = NULL; // connectivity map : cmap[nspin][nspin] = 1 if connected else 0
         float** stmap = NULL; // strength map : stmap[nspin][nspin] = strength
         int** spmap = NULL; // sparse map : spmap[nspin][ncol] = n connected spin + 1d array of connected spins index
+
+        //!!if (strcasecmp(cls->method, "pcce")==0){
+        //!!    double** centerpositions = NULL; // start from 0
+        //!!    int centerarraylength = 0;
+        //!!    int* spinidx = NULL ; // start from 0
+        //!!    getCenters(&centerpositions, &centerarraylength, &spinidx, ba);
+        //!!    int BathArray_getNspin(ba)
+        //!!}
 
         float rdip = Config_getRdip(config);
         float rdipcut = Config_getRdipcut(config);

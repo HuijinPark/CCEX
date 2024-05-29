@@ -124,10 +124,10 @@ typedef struct {
     /*-----------------------------------------------------------------------------*/
     int nqubit; /**< The number of Qubit                                           */
     Qubit** qubit; /**< Qubit information (see struct Qubit)                       */
-    MatrixXcd** intmap; /**< Interaction i-j (Unit : radkHz)                    */
-    MatrixXcd psia; /**< Projected state alpha for QubitArray                 */
-    MatrixXcd psib; /**< Projected state beta for QubitArray                  */
-    MatrixXcd psi0; /**< Initial state of qubit                               */
+    MatrixXcd** intmap; /**< Interaction i-j (Unit : radkHz)                       */
+    MatrixXcd psia; /**< Projected state alpha for QubitArray                      */
+    MatrixXcd psib; /**< Projected state beta for QubitArray                       */
+    MatrixXcd psi0; /**< Initial state of qubit                                    */
     bool overhaus;  /**< Overhauser field : on | off                               */
     /*-----------------------------------------------------------------------------*/
     /**<

@@ -11,7 +11,9 @@
 #include "../include/cluster.h"
 
 
-int verbosity = false;
+bool verbosity = true;
+int rank = 0;
+int nprocess = 1;
 
 int main(int argc, char* argv[]){
 

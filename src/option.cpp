@@ -428,6 +428,19 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     freeInt1d(&nk);
     // all element would be "0" in which we consider all pairs within rdip
 
+
+    // read sK .. for pCCE
+    //if (strcasecmp(Cluster_getMethod(clus),"pcce") == 0){
+    //    int* defaultSk = NULL;
+    //    int sK = cJSON_ReadInt(root,"sK",false,defaultSk); 
+    //    Cluster_setSk(clus,sK);
+    //    
+
+    //}
+    
+    //int order = cJSON_ReadInt(root,"order",false, NULL); // read twice
+
+
     cJSON_Delete(root);
     freeChar1d(&data);
 }

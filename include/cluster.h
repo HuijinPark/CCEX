@@ -21,6 +21,11 @@ typedef struct {
     */
     int order;
 
+    /** pcce
+
+    */
+    int sK;
+
     /**
      * @brief Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | kmeans
      * @details The following is the description of each algorithm.
@@ -139,6 +144,12 @@ void Cluster_freeClusinfo(Cluster* cls);
 int Cluster_setClusinfo_addcluster(Cluster* cls, int order, int iter, int* cluster); // add new cluster, return the index of the cluster
 void Cluster_setClusinfo_chgcluster(Cluster* cls, int order, int* cluster, int ic); // change cluster at ic-th cluster
 void Cluster_setClusinfo_chgiter(Cluster* cls, int order, int iter, int ic); // change iter at ic-th cluster 
+
+//void Cluster_setSk(Cluster* cls, int sk); //
+//void Cluster_getSk(Cluster* cls); // output
+
+
+
 // what's iter :     
 // The number how many you will multiply/divide 
 // in the coherence calculation for 0 th order

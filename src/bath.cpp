@@ -982,7 +982,7 @@ BathSpin_setQuad_fromEFG(BathSpin* bs, MatrixXcd efg, double eq, float spin){
     eq = eq * 1.0e-30; // 10e-30 m^2 -> m^2
 
     // Quadrupole (radkHz)
-    bs->quad = MHZ_TO_RADKHZ((eq)/(2.0*spin*(2.0*spin-1.0))/h * efg);
+    bs->quad = MHZ_TO_RADKHZ((eq)/(spin*(2.0*spin-1.0))/h * efg);
 }
 
 

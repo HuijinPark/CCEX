@@ -133,13 +133,13 @@ typedef struct {
      * @brief The number of bath spins
      * @todo Add documentation for cce.in : &Bath -> "nspin" tag
     */
-    int nspin; /**< The number of BathSpin */
+    int nspin; /**< The number of BathSpin */  
 
     /**
      * @brief The array of BathSpin
      * @todo Add documentation for cce.in : &Bath tag
     */
-    BathSpin** bath;
+    BathSpin** bath;  
 
     // spin properties
     int prop_nspecies; /**< The number of species */

@@ -1,5 +1,5 @@
 {
-    "method" : "gcce", // Possible options : cce | gcce | dsj | itb | dsjitb | pcce
+    "method" : "pcce", // Possible options : cce | gcce | dsj | itb | dsjitb | pcce
     "QUAntity" : "coherence", // Possible options : coherence | dm | noise
     // "bfield": 100.0, // Magnetic field (Unit : gauss) , bfield_z
     "bfield" : [40.0, 20.0, 100.0], // Magnetic field (Unit : gauss) bfield_vector
@@ -12,6 +12,11 @@
     "nstate": 7,
     "seed": 10, 
     "order" : 3,
+    "kmeans_pp"     : true,
+    "iter_detail"   : false,
+    "sK"            : 4 ,
+    "max_trial"     : 100 ,
+    "max_iteration" : 100,
 
     // "method" : "hash",
     "nk" : [0,0,0,100],

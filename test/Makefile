@@ -9,7 +9,7 @@ CXXFLAGS += -Wno-deprecated-declarations
 SRC_DIR=../src
 OBJ_DIR=../obj
 
-TARGET = ./test_defect
+TARGET = ./test_option_cluster
 
 SRCS=$(wildcard $(SRC_DIR)/*.cpp) 
 SRCS += $(TARGET).cpp
