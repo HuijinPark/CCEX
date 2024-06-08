@@ -11,7 +11,7 @@
 #include "cluster.h"
 #include "general.h"
 
-void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cc, Pulse* pulse, Cluster* cluster, Output* output);
+void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cc, Pulse* pulse, Cluster* cluster, Output* output, int*** localClusters);
 
 BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* dfa, int nqubit);
 

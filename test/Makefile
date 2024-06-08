@@ -11,7 +11,7 @@ OBJ_DIR=../obj
 
 TARGET = ./test_option_cluster
 
-SRCS=$(wildcard $(SRC_DIR)/*.cpp) 
+SRCS=$(wildcard $(SRC_DIR)/*.cpp)  
 SRCS += $(TARGET).cpp
 OBJS=$(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 

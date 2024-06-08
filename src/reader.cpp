@@ -72,7 +72,8 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
     double* gyros       = BathArray_getProp_gyros(ba);
 
     // Read bath files
-    int nspin = 0;
+    int nspin_prev = 0;
+    int nspin = 0;    
 
     for (int i=0; i<nbathfiles; i++){
 
@@ -113,7 +114,6 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
                     // increase the number of spins
                     nspin++;
                     BathArray_setNspin(ba, nspin);                
-
                     // allocate the BathArray->Bath
                     if (nspin == 0){
                         BathArray_allocBath(ba, nqubit); // alloc bath spins
@@ -132,7 +132,8 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
                     Config_set_flines_i(cnf, fline, nspin-1);
 
                     // set the bath spin properties
-                    int ispeceis = findIndexChar(names,0,nspecies,name);
+                    int ispeceis = findIndexChar(names,0,nspecies-1,name);
+
                     if (ispeceis == -1){
                         fprintf(stderr,"Error(readBathFile): Cannot find the species name in the gyro file\n");
                         fprintf(stderr,"The bath spin is : %s %lf %lf %lf \n",name,xyz[0],xyz[1],xyz[2]);
@@ -141,6 +142,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
                         BathArray_setBath_i_spin(ba, spins[ispeceis], nspin-1);
                         BathArray_setBath_i_gyro(ba, gyros[ispeceis], nspin-1);
                     }
+
 
                     // overlap..?
                 }
@@ -155,17 +157,21 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
         ////////////////////////////////////////////////////////////////////////
         // Print
         if(rank==0){
+            printLine();
             sprintf(message,"Read BathFile[%d] : %s\n",i,fname); printMessage(message);
-            for (int isp=0; isp<nspin; isp++){
-                if (verbosity || (isp<3 || isp>nspin-3)){ 
-                    printf("        ( fline %5d )",Config_get_flines_i(cnf,isp));
-                    // sprintf(message,"( fline %3d ) ",Config_get_flines_i(cnf,isp)); printMessage(message);
+            sprintf(message,"- Number of bath spins : %d (nspin = %d)",nspin-nspin_prev,nspin); printMessage(message);
+            for (int isp=nspin_prev; isp<nspin; isp++){
+                if (verbosity || (isp<nspin_prev + 3 || isp>nspin-3)){ 
+                    // printf("        ( fline %5d )",Config_get_flines_i(cnf,isp));
                     BathArray_reportBath_i_props(ba, isp);
                 }
-                if (!verbosity && isp==3){
+                if (!verbosity && isp==nspin_prev + 3){
                     sprintf(message,"   : \n"); printMessage(message);
                 }
             }
+            printLine();
+
+            nspin_prev = BathArray_getNspin(ba);
             printf("\n");
         }
         ////////////////////////////////////////////////////////////////////////
@@ -219,10 +225,10 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
         
         if (rank==0){
             if (data == NULL){
-                sprintf(message,"Warning(readStateFile): Cannot open the state file (%s)\n",fname); printMessage(message);
+                sprintf(message,"Warning(readStateFile): Cannot open the state file (%s)",fname); printMessage(message);
             }
             if (nbathfiles > 1){
-                sprintf(message,"Warning(readStateFile): The number of bathfiles is larger than 1\n"); printMessage(message);
+                sprintf(message,"Warning(readStateFile): The number of bathfiles is larger than 1"); printMessage(message);
             }
             sprintf(message,"The bath state is randomly generated\n"); printMessage(message);
         }
@@ -290,7 +296,7 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
         
         if (rank==0){
             if (data == NULL){
-                sprintf(message,"Warning(setPaxes): Cannot open the avaax file (%s)\n",fname); printMessage(message);
+                sprintf(message,"Warning(setPaxes): Cannot open the avaax file (%s)",fname); printMessage(message);
             }
             if (nbathfiles > 1){
                 sprintf(message,"Warning(setPaxes): The number of bathfiles is larger than 1\n"); printMessage(message);
@@ -404,10 +410,11 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
         
         if (rank==0){
             if (data == NULL){
-                sprintf(message,"Warning(setSubbathStates): Cannot open the exstate file (%s)\n",fname); printMessage(message);
+                
+                sprintf(message,"Warning(setSubbathStates): Cannot open the exstate file (%s)",fname); printMessage(message);
             }
             if (nbathfiles > 1){
-                sprintf(message,"Warning(setSubbathStates): The number of bathfiles is larger than 1\n"); printMessage(message);
+                sprintf(message,"Warning(setSubbathStates): The number of bathfiles is larger than 1"); printMessage(message);
             }
             sprintf(message,"The subbath states are randomly generated\n"); printMessage(message);
         }
@@ -517,7 +524,7 @@ void readGyrofile(BathArray* ba, Config* cnf){
     }
     fclose(data);
     if(rank==0){printf("        Read GyroFile : %s\n",fname);}
-    if(rank==0){printf("        Current nspecies = %d \n",nspecies);}
+    if(rank==0){BathArray_reportSpinProperties(ba);}
     if(rank==0){printf("\n");}
 }
 
@@ -537,16 +544,34 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
     double CorrTotSpin = Config_getCorrTotSpin(cnf);
     double SpinFactor = 0.0;
 
+    if (rank==0){
+        printSubTitle("Read the Hyperfine interaction from DFT inputfile...");
+    }
+
     //the information in Atensor file
     if (hf_readmode==0){
-        // Use point-dipole approximation
+        printf("      %-18s:   %4d ( Point-dipole tensor )\n\n", "HF Readmode ", hf_readmode);
+        BathArray_setBathHypfs(ba,qa); 
     }
     else if (hf_readmode==1 || hf_readmode==2 || hf_readmode==3){
 
-        printLine();
-        printSubTitle("Read the Hyperfine interaction from DFT inputfile...");
-        printStructElementChar("HF Tensor file : ", hf_tensorfile);
-        printStructElementInt("HF Readmode : ", hf_readmode);
+        if (rank==0){
+
+            if (hf_readmode==1){
+                printf("      %-18s:   %d ( Fermi-contact term + point-dipole tensor )\n", "HF Readmode ", hf_readmode);
+            }
+            else if (hf_readmode==2){
+                printf("      %-18s:   %d ( DFT dipolar tensor )\n", "HF Readmode ", hf_readmode);
+            }
+            else if (hf_readmode==3){
+                printf("      %-18s:   %d ( Fermi-contact term + DFT dipole tensor )\n", "HF Readmode ", hf_readmode);
+            }
+            printStructElementChar("HF Tensor file ", hf_tensorfile);
+            printStructElementDouble("HF Cutoff ", hf_cutoff);
+            printStructElementInt("HF ignoring range ", hf_ignore_oor);
+            printf("\n");
+
+        }
 
         //////////////////////////////////////////////////////////////////
         // Tensor information
@@ -575,7 +600,10 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
         ////////////////////////////////////////////////////////////
     
         int version = READ_Tensor_ver(hf_tensorfile,&SpinFactor ,DefectTotSpin, &CorrTotSpin);
-        printHfInfo_version(version, DefectTotSpin, CorrTotSpin, SpinFactor);
+
+        if (rank==0){
+            printHfInfo_version(version, DefectTotSpin, CorrTotSpin, SpinFactor);
+        }
 
         //the information to checking BD (in A-&Q-tensor)
         isVertex = \
@@ -590,16 +618,25 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
                 exit(1);
             }
         }
-        printHfInfo_BD(A_vertex, A_center, A_normal, A_MinDif, A_MaxDif, isVertex);
+
+        if (rank==0 && verbosity){
+            printHfInfo_BD(A_vertex, A_center, A_normal, A_MinDif, A_MaxDif, isVertex);
+        }
 
         // Read gfactor and etc
         READ_Tensor_const(hf_tensorfile,names,nspecies,&(A_Gfactor),"g-factor___"); // length = nspecies+1
         READ_Tensor_etc(hf_tensorfile,names,nspecies,&(A_Etc),"etc____",1); // length = nspecies+1
-        printHfInfo_etc(A_Etc, A_Gfactor, names, nspecies, 0);
+
+        if (rank==0 && verbosity){
+            printHfInfo_etc(A_Etc, A_Gfactor, names, nspecies, 0);
+        }
 
         // Read the tensors
         READ_Tensor(hf_tensorfile,&(AtensorArray),13); // length = AtensorArray[0][0]
-        printHfInfo_tensor(AtensorArray, 0);
+
+        if (rank==0 && verbosity){
+            printHfInfo_tensor(AtensorArray, 0);
+        }
         
         ////////////////////////////////////////////////////////////
         // Set Hyperfine tensor to bath array
@@ -729,7 +766,11 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
             freeDouble2d(&A_normal, 8);
         }
 
-        printf("        Read the Hyperfine interaction from DFT inputfile... Done\n");
+    }
+
+    if (rank==0){
+        int nqubit = QubitArray_getNqubit(qa);
+        BathArray_reportBath_hypf(ba, nqubit); //report updated hyperfine tensors
     }
 }
 
@@ -1469,7 +1510,7 @@ int READ_Tensor_ver(const char* inputfile,double* SpinFactor, double DefectTotSp
             if (strncmp(ptr,QE,strlen(QE))==0){
                 CheckOption=true;
                 if (rank==0){
-                    printf("\t\tSuccessfully, The version tag is read from Tensorfile (Q.E)\n");
+                    printf("\t\t  Successfully, The version tag is read from Tensorfile (Q.E)\n");
                 }
                 break; // Q.E. version
             }
@@ -1478,22 +1519,22 @@ int READ_Tensor_ver(const char* inputfile,double* SpinFactor, double DefectTotSp
             if (strncmp(ptr,VASP,strlen(VASP))==0){
                 CheckOption=true;
                 if (rank==0){
-                    printf("\t\tSuccessfully, The version tag is read from Tensorfile (VASP)\n");
+                    printf("\t\t  Successfully, The version tag is read from Tensorfile (VASP)\n");
                 }
                 //calculate the spin factor with total spin & correlation
                 if (*CorrTotSpin != 0.0){
                     //consider other central spin value
                     (*SpinFactor) = (*CorrTotSpin) / DefectTotSpin;
                     if (rank==0){
-                        printf("\t\tAre you sure that the Central Spin is different from A-tensor file?\n");
-                        printf("\t\tTo check the detail option, set '-v' options\n");
+                        printf("\t\t  Are you sure that the Central Spin is different from A-tensor file?\n");
+                        printf("\t\t  To check the detail option, set '-v' options\n");
                     }
                 }else{
                     //just use total spin written in A-tensor file
                     //(*SpinFactor) = DefectTotSpin; 
                     (*SpinFactor) = 1;
                     if (rank==0){
-                        printf("\t\tYou will use the raw data of A-tensor file\n");
+                        printf("\t\t  You will use the raw data of A-tensor file\n");
                     }
                 }
                 rewind(data);fclose(data);
@@ -1509,15 +1550,15 @@ int READ_Tensor_ver(const char* inputfile,double* SpinFactor, double DefectTotSp
     //if you can search the version tag, 
     //The 'Version Tag' will be recongize as 'Q.E.' version
     if (CheckOption == false && rank == 0){
-        printf("\t\tThe version tage is not finded from Tensorfile, Now we will use 'Q.E.'\n");
+        printf("\t\t  The version tage is not finded from Tensorfile, Now we will use 'Q.E.'\n");
     }
     
     //calculate the spin factor with total spin & correlation
     (*CorrTotSpin) = 0.5; //automatically, set S=1/2 in Q.E.
     (*SpinFactor) = (*CorrTotSpin) / DefectTotSpin;
     if (DefectTotSpin != 1 && rank == 0){
-        printf("\t\tDefectTotSpin is different from default value(1)!!\n");
-        printf("\t\tTo check the detail option, set '-v' options\n");
+        printf("\t\t  DefectTotSpin is different from default value(1)!!\n");
+        printf("\t\t  To check the detail option, set '-v' options\n");
     }
     return 0;   // Q.E.
 
@@ -1532,12 +1573,12 @@ void printHfInfo_version(int version, double DefectTotSpin, double CorrTotSpin, 
 
     //print A-tensor version (Q.E. or VASP)
     if (version == 0){ //Q.E.
-        printf("\tYour Hyperfine file version is 'Q.E.'\n");
+        printf("\t\tYour Hyperfine file version is 'Q.E.'\n");
         printf("\t\tCentral Tot spin & Correlation spin = %lf & %lf\n",DefectTotSpin, CorrTotSpin);
         printf("\t\t-->SpinFactor = (Correlation Spin) / (Central Tot spin) = %lf\n",SpinFactor);
 
     }else if (version == 1){    //VASP
-        printf("\tYour Hyperfine file version is 'VASP'\n");
+        printf("\t\tYour Hyperfine file version is 'VASP'\n");
         if (CorrTotSpin != 0.0){
             printf("\t\tCentral Tot spin & Correlation spin = %lf & %lf\n",DefectTotSpin, CorrTotSpin);
             printf("\t\t-->SpinFactor = (Correlation Spin) / (Central Tot spin) = %lf\n",SpinFactor);

@@ -3,105 +3,80 @@
 #include "../include/memory.h"
 #include "../include/reader.h"
 
-void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pulse* pls, Cluster* cls, Output* op){
+void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pulse* pls, Cluster* cls, Output* op, int*** localclusters){
 
     char message[500];
 
-    if (rank==0){
-        printLineSection();
-        printTitle("MPI distribution for the clusters");
-    }
     ////////////////////////////////
-    // MPI : distribute the clusters
+    // Get parameters
     ////////////////////////////////
-    int order = Cluster_getOrder(cls);
-    int*** clusters = Cluster_getClusinfo(cls);
-    int*** localclusters = MPI_getLocalClusters(order,clusters);
-    // int*** localclusters = clusters; // No MPI
-    // reportClusinfo(localclusters,order);
-    MPI_Barrier(MPI_COMM_WORLD);
 
-    ////////////////////////////////
-    // Check is GCCE or CCE
-    ////////////////////////////////
-    int iter_0th = Cluster_getClusinfo_iter(cls,0,0);
+    // Method-related parameters
+    int order = Config_getOrder(cnf);
     char* method = Config_getMethod(cnf);
     char* quantity = Config_getQuantity(cnf);
+    int nstate = Config_getNstate(cnf);
 
+    // Calculation condition parameters
+    int nstep = Config_getNstep(cnf);
+    float deltat = Config_getDeltat(cnf);
+
+    // The number of Bath and Qubit spins
+    int nqubit = QubitArray_getNqubit(qa);
+    int nspin = BathArray_getNspin(ba);
+    
+    // Output parameters
+    char* savemode = Output_getSavemode(op);
+
+    // Power of the 0th cluster
+    int iter_0th = Cluster_getClusinfo_iter(cls,0,0);
     bool isGCCE = false;
-    if (iter_0th != 0){isGCCE = true;}
-
-    if (rank==0){ 
-        printLineSection();
-        if (isGCCE){
-            if (strcasecmp(method,"gcce")!=0){
-                fprintf(stderr,"Error : Method is not gCCE\n");
-                exit(1);
-            }
-            printTitle("gCCE calculation");
-        }else{  
-            if (strcasecmp(method,"cce")!=0){
-                fprintf(stderr,"Error : Method is not CCE\n");
-                exit(1);
-            }
-            printTitle("CCE calculation");
-        }
-    }
     
     ////////////////////////////////
-    // Save mode
+    // Print the calculation method
     ////////////////////////////////
-    char* savemode = Output_getSavemode(op);
+
+    // gCCE or conventional CCE
+    if (strcasecmp(method,"gcce")==0 && iter_0th==0){
+        // gCCE method requires the 0th cluster
+        fprintf(stderr,"Error : calculate,, gCCE method requires the 0th cluster\n");
+        exit(1);
+    }else if (strcasecmp(method,"gcce")==0 && iter_0th>0){
+        isGCCE = true;
+    }
+    
+    MPI_Barrier(MPI_COMM_WORLD);
 
     ////////////////////////////////
     // Main calculation loop
     ////////////////////////////////
 
-    int nqubit = QubitArray_getNqubit(qa);
-    int nspin = BathArray_getNspin(ba);
-    int nstate = Config_getNstate(cnf);
-    int nstep = Config_getNstep(cnf);
-    float deltat = Config_getDeltat(cnf);
-    
-    MPI_Barrier(MPI_COMM_WORLD);
-
-    if (rank==0){
-        printLineSection();
-        printTitle("Main calculation loop");
-
-        // Print the information
-        if (nstate == 0){
-            printLine();
-            printMessage("Ensemble calculation");
-            printLine();
-            printf("\n");
-        }else{
-            printLine();
-            printMessage("Single calculation");
-            printLine();
-            printf("\n");
-        }
-
-    }
-
     for (int istate=0; istate<=nstate; istate++){
 
-        ////////////////////////////////
-        // Update QubitArray, BathArray 
-        ////////////////////////////////
-        if (rank==0 && nstate!=0 && istate!=0){
-            sprintf(message,"Iteration %d : Update QubitArray, BathArray",istate);
-            printMessage(message);
-            printLine();
-        }
-        
-        // Ensemble app. doesn't generate random states
+        // wall time
+        double time_start_step = MPI_Wtime();
 
-        // Single app. generates random states
+        if (rank==0 && nstate!=0 && istate!=0){
+            sprintf(message,"%s calculation (%s) : Iteration # %d",method,"Single-sample approach",istate); 
+            printTitle(message);
+        }else if (rank==0 && nstate==0 && istate==0){
+            sprintf(message,"%s calculation (%s)",method,"Ensemble approach"); 
+            printTitle(message);
+        }
+
+        /////////////////////////////////////////////////////////
+        // Update QubitArray, BathArray, DefectArray 
+        /////////////////////////////////////////////////////////
+        // Generate random states in single-sample approach
         if (istate>0){
 
+            ////////////////////////////////
             // Randomize bath states
-            // BathArray_setBathStatesRandom(ba);
+            ////////////////////////////////
+            // Set Bath states
+            if (rank==0){
+                printSubTitle("Randomize main-bath states...");
+            }
             setBathStates(ba,cnf,istate); // Read or random set
             if (rank==0){
                 BathArray_reportBath_states(ba);
@@ -109,18 +84,21 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
             // Set Subbath states
             if (DefectArray_getNdefect(dfa)>0){
+                if (rank==0){
+                    printSubTitle("Randomize sub-bath states...");
+                }
                 setSubbathStates(dfa,ba,cnf,istate); // Read or random set
                 if (rank==0){
                     DefectArray_reportSubbath_states(dfa);
                 }
             }
             
-
+            ////////////////////////////////
             // Calculate bath disorders
+            ////////////////////////////////
+
+            // Set the bath disorders
             BathArray_setBathDisorders(ba);
-            if (rank==0){
-                BathArray_reportBath_disorders(ba);
-            }
             
             // Calculate overhauser fields of qubits
             bool isOvh = QubitArray_getOverhaus(qa);
@@ -129,9 +107,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     double overhaus = BathArray_getOverhaus(ba,iq);
                     QubitArray_setQubit_i_overhaus(qa,overhaus,iq);
                 }
-            }
-            if (rank==0){
-                QubitArray_reportQubit_overhaus(qa);
             }
 
             if (DefectArray_getNdefect(dfa)>0){
@@ -142,43 +117,85 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 if (isOvh){
                     updateOverhaus_qubit_sub(dfa,qa);
                 }
-                if (rank==0){
-                    BathArray_reportBath_disorders(ba);
+            }
+
+            if (rank==0){
+                QubitArray_reportQubit_overhaus(qa);
+                BathArray_reportBath_disorders(ba);
+                if (DefectArray_getNdefect(dfa)>0){
                     DefectArray_reportSubbath_disorders(dfa);
-                    QubitArray_reportQubit_overhaus(qa);
                 }
             }
-            
-
         }
 
-        // Set the initial state and psia, psib
-        if (istate==0 && istate < nstate){
-            ; // Single, no cal. for istate=0
-        }else{
-            
-            // Calculate the qubit Hamiltonian
+
+        if (!(nstate !=0 && istate==0)){
+            // Calculating condition : 
+            //  nstate !=0 and istate!=0 : single sample approach
+            //  nstate !=0 and istate==0 : X
+            //  nstate ==0 and istate==0 : ensemble approach
+            //  nstate ==0 and istate!=0 : X
+
+
+
+            /////////////////////////////////////////////////////////
+            // Set initial state and alpha, beta of qubits
+            /////////////////////////////////////////////////////////
+
+            // Get psia, psib as adiabatic states
+            MatrixXcd psia = QubitArray_getPsia(qa);
+            MatrixXcd psib = QubitArray_getPsib(qa);
+
             float* bfield = Config_getBfield(cnf);
             int* alphaidx = QubitArray_get_alphaidx(qa);
             int* betaidx = QubitArray_get_betaidx(qa);
-            if (alphaidx!=NULL && betaidx!=NULL){
-                QubitArray_setPsiaPsib_fromIdx(qa,bfield);
-            }else if (alphaidx==NULL && betaidx==NULL){
-                QubitArray_setPsiaPsib_fromQubit(qa);
+
+            if (psia.rows()==0 && psia.cols()==0 && psib.rows()==0 && psib.cols()==0){
+                if (alphaidx!=NULL && betaidx!=NULL){
+                    if (rank==0){
+                        printSubTitle("Set psia, psib from qubit index...");
+                    }
+                    QubitArray_setPsiaPsib_fromIdx(qa,bfield);
+                }else if (alphaidx==NULL && betaidx==NULL){
+                    if (rank==0){
+                        printSubTitle("Set psia, psib from qubit alpha, beta...");
+                    }
+                    QubitArray_setPsiaPsib_fromQubit(qa);
+                }else{
+                    fprintf(stderr,"Error : calculate,, Invalid qubit index (cannot set the psia,psib)\n");
+                    exit(1);
+                }
             }else{
-                fprintf(stderr,"Error : calculate,, Invalid qubit index (cannot set the psia,psib)\n");
-                exit(1);
+                if (rank==0){
+                    printSubTitle("Set psia, psib from input...");
+                }
+            }
+
+            if (rank==0){
+                QubitArray_reportPsiaPsib(qa);
             }
             
             // Qubit initial state
             MatrixXcd psi0 = QubitArray_getPsi0(qa);
             if (psi0.rows()==0 && psi0.cols()==0){
+                if (rank==0){
+                    printSubTitle("Set psi0 from psia, psib...");
+                }
                 QubitArray_setPsi0_fromPsiaPsib(qa);
+            }else{
+                if (rank==0){
+                    printSubTitle("Set psi0 from input...");
+                }
             }
 
-            ////////////////////////////////
+            // Report
+            if (rank==0){
+                QubitArray_reportPsi0(qa);
+            }
+
+            /////////////////////////////////////////////////////////
             //  Calculate the coherence
-            ////////////////////////////////
+            /////////////////////////////////////////////////////////
 
             ////////////////////////////////
             // Initialize the results
@@ -200,10 +217,9 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             for (int istep=0; istep<nstep; istep++){
                 result_wD[istep] = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));
                 result_nD[istep] = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));
-                // result_0th[istep] = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));
                 result_0th_inv[istep] = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));
-                // result_nth[istep] = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));
             }
+            ////////////////////////////////
 
             ////////////////////////////////
             // Zero-th order 
@@ -213,8 +229,8 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             if (isGCCE){ // gcce
                 // Zero-th order
                 if (rank==0){
-                    printLine();
-                    printSubTitle("Calculate 0-th cluster...\n");
+                    printf("\n");
+                    printSubTitle("Calculate 0-th cluster...");
                 }
                 
                 result_0th = calCoherenceGcce(qa,NULL,cnf,pls);
@@ -224,8 +240,8 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 if (rank==0){
                     steptime_end = MPI_Wtime();
                     // make message
-                    sprintf(message,"Wall time : %.2f[s]\n",steptime_end-steptime_sta);
-                    printSubTitle(message);
+                    sprintf(message,"# Wall time : %.2f[s]",steptime_end-steptime_sta);
+                    printMessage(message);
                     printLine(); printf("\n");
                 }
             }else{
@@ -236,6 +252,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             }
 
             MPI_Barrier(MPI_COMM_WORLD);
+            ////////////////////////////////
 
             ////////////////////////////////
             // Higher orders
@@ -243,8 +260,8 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
                 // Message
                 if (rank==0){
-                    sprintf(message,"Calculate %d-th cluster...\n",n);
-                    printLine();
+                    printf("\n");
+                    sprintf(message,"Calculate %d-th cluster...",n);
                     printSubTitle(message);
                 }
 
@@ -309,7 +326,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     steptime_end = MPI_Wtime();
                     // make message
                     printf("\n");
-                    sprintf(message,"# Wall time : %.2f[s]\n",steptime_end-steptime_sta);
+                    sprintf(message,"# Wall time : %.2f[s]",steptime_end-steptime_sta);
                     printMessage(message);
                     printLine(); printf("\n");
                 }
@@ -325,7 +342,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     result_wD[istep] = mulMatrixXcdElementWise(result_wD[istep], result_0th[istep]);
                 }           
             }
-    
+
             delete[] result_0th;
             delete[] result_0th_inv;
             
@@ -414,6 +431,12 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     double Azz = Atensor(2,2).real();
                     Output_save_info(op,result_wD_all,result_nD_all,nstep,deltat,istate, Azx, Azz, bathfile);
                 }
+                // print wall clock time
+                steptime_end = MPI_Wtime();
+                printLine();
+                printf("          Wall time = %.5f s\n", steptime_end - time_start_step);
+                printLine();
+                printf("\n\n");
             }
 
             ////////////////////////////////
@@ -426,7 +449,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             MPI_Barrier(MPI_COMM_WORLD);
         }
     }
-
 }
 
 BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* dfa, int nqubit){
@@ -490,9 +512,9 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
         }
     }
 
-    if (rank==0 && addedspin>0 && verbosity){
-        printStructElementInt("Added spin",addedspin);
-    }
+    // if (rank==0 && addedspin>0 && verbosity){
+    //     printStructElementInt("Added spin",addedspin);
+    // }
 
     return ba_cluster;
 }

@@ -151,6 +151,10 @@ int min(int x, int y);
 int*** MPI_getLocalClusters(int order, int*** clusters);
 // MatrixXcd* MPI_reduceLocalResult(int nstep, MatrixXcd* local);
 
+/* Print help and banner ---------------------------------------------------------*/
+void printBanner();
+void printHelp();
+
 #endif // __CCEX_UTILITIES_UTILITIES_H_
 
 

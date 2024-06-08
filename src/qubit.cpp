@@ -608,15 +608,16 @@ void QubitArray_reportQubit_overhaus(QubitArray* qa){
         snprintf(message,100,"Qubit[%d].overhaus",i);
         printStructElementDouble(message,QubitArray_getQubit_i_overhaus(qa,i));
     }
+    printf("\n");
 }
 
 void QubitArray_report(QubitArray* qa){
 
-    printLineSection();
     printTitle("Structure QubitArray");
     
     printSubTitle("General properties");
     printStructElementBool("overhaus",QubitArray_getOverhaus(qa));
+    printf("\n");
     
     printSubTitle("Qubit properties");
     int nqubit = QubitArray_getNqubit(qa);
@@ -630,6 +631,7 @@ void QubitArray_report(QubitArray* qa){
     printf("\n");
     printLine();
     
+    printf("\n");
     QubitArray_reportIntmap(qa);
     printf("\n");
 
@@ -649,7 +651,5 @@ void QubitArray_report(QubitArray* qa){
         printStructElementChar("alphaidx","NULL");
         printStructElementChar("betaidx","NULL");
     }
-    printf("\n");
-    printLineSection();
 }
 

@@ -425,7 +425,7 @@ MatrixXcd BathArray_Rho0(BathArray* ba, bool isEnsemble){
 
     int dimBA = BathArray_dim(ba);
 
-    if (isEnsemble){
+    if (isEnsemble || dimBA == 1){
         return MatrixXcd::Identity(dimBA,dimBA) * (1.0/(double)dimBA);
     }else{
         MatrixXcd psi0 = BathArray_Psi0(ba);
@@ -507,20 +507,29 @@ void BathArray_reportBath_i_props(BathArray* ba, int i){
     float spin = BathArray_getBath_i_spin(ba,i);
     double gyro = BathArray_getBath_i_gyro(ba,i);
     double* xyz = BathArray_getBath_i_xyz(ba,i);    
-    printf("      [%3d] %7s %7.3lf %7.3lf %7.3lf   ( S = %2.1f, gyro = %7.3lf )\n",i,name,xyz[0],xyz[1],xyz[2],spin,gyro);   
+    printf("      [%3d] %5s %7.3lf %7.3lf %7.3lf   ( S = %2.1f, gyro = %7.3lf )\n",i,name,xyz[0],xyz[1],xyz[2],spin,gyro);   
 }
 
 void BathArray_reportBath_states(BathArray* ba){
+
     int nspin = BathArray_getNspin(ba);
+    printStructElementInt("nbathspin (#)",nspin);
+    printLine();
+
     for (int i=0; i<nspin; i++){
         if (verbosity || (i<3 || i>nspin-3)){ 
             float state = BathArray_getBath_i_state(ba,i);
-            printf("      [%3d] state = %2.1f\n",i,state);
+
+            char message[100];
+            sprintf(message,"bath[%d].state ",i);
+            printStructElementFloat(message,state);
         }
         if (!verbosity && i==3){
             printf("         :\n");
         }
     }
+    printLine();
+    printf("\n");
 }
 
 void BathArray_reportBath_detunings(BathArray* ba){
@@ -536,6 +545,7 @@ void BathArray_reportBath_detunings(BathArray* ba){
             printf("         :\n");
         }
     }
+    printf("\n");
 }
 
 void BathArray_reportBath_disorders(BathArray* ba){
@@ -552,26 +562,30 @@ void BathArray_reportBath_disorders(BathArray* ba){
             printf("         :\n");
         }
     }
+    printf("\n");
 }
 
 void BathArray_reportBath_hypf(BathArray* ba, int nqubit){
 
-    printSubTitle("Bath Hyperfine tensors");
+    printSubTitle("Bath Hyperfine tensors (radkHz) ");
+
+    printf("      hypf[ib][iq] (ib : bath spin index, iq : qubit index)\n");
 
     int nspin = BathArray_getNspin(ba);
-    for (int i=0; i<nspin; i++){
-        if (verbosity || (i<3 || i>nspin-3)){ 
-            for (int iq=0; iq<nqubit; iq++){
-            char key[100];
-            sprintf(key,"hypf[%d][%d]",i,iq);
-            MatrixXcd hypf = BathArray_getBath_i_hypf_j(ba,i,iq);
-            printInlineMatrixXcd(key,hypf);
+
+    for (int iq=0; iq<nqubit; iq++){
+        for (int i=0; i<nspin; i++){
+            if (verbosity || (i<3 || i>nspin-3)){              
+                char key[100];
+                sprintf(key,"hypf[%d][%d]",i,iq);
+                MatrixXcd hypf = BathArray_getBath_i_hypf_j(ba,i,iq);
+                printInlineMatrixXcd(key,hypf);
             }
-            printf("\n");
+            if (!verbosity && i==3){
+                printf("         :\n\n");
+            }
         }
-        if (!verbosity && i==3){
-            printf("         :\n\n");
-        }
+        printf("\n");
     }
 
     printLineSection();
@@ -726,13 +740,13 @@ void BathArray_setBath_i_xyz(BathArray* ba, const double* xyz, int i){
 
 void BathArray_setBath_i_state(BathArray* ba, const float state, int i){
 
-    float S = BathArray_getBath_i_spin(ba,i);
+    // float S = BathArray_getBath_i_spin(ba,i);
 
-    if (!isSubLevel(S,state)){
-        fprintf(stderr,"Error(BathArray_setBath_i_state): S = %2.1f\n",S);
-        fprintf(stderr,"Error(BathArray_setBath_i_state): state = %2.1f is out of range\n",state);
-        exit(EXIT_FAILURE);
-    }
+    // if (!isSubLevel(S,state)){
+    //     fprintf(stderr,"Error(BathArray_setBath_i_state): S = %2.1f\n",S);
+    //     fprintf(stderr,"Error(BathArray_setBath_i_state): state = %2.1f is out of range\n",state);
+    //     exit(EXIT_FAILURE);
+    // }
 
     ba->bath[i]->state = state;
 

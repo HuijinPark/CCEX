@@ -375,7 +375,7 @@ void printTitle(char* title){
 }
 
 void printSubTitle(char* title){
-    printf("\n    >> %s\n\n",title);
+    printf("    >> %s\n\n",title);
 }
 
 void printMessage(char* title){
@@ -651,3 +651,88 @@ int*** MPI_getLocalClusters(int order, int*** clusters){
 
 //     //return result;
 // } 
+
+/* Print help and banner ---------------------------------------------------------*/
+void printBanner(){
+
+    // Print the following :
+    printf("\n\n");
+    printf("    ======================================================================\n\n");
+    printf("                   ______   ______  _______ ___   ___ \n");
+    printf("                  /      | /      ||   ____|\\  \\ /  / \n");
+    printf("                 |  ,----'|  ,----'|  |__    \\  V  /  \n");
+    printf("                 |  |     |  |     |   __|    >   <   \n");
+    printf("                 |  `----.|  `----.|  |____  /  .  \\  \n");
+    printf("                  \\______| \\______||_______|/__/ \\__\\ \n");
+    printf("                __   _   _   _  _       _   _     _   _   _ _   \n");
+    printf("               / _| / \\ | \\_/ || |     //  / \\   | | / \\ | | |  \n");
+    printf("              ( (_ ( o )| \\_/ || |_   //  | o |n_| |( o )| U |  \n");
+    printf("               \\__| \\_,7|_| |_||___| //   |_n_|\\__/  \\_/ |___|  \n");
+    printf("\n");
+
+    //Ref :                                                                              
+    //https://wepplication.github.io/tools/asciiArtGen/?fontSelector=Doom&userInput=General+++CCE-X
+
+    time_t t = time(NULL);
+    struct tm *d1 = localtime(&t);
+    
+    printf("\n");
+    printf("            Program CCEX starts on %s ", asctime(d1));
+    printf("               The CCEX code has compiled at '%s' \n", __DATE__);
+    printf("    ======================================================================\n");
+    printf("\n"); 
+
+}
+
+void printHelp(){
+
+    printf("\tThis code is to simulate the many-body spin dynamics\n");
+    printf("\n\n");
+
+    printf("\tHow to use this code : CCECode [OPTION]... [FILE]...\n");
+    printf("\t\t-f\t:\tUse the condition input-file\n");
+    printf("\t\t-m\t:\tUse the external 'calMethod' ('single, ensemble, semi')\n");
+    printf("\t\t-I\t:\tuse the external 'BathFile'\n");
+    printf("\t\t-s\t:\tuse the external 'StateFile'\n");
+    printf("\t\t-S\t:\tuse the external 'ExStateFile'\n");
+    printf("\t\t-a\t:\tuse the external 'AvaaxFile'\n");
+    printf("\t\t-B\t:\tuse the external 'B0'\n");
+    printf("\t\t-o\t:\tuse the external 'Savefile' name\n");
+    printf("\t\t-v\t:\tprint the information of A-&Q-tensor file\n");
+    printf("\t\t-h\t:\tdisplay this help and exit\n");
+    printf("\n\n");
+
+
+    printf("\tAlong the 'calMethod' option, we can choose the calculation method!\n");
+    printf("\t 'calMethod = single'   : use the single sample calculation method\n");
+    printf("\t 'calMethod = ensemble' : use the ensemble CCE calculation method (default)\n");
+    printf("\t 'calMethod = semi'     : use the semi-classical CCE calculation method\n");
+    printf("\n\n");
+
+
+    printf("\tTo run this code, at least you need to the three file before!\n");
+    printf("\t\t1. Inputfile about nuclear configure which have spin positions and isotopes information\n");
+    printf("\t\t2. Gyromagnetic ratio about isotope nuclear\n");
+    printf("\t\t3. Defect position file // Write the defect position in condition file\n");
+    printf("\n\n");
+
+
+    printf("\tAnd then, you need another element!\n");
+    printf("\t\tCommon options         : 'BathFile', 'Order', 'Pulse', 'B0', deltaT', 'nStep', 'SaveFile', HFOpt', 'QuadOpt', 'HFmediOpt', ...\n");
+    printf("\t\tSingle method          : 'StateFile', 'ExStateFile', 'AvaaxFile', 'rDsrdr', 'enJTEOpt', 'nExspin'\n");
+    printf("\t\t                         '&Exspin' tag related stuff (For detail See below)\n");
+    printf("\t\tEnsemble method        : ''\n");
+    printf("\t\tsemi-classical method  : 'IntegStep' \n");
+    printf("\n\n");
+
+
+    printf("\tIf you use the condition file, there are many conditions...\n");
+    printf("\t\t'GyroFile'                \t: gyro magnetic ratio input-file (neccessary)\n");
+    printf("\t\t'DefectFile'              \t: input-file or array related defect position (neccessary) (unit : angsrom)\n");
+    printf("\t\t'BathFile'                \t: input-file of bath Configure\n");
+    printf("\t\t'StateFile'               \t: spin state input file\n");
+    printf("\t\t'ExStateFile'             \t: addtional spin's state input file \n");
+    printf("\t\t'AvaaxFile'               \t: the numbering of available geometry of the extra spin's input file\n");
+    printf("\t\t'SaveFile', 'SaveFileNoDiv', 'SaveFileWiDiv'\t: the file name to save the result of CCE\n");
+    printf("\n");
+}

@@ -35,7 +35,14 @@ int main(int argc, char* argv[]){
 
     // wall time check
     double time_start, time_end;
+    double time_start_step;
     time_start = MPI_Wtime();
+
+    // Print welcome message
+    if (rank==0){
+        printBanner();
+    }
+
     //=======================================================
     // Variables declaration
     //=======================================================
@@ -58,21 +65,36 @@ int main(int argc, char* argv[]){
     int c;
     int nbathfiles_fromfccein = 0;
     int nbathfiles_current = 0;
-    int nstate_current = 0;
+
+    //  Declare and initialize the variables 
+    // that will be used to store the arguments
+    char method[MAX_CHARARRAY_LENGTH] = "";
+    char quantity[MAX_CHARARRAY_LENGTH] = "";
+    char** bathfiles = NULL;
+    int nstate = 0;
+    double bfield_z = 0.0;
+    char* outfile = NULL;
 
     while ((c = getopt(argc, argv, "hvf:m:q:I:s:N:S:a:B:o:")) != -1) {
         switch (c) {
             case 'f':
-                
-                fccein = allocChar1d(MAX_FILEPATH); 
-                strcpy(fccein,optarg);
+
+                // set the parameter as the input file
+                if (rank==0){ 
+                    // print message
+                    char message[500];
+                    sprintf(message, "Option filename : '%s' \n", optarg);
+                    printMessage(message);
+                }
+                fccein = optarg;
 
                 // check if the file exists
                 if (access(fccein, F_OK) == -1){
-                    fprintf(stderr, "Error: fccein does not exist\n");
+                    fprintf(stderr, "Error: Option file does NOT exist\n\n");
                     exit(EXIT_FAILURE);
                 }
-                
+
+                // read the input file
                 cJSON_readOptionConfig      (cnf, fccein); // general.h
                 cJSON_readOptionQubitArray  (qa,  fccein); //qubit.h
                 cJSON_readOptionDefectArray (dfa, fccein); // defect.h
@@ -156,23 +178,46 @@ int main(int argc, char* argv[]){
         fprintf(stderr, "nbathfiles_current = %d\n", nbathfiles_current);
         exit(EXIT_FAILURE);
     }
-    
+
     //=======================================================
     // Report options
     //=======================================================
     if (rank==0){
-        Config_report(cnf);
+        printf("\n\n");
+        printf("    ======================================================================\n");
+        printf("        Report all structures \n");
+        printf("    ======================================================================\n\n");
+
+        printf("    ----------------------------------------------------------------------\n");
+        Config_report(cnf); 
+        printf("\n\n");
+
+        printf("    ----------------------------------------------------------------------\n");
         QubitArray_report(qa);
+        printf("\n\n");
 
         if (DefectArray_getNdefect(dfa) > 0){
+            printf("    ----------------------------------------------------------------------\n");
+            printTitle("DefectArray");
             for (int idf=0; idf<DefectArray_getNdefect(dfa); idf++){
                 DefectArray_reportDefect_idf(dfa,idf);
+                printf("\n");
             }
         }
 
+        printf("    ----------------------------------------------------------------------\n");
         Cluster_report(cls);
+        printf("\n\n");
+
+        printf("    ----------------------------------------------------------------------\n");
         Pulse_report(pls);
+        printf("\n\n");
+
+        printf("    ----------------------------------------------------------------------\n");
         Output_report(op);
+        printf("\n");
+
+        printLineSection();
     }
 
     //=======================================================
@@ -181,19 +226,36 @@ int main(int argc, char* argv[]){
 
     srand(seed);
 
+    if (rank==0){
+        printf("\n\n");
+        printf("    ======================================================================\n");
+        printf("        Read files \n");
+        printf("    ======================================================================\n\n");
+        time_start_step = MPI_Wtime();
+    }
+
     // Qubit
     if (rank == 0){
-        printSubTitle("Qubit File");
+        printSubTitle("Qubit file");
     }
     readQubitfile(qa,cnf); // set qubit xyz position for nqubit=1
 
-    // Bath
+    // Bath : Gyromagnetic ratio
     if (rank == 0){
-        printSubTitle("Bath related File");
+        printSubTitle("Gyromagnetic ratio file");
     }
     readGyrofile(ba,cnf); // set gyro, spin, name (properties)
+
+    // Bath : Configuration files
+    if (rank == 0){
+        printSubTitle("Bath configuration files");
+    }
     readBathfiles(ba,qa,cnf);  // set bath xyz position and properties
+
+    // Hyperfine tensor
     readHftensorfile(ba,qa,cnf); // set hyperfine tensor only from file
+
+    // Quadrupole tensor
     // readQdtensorfile(ba,qa,cnf);
 
     // Bath State
@@ -211,12 +273,6 @@ int main(int argc, char* argv[]){
     //     printLineSection();
     // }
 
-    // point dipole approximation if no hyperfine tensor
-    int nqubit = QubitArray_getNqubit(qa);
-    BathArray_setBathHypfs(ba,qa); 
-    if (rank==0){
-        BathArray_reportBath_hypf(ba, nqubit); //report updated hyperfine tensors
-    }
 
     // Defect
     if (DefectArray_getNdefect(dfa) > 0){
@@ -227,8 +283,8 @@ int main(int argc, char* argv[]){
 
         int nspin = BathArray_getNspin(ba);
         DefectArray_allocPaxes(dfa, nspin);
-        // DefectArray_setPaxesRandom(dfa,ba);
         setDefectPaxes(dfa,ba,cnf); // Read or random set
+
         if (rank==0){
             DefectArray_reportPaxes(dfa);
         }
@@ -249,19 +305,61 @@ int main(int argc, char* argv[]){
             DefectArray_reportSubbath_hypf_subs(dfa);
         }
     }
-    
 
-    // Cluster
+    if (rank==0){
+        // print wall clock time
+        time_end = MPI_Wtime();
+        printLine();
+        printf("          Wall time = %.5f s\n", time_end - time_start);
+        printLine();
+    }
+    
+    //=======================================================
+    // Clusterize
+    //=======================================================
+
+    if (rank==0){
+        printf("\n\n");
+        printf("   ======================================================================\n");
+        printf("       Clusterize \n");
+        printf("   ======================================================================\n\n");
+        time_start_step = MPI_Wtime();
+    }
+
     Cluster_clusterize(cls,ba,cnf);
     if (rank==0){
         Cluster_reportClusinfo(cls);
+
+        // print wall clock time
+        time_end = MPI_Wtime();
+        printLine();
+        printf("          Wall time = %.5f s\n", time_end - time_start_step);
+        printLine();
     }
 
     //=======================================================
     // Main calculation & save results
     //=======================================================
-    calculate(qa,ba,dfa,cnf,pls,cls,op);
-    
+
+    if (rank==0){
+        printf("\n\n");
+        printf("   ======================================================================\n");
+        printf("       Main calculation \n");
+        printf("   ======================================================================\n\n");
+        time_start_step = MPI_Wtime();
+    }
+
+    // MPI distribution for the clusters
+    int order = Cluster_getOrder(cls);
+    int*** clusters = Cluster_getClusinfo(cls);
+    int*** localclusters = MPI_getLocalClusters(order,clusters);
+    // int*** localclusters = clusters; // No MPI
+    // reportClusinfo(localclusters,order);
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    // Calculate the dynamics
+    calculate(qa,ba,dfa,cnf,pls,cls,op,localclusters);
+
     //=======================================================
     // Free memory
     //=======================================================

@@ -263,12 +263,9 @@ void Output_freeAll(Output* op){
 
 void Output_report(Output* op){
 
-    printLineSection();
     printTitle("Structure Output");
 
     printStructElementChar("savemode", op->savemode);
     printStructElementChar("outfile", op->outfile);
-    
-    printf("\n");
-    printLineSection();
+
 }

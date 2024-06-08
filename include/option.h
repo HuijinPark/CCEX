@@ -23,9 +23,9 @@ char* cJSON_ReadFccein(char* fccein);
 char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_value);
 char* cJSON_ReadString(cJSON* root, char* key, bool _default, char* default_value);
 
-int cJSON_ReadInt(cJSON* root, char* key, bool _default, int* default_value);
-float cJSON_ReadFloat(cJSON* root, char* key, bool _default, float* default_value);
-double cJSON_ReadDouble(cJSON* root, char* key, bool _default, double* default_value);
+int cJSON_ReadInt(cJSON* root, char* key, bool _default, int default_value);
+float cJSON_ReadFloat(cJSON* root, char* key, bool _default, float default_value);
+double cJSON_ReadDouble(cJSON* root, char* key, bool _default, double default_value);
 bool cJSON_ReadBool(cJSON* root, char* key, bool _default, bool default_value);
 
 char** cJSON_ReadString1d(cJSON* root, char* key, bool _default, char** default_value, int isze); // memory free is needed

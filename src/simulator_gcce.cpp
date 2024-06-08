@@ -79,6 +79,7 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
 
     double tfree = 0.0;
 
+
     for (int i=0; i<nstep; i++){
 
         MatrixXcd Utot = calPropagatorGcce(qa, Htot, pls, tfree);

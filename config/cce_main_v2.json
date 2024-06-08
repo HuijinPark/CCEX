@@ -1,0 +1,137 @@
+{
+    "method" : "gcce", // Possible options : cce | gcce | dsj | itb | dsjitb | pcce
+    "QUAntity" : "coherence", // Possible options : coherence | dm | noise
+    // "bfield": 100.0, // Magnetic field (Unit : gauss) , bfield_z
+    "bfield" : [40.0, 20.0, 100.0], // Magnetic field (Unit : gauss) bfield_vector
+    "rbath": 10000.0,
+    "rdip": 10000.0,
+    "deltat": 1.0,
+    "nstep": 5,
+    "rbathcut": 0.0,
+    "rdipcut": 0.0,
+    "nstate": 2,
+    "seed": 10, 
+    "order" : 3,
+    "kmeans_pp"     : true,
+    "iter_detail"   : false,
+    "sK"            : 4 ,
+    "max_trial"     : 100 ,
+    "max_iteration" : 100,
+
+    "npulse" : 5,
+
+    // "method" : "hash",
+    "nk" : [0,0,0,100],
+    "addsubclus" : false,
+
+    // files 
+    // "qubitfile" : "./config/qubitfile",
+    // "alphams" : 0.0,
+    // "betams" : -1.0,
+    "gyrofile" : "./config/gyrofile",
+    "bathfile" : ["./config/bathfile1", "./config/bathfile2"],
+    // "bathadjust" : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+
+    "hf_readmode" : 0,
+    "hf_tensorfile" : "./config/hf_tensorfile",
+    "hf_cutoff" : 0.0,
+    "hf_ignore_oor" : 0,
+
+    "qd_readmode" : 2,
+    "qd_tensorfile" : "./config/qd_tensorfile",
+    "qd_tensorfile_woqubit" : "./config/qd_tensorfile_woqubit",
+
+    "outfile" : "./outtest",
+
+    "Qubit": {
+        "nqubit": 1,
+        "qubit": [
+        {
+            "name": "qubit1",
+            "spin": 1.0,
+            "gyro": -17608.597050,
+            "xyz": [0.0, 0.0, 0.0],
+            "alphams": 0.0,
+            "betams": -1.0,
+            "detuning": 0.0
+        }
+        ],
+        "intmap": [
+        {
+            "between": ["qubit1", "qubit1"],
+            "tensor": [
+                [1.123123, 2.123123, 3.123123],
+                [4.123123, 5.123123, 6.123123],
+                [7.123123, 8.123123, 9.123123]
+            ]
+        }
+        ],
+        "psia": [1.0, 4.0, 7.0],
+        "psib": [2.0, 5.0, 8.0],
+        "psi0": [3.0, 6.0, 9.0],
+        "overhaus" : true,
+        "alphaidx" : 0,
+        "betaidx" : 1
+    },
+
+    "Defect" : [
+        {
+            "dfname": "NVH",
+            "apprx": true,
+            "naddspin" : 2,
+            "types" : ["N", "H"],
+            "spins" : [1.0, 0.5],
+            "gyros" : [10.9 , 3.5],
+            "eqs" : [1.0, 0.0],
+
+            "navaax" : 4,
+            "rxyzs" : [ [1, "N", [1,2,3]],
+                        [2, "N", [11,12,13]],
+                        [3, "N", [21,22,23]],
+                        [4, "N", [31,32,33]],
+                        [1, "H", [41,42,43]],
+                        [2, "H", [51,52,53]],
+                        [3, "H", [61,62,63]],
+                        [4, "H", [71,72,73]]],
+
+            "hypf" : [ [1, "N", [1,2,3,4,5,6,7,8,9]],
+                       [2, "N", [11,12,13,14,15,16,17,18,19]],
+                       [3, "N", [21,22,23,24,25,26,27,28,29]],
+                       [4, "N", [31,32,33,34,35,36,37,38,39]],
+                       [1, "H", [41,42,43,44,45,46,47,48,49]],
+                       [2, "H", [51,52,53,54,55,56,57,58,59]],
+                       [3, "H", [61,62,63,64,65,66,67,68,69]],
+                       [4, "H", [71,72,73,74,75,76,77,78,79]]],
+
+            "efg" :  [ [1, "N", [1,2,3,4,5,6,7,8,9]],
+                       [2, "N", [11,12,13,14,15,16,17,18,19]],
+                       [3, "N", [21,22,23,24,25,26,27,28,29]],
+                       [4, "N", [31,32,33,34,35,36,37,38,39]]],
+
+            "zfs" : [  [1, "e", [1,2,3,4,5,6,7,8,9]],
+                       [2, "e", [11,12,13,14,15,16,17,18,19]],
+                       [3, "e", [21,22,23,24,25,26,27,28,29]],
+                       [4, "e", [31,32,33,34,35,36,37,38,39]]]
+        },
+        {
+            "dfname": "P1",
+            "apprx": false,
+            "naddspin" : 0,
+            "navaax" : 12,
+            "detuning" : [ [1, "e", 1.0],
+                           [2, "e", 2.0],
+                           [3, "e", 3.0],
+                           [4, "e", 4.0],
+                           [5, "e", 5.0],
+                           [6, "e", 6.0],
+                           [7, "e", 7.0],
+                           [8, "e", 8.0],
+                           [9, "e", 9.0],
+                           [10, "e", 10.0],
+                           [11, "e", 11.0],
+                           [12, "e", 12.0]]
+        }
+    ]
+
+
+}

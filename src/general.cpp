@@ -259,14 +259,21 @@ int     Config_getQd_readmode(Config* cnf){
 void Config_setMethod(Config* cnf, char* method){
 
     const int opsize = 7;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"gcce","cce","dsj","itb","dsjitb","kmeans"};
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"gCCE","CCE","dsj","itb","dsjitb","pCCE"};
+
     int idx = findIndexCharFix(options,0,opsize-1,method);
     if (idx == -1) {
         fprintf(stderr, "Error: current method options (%s) is not available\n",method);
+        fprintf(stderr, "Available options are : ");
+        for (int i = 0; i < opsize; i++){
+            fprintf(stderr, "%s ",options[i]);
+        }
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Please check the input file or change the possible option set\n");
         exit(EXIT_FAILURE);
     }
 
-    strcpy(cnf->method,method);
+    strcpy(cnf->method,options[idx]);
 }
 
 void Config_setQuantity(Config* cnf, char* quantity){
@@ -276,6 +283,12 @@ void Config_setQuantity(Config* cnf, char* quantity){
     int idx = findIndexCharFix(options,0,opsize-1,quantity);
     if (idx == -1) {
         fprintf(stderr, "Error: current quantity options (%s) is not available\n",quantity);
+        fprintf(stderr, "Available options are : ");
+        for (int i = 0; i < opsize; i++){
+            fprintf(stderr, "%s ",options[i]);
+        }
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Please check the input file or change the possible option set\n");
         exit(EXIT_FAILURE);
     }
 
@@ -532,7 +545,6 @@ void Config_setQd_readmode(Config* cnf, int qd_readmode){
 
 void Config_report(Config* cnf){
 
-    printLineSection();
     printTitle("Structure Config");
 
     printStructElementChar("method",Config_getMethod(cnf));
@@ -575,5 +587,4 @@ void Config_report(Config* cnf){
         printStructElementChar("qd_tensorfile",Config_getQd_tensorfile(cnf));
         printStructElementChar("qd_tensorfile_woqubit",Config_getQd_tensorfile_woqubit(cnf));
     }    
-    printLineSection();
 }

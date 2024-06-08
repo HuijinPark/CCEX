@@ -154,7 +154,6 @@ void Pulse_report(Pulse* pulse){
     bool     pulseiter = Pulse_getPulseiter(pulse);
     double** sequence  = Pulse_getSequence(pulse);
 
-    printLineSection();
     printTitle("Structure Pulse");
 
     printStructElementChar("pulsename", Pulse_getPulsename(pulse));
@@ -174,8 +173,6 @@ void Pulse_report(Pulse* pulse){
         }
         printLine();
     }
-    printf("\n");
-    printLineSection();
 }
 
 // allocation

@@ -344,8 +344,9 @@ void makeHashClusterOn(HashCluster** hashclusters, int order, int nspin, int** s
             else if (nCluster == nk){;}
             else{
                 if (n == order){
-                    printf("Error, during making clusters of %d order made clusters(%d) is smaller than given nCluster(%d) is ",n,nCluster,nk);
-                    exit(1);
+                    char message[500];
+                    sprintf(message,"Warning, during making clusters of %d order, made clusters(%d) is smaller than given nCluster(%d)",n,nCluster,nk);
+                    printMessage(message);
                 }
                 else{;}
             }

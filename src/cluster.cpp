@@ -116,7 +116,6 @@ void Cluster_freeAll(Cluster* cls){
 // report
 void Cluster_report(Cluster* cls){
 
-    printLineSection();
     printTitle("Structure Cluster");
 
     printSubTitle("General properties");
@@ -135,7 +134,6 @@ void Cluster_report(Cluster* cls){
     }
 
     printf("\n");
-    printLineSection();
 }
 
 void Cluster_reportNk(Cluster* cls){
