@@ -54,19 +54,19 @@ $ mpicxx -v
 # All variables
 
 cJSON_readOptionConfig 함수
-method -> method
-quantity -> quantity
-order -> order
-bfield -> bfield
-rbath -> rbath
-rdip -> rdip
-deltat -> deltat
-nstep -> nstep
-rbathcut -> rbathcut
-rdipcut -> rdipcut
-nstate -> nstate
-seed -> seed
-qubitfile -> qubitfile
+method      -> method
+quantity    -> quantity
+order       -> order
+bfield      -> bfield
+rbath       -> rbath
+rdip        -> rdip
+deltat      -> deltat
+nstep       -> nstep
+rbathcut    -> rbathcut
+rdipcut     -> rdipcut
+nstate      -> nstate
+seed        -> seed
+qubitfile   -> qubitfile
 gyrofile -> gyrofile
 bathfile -> bathfiles
 bathadjust -> bathadjust

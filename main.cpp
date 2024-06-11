@@ -129,7 +129,22 @@ int main(int argc, char* argv[]){
                     Config_setBathfiles_i(cnf,optarg,nbathfiles_current-1);
                 }
                 break;
-                
+
+            case 's':
+                Config_freeStatefile(cnf);
+                Config_allocStatefile(cnf);
+                Config_setStatefile(cnf,optarg);
+
+            case 'a':
+                Config_freeAvaaxfile(cnf);
+                Config_allocAvaaxfile(cnf);
+                Config_setAvaaxfile(cnf,optarg);
+
+            case 'S':
+                Config_freeExstatefile(cnf);
+                Config_allocExstatefile(cnf);
+                Config_setExstatefile(cnf,optarg);
+
             case 'N':
                 Config_setNstate(cnf,atoi(optarg));
                 break;
@@ -257,13 +272,6 @@ int main(int argc, char* argv[]){
 
     // Quadrupole tensor
     // readQdtensorfile(ba,qa,cnf);
-
-    // Bath State
-    // readStatefile(ba,cnf); // set bath states
-    
-    // Extra spins
-    // readAvaaxfile(ba,cnf); // set available principal axis
-    // readExstatefile(ba,cnf); // set extra spin states
 
     // Defect
     if (DefectArray_getNdefect(dfa) > 0){

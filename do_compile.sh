@@ -25,6 +25,7 @@ CXX = mpiicpc
 CXXFLAGS = -std=c++11 -O3 -g #-Wall Higher level warning
 #CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
 CXXFLAGS += -Wno-deprecated-declarations
+CXXFLAGS += -diag-disable=2196
 #CXXFLAGS += -Wno-writable-strings
 
 SRC_DIR=./src
@@ -38,7 +39,7 @@ SRCS += main.cpp
 OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
 
 #INCLUDE_MPICH = -I/opt/homebrew/Cellar/mpich/4.2.1/include/
-INCLUDE_EIGEN = -I./zlib/eigen-3.4.0/
+INCLUDE_EIGEN = -I./zlib/eigen
 INCLUDE_UTHASH = -I./zlib/uthash/include/
 INCLUDE_MAIN = -I./include/
 

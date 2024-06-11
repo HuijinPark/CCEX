@@ -3,14 +3,14 @@
 module purge 
 module load icc18 icc18.impi fftw mkl2018
 
-PwdDir="`pwd`"
-
-cd ../../../../
-
-    make clean
-    make -j$(nproc)
-
-cd "${PwdDir}" 
+#PwdDir="`pwd`"
+#
+#cd ../../../../
+#
+#    make clean
+#    make -j$(nproc)
+#
+#cd "${PwdDir}" 
 
 code="../../../../bin/main.out"
 ccein="./cce.json"
