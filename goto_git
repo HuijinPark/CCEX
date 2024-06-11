@@ -1,0 +1,9 @@
+#!/bin/sh
+
+git add --all
+wait
+git commit -m "$1"
+wait
+git push origin main
+wait
+

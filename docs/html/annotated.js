@@ -1,0 +1,27 @@
+var annotated =
+[
+    [ "Eigen", "namespaceEigen.html", null ],
+    [ "BathArray", "structBathArray.html", "structBathArray" ],
+    [ "BathSpin", "structBathSpin.html", "structBathSpin" ],
+    [ "BathSpinArray", "structBathSpinArray.html", null ],
+    [ "CalConfig", "structCalConfig.html", null ],
+    [ "cJSON", "structcJSON.html", "structcJSON" ],
+    [ "cJSON_Hooks", "structcJSON__Hooks.html", "structcJSON__Hooks" ],
+    [ "Cluster", "structCluster.html", "structCluster" ],
+    [ "ClusterConfig", "structClusterConfig.html", null ],
+    [ "Config", "structConfig.html", "structConfig" ],
+    [ "Defect", "structDefect.html", "structDefect" ],
+    [ "DefectArray", "structDefectArray.html", "structDefectArray" ],
+    [ "DoubleComplex", "structDoubleComplex.html", "structDoubleComplex" ],
+    [ "DoubleTensor", "structDoubleTensor.html", "structDoubleTensor" ],
+    [ "error", "structerror.html", "structerror" ],
+    [ "HashCluster", "structHashCluster.html", "structHashCluster" ],
+    [ "internal_hooks", "structinternal__hooks.html", "structinternal__hooks" ],
+    [ "Output", "structOutput.html", "structOutput" ],
+    [ "parse_buffer", "structparse__buffer.html", "structparse__buffer" ],
+    [ "printbuffer", "structprintbuffer.html", "structprintbuffer" ],
+    [ "Property", "structProperty.html", "structProperty" ],
+    [ "Pulse", "structPulse.html", "structPulse" ],
+    [ "Qubit", "structQubit.html", "structQubit" ],
+    [ "QubitArray", "structQubitArray.html", "structQubitArray" ]
+];
