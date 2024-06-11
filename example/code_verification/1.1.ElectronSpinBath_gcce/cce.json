@@ -1,0 +1,41 @@
+{
+    "method" : "gcce",
+    "quantity" : "coherence",
+
+    !"qubitfile" : "./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_Defect",
+    "gyrofile" : "./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro",
+    "bathfile" : ["./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1"],
+    "avaaxfile" : "./../CCE_Reprod/Bath_Data/1.single_data/bathJT_DiaP1_1ppm_1",
+    "statefile" : "./../CCE_Reprod/Bath_Data/1.single_data/state_DiaP1_1ppm_",
+    "exstatefile" : "./../CCE_Reprod/Bath_Data/1.single_data/stateEx_DiaP1_1ppm_",
+
+    "Qubit"   : {
+                   "nqubit" : 1,
+                   "qubit"  : [
+                   {   
+                       "name"   : "qubit1",
+                       "spin"   : 1.0,
+                       "gyro"   : -17608.597050,
+                       "xyz"    : [1123.596, 1124.863, 1124.378],
+                       "alphams": -1,
+                       "betams" : 0,
+                       "detuning": [0.0]
+                   }]
+    },
+
+    "order" : 2,
+    "npulse" : 1,
+    "bfield" : 300,
+    "deltat": 0.00005,
+    "nstep": 512, !100
+    "seed" : 8805,
+
+    "rbath": 850,
+    "rdip": 620,
+    "nstate" : 1,
+    
+    "outfile" : "CCE2_ElectronSpinBath_1ppm_1"
+
+    !"alphams" : -1,
+    !"betams" : 0
+}
