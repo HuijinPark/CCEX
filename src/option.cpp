@@ -14,12 +14,14 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
-    
+
     if (root == NULL){
         printf("Error before: %s\n", cJSON_GetErrorPtr());
         exit(EXIT_FAILURE);
         freeChar1d(&data);
-    }
+    }else{
+		;//printf("%s",cJSON_Print(root));
+	}
 
     ////////////////////////////////////////////////////////////////////////
     // General Options
@@ -567,9 +569,11 @@ void cJSON_readOptionOutput(Output* op, char* fccein){
     Output_setSavemode(op,savemode);
 ;
     char* outfileDefault = NULL;
-    char* outfile = cJSON_ReadString(root,"outfile",false,outfileDefault);
-    Output_allocOutfile(op);
-    Output_setOutfile(op,outfile);
+    char* outfile = cJSON_ReadString(root,"outfile",true,outfileDefault);
+	if (outfile != NULL){
+	    Output_allocOutfile(op);
+    	Output_setOutfile(op,outfile);
+	}
 
     cJSON_Delete(root);
     freeChar1d(&data);
@@ -708,7 +712,7 @@ char* cJSON_ReadFccein(char* fccein){
     size_t currentLength = 0; 
 
     while (fgets(line, sizeof(line), inputFile) != NULL) {
-        char* commentStart = strstr(line, "//");
+        char* commentStart = strstr(line, "!");
         if (commentStart != NULL) {
             *commentStart = '\0'; 
         }
@@ -755,12 +759,12 @@ char** cJSON_ReadFilePath1d(int* length, cJSON* root, char* key, bool _default, 
         cJSON* itemElement;
         cJSON_ArrayForEach(itemElement, item){
 
-            //access 
-            if (access(itemElement->valuestring, R_OK) != 0) {
-                fprintf(stderr, "Error: %s is not found in the input file\n",key);
-                fprintf(stderr, "Current path: %s\n",itemElement->valuestring);
-                exit(EXIT_FAILURE);
-            }
+            ////access 
+            //if (access(itemElement->valuestring, R_OK) != 0) {
+            //    fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            //    fprintf(stderr, "Current path: %s\n",itemElement->valuestring);
+            //    exit(EXIT_FAILURE);
+            //}
 
             if (i==0){
                 array = allocChar2d(1,MAX_FILEPATH);

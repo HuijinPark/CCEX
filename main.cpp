@@ -102,8 +102,11 @@ int main(int argc, char* argv[]){
                 cJSON_readOptionPulse       (pls, fccein); // pulse.h
                 cJSON_readOptionOutput      (op,  fccein); // output.h
 
-                nbathfiles_fromfccein = Config_getNbathfiles(cnf);
-                nbathfiles_current += nbathfiles_fromfccein;
+				if (rank==0){
+					printf("\n	>> Read %s file successfully ..\n",optarg);
+				}
+
+				nbathfiles_fromfccein = Config_getNbathfiles(cnf);
                 break;
 
             case 'm':
@@ -154,6 +157,7 @@ int main(int argc, char* argv[]){
                 break;
 
             case 'o':
+                Output_freeOutfile(op);
                 Output_allocOutfile(op);
                 Output_setOutfile(op,optarg);
                 break;
