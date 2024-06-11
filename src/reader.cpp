@@ -550,7 +550,9 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
 
     //the information in Atensor file
     if (hf_readmode==0){
-        printf("      %-18s:   %4d ( Point-dipole tensor )\n\n", "HF Readmode ", hf_readmode);
+        if (rank==0){
+            printf("      %-18s:   %4d ( Point-dipole tensor )\n\n", "HF Readmode ", hf_readmode);
+        }
         BathArray_setBathHypfs(ba,qa); 
     }
     else if (hf_readmode==1 || hf_readmode==2 || hf_readmode==3){

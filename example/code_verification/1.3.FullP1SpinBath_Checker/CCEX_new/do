@@ -1,16 +1,21 @@
 #!/bin/sh
 
+module purge 
+module load icc18 icc18.impi fftw mkl2018
+
 PwdDir="`pwd`"
 
 cd ../../../../
 
-    make
+    make clean
+    make -j$(nproc)
 
 cd "${PwdDir}" 
 
 code="../../../../bin/main.out"
 ccein="./cce.json"
 
-process=1
+process=20
 
 mpirun -n ${process} ${code} -f ${ccein} -v > process
+#${code} -f ${ccein} -v > process

@@ -468,7 +468,7 @@ void printClusters(HashCluster* hashClusters)
     HASH_ITER(hh, hashClusters, item1, tmp1) {
         int nCluster = 0;
         HASH_ITER(hh, item1->prop, item2, tmp2) {
-            printf("$items[%3s][%10s] : ", item1->N, item2->id);
+            printf("\t\t$items[%3s][%10s] : ", item1->N, item2->id);
 
             int count = 0;
             int* clusterFromId = parseClusterIdToIntArray(item2->id,&count);
@@ -480,8 +480,8 @@ void printClusters(HashCluster* hashClusters)
             free(clusterFromId);
         }
         printf("\n");
-        printf("Total %s-Cluster # :  %d\n",item1->N,nCluster);
-        printf("_________________________________________________________\n");
+        printf("\t\tTotal %s-Cluster # :  %d\n",item1->N,nCluster);
+        printf("\t\t_________________________________________________________\n");
         printf("\n\n");
     }
 }

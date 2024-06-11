@@ -35,25 +35,90 @@ MatrixXcd HamilBath(BathArray* ba, MatrixXcd** sigmas, Config* cnf){
     int nspin = BathArray_getNspin(ba);
     int bdim = BathArray_dim(ba);
     float* bfield = Config_getBfield(cnf);
+    int nstate = Config_getNstate(cnf);
 
     // Bath Hamiltonian
-    MatrixXcd Hb = MatrixXcd::Zero(bdim,bdim);
-    Hb = BathArray_TotalHamil(ba, sigmas, bfield);
+    MatrixXcd zeros_bdim = MatrixXcd::Zero(bdim,bdim);
+    MatrixXcd Hb         = zeros_bdim; // total bath spin Hamiltonian
+    MatrixXcd Hb_single  = zeros_bdim; // bath spin's total single spin Hamiltonian
+    MatrixXcd Hb_pair    = zeros_bdim; // bath spin's total paired spin Hamiltonian
 
-    // Subtract the double counted disorders
-    if (Config_getNstate(cnf)>0){
-        MatrixXcd Hb_i_overlapped = MatrixXcd::Zero(bdim,bdim);
-        for (int ib = 0; ib < nspin; ib++){
-            double disorder = 0.0;
-            for (int jb = 0; jb < nspin; jb++){
-                disorder += BathArray_getBath_i_disorder_j(ba,ib,jb); // if ensemble calculation, disorder = 0.0
-            }
-            MatrixXcd vecDisorder = calDetuningVector(disorder);
-            MatrixXcd Hb_i_overlapped_tmp = calHamiltonianSingleInt(vecDisorder,sigmas[ib]);
-            MatrixXcd Hb_i_overlapped = expandHamiltonian(sigmas, Hb_i_overlapped_tmp, nspin, ib);
-            Hb -= Hb_i_overlapped;
+    ///////////////////////////////////////////////////////////
+    // Single correlation 
+
+    for (int ib=0; ib<nspin; ib++){
+        ///////////////////////////////////////////////////////////
+        // Zeeman Hamiltonian     : -1.0 * gamma * vec{B0} * vec{Spin Operator}
+        // Detuning Hamiltonian   : [0,0,detuning] * vec{Spin Operator}
+        // Quad / ZFS Hamiltonian : vec{Spin Operator} 
+        //                            * tensor{quad/zfs} * vec{Spin Operator}
+        // Disorder Hamiltonian   : [0,0,disorder] * vec{Spin Operator} (Only single app.)
+        ///////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////
+        // Declare i-th bath Hamiltonian for each interaction
+        int bdim_i = BathArray_dimBath_i(ba,ib); // i-th spin dimension
+        MatrixXcd zeros_bdim_i  = MatrixXcd::Zero(bdim_i,bdim_i);
+        MatrixXcd Hbi           = zeros_bdim_i; // single   Hamiltonian of i-th bath spin 
+        MatrixXcd Hbi_Zeeman    = zeros_bdim_i; // Zeeman   Hamiltonian
+        MatrixXcd Hbi_Detuning  = zeros_bdim_i; // Detuning Hamiltonian
+        MatrixXcd Hbi_Quad      = zeros_bdim_i; // Quad/ZFS Hamiltonian
+        MatrixXcd Hbi_Disorder  = zeros_bdim_i; // Disorder Hamiltonian (Only single app)
+        bool      Hbi_Disorder_rm_overlap = true; // Remove overlapped disorder
+                                                  // Subtract the double counted disorders
+
+        // Calculate each Hamiltonian
+        Hbi_Zeeman   = BathArray_ZeemanHamil(ba,sigmas,ib,bfield);
+        Hbi_Detuning = BathArray_DetuningHamil(ba,sigmas,ib);
+        Hbi_Quad     = BathArray_QuadHamil(ba,sigmas,ib);
+
+        if (nstate > 0){    // Single-sample app.
+            Hbi_Disorder = BathArray_DisorderHamil(ba,sigmas,ib, \
+                                                    Hbi_Disorder_rm_overlap);
+        }else{ // Ensemble app.
+            Hbi_Disorder = zeros_bdim_i; 
+        }
+        ///////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////
+        // Sum all single interaction of i-th spin
+        Hbi = Hbi_Zeeman + Hbi_Detuning + Hbi_Quad + Hbi_Disorder;
+        ///////////////////////////////////////////////////////////
+        char mesg[500];
+        //sprintf(mesg,"Spin[%d] : %s",ib,"ZE");
+        //printInlineMatrixXcd(mesg,Hbi_Zeeman);
+        //sprintf(mesg,"Spin[%d] : %s",ib,"Detun");
+        //printInlineMatrixXcd(mesg,Hbi_Detuning);
+        //sprintf(mesg,"Spin[%d] : %s",ib,"Quad");
+        //printInlineMatrixXcd(mesg,Hbi_Quad);
+        //sprintf(mesg,"Spin[%d] : %s",ib,"Disd");
+        //printInlineMatrixXcd(mesg,Hbi_Disorder);
+
+        ///////////////////////////////////////////////////////////
+        // Expand dimension
+        Hb_single += expandHamiltonian(sigmas, Hbi, nspin, ib);
+        ///////////////////////////////////////////////////////////
+    }
+
+    ///////////////////////////////////////////////////////////
+    // Pair correlation
+    for (int i=0; i<nspin; i++){
+        for (int j=i+1; j<nspin; j++){
+            MatrixXcd Hbij = BathArray_InteractionHamil(ba,sigmas,i,j);
+            Hb_pair += Hbij;
+
+            //char mesg[500];
+            //sprintf(mesg,"Spin[%d] - Spin[%d] (%s) ",i,j,"Pair");
+            //printInlineMatrixXcd(mesg,Hbij);
+
         }
     }
+    ///////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////
+    // Bath Hamiltonian
+    Hb = Hb_single + Hb_pair;
+    ///////////////////////////////////////////////////////////
 
     return Hb;
 }
@@ -135,7 +200,10 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
 
         MatrixXcd Hqbij_tmp = calHamiltonianSingleInt(vector,bsigmas[ib]);
         MatrixXcd Hqbij = expandHamiltonian(bsigmas, Hqbij_tmp, nspin, ib);
-        // std::cout << "H_S_I [" << ib << "] = " <<  Hqbij << std::endl;
+        char mesg[500];
+        //sprintf(mesg,"Qubit - Spin[%d]", ib);
+        //printInlineMatrixXcd(mesg,Hqbij);
+ 
         Hqb += Hqbij;
     }
 

@@ -568,10 +568,10 @@ void QubitArray_reportQubit_i(QubitArray* qa, int i){
     printStructElementDouble1d("xyz (A)",QubitArray_getQubit_i_xyz(qa,i),3);
 
     MatrixXcd alpha = QubitArray_getQubit_i_alpha(qa,i);
-    printInlineMatrixXcd("alpha",alpha);
+    printStateInDiracNot("alpha",alpha);
 
     MatrixXcd beta = QubitArray_getQubit_i_beta(qa,i);
-    printInlineMatrixXcd("beta",beta);
+    printStateInDiracNot("beta",beta);
 }
 
 void QubitArray_reportIntmap(QubitArray* qa){

@@ -111,7 +111,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
             if (DefectArray_getNdefect(dfa)>0){
                 // Update BathArray from DefectArray
-                updateMainSpins_fromDefectArray(dfa,ba);
                 updateDisorder_main_sub(dfa,ba);
                 updateDisorder_sub_sub(dfa);
                 if (isOvh){
@@ -453,58 +452,58 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
 BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* dfa, int nqubit){
 
+    // Initialize  ba_cluster
     BathArray* ba_cluster = BathArray_init();
-
-    // Allocate the bath spins 
-    BathArray_setNspin(ba_cluster,nspin);
-    BathArray_allocBath(ba_cluster,nspin);
+    int nspin_cluster = 0;
 
     int bdim = BathArray_dim(ba);
 
     // Create the bath array for the cluster
+    int addedspin = 0;
     for (int ic=0; ic<nspin; ic++){
+
+        // Get BathSpin within the clusters
         int ibs = cluster[ic];
         BathSpin* bs  = BathArray_getBath_i(ba,ibs);
-        BathArray_setBath_i(ba_cluster, bs, ic, nqubit);
-    }
 
-    // // Set the properties
-    // int nspecies = BathArray_getProp_nspecies(ba);
-    // BathArray_setProp_nspecies(ba_cluster,nspecies);
-    // BathArray_allocProp(ba_cluster);
-    // char** names = BathArray_getProp_names(ba);
-    // double* gyros = BathArray_getProp_gyros(ba);
-    // float* spins = BathArray_getProp_spins(ba);
-    // for (int i=0; i<nspecies; i++){
-    //     BathArray_setProp_names_i(ba_cluster,names[i],i);
-    //     BathArray_setProp_gyros_i(ba_cluster,gyros[i],i);
-    //     BathArray_setProp_spins_i(ba_cluster,spins[i],i);       
-    // }
-    
+        // Allocate the bathArray
+        nspin_cluster+=1;
+        BathArray_setNspin(ba_cluster, nspin_cluster);
+
+        if (nspin_cluster==1){ 
+            BathArray_allocBath(ba_cluster,nspin_cluster); 
+        }
+        else{                  
+            BathArray_reallocBath(ba_cluster,nspin_cluster-1,nspin_cluster,nqubit); 
+        }
         
-    // Check if spins in the cluster is electronic defect
-    int addedspin = 0;
-    for (int i=0; i<nspin; i++){
-        int ibs = cluster[i];
+        // Set BathSpin in cluster batharray
+        BathArray_setBath_i(ba_cluster, bs, nspin_cluster-1, nqubit);
+
+        if (rank==0 && verbosity){
+            BathArray_reportBath(ba_cluster);
+        }
+
+        // Add sub-spins in cluster
         char* name = BathArray_getBath_i_name(ba,ibs);
         int idf = DefectArray_findDefectIndex(dfa,name);
-
-        if (idf<0){
-            ; // doesn't have additional spin information
-        }else{
+        // If the bath is paramagnetic defect bath,
+        //  additional spin might need to be added
+        if (idf>=0){
             // has additional spin information
             int naddspin = DefectArray_getDefect_idf_naddspin(dfa,idf);
             for (int isp=0; isp<naddspin; isp++){
                 
                 // Reallocate the bath array
-                int nspin_old = BathArray_getNspin(ba_cluster);
-                int nspin_new = nspin_old + 1;
-                BathArray_setNspin(ba_cluster,nspin_new);
-                BathArray_reallocBath(ba_cluster,nspin_old,nspin_new,nqubit);
+                nspin_cluster +=1;
+                BathArray_setNspin(ba_cluster,nspin_cluster);
+                BathArray_reallocBath(ba_cluster,nspin_cluster-1,nspin_cluster,nqubit);
 
                 // Add the additional spin to BathArray_for_cluster (ba_cluster)
                 BathSpin* bs_sub = DefectArray_getSubbath_i_isp(dfa,ibs,isp);
-                BathArray_setBath_i(ba_cluster,bs_sub,nspin_new-1,nqubit);
+
+                // Set Addtional bath spin in cluster batharray
+                BathArray_setBath_i(ba_cluster,bs_sub,nspin_cluster-1,nqubit);
 
                 // Add the additional spin to the cluster
                 addedspin++;
@@ -512,9 +511,24 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
         }
     }
 
-    // if (rank==0 && addedspin>0 && verbosity){
-    //     printStructElementInt("Added spin",addedspin);
-    // }
+    //// Set the properties
+    //int nspecies = BathArray_getProp_nspecies(ba);
+    //BathArray_setProp_nspecies(ba_cluster,nspecies);
+    //BathArray_allocProp(ba_cluster);
+    //char** names = BathArray_getProp_names(ba);
+    //double* gyros = BathArray_getProp_gyros(ba);
+    //float* spins = BathArray_getProp_spins(ba);
+    //for (int i=0; i<nspecies; i++){
+    //    BathArray_setProp_names_i(ba_cluster,names[i],i);
+    //    BathArray_setProp_gyros_i(ba_cluster,gyros[i],i);
+    //    BathArray_setProp_spins_i(ba_cluster,spins[i],i);       
+    //}
+
+
+    if (rank==0 && addedspin>0 && verbosity){
+        BathArray_reportBath(ba_cluster);
+        printStructElementInt(" * Added spin",addedspin);
+    }
 
     return ba_cluster;
 }

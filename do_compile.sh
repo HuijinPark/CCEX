@@ -22,7 +22,7 @@ cat << EOF > ./Makefile
 
 CXX = mpiicpc
 
-CXXFLAGS = -std=c++11 #-O2 -g #-Wall Higher level warning
+CXXFLAGS = -std=c++11 -O3 -g #-Wall Higher level warning
 #CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
 CXXFLAGS += -Wno-deprecated-declarations
 #CXXFLAGS += -Wno-writable-strings
@@ -76,7 +76,7 @@ cat << EOF > ./Makefile
 
 CXX = mpicxx
 
-CXXFLAGS = -std=c++11 #-O2 -g #-Wall Higher level warning
+CXXFLAGS = -std=c++11 -O2 -g #-Wall Higher level warning
 CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
 CXXFLAGS += -Wno-deprecated-declarations
 CXXFLAGS += -Wno-writable-strings
@@ -92,7 +92,7 @@ SRCS += main.cpp
 OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
 
 INCLUDE_MPICH = -I/opt/homebrew/Cellar/mpich/4.2.1/include/
-INCLUDE_EIGEN = -I./zlib/eigen-3.4.0/
+INCLUDE_EIGEN = -I./zlib/eigen #-3.4.0/
 INCLUDE_UTHASH = -I./zlib/uthash/include/
 INCLUDE_MAIN = -I./include/
 

@@ -280,7 +280,7 @@ MatrixXcd calHamiltonianSingleInt(MatrixXcd Vector, MatrixXcd* Pmat1){
     if (Vector.rows() == 1 && Vector.cols() == 3){//1x3
         ;
     }else if (Vector.rows() == 3 && Vector.cols() == 1){ //3x1
-        Vector = Vector.transpose();
+        Vector = Vector.transpose().eval();
     }else{
         perror("Error(calHamiltonianSingleInt): Dimension of Vector is not matched");
         exit(EXIT_FAILURE);       

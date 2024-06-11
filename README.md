@@ -5,7 +5,7 @@ CCEX ![](https://komarev.com/ghpvc/?username=your-github-username&style=flat-squ
 ===============
 
 ![License](https://img.shields.io/badge/License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b)<br/>
-*This code is for the simulation of qubit coherence dynamics<br/>
+**This code is for the simulation of qubit coherence dynamics<br/>**
 
 **Document** [How to use "CCEX"](https://cce-x-refactoring.vercel.app/index.html)
 

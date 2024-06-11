@@ -2,6 +2,9 @@
 #include "../include/hamiltonian.h"
 #include <iostream>
 MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls){
+    
+    double stime = MPI_Wtime();
+    double etime = 0.0;
 
     int nspin = BathArray_getNspin(ba);
     int bdim = BathArray_dim(ba);
@@ -25,20 +28,23 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
 
     // Bath Hamiltonian
     MatrixXcd Hb = HamilBath(ba,bsigmas,cnf);
-    // std::cout << "Hb" << Hb << std::endl;
+    //std::cout << "Hb" << Hb << std::endl;
 
     // Qubit - Bath Interaction Hamiltonian Hqb[0] = alpha * Hqb, Hqb[1] = beta * Hqb
     // Hqb[0] = alpha * (Sum_i Hqb[i]), Hqb[1] = beta * (Sum_i Hqb[i])
     MatrixXcd* Hqb = HamilQubitBathSecularApp(qa,ba,bsigmas,cnf); 
-    // std::cout << "Hqb[0] (alpha)" << Hqb[0] << std::endl;
-    // std::cout << "Hqb[1] (beta)" << Hqb[1] << std::endl;
+    //std::cout << "Hqb[0] (alpha)" << Hqb[0] << std::endl;
+    //std::cout << "Hqb[1] (beta)" << Hqb[1] << std::endl;
 
     // Total Hamiltonian
     Halpha = Hb + Hqb[0];
     Hbeta = Hb + Hqb[1];
 
-    // std::cout << "Halpha" << Halpha << std::endl;
-    // std::cout << "Hbeta" << Hbeta << std::endl;
+    //printInlineMatrixXcd("Halpha", Halpha);
+    //printInlineMatrixXcd("Hbeta", Hbeta  );
+
+    //etime = MPI_Wtime();
+    //printf("          Wall time step1 = %.5f s\n", stime - etime);
 
     ////////////////////////////////
     // Diagonalize the Hamiltonian
@@ -54,6 +60,12 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
     M      = M_up.inverse()*M_down;
     Eigen::VectorXcd es_up_Val=es_up.eigenvalues();
     Eigen::VectorXcd es_down_Val=es_down.eigenvalues();
+
+    //std::cout << "es_up" << es_up_Val  << std::endl;
+    //std::cout << "\n\nes_down" << es_down_Val << std::endl;
+    //etime = MPI_Wtime();
+    //printf("          Wall time step2 = %.5f s\n", stime - etime);
+
 
     ////////////////////////////////
     // Initial state of bath
@@ -89,6 +101,10 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
     double deltat = (double)Config_getDeltat(cnf);
     MatrixXcd* result = new MatrixXcd[nstep];
 
+    //etime = MPI_Wtime();
+    //printf("          Wall time step3 = %.5f s\n", stime - etime);
+
+
     double tfree = 0.0;
 
     if (isEnsemble){
@@ -122,7 +138,7 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
 
                 // Coherence function
                 //L_mat     =  M * U_down * M.adjoint()* U_up.adjoint();
-                L_mat     =  (M.array().rowwise() * U_down.transpose().array() ).matrix() 
+                L_mat     =  (M.array().rowwise() * U_down.transpose().eval().array() ).matrix() 
                             * (M.adjoint().array().rowwise() * U_up.adjoint().array()).matrix();
 
 
@@ -145,21 +161,21 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
                 
 
                 //pulse multiple
-                L_a_even = M.array().rowwise()           * U_down.transpose().array();   //M * U_down
+                L_a_even = M.array().rowwise()           * U_down.transpose().eval().array();   //M * U_down
                 L_b_even = M.adjoint().array().rowwise() * U_up.adjoint().array();       //M.adjoint * U_up.adjoint
 
                 if(npulse % 2 != 0){
-                    L_a_odd = M.adjoint().array().rowwise() * U_up.transpose().array();  //M.adjoint() * U_up
+                    L_a_odd = M.adjoint().array().rowwise() * U_up.transpose().eval().array();  //M.adjoint() * U_up
                     L_b_odd = M.array().rowwise()           * U_down.adjoint().array();  //M * U_down.adjoint
                 }
 
                 switch (npulse){
                 default :
                 case 3:
-                    L_a2_even = M.array().rowwise()           * U_down2.transpose().array();  //M * U_down2
+                    L_a2_even = M.array().rowwise()           * U_down2.transpose().eval().array();  //M * U_down2
                     L_b2_even = M.adjoint().array().rowwise() * U_up2.adjoint().array();      //M.adjoint * U_up2.adjoint
                 case 2:
-                    L_a2_odd = M.adjoint().array().rowwise() * U_up2.transpose().array();     //M.adjoint * U_up2
+                    L_a2_odd = M.adjoint().array().rowwise() * U_up2.transpose().eval().array();     //M.adjoint * U_up2
                     L_b2_odd = M.array().rowwise()           * U_down2.adjoint().array();     //M * U_down2.adjoint
                     break;
                 case 1:
@@ -177,7 +193,7 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
                             //L_a = L_a * M * U_down;
                             //L_b = M.adjoint() * U_up.adjoint() * L_b;
 
-                            //L_a_even = M.array().rowwise()           * U_down.transpose().array(); //M * U_down
+                            //L_a_even = M.array().rowwise()           * U_down.transpose().eval().array(); //M * U_down
                             //L_b_even = M.adjoint().array().rowwise() * U_up.adjoint().array(); //M.adjoint * U_up.adjoint
 
                             sum_L_a = sum_L_a * L_a_even;
@@ -187,7 +203,7 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
                             //L_a = L_a * M.adjoint() * U_up;
                             //L_b = M * U_down.adjoint() * L_b;
 
-                            //L_a_odd = M.adjoint().array().rowwise() * U_up.transpose().array(); //M.adjoint() * U_up
+                            //L_a_odd = M.adjoint().array().rowwise() * U_up.transpose().eval().array(); //M.adjoint() * U_up
                             //L_b_odd = M.array().rowwise()           * U_down.adjoint().array(); //M * U_down.adjoint
                             
                             sum_L_a = sum_L_a * L_a_odd;
@@ -199,7 +215,7 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
                             //L_a = L_a * M.adjoint()* U_up2;
                             //L_b = M * U_down2.adjoint() * L_b;
 
-                            //L_a2_odd = M.adjoint().array().rowwise() * U_up2.transpose().array(); //M.adjoint * U_up2
+                            //L_a2_odd = M.adjoint().array().rowwise() * U_up2.transpose().eval().array(); //M.adjoint * U_up2
                             //L_b2_odd = M.array().rowwise()           * U_down2.adjoint().array(); //M * U_down2.adjoint
 
                             sum_L_a = sum_L_a * L_a2_odd;
@@ -209,7 +225,7 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
                             //L_a = L_a * M * U_down2;
                             //L_b = M.adjoint() * U_up2.adjoint() * L_b;
 
-                            //L_a2_even = M.array().rowwise()           * U_down2.transpose().array(); //M * U_down2
+                            //L_a2_even = M.array().rowwise()           * U_down2.transpose().eval().array(); //M * U_down2
                             //L_b2_even = M.adjoint().array().rowwise() * U_up2.adjoint().array();     //M.adjoint * U_up2.adjoint
 
                             sum_L_a = sum_L_a * L_a2_even;
@@ -229,7 +245,9 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
         }
     }else{
 
+         //#pragma omp parallel for
          for (int i = 0; i < nstep; i++) {
+            //double stime_a = MPI_Wtime();
 
             // Total U operator for each ms state
             // L = < J | (Udown)^dagger (Udup) | J >
@@ -253,6 +271,8 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
 
                 double tau = tfree * sequence[ipulse][2];
                 int SameTauIndex = (int)sequence[ipulse][3];
+
+                //printf("[%d] tau = %.10lf\n",ipulse,tau);
 
                 // Calculate operators 
                 if (SameTauIndex == ipulse){
@@ -279,13 +299,13 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
                     //std::cout << UdownTau << std::endl;
 
                     //Mdagger_UupTauDagger = M_dagger * UupTauDagger
-                    //M_UdownTauDagger = M * UdownTauDagger
+                    //M_UdownTauDagger = M * UdownTauipulse,Dagger
                     //Mdagger_UupTau = M_dagger * UupTau
                     //M_UdownTau = M * UdownTau
                     Mdagger_UupTauDagger[ipulse] = (M.adjoint().array().rowwise() * UupTau.adjoint().array()).matrix();
                     M_UdownTauDagger[ipulse]     = (M.array().rowwise()           * UdownTau.adjoint().array()).matrix();
-                    Mdagger_UupTau[ipulse]       = (M.adjoint().array().rowwise() * UupTau.transpose().array()).matrix();
-                    M_UdownTau[ipulse]           = (M.array().rowwise()           * UdownTau.transpose().array()).matrix();
+                    Mdagger_UupTau[ipulse]       = (M.adjoint().array().rowwise() * UupTau.transpose().eval().array()).matrix();
+                    M_UdownTau[ipulse]           = (M.array().rowwise()           * UdownTau.transpose().eval().array()).matrix();
                 }
                 else{
                     Mdagger_UupTauDagger[ipulse] = Mdagger_UupTauDagger[SameTauIndex];
@@ -299,7 +319,7 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
                     UdownDagger = (M_down.array().rowwise() 
                                 * UdownTau.adjoint().array()).matrix();
                     // M_down_dagger * M_up * U_up * M_up_dagger 
-                    Uup         = (M.adjoint().array().rowwise() * UupTau.transpose().array()).matrix() 
+                    Uup         = (M.adjoint().array().rowwise() * UupTau.transpose().eval().array()).matrix() 
                                 * (M_up.adjoint());
 
                     //std::cout << "M_down * U_down_dagger" << std::endl;
@@ -324,18 +344,26 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
                 else{printf("Error calsingle.cpp\n");exit(1);}
             }
 
-            //std::cout << UdownDagger * Uup << std::endl;
-
+            //std::cout << "UdownDagger" << UdownDagger << std::endl;
+            //std::cout << "Uup" << Uup << std::endl;
+            //std::cout << psi0 << std::endl;
             result[i] = (psi0.adjoint() * UdownDagger * Uup * psi0);
-        
+
+            //printf("%.10lf  %.10lf %+.10lf j \n",tfree,result[i](0,0).real(),result[i](0,0).imag());
             tfree += deltat;                      
 
             delete[] Mdagger_UupTauDagger;
             delete[] M_UdownTauDagger;
             delete[] Mdagger_UupTau;
             delete[] M_UdownTau;
+
+            //etime = MPI_Wtime();
+            //printf("          Wall time step4-%d# = %.5f s\n",i, stime_a - etime);
         }
     }
+
+    //etime = MPI_Wtime();
+    //printf("          Wall time step done = %.5f s\n",stime - etime);
 
     // free
     for (int i=0; i<nspin; i++){

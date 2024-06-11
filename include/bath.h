@@ -178,11 +178,9 @@ int         BathArray_dimBath_i(BathArray* ba, int i);
 int         BathSpin_dim(BathSpin* bs);
 
 // Hamiltonian
-MatrixXcd   BathArray_TotalHamil(BathArray* ba, MatrixXcd** sigmas, float* bfield);
-MatrixXcd   BathArray_SingleHamil(BathArray* ba, MatrixXcd** sigmas, int ib, float* bfield);
 MatrixXcd   BathArray_ZeemanHamil(BathArray* ba, MatrixXcd** sigmas, int ib, float* bfield);
 MatrixXcd   BathArray_DetuningHamil(BathArray* ba, MatrixXcd** sigmas, int ib);
-MatrixXcd   BathArray_DisorderHamil(BathArray* ba, MatrixXcd** sigmas, int ib);
+MatrixXcd   BathArray_DisorderHamil(BathArray* ba, MatrixXcd** sigmas, int ib, bool rm_overlap);
 MatrixXcd   BathArray_QuadHamil(BathArray* ba, MatrixXcd** sigmas, int ib);
 MatrixXcd   BathArray_InteractionHamil(BathArray* ba, MatrixXcd** sigmas, int ib, int jb);
 MatrixXcd** BathArray_PauliOperators(BathArray* ba);

@@ -344,7 +344,6 @@ void DefectArray_allocSubbath(DefectArray* dfa, BathArray* ba, int nqubit){
             dfa->subbath[i][j]->hypf = allocMatrixXcd1d(nqubit);
         }
     }   
-    
 }
 
 void DefectArray_setSubbath(DefectArray* dfa, BathArray* ba, QubitArray* qa){

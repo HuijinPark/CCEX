@@ -290,6 +290,25 @@ void printInlineMatrixXcd(char* key, MatrixXcd mat){
     printf(" ]\n");
 }
 
+void printStateInDiracNot(char* key, MatrixXcd mat){
+    printf("      %-18s:   ", key);
+
+    int dim = mat.rows();
+    float spin = (dim-1.0)/2.0;
+
+    for (int i=0; i <dim; i++){
+        double real = mat(i,0).real();
+        double imag = mat(i,0).imag();
+        double abs_value = sqrt(real*real + imag*imag);
+
+        if ( abs_value > FLT_EPSILON ){
+            float ms = spin - i;
+            printf("(%+g%+gj) |%2g >  ",real,imag,ms);
+        }
+    }
+    printf("\n");
+}
+
 void printStructElementChar(char* key,char* val){
     printf("      %-18s:   %-21s\n", key, val);
 }

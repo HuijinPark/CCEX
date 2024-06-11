@@ -116,6 +116,7 @@ MatrixXcd mulMatrixXcdElementWise(MatrixXcd a, MatrixXcd b);
 
 /* Easy print ---------------------------------------------------*/
 void printInlineMatrixXcd(char* key, MatrixXcd mat);
+void printStateInDiracNot(char* key, MatrixXcd mat);
 void printStructElementChar(char* key,char* val);
 void printStructElementChar2d(char* key, char** val, int n);
 void printStructElementInt(char* key, int val);

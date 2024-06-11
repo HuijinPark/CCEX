@@ -204,7 +204,7 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
     ///////////////////////////////////////////////////////////
     int ib_mainspidx = BathArray_getBath_i_mainspidx(ba,i);
     int jb_mainspidx = BathArray_getBath_i_mainspidx(ba,j);
-    
+
     if (ib_mainspidx==jb_mainspidx && (ib_mainspidx != -1 && jb_mainspidx != -1)){
         // Check mainspin or subspin
         bool ib_is_subspin = false;
@@ -219,6 +219,7 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
         sprintf(ib_name_,"%s_",ib_name);
         sprintf(jb_name_,"%s_",jb_name);
 
+
         // Check if ib is subspin
         if (strstr(ib_name,jb_name_) != NULL){
             ib_is_subspin = true;
@@ -231,7 +232,6 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
         
         if (ib_is_subspin && jb_is_subspin){
             ; // sub - sub > point-dipole
-
         }else if (ib_is_subspin && !jb_is_subspin){
 
             // sub - main
@@ -243,6 +243,7 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
             if (!ib_hypf_sub.isZero(FLT_EPSILON)){
                 return ib_hypf_sub;
             }
+
             
         }else if (!ib_is_subspin && jb_is_subspin){
 
@@ -282,45 +283,6 @@ double BathArray_dist_i_j(BathArray* ba, int i, int j){
 
 }
 
-// Hamiltonian
-MatrixXcd BathArray_TotalHamil(BathArray* ba, MatrixXcd** sigmas, float* bfield){
-
-    int nspin = BathArray_getNspin(ba);
-    int dimBA = BathArray_dim(ba);
-
-    // Bath Hamiltonian
-    MatrixXcd HbTotal = MatrixXcd::Zero(dimBA,dimBA);
-
-    // Single Hamiltonian
-    for (int ib=0; ib<nspin; ib++){
-        MatrixXcd Hbi = BathArray_SingleHamil(ba,sigmas,ib,bfield);
-        MatrixXcd HbiExpand = expandHamiltonian(sigmas, Hbi, nspin, ib);
-        HbTotal += HbiExpand;
-    }
-
-    // Interaction Hamiltonian
-    for (int i=0; i<nspin; i++){
-        MatrixXcd Hbij;
-        for (int j=i+1; j<nspin; j++){
-            Hbij = BathArray_InteractionHamil(ba,sigmas,i,j);
-            HbTotal += Hbij;
-        }
-    }
-
-    return HbTotal;
-}
-
-MatrixXcd BathArray_SingleHamil(BathArray* ba, MatrixXcd** sigmas, int ib, float* bfield){
-
-    // Single Hamiltonian
-    MatrixXcd Hbi_Zeeman = BathArray_ZeemanHamil(ba,sigmas,ib,bfield);
-    MatrixXcd Hbi_Detuning = BathArray_DetuningHamil(ba,sigmas,ib);
-    MatrixXcd Hbi_Disorder = BathArray_DisorderHamil(ba,sigmas,ib);
-    MatrixXcd Hbi_Quad = BathArray_QuadHamil(ba,sigmas,ib);
-
-    return Hbi_Zeeman + Hbi_Detuning + Hbi_Disorder + Hbi_Quad;
-}
-
 MatrixXcd BathArray_ZeemanHamil(BathArray* ba, MatrixXcd** sigmas, int ib, float* bfield){
 
     int nspin = BathArray_getNspin(ba);
@@ -350,7 +312,9 @@ MatrixXcd BathArray_DetuningHamil(BathArray* ba, MatrixXcd** sigmas, int ib){
     return calHamiltonianSingleInt(vecDetuning,sigmas[ib]);
 }
 
-MatrixXcd BathArray_DisorderHamil(BathArray* ba, MatrixXcd** sigmas, int ib){
+MatrixXcd BathArray_DisorderHamil(BathArray* ba, MatrixXcd** sigmas, int ib, bool rm_overlap){
+    // rm_overlap : Remove the disorder orginated from the bath spins in BathArray.
+
 
     int nspin = BathArray_getNspin(ba);
 
@@ -359,8 +323,19 @@ MatrixXcd BathArray_DisorderHamil(BathArray* ba, MatrixXcd** sigmas, int ib){
         exit(EXIT_FAILURE);
     }
 
+
+    MatrixXcd vecDisorder;
     double disorder = BathArray_getBath_i_disorder(ba,ib);
-    MatrixXcd vecDisorder = calDetuningVector(disorder);
+    double disorder_overlap = 0.0;
+
+    if (rm_overlap){
+        for (int jb=0; jb<nspin ; jb++){
+            disorder_overlap += BathArray_getBath_i_disorder_j(ba,ib,jb);  
+        }
+    }
+    
+    disorder    = disorder - disorder_overlap;
+    vecDisorder = calDetuningVector(disorder);
 
     return calHamiltonianSingleInt(vecDisorder,sigmas[ib]);
 
@@ -506,8 +481,9 @@ void BathArray_reportBath_i_props(BathArray* ba, int i){
     char* name = BathArray_getBath_i_name(ba,i);
     float spin = BathArray_getBath_i_spin(ba,i);
     double gyro = BathArray_getBath_i_gyro(ba,i);
-    double* xyz = BathArray_getBath_i_xyz(ba,i);    
-    printf("      [%3d] %5s %7.3lf %7.3lf %7.3lf   ( S = %2.1f, gyro = %7.3lf )\n",i,name,xyz[0],xyz[1],xyz[2],spin,gyro);   
+    double* xyz = BathArray_getBath_i_xyz(ba,i);
+    int mainspidx = BathArray_getBath_i_mainspidx(ba,i);
+    printf("      [%3d] %5s %7.3lf %7.3lf %7.3lf   ( S = %2.1f, gyro = %10.3lf, mainspidx = %d )\n",i,name,xyz[0],xyz[1],xyz[2],spin,gyro, mainspidx);   
 }
 
 void BathArray_reportBath_states(BathArray* ba){
@@ -948,11 +924,11 @@ BathSpin_setXyz_fromRxyz(BathSpin* bs, double* xyz0, double* rxyz){
 void 
 BathSpin_setState(BathSpin* bs, float state){
 
-    if (!isSubLevel(bs->spin,state)){
-        fprintf(stderr,"Error(BathSpin_setState): S = %2.1f\n",bs->spin);
-        fprintf(stderr,"Error(BathSpin_setState): state = %2.1f is out of range\n",state);
-        exit(EXIT_FAILURE);
-    }
+    //if (!isSubLevel(bs->spin,state)){
+    //    fprintf(stderr,"Error(BathSpin_setState): S = %2.1f\n",bs->spin);
+    //    fprintf(stderr,"Error(BathSpin_setState): state = %2.1f is out of range\n",state);
+    //    exit(EXIT_FAILURE);
+    //}
     bs->state = state;
 }
 
@@ -996,7 +972,11 @@ BathSpin_setQuad_fromEFG(BathSpin* bs, MatrixXcd efg, double eq, float spin){
     eq = eq * 1.0e-30; // 10e-30 m^2 -> m^2
 
     // Quadrupole (radkHz)
-    bs->quad = MHZ_TO_RADKHZ((eq)/(spin*(2.0*spin-1.0))/h * efg);
+    if (spin > 0.5){
+        bs->quad = MHZ_TO_RADKHZ((eq)/(2.0*spin*(2.0*spin-1.0))/h * efg);
+    }else{
+        bs->quad = MatrixXcd::Zero(3,3);
+    }
 }
 
 

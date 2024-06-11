@@ -265,15 +265,6 @@ int main(int argc, char* argv[]){
     // readAvaaxfile(ba,cnf); // set available principal axis
     // readExstatefile(ba,cnf); // set extra spin states
 
-    // if (rank==0){
-    //     printLineSection();
-    //     printTitle("BathArray");
-    //     BathArray_report(ba);
-    //     printf("\n");
-    //     printLineSection();
-    // }
-
-
     // Defect
     if (DefectArray_getNdefect(dfa) > 0){
 
@@ -304,6 +295,16 @@ int main(int argc, char* argv[]){
             DefectArray_reportSubbath_quads(dfa);
             DefectArray_reportSubbath_hypf_subs(dfa);
         }
+
+        // Update main bathspins : mainspidx, zfs(pax), detuning(pax)
+        updateMainSpins_fromDefectArray(dfa,ba);
+    }
+
+    if (rank==0){
+        printf("    ----------------------------------------------------------------------\n");
+        printTitle("BathArray");
+        BathArray_report(ba);
+        printf("\n");
     }
 
     if (rank==0){
@@ -359,6 +360,7 @@ int main(int argc, char* argv[]){
 
     // Calculate the dynamics
     calculate(qa,ba,dfa,cnf,pls,cls,op,localclusters);
+    MPI_Barrier(MPI_COMM_WORLD);
 
     //=======================================================
     // Free memory

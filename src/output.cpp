@@ -110,18 +110,8 @@ void Output_save_all(Output* op, MatrixXcd* result, int nstep, float deltat, int
         strcat(cluster_str, spin_str);
     }
 
-    // istate to string
-    char istate_str[10];
-    if (istate==0){
-        istate_str[0] = '\0';
-    }
-    else{
-        sprintf(istate_str, "_state%d", istate);
-    }
-       
     // add string outfilehead, cluster, istate to outfile
     strcat(op->outfile, cluster_str);
-    strcat(op->outfile, istate_str);  
     
     Output_save(op, result, result, nstep, deltat, istate);
     //////////////////////////////
