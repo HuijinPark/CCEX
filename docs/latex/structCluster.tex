@@ -1,0 +1,79 @@
+\hypertarget{structCluster}{\section{Cluster Struct Reference}
+\label{structCluster}\index{Cluster@{Cluster}}
+}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{structCluster_ae77394af156e2e278a34f12e83d66cb7}{order}
+\begin{DoxyCompactList}\small\item\em The order of C\-C\-E (default \-: 0) \end{DoxyCompactList}\item 
+int \hyperlink{structCluster_a7c4d583750b7f37eb2ca537e23ad334f}{s\-K}
+\item 
+char \hyperlink{structCluster_acfc81556c4ed78e0bce4c36119fe7150}{method} \mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}
+\begin{DoxyCompactList}\small\item\em Clustering algorithm \-: cce (default) $|$ gcce $|$ dsj $|$ itb $|$ dsjitb $|$ kmeans. \end{DoxyCompactList}\item 
+int $\ast$ \hyperlink{structCluster_a1385a76b03a7f2f862526ff2bf449755}{nk}
+\begin{DoxyCompactList}\small\item\em The number of clusters for each order \char`\"{}k\char`\"{}. \end{DoxyCompactList}\item 
+bool \hyperlink{structCluster_a33621fac416bdd2eea40805e74730748}{addsubclus}
+\begin{DoxyCompactList}\small\item\em Include all sub-\/clusters of the highest order \-: on $|$ off. \end{DoxyCompactList}\item 
+int $\ast$$\ast$$\ast$ \hyperlink{structCluster_afd65bde6cf52f123d1d1ab7a3fd9805c}{clusinfo}
+\begin{DoxyCompactList}\small\item\em The clusters for each order \char`\"{}k\char`\"{}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structCluster_a33621fac416bdd2eea40805e74730748}{\index{Cluster@{Cluster}!addsubclus@{addsubclus}}
+\index{addsubclus@{addsubclus}!Cluster@{Cluster}}
+\subsubsection[{addsubclus}]{\setlength{\rightskip}{0pt plus 5cm}bool Cluster\-::addsubclus}}\label{structCluster_a33621fac416bdd2eea40805e74730748}
+
+
+Include all sub-\/clusters of the highest order \-: on $|$ off. 
+
+When calcuting the coherence in electron spin bath, C\-C\-E with order $>$= 3 gives lots of diverged point in coherence fucntion. If turn on this option, it will include all sub-\/clusters of the highest order and give the more robust result. (default \-: off) \hypertarget{structCluster_afd65bde6cf52f123d1d1ab7a3fd9805c}{\index{Cluster@{Cluster}!clusinfo@{clusinfo}}
+\index{clusinfo@{clusinfo}!Cluster@{Cluster}}
+\subsubsection[{clusinfo}]{\setlength{\rightskip}{0pt plus 5cm}int$\ast$$\ast$$\ast$ Cluster\-::clusinfo}}\label{structCluster_afd65bde6cf52f123d1d1ab7a3fd9805c}
+
+
+The clusters for each order \char`\"{}k\char`\"{}. 
+
+clusters\mbox{[}i\mbox{]}\mbox{[}j\mbox{]}\mbox{[}k\mbox{]} i \-: i-\/th order j \-: (if j==0) The number of clusters at order i (if j!=0) j-\/th clusters at order i k \-: (if k==0) The number that you will have to multiply(+)/divide(-\/) in the coherence calcualtion (if k!=0) The index of the spin in the cluster
+
+e.\-g. clusters\mbox{[}i=0\mbox{]}\mbox{[}j=0\mbox{]}\mbox{[}k=0\mbox{]} \-: The number how many you should calculate in 0-\/th order clusters\mbox{[}i=1\mbox{]}\mbox{[}j=0\mbox{]}\mbox{[}k=0\mbox{]} \-: The number of 1st order clusters clusters\mbox{[}i=1\mbox{]}\mbox{[}j!=0\mbox{]}\mbox{[}k=0\mbox{]} \-: The number how many you should calculate the coherence for 1st order and j-\/th cluster clusters\mbox{[}i=1\mbox{]}\mbox{[}j!=0\mbox{]}\mbox{[}k!=0\mbox{]} \-: The spin index in j-\/th cluster at 1st order \hypertarget{structCluster_acfc81556c4ed78e0bce4c36119fe7150}{\index{Cluster@{Cluster}!method@{method}}
+\index{method@{method}!Cluster@{Cluster}}
+\subsubsection[{method}]{\setlength{\rightskip}{0pt plus 5cm}char Cluster\-::method\mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}}}\label{structCluster_acfc81556c4ed78e0bce4c36119fe7150}
+
+
+Clustering algorithm \-: cce (default) $|$ gcce $|$ dsj $|$ itb $|$ dsjitb $|$ kmeans. 
+
+The following is the description of each algorithm.
+
+
+\begin{DoxyItemize}
+\item cce \-: Conventional C\-C\-E method $\ast$using hash algorithm
+\item gcce \-: Generalized C\-C\-E method $\ast$using hash algorithm
+\item dsj \-: Disjoint clustering algorithm , meaning that it consider the disjointed cluster
+\item itb \-: Inter-\/bathcluster clustering algorithm , meaning that it consider the pair interaction between disjointed bath cluster
+\item dsjitb \-: Disjoint + inter-\/bathcluster clustering algorithm , meaning that it consider the disjointed group and the interaction between disjointed clusters. (dsjitb with order = 2 gives the same result as normal C\-C\-E2) 
+\end{DoxyItemize}\hypertarget{structCluster_a1385a76b03a7f2f862526ff2bf449755}{\index{Cluster@{Cluster}!nk@{nk}}
+\index{nk@{nk}!Cluster@{Cluster}}
+\subsubsection[{nk}]{\setlength{\rightskip}{0pt plus 5cm}int$\ast$ Cluster\-::nk}}\label{structCluster_a1385a76b03a7f2f862526ff2bf449755}
+
+
+The number of clusters for each order \char`\"{}k\char`\"{}. 
+
+nk is useful when you calculate C\-C\-E with order $>$= 3 At order $>$=3, Creating clusters is based on rdip, a ton of cluster will be formed (at least 1e6). This value would consider nk \# clusters for each order after sorting this clusters by coupling-\/strength. ( N\-O\-T\-E \-: this parameter is only available at \char`\"{}clusalgo = hash\char`\"{} )
+
+Input file format \-: nk = k\-:n (0$<$=k$<$=order, 0$<$=n$<$=Maximum number of clusters) e.\-g. nk = \{ 1\-:1000, 2\-:100, 3\-:10, 4\-:5 \} nk = \{ 2\-:100000, 3\-:100000 \} nk = \{ 4\-:0 \} (if n=0, it means we will include all clusters at order 4)
+
+Array format\-: nk\mbox{[}order + 1\mbox{]} = \{0,\} (default, including all clusters for each order) nk\mbox{[}i=0\mbox{]} = The number of clusters at order 0 (e.\-i. nk\mbox{[}0\mbox{]} = 1 always) nk\mbox{[}i$>$i\mbox{]} = The number of clusters at order i \hypertarget{structCluster_ae77394af156e2e278a34f12e83d66cb7}{\index{Cluster@{Cluster}!order@{order}}
+\index{order@{order}!Cluster@{Cluster}}
+\subsubsection[{order}]{\setlength{\rightskip}{0pt plus 5cm}int Cluster\-::order}}\label{structCluster_ae77394af156e2e278a34f12e83d66cb7}
+
+
+The order of C\-C\-E (default \-: 0) 
+
+Maximum nuclear spins included in a cluster (order $>$= 0) \hypertarget{structCluster_a7c4d583750b7f37eb2ca537e23ad334f}{\index{Cluster@{Cluster}!s\-K@{s\-K}}
+\index{s\-K@{s\-K}!Cluster@{Cluster}}
+\subsubsection[{s\-K}]{\setlength{\rightskip}{0pt plus 5cm}int Cluster\-::s\-K}}\label{structCluster_a7c4d583750b7f37eb2ca537e23ad334f}
+pcce 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/home/huijin/git/\-C\-C\-E\-X/include/cluster.\-h\end{DoxyCompactItemize}

@@ -1,0 +1,50 @@
+\hypertarget{structPulse}{\section{Pulse Struct Reference}
+\label{structPulse}\index{Pulse@{Pulse}}
+}
+
+
+This structure contains the pulse-\/related parameters.  
+
+
+
+
+{\ttfamily \#include $<$pulse.\-h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{structPulse_ab083ce764799722049dac44ad7479bad}{npulse}
+\item 
+bool \hyperlink{structPulse_a4fcad551982a417a36f160cd0a6f0975}{pulseiter}
+\item 
+char \hyperlink{structPulse_a94ae332f008b81e37d8df344a3c7d9b7}{pulsename} \mbox{[}100\mbox{]}
+\item 
+double $\ast$$\ast$ \hyperlink{structPulse_af1bd05f903769ac217b18fb0c2ebc31a}{sequence}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This structure contains the pulse-\/related parameters. 
+
+\subsection{Member Data Documentation}
+\hypertarget{structPulse_ab083ce764799722049dac44ad7479bad}{\index{Pulse@{Pulse}!npulse@{npulse}}
+\index{npulse@{npulse}!Pulse@{Pulse}}
+\subsubsection[{npulse}]{\setlength{\rightskip}{0pt plus 5cm}int Pulse\-::npulse}}\label{structPulse_ab083ce764799722049dac44ad7479bad}
+The number of pulse (default \-: 0) \hypertarget{structPulse_a4fcad551982a417a36f160cd0a6f0975}{\index{Pulse@{Pulse}!pulseiter@{pulseiter}}
+\index{pulseiter@{pulseiter}!Pulse@{Pulse}}
+\subsubsection[{pulseiter}]{\setlength{\rightskip}{0pt plus 5cm}bool Pulse\-::pulseiter}}\label{structPulse_a4fcad551982a417a36f160cd0a6f0975}
+The pulse iteration (default \-: false) About npulse (Details) npulse = 0 \-: Ramsey (default) npulse = 1 \-: Hahn\-Echo (default) npulse $>$ 1 \-: C\-P\-M\-G (default) \hypertarget{structPulse_a94ae332f008b81e37d8df344a3c7d9b7}{\index{Pulse@{Pulse}!pulsename@{pulsename}}
+\index{pulsename@{pulsename}!Pulse@{Pulse}}
+\subsubsection[{pulsename}]{\setlength{\rightskip}{0pt plus 5cm}char Pulse\-::pulsename\mbox{[}100\mbox{]}}}\label{structPulse_a94ae332f008b81e37d8df344a3c7d9b7}
+The pulsename (default \-: \char`\"{}\-None\char`\"{}) About pulsename (Details) pulsename = Hahn\-Echo $|$ Ramsey $|$ C\-P\-M\-G above pulsename option doesn't need a sequence \hypertarget{structPulse_af1bd05f903769ac217b18fb0c2ebc31a}{\index{Pulse@{Pulse}!sequence@{sequence}}
+\index{sequence@{sequence}!Pulse@{Pulse}}
+\subsubsection[{sequence}]{\setlength{\rightskip}{0pt plus 5cm}double$\ast$$\ast$ Pulse\-::sequence}}\label{structPulse_af1bd05f903769ac217b18fb0c2ebc31a}
+pulse sequence (default \-: N\-U\-L\-L) About sequence (Details) By using this parameter, we can adjust/delay pulse timing. (No unit)
+
+Input file format\-: sequence = \{ t1, t2, t3, ... , tn \} (tn $<$ 1.\-0, n = npulse) (only pulse timing) ti is the time fraction of i-\/th pulse
+
+Array format\-: sequence is started with 0.\-0 and end with 1.\-0 sequence\mbox{[}npulse+1\mbox{]}\mbox{[}4\mbox{]} (defulat \-: N\-U\-L\-L) sequence\mbox{[}ipulse\mbox{]}\mbox{[}0\mbox{]} = Fraction of Previous pulse sequence\mbox{[}ipulse\mbox{]}\mbox{[}1\mbox{]} = Fraction of current pulse sequence\mbox{[}ipulse\mbox{]}\mbox{[}2\mbox{]} = Difference of Fractions \char`\"{}\mbox{[}i\mbox{]}\mbox{[}1\mbox{]} -\/ \mbox{[}i\mbox{]}\mbox{[}0\mbox{]}\char`\"{} sequence\mbox{[}ipulse\mbox{]}\mbox{[}3\mbox{]} = The Index that have the same difference value if there is no the same difference value then give the current index ( This would reduce the calculational time cost ) e.\-g. Input file format \-: npulse = 0 (Ramasey) sequence parameter \-: sequence\mbox{[}0\mbox{]} = 0.\-0 , 1.\-0 , 1.\-0 , 0 e.\-g. Input file format \-: sequence = \{ 0.\-5 \} (Hahn\-Echo) sequence parameter \-: sequence\mbox{[}0\mbox{]} = 0.\-0 , 0.\-5 , 0.\-5 , 0 sequence\mbox{[}1\mbox{]} = 0.\-5 , 1.\-0 , 0.\-5 , 0 e.\-g. Input file format \-: sequence = \{ 0.\-25, 0.\-75 \} (C\-P\-M\-G) sequence parameter \-: sequence\mbox{[}0\mbox{]} = 0.\-0 , 0.\-25 , 0.\-25 , 0 sequence\mbox{[}1\mbox{]} = 0.\-25 , 0.\-75 , 0.\-5 , 1 sequence\mbox{[}2\mbox{]} = 0.\-75 , 1.\-0 , 0.\-25 , 0 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/home/huijin/git/\-C\-C\-E\-X/include/pulse.\-h\end{DoxyCompactItemize}

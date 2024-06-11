@@ -1,0 +1,87 @@
+\hypertarget{structQubitArray}{\section{Qubit\-Array Struct Reference}
+\label{structQubitArray}\index{Qubit\-Array@{Qubit\-Array}}
+}
+
+
+\hyperlink{structQubitArray}{Qubit\-Array} include information of all qubits.  
+
+
+
+
+{\ttfamily \#include $<$qubit.\-h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int $\ast$ \hyperlink{structQubitArray_a0a5c3875737d2a3bc14399109e89c82d}{\-\_\-alphaidx}
+\item 
+int $\ast$ \hyperlink{structQubitArray_a93fa20887ef373b3710d0734e9f1b7a4}{\-\_\-betaidx}
+\item 
+int \hyperlink{structQubitArray_ac87a8cdf149336447fe601f59c7ff371}{nqubit}
+\item 
+\hyperlink{structQubit}{Qubit} $\ast$$\ast$ \hyperlink{structQubitArray_ae87046f60e524d2aed1f6605c746d86e}{qubit}
+\item 
+Matrix\-Xcd $\ast$$\ast$ \hyperlink{structQubitArray_a1d74d3f22fe851f267c72b8cda416dd0}{intmap}
+\item 
+Matrix\-Xcd \hyperlink{structQubitArray_a168f33429921f2605e8c3ab850d3e6d9}{psia}
+\item 
+Matrix\-Xcd \hyperlink{structQubitArray_ad88cb397f3656eb7ac316e966d5e9172}{psib}
+\item 
+Matrix\-Xcd \hyperlink{structQubitArray_a17543dd30e2e5ef672ff5f751119beea}{psi0}
+\item 
+bool \hyperlink{structQubitArray_ab1cb38fcd5640338fad8c2abc868b53e}{overhaus}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{structQubitArray}{Qubit\-Array} include information of all qubits. 
+
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000013}{Todo}]Check if the psia, psib, psi0, rho0 is normalied. 
+
+initstate \-: Like above case, we need to change the format of this tag. e.\-g. initstate = $|$+1$>$$|$1.5$>$$|$0.5$>$ -\/ i$|$+1$>$$|$0.5$>$$|$-\/0.5$>$ =$>$ generally \-: initstate = a$|$ms\-\_\-1$>$$|$ms\-\_\-2$>$..$|$ms\-\_\-n$>$ + b$|$ms'\-\_\-1$>$$|$ms'\-\_\-2$>$..$|$ms'\-\_\-n$>$ 
+
+Add doucumentation for qubitarray and cce.\-in \char`\"{}\&\-Qubit\char`\"{} tag \end{DoxyRefDesc}
+
+
+Each parameter is read from the input file or options.
+\begin{DoxyItemize}
+\item \-\_\-parameter \-: Only use during reading input file and then free
+\item parameter \-: Use during simulation \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000014}{Todo}]alphastate, betastate \-: currently the value format of this tag in input file is \-: e.\-g. alphastate = \{ e, 1, 0, 0, \} but we need to change this format to bracket notation\-: e,g. alphastate = e $|$-\/1$>$ betastate = n1 $|$+1.5$>$ betastate = n1 i$|$-\/0.5$>$ =$>$ generally \-: alphastate or betastate = qname a$|$ms$>$ \-: a is the constant (can be complex number) \end{DoxyRefDesc}
+
+\end{DoxyItemize}
+
+\subsection{Member Data Documentation}
+\hypertarget{structQubitArray_a0a5c3875737d2a3bc14399109e89c82d}{\index{Qubit\-Array@{Qubit\-Array}!\-\_\-alphaidx@{\-\_\-alphaidx}}
+\index{\-\_\-alphaidx@{\-\_\-alphaidx}!QubitArray@{Qubit\-Array}}
+\subsubsection[{\-\_\-alphaidx}]{\setlength{\rightskip}{0pt plus 5cm}int$\ast$ Qubit\-Array\-::\-\_\-alphaidx}}\label{structQubitArray_a0a5c3875737d2a3bc14399109e89c82d}
+\hyperlink{namespaceEigen}{Eigen} state alpha index (default \-: N\-U\-L\-L) \hypertarget{structQubitArray_a93fa20887ef373b3710d0734e9f1b7a4}{\index{Qubit\-Array@{Qubit\-Array}!\-\_\-betaidx@{\-\_\-betaidx}}
+\index{\-\_\-betaidx@{\-\_\-betaidx}!QubitArray@{Qubit\-Array}}
+\subsubsection[{\-\_\-betaidx}]{\setlength{\rightskip}{0pt plus 5cm}int$\ast$ Qubit\-Array\-::\-\_\-betaidx}}\label{structQubitArray_a93fa20887ef373b3710d0734e9f1b7a4}
+\hyperlink{namespaceEigen}{Eigen} state beta index (default \-: N\-U\-L\-L) \hypertarget{structQubitArray_a1d74d3f22fe851f267c72b8cda416dd0}{\index{Qubit\-Array@{Qubit\-Array}!intmap@{intmap}}
+\index{intmap@{intmap}!QubitArray@{Qubit\-Array}}
+\subsubsection[{intmap}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xcd$\ast$$\ast$ Qubit\-Array\-::intmap}}\label{structQubitArray_a1d74d3f22fe851f267c72b8cda416dd0}
+Interaction i-\/j (Unit \-: radk\-Hz) \hypertarget{structQubitArray_ac87a8cdf149336447fe601f59c7ff371}{\index{Qubit\-Array@{Qubit\-Array}!nqubit@{nqubit}}
+\index{nqubit@{nqubit}!QubitArray@{Qubit\-Array}}
+\subsubsection[{nqubit}]{\setlength{\rightskip}{0pt plus 5cm}int Qubit\-Array\-::nqubit}}\label{structQubitArray_ac87a8cdf149336447fe601f59c7ff371}
+The number of \hyperlink{structQubit}{Qubit} \hypertarget{structQubitArray_ab1cb38fcd5640338fad8c2abc868b53e}{\index{Qubit\-Array@{Qubit\-Array}!overhaus@{overhaus}}
+\index{overhaus@{overhaus}!QubitArray@{Qubit\-Array}}
+\subsubsection[{overhaus}]{\setlength{\rightskip}{0pt plus 5cm}bool Qubit\-Array\-::overhaus}}\label{structQubitArray_ab1cb38fcd5640338fad8c2abc868b53e}
+Overhauser field \-: on $|$ off \hypertarget{structQubitArray_a17543dd30e2e5ef672ff5f751119beea}{\index{Qubit\-Array@{Qubit\-Array}!psi0@{psi0}}
+\index{psi0@{psi0}!QubitArray@{Qubit\-Array}}
+\subsubsection[{psi0}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xcd Qubit\-Array\-::psi0}}\label{structQubitArray_a17543dd30e2e5ef672ff5f751119beea}
+Initial state of qubit \hypertarget{structQubitArray_a168f33429921f2605e8c3ab850d3e6d9}{\index{Qubit\-Array@{Qubit\-Array}!psia@{psia}}
+\index{psia@{psia}!QubitArray@{Qubit\-Array}}
+\subsubsection[{psia}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xcd Qubit\-Array\-::psia}}\label{structQubitArray_a168f33429921f2605e8c3ab850d3e6d9}
+Projected state alpha for \hyperlink{structQubitArray}{Qubit\-Array} \hypertarget{structQubitArray_ad88cb397f3656eb7ac316e966d5e9172}{\index{Qubit\-Array@{Qubit\-Array}!psib@{psib}}
+\index{psib@{psib}!QubitArray@{Qubit\-Array}}
+\subsubsection[{psib}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xcd Qubit\-Array\-::psib}}\label{structQubitArray_ad88cb397f3656eb7ac316e966d5e9172}
+Projected state beta for \hyperlink{structQubitArray}{Qubit\-Array} \hypertarget{structQubitArray_ae87046f60e524d2aed1f6605c746d86e}{\index{Qubit\-Array@{Qubit\-Array}!qubit@{qubit}}
+\index{qubit@{qubit}!QubitArray@{Qubit\-Array}}
+\subsubsection[{qubit}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Qubit}$\ast$$\ast$ Qubit\-Array\-::qubit}}\label{structQubitArray_ae87046f60e524d2aed1f6605c746d86e}
+\hyperlink{structQubit}{Qubit} information (see struct \hyperlink{structQubit}{Qubit}) 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/home/huijin/git/\-C\-C\-E\-X/include/qubit.\-h\end{DoxyCompactItemize}

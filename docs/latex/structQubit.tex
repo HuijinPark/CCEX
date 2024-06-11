@@ -1,0 +1,134 @@
+\hypertarget{structQubit}{\section{Qubit Struct Reference}
+\label{structQubit}\index{Qubit@{Qubit}}
+}
+
+
+\hyperlink{structQubit}{Qubit} structure contains each qubit's information.  
+
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+char \hyperlink{structQubit_ab65a0dfa0efbd8a7862403f4704c1587}{name} \mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}
+\begin{DoxyCompactList}\small\item\em The name of a qubit. \end{DoxyCompactList}\item 
+float \hyperlink{structQubit_a858930b7d9d9cafc70f26ab7993dadad}{spin}
+\begin{DoxyCompactList}\small\item\em The spin number of a qubit. \end{DoxyCompactList}\item 
+double \hyperlink{structQubit_a668a62d3ddf72e6b9acbc6338c97090f}{gyro}
+\begin{DoxyCompactList}\small\item\em The gyromagnetic ratio of a qubit (Unit \-: radk\-Hz/\-G) \end{DoxyCompactList}\item 
+double \hyperlink{structQubit_a799cb32b473160eb8e9e4aa6c9c39b18}{xyz} \mbox{[}3\mbox{]}
+\begin{DoxyCompactList}\small\item\em The position of a qubit (Unit \-: angstrom) \end{DoxyCompactList}\item 
+double \hyperlink{structQubit_a6e0e926587994ef24d67431d0dbef9e7}{detuning}
+\begin{DoxyCompactList}\small\item\em The detuning value of a qubit (Unit \-: radk\-Hz) \end{DoxyCompactList}\item 
+double \hyperlink{structQubit_aecb3943042094c4be043f375626dbd24}{overhaus}
+\begin{DoxyCompactList}\small\item\em The energy detuning from spin bath (Unit \-: radk\-Hz) \end{DoxyCompactList}\item 
+Matrix\-Xcd \hyperlink{structQubit_accc3b309d802ab6f269b7d8a7536a4a0}{alpha}
+\begin{DoxyCompactList}\small\item\em The projected state of a qubit (alpha) \end{DoxyCompactList}\item 
+Matrix\-Xcd \hyperlink{structQubit_a6c73eb8c49fdb6db06179b21b5a2923d}{beta}
+\begin{DoxyCompactList}\small\item\em The projected state of a qubit (beta) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{structQubit}{Qubit} structure contains each qubit's information. 
+
+\begin{DoxyNote}{Note}
+When you make this structure, the following action would be done automatically. (1) alpha, beta value would be allocated (2) The dimension of alpha, beta would be checked if it is 2$\ast$spin+1 (3) The alpha, beta would be normalized 
+\end{DoxyNote}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structQubit_accc3b309d802ab6f269b7d8a7536a4a0}{\index{Qubit@{Qubit}!alpha@{alpha}}
+\index{alpha@{alpha}!Qubit@{Qubit}}
+\subsubsection[{alpha}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xcd Qubit\-::alpha}}\label{structQubit_accc3b309d802ab6f269b7d8a7536a4a0}
+
+
+The projected state of a qubit (alpha) 
+
+Value is be obtained from \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}alphams\char`\"{} or -\/$>$ \char`\"{}alphastate\char`\"{} tag (no default value)
+\begin{DoxyItemize}
+\item Demension \-: 2$\ast$spin+1
+\item alphams \-: The z-\/basis sub level of alpha (e.\-g. S, S-\/1, S-\/2 ... -\/\-S+1, -\/\-S)
+\item alphastate \-: The spin state (matrix) of alpha (e.\-g. \mbox{[}1 0 0\mbox{]}, \mbox{[}0 1 0\mbox{]}, \mbox{[}0 0 1\mbox{]}) \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000021}{Todo}]Add documentation for cce.\-in \-: \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}alphams\char`\"{} and -\/$>$ \char`\"{}alphastate\char`\"{} tag \end{DoxyRefDesc}
+
+\end{DoxyItemize}\hypertarget{structQubit_a6c73eb8c49fdb6db06179b21b5a2923d}{\index{Qubit@{Qubit}!beta@{beta}}
+\index{beta@{beta}!Qubit@{Qubit}}
+\subsubsection[{beta}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xcd Qubit\-::beta}}\label{structQubit_a6c73eb8c49fdb6db06179b21b5a2923d}
+
+
+The projected state of a qubit (beta) 
+
+Value is be obtained from \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}betams\char`\"{} or -\/$>$ \char`\"{}betastate\char`\"{} tag (no default value)
+\begin{DoxyItemize}
+\item Demension \-: 2$\ast$spin+1
+\item betams \-: The z-\/basis sub level of beta (e.\-g. S, S-\/1, S-\/2 ... -\/\-S+1, -\/\-S)
+\item betastate \-: The spin state (matrix) of beta (e.\-g. \mbox{[}1 0 0\mbox{]}, \mbox{[}0 1 0\mbox{]}, \mbox{[}0 0 1\mbox{]}) \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000022}{Todo}]Add documentation for cce.\-in \-: \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}betams\char`\"{} and -\/$>$ \char`\"{}betastate\char`\"{} tag \end{DoxyRefDesc}
+
+\end{DoxyItemize}\hypertarget{structQubit_a6e0e926587994ef24d67431d0dbef9e7}{\index{Qubit@{Qubit}!detuning@{detuning}}
+\index{detuning@{detuning}!Qubit@{Qubit}}
+\subsubsection[{detuning}]{\setlength{\rightskip}{0pt plus 5cm}double Qubit\-::detuning}}\label{structQubit_a6e0e926587994ef24d67431d0dbef9e7}
+
+
+The detuning value of a qubit (Unit \-: radk\-Hz) 
+
+The artifitial effect to shift energy level of a qubit. Value can be obtained from \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qdetuning\char`\"{} (default \-: 0.\-0) \begin{DoxyNote}{Note}
+Unit in input file (cce.\-in) \-: M\-Hz 
+\end{DoxyNote}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000019}{Todo}]Add documentation for cce.\-in \-: \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qdetuning\char`\"{} tag \end{DoxyRefDesc}
+\hypertarget{structQubit_a668a62d3ddf72e6b9acbc6338c97090f}{\index{Qubit@{Qubit}!gyro@{gyro}}
+\index{gyro@{gyro}!Qubit@{Qubit}}
+\subsubsection[{gyro}]{\setlength{\rightskip}{0pt plus 5cm}double Qubit\-::gyro}}\label{structQubit_a668a62d3ddf72e6b9acbc6338c97090f}
+
+
+The gyromagnetic ratio of a qubit (Unit \-: radk\-Hz/\-G) 
+
+Value is obtained from \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qgyro\char`\"{} (default \-: gyro\-\_\-electron) \begin{DoxyNote}{Note}
+Unit in input file (cce.\-in) \-: radk\-Hz/\-G 
+\end{DoxyNote}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000017}{Todo}]Add documentation for cce.\-in \-: \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qgyro\char`\"{} tag \end{DoxyRefDesc}
+\hypertarget{structQubit_ab65a0dfa0efbd8a7862403f4704c1587}{\index{Qubit@{Qubit}!name@{name}}
+\index{name@{name}!Qubit@{Qubit}}
+\subsubsection[{name}]{\setlength{\rightskip}{0pt plus 5cm}char Qubit\-::name\mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}}}\label{structQubit_ab65a0dfa0efbd8a7862403f4704c1587}
+
+
+The name of a qubit. 
+
+Value can be obtained from \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qname\char`\"{} (default \-: e) \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000015}{Todo}]Add documentation for cce.\-in \-: \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qname\char`\"{} tag \end{DoxyRefDesc}
+\hypertarget{structQubit_aecb3943042094c4be043f375626dbd24}{\index{Qubit@{Qubit}!overhaus@{overhaus}}
+\index{overhaus@{overhaus}!Qubit@{Qubit}}
+\subsubsection[{overhaus}]{\setlength{\rightskip}{0pt plus 5cm}double Qubit\-::overhaus}}\label{structQubit_aecb3943042094c4be043f375626dbd24}
+
+
+The energy detuning from spin bath (Unit \-: radk\-Hz) 
+
+Automatically set if \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qoverhaus\char`\"{} tag is true (default \-: 0.\-0) \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000020}{Todo}]Add documentation for cce.\-in \-: \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qoverhaus\char`\"{} tag \end{DoxyRefDesc}
+\hypertarget{structQubit_a858930b7d9d9cafc70f26ab7993dadad}{\index{Qubit@{Qubit}!spin@{spin}}
+\index{spin@{spin}!Qubit@{Qubit}}
+\subsubsection[{spin}]{\setlength{\rightskip}{0pt plus 5cm}float Qubit\-::spin}}\label{structQubit_a858930b7d9d9cafc70f26ab7993dadad}
+
+
+The spin number of a qubit. 
+
+Value can be obtained from \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qnspin\char`\"{} (default \-: 1) \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000016}{Todo}]Add documentation for cce.\-in \-: \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qspin\char`\"{} tag \end{DoxyRefDesc}
+\hypertarget{structQubit_a799cb32b473160eb8e9e4aa6c9c39b18}{\index{Qubit@{Qubit}!xyz@{xyz}}
+\index{xyz@{xyz}!Qubit@{Qubit}}
+\subsubsection[{xyz}]{\setlength{\rightskip}{0pt plus 5cm}double Qubit\-::xyz\mbox{[}3\mbox{]}}}\label{structQubit_a799cb32b473160eb8e9e4aa6c9c39b18}
+
+
+The position of a qubit (Unit \-: angstrom) 
+
+Value should be obtained from \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qxyz\char`\"{} or qubitfile (no default value) \begin{DoxyNote}{Note}
+Unit in input file (cce.\-in) \-: angstrom 
+\end{DoxyNote}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000018}{Todo}]Add documentation for cce.\-in \-: \&\hyperlink{structQubit}{Qubit} -\/$>$ \char`\"{}qxyz\char`\"{} tag and qubitfile \end{DoxyRefDesc}
+
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/home/huijin/git/\-C\-C\-E\-X/include/qubit.\-h\end{DoxyCompactItemize}
