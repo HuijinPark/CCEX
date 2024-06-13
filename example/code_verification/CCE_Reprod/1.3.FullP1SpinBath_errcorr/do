@@ -1,13 +1,14 @@
 #!/bin/sh
 
 module purge 
-module load icc18 icc18.impi fftw mkl2018 
+#module load icc18 icc18.impi fftw mkl2018 
+module load 22.2/icc-22.2 22.2/fftw-3.3.10 22.2/gsl-2.7.1 
 export LD_LIBRARY_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD_LIBRARY_PATH
 
 node_process=24
 
 #option input
-CodePath="/home/huijin/scrp/CCE_Code/17.5.5.version11_pm_apprx/CCEXv12.out"
+CodePath="/home/huijin/scrp/CCE_Code/17.5.5.version11_pm_apprx_idm3/CCEXv12.out"
 
 # inputfiles
 option_input="./cce.in"

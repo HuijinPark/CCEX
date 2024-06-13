@@ -111,8 +111,8 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
             if (DefectArray_getNdefect(dfa)>0){
                 // Update BathArray from DefectArray
-                updateDisorder_main_sub(dfa,ba);
                 updateDisorder_sub_sub(dfa);
+                updateDisorder_main_sub(dfa,ba);
                 if (isOvh){
                     updateOverhaus_qubit_sub(dfa,qa);
                 }

@@ -21,7 +21,7 @@ startTime_string=`date`
 #############################################################################
 #about CCE2 calculation 
 
- mpirun -n ${node_process} ${CodePath} -f ${option_input} -o ${outFile} -v > "Process_1"
+ mpirun -n ${node_process} ${CodePath} -f ${option_input} -o ${outFile} -N 2 -v > "Process_1"
 
 
 

@@ -604,21 +604,31 @@ void updateDisorder_sub_sub(DefectArray* dfa){
     if (verbosity && rank==0){
         printSubTitle("Update disorder of Subbath in DefectArray");
         printMessage("The bathspin is actually defect, so the other spins can be exist near the defect.\n\
-         We call them as subspins. And we update the disorder originated from the subspins\n\n\
+         We call them as subspins. And we update the disorder originated from the subspins \n\
+         after initializeing it as subbath.disorder = 0.0\n\n\
          * subspin - other subspin of sharing the same mainspn : point-dipole approximation\n\
          * subspin - other subspin of other main spin : point-dipole approximation: \n");
     }
 
     int nbathspin = DefectArray_getNbathspin(dfa);
+    
 
     for (int ibs_current=0; ibs_current<nbathspin; ibs_current++){
 
         int naddspin_current = DefectArray_getNaddspins_i(dfa,ibs_current);
+
         for (int isp_current=0; isp_current<naddspin_current; isp_current++){
             ///////////////////////////////////////////////////
             // Current subspin
             BathSpin* subspin_current = DefectArray_getSubbath_i_isp(dfa,ibs_current,isp_current);
-            double sub_current_disorder = BathSpin_getDisorder(subspin_current);
+            //if (BathSpin_getDisorder(subspin_current) > FLT_EPSILON){
+            //    // If subbath already has disorder value then, err
+            //    fprintf(stderr,"Error (updateDisorder_sub_sub) : Subbath has already haven the disorder value (%d)\n",BathSpin_getDisorder(subspin_current));
+            //    fprintf(stderr,"Error (updateDisorder_sub_sub) : Because we set the subbath disorder as 0.0 here. It gives error\n");
+            //    exit(EXIT_FAILURE);
+
+            //}
+            double sub_current_disorder = 0.0; 
             double sub_current_additional_disorder = 0.0;
             // Current Spin properties
             double* sub_current_xyz = BathSpin_getXyz(subspin_current);
