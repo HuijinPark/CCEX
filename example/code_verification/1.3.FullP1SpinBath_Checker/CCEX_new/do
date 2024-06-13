@@ -17,5 +17,5 @@ ccein="./cce.json"
 
 process=20
 
-mpirun -n ${process} ${code} -f ${ccein} -v > process
+mpirun -n ${process} ${code} -f ${ccein} -v -I "./../../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1" > process
 #${code} -f ${ccein} -v > process
