@@ -466,14 +466,25 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
 
 
     // read sK .. for pCCE
-    //if (strcasecmp(Cluster_getMethod(clus),"pcce") == 0){
-    //    int* defaultSk = NULL;
-    //    int sK = cJSON_ReadInt(root,"sK",false,defaultSk); 
-    //    Cluster_setSk(clus,sK);
-    //    
+    if (strcasecmp(Cluster_getMethod(clus),"pcce") == 0){
+        int* defaultSk        = NULL;
+        int default_max_trial = 30000;
+        int default_max_iter  = 30000;
 
-    //}
-    
+        int sK           = cJSON_ReadInt(root,"sK"          , false, defaultSk ); 
+        int max_trial    = cJSON_ReadInt(root,"max_trial"   , true , &default_max_trial); 
+        int max_iter     = cJSON_ReadInt(root,"max_iter"    , true , &default_max_iter); 
+        bool kmeans_pp   = cJSON_ReadBool(root,"kmeans_pp"  , true , true);
+        bool iter_detail = cJSON_ReadBool(root,"iter_detail", true , false);
+
+        Cluster_setSk(clus,sK);
+        Cluster_setMax_trial(clus,max_trial);
+        Cluster_setMax_iter(clus,max_iter);
+        Cluster_setKmeans_pp(clus,kmeans_pp);
+        Cluster_setIter_detail(clus,iter_detail);
+        
+    }
+
     //int order = cJSON_ReadInt(root,"order",false, NULL); // read twice
 
 

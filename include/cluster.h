@@ -24,7 +24,12 @@ typedef struct {
     /** pcce
 
     */
-    int sK;
+    int  sK;
+    int  max_trial;
+    int  max_iter;
+
+    bool kmeans_pp;
+    bool iter_detail;
 
     /**
      * @brief Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | kmeans
@@ -114,7 +119,8 @@ typedef struct {
 
 // init
 Cluster* Cluster_init();
-void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config);
+void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config);
+void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, Config* config);
 
 // free
 void Cluster_freeAll(Cluster* cls);

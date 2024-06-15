@@ -339,7 +339,8 @@ int main(int argc, char* argv[]){
         time_start_step = MPI_Wtime();
     }
 
-    Cluster_clusterize(cls,ba,cnf);
+    Cluster_clusterize(cls,ba,qa,cnf);
+
     if (rank==0){
         Cluster_reportClusinfo(cls);
 

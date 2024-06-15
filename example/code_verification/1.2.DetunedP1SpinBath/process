@@ -14,8 +14,8 @@
                \__| \_,7|_| |_||___| //   |_n_|\__/  \_/ |___|  
 
 
-            Program CCEX starts on Tue Jun 11 13:17:22 2024
-                The CCEX code has compiled at 'Jun 10 2024' 
+            Program CCEX starts on Thu Jun 13 16:29:45 2024
+                The CCEX code has compiled at 'Jun 13 2024' 
     ======================================================================
 
         Option filename : './cce.json' 
@@ -59,6 +59,8 @@
 
         Read Output Options ...
           [ savemode, outfile ] 
+
+	>> Read ./cce.json file successfully ..
 
 
     ======================================================================
@@ -2677,7 +2679,7 @@
       -------------------------------------------------
 
       -------------------------------------------------
-          Wall time = 0.05212 s
+          Wall time = 0.05146 s
       -------------------------------------------------
 
 
@@ -55528,7 +55530,7 @@
 
 
       -------------------------------------------------
-          Wall time = 1.17480 s
+          Wall time = 0.88759 s
       -------------------------------------------------
 
 
@@ -56491,6 +56493,17 @@
       subbath[467].state :   [ ]
       subbath[468].state :   [ ]
       -------------------------------------------------
+
+    >> Update disorder of Subbath in DefectArray
+
+        The bathspin is actually defect, so the other spins can be exist near the defect.
+         We call them as subspins. And we update the disorder originated from the subspins 
+         after initializeing it as subbath.disorder = 0.0
+
+         * subspin - other subspin of sharing the same mainspn : point-dipole approximation
+         * subspin - other subspin of other main spin : point-dipole approximation: 
+
+
 
     >> Update disorder of BathArray and DefectArray (from defect information)
 
@@ -57907,16 +57920,6 @@
 
         MainSpin[468].disorder =  +1e+02(Current)      +0(Additional) =  +1e+02 (radkHz)
 
-    >> Update disorder of Subbath in DefectArray
-
-        The bathspin is actually defect, so the other spins can be exist near the defect.
-         We call them as subspins. And we update the disorder originated from the subspins
-
-         * subspin - other subspin of sharing the same mainspn : point-dipole approximation
-         * subspin - other subspin of other main spin : point-dipole approximation: 
-
-
-
     >> Qubit overhaus (radkHz)
 
       Qubit[0].overhaus :   0                    
@@ -58531,9 +58534,9 @@
       [  0]    P1 920.566 550.418 722.814   ( S = 0.5, gyro = -17608.597, mainspidx = 23 )
 
       -------------------------------------------------
-        At rank 0, 24-th cluster (100%) is computed at 0.03 s
+        At rank 0, 24-th cluster (100%) is computed at 0.05 s
 
-        # Wall time : 0.03[s]
+        # Wall time : 0.05[s]
       -------------------------------------------------
 
 
@@ -61289,7 +61292,7 @@
       [  1]    P1 703.666 760.102 1346.782   ( S = 0.5, gyro = -17608.597, mainspidx = 269 )
 
       -------------------------------------------------
-        At rank 0, 250-th cluster (19%) is computed at 0.62 s
+        At rank 0, 250-th cluster (19%) is computed at 0.63 s
       nspin (#)         :   1                    
       -------------------------------------------------
       [  0]    P1 819.682 1641.062 1331.852   ( S = 0.5, gyro = -17608.597, mainspidx = 87 )
@@ -64040,7 +64043,7 @@
       [  1]    P1 1831.045 1520.203 903.518   ( S = 0.5, gyro = -17608.597, mainspidx = 285 )
 
       -------------------------------------------------
-        At rank 0, 500-th cluster (38%) is computed at 1.22 s
+        At rank 0, 500-th cluster (38%) is computed at 1.24 s
       nspin (#)         :   1                    
       -------------------------------------------------
       [  0]    P1 1218.174 908.627 1254.114   ( S = 0.5, gyro = -17608.597, mainspidx = 210 )
@@ -66791,7 +66794,7 @@
       [  1]    P1 1645.670 1014.197 1589.780   ( S = 0.5, gyro = -17608.597, mainspidx = 360 )
 
       -------------------------------------------------
-        At rank 0, 750-th cluster (57%) is computed at 1.82 s
+        At rank 0, 750-th cluster (57%) is computed at 2.24 s
       nspin (#)         :   1                    
       -------------------------------------------------
       [  0]    P1 1186.648 1895.158 1196.453   ( S = 0.5, gyro = -17608.597, mainspidx = 58 )
@@ -69542,7 +69545,7 @@
       [  1]    P1 1081.981 1249.362 1099.666   ( S = 0.5, gyro = -17608.597, mainspidx = 338 )
 
       -------------------------------------------------
-        At rank 0, 1000-th cluster (77%) is computed at 2.42 s
+        At rank 0, 1000-th cluster (77%) is computed at 2.92 s
       nspin (#)         :   1                    
       -------------------------------------------------
       [  0]    P1 862.558 1696.395 932.348   ( S = 0.5, gyro = -17608.597, mainspidx = 355 )
@@ -72293,7 +72296,7 @@
       [  1]    P1 1244.656 1538.405 465.402   ( S = 0.5, gyro = -17608.597, mainspidx = 392 )
 
       -------------------------------------------------
-        At rank 0, 1250-th cluster (96%) is computed at 3.23 s
+        At rank 0, 1250-th cluster (96%) is computed at 3.52 s
       nspin (#)         :   1                    
       -------------------------------------------------
       [  0]    P1 1645.670 1014.197 1589.780   ( S = 0.5, gyro = -17608.597, mainspidx = 360 )
@@ -72811,9 +72814,9 @@
       [  1]    P1 1377.067 639.243 881.380   ( S = 0.5, gyro = -17608.597, mainspidx = 320 )
 
       -------------------------------------------------
-        At rank 0, 1297-th cluster (100%) is computed at 3.35 s
+        At rank 0, 1297-th cluster (100%) is computed at 3.63 s
 
-        # Wall time : 3.35[s]
+        # Wall time : 3.63[s]
       -------------------------------------------------
 
     >> Product local results...
@@ -72823,14 +72826,14 @@
     >> Save the results...
 
       -------------------------------------------------
-          Wall time = 4.09628 s
+          Wall time = 4.64703 s
       -------------------------------------------------
 
 
 
     ===============================================================
 
-        JOB DONE : Wall time = 5.33260 s
+        JOB DONE : Wall time = 5.59454 s
 
     ===============================================================
 
