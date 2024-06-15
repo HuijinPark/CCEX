@@ -1,5 +1,5 @@
 {
-    "method" : "gcce", // Possible options : cce | gcce | dsj | itb | dsjitb | pcce
+    "method" : "pcce", // Possible options : cce | gcce | dsj | itb | dsjitb | pcce
     "QUAntity" : "coherence", // Possible options : coherence | dm | noise
     // "bfield": 100.0, // Magnetic field (Unit : gauss) , bfield_z
     "bfield" : [40.0, 20.0, 100.0], // Magnetic field (Unit : gauss) bfield_vector
@@ -14,9 +14,9 @@
     "order" : 3,
     "kmeans_pp"     : true,
     "iter_detail"   : false,
-    "sK"            : 4 ,
-    "max_trial"     : 100 ,
-    "max_iteration" : 100,
+    "sK"            : 10 ,
+    "max_trial"     : 200,
+    "max_iter"      : 2000,
 
     // "method" : "hash",
     "nk" : [0,0,0,100],
@@ -25,7 +25,9 @@
     // files 
     "qubitfile" : "./../config/qubitfile",
     "gyrofile" : "./../config/gyrofile",
-    "bathfile" : ["./../config/bathfile1", "./../config/bathfile2"],
+    //"bathfile" : ["./../config/bathfile1", "./../config/bathfile2"],
+    //"bathfile" : ["./../config/bathfile1"],
+    "bathfile" : ["./../config/bath_500.txt"],
     "bathadjust" : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
 
     "hf_readmode" : 1,
