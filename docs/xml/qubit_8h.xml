@@ -1,0 +1,1657 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="qubit_8h" kind="file">
+    <compoundname>qubit.h</compoundname>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includedby refid="bath_8h" local="yes">/home/huijin/git/CCEX/include/bath.h</includedby>
+    <includedby refid="option_8h" local="yes">/home/huijin/git/CCEX/include/option.h</includedby>
+    <includedby refid="reader_8h" local="yes">/home/huijin/git/CCEX/include/reader.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
+    <includedby refid="qubit_8cpp" local="yes">/home/huijin/git/CCEX/src/qubit.cpp</includedby>
+    <incdepgraph>
+      <node id="140">
+        <label>/home/huijin/git/CCEX/include/qubit.h</label>
+        <link refid="qubit.h"/>
+        <childnode refid="141" relation="include">
+        </childnode>
+      </node>
+      <node id="142">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="145">
+        <label>unistd.h</label>
+      </node>
+      <node id="143">
+        <label>iostream</label>
+      </node>
+      <node id="144">
+        <label>mpi.h</label>
+      </node>
+      <node id="141">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="142" relation="include">
+        </childnode>
+        <childnode refid="143" relation="include">
+        </childnode>
+        <childnode refid="144" relation="include">
+        </childnode>
+        <childnode refid="145" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="150">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
+        <link refid="option_8h_source"/>
+      </node>
+      <node id="153">
+        <label>/home/huijin/git/CCEX/include/reader.h</label>
+        <link refid="reader_8h_source"/>
+      </node>
+      <node id="154">
+        <label>/home/huijin/git/CCEX/include/output.h</label>
+        <link refid="output_8h_source"/>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+      </node>
+      <node id="149">
+        <label>/home/huijin/git/CCEX/include/cluster_hash.h</label>
+        <link refid="cluster__hash_8h_source"/>
+      </node>
+      <node id="151">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+      </node>
+      <node id="147">
+        <label>/home/huijin/git/CCEX/include/bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="148" relation="include">
+        </childnode>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="154" relation="include">
+        </childnode>
+        <childnode refid="153" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+      </node>
+      <node id="146">
+        <label>/home/huijin/git/CCEX/include/qubit.h</label>
+        <link refid="qubit.h"/>
+        <childnode refid="147" relation="include">
+        </childnode>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="153" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+      </node>
+      <node id="152">
+        <label>/home/huijin/git/CCEX/include/defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="153" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+      </node>
+      <node id="148">
+        <label>/home/huijin/git/CCEX/include/cluster.h</label>
+        <link refid="cluster_8h_source"/>
+        <childnode refid="149" relation="include">
+        </childnode>
+        <childnode refid="150" relation="include">
+        </childnode>
+        <childnode refid="151" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structQubit" prot="public">Qubit</innerclass>
+    <innerclass refid="structQubitArray" prot="public">QubitArray</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="qubit_8h_1a45741e296e28f50e77a289798d9f6282" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int QubitArray_dim</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_dim</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="148" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="41" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a9e6e90d7a9584308757865ec6b19ddb2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int QubitArray_dimQubit_i</definition>
+        <argsstring>(QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_dimQubit_i</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="149" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="50" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a6eedd653b6800f121259b2e2e089a9c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double QubitArray_mindist</definition>
+        <argsstring>(double *xyz, QubitArray *qa)</argsstring>
+        <name>QubitArray_mindist</name>
+        <param>
+          <type>double *</type>
+          <declname>xyz</declname>
+        </param>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="150" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="55" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ac9ceba40cf962f89c8e6d1132b9df95c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setPsiaPsib_fromQubit</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_setPsiaPsib_fromQubit</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="151" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="74" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ac4b95a476edfc9104098f7e48ff2f2e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setPsiaPsib_fromIdx</definition>
+        <argsstring>(QubitArray *qa, float *bfield)</argsstring>
+        <name>QubitArray_setPsiaPsib_fromIdx</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>bfield</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="152" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="95" bodyend="141"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aafad57f5c068bdca6420c8955c37dec8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setPsi0_fromPsiaPsib</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_setPsi0_fromPsiaPsib</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="153" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="144" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a5b6edc8e889cd8f52085311a12cc3043" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_TotalHamil</definition>
+        <argsstring>(QubitArray *qa, MatrixXcd **sigmas, float *bfield)</argsstring>
+        <name>QubitArray_TotalHamil</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>bfield</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="156" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="199" bodyend="224"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aaf6cbe6a72b0007d02fb43f47be4d5d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_SingleHamil</definition>
+        <argsstring>(QubitArray *qa, MatrixXcd **sigmas, int iq, float *bfield)</argsstring>
+        <name>QubitArray_SingleHamil</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>bfield</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="157" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="226" bodyend="235"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a51e614ecf6dc8210b7917b0312191ccd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_ZeemanHamil</definition>
+        <argsstring>(QubitArray *qa, MatrixXcd **sigmas, int iq, float *bfield)</argsstring>
+        <name>QubitArray_ZeemanHamil</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>bfield</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="158" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="237" bodyend="250"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a1259898fa6ddba6bd7e06ea4d7e369a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_DetuningHamil</definition>
+        <argsstring>(QubitArray *qa, MatrixXcd **sigmas, int iq)</argsstring>
+        <name>QubitArray_DetuningHamil</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="159" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="252" bodyend="265"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a8c70c7b57898ae70255cb38924209c47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_OverhausHamil</definition>
+        <argsstring>(QubitArray *qa, MatrixXcd **sigmas, int iq)</argsstring>
+        <name>QubitArray_OverhausHamil</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="160" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="267" bodyend="280"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ac2e1f870ff753b199cc23bf1e5343753" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_ZFSHamil</definition>
+        <argsstring>(QubitArray *qa, MatrixXcd **sigmas, int iq)</argsstring>
+        <name>QubitArray_ZFSHamil</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="161" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="282" bodyend="294"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a67df31b547ae3a0fb500b9e110eaa09c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_InteractionHamil</definition>
+        <argsstring>(QubitArray *qa, MatrixXcd **sigmas, int iq, int jq)</argsstring>
+        <name>QubitArray_InteractionHamil</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>jq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="162" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="296" bodyend="317"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a7e7823e37fdb6382040ae9a06b2a5e55" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd **</type>
+        <definition>MatrixXcd** QubitArray_PauliOperators</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_PauliOperators</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="163" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="172" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a5b696572e7a81abe12ec84088a69b5a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd* QubitArray_PauliOperator_fromPsiaPsib</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_PauliOperator_fromPsiaPsib</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="164" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="187" bodyend="197"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a4ea75a66fcf852fa6ef49a13a212e737" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_Rho0</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_Rho0</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="167" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="320" bodyend="323"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a122e8cc3fe04fda22236538ab1330e5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int QubitArray_getQubitIdx_fromName</definition>
+        <argsstring>(QubitArray *qa, const char *name)</argsstring>
+        <name>QubitArray_getQubitIdx_fromName</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="170" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="162" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aa167a0f05ddabdfd98cc9a617adae9d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+        <definition>QubitArray* QubitArray_init</definition>
+        <argsstring>()</argsstring>
+        <name>QubitArray_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="174" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="11" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aebb7ea793f0187bcc49214923c8df639" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_report</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_report</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="177" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="614" bodyend="654"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a18adfd484d631b24ea39effb17baff4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_reportQubit_i</definition>
+        <argsstring>(QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_reportQubit_i</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="178" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="561" bodyend="575"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1af42cb87cfbf86dab8dac7b57dfb8c6cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_reportIntmap</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_reportIntmap</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="179" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="577" bodyend="591"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a13957bf59be2db2833c38b8bae0fc405" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_reportPsiaPsib</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_reportPsiaPsib</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="180" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="593" bodyend="596"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a050f9574dee170941a6b92c1dfc7f503" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_reportPsi0</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_reportPsi0</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="181" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="598" bodyend="600"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ab38cadf0fa65eb87e8db71d0a58add2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_reportQubit_overhaus</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_reportQubit_overhaus</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="182" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="602" bodyend="612"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ac1ac692b91c0b5c5dfd534436ae584d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_allocQubit</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_allocQubit</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="185" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="336" bodyend="340"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a0ba58b396ae67f2a2ea954e434595b56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_allocIntmap</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_allocIntmap</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="186" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="342" bodyend="352"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1af8452e46c7d5bf255f6e78a884b40699" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_alloc_alphaidx_betaidx</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_alloc_alphaidx_betaidx</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="187" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="354" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a84f43d736d42d9ac064ffce1095f85bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setNqubit</definition>
+        <argsstring>(QubitArray *qa, const int nspin)</argsstring>
+        <name>QubitArray_setNqubit</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="190" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="360" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a6aeed5e74fbbc8f32548aa9d2f4ac8e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setOverhaus</definition>
+        <argsstring>(QubitArray *qa, const bool overhaus)</argsstring>
+        <name>QubitArray_setOverhaus</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>overhaus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="191" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="364" bodyend="366"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aba4cbaf1dc63797a73781c636d2c755d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit</definition>
+        <argsstring>(QubitArray *qa, Qubit **qubit)</argsstring>
+        <name>QubitArray_setQubit</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structQubit" kindref="compound">Qubit</ref> **</type>
+          <declname>qubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="192" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="376" bodyend="378"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a103c7892763b345321616cf69a417e60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_set_alphaidx</definition>
+        <argsstring>(QubitArray *qa, const int *alphaidx)</argsstring>
+        <name>QubitArray_set_alphaidx</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const int *</type>
+          <declname>alphaidx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="193" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="368" bodyend="374"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a3c9efdc2d478a22bd7aa3f7e48642ba7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_set_betaidx</definition>
+        <argsstring>(QubitArray *qa, const int *betaidx)</argsstring>
+        <name>QubitArray_set_betaidx</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const int *</type>
+          <declname>betaidx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="194" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="380" bodyend="386"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a7981d8f74a9047360ed0b5c4cb87f8f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setIntmap_i_j</definition>
+        <argsstring>(QubitArray *qa, const MatrixXcd tensor, int i, int j)</argsstring>
+        <name>QubitArray_setIntmap_i_j</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="195" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="388" bodyend="395"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a934a12377cb15d0b97432b0e2cb840e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setPsia</definition>
+        <argsstring>(QubitArray *qa, const MatrixXcd psia)</argsstring>
+        <name>QubitArray_setPsia</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>psia</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="196" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="397" bodyend="399"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ad83b088cfb1be623c77189ac334e60a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setPsib</definition>
+        <argsstring>(QubitArray *qa, const MatrixXcd psib)</argsstring>
+        <name>QubitArray_setPsib</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>psib</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="197" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="401" bodyend="403"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ac9319da853557a660b2d0cd1ab2f868f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setPsi0</definition>
+        <argsstring>(QubitArray *qa, const MatrixXcd psi0)</argsstring>
+        <name>QubitArray_setPsi0</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>psi0</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="198" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="405" bodyend="407"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a4b9b092eb258e56ea79f4b779b474b9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_name</definition>
+        <argsstring>(QubitArray *qa, const char *name, int i)</argsstring>
+        <name>QubitArray_setQubit_i_name</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="199" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="478" bodyend="480"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a1ae8b208dd48a354d48dfdb21799cc4f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_spin</definition>
+        <argsstring>(QubitArray *qa, const float spin, int i)</argsstring>
+        <name>QubitArray_setQubit_i_spin</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const float</type>
+          <declname>spin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="200" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="482" bodyend="484"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a38f6252d82c461c3c6bfc41429c3ed68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_gyro</definition>
+        <argsstring>(QubitArray *qa, const double gyro, int i)</argsstring>
+        <name>QubitArray_setQubit_i_gyro</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>gyro</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="201" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="486" bodyend="488"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a730321d41576eb2869b51d0cd17643e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_xyz</definition>
+        <argsstring>(QubitArray *qa, const double *xyz, int i)</argsstring>
+        <name>QubitArray_setQubit_i_xyz</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const double *</type>
+          <declname>xyz</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="202" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="490" bodyend="494"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a8085a9b2e4e09d3a25291602c9b5a21e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_detuning</definition>
+        <argsstring>(QubitArray *qa, const double detuning, int i)</argsstring>
+        <name>QubitArray_setQubit_i_detuning</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>detuning</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="203" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="496" bodyend="498"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a98c8ac794f815c01a6cf3198a5e462cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_overhaus</definition>
+        <argsstring>(QubitArray *qa, const double overhaus, int i)</argsstring>
+        <name>QubitArray_setQubit_i_overhaus</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>overhaus</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="204" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="500" bodyend="502"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a06adbf28da37d64b8719fe21613a710b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_alpha</definition>
+        <argsstring>(QubitArray *qa, const MatrixXcd alpha, int i)</argsstring>
+        <name>QubitArray_setQubit_i_alpha</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>alpha</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="205" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="504" bodyend="506"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aa36d42342c0c3f9e92a649def188c8aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_beta</definition>
+        <argsstring>(QubitArray *qa, const MatrixXcd beta, int i)</argsstring>
+        <name>QubitArray_setQubit_i_beta</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>beta</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="206" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="508" bodyend="510"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a9912adc80412ddcbf72283f477835337" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_alpha_fromMs</definition>
+        <argsstring>(QubitArray *qa, const float ms, int i)</argsstring>
+        <name>QubitArray_setQubit_i_alpha_fromMs</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const float</type>
+          <declname>ms</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="207" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="512" bodyend="515"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a9aba66f88595c3a6427a67e1ed434e82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_setQubit_i_beta_fromMs</definition>
+        <argsstring>(QubitArray *qa, const float ms, int i)</argsstring>
+        <name>QubitArray_setQubit_i_beta_fromMs</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>const float</type>
+          <declname>ms</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="208" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="517" bodyend="520"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a92d53023231774329afb43515ae426af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int QubitArray_getNqubit</definition>
+        <argsstring>(const QubitArray *qa)</argsstring>
+        <name>QubitArray_getNqubit</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="211" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="411" bodyend="413"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a43602ef791226ac908285556eea20b77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool QubitArray_getOverhaus</definition>
+        <argsstring>(const QubitArray *qa)</argsstring>
+        <name>QubitArray_getOverhaus</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="212" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="415" bodyend="417"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a808ead69b0d40f547fffe9f17e050555" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int* QubitArray_get_alphaidx</definition>
+        <argsstring>(const QubitArray *qa)</argsstring>
+        <name>QubitArray_get_alphaidx</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="213" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="419" bodyend="421"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ae4c72d491b573e505ceffd71913952f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int* QubitArray_get_betaidx</definition>
+        <argsstring>(const QubitArray *qa)</argsstring>
+        <name>QubitArray_get_betaidx</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="214" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="423" bodyend="425"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1adc59782eac519b790b11f0454b09084b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd **</type>
+        <definition>MatrixXcd** QubitArray_getIntmap</definition>
+        <argsstring>(const QubitArray *qa)</argsstring>
+        <name>QubitArray_getIntmap</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="215" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="427" bodyend="429"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aa6e1e16173a894c62d3ba6e321899b84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_getIntmap_i_j</definition>
+        <argsstring>(const QubitArray *qa, int i, int j)</argsstring>
+        <name>QubitArray_getIntmap_i_j</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="216" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="431" bodyend="433"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ace3511c49f18f11b931cc1dc2482993b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_getPsia</definition>
+        <argsstring>(const QubitArray *qa)</argsstring>
+        <name>QubitArray_getPsia</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="217" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="435" bodyend="437"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a49773f2cf68d5f6f6bd48548ed0b0af8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_getPsib</definition>
+        <argsstring>(const QubitArray *qa)</argsstring>
+        <name>QubitArray_getPsib</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="218" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="439" bodyend="441"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1abc14c288673cc49fda527e1be63be7c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_getPsi0</definition>
+        <argsstring>(const QubitArray *qa)</argsstring>
+        <name>QubitArray_getPsi0</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="219" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="443" bodyend="445"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a1e11046357a6772005291e9fa7d8fbe2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* QubitArray_getQubit_i_name</definition>
+        <argsstring>(const QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_getQubit_i_name</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="220" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="527" bodyend="529"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a5185ffc14ec13d30ee5024a9b8045091" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float QubitArray_getQubit_i_spin</definition>
+        <argsstring>(const QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_getQubit_i_spin</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="221" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="531" bodyend="533"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a3e9f9e838128b9f9eb6a733d5e64ad42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double QubitArray_getQubit_i_gyro</definition>
+        <argsstring>(const QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_getQubit_i_gyro</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="222" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="535" bodyend="537"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a795ccf110d3bca40d498849468cf5d92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double* QubitArray_getQubit_i_xyz</definition>
+        <argsstring>(const QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_getQubit_i_xyz</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="223" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="539" bodyend="541"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a8f6dc3eee81c414eaeca4a87378349fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double QubitArray_getQubit_i_detuning</definition>
+        <argsstring>(const QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_getQubit_i_detuning</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="224" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="551" bodyend="553"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a0cfb5cd962893c658becd7f4b6065b6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double QubitArray_getQubit_i_overhaus</definition>
+        <argsstring>(const QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_getQubit_i_overhaus</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="225" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="555" bodyend="557"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aa2ac9548d4bcfa2ad0ef89a53680f45c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_getQubit_i_alpha</definition>
+        <argsstring>(const QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_getQubit_i_alpha</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="226" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="543" bodyend="545"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a7b851d6bad14846152c5b2bebd75ea71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray_getQubit_i_beta</definition>
+        <argsstring>(const QubitArray *qa, int i)</argsstring>
+        <name>QubitArray_getQubit_i_beta</name>
+        <param>
+          <type>const <ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="227" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="547" bodyend="549"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a9f8741d042da0cdf68d09d0b64cb036b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_freeAll</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_freeAll</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="230" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="33" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1a988e9577546f8eea559828f969543efb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_freeQubit</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_freeQubit</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="231" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="449" bodyend="455"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1ab88a26b05d22f2069cb3123c924992a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_freeIntmap</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_freeIntmap</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="232" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="457" bodyend="466"/>
+      </memberdef>
+      <memberdef kind="function" id="qubit_8h_1aafe8f76084e8c5ff931eba2fc03ae5e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QubitArray_free_alphaidx_betaidx</definition>
+        <argsstring>(QubitArray *qa)</argsstring>
+        <name>QubitArray_free_alphaidx_betaidx</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="233" column="1" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="468" bodyend="471"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_QUBIT_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_QUBIT_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="structQubit" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Basic<sp/>spin<sp/>information<sp/>(Essential)<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="structQubit_1ab65a0dfa0efbd8a7862403f4704c1587" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>name[MAX_CHARARRAY_LENGTH];</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="structQubit_1a858930b7d9d9cafc70f26ab7993dadad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structQubit_1a858930b7d9d9cafc70f26ab7993dadad" kindref="member">spin</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structQubit_1a668a62d3ddf72e6b9acbc6338c97090f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structQubit_1a668a62d3ddf72e6b9acbc6338c97090f" kindref="member">gyro</ref>;<sp/></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="structQubit_1a799cb32b473160eb8e9e4aa6c9c39b18" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>xyz[3];</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Interaction<sp/>information<sp/>(Optional)<sp/>*/</highlight><highlight class="normal"><sp/></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59" refid="structQubit_1a6e0e926587994ef24d67431d0dbef9e7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structQubit_1a6e0e926587994ef24d67431d0dbef9e7" kindref="member">detuning</ref>;<sp/></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="structQubit_1aecb3943042094c4be043f375626dbd24" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structQubit_1aecb3943042094c4be043f375626dbd24" kindref="member">overhaus</ref>;<sp/></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Qubit<sp/>projected<sp/>state<sp/>(Optional)<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="structQubit_1accc3b309d802ab6f269b7d8a7536a4a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/><ref refid="structQubit_1accc3b309d802ab6f269b7d8a7536a4a0" kindref="member">alpha</ref>;<sp/></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="structQubit_1a6c73eb8c49fdb6db06179b21b5a2923d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/><ref refid="structQubit_1a6c73eb8c49fdb6db06179b21b5a2923d" kindref="member">beta</ref>;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="90"><highlight class="normal">}<sp/><ref refid="structQubit" kindref="compound">Qubit</ref>;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="structQubitArray" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Use<sp/>only<sp/>during<sp/>reading<sp/>input<sp/>file<sp/>-----------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>QubitArray</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="structQubitArray_1a0a5c3875737d2a3bc14399109e89c82d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="structQubitArray_1a0a5c3875737d2a3bc14399109e89c82d" kindref="member">_alphaidx</ref>;<sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="121" refid="structQubitArray_1a93fa20887ef373b3710d0734e9f1b7a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="structQubitArray_1a93fa20887ef373b3710d0734e9f1b7a4" kindref="member">_betaidx</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*-----------------------------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Use<sp/>during<sp/>simulation<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*-----------------------------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="structQubitArray_1ac87a8cdf149336447fe601f59c7ff371" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structQubitArray_1ac87a8cdf149336447fe601f59c7ff371" kindref="member">nqubit</ref>;<sp/></highlight></codeline>
+<codeline lineno="126" refid="structQubitArray_1ae87046f60e524d2aed1f6605c746d86e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structQubit" kindref="compound">Qubit</ref>**<sp/><ref refid="structQubitArray_1ae87046f60e524d2aed1f6605c746d86e" kindref="member">qubit</ref>;<sp/></highlight></codeline>
+<codeline lineno="127" refid="structQubitArray_1a1d74d3f22fe851f267c72b8cda416dd0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd**<sp/><ref refid="structQubitArray_1a1d74d3f22fe851f267c72b8cda416dd0" kindref="member">intmap</ref>;<sp/></highlight></codeline>
+<codeline lineno="128" refid="structQubitArray_1a168f33429921f2605e8c3ab850d3e6d9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/><ref refid="structQubitArray_1a168f33429921f2605e8c3ab850d3e6d9" kindref="member">psia</ref>;<sp/></highlight></codeline>
+<codeline lineno="129" refid="structQubitArray_1ad88cb397f3656eb7ac316e966d5e9172" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/><ref refid="structQubitArray_1ad88cb397f3656eb7ac316e966d5e9172" kindref="member">psib</ref>;<sp/></highlight></codeline>
+<codeline lineno="130" refid="structQubitArray_1a17543dd30e2e5ef672ff5f751119beea" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/><ref refid="structQubitArray_1a17543dd30e2e5ef672ff5f751119beea" kindref="member">psi0</ref>;<sp/></highlight></codeline>
+<codeline lineno="131" refid="structQubitArray_1ab1cb38fcd5640338fad8c2abc868b53e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structQubitArray_1ab1cb38fcd5640338fad8c2abc868b53e" kindref="member">overhaus</ref>;<sp/><sp/></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*-----------------------------------------------------------------------------*/</highlight></codeline>
+<codeline lineno="143"><highlight class="normal">}<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>High<sp/>Level<sp/>--------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="comment">//<sp/>physical<sp/>properties</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_dim(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_dimQubit_i(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_mindist(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>xyz,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setPsiaPsib_fromQubit(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);<sp/></highlight><highlight class="comment">//<sp/>psia<sp/>=<sp/>kron(qubit_i_alpha,qubit_j_alpha,<sp/>...)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setPsiaPsib_fromIdx(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>bfield);<sp/></highlight><highlight class="comment">//<sp/>psia,<sp/>psib<sp/>:<sp/>eigenstate<sp/>of<sp/>Hq<sp/>(idx)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setPsi0_fromPsiaPsib(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);<sp/></highlight><highlight class="comment">//<sp/>psi0<sp/>=<sp/>Normalize(psia<sp/>+<sp/>psib)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_TotalHamil(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>bfield);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_SingleHamil(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>bfield);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_ZeemanHamil(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>bfield);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_DetuningHamil(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_OverhausHamil(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_ZFSHamil(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_InteractionHamil(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>jq);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal">MatrixXcd**<sp/>QubitArray_PauliOperators(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">MatrixXcd*<sp/><sp/>QubitArray_PauliOperator_fromPsiaPsib(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="comment">//<sp/>density<sp/>matrix</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_Rho0(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="comment">//<sp/>utils</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_getQubitIdx_fromName(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>name);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Low<sp/>Level<sp/>--------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>QubitArray_init();<sp/></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//<sp/>report</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_report(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_reportQubit_i(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_reportIntmap(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_reportPsiaPsib(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_reportPsi0(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_reportQubit_overhaus(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight><highlight class="comment">//<sp/>alloc</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_allocQubit(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>length<sp/>=<sp/>nqubit</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_allocIntmap(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>length<sp/>=<sp/>(nqubit,nqubit)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_alloc_alphaidx_betaidx(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);<sp/></highlight><highlight class="comment">//<sp/>length<sp/>=<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="comment">//<sp/>set</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setNqubit(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setOverhaus(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>overhaus);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structQubit" kindref="compound">Qubit</ref>**<sp/>qubit);</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_set_alphaidx(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>alphaidx);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_set_betaidx(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>betaidx);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setIntmap_i_j(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>tensor,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setPsia(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>psia);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setPsib(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>psib);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setPsi0(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>psi0);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_name(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>name,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_spin(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>spin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_gyro(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gyro,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_xyz(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>xyz,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_detuning(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>detuning,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_overhaus(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>overhaus,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_alpha(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>alpha,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_beta(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>beta,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_alpha_fromMs(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ms,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_setQubit_i_beta_fromMs(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ms,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight><highlight class="comment">//<sp/>get<sp/>(This<sp/>is<sp/>not<sp/>a<sp/>copy.<sp/>Watch<sp/>out<sp/>when<sp/>you<sp/>change<sp/>the<sp/>value<sp/>with<sp/>this<sp/>function!)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_getNqubit(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_getOverhaus(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_get_alphaidx(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_get_betaidx(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="215"><highlight class="normal">MatrixXcd**<sp/>QubitArray_getIntmap(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_getIntmap_i_j(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_getPsia(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_getPsib(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_getPsi0(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_getQubit_i_name(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_getQubit_i_spin(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_getQubit_i_gyro(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/>QubitArray_getQubit_i_xyz(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_getQubit_i_detuning(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_getQubit_i_overhaus(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_getQubit_i_alpha(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>QubitArray_getQubit_i_beta(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="comment">//<sp/>free</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_freeAll(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_freeQubit(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_freeIntmap(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QubitArray_free_alphaidx_betaidx(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_QUBIT_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/qubit.h"/>
+  </compounddef>
+</doxygen>

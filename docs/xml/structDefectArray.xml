@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="structDefectArray" kind="struct" prot="public">
+    <compoundname>DefectArray</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structDefectArray_1abbe19ffc03894f576ecc2c98653c5157" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int DefectArray::nbathspin</definition>
+        <argsstring></argsstring>
+        <name>nbathspin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="42" column="1" bodyfile="/home/huijin/git/CCEX/include/defect.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structDefectArray_1a3a0ebca9f87b89034bd0b423c83b2773" prot="public" static="no" mutable="no">
+        <type>int *</type>
+        <definition>int* DefectArray::naddspins</definition>
+        <argsstring></argsstring>
+        <name>naddspins</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="43" column="1" bodyfile="/home/huijin/git/CCEX/include/defect.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structDefectArray_1a36b7ddf253204964750b4e68a4b4d263" prot="public" static="no" mutable="no">
+        <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> ***</type>
+        <definition>BathSpin*** DefectArray::subbath</definition>
+        <argsstring></argsstring>
+        <name>subbath</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="44" column="1" bodyfile="/home/huijin/git/CCEX/include/defect.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structDefectArray_1a3cd9353c49e6f295684c3949911c35a9" prot="public" static="no" mutable="no">
+        <type>int *</type>
+        <definition>int* DefectArray::paxes</definition>
+        <argsstring></argsstring>
+        <name>paxes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="46" column="1" bodyfile="/home/huijin/git/CCEX/include/defect.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structDefectArray_1a9e6a847a550580b3dc85578a0a30e1e3" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int DefectArray::ndefect</definition>
+        <argsstring></argsstring>
+        <name>ndefect</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="48" column="1" bodyfile="/home/huijin/git/CCEX/include/defect.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structDefectArray_1a32134d0ed017c082e785441cdb6a0e71" prot="public" static="no" mutable="no">
+        <type><ref refid="structDefect" kindref="compound">Defect</ref> **</type>
+        <definition>Defect** DefectArray::defect</definition>
+        <argsstring></argsstring>
+        <name>defect</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="49" column="1" bodyfile="/home/huijin/git/CCEX/include/defect.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="23">
+        <label>BathSpin</label>
+        <link refid="structBathSpin"/>
+      </node>
+      <node id="22">
+        <label>DefectArray</label>
+        <link refid="structDefectArray"/>
+        <childnode refid="23" relation="usage">
+          <edgelabel>subbath</edgelabel>
+        </childnode>
+        <childnode refid="24" relation="usage">
+          <edgelabel>defect</edgelabel>
+        </childnode>
+      </node>
+      <node id="24">
+        <label>Defect</label>
+        <link refid="structDefect"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/huijin/git/CCEX/include/defect.h" line="40" column="1" bodyfile="/home/huijin/git/CCEX/include/defect.h" bodystart="40" bodyend="51"/>
+    <listofallmembers>
+      <member refid="structDefectArray_1a32134d0ed017c082e785441cdb6a0e71" prot="public" virt="non-virtual"><scope>DefectArray</scope><name>defect</name></member>
+      <member refid="structDefectArray_1a3a0ebca9f87b89034bd0b423c83b2773" prot="public" virt="non-virtual"><scope>DefectArray</scope><name>naddspins</name></member>
+      <member refid="structDefectArray_1abbe19ffc03894f576ecc2c98653c5157" prot="public" virt="non-virtual"><scope>DefectArray</scope><name>nbathspin</name></member>
+      <member refid="structDefectArray_1a9e6a847a550580b3dc85578a0a30e1e3" prot="public" virt="non-virtual"><scope>DefectArray</scope><name>ndefect</name></member>
+      <member refid="structDefectArray_1a3cd9353c49e6f295684c3949911c35a9" prot="public" virt="non-virtual"><scope>DefectArray</scope><name>paxes</name></member>
+      <member refid="structDefectArray_1a36b7ddf253204964750b4e68a4b4d263" prot="public" virt="non-virtual"><scope>DefectArray</scope><name>subbath</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

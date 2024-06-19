@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="structBathArray" kind="struct" prot="public">
+    <compoundname>BathArray</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structBathArray_1ac71d275f6b9a2293d80fe8edf69fc46f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int BathArray::nspin</definition>
+        <argsstring></argsstring>
+        <name>nspin</name>
+        <briefdescription>
+<para>The number of bath spins. </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000011"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; &quot;nspin&quot; tag </para></xrefdescription></xrefsect>The number of <ref refid="structBathSpin" kindref="compound">BathSpin</ref> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="136" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathArray_1a807633d8e314f488e12dfc95040ecc01" prot="public" static="no" mutable="no">
+        <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> **</type>
+        <definition>BathSpin** BathArray::bath</definition>
+        <argsstring></argsstring>
+        <name>bath</name>
+        <briefdescription>
+<para>The array of <ref refid="structBathSpin" kindref="compound">BathSpin</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para><xrefsect id="todo_1_todo000012"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="142" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="142" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathArray_1a23c43fd398472286b1f80c5159896daf" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int BathArray::prop_nspecies</definition>
+        <argsstring></argsstring>
+        <name>prop_nspecies</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of species </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="145" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathArray_1a8349ee706336e916dd546a613fbb51e2" prot="public" static="no" mutable="no">
+        <type>char **</type>
+        <definition>char** BathArray::prop_names</definition>
+        <argsstring></argsstring>
+        <name>prop_names</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The name of species </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="146" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="146" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathArray_1a79ff244bc7666f22c2bbb8072d3e3fa2" prot="public" static="no" mutable="no">
+        <type>double *</type>
+        <definition>double* BathArray::prop_gyros</definition>
+        <argsstring></argsstring>
+        <name>prop_gyros</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The gyromagnetic ratio of species </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="147" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathArray_1aca533199f1899634d7c1827864c89478" prot="public" static="no" mutable="no">
+        <type>float *</type>
+        <definition>float* BathArray::prop_spins</definition>
+        <argsstring></argsstring>
+        <name>prop_spins</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The spin quantum number of species </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="148" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>BathSpin</label>
+        <link refid="structBathSpin"/>
+      </node>
+      <node id="1">
+        <label>BathArray</label>
+        <link refid="structBathArray"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>bath</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/huijin/git/CCEX/include/bath.h" line="130" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="130" bodyend="149"/>
+    <listofallmembers>
+      <member refid="structBathArray_1a807633d8e314f488e12dfc95040ecc01" prot="public" virt="non-virtual"><scope>BathArray</scope><name>bath</name></member>
+      <member refid="structBathArray_1ac71d275f6b9a2293d80fe8edf69fc46f" prot="public" virt="non-virtual"><scope>BathArray</scope><name>nspin</name></member>
+      <member refid="structBathArray_1a79ff244bc7666f22c2bbb8072d3e3fa2" prot="public" virt="non-virtual"><scope>BathArray</scope><name>prop_gyros</name></member>
+      <member refid="structBathArray_1a8349ee706336e916dd546a613fbb51e2" prot="public" virt="non-virtual"><scope>BathArray</scope><name>prop_names</name></member>
+      <member refid="structBathArray_1a23c43fd398472286b1f80c5159896daf" prot="public" virt="non-virtual"><scope>BathArray</scope><name>prop_nspecies</name></member>
+      <member refid="structBathArray_1aca533199f1899634d7c1827864c89478" prot="public" virt="non-virtual"><scope>BathArray</scope><name>prop_spins</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

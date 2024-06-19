@@ -1,0 +1,438 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="pulse_8h" kind="file">
+    <compoundname>pulse.h</compoundname>
+    <includes refid="utilities_8h" local="yes">./../include/utilities.h</includes>
+    <includedby refid="option_8h" local="yes">/home/huijin/git/CCEX/include/option.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
+    <includedby refid="pulse_8cpp" local="yes">/home/huijin/git/CCEX/src/pulse.cpp</includedby>
+    <incdepgraph>
+      <node id="133">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="136">
+        <label>unistd.h</label>
+      </node>
+      <node id="134">
+        <label>iostream</label>
+      </node>
+      <node id="131">
+        <label>/home/huijin/git/CCEX/include/pulse.h</label>
+        <link refid="pulse.h"/>
+        <childnode refid="132" relation="include">
+        </childnode>
+      </node>
+      <node id="135">
+        <label>mpi.h</label>
+      </node>
+      <node id="132">
+        <label>./../include/utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="133" relation="include">
+        </childnode>
+        <childnode refid="134" relation="include">
+        </childnode>
+        <childnode refid="135" relation="include">
+        </childnode>
+        <childnode refid="136" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="138">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
+        <link refid="option_8h_source"/>
+      </node>
+      <node id="139">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+      </node>
+      <node id="137">
+        <label>/home/huijin/git/CCEX/include/pulse.h</label>
+        <link refid="pulse.h"/>
+        <childnode refid="138" relation="include">
+        </childnode>
+        <childnode refid="139" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structPulse" prot="public">Pulse</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="pulse_8h_1a0c7619127c67d5d5aa5559d1dccf6552" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+        <definition>Pulse* Pulse_init</definition>
+        <argsstring>()</argsstring>
+        <name>Pulse_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="63" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="8" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a68c4200b8c8a7219dff809fc95835007" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_report</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_report</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="65" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="150" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a74cfa2780f1d797822ba8676a791ece4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setNpulse</definition>
+        <argsstring>(Pulse *pulse, int npulse)</argsstring>
+        <name>Pulse_setNpulse</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>npulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="67" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="18" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1ab47f98146415eee502baccfc07b644e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setPulsename</definition>
+        <argsstring>(Pulse *pulse, char *pulsename)</argsstring>
+        <name>Pulse_setPulsename</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>pulsename</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="68" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="22" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a0d87dba64cb7ffa5b029fd6d6d037922" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setSequence_fromName</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_setSequence_fromName</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="69" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="30" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a4d22448c11cd121fde947397d118f449" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setSequence_fromInput</definition>
+        <argsstring>(Pulse *pulse, double *sequenceinput)</argsstring>
+        <name>Pulse_setSequence_fromInput</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>sequenceinput</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="70" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="67" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1aad13a34668d7aa6baf2848bb076c3dff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setPulseiter</definition>
+        <argsstring>(Pulse *pulse, bool pulseiter)</argsstring>
+        <name>Pulse_setPulseiter</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>pulseiter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="71" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="26" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a6a09cffba4cc0f91199bef3c1cdf874a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Pulse_getNpulse</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_getNpulse</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="73" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="123" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a27ac15f8163d1ce64bc5aab3c32d1faf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* Pulse_getPulsename</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_getPulsename</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="74" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="127" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a28893dfeabe0b3e18e3be3550e6e49f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double **</type>
+        <definition>double** Pulse_getSequence</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_getSequence</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="75" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="135" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a4ad30025483afe5de1cde4ab00ef464b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Pulse_getPulseiter</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_getPulseiter</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="76" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="131" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a7bba76df2b32cdb55943e1114e334bad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_allocSequence</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_allocSequence</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="79" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="179" bodyend="182"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a441f4594a769b4009d7a59a4e0445c03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_freeSequence</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_freeSequence</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="80" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="184" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a9fab2c11c2890ea089bff3a7456cc443" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_freeAll</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_freeAll</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="81" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="189" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1ac3192f4363056be9321743edea567d1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateSequenceRamsey</definition>
+        <argsstring>(double ***sequence)</argsstring>
+        <name>generateSequenceRamsey</name>
+        <param>
+          <type>double ***</type>
+          <declname>sequence</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="84" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="195" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1a8afa668f5fc3415e1c4497588d03798e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateSequenceHE</definition>
+        <argsstring>(double ***sequence)</argsstring>
+        <name>generateSequenceHE</name>
+        <param>
+          <type>double ***</type>
+          <declname>sequence</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="85" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="204" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1ac64e4d9b1b6f6a7fd8111893e478b31f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateSequenceCPMG</definition>
+        <argsstring>(double ***sequence, int npulse)</argsstring>
+        <name>generateSequenceCPMG</name>
+        <param>
+          <type>double ***</type>
+          <declname>sequence</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>npulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="86" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="218" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8h_1add7902f7c40a41d20f29b9a6005b107f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateSequenceEqual</definition>
+        <argsstring>(double ***sequence, int npulse)</argsstring>
+        <name>generateSequenceEqual</name>
+        <param>
+          <type>double ***</type>
+          <declname>sequence</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>npulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="87" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="260" bodyend="277"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_PULSE_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_PULSE_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;./../include/utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="structPulse" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="structPulse_1ab083ce764799722049dac44ad7479bad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structPulse_1ab083ce764799722049dac44ad7479bad" kindref="member">npulse</ref>;<sp/></highlight></codeline>
+<codeline lineno="13" refid="structPulse_1a4fcad551982a417a36f160cd0a6f0975" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structPulse_1a4fcad551982a417a36f160cd0a6f0975" kindref="member">pulseiter</ref>;<sp/></highlight></codeline>
+<codeline lineno="20" refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>pulsename[100];<sp/></highlight></codeline>
+<codeline lineno="26" refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/><ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>;<sp/></highlight></codeline>
+<codeline lineno="61"><highlight class="normal">}<sp/><ref refid="structPulse" kindref="compound">Pulse</ref>;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>Pulse_init();</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_report(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setNpulse(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setPulsename(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>pulsename);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setSequence_fromName(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setSequence_fromInput(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>sequenceinput);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setPulseiter(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>pulseiter);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>Pulse_getNpulse(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Pulse_getPulsename(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>Pulse_getSequence(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Pulse_getPulseiter(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">//<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_allocSequence(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_freeSequence(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_freeAll(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/>generate<sp/>pulse<sp/>sequence</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateSequenceRamsey(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>sequence);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateSequenceHE(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>sequence);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateSequenceCPMG(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>sequence,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateSequenceEqual(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>sequence,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_PULSE_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/pulse.h"/>
+  </compounddef>
+</doxygen>

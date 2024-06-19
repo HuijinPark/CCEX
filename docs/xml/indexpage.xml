@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="indexpage" kind="page">
+    <compoundname>index</compoundname>
+    <title>Overview</title>
+    <detaileddescription>
+<para>Generated on 2024.06.01</para><sect1 id="index_1Introduction">
+<title>Introduction</title>
+<para>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <ref refid="" kindref="compound">&quot;CCEX GitHub Repository&quot; </ref></para></sect1>
+<sect1 id="index_1AboutTheSimulation">
+<title>About the simulation</title>
+<para>In this code, we simulate the qubit dynamics in the presence of the bath spins.</para><para>You can simulate the spin qubit dynamcis with the following methods:<itemizedlist>
+<listitem><para><ref refid="structCluster" kindref="compound">Cluster</ref> correlation expension method (CCE method)</para></listitem><listitem><para>CCE-NeNn method</para></listitem><listitem><para>Generalized CCE method</para></listitem><listitem><para>Partition CCE method (To be done)</para></listitem></itemizedlist>
+</para><para>You can obtain the following physical quantities of qubit for evolving time:<itemizedlist>
+<listitem><para>Coherence function</para></listitem><listitem><para>Density matrix (gCCE method only)</para></listitem><listitem><para>Noise function (To be done for CCE, gCCE)</para></listitem></itemizedlist>
+</para></sect1>
+<sect1 id="index_1Installation">
+<title>Installation</title>
+<para><programlisting><codeline><highlight class="normal">$<sp/>git<sp/>clone<sp/>https:</highlight><highlight class="comment">//github.com/HuijinPark/CCEX.git<sp/></highlight></codeline>
+</programlisting></para><para><bold>Requirement</bold> <bold></bold> <itemizedlist>
+<listitem><para><ref refid="" kindref="compound">&quot;Intel MKL&quot; </ref></para></listitem><listitem><para><ref refid="" kindref="compound">&quot;Intel mpi&quot; </ref></para></listitem></itemizedlist>
+</para><para><bold>Note</bold> <bold></bold> <itemizedlist>
+<listitem><para>MakeFile Path should be changed.. (To be changed)</para></listitem></itemizedlist>
+</para></sect1>
+<sect1 id="index_1UsageInstructions">
+<title>Usage Instructions</title>
+<para>To run the code using <computeroutput> mpirun </computeroutput>, use the following command :</para><para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>process_number<sp/>code_path<sp/>-f<sp/>input_file<sp/></highlight></codeline>
+</programlisting></para><para><itemizedlist>
+<listitem><para>process_number : The number of processes to run.</para></listitem><listitem><para>code_path : The path to your executable code.</para></listitem><listitem><para>-f input_file : The input file required for the code to run. (input file should be <computeroutput>.json</computeroutput> file)</para></listitem></itemizedlist>
+</para><para><bold>example</bold> <bold></bold>  $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json </para><para><bold>*</bold> For more detailed instructions, see the <ref refid="GettingStarted" kindref="compound">Getting Started</ref>.<bold></bold> </para></sect1>
+<sect1 id="index_1Update">
+<title>Update</title>
+<para>... To be written.</para></sect1>
+<sect1 id="index_1ToDoList">
+<title>To do list</title>
+<para><itemizedlist>
+<listitem><para>Grouping of files in Model / Parser / Generator categories </para></listitem></itemizedlist>
+</para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

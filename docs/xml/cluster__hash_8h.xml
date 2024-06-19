@@ -1,0 +1,874 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="cluster__hash_8h" kind="file">
+    <compoundname>cluster_hash.h</compoundname>
+    <includes local="no">string.h</includes>
+    <includes local="no">stdlib.h</includes>
+    <includes local="no">stdio.h</includes>
+    <includes local="no">time.h</includes>
+    <includes local="yes">../zlib/uthash/src/uthash.h</includes>
+    <includes local="no">stddef.h</includes>
+    <includes local="no">stdint.h</includes>
+    <includes refid="cluster_8h" local="yes">cluster.h</includes>
+    <includedby refid="cluster_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster.cpp</includedby>
+    <includedby refid="cluster__hash_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster_hash.cpp</includedby>
+    <incdepgraph>
+      <node id="46">
+        <label>stdint.h</label>
+      </node>
+      <node id="41">
+        <label>stdlib.h</label>
+      </node>
+      <node id="39">
+        <label>/home/huijin/git/CCEX/include/cluster_hash.h</label>
+        <link refid="cluster_hash.h"/>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>stddef.h</label>
+      </node>
+      <node id="54">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="49" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="44">
+        <label>../zlib/uthash/src/uthash.h</label>
+      </node>
+      <node id="40">
+        <label>string.h</label>
+      </node>
+      <node id="53">
+        <label>unistd.h</label>
+      </node>
+      <node id="48">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>time.h</label>
+      </node>
+      <node id="51">
+        <label>iostream</label>
+      </node>
+      <node id="47">
+        <label>cluster.h</label>
+        <link refid="cluster_8h_source"/>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>mpi.h</label>
+      </node>
+      <node id="49">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>stdio.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structProperty" prot="public">Property</innerclass>
+    <innerclass refid="structHashCluster" prot="public">HashCluster</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="cluster__hash_8h_1a13654ad43b75218709e205850a41f85f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void clusterizeHash</definition>
+        <argsstring>(Cluster *CCE, int nspin, int **spmap, float **stmap)</argsstring>
+        <name>clusterizeHash</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>CCE</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <param>
+          <type>int **</type>
+          <declname>spmap</declname>
+        </param>
+        <param>
+          <type>float **</type>
+          <declname>stmap</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="41" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="12" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a237a61085a593a921c989c9ad778f47d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void convertClusinfoToHash</definition>
+        <argsstring>(HashCluster **hashClusters, Cluster *CCE)</argsstring>
+        <name>convertClusinfoToHash</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> **</type>
+          <declname>hashClusters</declname>
+        </param>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>CCE</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="42" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="76" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a45a3eaaac9d3364767563484f85ae5a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void solveTilde</definition>
+        <argsstring>(HashCluster **hashcluster, Cluster *CCE, int nspin)</argsstring>
+        <name>solveTilde</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> **</type>
+          <declname>hashcluster</declname>
+        </param>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>CCE</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="43" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="692" bodyend="799"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1aee631b4fe6a87df7efd1ade71a010a82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void makeHashClusterO1</definition>
+        <argsstring>(HashCluster **hashclusters, int nspin)</argsstring>
+        <name>makeHashClusterO1</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> **</type>
+          <declname>hashclusters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="45" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="161" bodyend="185"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a6266836cf9a3bc5ad53fd367e09506e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void makeHashClusterO2</definition>
+        <argsstring>(HashCluster **hashclusters, int nspin, int **spmap, float **stmap)</argsstring>
+        <name>makeHashClusterO2</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> **</type>
+          <declname>hashclusters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <param>
+          <type>int **</type>
+          <declname>spmap</declname>
+        </param>
+        <param>
+          <type>float **</type>
+          <declname>stmap</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="46" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="188" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1aff440b8597c83b6d13cc5a22f139b068" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void makeHashClusterOn</definition>
+        <argsstring>(HashCluster **hashclusters, int order, int nspin, int **spmap, float **stmap, int *nks)</argsstring>
+        <name>makeHashClusterOn</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> **</type>
+          <declname>hashclusters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <param>
+          <type>int **</type>
+          <declname>spmap</declname>
+        </param>
+        <param>
+          <type>float **</type>
+          <declname>stmap</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>nks</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="47" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="224" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1ab2d03ad431ee0115b07f538a5844c162" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeHashCluster</definition>
+        <argsstring>(HashCluster **hashClusters, int order)</argsstring>
+        <name>freeHashCluster</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> **</type>
+          <declname>hashClusters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="49" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="57" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1abebc71c366d2ca94c9f085a1316f0338" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int addCluster</definition>
+        <argsstring>(HashCluster **hashClusters, int order, const char *id, int *spins, float strength, int count)</argsstring>
+        <name>addCluster</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> **</type>
+          <declname>hashClusters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>strength</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para><itemizedlist>
+<listitem><para>Value assignment 2nd */ </para></listitem></itemizedlist>
+</para>        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="51" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="112" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a3c03f282af1a291fee41e3f0f21545d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int by_strength</definition>
+        <argsstring>(const Property *a, const Property *b)</argsstring>
+        <name>by_strength</name>
+        <param>
+          <type>const <ref refid="structProperty" kindref="compound">Property</ref> *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structProperty" kindref="compound">Property</ref> *</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="52" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="371" bodyend="376"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a1c8b9255f31a154e48e5c8975a5b556d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> *</type>
+        <definition>HashCluster* findCluster</definition>
+        <argsstring>(HashCluster *hashClusters, int order)</argsstring>
+        <name>findCluster</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> *</type>
+          <declname>hashClusters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="53" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="378" bodyend="388"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1ad1b54a9108e1b42f15f32d970e34f5fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int setMaxLengthStr</definition>
+        <argsstring>(int nSpin, int order)</argsstring>
+        <name>setMaxLengthStr</name>
+        <param>
+          <type>int</type>
+          <declname>nSpin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="55" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="155" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a2c4c9395b42b8370c566cea0ec369942" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void addSpin</definition>
+        <argsstring>(int **newcluster, int *oldcluster, int oldn, int spin)</argsstring>
+        <name>addSpin</name>
+        <param>
+          <type>int **</type>
+          <declname>newcluster</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>oldcluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>oldn</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>spin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="57" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="419" bodyend="425"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a2e7e844007824dff536a437e679a8f70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void typeStr</definition>
+        <argsstring>(char **destination, int *cluster, int order, int nSpin)</argsstring>
+        <name>typeStr</name>
+        <param>
+          <type>char **</type>
+          <declname>destination</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>cluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nSpin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="58" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="359" bodyend="369"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1ab824186b80bbe281189462174e2c4698" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int binarySearch</definition>
+        <argsstring>(int *arr, int low, int high, int target)</argsstring>
+        <name>binarySearch</name>
+        <param>
+          <type>int *</type>
+          <declname>arr</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>low</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>high</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="60" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="402" bodyend="417"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a92aab7efa50c927df5e6ff090968fdfd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float minStrength</definition>
+        <argsstring>(float currentStrength, float **strengthMap, int *oldcluster, int oldn, int newspin)</argsstring>
+        <name>minStrength</name>
+        <param>
+          <type>float</type>
+          <declname>currentStrength</declname>
+        </param>
+        <param>
+          <type>float **</type>
+          <declname>strengthMap</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>oldcluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>oldn</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="62" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="427" bodyend="439"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1ade82d5910aec868945bbfbaa657b3ed6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float addAllStrength</definition>
+        <argsstring>(float currentStrength, float **strengthMap, int *oldcluster, int oldn, int newspin)</argsstring>
+        <name>addAllStrength</name>
+        <param>
+          <type>float</type>
+          <declname>currentStrength</declname>
+        </param>
+        <param>
+          <type>float **</type>
+          <declname>strengthMap</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>oldcluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>oldn</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>newspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="63" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="583" bodyend="591"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a38bab6a7e70e8f207f00872ab30e1a0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printClusters</definition>
+        <argsstring>(HashCluster *hashClusters)</argsstring>
+        <name>printClusters</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> *</type>
+          <declname>hashClusters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="65" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="464" bodyend="487"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a3d25f0062cfd81b8dda08a8a772570b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printProperties</definition>
+        <argsstring>(Property *hashProperties)</argsstring>
+        <name>printProperties</name>
+        <param>
+          <type><ref refid="structProperty" kindref="compound">Property</ref> *</type>
+          <declname>hashProperties</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="66" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="441" bodyend="462"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a3679f0299f227492571e44be455cdb4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int* parseClusterIdToIntArray</definition>
+        <argsstring>(const char *id, int *count)</argsstring>
+        <name>parseClusterIdToIntArray</name>
+        <param>
+          <type>const char *</type>
+          <declname>id</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="68" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="490" bodyend="521"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a881bd0eb07e76afd42275803a1d0ca29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int countDigits</definition>
+        <argsstring>(int number)</argsstring>
+        <name>countDigits</name>
+        <param>
+          <type>int</type>
+          <declname>number</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="69" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="524" bodyend="546"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a3c08100306289ee92372fad9d0142add" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int search2dArr</definition>
+        <argsstring>(int **arr, int low, int high, int left, int right, int *target)</argsstring>
+        <name>search2dArr</name>
+        <param>
+          <type>int **</type>
+          <declname>arr</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>low</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>high</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>right</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="70" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="548" bodyend="560"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1a7519d1ca541c84a4268f1ca765d6f517" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void updateNk</definition>
+        <argsstring>(int **Nk, int order, HashCluster *hashClusters)</argsstring>
+        <name>updateNk</name>
+        <param>
+          <type>int **</type>
+          <declname>Nk</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> *</type>
+          <declname>hashClusters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="72" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="562" bodyend="581"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1aa3b67c8c122faf40826b75bc6f0ef805" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void addSubClusters</definition>
+        <argsstring>(HashCluster **hashclusters, int nspin, float **stmap, int n)</argsstring>
+        <name>addSubClusters</name>
+        <param>
+          <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> **</type>
+          <declname>hashclusters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <param>
+          <type>float **</type>
+          <declname>stmap</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="73" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="632" bodyend="690"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1ac0beb7777256cc3c7eb608b497503553" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateCombinations</definition>
+        <argsstring>(int *arr, int ***data, int *tempCombination, int start, int end, int index, int r, int *nCombination)</argsstring>
+        <name>generateCombinations</name>
+        <param>
+          <type>int *</type>
+          <declname>arr</declname>
+        </param>
+        <param>
+          <type>int ***</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>tempCombination</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>nCombination</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="74" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="606" bodyend="630"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__hash_8h_1aa9f95887c42a0e4f46ddeb04e68c914f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float addAllStrengthForAllSpins</definition>
+        <argsstring>(float **strengthMap, int *cluster, int order)</argsstring>
+        <name>addAllStrengthForAllSpins</name>
+        <param>
+          <type>float **</type>
+          <declname>strengthMap</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>cluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="75" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="593" bodyend="603"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_CLUSTER_HASH_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_CLUSTER_HASH_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string.h&gt;</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>strcpy<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>malloc<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdio.h&gt;</highlight><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>printf<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;time.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../zlib/uthash/src/uthash.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;cluster.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="structProperty" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>id<sp/>:<sp/>clustered<sp/>spin<sp/>indeices(char)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>spins<sp/>:<sp/>clustered<sp/>spin</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>strength<sp/>:<sp/>coupling<sp/>strength</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*id;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*spins;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>strength;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>solve<sp/>tilde<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>[0][0][0]<sp/>:<sp/>None</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>[i][0][0]<sp/>:<sp/>The<sp/>number<sp/>of<sp/>subclusters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>[i][j][0]<sp/>:<sp/>each<sp/>subcluster<sp/>j,<sp/>length<sp/>=<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>[i][j][k]<sp/>:<sp/>k-th<sp/>spin<sp/>in<sp/>j-th<sp/>subcluster<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//int***<sp/>subclusters_connected;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//int***<sp/>subclusters_notConnected;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>count<sp/>:<sp/>The<sp/>number<sp/>that<sp/>you<sp/>have<sp/>to<sp/>multi.<sp/>or<sp/>div.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>UT_hash_handle<sp/>hh;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}<sp/><ref refid="structProperty" kindref="compound">Property</ref>;<sp/></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="structHashCluster" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//N<sp/>:<sp/>cluster<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//prop<sp/>:<sp/>cluster<sp/>properties</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>N;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structProperty" kindref="compound">Property</ref><sp/>*prop;<sp/></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>UT_hash_handle<sp/>hh;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="39"><highlight class="normal">}<sp/><ref refid="structHashCluster" kindref="compound">HashCluster</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clusterizeHash(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>CCE,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>spmap,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>stmap);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>convertClusinfoToHash(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashClusters,<sp/><ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>CCE);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>solveTilde(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashcluster,<sp/><ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>CCE,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>makeHashClusterO1(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashclusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>makeHashClusterO2(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashclusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>spmap,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>stmap);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>makeHashClusterOn(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashclusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>spmap,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>stmap,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>nks);<sp/></highlight><highlight class="comment">//nks<sp/>=<sp/>CCE-&gt;nk</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeHashCluster(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashClusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>addCluster(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashClusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>spins,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>strength,</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>by_strength(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structProperty" kindref="compound">Property</ref>*<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structProperty" kindref="compound">Property</ref>*<sp/>b);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><ref refid="structHashCluster" kindref="compound">HashCluster</ref>*<sp/>findCluster(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>*<sp/>hashClusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>setMaxLengthStr(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nSpin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addSpin(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>newcluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>oldcluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>oldn,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>spin);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>typeStr(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>destination,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nSpin);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>binarySearch(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>arr,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>low,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>high,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>target);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>minStrength(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>currentStrength,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>strengthMap,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>oldcluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>oldn,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>newspin);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>addAllStrength(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>currentStrength,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>strengthMap,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>oldcluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>oldn,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>newspin);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printClusters(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>*<sp/>hashClusters);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printProperties(<ref refid="structProperty" kindref="compound">Property</ref>*<sp/>hashProperties);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>parseClusterIdToIntArray(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>count);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>countDigits(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>number);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>search2dArr(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>arr,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>low,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>high,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>left,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/>right,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>target);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateNk(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>Nk,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/><ref refid="structHashCluster" kindref="compound">HashCluster</ref>*<sp/>hashClusters);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addSubClusters(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashclusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>stmap,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateCombinations(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>arr,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>data,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>tempCombination,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>start,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>end,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>index,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>r,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>nCombination);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>addAllStrengthForAllSpins(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>strengthMap,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_CLUSTER_HASH_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/cluster_hash.h"/>
+  </compounddef>
+</doxygen>

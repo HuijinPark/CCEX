@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="structQubitArray" kind="struct" prot="public">
+    <compoundname>QubitArray</compoundname>
+    <includes refid="qubit_8h" local="no">qubit.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structQubitArray_1a0a5c3875737d2a3bc14399109e89c82d" prot="public" static="no" mutable="no">
+        <type>int *</type>
+        <definition>int* QubitArray::_alphaidx</definition>
+        <argsstring></argsstring>
+        <name>_alphaidx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="namespaceEigen" kindref="compound">Eigen</ref> state alpha index (default : NULL) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="120" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubitArray_1a93fa20887ef373b3710d0734e9f1b7a4" prot="public" static="no" mutable="no">
+        <type>int *</type>
+        <definition>int* QubitArray::_betaidx</definition>
+        <argsstring></argsstring>
+        <name>_betaidx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="namespaceEigen" kindref="compound">Eigen</ref> state beta index (default : NULL) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="121" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubitArray_1ac87a8cdf149336447fe601f59c7ff371" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int QubitArray::nqubit</definition>
+        <argsstring></argsstring>
+        <name>nqubit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of <ref refid="structQubit" kindref="compound">Qubit</ref> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="125" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubitArray_1ae87046f60e524d2aed1f6605c746d86e" prot="public" static="no" mutable="no">
+        <type><ref refid="structQubit" kindref="compound">Qubit</ref> **</type>
+        <definition>Qubit** QubitArray::qubit</definition>
+        <argsstring></argsstring>
+        <name>qubit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="structQubit" kindref="compound">Qubit</ref> information (see struct <ref refid="structQubit" kindref="compound">Qubit</ref>) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="126" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubitArray_1a1d74d3f22fe851f267c72b8cda416dd0" prot="public" static="no" mutable="no">
+        <type>MatrixXcd **</type>
+        <definition>MatrixXcd** QubitArray::intmap</definition>
+        <argsstring></argsstring>
+        <name>intmap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Interaction i-j (Unit : radkHz) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="127" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubitArray_1a168f33429921f2605e8c3ab850d3e6d9" prot="public" static="no" mutable="no">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray::psia</definition>
+        <argsstring></argsstring>
+        <name>psia</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Projected state alpha for <ref refid="structQubitArray" kindref="compound">QubitArray</ref> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="128" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubitArray_1ad88cb397f3656eb7ac316e966d5e9172" prot="public" static="no" mutable="no">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray::psib</definition>
+        <argsstring></argsstring>
+        <name>psib</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Projected state beta for <ref refid="structQubitArray" kindref="compound">QubitArray</ref> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="129" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubitArray_1a17543dd30e2e5ef672ff5f751119beea" prot="public" static="no" mutable="no">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd QubitArray::psi0</definition>
+        <argsstring></argsstring>
+        <name>psi0</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial state of qubit </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="130" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubitArray_1ab1cb38fcd5640338fad8c2abc868b53e" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool QubitArray::overhaus</definition>
+        <argsstring></argsstring>
+        <name>overhaus</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Overhauser field : on | off </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="131" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="structQubitArray" kindref="compound">QubitArray</ref> include information of all qubits. </para>    </briefdescription>
+    <detaileddescription>
+<para><xrefsect id="todo_1_todo000013"><xreftitle>Todo</xreftitle><xrefdescription><para>Check if the psia, psib, psi0, rho0 is normalied. </para><para>initstate : Like above case, we need to change the format of this tag. e.g. initstate = |+1&gt;|1.5&gt;|0.5&gt; - i|+1&gt;|0.5&gt;|-0.5&gt; =&gt; generally : initstate = a|ms_1&gt;|ms_2&gt;..|ms_n&gt; + b|ms&apos;_1&gt;|ms&apos;_2&gt;..|ms&apos;_n&gt; </para><para>Add doucumentation for qubitarray and cce.in &quot;&amp;Qubit&quot; tag </para></xrefdescription></xrefsect></para><para>Each parameter is read from the input file or options.<itemizedlist>
+<listitem><para>_parameter : Only use during reading input file and then free</para></listitem><listitem><para>parameter : Use during simulation <xrefsect id="todo_1_todo000014"><xreftitle>Todo</xreftitle><xrefdescription><para>alphastate, betastate : currently the value format of this tag in input file is : e.g. alphastate = { e, 1, 0, 0, } but we need to change this format to bracket notation: e,g. alphastate = e |-1&gt; betastate = n1 |+1.5&gt; betastate = n1 i|-0.5&gt; =&gt; generally : alphastate or betastate = qname a|ms&gt; : a is the constant (can be complex number) </para></xrefdescription></xrefsect></para></listitem></itemizedlist>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="52">
+        <label>Qubit</label>
+        <link refid="structQubit"/>
+      </node>
+      <node id="51">
+        <label>QubitArray</label>
+        <link refid="structQubitArray"/>
+        <childnode refid="52" relation="usage">
+          <edgelabel>qubit</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/huijin/git/CCEX/include/qubit.h" line="115" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="115" bodyend="143"/>
+    <listofallmembers>
+      <member refid="structQubitArray_1a0a5c3875737d2a3bc14399109e89c82d" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>_alphaidx</name></member>
+      <member refid="structQubitArray_1a93fa20887ef373b3710d0734e9f1b7a4" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>_betaidx</name></member>
+      <member refid="structQubitArray_1a1d74d3f22fe851f267c72b8cda416dd0" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>intmap</name></member>
+      <member refid="structQubitArray_1ac87a8cdf149336447fe601f59c7ff371" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>nqubit</name></member>
+      <member refid="structQubitArray_1ab1cb38fcd5640338fad8c2abc868b53e" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>overhaus</name></member>
+      <member refid="structQubitArray_1a17543dd30e2e5ef672ff5f751119beea" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>psi0</name></member>
+      <member refid="structQubitArray_1a168f33429921f2605e8c3ab850d3e6d9" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>psia</name></member>
+      <member refid="structQubitArray_1ad88cb397f3656eb7ac316e966d5e9172" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>psib</name></member>
+      <member refid="structQubitArray_1ae87046f60e524d2aed1f6605c746d86e" prot="public" virt="non-virtual"><scope>QubitArray</scope><name>qubit</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

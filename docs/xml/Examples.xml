@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="Examples" kind="page">
+    <compoundname>Examples</compoundname>
+    <title>Examples</title>
+    <detaileddescription>
+<para><heading level="1">Example of Including Input File and Result Plot</heading>
+</para><para>This page provides an example of how to include an input file and a result plot in a Doxygen document.</para><para><heading level="2">Input File</heading>
+</para><para>The following is the content of the input file used for the simulation:</para><para><programlisting><codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>!<sp/><ref refid="structConfig" kindref="compound">Config</ref><sp/>-<sp/>Method<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;method&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;CCE&quot;</highlight><highlight class="normal">,<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;quantity&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;coherence&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>!<sp/><ref refid="structConfig" kindref="compound">Config</ref><sp/>-<sp/>File</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;qubitfile&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>:<sp/><sp/></highlight><highlight class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_Defect&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;gyrofile&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><sp/></highlight><highlight class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/DiaP1_gyro&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;bathfile&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>[</highlight><highlight class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_&quot;</highlight><highlight class="normal">],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>!</highlight><highlight class="stringliteral">&quot;avaaxfile&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>:<sp/><sp/></highlight><highlight class="stringliteral">&quot;Random&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>!</highlight><highlight class="stringliteral">&quot;statefile&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>:<sp/><sp/></highlight><highlight class="stringliteral">&quot;Random&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/>!</highlight><highlight class="stringliteral">&quot;exstatefile&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>:<sp/><sp/></highlight><highlight class="stringliteral">&quot;Random&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>!<sp/><ref refid="structConfig" kindref="compound">Config</ref><sp/>-<sp/>General</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;order&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>2,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;bfield&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>500,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;rbath&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>850,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;rdip&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>620,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;deltat&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>0.01,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;nstep&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>300,<sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>!<sp/><ref refid="structQubit" kindref="compound">Qubit</ref><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;alphams&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>:<sp/>-1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;betams&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>0,</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>!<sp/><ref refid="structCluster" kindref="compound">Cluster</ref></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;addsubclus&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>0,<sp/>!<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal"><sp/>/<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;nk&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>[0,0,0],<sp/>!<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal"><sp/>:<sp/>[0]<sp/>(all)<sp/>or<sp/>[0,0,30,40,50]</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>!<sp/><ref refid="structPulse" kindref="compound">Pulse</ref></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;npulse&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>!<sp/><ref refid="structConfig" kindref="compound">Config</ref><sp/>-<sp/>Spin<sp/>tensor</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;hf_readmode&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>:<sp/>0,<sp/></highlight></codeline>
+<codeline><highlight class="normal">!<sp/><sp/></highlight><highlight class="stringliteral">&quot;hf_tensorfile&quot;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;0&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal">!<sp/><sp/></highlight><highlight class="stringliteral">&quot;hf_cutoff&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>:<sp/>0</highlight></codeline>
+<codeline><highlight class="normal">!<sp/><sp/></highlight><highlight class="stringliteral">&quot;qd_readmode&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>:<sp/>0,</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>!<sp/><ref refid="structOutput" kindref="compound">Output</ref></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;savemode&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;normal&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">,<sp/><sp/></highlight><highlight class="stringliteral">&quot;Defect&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;dfname&quot;</highlight><highlight class="normal">:<sp/></highlight><highlight class="stringliteral">&quot;P1&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;naddspin&quot;</highlight><highlight class="normal"><sp/>:<sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;types&quot;</highlight><highlight class="normal"><sp/>:<sp/>[</highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;spins&quot;</highlight><highlight class="normal"><sp/>:<sp/>[1],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;eqs&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>:<sp/>[2.044],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;gyros&quot;</highlight><highlight class="normal"><sp/>:<sp/>[1.9337792],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;navaax&quot;</highlight><highlight class="normal"><sp/>:<sp/>4,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;hypf&quot;</highlight><highlight class="normal"><sp/>:<sp/>[<sp/>[1,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[<sp/>81.312000<sp/>,<sp/><sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/><sp/>81.312000<sp/>,<sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/><sp/>114.026400]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[2,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[103.121928<sp/>,<sp/><sp/><sp/><sp/>12.591967<sp/>,<sp/><sp/><sp/><sp/>8.903264<sp/>,<sp/><sp/><sp/>12.591967<sp/>,<sp/><sp/><sp/><sp/>88.581975<sp/>,<sp/><sp/><sp/><sp/>5.140302<sp/>,<sp/><sp/><sp/>8.903264<sp/>,<sp/><sp/><sp/><sp/>5.140302<sp/>,<sp/><sp/><sp/><sp/><sp/>84.946496]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[3,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[103.121923<sp/>,<sp/><sp/><sp/>-12.591970<sp/>,<sp/><sp/><sp/>-8.903263<sp/>,<sp/><sp/>-12.591970<sp/>,<sp/><sp/><sp/><sp/>88.581981<sp/>,<sp/><sp/><sp/><sp/>5.140303<sp/>,<sp/><sp/>-8.903263<sp/>,<sp/><sp/><sp/><sp/>5.140303<sp/>,<sp/><sp/><sp/><sp/><sp/>84.946496]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[4,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[<sp/>81.312000<sp/>,<sp/><sp/><sp/><sp/>-0.000001<sp/>,<sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/>-0.000001<sp/>,<sp/><sp/><sp/>110.391904<sp/>,<sp/><sp/>-10.280603<sp/>,<sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/>-10.280603<sp/>,<sp/><sp/><sp/><sp/><sp/>84.946496]]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;efg&quot;</highlight><highlight class="normal"><sp/>:<sp/><sp/>[<sp/>[1,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[<sp/><sp/>0.521910<sp/>,<sp/><sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/><sp/><sp/>0.522771<sp/>,<sp/><sp/><sp/>-0.000086<sp/>,<sp/><sp/><sp/>0.000000<sp/>,<sp/><sp/><sp/>-0.000086<sp/>,<sp/><sp/><sp/><sp/><sp/>-1.044681]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[2,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[<sp/>-0.522214<sp/>,<sp/><sp/><sp/><sp/>-0.603404<sp/>,<sp/><sp/><sp/>-0.426335<sp/>,<sp/><sp/><sp/>-0.603404<sp/>,<sp/><sp/><sp/><sp/><sp/>0.174349<sp/>,<sp/><sp/><sp/>-0.246178<sp/>,<sp/><sp/>-0.426335<sp/>,<sp/><sp/><sp/>-0.246178<sp/>,<sp/><sp/><sp/><sp/><sp/><sp/>0.347865]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[3,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[<sp/>-0.522354<sp/>,<sp/><sp/><sp/><sp/><sp/>0.603323<sp/>,<sp/><sp/><sp/><sp/>0.426364<sp/>,<sp/><sp/><sp/><sp/>0.603323<sp/>,<sp/><sp/><sp/><sp/><sp/>0.174489<sp/>,<sp/><sp/><sp/>-0.246128<sp/>,<sp/><sp/><sp/>0.426364<sp/>,<sp/><sp/><sp/>-0.246128<sp/>,<sp/><sp/><sp/><sp/><sp/><sp/>0.347865]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[4,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[<sp/><sp/>0.522771<sp/>,<sp/><sp/><sp/><sp/><sp/>0.000081<sp/>,<sp/><sp/><sp/>-0.000029<sp/>,<sp/><sp/><sp/><sp/>0.000081<sp/>,<sp/><sp/><sp/><sp/>-0.870636<sp/>,<sp/><sp/><sp/><sp/>0.492306<sp/>,<sp/><sp/>-0.000029<sp/>,<sp/><sp/><sp/><sp/>0.492306<sp/>,<sp/><sp/><sp/><sp/><sp/><sp/>0.347865]]]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>]</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para><para><heading level="2">Job File</heading>
+</para><para>The following is the content of job file used for the simulation:</para><para><programlisting><codeline><highlight class="preprocessor">#!/bin/sh</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>-J<sp/>CCE2e2n_DiaP1_1ppm_Order_2</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>-p<sp/>24core</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>--nodes=8</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>--ntasks-per-node=24</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>--cpus-per-task=1</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>--out<sp/>outfile</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>--time=48:00:00</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>--qos=medium</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#SBATCH<sp/>--mem-per-cpu=5300</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">module<sp/>purge<sp/></highlight></codeline>
+<codeline><highlight class="normal">module<sp/>load<sp/>22.2/icc-22.2<sp/>22.2/fftw-3.3.10<sp/>22.2/gsl-2.7.1<sp/></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">export<sp/>LD_LIBRARY_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD_LIBRARY_PATH</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">export<sp/>OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK</highlight></codeline>
+<codeline><highlight class="normal">NTASKS=$(($SLURM_NTASKS_PER_NODE<sp/>*<sp/>$SLURM_JOB_NUM_NODES))</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">echo<sp/></highlight><highlight class="stringliteral">&quot;NTASKS<sp/>=&quot;</highlight><highlight class="normal"><sp/>$NTASKS</highlight></codeline>
+<codeline><highlight class="normal">echo<sp/></highlight><highlight class="stringliteral">&quot;NUM_NODES<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>$SLURM_JOB_NUM_NODES</highlight></codeline>
+<codeline><highlight class="normal">env<sp/>|<sp/>grep<sp/>SLURM</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">node_process=$NTASKS</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#############################################</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#<sp/>Main<sp/>Paramaters</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#bath<sp/>number</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">s=</highlight><highlight class="stringliteral">&quot;$SLURM_ARRAY_TASK_ID&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">cista=</highlight><highlight class="stringliteral">&quot;${s}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">ciend=$((<sp/>${s}<sp/>+<sp/>50<sp/>-<sp/>1<sp/><sp/>))</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">sista=</highlight><highlight class="stringliteral">&quot;1&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">siend=</highlight><highlight class="stringliteral">&quot;50&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">Nstate=$((<sp/>${siend}<sp/>-<sp/>${sista}<sp/>+<sp/>1<sp/>))</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">configures=$(seq<sp/>${cista}<sp/>1<sp/>${ciend})</highlight></codeline>
+<codeline><highlight class="normal">states=$(seq<sp/>${sista}<sp/>1<sp/>${siend})</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">#option<sp/>input</highlight></codeline>
+<codeline><highlight class="normal">CodePath=</highlight><highlight class="stringliteral">&quot;/home/huijin/git/CCEX/bin/main.out&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">#<sp/>inputfiles</highlight></codeline>
+<codeline><highlight class="normal">mkdir<sp/></highlight><highlight class="stringliteral">&quot;./rawdata/&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">option_input=</highlight><highlight class="stringliteral">&quot;./ccein.json&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">BathFile=</highlight><highlight class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">AvaaxFile=</highlight><highlight class="stringliteral">&quot;Random&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">StateFile=</highlight><highlight class="stringliteral">&quot;Random&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">ExStateFile=</highlight><highlight class="stringliteral">&quot;Random&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">#<sp/>outfiles</highlight></codeline>
+<codeline><highlight class="normal">outFile=</highlight><highlight class="stringliteral">&quot;./rawdata/CCE2e2n_DiaP1_1ppm_Order_2_&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">#time<sp/>checking</highlight></codeline>
+<codeline><highlight class="normal">startTime=$(date<sp/>+%s.%N)</highlight></codeline>
+<codeline><highlight class="normal">startTime_string=`date`</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#############################################################################</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="preprocessor">#about<sp/>CCE2<sp/>calculation<sp/></highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>m<sp/>in<sp/>$configures</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>mpirun<sp/>-n<sp/>${node_process}<sp/>${CodePath}<sp/>-f<sp/>${option_input}<sp/>-I<sp/></highlight><highlight class="stringliteral">&quot;${BathFile}${m}&quot;</highlight><highlight class="normal"><sp/>-a<sp/></highlight><highlight class="stringliteral">&quot;${AvaaxFile}${m}&quot;</highlight><highlight class="normal"><sp/>-s<sp/></highlight><highlight class="stringliteral">&quot;${StateFile}&quot;</highlight><highlight class="normal"><sp/>-S<sp/></highlight><highlight class="stringliteral">&quot;${ExStateFile}&quot;</highlight><highlight class="normal"><sp/>-o<sp/></highlight><highlight class="stringliteral">&quot;${outFile}${m}&quot;</highlight><highlight class="normal"><sp/>-N<sp/></highlight><highlight class="stringliteral">&quot;$Nstate&quot;</highlight><highlight class="normal"><sp/>&gt;<sp/></highlight><highlight class="stringliteral">&quot;Process_${m}&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>s<sp/>in<sp/>$states</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">do</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mv<sp/></highlight><highlight class="stringliteral">&quot;${outFile}${m}_wiDiv_${s}&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;${outFile}${m}{${s}}_wiDiv&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mv<sp/></highlight><highlight class="stringliteral">&quot;${outFile}${m}_noDiv_${s}&quot;</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;${outFile}${m}{${s}}_noDiv&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>done</highlight></codeline>
+<codeline><highlight class="normal">done</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor">#############################################################################$</highlight></codeline>
+<codeline><highlight class="preprocessor"></highlight><highlight class="normal">endTime=$(date<sp/>+%s.%N)</highlight></codeline>
+<codeline><highlight class="normal">endTime_string=`date`</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">elapsed=`echo<sp/></highlight><highlight class="stringliteral">&quot;($endTime-$startTime)&quot;</highlight><highlight class="normal"><sp/>|bc`</highlight></codeline>
+<codeline><highlight class="normal">htime=`echo<sp/></highlight><highlight class="stringliteral">&quot;$elapsed/3600&quot;</highlight><highlight class="normal">|bc`</highlight></codeline>
+<codeline><highlight class="normal">mtime=`echo<sp/></highlight><highlight class="stringliteral">&quot;($elapsed/60)-($htime*60)&quot;</highlight><highlight class="normal">|bc`</highlight></codeline>
+<codeline><highlight class="normal">stime=`echo<sp/></highlight><highlight class="stringliteral">&quot;$elapsed-(($elapsed/60)*60)&quot;</highlight><highlight class="normal">|bc`</highlight></codeline>
+<codeline><highlight class="normal">echo<sp/></highlight><highlight class="stringliteral">&quot;Start<sp/>time<sp/>:<sp/>$startTime_string&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">echo<sp/></highlight><highlight class="stringliteral">&quot;End<sp/>time<sp/><sp/><sp/>:<sp/>$endTime_string&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">echo<sp/></highlight><highlight class="stringliteral">&quot;Total<sp/>time<sp/>:<sp/>${htime}H<sp/>${mtime}M<sp/>${stime}S&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+</programlisting></para><para><heading level="2">Result Plot</heading>
+</para><para>The following image shows the plot of the simulation results:</para><para><image type="html" name="SpinEcho.png"></image>
+</para><para>The plot demonstrates the relationship between the input parameters and the output results.</para><para><programlisting><codeline><highlight class="normal">2.0000000000<sp/><sp/><sp/><sp/>294.7283763394<sp/><sp/>0.8763843990<sp/><sp/><sp/><sp/></highlight></codeline>
+</programlisting> </para>    </detaileddescription>
+  </compounddef>
+</doxygen>

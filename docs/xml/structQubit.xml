@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="structQubit" kind="struct" prot="public">
+    <compoundname>Qubit</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structQubit_1ab65a0dfa0efbd8a7862403f4704c1587" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char Qubit::name[MAX_CHARARRAY_LENGTH]</definition>
+        <argsstring>[MAX_CHARARRAY_LENGTH]</argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>The name of a qubit. </para>        </briefdescription>
+        <detaileddescription>
+<para>Value can be obtained from &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qname&quot; (default : e) <xrefsect id="todo_1_todo000015"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qname&quot; tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="24" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubit_1a858930b7d9d9cafc70f26ab7993dadad" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Qubit::spin</definition>
+        <argsstring></argsstring>
+        <name>spin</name>
+        <briefdescription>
+<para>The spin number of a qubit. </para>        </briefdescription>
+        <detaileddescription>
+<para>Value can be obtained from &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qnspin&quot; (default : 1) <xrefsect id="todo_1_todo000016"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qspin&quot; tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="31" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubit_1a668a62d3ddf72e6b9acbc6338c97090f" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double Qubit::gyro</definition>
+        <argsstring></argsstring>
+        <name>gyro</name>
+        <briefdescription>
+<para>The gyromagnetic ratio of a qubit (Unit : radkHz/G) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value is obtained from &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qgyro&quot; (default : gyro_electron) <simplesect kind="note"><para>Unit in input file (cce.in) : radkHz/G </para></simplesect>
+<xrefsect id="todo_1_todo000017"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qgyro&quot; tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="39" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubit_1a799cb32b473160eb8e9e4aa6c9c39b18" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double Qubit::xyz[3]</definition>
+        <argsstring>[3]</argsstring>
+        <name>xyz</name>
+        <briefdescription>
+<para>The position of a qubit (Unit : angstrom) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value should be obtained from &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qxyz&quot; or qubitfile (no default value) <simplesect kind="note"><para>Unit in input file (cce.in) : angstrom </para></simplesect>
+<xrefsect id="todo_1_todo000018"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qxyz&quot; tag and qubitfile </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="47" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubit_1a6e0e926587994ef24d67431d0dbef9e7" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double Qubit::detuning</definition>
+        <argsstring></argsstring>
+        <name>detuning</name>
+        <briefdescription>
+<para>The detuning value of a qubit (Unit : radkHz) </para>        </briefdescription>
+        <detaileddescription>
+<para>The artifitial effect to shift energy level of a qubit. Value can be obtained from &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qdetuning&quot; (default : 0.0) <simplesect kind="note"><para>Unit in input file (cce.in) : MHz </para></simplesect>
+<xrefsect id="todo_1_todo000019"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qdetuning&quot; tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="59" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubit_1aecb3943042094c4be043f375626dbd24" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double Qubit::overhaus</definition>
+        <argsstring></argsstring>
+        <name>overhaus</name>
+        <briefdescription>
+<para>The energy detuning from spin bath (Unit : radkHz) </para>        </briefdescription>
+        <detaileddescription>
+<para>Automatically set if &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qoverhaus&quot; tag is true (default : 0.0) <xrefsect id="todo_1_todo000020"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;qoverhaus&quot; tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="66" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubit_1accc3b309d802ab6f269b7d8a7536a4a0" prot="public" static="no" mutable="no">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd Qubit::alpha</definition>
+        <argsstring></argsstring>
+        <name>alpha</name>
+        <briefdescription>
+<para>The projected state of a qubit (alpha) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value is be obtained from &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;alphams&quot; or -&gt; &quot;alphastate&quot; tag (no default value)<itemizedlist>
+<listitem><para>Demension : 2*spin+1</para></listitem><listitem><para>alphams : The z-basis sub level of alpha (e.g. S, S-1, S-2 ... -S+1, -S)</para></listitem><listitem><para>alphastate : The spin state (matrix) of alpha (e.g. [1 0 0], [0 1 0], [0 0 1]) <xrefsect id="todo_1_todo000021"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;alphams&quot; and -&gt; &quot;alphastate&quot; tag </para></xrefdescription></xrefsect></para></listitem></itemizedlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="78" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structQubit_1a6c73eb8c49fdb6db06179b21b5a2923d" prot="public" static="no" mutable="no">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd Qubit::beta</definition>
+        <argsstring></argsstring>
+        <name>beta</name>
+        <briefdescription>
+<para>The projected state of a qubit (beta) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value is be obtained from &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;betams&quot; or -&gt; &quot;betastate&quot; tag (no default value)<itemizedlist>
+<listitem><para>Demension : 2*spin+1</para></listitem><listitem><para>betams : The z-basis sub level of beta (e.g. S, S-1, S-2 ... -S+1, -S)</para></listitem><listitem><para>betastate : The spin state (matrix) of beta (e.g. [1 0 0], [0 1 0], [0 0 1]) <xrefsect id="todo_1_todo000022"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> -&gt; &quot;betams&quot; and -&gt; &quot;betastate&quot; tag </para></xrefdescription></xrefsect></para></listitem></itemizedlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="88" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="structQubit" kindref="compound">Qubit</ref> structure contains each qubit&apos;s information. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>When you make this structure, the following action would be done automatically. (1) alpha, beta value would be allocated (2) The dimension of alpha, beta would be checked if it is 2*spin+1 (3) The alpha, beta would be normalized </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/home/huijin/git/CCEX/include/qubit.h" line="15" column="1" bodyfile="/home/huijin/git/CCEX/include/qubit.h" bodystart="15" bodyend="90"/>
+    <listofallmembers>
+      <member refid="structQubit_1accc3b309d802ab6f269b7d8a7536a4a0" prot="public" virt="non-virtual"><scope>Qubit</scope><name>alpha</name></member>
+      <member refid="structQubit_1a6c73eb8c49fdb6db06179b21b5a2923d" prot="public" virt="non-virtual"><scope>Qubit</scope><name>beta</name></member>
+      <member refid="structQubit_1a6e0e926587994ef24d67431d0dbef9e7" prot="public" virt="non-virtual"><scope>Qubit</scope><name>detuning</name></member>
+      <member refid="structQubit_1a668a62d3ddf72e6b9acbc6338c97090f" prot="public" virt="non-virtual"><scope>Qubit</scope><name>gyro</name></member>
+      <member refid="structQubit_1ab65a0dfa0efbd8a7862403f4704c1587" prot="public" virt="non-virtual"><scope>Qubit</scope><name>name</name></member>
+      <member refid="structQubit_1aecb3943042094c4be043f375626dbd24" prot="public" virt="non-virtual"><scope>Qubit</scope><name>overhaus</name></member>
+      <member refid="structQubit_1a858930b7d9d9cafc70f26ab7993dadad" prot="public" virt="non-virtual"><scope>Qubit</scope><name>spin</name></member>
+      <member refid="structQubit_1a799cb32b473160eb8e9e4aa6c9c39b18" prot="public" virt="non-virtual"><scope>Qubit</scope><name>xyz</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

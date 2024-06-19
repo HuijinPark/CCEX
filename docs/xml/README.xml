@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="README" kind="page">
+    <compoundname>README</compoundname>
+    <detaileddescription>
+<para>2023.11.19</para><para><heading level="1">CCEX   </heading>
+</para><para><image type="html" name="License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b"></image>
+<linebreak/>
+ <bold>This code is for the simulation of qubit coherence dynamics<linebreak/>
+</bold></para><para><bold>Document</bold> <ulink url="https://cce-x-refactoring.vercel.app/index.html">How to use &quot;CCEX&quot;</ulink></para><para><bold>TODO</bold><itemizedlist>
+<listitem><para>Add additional spins for spin defects</para></listitem><listitem><para>Bath tensor file</para></listitem><listitem><para>qintmap self, easy for zfs tensor -&gt; { D= xxx , E= xxx }</para></listitem><listitem><para>pulse operator for each qubit <linebreak/>
+</para></listitem></itemizedlist>
+</para><para><bold>Useful page</bold><itemizedlist>
+<listitem><para><ulink url="https://docs.github.com/ko/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax">How to write &quot;README.md&quot;</ulink></para></listitem></itemizedlist>
+</para><para><bold>Used language</bold><linebreak/>
+ <image type="html" name="c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white"></image>
+ <image type="html" name="c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white"></image>
+ <image type="html" name="github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"></image>
+ <image type="html" name="git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white"></image>
+ <linebreak/>
+</para><para><bold>External library</bold><linebreak/>
+ <ref refid="namespaceEigen" kindref="compound">Eigen</ref> (For details, see <ulink url="https://eigen.tuxfamily.org/index.php?title=Main_Page">here</ulink>)<linebreak/>
+ uthash (For details, see <ulink url="https://troydhanson.github.io/uthash/userguide.html#_a_hash_in_c">here</ulink>)<linebreak/>
+ <linebreak/>
+</para><para><blockquote><para>[!NOTE] Highlights information that users should take into account, even when skimming.</para><para></para></blockquote></para><para><blockquote><para>[!IMPORTANT] intel MPI library is required</para><para></para></blockquote></para><para><blockquote><para>[!WARNING] Critical content demanding immediate user attention due to potential risks.</para><para></para></blockquote></para><para><heading level="1">How to install and connect the library of mpich (mpi stuff) in macos</heading>
+</para><para><heading level="4">mpich</heading>
+</para><para>brew install mpich mpicxx <ndash/>version</para><para>$ mpicxx -v &apos;-I /opt/homebrew/Cellar/mpich/4.2.1/include&apos; [-Wunused-command-line-argument] The include directory : /opt/homebrew/Cellar/mpich/4.2.1/include&apos;</para><para>*/ </para>    </detaileddescription>
+  </compounddef>
+</doxygen>

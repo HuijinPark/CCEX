@@ -1,0 +1,449 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="structConfig" kind="struct" prot="public">
+    <compoundname>Config</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structConfig_1a73d927bf5bdb0f39d024b23dc66f0c1c" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char Config::method[MAX_CHARARRAY_LENGTH]</definition>
+        <argsstring>[MAX_CHARARRAY_LENGTH]</argsstring>
+        <name>method</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>CCE method : ensemble | single | gcce </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="15" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a408cf9618ed41aefd0b0c323f57e0730" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char Config::quantity[MAX_CHARARRAY_LENGTH]</definition>
+        <argsstring>[MAX_CHARARRAY_LENGTH]</argsstring>
+        <name>quantity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Measurment : coherence | noise | dm </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="16" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::order</definition>
+        <argsstring></argsstring>
+        <name>order</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum nuclear spins included in a cluster ( &gt;= 0 ) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="19" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1abf4c62b17ba762512fab9da0f1e193be" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Config::bfield[3]</definition>
+        <argsstring>[3]</argsstring>
+        <name>bfield</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Magnetic field (Bx,Bx,Bz) (Unit G) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="20" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a79389333cffeb4063cf1d39e89234c57" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Config::rbath</definition>
+        <argsstring></argsstring>
+        <name>rbath</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bath radius (Unit angstrom) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="21" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1af9d5e3a3b185555cbe04ad12733612b1" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Config::rdip</definition>
+        <argsstring></argsstring>
+        <name>rdip</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Dipole radius (Unit angstrom) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="22" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a6539de558079f55df76dce79c4079b33" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Config::deltat</definition>
+        <argsstring></argsstring>
+        <name>deltat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time interval (Unit ms) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="23" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1acd1675410784e93a9c9866de0c64807e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::nstep</definition>
+        <argsstring></argsstring>
+        <name>nstep</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Time step </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="24" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a2eeef76fa44792c24c3320ff6b4d19c8" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Config::rbathcut</definition>
+        <argsstring></argsstring>
+        <name>rbathcut</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cutoff to remove spins within rbathcut </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="25" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a39b6cf20220772b2326ddf423bf3a3f7" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float Config::rdipcut</definition>
+        <argsstring></argsstring>
+        <name>rdipcut</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cutoff to remove spin pairs within rdipcut </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="26" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a91b2aadf805896022127036ded259e79" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::nstate</definition>
+        <argsstring></argsstring>
+        <name>nstate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of bath states (single and gcce method only) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="27" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a92ed038fd7676ed62640f59270a60545" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::seed</definition>
+        <argsstring></argsstring>
+        <name>seed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fixed random value (if none, time(null) ) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="28" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a9f5ed3dfb6ae52627a94099cb837cfbf" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* Config::qubitfile</definition>
+        <argsstring></argsstring>
+        <name>qubitfile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="structQubit" kindref="compound">Qubit</ref> file name </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="31" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a735f7f25b0847d08468616025a27ffe5" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* Config::gyrofile</definition>
+        <argsstring></argsstring>
+        <name>gyrofile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Gyro file name </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="32" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a26827d7c075042372d21965a827328c3" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::nbathfiles</definition>
+        <argsstring></argsstring>
+        <name>nbathfiles</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of bath files </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="33" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1afe80a72359e5fc90a5f0f16e9f1d357e" prot="public" static="no" mutable="no">
+        <type>char **</type>
+        <definition>char** Config::bathfiles</definition>
+        <argsstring></argsstring>
+        <name>bathfiles</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bath file names </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="34" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a1ce641fcaac86656dde150e974ff5ff7" prot="public" static="no" mutable="no">
+        <type>double **</type>
+        <definition>double** Config::bathadjust</definition>
+        <argsstring></argsstring>
+        <name>bathadjust</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bath adjust values </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="35" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1ae3244e507716ae5483bb32a2e4fef809" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* Config::avaaxfile</definition>
+        <argsstring></argsstring>
+        <name>avaaxfile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Available principal axis </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="36" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a7ce40e0c9e172e7b2e213101b154760b" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* Config::statefile</definition>
+        <argsstring></argsstring>
+        <name>statefile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>State file </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="37" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a70ec8756f364dc3d40201f951476137e" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* Config::exstatefile</definition>
+        <argsstring></argsstring>
+        <name>exstatefile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>extra spin&apos; state file </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="38" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1aae1991f77e6f99acc5342c1944b46736" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::_nflines</definition>
+        <argsstring></argsstring>
+        <name>_nflines</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>number of file lines </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="39" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a20fb9e36c4c73d0890445628232c5636" prot="public" static="no" mutable="no">
+        <type>int *</type>
+        <definition>int* Config::_flines</definition>
+        <argsstring></argsstring>
+        <name>_flines</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>file line number of each bath spins </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="40" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="40" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a716389cd405e9c041cd3ac7c7608ccdd" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double Config::DefectTotSpin</definition>
+        <argsstring></argsstring>
+        <name>DefectTotSpin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total spin of defect : default : 1 </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="43" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1ac923676eaaf0a911eb890ee419c2b8e6" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double Config::CorrTotSpin</definition>
+        <argsstring></argsstring>
+        <name>CorrTotSpin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Total spin of correlation : default : 0 </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="55" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a3d4d5a3943f20928bdce09e64fa4bb37" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::hf_readmode</definition>
+        <argsstring></argsstring>
+        <name>hf_readmode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read mode for hyperfine tensor file : 0 : off , 1~3 : fermi &amp; DFT </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="67" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a52710072ec30b071e08c1b62f7450c0f" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* Config::hf_tensorfile</definition>
+        <argsstring></argsstring>
+        <name>hf_tensorfile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Hyperfine tensor file name </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="68" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1af82a9ccd3b05247db3da179361faef85" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double Config::hf_cutoff</definition>
+        <argsstring></argsstring>
+        <name>hf_cutoff</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cutoff for hyperfine tensor file </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="69" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a840b086fb6ef148cea4e370967da30e9" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::hf_ignore_oor</definition>
+        <argsstring></argsstring>
+        <name>hf_ignore_oor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Ignore nuclear spins out of range the hyperfine tensor file </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="70" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1adc1119b46a95084ddd4c7bfa2a8d50d9" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Config::qd_readmode</definition>
+        <argsstring></argsstring>
+        <name>qd_readmode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Read mode for quadrupole tensor file : 0 : off , 1 : exp , 2: dft </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="74" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a91d5741035098807bc28000a003bd35d" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* Config::qd_tensorfile</definition>
+        <argsstring></argsstring>
+        <name>qd_tensorfile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Quadrupole tensor file name </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="75" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1a93e5666a93192db9d1cd361381d64301" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* Config::qd_tensorfile_woqubit</definition>
+        <argsstring></argsstring>
+        <name>qd_tensorfile_woqubit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Quadrupole tensor file name without qubit </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="76" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/huijin/git/CCEX/include/general.h" line="12" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="12" bodyend="90"/>
+    <listofallmembers>
+      <member refid="structConfig_1a20fb9e36c4c73d0890445628232c5636" prot="public" virt="non-virtual"><scope>Config</scope><name>_flines</name></member>
+      <member refid="structConfig_1aae1991f77e6f99acc5342c1944b46736" prot="public" virt="non-virtual"><scope>Config</scope><name>_nflines</name></member>
+      <member refid="structConfig_1ae3244e507716ae5483bb32a2e4fef809" prot="public" virt="non-virtual"><scope>Config</scope><name>avaaxfile</name></member>
+      <member refid="structConfig_1a1ce641fcaac86656dde150e974ff5ff7" prot="public" virt="non-virtual"><scope>Config</scope><name>bathadjust</name></member>
+      <member refid="structConfig_1afe80a72359e5fc90a5f0f16e9f1d357e" prot="public" virt="non-virtual"><scope>Config</scope><name>bathfiles</name></member>
+      <member refid="structConfig_1abf4c62b17ba762512fab9da0f1e193be" prot="public" virt="non-virtual"><scope>Config</scope><name>bfield</name></member>
+      <member refid="structConfig_1ac923676eaaf0a911eb890ee419c2b8e6" prot="public" virt="non-virtual"><scope>Config</scope><name>CorrTotSpin</name></member>
+      <member refid="structConfig_1a716389cd405e9c041cd3ac7c7608ccdd" prot="public" virt="non-virtual"><scope>Config</scope><name>DefectTotSpin</name></member>
+      <member refid="structConfig_1a6539de558079f55df76dce79c4079b33" prot="public" virt="non-virtual"><scope>Config</scope><name>deltat</name></member>
+      <member refid="structConfig_1a70ec8756f364dc3d40201f951476137e" prot="public" virt="non-virtual"><scope>Config</scope><name>exstatefile</name></member>
+      <member refid="structConfig_1a735f7f25b0847d08468616025a27ffe5" prot="public" virt="non-virtual"><scope>Config</scope><name>gyrofile</name></member>
+      <member refid="structConfig_1af82a9ccd3b05247db3da179361faef85" prot="public" virt="non-virtual"><scope>Config</scope><name>hf_cutoff</name></member>
+      <member refid="structConfig_1a840b086fb6ef148cea4e370967da30e9" prot="public" virt="non-virtual"><scope>Config</scope><name>hf_ignore_oor</name></member>
+      <member refid="structConfig_1a3d4d5a3943f20928bdce09e64fa4bb37" prot="public" virt="non-virtual"><scope>Config</scope><name>hf_readmode</name></member>
+      <member refid="structConfig_1a52710072ec30b071e08c1b62f7450c0f" prot="public" virt="non-virtual"><scope>Config</scope><name>hf_tensorfile</name></member>
+      <member refid="structConfig_1a73d927bf5bdb0f39d024b23dc66f0c1c" prot="public" virt="non-virtual"><scope>Config</scope><name>method</name></member>
+      <member refid="structConfig_1a26827d7c075042372d21965a827328c3" prot="public" virt="non-virtual"><scope>Config</scope><name>nbathfiles</name></member>
+      <member refid="structConfig_1a91b2aadf805896022127036ded259e79" prot="public" virt="non-virtual"><scope>Config</scope><name>nstate</name></member>
+      <member refid="structConfig_1acd1675410784e93a9c9866de0c64807e" prot="public" virt="non-virtual"><scope>Config</scope><name>nstep</name></member>
+      <member refid="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" prot="public" virt="non-virtual"><scope>Config</scope><name>order</name></member>
+      <member refid="structConfig_1adc1119b46a95084ddd4c7bfa2a8d50d9" prot="public" virt="non-virtual"><scope>Config</scope><name>qd_readmode</name></member>
+      <member refid="structConfig_1a91d5741035098807bc28000a003bd35d" prot="public" virt="non-virtual"><scope>Config</scope><name>qd_tensorfile</name></member>
+      <member refid="structConfig_1a93e5666a93192db9d1cd361381d64301" prot="public" virt="non-virtual"><scope>Config</scope><name>qd_tensorfile_woqubit</name></member>
+      <member refid="structConfig_1a408cf9618ed41aefd0b0c323f57e0730" prot="public" virt="non-virtual"><scope>Config</scope><name>quantity</name></member>
+      <member refid="structConfig_1a9f5ed3dfb6ae52627a94099cb837cfbf" prot="public" virt="non-virtual"><scope>Config</scope><name>qubitfile</name></member>
+      <member refid="structConfig_1a79389333cffeb4063cf1d39e89234c57" prot="public" virt="non-virtual"><scope>Config</scope><name>rbath</name></member>
+      <member refid="structConfig_1a2eeef76fa44792c24c3320ff6b4d19c8" prot="public" virt="non-virtual"><scope>Config</scope><name>rbathcut</name></member>
+      <member refid="structConfig_1af9d5e3a3b185555cbe04ad12733612b1" prot="public" virt="non-virtual"><scope>Config</scope><name>rdip</name></member>
+      <member refid="structConfig_1a39b6cf20220772b2326ddf423bf3a3f7" prot="public" virt="non-virtual"><scope>Config</scope><name>rdipcut</name></member>
+      <member refid="structConfig_1a92ed038fd7676ed62640f59270a60545" prot="public" virt="non-virtual"><scope>Config</scope><name>seed</name></member>
+      <member refid="structConfig_1a7ce40e0c9e172e7b2e213101b154760b" prot="public" virt="non-virtual"><scope>Config</scope><name>statefile</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,666 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="pulse_8cpp" kind="file">
+    <compoundname>pulse.cpp</compoundname>
+    <includes refid="pulse_8h" local="yes">../include/pulse.h</includes>
+    <includes refid="memory_8h" local="yes">../include/memory.h</includes>
+    <incdepgraph>
+      <node id="353">
+        <label>/home/huijin/git/CCEX/src/pulse.cpp</label>
+        <link refid="pulse.cpp"/>
+        <childnode refid="354" relation="include">
+        </childnode>
+        <childnode refid="360" relation="include">
+        </childnode>
+      </node>
+      <node id="356">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="359">
+        <label>unistd.h</label>
+      </node>
+      <node id="357">
+        <label>iostream</label>
+      </node>
+      <node id="354">
+        <label>../include/pulse.h</label>
+        <link refid="pulse_8h_source"/>
+        <childnode refid="355" relation="include">
+        </childnode>
+      </node>
+      <node id="360">
+        <label>../include/memory.h</label>
+        <link refid="memory_8h_source"/>
+        <childnode refid="355" relation="include">
+        </childnode>
+      </node>
+      <node id="358">
+        <label>mpi.h</label>
+      </node>
+      <node id="355">
+        <label>./../include/utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="356" relation="include">
+        </childnode>
+        <childnode refid="357" relation="include">
+        </childnode>
+        <childnode refid="358" relation="include">
+        </childnode>
+        <childnode refid="359" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="pulse_8cpp_1a0c7619127c67d5d5aa5559d1dccf6552" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+        <definition>Pulse* Pulse_init</definition>
+        <argsstring>()</argsstring>
+        <name>Pulse_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="8" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="8" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a74cfa2780f1d797822ba8676a791ece4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setNpulse</definition>
+        <argsstring>(Pulse *pulse, int npulse)</argsstring>
+        <name>Pulse_setNpulse</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>npulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="18" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="18" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1ab47f98146415eee502baccfc07b644e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setPulsename</definition>
+        <argsstring>(Pulse *pulse, char *pulsename)</argsstring>
+        <name>Pulse_setPulsename</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>pulsename</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="22" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="22" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1aad13a34668d7aa6baf2848bb076c3dff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setPulseiter</definition>
+        <argsstring>(Pulse *pulse, bool pulseiter)</argsstring>
+        <name>Pulse_setPulseiter</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>pulseiter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="26" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="26" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a0d87dba64cb7ffa5b029fd6d6d037922" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setSequence_fromName</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_setSequence_fromName</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="30" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="30" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a613c7d6b5544c7cc63dd5b7cc80ba694" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_setSequence_fromInput</definition>
+        <argsstring>(Pulse *pulse, double *seqinput)</argsstring>
+        <name>Pulse_setSequence_fromInput</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>seqinput</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="67" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="67" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a6a09cffba4cc0f91199bef3c1cdf874a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Pulse_getNpulse</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_getNpulse</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="123" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="123" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a27ac15f8163d1ce64bc5aab3c32d1faf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* Pulse_getPulsename</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_getPulsename</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="127" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="127" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a4ad30025483afe5de1cde4ab00ef464b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Pulse_getPulseiter</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_getPulseiter</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="131" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="131" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a28893dfeabe0b3e18e3be3550e6e49f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double **</type>
+        <definition>double** Pulse_getSequence</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_getSequence</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="135" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="135" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a68c4200b8c8a7219dff809fc95835007" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_report</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_report</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="150" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="150" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a7bba76df2b32cdb55943e1114e334bad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_allocSequence</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_allocSequence</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="179" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="179" bodyend="182"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a441f4594a769b4009d7a59a4e0445c03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_freeSequence</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_freeSequence</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="184" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="184" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a9fab2c11c2890ea089bff3a7456cc443" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Pulse_freeAll</definition>
+        <argsstring>(Pulse *pulse)</argsstring>
+        <name>Pulse_freeAll</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="189" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="189" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1ac3192f4363056be9321743edea567d1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateSequenceRamsey</definition>
+        <argsstring>(double ***sequence)</argsstring>
+        <name>generateSequenceRamsey</name>
+        <param>
+          <type>double ***</type>
+          <declname>sequence</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="195" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="195" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1a8afa668f5fc3415e1c4497588d03798e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateSequenceHE</definition>
+        <argsstring>(double ***sequence)</argsstring>
+        <name>generateSequenceHE</name>
+        <param>
+          <type>double ***</type>
+          <declname>sequence</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="204" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="204" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1ac64e4d9b1b6f6a7fd8111893e478b31f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateSequenceCPMG</definition>
+        <argsstring>(double ***sequence, int npulse)</argsstring>
+        <name>generateSequenceCPMG</name>
+        <param>
+          <type>double ***</type>
+          <declname>sequence</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>npulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="218" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="218" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="pulse_8cpp_1add7902f7c40a41d20f29b9a6005b107f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void generateSequenceEqual</definition>
+        <argsstring>(double ***sequence, int npulse)</argsstring>
+        <name>generateSequenceEqual</name>
+        <param>
+          <type>double ***</type>
+          <declname>sequence</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>npulse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/pulse.cpp" line="260" column="1" bodyfile="/home/huijin/git/CCEX/src/pulse.cpp" bodystart="260" bodyend="277"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;../include/pulse.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../include/memory.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Low-level<sp/>functions<sp/>------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>Pulse_init(){</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse<sp/>=<sp/>(<ref refid="structPulse" kindref="compound">Pulse</ref>*)allocArray1d(1,<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<ref refid="structPulse" kindref="compound">Pulse</ref>));</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>pulse-&gt;<ref refid="structPulse_1ab083ce764799722049dac44ad7479bad" kindref="member">npulse</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>pulse-&gt;<ref refid="structPulse_1a4fcad551982a417a36f160cd0a6f0975" kindref="member">pulseiter</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>pulse-&gt;<ref refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" kindref="member">pulsename</ref>[0]<sp/>=<sp/></highlight><highlight class="charliteral">&apos;\0&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref><sp/>=<sp/>NULL;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pulse;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setNpulse(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse){</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>pulse-&gt;<ref refid="structPulse_1ab083ce764799722049dac44ad7479bad" kindref="member">npulse</ref><sp/>=<sp/>npulse;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setPulsename(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>pulsename){</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(pulse-&gt;<ref refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" kindref="member">pulsename</ref>,<sp/>pulsename);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setPulseiter(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>pulseiter){</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>pulse-&gt;<ref refid="structPulse_1a4fcad551982a417a36f160cd0a6f0975" kindref="member">pulseiter</ref><sp/>=<sp/>pulseiter;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setSequence_fromName(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref><sp/>==<sp/>NULL){</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;Error,<sp/>pulse-&gt;sequence<sp/>is<sp/>not<sp/>allocated!<sp/>\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse<sp/>=<sp/>Pulse_getNpulse(pulse);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>made<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(strcmp(pulse-&gt;<ref refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" kindref="member">pulsename</ref>,<sp/></highlight><highlight class="stringliteral">&quot;Ramsey&quot;</highlight><highlight class="normal">)<sp/>==<sp/>0<sp/>&amp;&amp;<sp/>npulse<sp/>==<sp/>0){</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>generateSequenceRamsey(&amp;(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>));</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>made<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(strcmp(pulse-&gt;<ref refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" kindref="member">pulsename</ref>,<sp/></highlight><highlight class="stringliteral">&quot;HahnEcho&quot;</highlight><highlight class="normal">)<sp/>==<sp/>0<sp/>&amp;&amp;<sp/>npulse<sp/>==<sp/>1){</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>generateSequenceHE(&amp;(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>));</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>made<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(strcmp(pulse-&gt;<ref refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" kindref="member">pulsename</ref>,<sp/></highlight><highlight class="stringliteral">&quot;CPMG&quot;</highlight><highlight class="normal">)<sp/>==<sp/>0<sp/>&amp;&amp;<sp/>npulse<sp/>&gt;<sp/>1){</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>generateSequenceCPMG(&amp;(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>),<sp/>pulse-&gt;<ref refid="structPulse_1ab083ce764799722049dac44ad7479bad" kindref="member">npulse</ref>);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>made<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(strcmp(pulse-&gt;<ref refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" kindref="member">pulsename</ref>,<sp/></highlight><highlight class="stringliteral">&quot;Equal&quot;</highlight><highlight class="normal">)<sp/>==<sp/>0<sp/>&amp;&amp;<sp/>npulse<sp/>&gt;<sp/>1){</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>generateSequenceEqual(&amp;(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>),<sp/>pulse-&gt;<ref refid="structPulse_1ab083ce764799722049dac44ad7479bad" kindref="member">npulse</ref>);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>made<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!made){</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;Error,<sp/>pulse-&gt;pulsename<sp/>is<sp/>not<sp/>matched!<sp/>or<sp/>you<sp/>have<sp/>to<sp/>use<sp/>sequence<sp/>tag\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_setSequence_fromInput(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>seqinput){</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>e.g.<sp/>Input<sp/>file<sp/>format<sp/>:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>if<sp/>pulse-&gt;npulse<sp/>=<sp/>4</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>input<sp/>:<sp/>seqinput<sp/>:<sp/>[0.2,<sp/>0.4,<sp/>0.6,<sp/>0.8]<sp/>//gives<sp/>pulse<sp/>timing</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref><sp/>==<sp/>NULL){</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;Error,<sp/>pulse-&gt;sequence<sp/>is<sp/>not<sp/>allocated!<sp/>\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse<sp/>=<sp/>Pulse_getNpulse(pulse);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;(npulse+1);<sp/>i++){</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>start<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>end<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i==0<sp/>&amp;&amp;<sp/>i!=npulse){</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end<sp/>=<sp/>seqinput[i];<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i!=0<sp/>&amp;&amp;<sp/>i==npulse){</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start<sp/>=<sp/>seqinput[i];</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i==0<sp/>&amp;&amp;<sp/>i==npulse){</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start<sp/>=<sp/>seqinput[i-1];</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end<sp/>=<sp/>seqinput[i];</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[i][0]<sp/>=<sp/>start;<sp/></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[i][1]<sp/>=<sp/>end;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[i][2]<sp/>=<sp/>end<sp/>-<sp/>start;<sp/></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Find<sp/>3-rd<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>findSameDiffIdx<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j=0;<sp/>j&lt;i;<sp/>j++){</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[j][2]<sp/>==<sp/>(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[i][2]){</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[i][3]<sp/>=<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)j;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[j][3]<sp/>!=<sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[i][3]){</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;Error,<sp/>the<sp/>SameDifferenceIndex<sp/>is<sp/>different!<sp/>\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>findSameDiffIdx<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(findSameDiffIdx){;}</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{<sp/>(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>)[i][3]<sp/>=<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)i;<sp/>}</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>Pulse_getNpulse(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pulse-&gt;<ref refid="structPulse_1ab083ce764799722049dac44ad7479bad" kindref="member">npulse</ref>;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Pulse_getPulsename(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pulse-&gt;<ref refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" kindref="member">pulsename</ref>;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Pulse_getPulseiter(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pulse-&gt;<ref refid="structPulse_1a4fcad551982a417a36f160cd0a6f0975" kindref="member">pulseiter</ref>;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>Pulse_getSequence(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>data<sp/>format</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>Array<sp/>format:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>sequence<sp/>is<sp/>started<sp/>with<sp/>0.0<sp/>and<sp/>end<sp/>with<sp/>1.0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>sequence[npulse+1][4]<sp/>(defulat<sp/>:<sp/>NULL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>sequence[ipulse][0]<sp/>=<sp/>Fraction<sp/>of<sp/>Previous<sp/>pulse</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>sequence[ipulse][1]<sp/>=<sp/>Fraction<sp/>of<sp/>current<sp/>pulse</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>sequence[ipulse][2]<sp/>=<sp/>Difference<sp/>of<sp/>Fractions<sp/>&quot;[i][1]<sp/>-<sp/>[i][0]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>sequence[ipulse][3]<sp/>=<sp/>The<sp/>Index<sp/>that<sp/>have<sp/>the<sp/>same<sp/>difference<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>there<sp/>is<sp/>no<sp/>the<sp/>same<sp/>difference<sp/>value<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>then<sp/>give<sp/>the<sp/>current<sp/>index</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/>This<sp/>would<sp/>reduce<sp/>the<sp/>calculational<sp/>time<sp/>cost<sp/>)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_report(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>npulse<sp/><sp/><sp/><sp/>=<sp/>Pulse_getNpulse(pulse);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/>pulsename<sp/>=<sp/>Pulse_getPulsename(pulse);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>pulseiter<sp/>=<sp/>Pulse_getPulseiter(pulse);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>sequence<sp/><sp/>=<sp/>Pulse_getSequence(pulse);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>printTitle(</highlight><highlight class="stringliteral">&quot;Structure<sp/>Pulse&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>printStructElementChar(</highlight><highlight class="stringliteral">&quot;pulsename&quot;</highlight><highlight class="normal">,<sp/>Pulse_getPulsename(pulse));</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>printStructElementInt(</highlight><highlight class="stringliteral">&quot;npulse&quot;</highlight><highlight class="normal">,<sp/>Pulse_getNpulse(pulse));</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>printStructElementBool(</highlight><highlight class="stringliteral">&quot;pulseiter&quot;</highlight><highlight class="normal">,<sp/>Pulse_getPulseiter(pulse));</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%27s<sp/>*<sp/>ture<sp/><sp/>-<sp/>pulse<sp/>is<sp/>applied<sp/>to<sp/>each<sp/>qubit\n&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%27s<sp/>*<sp/>false<sp/>-<sp/>pulse<sp/>is<sp/>applied<sp/>to<sp/>qubit-array\n&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(sequence<sp/>!=<sp/>NULL){</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printSubTitle(</highlight><highlight class="stringliteral">&quot;Sequence&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printLine();</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%6s<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>%8s<sp/>%8s<sp/>%8s<sp/>%8s<sp/>\n&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;start&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;end&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;diff&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;index\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;npulse+1;<sp/>i++){</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%6s<sp/>sequence[%d]<sp/>:<sp/>%8.3lf<sp/>%8.3lf<sp/>%8.3lf<sp/>%8.3lf<sp/>\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">,i,sequence[i][0],sequence[i][1],sequence[i][2],sequence[i][3]);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printLine();</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="176"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="comment">//<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_allocSequence(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse<sp/>=<sp/>Pulse_getNpulse(pulse);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref><sp/>=<sp/>allocDouble2d(npulse+1,<sp/>4);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_freeSequence(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse<sp/>=<sp/>Pulse_getNpulse(pulse);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>freeDouble2d(&amp;(pulse-&gt;<ref refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" kindref="member">sequence</ref>),<sp/>npulse+1);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Pulse_freeAll(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse){</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pulse_freeSequence(pulse);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>freeArray1d((</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">**)&amp;pulse);</highlight></codeline>
+<codeline lineno="192"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateSequenceRamsey(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>sequence){</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[0][0]<sp/>=<sp/>0.0;<sp/></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[0][1]<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[0][2]<sp/>=<sp/>1.0;<sp/></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[0][3]<sp/>=<sp/>0.0;<sp/></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateSequenceHE(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>sequence){</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[0][0]<sp/>=<sp/>0.0;<sp/></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[0][1]<sp/>=<sp/>0.5;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[0][2]<sp/>=<sp/>0.5;<sp/></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[0][3]<sp/>=<sp/>0.0;<sp/></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[1][0]<sp/>=<sp/>0.5;<sp/></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[1][1]<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[1][2]<sp/>=<sp/>0.5;<sp/></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/>(*sequence)[1][3]<sp/>=<sp/>0.0;<sp/></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="216"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateSequenceCPMG(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>sequence,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse){</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>n<sp/>:<sp/>pulse</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>c<sp/>:<sp/>sequence<sp/>i</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>sequence<sp/>(2c-1)/2n<sp/>*<sp/>T</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>start<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>end<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;(npulse+1);<sp/>i++){</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i==0<sp/>&amp;&amp;<sp/>i!=npulse){</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end<sp/>=<sp/>double(2*(i+1)-1)/double(2*npulse);<sp/></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i!=0<sp/>&amp;&amp;<sp/>i==npulse){</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start<sp/>=<sp/>double(2*i-1)/double(2*npulse);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i==0<sp/>&amp;&amp;<sp/>i==npulse){</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start<sp/>=<sp/>double(2*i-1)/double(2*npulse);</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end<sp/>=<sp/>double(2*(i+1)-1)/double(2*npulse);<sp/></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][0]<sp/>=<sp/>start;<sp/></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][1]<sp/>=<sp/>end;</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][2]<sp/>=<sp/>end<sp/>-<sp/>start;<sp/></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Find<sp/>3-rd<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i==0<sp/>||<sp/>i==npulse){</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][3]<sp/>=<sp/>0.0;<sp/></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][3]<sp/>=<sp/>1.0;<sp/></highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="258"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateSequenceEqual(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>sequence,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>npulse){</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>n<sp/>:<sp/>pulse</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>c<sp/>:<sp/>sequence<sp/>i</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>sequence<sp/>c/n<sp/>*<sp/>T</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>start<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>end<sp/>=<sp/>1.0;</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>diff<sp/>=<sp/>1.0/double(npulse+1);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;(npulse+1);<sp/>i++){</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][0]<sp/>=<sp/>diff<sp/>*<sp/>i;<sp/></highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][1]<sp/>=<sp/>diff<sp/>*<sp/>(i+1);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][2]<sp/>=<sp/>diff;</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(*sequence)[i][3]<sp/>=<sp/>0.0;<sp/></highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="277"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/src/pulse.cpp"/>
+  </compounddef>
+</doxygen>

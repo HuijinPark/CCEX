@@ -1,0 +1,1639 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="defect_8h" kind="file">
+    <compoundname>defect.h</compoundname>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includes refid="bath_8h" local="yes">bath.h</includes>
+    <includedby refid="option_8h" local="yes">/home/huijin/git/CCEX/include/option.h</includedby>
+    <includedby refid="reader_8h" local="yes">/home/huijin/git/CCEX/include/reader.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
+    <includedby refid="defect_8cpp" local="yes">/home/huijin/git/CCEX/src/defect.cpp</includedby>
+    <incdepgraph>
+      <node id="63">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="65" relation="include">
+        </childnode>
+      </node>
+      <node id="64">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="57">
+        <label>/home/huijin/git/CCEX/include/defect.h</label>
+        <link refid="defect.h"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+      </node>
+      <node id="62">
+        <label>unistd.h</label>
+      </node>
+      <node id="65">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="58" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>iostream</label>
+      </node>
+      <node id="61">
+        <label>mpi.h</label>
+      </node>
+      <node id="58">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="67">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
+        <link refid="option_8h_source"/>
+      </node>
+      <node id="68">
+        <label>/home/huijin/git/CCEX/include/reader.h</label>
+        <link refid="reader_8h_source"/>
+      </node>
+      <node id="69">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+      </node>
+      <node id="66">
+        <label>/home/huijin/git/CCEX/include/defect.h</label>
+        <link refid="defect.h"/>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="68" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structDefect" prot="public">Defect</innerclass>
+    <innerclass refid="structDefectArray" prot="public">DefectArray</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="defect_8h_1a8f08e0dc32156449f475af220706d094" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void updateMainSpins_fromDefectArray</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba)</argsstring>
+        <name>updateMainSpins_fromDefectArray</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="59" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="441" bodyend="496"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a3ea32b46b0daa88628f319f33e514873" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void updateDisorder_main_sub</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba)</argsstring>
+        <name>updateDisorder_main_sub</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="60" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="498" bodyend="592"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a41abcd25dae2f2336b9d9d653f31c20f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void updateDisorder_sub_sub</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>updateDisorder_sub_sub</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="61" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="594" bodyend="679"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a0334b31e67f3325af30e7b35c2d5d769" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void updateOverhaus_qubit_sub</definition>
+        <argsstring>(DefectArray *dfa, QubitArray *ba)</argsstring>
+        <name>updateOverhaus_qubit_sub</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="62" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="681" bodyend="723"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a594f6496fbe2beffb66f7a9f6676f897" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+        <definition>DefectArray* DefectArray_init</definition>
+        <argsstring>()</argsstring>
+        <name>DefectArray_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="67" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="56" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a92e592e423feb06322258098e2fcb036" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setNdefect</definition>
+        <argsstring>(DefectArray *dfa, int ndefect)</argsstring>
+        <name>DefectArray_setNdefect</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ndefect</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="70" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="68" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a8fa56bf286f6fcf64d2dc047d01b918c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_dfname</definition>
+        <argsstring>(DefectArray *dfa, int idf, char *dfname)</argsstring>
+        <name>DefectArray_setDefect_idf_dfname</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>dfname</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="71" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="98" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a5b02d2ac15f48e856dc77b217a40d50f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_apprx</definition>
+        <argsstring>(DefectArray *dfa, int idf, bool apprx)</argsstring>
+        <name>DefectArray_setDefect_idf_apprx</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>apprx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="72" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="102" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1abf13b685a00e2bca791525c42d7ed322" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_naddspin</definition>
+        <argsstring>(DefectArray *dfa, int idf, int naddspin)</argsstring>
+        <name>DefectArray_setDefect_idf_naddspin</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>naddspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="73" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="106" bodyend="108"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a8cce64a381a9420aef267dac3d2e0350" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_types</definition>
+        <argsstring>(DefectArray *dfa, int idf, char **types)</argsstring>
+        <name>DefectArray_setDefect_idf_types</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>types</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="74" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="110" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ad3fc00f5c269cfc80d79fa4c734133e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_spins</definition>
+        <argsstring>(DefectArray *dfa, int idf, float *spins)</argsstring>
+        <name>DefectArray_setDefect_idf_spins</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>spins</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="75" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="116" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a4acc76c5be56d692708099dbda367b2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_gyros</definition>
+        <argsstring>(DefectArray *dfa, int idf, double *gyros)</argsstring>
+        <name>DefectArray_setDefect_idf_gyros</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>gyros</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="76" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="122" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1aaf14496555fe212f232f3555fb2db9f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_eqs</definition>
+        <argsstring>(DefectArray *dfa, int idf, double *eqs)</argsstring>
+        <name>DefectArray_setDefect_idf_eqs</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>eqs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="77" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="128" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a22b975bb45d623f3cd40116fb062fbd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_navaax</definition>
+        <argsstring>(DefectArray *dfa, int idf, int navaax)</argsstring>
+        <name>DefectArray_setDefect_idf_navaax</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>navaax</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="78" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="134" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ada9f91638deae71eee0f7dab44282822" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_iax_isp_rxyz</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax, int isp, double *rxyzs)</argsstring>
+        <name>DefectArray_setDefect_idf_iax_isp_rxyz</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>rxyzs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="79" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="138" bodyend="142"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1acbb90ee7348f37b4c968eb71f0d407e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_iax_isp_hypf</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax, int isp, MatrixXcd hypf)</argsstring>
+        <name>DefectArray_setDefect_idf_iax_isp_hypf</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>hypf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="80" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="143" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a6dddd196c3d014c2d5c1cdcdea99e790" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_iax_isp_efg</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax, int isp, MatrixXcd efg)</argsstring>
+        <name>DefectArray_setDefect_idf_iax_isp_efg</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>efg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="81" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="146" bodyend="148"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a1eb4f15b7acb6173c791b5278ae88c70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_iax_zfs</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax, MatrixXcd zfs)</argsstring>
+        <name>DefectArray_setDefect_idf_iax_zfs</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>zfs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="82" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="149" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a23c2644c16be8383a93b6a005f2eaa40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setDefect_idf_iax_detuning</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax, double detuning)</argsstring>
+        <name>DefectArray_setDefect_idf_iax_detuning</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>detuning</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="83" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="152" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a9054b7960f6ab8ecc76d69a9722b685a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int DefectArray_findDefectIndex</definition>
+        <argsstring>(DefectArray *dfa, char *dfname)</argsstring>
+        <name>DefectArray_findDefectIndex</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>dfname</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="86" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="169" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a99dcb7dc57b5706c7a5764c703c43ca5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int DefectArray_getNdefect</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_getNdefect</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="89" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="182" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a73e2b6a037540876244b726e3fa9cc1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* DefectArray_getDefect_idf_dfname</definition>
+        <argsstring>(DefectArray *dfa, int idf)</argsstring>
+        <name>DefectArray_getDefect_idf_dfname</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="90" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="186" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a0dd45f0baee4bdee08fb7415d990f186" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool DefectArray_getDefect_idf_apprx</definition>
+        <argsstring>(DefectArray *dfa, int idf)</argsstring>
+        <name>DefectArray_getDefect_idf_apprx</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="91" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="190" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a6b3addea84c2c80f4f7ba619c97f7014" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int DefectArray_getDefect_idf_naddspin</definition>
+        <argsstring>(DefectArray *dfa, int idf)</argsstring>
+        <name>DefectArray_getDefect_idf_naddspin</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="92" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="194" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ae3db7c03d4c1f7741f0e909c6db161ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* DefectArray_getDefect_idf_isp_types</definition>
+        <argsstring>(DefectArray *dfa, int idf, int isp)</argsstring>
+        <name>DefectArray_getDefect_idf_isp_types</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="93" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="198" bodyend="200"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a700a1bcf079ce7c809eedba6aee86e3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float DefectArray_getDefect_idf_isp_spins</definition>
+        <argsstring>(DefectArray *dfa, int idf, int isp)</argsstring>
+        <name>DefectArray_getDefect_idf_isp_spins</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="94" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="202" bodyend="204"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a4367f6d21dd7e9aaa0c045e56372c37d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double DefectArray_getDefect_idf_isp_gyros</definition>
+        <argsstring>(DefectArray *dfa, int idf, int isp)</argsstring>
+        <name>DefectArray_getDefect_idf_isp_gyros</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="95" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="206" bodyend="209"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a36134ae748439bd5393d05f8563170fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double DefectArray_getDefect_idf_isp_eqs</definition>
+        <argsstring>(DefectArray *dfa, int idf, int isp)</argsstring>
+        <name>DefectArray_getDefect_idf_isp_eqs</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="96" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="211" bodyend="213"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a5b59c3eda7bbe60bca788968e6acc1f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int DefectArray_getDefect_idf_navaax</definition>
+        <argsstring>(DefectArray *dfa, int idf)</argsstring>
+        <name>DefectArray_getDefect_idf_navaax</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="97" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="215" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1acc17e7cc692affa60d8f0657d7c10857" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double* DefectArray_getDefect_idf_iax_isp_rxyz</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax, int isp)</argsstring>
+        <name>DefectArray_getDefect_idf_iax_isp_rxyz</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="98" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="219" bodyend="221"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a8c6789ea6779f6a33936b2b44cb0e61b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd DefectArray_getDefect_idf_iax_isp_hypf</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax, int isp)</argsstring>
+        <name>DefectArray_getDefect_idf_iax_isp_hypf</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="99" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="223" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1af12fb02836624f669e30abc9fca511c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd DefectArray_getDefect_idf_iax_isp_efg</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax, int isp)</argsstring>
+        <name>DefectArray_getDefect_idf_iax_isp_efg</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="100" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="227" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ad797f4747bdd9da9db55ffac2a47a4d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd DefectArray_getDefect_idf_iax_zfs</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax)</argsstring>
+        <name>DefectArray_getDefect_idf_iax_zfs</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="101" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="231" bodyend="233"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a2dea28641862ee32ba74000f620e4c1d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double DefectArray_getDefect_idf_iax_detuning</definition>
+        <argsstring>(DefectArray *dfa, int idf, int iax)</argsstring>
+        <name>DefectArray_getDefect_idf_iax_detuning</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iax</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="102" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="235" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ab4f111640c471a92439340e842b9e9d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_allocDefect</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_allocDefect</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="105" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="73" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a0050ddceb6923987c25359df9fe9afa6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_allocDefect_idf</definition>
+        <argsstring>(DefectArray *dfa, int idf, int navaax, int naddspin)</argsstring>
+        <name>DefectArray_allocDefect_idf</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>navaax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>naddspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="106" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="77" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a9d1ffd714f6d004e81b7783cd0f781d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setPaxes_i</definition>
+        <argsstring>(DefectArray *dfa, int ibs, int axis)</argsstring>
+        <name>DefectArray_setPaxes_i</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ibs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>axis</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="109" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="178" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a19b3232ef7141b1d483fcd131731a6bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setPaxesRandom</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba)</argsstring>
+        <name>DefectArray_setPaxesRandom</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="110" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="7" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1adbf80bb27c87982f8f79a99f114ef800" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setSubbathStatesRandom</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba)</argsstring>
+        <name>DefectArray_setSubbathStatesRandom</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="111" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="32" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a2b8c0f7d319e660dedb3a26e8722acf0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setNaddspins</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba)</argsstring>
+        <name>DefectArray_setNaddspins</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="112" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="157" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ac61086b1cdc942187538f7dabb7d4a91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_setSubbath</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba, QubitArray *qa)</argsstring>
+        <name>DefectArray_setSubbath</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>What we do here :<orderedlist>
+<listitem><para>Set subbath name, xyz, spin, gyro, (eq,) hypf, mainspidx,</para></listitem><listitem><para>Set quad(zfs),hypf_sub (depending on principal axis)</para></listitem></orderedlist>
+<orderedlist>
+<listitem><para>Set detuning = 0.0 (No detuning)</para></listitem><listitem><para>Set state = 0.0 and disorder = 0.0 (will be updated later)</para></listitem></orderedlist>
+</para><para><ref refid="structBathSpin" kindref="compound">BathSpin</ref> information (Main spins - electron) </para>        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="113" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="349" bodyend="437"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1aabbb4d5951ee06d5080d938362e1f9e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_allocPaxes</definition>
+        <argsstring>(DefectArray *dfa, int nbathspin)</argsstring>
+        <name>DefectArray_allocPaxes</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nbathspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="116" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="322" bodyend="325"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1acd5198b4a91cb4d3288e3ef9d91b55ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_allocNaddspins</definition>
+        <argsstring>(DefectArray *dfa, int nbathspin)</argsstring>
+        <name>DefectArray_allocNaddspins</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nbathspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="117" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="327" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a02f7c16af447c48a85bd63a0114f3d70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_allocSubbath</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba, int nqubit)</argsstring>
+        <name>DefectArray_allocSubbath</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="118" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="332" bodyend="347"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a30164208870664d2aa4ecf3407245ac6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int DefectArray_getNbathspin</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_getNbathspin</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="121" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="239" bodyend="241"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a543d31330dc4e4f9f22a318a54bac71d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int DefectArray_getPaxes_i</definition>
+        <argsstring>(DefectArray *dfa, int ibs)</argsstring>
+        <name>DefectArray_getPaxes_i</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ibs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="122" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="243" bodyend="245"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a772a0fb2689253810d970dd40b08feab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int DefectArray_getNaddspins_i</definition>
+        <argsstring>(DefectArray *dfa, int ibs)</argsstring>
+        <name>DefectArray_getNaddspins_i</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ibs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="123" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="247" bodyend="250"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a01df5d3c3fef2f9b173a49681a931299" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+        <definition>BathSpin* DefectArray_getSubbath_i_isp</definition>
+        <argsstring>(DefectArray *dfa, int ibs, int isp)</argsstring>
+        <name>DefectArray_getSubbath_i_isp</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ibs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="124" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="252" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a5d406904c0c33a69c999c59eeb488342" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_freePaxes</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_freePaxes</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="127" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="286" bodyend="292"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a501bdca25ce75b807315c91ad7d08402" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_freeNaddspins</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_freeNaddspins</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="128" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="294" bodyend="300"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1af1c1d3150f60f0ccfac4982daf48dd5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_freeSubbath</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_freeSubbath</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="129" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="303" bodyend="318"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ad154028adc7e11112674b19eefd4ee99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_freeAll</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_freeAll</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="130" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="257" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ab3b91ce949bd9c96def61b061a36816f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportAll</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_reportAll</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="136" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="1066" bodyend="1068"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1aadedde4ee1d0202e97b81046b3fdc253" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportSubbath_props</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_reportSubbath_props</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="138" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="1030" bodyend="1062"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a82ef176eb196703e1d427ff2f27eafd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportSubbath_states</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_reportSubbath_states</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="139" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="826" bodyend="859"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1afd169753382554b2fcef9d5e0c71a7ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportSubbath_hypfs</definition>
+        <argsstring>(DefectArray *dfa, int nqubit)</argsstring>
+        <name>DefectArray_reportSubbath_hypfs</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="140" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="896" bodyend="930"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1ae26a04ddf49de944f6058b152e5c01db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportSubbath_quads</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_reportSubbath_quads</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="141" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="932" bodyend="962"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1af504499b24f5e825f3908c6144b501d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportSubbath_hypf_subs</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_reportSubbath_hypf_subs</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="142" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="964" bodyend="995"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a36daca4f61f14082d034289f37f823b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportSubbath_disorders</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_reportSubbath_disorders</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="143" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="997" bodyend="1028"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a506efd820c19c5095fdef50c5e35e3ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportDefect_idf</definition>
+        <argsstring>(DefectArray *dfa, int idf)</argsstring>
+        <name>DefectArray_reportDefect_idf</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>idf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="146" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="725" bodyend="800"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1abc581fcf88cfa9812e9613bfec4af3e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportPaxes</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_reportPaxes</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="147" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="802" bodyend="824"/>
+      </memberdef>
+      <memberdef kind="function" id="defect_8h_1a5a93fbad4d518932076c6fe0e757d6ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void DefectArray_reportNaddspins</definition>
+        <argsstring>(DefectArray *dfa)</argsstring>
+        <name>DefectArray_reportNaddspins</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/defect.h" line="148" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="861" bodyend="883"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_DEFECT_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_DEFECT_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;bath.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="structDefect" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Defect<sp/>information<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>dfname[MAX_CHARARRAY_LENGTH];</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>apprx;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Defect&apos;<sp/>spin<sp/>information<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/>naddspin;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>types;<sp/></highlight><highlight class="comment">//<sp/>spname[n]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>spins;<sp/></highlight><highlight class="comment">//<sp/>spin[n]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>gyros;<sp/></highlight><highlight class="comment">//<sp/>gyro[n]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>eqs;<sp/></highlight><highlight class="comment">//<sp/>eq[n]<sp/><sp/>//quadrupole<sp/>memomts<sp/>eq<sp/>in<sp/>&quot;milibarn<sp/>*<sp/>10e+1&quot;<sp/>m^2<sp/>=<sp/>10e-30<sp/>m^2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Defect&apos;<sp/>spin<sp/>interaction<sp/>information<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>changes<sp/>for<sp/>avaax,<sp/>spin</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>navaax;<sp/></highlight><highlight class="comment">//<sp/>possible<sp/>number<sp/>of<sp/>principal<sp/>axis</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>rxyzs;<sp/></highlight><highlight class="comment">//<sp/>rxyz[n+1][m][k]<sp/>:<sp/>n:<sp/>avaax(1~navaax),<sp/>m<sp/>:<sp/>addspin<sp/>type<sp/>,<sp/>k<sp/>:<sp/>x,y,z</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd**<sp/>hypf;<sp/></highlight><highlight class="comment">//<sp/>hypf[n+1][m]<sp/>//<sp/>(MHz)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd**<sp/>efg;<sp/></highlight><highlight class="comment">//<sp/>quad[n+1][m]<sp/>//<sp/>(Hartree/Bohr^2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd*<sp/>zfs<sp/>;<sp/></highlight><highlight class="comment">//<sp/>zfs[n+1]<sp/><sp/>//<sp/>(MHz)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>detuning;<sp/></highlight><highlight class="comment">//<sp/>detuning[n+1]<sp/>//<sp/><sp/>(MHz)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>n<sp/>:<sp/>available<sp/>axis</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>m<sp/>:<sp/>addspin<sp/>type</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}<sp/><ref refid="structDefect" kindref="compound">Defect</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structDefectArray" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nbathspin;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>naddspins;<sp/></highlight><highlight class="comment">//<sp/>naddspin[nbathspin]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structBathSpin" kindref="compound">BathSpin</ref>***<sp/>subbath;<sp/></highlight><highlight class="comment">//<sp/>bspin[nbathspin][naddspin]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>paxes;<sp/></highlight><highlight class="comment">//<sp/>avaax[nbathspin]<sp/>(Fix<sp/>for<sp/>the<sp/>configuration)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ndefect;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structDefect" kindref="compound">Defect</ref>**<sp/>defect;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}<ref refid="structDefectArray" kindref="compound">DefectArray</ref>;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Update<sp/>BathArray<sp/>(input<sp/>:<sp/>Defect_i,<sp/>paxis(index),<sp/>BathSpin)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(1)<sp/>mainspinidx<sp/>=<sp/>self-index</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(2)<sp/>quad<sp/>(zfs)<sp/>=<sp/>check<sp/>paxis,<sp/>replace<sp/>the<sp/>quad<sp/>as<sp/>zfs(axis)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/>(3)<sp/>detuning<sp/>=<sp/>check<sp/>paxis,<sp/>add<sp/>+=detuning(axis)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateMainSpins_fromDefectArray(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateDisorder_main_sub(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateDisorder_sub_sub(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>updateOverhaus_qubit_sub(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Low<sp/>level<sp/>functions<sp/>------------------------------------------------<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//<sp/>init</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>DefectArray_init();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/>set<sp/>defect<sp/>information</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setNdefect(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ndefect);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_dfname(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>dfname);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_apprx(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>apprx);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_naddspin(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>naddspin);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_types(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>types);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_spins(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>spins);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_gyros(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>gyros);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_eqs(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>eqs);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_navaax(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>navaax);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_iax_isp_rxyz(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>rxyzs);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_iax_isp_hypf(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp,<sp/>MatrixXcd<sp/>hypf);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_iax_isp_efg(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp,<sp/>MatrixXcd<sp/>efg);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_iax_zfs(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax,<sp/>MatrixXcd<sp/>zfs);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setDefect_idf_iax_detuning(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>detuning);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//<sp/>find<sp/>defect<sp/>index<sp/>from<sp/>name</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>DefectArray_findDefectIndex(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>dfname);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//<sp/>get<sp/>defect<sp/>information</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>DefectArray_getNdefect(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>DefectArray_getDefect_idf_dfname(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>DefectArray_getDefect_idf_apprx(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>DefectArray_getDefect_idf_naddspin(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>DefectArray_getDefect_idf_isp_types(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>DefectArray_getDefect_idf_isp_spins(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>DefectArray_getDefect_idf_isp_gyros(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>DefectArray_getDefect_idf_isp_eqs(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>DefectArray_getDefect_idf_navaax(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>DefectArray_getDefect_idf_iax_isp_rxyz(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">MatrixXcd<sp/>DefectArray_getDefect_idf_iax_isp_hypf(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">MatrixXcd<sp/>DefectArray_getDefect_idf_iax_isp_efg(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal">MatrixXcd<sp/>DefectArray_getDefect_idf_iax_zfs(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>DefectArray_getDefect_idf_iax_detuning(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iax);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/>alloc<sp/>defect<sp/>information</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_allocDefect(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);<sp/></highlight><highlight class="comment">//<sp/>defect<sp/>:<sp/>ndefect</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_allocDefect_idf(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>navaax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>naddspin);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/>set<sp/>subspin<sp/>information</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setPaxes_i(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ibs,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>axis);<sp/></highlight><highlight class="comment">//<sp/>paxes</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setPaxesRandom(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);<sp/></highlight><highlight class="comment">//<sp/>nbathspin<sp/>(//<sp/>before<sp/>calculate)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setSubbathStatesRandom(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);<sp/></highlight><highlight class="comment">//<sp/>subbath-&gt;staets</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setNaddspins(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);<sp/></highlight><highlight class="comment">//<sp/>before<sp/>calculate</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_setSubbath(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">//<sp/>alloc<sp/>subspin<sp/>information</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_allocPaxes(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nbathspin);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_allocNaddspins(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nbathspin);<sp/></highlight><highlight class="comment">//<sp/>before<sp/>calculate</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_allocSubbath(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="comment">//<sp/>get<sp/>subspin<sp/>information</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>DefectArray_getNbathspin(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>DefectArray_getPaxes_i(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ibs);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>DefectArray_getNaddspins_i(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ibs);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>DefectArray_getSubbath_i_isp(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ibs,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp);<sp/></highlight><highlight class="comment">//<sp/>control<sp/>this<sp/>with<sp/>BathSpin_get/set<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/>free<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_freePaxes(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_freeNaddspins(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_freeSubbath(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_freeAll(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//<sp/>report</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportAll(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportSubbath_props(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);<sp/></highlight><highlight class="comment">//<sp/>name,<sp/>spin,<sp/>gyro,<sp/>xyz,<sp/>mainspidx</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportSubbath_states(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);<sp/></highlight><highlight class="comment">//<sp/>state<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportSubbath_hypfs(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit);<sp/></highlight><highlight class="comment">//<sp/>hypf</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportSubbath_quads(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);<sp/></highlight><highlight class="comment">//quad</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportSubbath_hypf_subs(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);<sp/></highlight><highlight class="comment">//<sp/>hypf_sub</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportSubbath_disorders(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);<sp/></highlight><highlight class="comment">//<sp/>disorder</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="comment">//,<sp/>detuning<sp/>(detuning<sp/>is<sp/>not<sp/>implemented<sp/>yet)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportDefect_idf(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idf);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportPaxes(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportNaddspins(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//__CCEX_DEFECT_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/defect.h"/>
+  </compounddef>
+</doxygen>

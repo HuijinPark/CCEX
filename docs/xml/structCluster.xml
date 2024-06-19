@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="structCluster" kind="struct" prot="public">
+    <compoundname>Cluster</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structCluster_1ae77394af156e2e278a34f12e83d66cb7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Cluster::order</definition>
+        <argsstring></argsstring>
+        <name>order</name>
+        <briefdescription>
+<para>The order of CCE (default : 0) </para>        </briefdescription>
+        <detaileddescription>
+<para>Maximum nuclear spins included in a cluster (order &gt;= 0) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="22" column="1" bodyfile="/home/huijin/git/CCEX/include/cluster.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structCluster_1a7c4d583750b7f37eb2ca537e23ad334f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Cluster::sK</definition>
+        <argsstring></argsstring>
+        <name>sK</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>pcce </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="27" column="1" bodyfile="/home/huijin/git/CCEX/include/cluster.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structCluster_1acfc81556c4ed78e0bce4c36119fe7150" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char Cluster::method[MAX_CHARARRAY_LENGTH]</definition>
+        <argsstring>[MAX_CHARARRAY_LENGTH]</argsstring>
+        <name>method</name>
+        <briefdescription>
+<para>Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | kmeans. </para>        </briefdescription>
+        <detaileddescription>
+<para>The following is the description of each algorithm.</para><para><itemizedlist>
+<listitem><para>cce : Conventional CCE method *using hash algorithm</para></listitem><listitem><para>gcce : Generalized CCE method *using hash algorithm</para></listitem><listitem><para>dsj : Disjoint clustering algorithm , meaning that it consider the disjointed cluster</para></listitem><listitem><para>itb : Inter-bathcluster clustering algorithm , meaning that it consider the pair interaction between disjointed bath cluster</para></listitem><listitem><para>dsjitb : Disjoint + inter-bathcluster clustering algorithm , meaning that it consider the disjointed group and the interaction between disjointed clusters. (dsjitb with order = 2 gives the same result as normal CCE2) </para></listitem></itemizedlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="45" column="1" bodyfile="/home/huijin/git/CCEX/include/cluster.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structCluster_1a1385a76b03a7f2f862526ff2bf449755" prot="public" static="no" mutable="no">
+        <type>int *</type>
+        <definition>int* Cluster::nk</definition>
+        <argsstring></argsstring>
+        <name>nk</name>
+        <briefdescription>
+<para>The number of clusters for each order &quot;k&quot;. </para>        </briefdescription>
+        <detaileddescription>
+<para>nk is useful when you calculate CCE with order &gt;= 3 At order &gt;=3, Creating clusters is based on rdip, a ton of cluster will be formed (at least 1e6). This value would consider nk # clusters for each order after sorting this clusters by coupling-strength. ( NOTE : this parameter is only available at &quot;clusalgo = hash&quot; )</para><para>Input file format : nk = k:n (0&lt;=k&lt;=order, 0&lt;=n&lt;=Maximum number of clusters) e.g. nk = { 1:1000, 2:100, 3:10, 4:5 } nk = { 2:100000, 3:100000 } nk = { 4:0 } (if n=0, it means we will include all clusters at order 4)</para><para>Array format: nk[order + 1] = {0,} (default, including all clusters for each order) nk[i=0] = The number of clusters at order 0 (e.i. nk[0] = 1 always) nk[i&gt;i] = The number of clusters at order i </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="68" column="1" bodyfile="/home/huijin/git/CCEX/include/cluster.h" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structCluster_1a33621fac416bdd2eea40805e74730748" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Cluster::addsubclus</definition>
+        <argsstring></argsstring>
+        <name>addsubclus</name>
+        <briefdescription>
+<para>Include all sub-clusters of the highest order : on | off. </para>        </briefdescription>
+        <detaileddescription>
+<para>When calcuting the coherence in electron spin bath, CCE with order &gt;= 3 gives lots of diverged point in coherence fucntion. If turn on this option, it will include all sub-clusters of the highest order and give the more robust result. (default : off) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="81" column="1" bodyfile="/home/huijin/git/CCEX/include/cluster.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structCluster_1afd65bde6cf52f123d1d1ab7a3fd9805c" prot="public" static="no" mutable="no">
+        <type>int ***</type>
+        <definition>int*** Cluster::clusinfo</definition>
+        <argsstring></argsstring>
+        <name>clusinfo</name>
+        <briefdescription>
+<para>The clusters for each order &quot;k&quot;. </para>        </briefdescription>
+        <detaileddescription>
+<para>clusters[i][j][k] i : i-th order j : (if j==0) The number of clusters at order i (if j!=0) j-th clusters at order i k : (if k==0) The number that you will have to multiply(+)/divide(-) in the coherence calcualtion (if k!=0) The index of the spin in the cluster</para><para>e.g. clusters[i=0][j=0][k=0] : The number how many you should calculate in 0-th order clusters[i=1][j=0][k=0] : The number of 1st order clusters clusters[i=1][j!=0][k=0] : The number how many you should calculate the coherence for 1st order and j-th cluster clusters[i=1][j!=0][k!=0] : The spin index in j-th cluster at 1st order </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="107" column="1" bodyfile="/home/huijin/git/CCEX/include/cluster.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/huijin/git/CCEX/include/cluster.h" line="16" column="1" bodyfile="/home/huijin/git/CCEX/include/cluster.h" bodystart="16" bodyend="109"/>
+    <listofallmembers>
+      <member refid="structCluster_1a33621fac416bdd2eea40805e74730748" prot="public" virt="non-virtual"><scope>Cluster</scope><name>addsubclus</name></member>
+      <member refid="structCluster_1afd65bde6cf52f123d1d1ab7a3fd9805c" prot="public" virt="non-virtual"><scope>Cluster</scope><name>clusinfo</name></member>
+      <member refid="structCluster_1acfc81556c4ed78e0bce4c36119fe7150" prot="public" virt="non-virtual"><scope>Cluster</scope><name>method</name></member>
+      <member refid="structCluster_1a1385a76b03a7f2f862526ff2bf449755" prot="public" virt="non-virtual"><scope>Cluster</scope><name>nk</name></member>
+      <member refid="structCluster_1ae77394af156e2e278a34f12e83d66cb7" prot="public" virt="non-virtual"><scope>Cluster</scope><name>order</name></member>
+      <member refid="structCluster_1a7c4d583750b7f37eb2ca537e23ad334f" prot="public" virt="non-virtual"><scope>Cluster</scope><name>sK</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

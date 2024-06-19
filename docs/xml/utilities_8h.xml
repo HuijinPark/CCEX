@@ -1,0 +1,1558 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="utilities_8h" kind="file">
+    <compoundname>utilities.h</compoundname>
+    <includes local="no">Eigen/Dense</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">mpi.h</includes>
+    <includes local="no">unistd.h</includes>
+    <includedby refid="bath_8h" local="yes">/home/huijin/git/CCEX/include/bath.h</includedby>
+    <includedby refid="qubit_8h" local="yes">/home/huijin/git/CCEX/include/qubit.h</includedby>
+    <includedby refid="general_8h" local="yes">/home/huijin/git/CCEX/include/general.h</includedby>
+    <includedby refid="cluster_8h" local="yes">/home/huijin/git/CCEX/include/cluster.h</includedby>
+    <includedby refid="defect_8h" local="yes">/home/huijin/git/CCEX/include/defect.h</includedby>
+    <includedby refid="hamiltonian_8h" local="yes">/home/huijin/git/CCEX/include/hamiltonian.h</includedby>
+    <includedby refid="memory_8h" local="yes">/home/huijin/git/CCEX/include/memory.h</includedby>
+    <includedby refid="pulse_8h" local="yes">/home/huijin/git/CCEX/include/pulse.h</includedby>
+    <includedby refid="output_8h" local="yes">/home/huijin/git/CCEX/include/output.h</includedby>
+    <includedby refid="option_8h" local="yes">/home/huijin/git/CCEX/include/option.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
+    <includedby refid="cluster_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster.cpp</includedby>
+    <includedby refid="qubit_8cpp" local="yes">/home/huijin/git/CCEX/src/qubit.cpp</includedby>
+    <includedby refid="reader_8cpp" local="yes">/home/huijin/git/CCEX/src/reader.cpp</includedby>
+    <includedby refid="utilities_8cpp" local="yes">/home/huijin/git/CCEX/src/utilities.cpp</includedby>
+    <incdepgraph>
+      <node id="182">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="185">
+        <label>unistd.h</label>
+      </node>
+      <node id="183">
+        <label>iostream</label>
+      </node>
+      <node id="184">
+        <label>mpi.h</label>
+      </node>
+      <node id="181">
+        <label>/home/huijin/git/CCEX/include/utilities.h</label>
+        <link refid="utilities.h"/>
+        <childnode refid="182" relation="include">
+        </childnode>
+        <childnode refid="183" relation="include">
+        </childnode>
+        <childnode refid="184" relation="include">
+        </childnode>
+        <childnode refid="185" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="197">
+        <label>/home/huijin/git/CCEX/include/hamiltonian.h</label>
+        <link refid="hamiltonian_8h_source"/>
+      </node>
+      <node id="190">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
+        <link refid="option_8h_source"/>
+      </node>
+      <node id="193">
+        <label>/home/huijin/git/CCEX/include/reader.h</label>
+        <link refid="reader_8h_source"/>
+      </node>
+      <node id="194">
+        <label>/home/huijin/git/CCEX/include/output.h</label>
+        <link refid="output_8h_source"/>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+      </node>
+      <node id="189">
+        <label>/home/huijin/git/CCEX/include/cluster_hash.h</label>
+        <link refid="cluster__hash_8h_source"/>
+      </node>
+      <node id="191">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+      </node>
+      <node id="187">
+        <label>/home/huijin/git/CCEX/include/bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+        <childnode refid="194" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+      </node>
+      <node id="195">
+        <label>/home/huijin/git/CCEX/include/qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="187" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+      </node>
+      <node id="192">
+        <label>/home/huijin/git/CCEX/include/defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+      </node>
+      <node id="196">
+        <label>/home/huijin/git/CCEX/include/general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="187" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="194" relation="include">
+        </childnode>
+        <childnode refid="193" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+      </node>
+      <node id="188">
+        <label>/home/huijin/git/CCEX/include/cluster.h</label>
+        <link refid="cluster_8h_source"/>
+        <childnode refid="189" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+      </node>
+      <node id="199">
+        <label>/home/huijin/git/CCEX/include/pulse.h</label>
+        <link refid="pulse_8h_source"/>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+      </node>
+      <node id="198">
+        <label>/home/huijin/git/CCEX/include/memory.h</label>
+        <link refid="memory_8h_source"/>
+      </node>
+      <node id="186">
+        <label>/home/huijin/git/CCEX/include/utilities.h</label>
+        <link refid="utilities.h"/>
+        <childnode refid="187" relation="include">
+        </childnode>
+        <childnode refid="195" relation="include">
+        </childnode>
+        <childnode refid="196" relation="include">
+        </childnode>
+        <childnode refid="188" relation="include">
+        </childnode>
+        <childnode refid="192" relation="include">
+        </childnode>
+        <childnode refid="197" relation="include">
+        </childnode>
+        <childnode refid="198" relation="include">
+        </childnode>
+        <childnode refid="199" relation="include">
+        </childnode>
+        <childnode refid="194" relation="include">
+        </childnode>
+        <childnode refid="190" relation="include">
+        </childnode>
+        <childnode refid="191" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structDoubleComplex" prot="public">DoubleComplex</innerclass>
+    <innerclass refid="structDoubleTensor" prot="public">DoubleTensor</innerclass>
+    <innernamespace refid="namespaceEigen">Eigen</innernamespace>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="utilities_8h_1a5bd13fea2d52009d82048504cb75e7c1" prot="public" static="no">
+        <name>EIGEN_USE_MKL_ALL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="9" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a525335710b53cb064ca56b936120431e" prot="public" static="no">
+        <name>_USE_MATH_DEFINES</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="10" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a2bb7c72bd2136a6e9dc96bf11f0713e7" prot="public" static="no">
+        <name>H_BAR</name>
+        <initializer>1.054571729</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="66" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a672cbbe7370c73289199e234d28c3222" prot="public" static="no">
+        <name>MHZ_TO_RADKHZ</name>
+        <param><defname>x</defname></param>
+        <initializer>(1 * (2.0 * M_PI * 1.0e+3) * x)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="69" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="69" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a5e4f5f344ec7d28857e057f009807e5e" prot="public" static="no">
+        <name>RADKHZ_TO_MHZ</name>
+        <param><defname>x</defname></param>
+        <initializer>(1 / (2.0 * M_PI * 1.0e+3) * x)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="70" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a4041a6053a36ea59e01769ab2ac10f56" prot="public" static="no">
+        <name>KHZ_TO_RADKHZ</name>
+        <param><defname>x</defname></param>
+        <initializer>(1 * (2.0 * M_PI) * x)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="71" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="71" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a734c5d51530f915f74b7f598bcbc9bfc" prot="public" static="no">
+        <name>RADKHZ_TO_KHZ</name>
+        <param><defname>x</defname></param>
+        <initializer>(1 / (2.0 * M_PI) * x)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="72" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a140d23f0be8b87335973a4c9283788fb" prot="public" static="no">
+        <name>GAMMA_ELECTRON</name>
+        <initializer>-17608.597050;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="75" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1acfe7c01f1c9573de5781b86b883fbd3c" prot="public" static="no">
+        <name>MAX_FILEPATH</name>
+        <initializer>500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum length of file path </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="78" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a8fd1020882e791db92eea4bb93e2ca39" prot="public" static="no">
+        <name>MAX_OPTION_ARRAY_LENGTH</name>
+        <initializer>500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum length of option array </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="81" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a20c56dad12fe418d86133abf748fd93f" prot="public" static="no">
+        <name>MAX_OPTION_ELEMENT_LENGTH</name>
+        <initializer>50</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum length of option element </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="82" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="82" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a182419ed9c53c0404cfc85826267a63d" prot="public" static="no">
+        <name>MAX_CHARARRAY_LENGTH</name>
+        <initializer>20</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum length of structure char array </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="83" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="83" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1adfbb314f85ef42f51d066fcc5c205fe3" prot="public" static="no">
+        <name>MAX_MAINTAG_SUBOPTION_NUMBER</name>
+        <initializer>500</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of suboptions for each &amp;MAINTAG </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="85" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="utilities_8h_1a6723497da67f8a714b7fc737df434313" prot="public" static="no">
+        <name>MAX_MAINTAG_SUBOPTION_LINE_LENGTH</name>
+        <initializer>1000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum length of suboption element for each &amp;MAINTAG </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="86" column="9" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="utilities_8h_1a6553282014bd97f1615ca44da7f3dc5d" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>doublec</definition>
+        <argsstring></argsstring>
+        <name>doublec</name>
+        <briefdescription>
+<para>Complex number with double precision in <ref refid="namespaceEigen" kindref="compound">Eigen</ref> library. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="48" column="1" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="utilities_8h_1a467aba7c12859cb5af2608e517b42e0e" prot="public" static="no">
+        <type>Eigen::Matrix&lt; doublec, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>MatrixXcd</definition>
+        <argsstring></argsstring>
+        <name>MatrixXcd</name>
+        <briefdescription>
+<para>Matrix with complex number with double precision in <ref refid="namespaceEigen" kindref="compound">Eigen</ref> library. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="54" column="1" bodyfile="/home/huijin/git/CCEX/include/utilities.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="utilities_8h_1a6cfd95afd0afebd625b889fb6e58371c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int rank</definition>
+        <argsstring></argsstring>
+        <name>rank</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Rank of the process (MPI) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="13" column="1" bodyfile="/home/huijin/git/CCEX/main.cpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="utilities_8h_1ad63755d2adcd7229a0435675214f9c43" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nprocess</definition>
+        <argsstring></argsstring>
+        <name>nprocess</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of processes (MPI) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="14" column="1" bodyfile="/home/huijin/git/CCEX/main.cpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="utilities_8h_1a05f20aa9cc609764dd25d474e78d3ea7" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool verbosity</definition>
+        <argsstring></argsstring>
+        <name>verbosity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><hruler/>
+ Verbosity level </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="18" column="1" bodyfile="/home/huijin/git/CCEX/main.cpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="utilities_8h_1a4b255578067c0937e13f2ef0078241ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double* MatrixXcdToDouble1d</definition>
+        <argsstring>(MatrixXcd mat)</argsstring>
+        <name>MatrixXcdToDouble1d</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="90" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="15" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a9c7f009c4cdeea19fb03a6062b19ba4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd Double1dToMatrixXcd</definition>
+        <argsstring>(double *val, int n)</argsstring>
+        <name>Double1dToMatrixXcd</name>
+        <param>
+          <type>double *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="91" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="7" bodyend="13"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a2aefe88dad8d53dec31e792d2e9b9fa6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double dist</definition>
+        <argsstring>(double spin1[], double spin2[])</argsstring>
+        <name>dist</name>
+        <param>
+          <type>double</type>
+          <declname>spin1</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>spin2</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="96" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="26" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a4d139712825bcde2ae1aed0d3ec5ad5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double cosTheta</definition>
+        <argsstring>(double spin1[], double spin2[], double dist)</argsstring>
+        <name>cosTheta</name>
+        <param>
+          <type>double</type>
+          <declname>spin1</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>spin2</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>dist</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="97" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="33" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a5b934a224579933ac378e74bab0b68cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double sinTheta</definition>
+        <argsstring>(double spin1[], double spin2[], double dist)</argsstring>
+        <name>sinTheta</name>
+        <param>
+          <type>double</type>
+          <declname>spin1</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>spin2</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>dist</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="98" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="38" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a10b6615e47dfd70c43029c037751f9e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double cosPhi</definition>
+        <argsstring>(double spin1[], double spin2[])</argsstring>
+        <name>cosPhi</name>
+        <param>
+          <type>double</type>
+          <declname>spin1</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>spin2</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="99" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="44" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a15fe4cc12d3ce405f46b3012de0440b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double sinPhi</definition>
+        <argsstring>(double spin1[], double spin2[])</argsstring>
+        <name>sinPhi</name>
+        <param>
+          <type>double</type>
+          <declname>spin1</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>spin2</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="100" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="49" bodyend="53"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1acf1c2b8c239acc495284035dd3e2f755" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float *</type>
+        <definition>float* substates</definition>
+        <argsstring>(float S)</argsstring>
+        <name>substates</name>
+        <param>
+          <type>float</type>
+          <declname>S</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="105" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="60" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a9426ec76eb56e1975c68e8670e96ae88" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool isSubLevel</definition>
+        <argsstring>(float S, float ms)</argsstring>
+        <name>isSubLevel</name>
+        <param>
+          <type>float</type>
+          <declname>S</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>ms</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="106" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="70" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a0af91089d5fcaa976b033ce4e6264c81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd getSpinor</definition>
+        <argsstring>(float S, float ms)</argsstring>
+        <name>getSpinor</name>
+        <param>
+          <type>float</type>
+          <declname>S</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>ms</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="107" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="81" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1ae85976047fe576da4e47a0d7fff7b78a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd kron</definition>
+        <argsstring>(MatrixXcd a, MatrixXcd b)</argsstring>
+        <name>kron</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="108" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="119" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a9b51b0619b40657054c85a7785c867c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd partialtrace</definition>
+        <argsstring>(MatrixXcd Mij, int dimrow, int dimcol)</argsstring>
+        <name>partialtrace</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>Mij</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>dimrow</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>dimcol</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="109" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="202" bodyend="236"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a48dd05e439c0be45622f701086fbb244" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double calNorm</definition>
+        <argsstring>(MatrixXcd m)</argsstring>
+        <name>calNorm</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+<para>Calculate the norm of the matrix. </para>        </briefdescription>
+        <detaileddescription>
+<para>Spinor Properties : normalized set <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">m</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>gsl_matrix_complex </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>norm of the matrix </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="110" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="136" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1ab6733ca1dc8e846d6aefa625620df43d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int normalize</definition>
+        <argsstring>(MatrixXcd *m)</argsstring>
+        <name>normalize</name>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="111" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="159" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a0c8e632eac324b8529a548082a3954f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float findZbasisSubLevel</definition>
+        <argsstring>(MatrixXcd spinor)</argsstring>
+        <name>findZbasisSubLevel</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>spinor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="112" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="173" bodyend="200"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1ac633c6b52e7ecccb79afb1e156b5f1e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd powMatrixXcdElementWise</definition>
+        <argsstring>(MatrixXcd a, int n)</argsstring>
+        <name>powMatrixXcdElementWise</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="114" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="238" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1ad062f8a5dabc3641ca77f3b4acae0774" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd mulMatrixXcdElementWise</definition>
+        <argsstring>(MatrixXcd a, MatrixXcd b)</argsstring>
+        <name>mulMatrixXcdElementWise</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="115" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="256" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a6e936e0f958d89c5ef7bac7993d985f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printInlineMatrixXcd</definition>
+        <argsstring>(char *key, MatrixXcd mat)</argsstring>
+        <name>printInlineMatrixXcd</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="118" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="261" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a4a73d5d44cbb32db1094c77e8c1ab4eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStateInDiracNot</definition>
+        <argsstring>(char *key, MatrixXcd mat)</argsstring>
+        <name>printStateInDiracNot</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="119" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="293" bodyend="310"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1abbe8b03682b2ed276d90898f027e2ee7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementChar</definition>
+        <argsstring>(char *key, char *val)</argsstring>
+        <name>printStructElementChar</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="120" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="312" bodyend="314"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a373dfb50c0cd57d41b73c300a74eb36c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementChar2d</definition>
+        <argsstring>(char *key, char **val, int n)</argsstring>
+        <name>printStructElementChar2d</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="121" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="316" bodyend="327"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1aad89de3b2cfb3e3407d6c076c68026f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementInt</definition>
+        <argsstring>(char *key, int val)</argsstring>
+        <name>printStructElementInt</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="122" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="329" bodyend="331"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a3ddea3fc0335b0c4c2b55f75a08b5abd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementInt1dIdx</definition>
+        <argsstring>(char *key, int *val, int n)</argsstring>
+        <name>printStructElementInt1dIdx</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="123" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="333" bodyend="344"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1afa6c1b7d859474f91277a6eb127c2d58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementFloat</definition>
+        <argsstring>(char *key, float val)</argsstring>
+        <name>printStructElementFloat</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="124" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="346" bodyend="348"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a11539e572f45c8cf0d75c149a0bd99d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementFloat1d</definition>
+        <argsstring>(char *key, float *val, int n)</argsstring>
+        <name>printStructElementFloat1d</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="125" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="350" bodyend="361"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a7bda98546c1fc0fb42f240c9b3a762c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementDouble</definition>
+        <argsstring>(char *key, double val)</argsstring>
+        <name>printStructElementDouble</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="126" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="363" bodyend="365"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a2e1b74556d20b16d3a8e18042398fcc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementDouble1d</definition>
+        <argsstring>(char *key, double *val, int n)</argsstring>
+        <name>printStructElementDouble1d</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>val</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="127" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="367" bodyend="378"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a99f2bc03fafde10029d172c288e8d264" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printStructElementBool</definition>
+        <argsstring>(char *key, bool val)</argsstring>
+        <name>printStructElementBool</name>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="128" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="380" bodyend="382"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a22f0047ca1e195cb409fbb3540cb86e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printLine</definition>
+        <argsstring>()</argsstring>
+        <name>printLine</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="129" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="384" bodyend="386"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1af76e568be9cffb9fd84a8d47ae73c859" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printLineSection</definition>
+        <argsstring>()</argsstring>
+        <name>printLineSection</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="130" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="388" bodyend="390"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a5564a74283c7de4315aa6c31e3a18cd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printTitle</definition>
+        <argsstring>(char *title)</argsstring>
+        <name>printTitle</name>
+        <param>
+          <type>char *</type>
+          <declname>title</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="131" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="392" bodyend="394"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a4e488695843bcdf98056b5a27f932694" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printSubTitle</definition>
+        <argsstring>(char *title)</argsstring>
+        <name>printSubTitle</name>
+        <param>
+          <type>char *</type>
+          <declname>title</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="132" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="396" bodyend="398"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1aade83057783d63d6c740ab5badf562cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printMessage</definition>
+        <argsstring>(char *message)</argsstring>
+        <name>printMessage</name>
+        <param>
+          <type>char *</type>
+          <declname>message</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="133" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="400" bodyend="402"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a03c6e91a2ab8765bbcf642edf3a0916f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int findIndexInt</definition>
+        <argsstring>(int *array, int ista, int iend, int val)</argsstring>
+        <name>findIndexInt</name>
+        <param>
+          <type>int *</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ista</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iend</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="136" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="405" bodyend="412"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1aa6fc66444ea4320ad797232437f46372" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int findIndexCharFix</definition>
+        <argsstring>(char array[][MAX_CHARARRAY_LENGTH], int ista, int iend, char *val)</argsstring>
+        <name>findIndexCharFix</name>
+        <param>
+          <type>char</type>
+          <declname>array</declname>
+          <array>[][MAX_CHARARRAY_LENGTH]</array>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ista</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iend</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="137" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="414" bodyend="421"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1aa81ad629712eb5ea1d3567e334c133fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int findIndexChar</definition>
+        <argsstring>(char **array, int ista, int iend, char *val)</argsstring>
+        <name>findIndexChar</name>
+        <param>
+          <type>char **</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ista</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iend</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="138" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="423" bodyend="430"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1ac432f8aeae10d2635ea20ed8191742c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int findIndexFloat</definition>
+        <argsstring>(float *array, int ista, int iend, float val)</argsstring>
+        <name>findIndexFloat</name>
+        <param>
+          <type>float *</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ista</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iend</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="139" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="432" bodyend="439"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1accb541fe6da91628724b5bffd79da87c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int isStringDouble</definition>
+        <argsstring>(char *s)</argsstring>
+        <name>isStringDouble</name>
+        <param>
+          <type>char *</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="142" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="479" bodyend="499"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a331eade4c4bc4635171db82a4d11faa9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void QuickSort</definition>
+        <argsstring>(int **d_Array, int left, int right)</argsstring>
+        <name>QuickSort</name>
+        <param>
+          <type>int **</type>
+          <declname>d_Array</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>right</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="145" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="443" bodyend="449"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a409d692e2bfdb78dd777abb5aed007c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Partition</definition>
+        <argsstring>(int **d_Array, int left, int right)</argsstring>
+        <name>Partition</name>
+        <param>
+          <type>int **</type>
+          <declname>d_Array</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>left</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>right</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="146" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="451" bodyend="468"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a06a4ca14041fa08f3ab7956d0c5c84b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Swap</definition>
+        <argsstring>(int **d_Array, int a, int b)</argsstring>
+        <name>Swap</name>
+        <param>
+          <type>int **</type>
+          <declname>d_Array</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="147" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="470" bodyend="474"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a652d438c6c223d76ea7226c2adbb715b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void para_range</definition>
+        <argsstring>(int n1, int n2, int nprocs, int myrank, int *ista, int *iend)</argsstring>
+        <name>para_range</name>
+        <param>
+          <type>int</type>
+          <declname>n1</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n2</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nprocs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>myrank</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>ista</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>iend</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="150" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="502" bodyend="510"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1aebfa23dbf6ec30f35f2986a654bd47c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int min</definition>
+        <argsstring>(int x, int y)</argsstring>
+        <name>min</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="151" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="512" bodyend="518"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a1613a6675e0ab3d37ec64934b9d8d5d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int ***</type>
+        <definition>int*** MPI_getLocalClusters</definition>
+        <argsstring>(int order, int ***clusters)</argsstring>
+        <name>MPI_getLocalClusters</name>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int ***</type>
+          <declname>clusters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="152" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="521" bodyend="635"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1aeb93e25e95d089d3e1c79baf4a71b594" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printBanner</definition>
+        <argsstring>()</argsstring>
+        <name>printBanner</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="156" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="675" bodyend="704"/>
+      </memberdef>
+      <memberdef kind="function" id="utilities_8h_1a0d20b69b0ad703df78459e1033d5c1d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printHelp</definition>
+        <argsstring>()</argsstring>
+        <name>printHelp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/utilities.h" line="157" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="706" bodyend="757"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_UTILITIES_UTILITIES_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_UTILITIES_UTILITIES_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Dense&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;mpi.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;unistd.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EIGEN_USE_MKL_ALL</highlight></codeline>
+<codeline lineno="10"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>_USE_MATH_DEFINES</highlight></codeline>
+<codeline lineno="11"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>MPI<sp/>Global<sp/>variable<sp/>------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rank;<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nprocess;<sp/></highlight></codeline>
+<codeline lineno="17"><highlight class="comment">/*<sp/>Print<sp/>Global<sp/>variable<sp/>----------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>verbosity;<sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="comment">/*<sp/>Data<sp/>Types<sp/>---------------------------------------------------*/</highlight></codeline>
+<codeline lineno="28" refid="structDoubleComplex" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="29" refid="structDoubleComplex_1a59acbb424a325b3510f85b75642bc5e4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structDoubleComplex_1a59acbb424a325b3510f85b75642bc5e4" kindref="member">real</ref>;<sp/></highlight></codeline>
+<codeline lineno="30" refid="structDoubleComplex_1aa3fa36b7221c819a1ee1f642529b5529" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structDoubleComplex_1aa3fa36b7221c819a1ee1f642529b5529" kindref="member">imag</ref>;<sp/></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}<sp/><ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="structDoubleTensor" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="38" refid="structDoubleTensor_1a78677cd002a23db74c7438a9e51aa264" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>xx,<sp/>xy,<sp/><ref refid="structDoubleTensor_1a78677cd002a23db74c7438a9e51aa264" kindref="member">xz</ref>;<sp/></highlight></codeline>
+<codeline lineno="39" refid="structDoubleTensor_1a0311ca5318233d1cd146c7f2ba0564a2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>yx,<sp/>yy,<sp/><ref refid="structDoubleTensor_1a0311ca5318233d1cd146c7f2ba0564a2" kindref="member">yz</ref>;<sp/></highlight></codeline>
+<codeline lineno="40" refid="structDoubleTensor_1af3fec476b850d04a0f1e7a4cfbaceb2d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>zx,<sp/>zy,<sp/><ref refid="structDoubleTensor_1af3fec476b850d04a0f1e7a4cfbaceb2d" kindref="member">zz</ref>;<sp/></highlight></codeline>
+<codeline lineno="41"><highlight class="normal">}<sp/><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Eigen<sp/>Library<sp/>------------------------------------------------*/</highlight></codeline>
+<codeline lineno="48"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;doublec;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>Eigen::Matrix&lt;doublec,<sp/>Eigen::Dynamic,<sp/>Eigen::Dynamic&gt;<sp/>MatrixXcd;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">Eigen;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Math<sp/>Constants<sp/>-----------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Planck<sp/>constant<sp/>:<sp/>1.054<sp/>571<sp/>729<sp/>x<sp/>10^-34<sp/>[J*s]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="comment">//<sp/>H_BAR<sp/>is<sp/>the<sp/>unit<sp/>conversion<sp/>constant<sp/>(Not<sp/>the<sp/>Planck<sp/>constant)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>H_BAR<sp/>1.054571729</highlight></codeline>
+<codeline lineno="67"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Unit<sp/>conversion</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MHZ_TO_RADKHZ(x)<sp/>(1<sp/>*<sp/>(2.0<sp/>*<sp/>M_PI<sp/>*<sp/>1.0e+3)<sp/>*<sp/>x)</highlight></codeline>
+<codeline lineno="70"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>RADKHZ_TO_MHZ(x)<sp/>(1<sp/>/<sp/>(2.0<sp/>*<sp/>M_PI<sp/>*<sp/>1.0e+3)<sp/>*<sp/>x)</highlight></codeline>
+<codeline lineno="71"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>KHZ_TO_RADKHZ(x)<sp/>(1<sp/>*<sp/>(2.0<sp/>*<sp/>M_PI)<sp/>*<sp/>x)</highlight></codeline>
+<codeline lineno="72"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>RADKHZ_TO_KHZ(x)<sp/>(1<sp/>/<sp/>(2.0<sp/>*<sp/>M_PI)<sp/>*<sp/>x)</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Gyromagnetic<sp/>ratio<sp/>of<sp/>electron<sp/>spin<sp/>[radkHz/G]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>GAMMA_ELECTRON<sp/>-17608.597050;</highlight></codeline>
+<codeline lineno="76"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>File<sp/>Constants<sp/>-----------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MAX_FILEPATH<sp/>500<sp/></highlight></codeline>
+<codeline lineno="80"><highlight class="preprocessor"></highlight><highlight class="comment">/*<sp/>cce.in<sp/>line<sp/>constants<sp/>----------------------------------------*/</highlight><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="81"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>MAX_OPTION_ARRAY_LENGTH<sp/>500<sp/></highlight></codeline>
+<codeline lineno="82"><highlight class="preprocessor">#define<sp/>MAX_OPTION_ELEMENT_LENGTH<sp/>50<sp/></highlight></codeline>
+<codeline lineno="83"><highlight class="preprocessor">#define<sp/>MAX_CHARARRAY_LENGTH<sp/>20<sp/></highlight></codeline>
+<codeline lineno="85"><highlight class="preprocessor">#define<sp/>MAX_MAINTAG_SUBOPTION_NUMBER<sp/>500<sp/></highlight></codeline>
+<codeline lineno="86"><highlight class="preprocessor">#define<sp/>MAX_MAINTAG_SUBOPTION_LINE_LENGTH<sp/>1000<sp/></highlight></codeline>
+<codeline lineno="89"><highlight class="preprocessor"></highlight><highlight class="comment">/*<sp/>utils<sp/>-------------------------------------------------------*/</highlight><highlight class="preprocessor"></highlight></codeline>
+<codeline lineno="90"><highlight class="preprocessor"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>MatrixXcdToDouble1d(MatrixXcd<sp/>mat);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">MatrixXcd<sp/>Double1dToMatrixXcd(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>val,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>math<sp/>functions<sp/>-----------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">//<sp/>geometry</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[]);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>cosTheta(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sinTheta(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>cosPhi(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[]);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sinPhi(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[]);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Physics<sp/>functions<sp/>--------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/>spin<sp/>state<sp/>control</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>substates(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>S);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isSubLevel(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>S,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ms);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal">MatrixXcd<sp/>getSpinor(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>S,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>ms);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">MatrixXcd<sp/>kron(MatrixXcd<sp/>a,<sp/>MatrixXcd<sp/>b);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">MatrixXcd<sp/>partialtrace(MatrixXcd<sp/>Mij,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>dimrow,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>dimcol);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>calNorm(MatrixXcd<sp/>m);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>normalize(MatrixXcd*<sp/>m);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>findZbasisSubLevel(MatrixXcd<sp/>spinor);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal">MatrixXcd<sp/>powMatrixXcdElementWise(MatrixXcd<sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">MatrixXcd<sp/>mulMatrixXcdElementWise(MatrixXcd<sp/>a,<sp/>MatrixXcd<sp/>b);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Easy<sp/>print<sp/>---------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printInlineMatrixXcd(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/>MatrixXcd<sp/>mat);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStateInDiracNot(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/>MatrixXcd<sp/>mat);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementChar(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>val);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementChar2d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>val,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementInt(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>val);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementInt1dIdx(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>val,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementFloat(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>val);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementFloat1d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>val,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementDouble(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>val);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementDouble1d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>val,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printStructElementBool(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>val);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printLine();</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printLineSection();</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printTitle(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>title);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printSubTitle(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>title);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printMessage(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>message);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Find<sp/>index<sp/>---------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>findIndexInt(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ista,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iend,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>val);<sp/></highlight><highlight class="comment">//<sp/>find<sp/>in<sp/>the<sp/>range<sp/>of<sp/>ista<sp/>&lt;=<sp/>i<sp/>&lt;=<sp/>iend</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>findIndexCharFix(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>array[][MAX_CHARARRAY_LENGTH],<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ista,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iend,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>val);<sp/></highlight><highlight class="comment">//<sp/>find<sp/>in<sp/>the<sp/>range<sp/>of<sp/>ista<sp/>&lt;=<sp/>i<sp/>&lt;=<sp/>iend,<sp/>strcasecmp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>findIndexChar(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ista,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iend,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>val);<sp/></highlight><highlight class="comment">//<sp/>find<sp/>in<sp/>the<sp/>range<sp/>of<sp/>ista<sp/>&lt;=<sp/>i<sp/>&lt;=<sp/>iend,<sp/>strcasecmp</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>findIndexFloat(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ista,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iend,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>val);<sp/></highlight><highlight class="comment">//<sp/>find<sp/>in<sp/>the<sp/>range<sp/>of<sp/>ista<sp/>&lt;=<sp/>i<sp/>&lt;=<sp/>iend</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Type<sp/>checker<sp/>---------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isStringDouble(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>*s);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Quick<sp/>Sort<sp/>--------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>QuickSort(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>d_Array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>left,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>right);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>Partition(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>d_Array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>left,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>right);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Swap(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>d_Array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>MPI<sp/>---------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>para_range(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n1,</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n2,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nprocs,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>myrank,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*ista,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*iend);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>min(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>x,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>y);</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>MPI_getLocalClusters(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>clusters);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="comment">//<sp/>MatrixXcd*<sp/>MPI_reduceLocalResult(int<sp/>nstep,<sp/>MatrixXcd*<sp/>local);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Print<sp/>help<sp/>and<sp/>banner<sp/>---------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printBanner();</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printHelp();</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_UTILITIES_UTILITIES_H_</highlight></codeline>
+<codeline lineno="160"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/utilities.h"/>
+  </compounddef>
+</doxygen>

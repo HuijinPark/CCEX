@@ -1,0 +1,430 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="output_8h" kind="file">
+    <compoundname>output.h</compoundname>
+    <includes refid="general_8h" local="yes">general.h</includes>
+    <includes refid="bath_8h" local="yes">bath.h</includes>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includedby refid="option_8h" local="yes">/home/huijin/git/CCEX/include/option.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
+    <includedby refid="output_8cpp" local="yes">/home/huijin/git/CCEX/src/output.cpp</includedby>
+    <incdepgraph>
+      <node id="119">
+        <label>/home/huijin/git/CCEX/include/output.h</label>
+        <link refid="output.h"/>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="126" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+      </node>
+      <node id="126">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="127" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+      </node>
+      <node id="127">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="121" relation="include">
+        </childnode>
+      </node>
+      <node id="122">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="125">
+        <label>unistd.h</label>
+      </node>
+      <node id="120">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="121" relation="include">
+        </childnode>
+      </node>
+      <node id="123">
+        <label>iostream</label>
+      </node>
+      <node id="124">
+        <label>mpi.h</label>
+      </node>
+      <node id="121">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="124" relation="include">
+        </childnode>
+        <childnode refid="125" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="129">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
+        <link refid="option_8h_source"/>
+      </node>
+      <node id="128">
+        <label>/home/huijin/git/CCEX/include/output.h</label>
+        <link refid="output.h"/>
+        <childnode refid="129" relation="include">
+        </childnode>
+        <childnode refid="130" relation="include">
+        </childnode>
+      </node>
+      <node id="130">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structOutput" prot="public">Output</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="output_8h_1a246bbb4bdade1fec37a74f52288bd0fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+        <definition>Output* Output_init</definition>
+        <argsstring>()</argsstring>
+        <name>Output_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="30" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="4" bodyend="9"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1afd9a47af9edc67e492f1b5890b6c595b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_save</definition>
+        <argsstring>(Output *op, MatrixXcd *result_wD, MatrixXcd *result_nD, int nstep, float deltat, int istate)</argsstring>
+        <name>Output_save</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result_wD</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result_nD</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nstep</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>deltat</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>istate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="31" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="11" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1a89057c68815c5f25f19e7f5b17fc2a8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_save_all</definition>
+        <argsstring>(Output *op, MatrixXcd *result, int nstep, float deltat, int *cluster, int nspin, int istate)</argsstring>
+        <name>Output_save_all</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nstep</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>deltat</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>cluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>istate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="32" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="94" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1aa0cea37b91d5d895f1a06e19d551f011" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_save_info</definition>
+        <argsstring>(Output *op, MatrixXcd *result_wD, MatrixXcd *result_nD, int nstep, float deltat, int istate, double Azx, double Azz, char *bathfile)</argsstring>
+        <name>Output_save_info</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result_wD</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result_nD</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nstep</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>deltat</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>istate</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>Azx</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>Azz</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>bathfile</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="33" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="129" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1a45c1e74132e535964cf887914fbbf092" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_setSavemode</definition>
+        <argsstring>(Output *op, char *savemode)</argsstring>
+        <name>Output_setSavemode</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>savemode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="35" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="217" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1abaefd91d3e41c0ce7e57f9af5f0800a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* Output_getSavemode</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_getSavemode</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="36" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="229" bodyend="231"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1a738ebf5a2d75f03d3baac8073c56b8cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_allocOutfile</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_allocOutfile</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="38" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="233" bodyend="235"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1acea267bd1b794ed21eb61b565a0bdefa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_freeOutfile</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_freeOutfile</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="39" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="237" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1abd65ea9be94348ea3e83cf15beeb1e7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_setOutfile</definition>
+        <argsstring>(Output *op, char *outfile)</argsstring>
+        <name>Output_setOutfile</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>outfile</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="40" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="241" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1a58a735c4720b4fcb58831a9209cc5509" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* Output_getOutfile</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_getOutfile</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="41" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="245" bodyend="247"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1a45e362c64a844fde067befad21c5d3c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_report</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_report</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="43" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="254" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8h_1a787e1d765898041179cf2cb9163ccd1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_freeAll</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_freeAll</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/output.h" line="45" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="249" bodyend="252"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_OUTPUT_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_OUTPUT_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;general.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;bath.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8" refid="structOutput" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Intermediate<sp/>Save</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>char*<sp/>InterSaveClusterFile;<sp/>/**&lt;<sp/>File<sp/>name<sp/>to<sp/>save<sp/>clusters&apos;<sp/>information<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>char*<sp/>InterSaveCoherenceFile;<sp/>/**&lt;<sp/>File<sp/>name<sp/>to<sp/>save<sp/>coherence<sp/>functions<sp/>of<sp/>clusters<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="structOutput_1a7f85059a943e07bad7f1b76d4e5a99d8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>savemode[20];<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>all<sp/>:<sp/>coherence<sp/>function<sp/>for<sp/>each<sp/>cluster<sp/>and<sp/>each<sp/>state<sp/>:<sp/>output<sp/>=<sp/>output_{cluster}_{state}_wD/nD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>normal<sp/>:<sp/>coherence<sp/>function<sp/>for<sp/>each<sp/>state<sp/>(default)<sp/>:<sp/>output<sp/>=<sp/>output_{state}_wD/nD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>avg<sp/>:<sp/>averaged<sp/>coherence<sp/>function<sp/>for<sp/>all<sp/>states<sp/>:<sp/>ouput<sp/>=<sp/>output_avg_wD/nD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>info<sp/>:<sp/>normal<sp/>save<sp/>mode<sp/>+<sp/>deep<sp/>learning<sp/>information<sp/>(Azx,<sp/>Azz,<sp/>bathfile)<sp/>:<sp/>output<sp/>=<sp/>output_{state}_wD/nD</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Final<sp/>Save<sp/>(Main<sp/>result)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>outfile1.<sp/>actual<sp/>result<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>outfile2.<sp/>the<sp/>result<sp/>to<sp/>compare<sp/>them<sp/>to<sp/>remove<sp/>the<sp/>diverged<sp/>points</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>char*<sp/>OutputFileHead;<sp/>/**&lt;<sp/>File<sp/>name<sp/>to<sp/>save<sp/>final<sp/>result<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>char*<sp/>OutputFileTail;<sp/>/**&lt;<sp/>File<sp/>name<sp/>to<sp/>save<sp/>final<sp/>result<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>char*<sp/>OutputFileHeadDisjoint;<sp/>/**&lt;<sp/>File<sp/>name<sp/>to<sp/>save<sp/>final<sp/>result<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>char*<sp/>OutputFileTailDisjoint;<sp/>/**&lt;<sp/>File<sp/>name<sp/>to<sp/>save<sp/>final<sp/>result<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile;<sp/></highlight><highlight class="comment">//<sp/>output<sp/>file<sp/>name<sp/>with<sp/>mode<sp/>(auto<sp/>generated)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}<sp/><ref refid="structOutput" kindref="compound">Output</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><ref refid="structOutput" kindref="compound">Output</ref>*<sp/>Output_init();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_save(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/>MatrixXcd*<sp/>result_wD,<sp/>MatrixXcd*<sp/>result_nD,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nstep,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>deltat,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>istate);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_save_all(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/>MatrixXcd*<sp/>result,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nstep,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>deltat,</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>istate);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_save_info(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/>MatrixXcd*<sp/>result_wD,<sp/>MatrixXcd*<sp/>result_nD,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nstep,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>deltat,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>istate,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Azx,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Azz,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>bathfile);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_setSavemode(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>savemode);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Output_getSavemode(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_allocOutfile(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_freeOutfile(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_setOutfile(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Output_getOutfile(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_report(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_freeAll(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_OUTPUT_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/output.h"/>
+  </compounddef>
+</doxygen>

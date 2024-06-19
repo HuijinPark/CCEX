@@ -1,2 +1,0 @@
-.. doxygenindex::
-   :project: CCEX

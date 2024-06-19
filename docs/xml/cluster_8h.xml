@@ -1,0 +1,771 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="cluster_8h" kind="file">
+    <compoundname>cluster.h</compoundname>
+    <includes refid="general_8h" local="yes">general.h</includes>
+    <includes refid="bath_8h" local="yes">bath.h</includes>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includedby refid="cluster__hash_8h" local="yes">/home/huijin/git/CCEX/include/cluster_hash.h</includedby>
+    <includedby refid="option_8h" local="yes">/home/huijin/git/CCEX/include/option.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
+    <includedby refid="cluster_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster.cpp</includedby>
+    <incdepgraph>
+      <node id="33">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="32">
+        <label>unistd.h</label>
+      </node>
+      <node id="27">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>iostream</label>
+      </node>
+      <node id="26">
+        <label>/home/huijin/git/CCEX/include/cluster.h</label>
+        <link refid="cluster.h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>mpi.h</label>
+      </node>
+      <node id="28">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="37">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
+        <link refid="option_8h_source"/>
+      </node>
+      <node id="36">
+        <label>/home/huijin/git/CCEX/include/cluster_hash.h</label>
+        <link refid="cluster__hash_8h_source"/>
+      </node>
+      <node id="38">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+      </node>
+      <node id="35">
+        <label>/home/huijin/git/CCEX/include/cluster.h</label>
+        <link refid="cluster.h"/>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structCluster" prot="public">Cluster</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="cluster_8h_1a682c076be5339c3b7c39bc75129ac002" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+        <definition>Cluster* Cluster_init</definition>
+        <argsstring>()</argsstring>
+        <name>Cluster_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="116" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="9" bodyend="18"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1acfd4c6ef5622dbfa59942c1a7617c1c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_clusterize</definition>
+        <argsstring>(Cluster *cls, BathArray *ba, Config *config)</argsstring>
+        <name>Cluster_clusterize</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>!if (strcasecmp(cls-&gt;method, &quot;pcce&quot;)==0){ ! double** centerpositions = NULL; // start from 0 ! int centerarraylength = 0; ! int* spinidx = NULL ; // start from 0 ! getCenters(&amp;centerpositions, &amp;centerarraylength, &amp;spinidx, ba); ! int BathArray_getNspin(ba) !} </para>        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="117" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="20" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a1e9067d49b0b0c7cc731eabfd0aad2c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_freeAll</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_freeAll</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="120" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="110" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a4c26ec88127ff5ef995e46cb615968af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_report</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_report</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="132" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="117" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1aeaca0e2ff29843390be43e8bf9b3e6b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_reportNk</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_reportNk</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="133" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="139" bodyend="142"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a5ad4b33c688b66d9624458663fb6b0c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_reportClusinfo</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_reportClusinfo</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="134" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="144" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a3903fe87910d2270893d1e729a0ea446" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reportClusinfo</definition>
+        <argsstring>(int ***clusinfo, int order)</argsstring>
+        <name>reportClusinfo</name>
+        <param>
+          <type>int ***</type>
+          <declname>clusinfo</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="135" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="182" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1ae45a1c18649e68c10d42cc910ffbb47c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_allocClusinfo</definition>
+        <argsstring>(Cluster *cls, int order)</argsstring>
+        <name>Cluster_allocClusinfo</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="141" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="225" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1aa5731c0e0c23755bd3616c71eb79c5d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_freeClusinfo</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_freeClusinfo</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="142" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="375" bodyend="394"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1af03141d021c7ab901adcbfde55a36b32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Cluster_setClusinfo_addcluster</definition>
+        <argsstring>(Cluster *cls, int order, int iter, int *cluster)</argsstring>
+        <name>Cluster_setClusinfo_addcluster</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iter</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>cluster</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="144" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="236" bodyend="269"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1ad278615a0ca28bd1c208e3a08c73489e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_setClusinfo_chgcluster</definition>
+        <argsstring>(Cluster *cls, int order, int *cluster, int ic)</argsstring>
+        <name>Cluster_setClusinfo_chgcluster</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>cluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ic</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="145" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="271" bodyend="278"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1adc3dd4b0e09252cdbdc1d90002c8b719" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_setClusinfo_chgiter</definition>
+        <argsstring>(Cluster *cls, int order, int iter, int ic)</argsstring>
+        <name>Cluster_setClusinfo_chgiter</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iter</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ic</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="146" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="280" bodyend="286"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a651e8291700f709f85b3f856ba539a42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Cluster_getClusinfo_ncluster</definition>
+        <argsstring>(Cluster *cls, int order)</argsstring>
+        <name>Cluster_getClusinfo_ncluster</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="157" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="289" bodyend="294"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a6b9c8c9df234300131441941b4bcedca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int* Cluster_getClusinfo_itercluster</definition>
+        <argsstring>(Cluster *cls, int order, int ic)</argsstring>
+        <name>Cluster_getClusinfo_itercluster</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ic</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="158" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="296" bodyend="302"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a85421142bc01aff90072f601750630d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Cluster_getClusinfo_iter</definition>
+        <argsstring>(Cluster *cls, int order, int ic)</argsstring>
+        <name>Cluster_getClusinfo_iter</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ic</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="159" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="304" bodyend="310"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a7c7ce96f1b498cd96f9947d19b36533f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int* Cluster_getClusinfo_cluster_copy</definition>
+        <argsstring>(Cluster *cls, int order, int ic)</argsstring>
+        <name>Cluster_getClusinfo_cluster_copy</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ic</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="160" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="312" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a5583bd2d256b68c05ae64321bedd9ce5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int ***</type>
+        <definition>int*** Cluster_getClusinfo</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_getClusinfo</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="161" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="322" bodyend="324"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1ac7679f34d7eeded23349753f0755b1a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_allocNk</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_allocNk</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="164" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="220" bodyend="223"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a7dce125082c96c3fa2749d8ef6cd5d5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_freeNk</definition>
+        <argsstring>(Cluster *qa)</argsstring>
+        <name>Cluster_freeNk</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="165" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="371" bodyend="373"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a14d2e85d18ec2ea621e6953d77716e20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Cluster_getNk_order</definition>
+        <argsstring>(Cluster *cls, int i)</argsstring>
+        <name>Cluster_getNk_order</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="166" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="344" bodyend="351"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a4bd76920f0cef240c3a31124c14ca203" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int* Cluster_getNk</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_getNk</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="167" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="340" bodyend="342"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a2873972ff65570fa0062778501cc1e82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* Cluster_getMethod</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_getMethod</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="170" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="328" bodyend="330"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a47d752dbb15a2ffb42196cdd3954847b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int Cluster_getOrder</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_getOrder</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="171" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="332" bodyend="334"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1a3dda4466570a4fc20cae5575985f6bbc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool Cluster_getAddsubclus</definition>
+        <argsstring>(Cluster *cls)</argsstring>
+        <name>Cluster_getAddsubclus</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="172" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="336" bodyend="338"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1aa90dc64438d37b32233d63477faf1f12" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_setOrder</definition>
+        <argsstring>(Cluster *cls, int order)</argsstring>
+        <name>Cluster_setOrder</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>order</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="175" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="356" bodyend="358"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1ababf9e54916b278727d4b425b3cc8904" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_setMethod</definition>
+        <argsstring>(Cluster *cls, char *method)</argsstring>
+        <name>Cluster_setMethod</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>method</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="176" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="360" bodyend="362"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1acbb70ded1b186b5dc918b75fa4d5eb70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_setAddsubclus</definition>
+        <argsstring>(Cluster *cls, bool addsubclus)</argsstring>
+        <name>Cluster_setAddsubclus</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>addsubclus</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="177" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="363" bodyend="365"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster_8h_1ac788d747aa9c4b77e643ba5f0419aae9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Cluster_setNk</definition>
+        <argsstring>(Cluster *cls, int *nk)</argsstring>
+        <name>Cluster_setNk</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>nk</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster.h" line="178" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster.cpp" bodystart="366" bodyend="368"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_CLUSTER_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_CLUSTER_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;general.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;bath.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="structCluster" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="structCluster_1ae77394af156e2e278a34f12e83d66cb7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structCluster_1ae77394af156e2e278a34f12e83d66cb7" kindref="member">order</ref>;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="structCluster_1a7c4d583750b7f37eb2ca537e23ad334f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structCluster_1a7c4d583750b7f37eb2ca537e23ad334f" kindref="member">sK</ref>;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="structCluster_1acfc81556c4ed78e0bce4c36119fe7150" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>method[MAX_CHARARRAY_LENGTH];</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="structCluster_1a1385a76b03a7f2f862526ff2bf449755" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/><ref refid="structCluster_1a1385a76b03a7f2f862526ff2bf449755" kindref="member">nk</ref>;<sp/></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81" refid="structCluster_1a33621fac416bdd2eea40805e74730748" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structCluster_1a33621fac416bdd2eea40805e74730748" kindref="member">addsubclus</ref>;<sp/></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="structCluster_1afd65bde6cf52f123d1d1ab7a3fd9805c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/><ref refid="structCluster_1afd65bde6cf52f123d1d1ab7a3fd9805c" kindref="member">clusinfo</ref>;<sp/></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal">}<sp/><ref refid="structCluster" kindref="compound">Cluster</ref>;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>High<sp/>Level<sp/>--------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">//<sp/>init</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>Cluster_init();</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_clusterize(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>config);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="comment">//<sp/>free</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_freeAll(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight><highlight class="comment">//<sp/>MPI</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/>int***<sp/>Clsuter_getLocalClusters_MPI(Cluster*<sp/>cls);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="comment">//<sp/>find<sp/>clusters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>Cluster_find_clusinfo_hash(Cluster*<sp/>cls,<sp/>BathArray*<sp/>batharr,<sp/>Config*<sp/>config);<sp/>//<sp/>normal<sp/>(hash)<sp/>algorithm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>Cluster_find_clusinfo_dsj(Cluster*<sp/>cls,<sp/>BathArray*<sp/>batharr,<sp/>Config*<sp/>config);<sp/>//<sp/>disjoint<sp/>algorithm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>Cluster_find_clusinfo_itb(Cluster*<sp/>cls,<sp/>BathArray*<sp/>batharr,<sp/>Config*<sp/>config);<sp/>//<sp/>inter-bathcluster<sp/>algorithm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>Cluster_find_clusinfo_dsjitb(Cluster*<sp/>cls,<sp/>BathArray*<sp/>batharr,<sp/>Config*<sp/>config);<sp/>//<sp/>disjoint<sp/>+<sp/>inter-bathcluster<sp/>algorithm</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/>report</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_report(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_reportNk(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_reportClusinfo(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reportClusinfo(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>clusinfo,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Low<sp/>Level<sp/>--------------------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="comment">//<sp/>clusinfo<sp/>controller</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_allocClusinfo(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);<sp/></highlight><highlight class="comment">//<sp/>alloc<sp/>clusinfo[order+1]<sp/>:<sp/>0<sp/>~<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_freeClusinfo(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>Cluster_setClusinfo_addcluster(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iter,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster);<sp/></highlight><highlight class="comment">//<sp/>add<sp/>new<sp/>cluster,<sp/>return<sp/>the<sp/>index<sp/>of<sp/>the<sp/>cluster</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_setClusinfo_chgcluster(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ic);<sp/></highlight><highlight class="comment">//<sp/>change<sp/>cluster<sp/>at<sp/>ic-th<sp/>cluster</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_setClusinfo_chgiter(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iter,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ic);<sp/></highlight><highlight class="comment">//<sp/>change<sp/>iter<sp/>at<sp/>ic-th<sp/>cluster<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>Cluster_setSk(Cluster*<sp/>cls,<sp/>int<sp/>sk);<sp/>//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>Cluster_getSk(Cluster*<sp/>cls);<sp/>//<sp/>output</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="comment">//<sp/>what&apos;s<sp/>iter<sp/>:<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="comment">//<sp/>The<sp/>number<sp/>how<sp/>many<sp/>you<sp/>will<sp/>multiply/divide<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="comment">//<sp/>in<sp/>the<sp/>coherence<sp/>calculation<sp/>for<sp/>0<sp/>th<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>Cluster_getClusinfo_ncluster(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);<sp/></highlight><highlight class="comment">//<sp/>get<sp/>the<sp/>number<sp/>of<sp/>clusters<sp/>at<sp/>order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>Cluster_getClusinfo_itercluster(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ic);<sp/></highlight><highlight class="comment">//<sp/>get<sp/>ic-th<sp/>iter+cluster<sp/>at<sp/>order<sp/>[0]<sp/>=<sp/>iter,<sp/>[1~]<sp/>=<sp/>cluster</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>Cluster_getClusinfo_iter(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ic);<sp/></highlight><highlight class="comment">//<sp/>get<sp/>ic-th<sp/>iter+cluster<sp/>at<sp/>order<sp/>[0]<sp/>=<sp/>iter,<sp/>[1~]<sp/>=<sp/>cluster</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>Cluster_getClusinfo_cluster_copy(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ic);<sp/></highlight><highlight class="comment">//<sp/>get<sp/>ic-th<sp/>cluster<sp/>at<sp/>order<sp/>(copy)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>Cluster_getClusinfo(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="comment">//<sp/>nk<sp/>controller</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_allocNk(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_freeNk(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>Cluster_getNk_order(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);<sp/></highlight><highlight class="comment">//<sp/>get<sp/>the<sp/>number<sp/>of<sp/>clusters<sp/>at<sp/>ith-orderr<sp/>at<sp/>ith-order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>Cluster_getNk(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight><highlight class="comment">//<sp/>others<sp/>controller</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Cluster_getMethod(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>Cluster_getOrder(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Cluster_getAddsubclus(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">//<sp/>set<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_setOrder(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_setMethod(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>method);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_setAddsubclus(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>addsubclus);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Cluster_setNk(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>nk);<sp/></highlight><highlight class="comment">//<sp/>set<sp/>the<sp/>number<sp/>of<sp/>clusters<sp/>at<sp/>ith-order</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_CLUSTER_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/cluster.h"/>
+  </compounddef>
+</doxygen>
