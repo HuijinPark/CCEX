@@ -1,6 +1,3 @@
-/** \page README 
-
-
 2023.11.19
 
 CCEX ![](https://komarev.com/ghpvc/?username=your-github-username&style=flat-square) ![](https://img.shields.io/github/watchers/{username}/{repo-name}.svg)
@@ -9,7 +6,8 @@ CCEX ![](https://komarev.com/ghpvc/?username=your-github-username&style=flat-squ
 ![License](https://img.shields.io/badge/License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b)<br/>
 **This code is for the simulation of qubit coherence dynamics<br/>**
 
-**Document** [How to use "CCEX"](https://cce-x-refactoring.vercel.app/index.html)
+**Document** [How to use "CCEX"](https://ccex-huijinparks-projects.vercel.app/index.html)
+
 
 **TODO**
 * Add additional spins for spin defects
@@ -44,14 +42,13 @@ uthash (For details, see [here](https://troydhanson.github.io/uthash/userguide.h
 
 
 
-# How to install and connect the library of mpich (mpi stuff) in macos
+# Installation external library
+How to install and connect the library of mpich (mpi stuff) in mac-os
 #### mpich
-brew install mpich
-mpicxx --version
+- brew install mpich
+- mpicxx --version
 
 $ mpicxx -v
-  '-I /opt/homebrew/Cellar/mpich/4.2.1/include' [-Wunused-command-line-argument]
-  The include directory : /opt/homebrew/Cellar/mpich/4.2.1/include'
+-  '-I /opt/homebrew/Cellar/mpich/4.2.1/include' [-Wunused-command-line-argument]
+-  The include directory : /opt/homebrew/Cellar/mpich/4.2.1/include'
 
-
-*/
