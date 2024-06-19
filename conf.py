@@ -6,7 +6,7 @@ subprocess.call('doxygen', shell=True)
 extensions = ['breathe']
 
 breathe_projects = {
-    "CCEX": "../docs/xml"
+    "CCEX": "docs/xml"
 }
 breathe_default_project = "CCEX"
 
