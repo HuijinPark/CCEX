@@ -1,10 +1,6 @@
 var NAVTREE =
 [
   [ "CCEX-1.0.0", "index.html", [
-    [ "Overview", "user", null ],
-    [ "Getting started", "user", null ],
-    [ "Input File", "user", null ],
-    [ "Examples", "user", null ],
     [ "Overview", "index.html", [
       [ "Introduction", "index.html#Introduction", null ],
       [ "the simulation", "index.html#About", null ],
@@ -13,13 +9,16 @@ var NAVTREE =
       [ "Update", "index.html#Update", null ],
       [ "do list", "index.html#To", null ]
     ] ],
+    [ "Getting started", "GettingStarted.html", null ],
+    [ "Input File", "InputFile.html", null ],
+    [ "Examples", "Examples.html", null ],
     [ "Class List", "annotated.html", "annotated" ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"annotated.html"
+"Examples.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
