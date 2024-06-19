@@ -2,6 +2,10 @@ var NAVTREE =
 [
   [ "CCEX-1.0.0", "index.html", [
     [ "README", "md__home_huijin_git_CCEX_README.html", null ],
+    [ "Example Page", "example_page.html", null ],
+    [ "Tag Page", "tag_page.html", [
+      [ "A Section in Tag Page", "tag_page.html#tag_section", null ]
+    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ]
