@@ -1,4 +1,4 @@
-/** \mainpage README Readme
+/** \mainpage README 
 
 2023.11.19
 

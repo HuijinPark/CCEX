@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['readme_20readme',['README Readme',['../index.html',1,'']]],
+  ['readme',['README',['../index.html',1,'']]],
   ['readme',['README',['../md__home_huijin_git_CCEX_README.html',1,'']]],
   ['rbath',['rbath',['../structConfig.html#a79389333cffeb4063cf1d39e89234c57',1,'Config']]],
   ['rbathcut',['rbathcut',['../structConfig.html#a2eeef76fa44792c24c3320ff6b4d19c8',1,'Config']]],
