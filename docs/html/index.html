@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.5"/>
-<title>CCEX-1.0.0: Overview</title>
+<title>CCEX-1.0.0: InputFile Input File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -47,7 +47,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="README.html"><span>Readme</span></a></li>
       <li class="current"><a href="index.html"><span>Overview</span></a></li>
       <li><a href="GettingStarted.html"><span>Getting&#160;started</span></a></li>
-      <li><a href="InputFile.html"><span>Input&#160;File</span></a></li>
+      <li><a href="index.html"><span>Input&#160;File</span></a></li>
       <li><a href="Examples.html"><span>Examples</span></a></li>
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li>
@@ -99,59 +99,104 @@ $(document).ready(function(){initNavTree('index.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">Overview </div>  </div>
+<div class="title">InputFile Input File </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>Generated on 2024.06.01</p>
-<h1><a class="anchor" id="Introduction"></a>
-Introduction</h1>
-<p>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <a class="el" href="">"CCEX GitHub Repository" </a></p>
-<h1><a class="anchor" id="AboutTheSimulation"></a>
-About the simulation</h1>
-<p>In this code, we simulate the qubit dynamics in the presence of the bath spins.</p>
-<p>You can simulate the spin qubit dynamcis with the following methods:</p>
+<div class="textblock"><p>This is navigator to find the input file tags</p>
+<h1><a class="anchor" id="IN_CONFIG"></a>
+General condition</h1>
 <ul>
-<li><a class="el" href="structCluster.html">Cluster</a> correlation expension method (CCE method)</li>
-<li>CCE-NeNn method</li>
-<li>Generalized CCE method</li>
-<li>Partition CCE method (To be done)</li>
+<li>method method</li>
+<li>quantity quantity</li>
+<li>order order</li>
+<li>bfield bfield</li>
+<li>rbath rbath</li>
+<li>rdip rdip</li>
+<li>deltat deltat</li>
+<li>nstep nstep</li>
+<li>rbathcut rbathcut</li>
+<li>rdipcut rdipcut</li>
+<li>nstate nstate</li>
+<li>seed seed</li>
+<li>qubitfile qubitfile</li>
+<li>gyrofile gyrofile</li>
+<li>bathfile bathfiles</li>
+<li>bathadjust bathadjust</li>
+<li>avaaxfile avaaxfile</li>
+<li>statefile statefile</li>
+<li>exstatefile exstatefile</li>
+<li>DefectTotSpin DefectTotSpin</li>
+<li>CorrTotSpin CorrTotSpin</li>
+<li>hf_readmode hf_readmode</li>
+<li>hf_tensorfile hf_tensorfile</li>
+<li>hf_cutoff hf_cutoff</li>
+<li>hf_ignore_oor hf_ignore_oor</li>
+<li>qd_readmode qd_readmode</li>
+<li>qd_tensorfile qd_tensorfile</li>
+<li>qd_tensorfile_woqubit qd_tensorfile_woqubit</li>
 </ul>
-<p>You can obtain the following physical quantities of qubit for evolving time:</p>
+<h1><a class="anchor" id="IN_CLUSTER"></a>
+Clustering condition</h1>
 <ul>
-<li>Coherence function</li>
-<li>Density matrix (gCCE method only)</li>
-<li>Noise function (To be done for CCE, gCCE)</li>
+<li>order order</li>
+<li>method method</li>
+<li>addsubclus addsubclus</li>
+<li>nk nk</li>
 </ul>
-<h1><a class="anchor" id="Installation"></a>
-Installation</h1>
-<div class="fragment"><div class="line">$ git clone https:<span class="comment">//github.com/HuijinPark/CCEX.git </span></div>
-</div><!-- fragment --><p><b>Requirement</b> <b></b> </p>
+<h1><a class="anchor" id="IN_OUTPUT"></a>
+Output options</h1>
 <ul>
-<li><a class="el" href="">"Intel MKL" </a></li>
-<li><a class="el" href="">"Intel mpi" </a></li>
+<li>savemode savemode</li>
+<li>outfile outfile</li>
 </ul>
-<p><b>Note</b> <b></b> </p>
+<h1><a class="anchor" id="IN_PULSE"></a>
+Pulse condition</h1>
 <ul>
-<li>MakeFile Path should be changed.. (To be changed)</li>
+<li>npulse npulse</li>
+<li>pulsename pulsename</li>
+<li>sequence sequenceinput</li>
 </ul>
-<h1><a class="anchor" id="UsageInstructions"></a>
-Usage Instructions</h1>
-<p>To run the code using <code> mpirun </code>, use the following command :</p>
-<div class="fragment"><div class="line">$ mpirun -n process_number code_path -f input_file </div>
-</div><!-- fragment --><ul>
-<li>process_number : The number of processes to run.</li>
-<li>code_path : The path to your executable code.</li>
-<li>-f input_file : The input file required for the code to run. (input file should be <code>.json</code> file)</li>
-</ul>
-<p><b>example</b> <b></b>  $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json </p>
-<p><b>*</b> For more detailed instructions, see the <a class="el" href="GettingStarted.html">Getting Started</a>.<b></b> </p>
-<h1><a class="anchor" id="Update"></a>
-Update</h1>
-<p>... To be written.</p>
-<h1><a class="anchor" id="ToDoList"></a>
-To do list</h1>
+<h1><a class="anchor" id="IN_DEFECTARR"></a>
+Configuration of spins on bath defect</h1>
 <ul>
-<li>Grouping of files in Model / Parser / Generator categories </li>
+<li>dfname dfname</li>
+<li>naddspin naddspin</li>
+<li>navaax navaax</li>
+<li>apprx apprx</li>
+<li>types types</li>
+<li>spins spins</li>
+<li>gyros gyros</li>
+<li>eqs eqs</li>
+<li>rxyzs rxyzs</li>
+<li>hypf hypf</li>
+<li>efg efg</li>
+<li>zfs zfs</li>
+<li>detuning detuning</li>
+</ul>
+<h1><a class="anchor" id="IN_QUBITARR"></a>
+Configuration of qubit spins</h1>
+<ul>
+<li>nqubit nqubit</li>
+<li>qubit (sub-key)</li>
+<li>name name</li>
+<li>spin spin</li>
+<li>gyro gyro</li>
+<li>xyz xyz</li>
+<li>detuning detuning</li>
+<li>alpha alphams</li>
+<li>beta betams</li>
+<li>intmap (sub-key)</li>
+<li>between between</li>
+<li>tensor tensor</li>
+<li>psia psiamat</li>
+<li>psib psibmat</li>
+<li>psi0 psi0mat</li>
+<li>overhaus overhaus</li>
+<li>alphaidx alphaidx</li>
+<li>betaidx betaidx</li>
+<li>qspin spin</li>
+<li>alphams alphams</li>
+<li>betams betams </li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- doc-content -->

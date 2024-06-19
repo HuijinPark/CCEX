@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['input_20file',['Input File',['../InputFile.html',1,'']]]
+  ['inputfile_20input_20file',['InputFile Input File',['../index.html',1,'']]]
 ];

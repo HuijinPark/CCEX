@@ -2,16 +2,15 @@ var NAVTREE =
 [
   [ "CCEX-1.0.0", "index.html", [
     [ "Readme", "README.html", null ],
-    [ "Overview", "index.html", [
-      [ "Introduction", "index.html#Introduction", null ],
-      [ "About the simulation", "index.html#AboutTheSimulation", null ],
-      [ "Installation", "index.html#Installation", null ],
-      [ "Usage Instructions", "index.html#UsageInstructions", null ],
-      [ "Update", "index.html#Update", null ],
-      [ "To do list", "index.html#ToDoList", null ]
+    [ "InputFile Input File", "index.html", [
+      [ "General condition", "index.html#IN_CONFIG", null ],
+      [ "Clustering condition", "index.html#IN_CLUSTER", null ],
+      [ "Output options", "index.html#IN_OUTPUT", null ],
+      [ "Pulse condition", "index.html#IN_PULSE", null ],
+      [ "Configuration of spins on bath defect", "index.html#IN_DEFECTARR", null ],
+      [ "Configuration of qubit spins", "index.html#IN_QUBITARR", null ]
     ] ],
     [ "Getting started", "GettingStarted.html", null ],
-    [ "Input File", "InputFile.html", null ],
     [ "Examples", "Examples.html", null ],
     [ "Class List", "annotated.html", "annotated" ]
   ] ]
