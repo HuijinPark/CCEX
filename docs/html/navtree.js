@@ -1,11 +1,6 @@
 var NAVTREE =
 [
   [ "CCEX-1.0.0", "index.html", [
-    [ "Overview", "index.html", [
-      [ "Introduction", "index.html#intro", null ],
-      [ "Example Page", "index.html#example", null ],
-      [ "Tag Page", "index.html#tag", null ]
-    ] ],
     [ "Getting started", "GettingStarted.html", null ],
     [ "Input File", "InputFile.html", null ],
     [ "Examples", "Examples.html", null ],

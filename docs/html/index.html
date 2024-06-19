@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.5"/>
-<title>CCEX-1.0.0: Overview</title>
+<title>CCEX-1.0.0: CCEX-1.0.0</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -99,18 +99,116 @@ $(document).ready(function(){initNavTree('index.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">Overview </div>  </div>
+<div class="title">CCEX-1.0.0 </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="intro"></a>
-Introduction</h1>
-<p>This is the introduction to CCEX-1.0.0.</p>
-<h1><a class="anchor" id="example"></a>
-Example Page</h1>
-<p><a href="example_page.html">Example Page</a></p>
-<h1><a class="anchor" id="tag"></a>
-Tag Page</h1>
-<p><a href="tag_page.html">Tag Page</a> </p>
+<div class="textblock"><p>Generated on  "%A, %B %-d, %Y at %-I:%M %p"</p>
+<h1>Introduction </h1>
+<p>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <a href="https://github.com/HuijinPark/CCEX">here</a>.</p>
+<h1>About the simulation </h1>
+<p>In this code, we simulate the qubit dynamics in the presence of the bath spins.</p>
+<p>You can simulate the spin qubit dynamcis with the following methods:</p>
+<ul>
+<li><a class="el" href="structCluster.html">Cluster</a> correlation expension method (CCE method)</li>
+<li>CCE-NeNn method</li>
+<li>Generalized CCE method</li>
+<li>Partition CCE method (To be done)</li>
+</ul>
+<p>You can obtain the following physical quantities of qubit for evolving time:</p>
+<ul>
+<li>Coherence function</li>
+<li>Density matrix (gCCE method only)</li>
+<li>Noise function (To be done for CCE, gCCE)</li>
+</ul>
+<h1>Installation </h1>
+<p>``` $ git clone <a href="https://github.com/HuijinPark/CCEX.git">https://github.com/HuijinPark/CCEX.git</a> ```</p>
+<h2>Requirement</h2>
+<p><a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html">Intel MKL</a> <a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5">Intel mpi</a></p>
+<h2>Note</h2>
+<p>MakeFile Path should be changed.. (To be changed)</p>
+<h1>Usage Instructions </h1>
+<p>To run the code using <code>mpirun</code>, use the following command :</p>
+<p>``` $ mpirun -n process_number code_path -f input_file</p>
+<p>```</p>
+<ul>
+<li>process_number : The number of processes to run.</li>
+<li>code_path : The path to your executable code.</li>
+<li>-f input_file : The input file required for the code to run.<ul>
+<li>(input file should be <code>.json</code><br/>
+ file)</li>
+</ul>
+</li>
+</ul>
+<h1>example</h1>
+<p>``` $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json ```</p>
+<h1>Update </h1>
+<p><code>To be written.</code></p>
+<h1>To do list </h1>
+<ul>
+<li>Grouping of files in Model / Parser / Generator categories</li>
+<li>Index files based on IndexIntf<ul>
+<li>HTML navigation</li>
+<li>HTML Help (chm)</li>
+<li>Documentation Sets (XCode)</li>
+<li>Qt Help (qhp)</li>
+<li>Eclipse Help</li>
+</ul>
+</li>
+<li>Search index<ul>
+<li>JavaScript based</li>
+<li>Server based</li>
+<li>External</li>
+</ul>
+</li>
+<li>Citations<ul>
+<li>via bibtex</li>
+</ul>
+</li>
+<li>Various processing steps for a comment block<ul>
+<li>comment conversion</li>
+<li>comment scanner</li>
+<li>markdown processor</li>
+<li>doc tokenizer</li>
+<li>doc parser</li>
+<li>doc visitors</li>
+</ul>
+</li>
+<li>Diagrams and Images<ul>
+<li>builtin</li>
+<li>via Graphviz dot</li>
+<li>via mscgen</li>
+<li>PNG generation</li>
+</ul>
+</li>
+<li><a class="el" href="structOutput.html">Output</a> formats: OutputGenerator, OutputList, and DocVisitor<ul>
+<li>Html: HtmlGenerator and HtmlDocVisitor</li>
+<li>Latex: LatexGenerator and LatexDocVisitor</li>
+<li>RTF: RTFGenerator and RTFDocVisitor</li>
+<li>Man: ManGenerator and ManDocVisitor</li>
+<li>XML: generateXML() and XmlDocVisitor</li>
+<li>print: debugging via PrintDocVisitor</li>
+<li>text: TextDocVisitor for tooltips</li>
+<li>perlmod</li>
+</ul>
+</li>
+<li>i18n via Translator and language.cpp</li>
+<li>Customizing the layout via LayoutDocManager</li>
+<li>Parsers<ul>
+<li>C Preprocessing<ul>
+<li>const expression evaluation</li>
+</ul>
+</li>
+<li>C link languages</li>
+<li>Python</li>
+<li>Fortran</li>
+<li>VHDL</li>
+<li>Tag files</li>
+</ul>
+</li>
+<li>Marshaling to/from disk</li>
+<li>Portability functions</li>
+<li>Utility functions </li>
+</ul>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
