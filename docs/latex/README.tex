@@ -1,0 +1,80 @@
+2023.\-11.\-19
+
+\section*{C\-C\-E\-X}
+
+  
+
+\par
+
+
+\section*{}
+
+\par
+ {\bfseries This code is for the simulation of qubit coherence dynamics\par
+}
+
+{\bfseries Document} \href{https://cce-x-refactoring.vercel.app/index.html}{\tt How to use \char`\"{}\-C\-C\-E\-X\char`\"{}}
+
+{\bfseries T\-O\-D\-O}
+\begin{DoxyItemize}
+\item Add additional spins for spin defects
+\item Bath tensor file
+\item qintmap self, easy for zfs tensor -\/$>$ \{ D= xxx , E= xxx \}
+\item pulse operator for each qubit \par
+
+\end{DoxyItemize}
+
+{\bfseries Useful page}
+\begin{DoxyItemize}
+\item \href{https://docs.github.com/ko/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax}{\tt How to write \char`\"{}\-R\-E\-A\-D\-M\-E.\-md\char`\"{}}
+\end{DoxyItemize}
+
+{\bfseries Used language}\par
+     \par
+
+
+{\bfseries External library}\par
+ \hyperlink{namespaceEigen}{Eigen} (For details, see \href{https://eigen.tuxfamily.org/index.php?title=Main_Page}{\tt here})\par
+ uthash (For details, see \href{https://troydhanson.github.io/uthash/userguide.html#_a_hash_in_c}{\tt here})\par
+ \par
+
+
+\begin{quotation}
+\mbox{[}!\-N\-O\-T\-E\mbox{]} Highlights information that users should take into account, even when skimming.
+
+\end{quotation}
+
+
+\begin{quotation}
+\mbox{[}!\-I\-M\-P\-O\-R\-T\-A\-N\-T\mbox{]} intel M\-P\-I library is required
+
+\end{quotation}
+
+
+\begin{quotation}
+\mbox{[}!\-W\-A\-R\-N\-I\-N\-G\mbox{]} Critical content demanding immediate user attention due to potential risks.
+
+\end{quotation}
+
+
+\section*{How to install and connect the library of mpich (mpi stuff) in macos}
+
+\paragraph*{mpich}
+
+brew install mpich mpicxx --version
+
+\$ mpicxx -\/v '-\/\-I /opt/homebrew/\-Cellar/mpich/4.2.\-1/include' \mbox{[}-\/\-Wunused-\/command-\/line-\/argument\mbox{]} The include directory \-: /opt/homebrew/\-Cellar/mpich/4.2.\-1/include'
+
+\section*{All variables}
+
+c\-J\-S\-O\-N\-\_\-read\-Option\-Config 함수 method -\/$>$ method quantity -\/$>$ quantity order -\/$>$ order bfield -\/$>$ bfield rbath -\/$>$ rbath rdip -\/$>$ rdip deltat -\/$>$ deltat nstep -\/$>$ nstep rbathcut -\/$>$ rbathcut rdipcut -\/$>$ rdipcut nstate -\/$>$ nstate seed -\/$>$ seed qubitfile -\/$>$ qubitfile gyrofile -\/$>$ gyrofile bathfile -\/$>$ bathfiles bathadjust -\/$>$ bathadjust avaaxfile -\/$>$ avaaxfile statefile -\/$>$ statefile exstatefile -\/$>$ exstatefile Defect\-Tot\-Spin -\/$>$ Defect\-Tot\-Spin Corr\-Tot\-Spin -\/$>$ Corr\-Tot\-Spin hf\-\_\-readmode -\/$>$ hf\-\_\-readmode hf\-\_\-tensorfile -\/$>$ hf\-\_\-tensorfile hf\-\_\-cutoff -\/$>$ hf\-\_\-cutoff hf\-\_\-ignore\-\_\-oor -\/$>$ hf\-\_\-ignore\-\_\-oor qd\-\_\-readmode -\/$>$ qd\-\_\-readmode qd\-\_\-tensorfile -\/$>$ qd\-\_\-tensorfile qd\-\_\-tensorfile\-\_\-woqubit -\/$>$ qd\-\_\-tensorfile\-\_\-woqubit
+
+c\-J\-S\-O\-N\-\_\-read\-Option\-Cluster 함수 order -\/$>$ order method -\/$>$ method addsubclus -\/$>$ addsubclus nk -\/$>$ nk
+
+c\-J\-S\-O\-N\-\_\-read\-Option\-Output 함수 savemode -\/$>$ savemode outfile -\/$>$ outfile
+
+c\-J\-S\-O\-N\-\_\-read\-Option\-Pulse 함수 npulse -\/$>$ npulse pulsename -\/$>$ pulsename sequence -\/$>$ sequenceinput
+
+c\-J\-S\-O\-N\-\_\-read\-Option\-Defect\-Array 함수 dfname -\/$>$ dfname naddspin -\/$>$ naddspin navaax -\/$>$ navaax apprx -\/$>$ apprx types -\/$>$ types spins -\/$>$ spins gyros -\/$>$ gyros eqs -\/$>$ eqs rxyzs -\/$>$ rxyzs hypf -\/$>$ hypf efg -\/$>$ efg zfs -\/$>$ zfs detuning -\/$>$ detuning
+
+c\-J\-S\-O\-N\-\_\-read\-Option\-Qubit\-Array 함수 nqubit -\/$>$ nqubit qubit (sub-\/key) name -\/$>$ name spin -\/$>$ spin gyro -\/$>$ gyro xyz -\/$>$ xyz detuning -\/$>$ detuning alpha -\/$>$ alphams beta -\/$>$ betams intmap (sub-\/key) between -\/$>$ between tensor -\/$>$ tensor psia -\/$>$ psiamat psib -\/$>$ psibmat psi0 -\/$>$ psi0mat overhaus -\/$>$ overhaus alphaidx -\/$>$ alphaidx betaidx -\/$>$ betaidx qspin -\/$>$ spin alphams -\/$>$ alphams betams -\/$>$ betams $\ast$/ 

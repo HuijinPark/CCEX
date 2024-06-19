@@ -1,8 +1,15 @@
-/** \mainpage README 
+/** \page README 
 
 2023.11.19
 
-CCEX ![](https://komarev.com/ghpvc/?username=your-github-username&style=flat-square) ![](https://img.shields.io/github/watchers/{username}/{repo-name}.svg)
+# CCEX 
+<img src="https://komarev.com/ghpvc/?username=your-github-username&style=flat-square" style="float: left; margin-right: 10px;" />
+<img src="https://img.shields.io/github/watchers/{username}/{repo-name}.svg" style="float: left; margin-right: 10px;" />
+<img src="https://img.shields.io/badge/License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b" style="float: left; margin-right: 10px;" />
+
+<br clear="left" />
+
+![](https://komarev.com/ghpvc/?username=your-github-username&style=flat-square) ![](https://img.shields.io/github/watchers/{username}/{repo-name}.svg)
 ===============
 
 ![License](https://img.shields.io/badge/License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b)<br/>

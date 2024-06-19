@@ -1,73 +1,57 @@
-2023.\-11.\-19
+Generated on 2024.\-06.\-01\hypertarget{index_Introduction}{}\section{Introduction}\label{index_Introduction}
+This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \hyperlink{}{\char`\"{}\-C\-C\-E\-X Git\-Hub Repository\char`\"{} }\hypertarget{index_AboutTheSimulation}{}\section{About the simulation}\label{index_AboutTheSimulation}
+In this code, we simulate the qubit dynamics in the presence of the bath spins.
 
-\section*{C\-C\-E\-X   }
-
-\par
- {\bfseries This code is for the simulation of qubit coherence dynamics\par
-}
-
-{\bfseries Document} \href{https://cce-x-refactoring.vercel.app/index.html}{\tt How to use \char`\"{}\-C\-C\-E\-X\char`\"{}}
-
-{\bfseries T\-O\-D\-O}
+You can simulate the spin qubit dynamcis with the following methods\-:
 \begin{DoxyItemize}
-\item Add additional spins for spin defects
-\item Bath tensor file
-\item qintmap self, easy for zfs tensor -\/$>$ \{ D= xxx , E= xxx \}
-\item pulse operator for each qubit \par
-
+\item correlation expension method (C\-C\-E method)
+\item C\-C\-E-\/\-Ne\-Nn method
+\item Generalized C\-C\-E method
+\item Partition C\-C\-E method (To be done)
 \end{DoxyItemize}
 
-{\bfseries Useful page}
+You can obtain the following physical quantities of qubit for evolving time\-:
 \begin{DoxyItemize}
-\item \href{https://docs.github.com/ko/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax}{\tt How to write \char`\"{}\-R\-E\-A\-D\-M\-E.\-md\char`\"{}}
+\item Coherence function
+\item Density matrix (g\-C\-C\-E method only)
+\item Noise function (To be done for C\-C\-E, g\-C\-C\-E)
+\end{DoxyItemize}\hypertarget{index_Installation}{}\section{Installation}\label{index_Installation}
+
+\begin{DoxyCode}
+$ git clone https:\textcolor{comment}{//github.com/HuijinPark/CCEX.git }
+\end{DoxyCode}
+
+
+{\bfseries Requirement} {\bfseries } 
+\begin{DoxyItemize}
+\item \hyperlink{}{\char`\"{}\-Intel M\-K\-L\char`\"{} }
+\item \hyperlink{}{\char`\"{}\-Intel mpi\char`\"{} }
 \end{DoxyItemize}
 
-{\bfseries Used language}\par
-     \par
+{\bfseries Note} {\bfseries } 
+\begin{DoxyItemize}
+\item Make\-File Path should be changed.. (To be changed)
+\end{DoxyItemize}\hypertarget{index_UsageInstructions}{}\section{Usage Instructions}\label{index_UsageInstructions}
+To run the code using {\ttfamily  mpirun }, use the following command \-:
 
 
-{\bfseries External library}\par
- \hyperlink{namespaceEigen}{Eigen} (For details, see \href{https://eigen.tuxfamily.org/index.php?title=Main_Page}{\tt here})\par
- uthash (For details, see \href{https://troydhanson.github.io/uthash/userguide.html#_a_hash_in_c}{\tt here})\par
- \par
+\begin{DoxyCode}
+$ mpirun -n process\_number code\_path -f input\_file 
+\end{DoxyCode}
 
 
-\begin{quotation}
-\mbox{[}!\-N\-O\-T\-E\mbox{]} Highlights information that users should take into account, even when skimming.
 
-\end{quotation}
+\begin{DoxyItemize}
+\item process\-\_\-number \-: The number of processes to run.
+\item code\-\_\-path \-: The path to your executable code.
+\item -\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
+\end{DoxyItemize}
 
+{\bfseries example} {\bfseries }  \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json 
 
-\begin{quotation}
-\mbox{[}!\-I\-M\-P\-O\-R\-T\-A\-N\-T\mbox{]} intel M\-P\-I library is required
+{\bfseries $\ast$} For more detailed instructions, see the \hyperlink{GettingStarted}{Getting Started}.{\bfseries } \hypertarget{index_Update}{}\section{Update}\label{index_Update}
+... To be written.\hypertarget{index_ToDoList}{}\section{To do list}\label{index_ToDoList}
 
-\end{quotation}
-
-
-\begin{quotation}
-\mbox{[}!\-W\-A\-R\-N\-I\-N\-G\mbox{]} Critical content demanding immediate user attention due to potential risks.
-
-\end{quotation}
-
-
-\section*{How to install and connect the library of mpich (mpi stuff) in macos}
-
-\paragraph*{mpich}
-
-brew install mpich mpicxx --version
-
-\$ mpicxx -\/v '-\/\-I /opt/homebrew/\-Cellar/mpich/4.2.\-1/include' \mbox{[}-\/\-Wunused-\/command-\/line-\/argument\mbox{]} The include directory \-: /opt/homebrew/\-Cellar/mpich/4.2.\-1/include'
-
-\section*{All variables}
-
-c\-J\-S\-O\-N\-\_\-read\-Option\-Config 함수 method -\/$>$ method quantity -\/$>$ quantity order -\/$>$ order bfield -\/$>$ bfield rbath -\/$>$ rbath rdip -\/$>$ rdip deltat -\/$>$ deltat nstep -\/$>$ nstep rbathcut -\/$>$ rbathcut rdipcut -\/$>$ rdipcut nstate -\/$>$ nstate seed -\/$>$ seed qubitfile -\/$>$ qubitfile gyrofile -\/$>$ gyrofile bathfile -\/$>$ bathfiles bathadjust -\/$>$ bathadjust avaaxfile -\/$>$ avaaxfile statefile -\/$>$ statefile exstatefile -\/$>$ exstatefile Defect\-Tot\-Spin -\/$>$ Defect\-Tot\-Spin Corr\-Tot\-Spin -\/$>$ Corr\-Tot\-Spin hf\-\_\-readmode -\/$>$ hf\-\_\-readmode hf\-\_\-tensorfile -\/$>$ hf\-\_\-tensorfile hf\-\_\-cutoff -\/$>$ hf\-\_\-cutoff hf\-\_\-ignore\-\_\-oor -\/$>$ hf\-\_\-ignore\-\_\-oor qd\-\_\-readmode -\/$>$ qd\-\_\-readmode qd\-\_\-tensorfile -\/$>$ qd\-\_\-tensorfile qd\-\_\-tensorfile\-\_\-woqubit -\/$>$ qd\-\_\-tensorfile\-\_\-woqubit
-
-c\-J\-S\-O\-N\-\_\-read\-Option\-Cluster 함수 order -\/$>$ order method -\/$>$ method addsubclus -\/$>$ addsubclus nk -\/$>$ nk
-
-c\-J\-S\-O\-N\-\_\-read\-Option\-Output 함수 savemode -\/$>$ savemode outfile -\/$>$ outfile
-
-c\-J\-S\-O\-N\-\_\-read\-Option\-Pulse 함수 npulse -\/$>$ npulse pulsename -\/$>$ pulsename sequence -\/$>$ sequenceinput
-
-c\-J\-S\-O\-N\-\_\-read\-Option\-Defect\-Array 함수 dfname -\/$>$ dfname naddspin -\/$>$ naddspin navaax -\/$>$ navaax apprx -\/$>$ apprx types -\/$>$ types spins -\/$>$ spins gyros -\/$>$ gyros eqs -\/$>$ eqs rxyzs -\/$>$ rxyzs hypf -\/$>$ hypf efg -\/$>$ efg zfs -\/$>$ zfs detuning -\/$>$ detuning
-
-c\-J\-S\-O\-N\-\_\-read\-Option\-Qubit\-Array 함수 nqubit -\/$>$ nqubit qubit (sub-\/key) name -\/$>$ name spin -\/$>$ spin gyro -\/$>$ gyro xyz -\/$>$ xyz detuning -\/$>$ detuning alpha -\/$>$ alphams beta -\/$>$ betams intmap (sub-\/key) between -\/$>$ between tensor -\/$>$ tensor psia -\/$>$ psiamat psib -\/$>$ psibmat psi0 -\/$>$ psi0mat overhaus -\/$>$ overhaus alphaidx -\/$>$ alphaidx betaidx -\/$>$ betaidx qspin -\/$>$ spin alphams -\/$>$ alphams betams -\/$>$ betams $\ast$/ 
+\begin{DoxyItemize}
+\item Grouping of files in Model / Parser / Generator categories 
+\end{DoxyItemize}
