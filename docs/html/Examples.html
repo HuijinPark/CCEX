@@ -107,7 +107,154 @@ $(document).ready(function(){initNavTree('Examples.html','');});
 <p>This page provides an example of how to include an input file and a result plot in a Doxygen document.</p>
 <h2>Input File</h2>
 <p>The following is the content of the input file used for the simulation:</p>
-<div class="fragment"></div><!-- fragment --> <div class="fragment"></div><!-- fragment --> <div class="fragment"></div><!-- fragment --><h2>Result Plot</h2>
+<div class="fragment"><div class="line">{</div>
+<div class="line">    ! <a class="code" href="structConfig.html">Config</a> - Method </div>
+<div class="line">    <span class="stringliteral">&quot;method&quot;</span>        : <span class="stringliteral">&quot;CCE&quot;</span>, </div>
+<div class="line">    <span class="stringliteral">&quot;quantity&quot;</span>      : <span class="stringliteral">&quot;coherence&quot;</span>,</div>
+<div class="line">    </div>
+<div class="line">    ! <a class="code" href="structConfig.html">Config</a> - File</div>
+<div class="line">    <span class="stringliteral">&quot;qubitfile&quot;</span>     :  <span class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_Defect&quot;</span>,</div>
+<div class="line">    <span class="stringliteral">&quot;gyrofile&quot;</span>      :  <span class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/DiaP1_gyro&quot;</span>,</div>
+<div class="line">    <span class="stringliteral">&quot;bathfile&quot;</span>      : [<span class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_&quot;</span>],</div>
+<div class="line">  !<span class="stringliteral">&quot;avaaxfile&quot;</span>     :  <span class="stringliteral">&quot;Random&quot;</span>,</div>
+<div class="line">  !<span class="stringliteral">&quot;statefile&quot;</span>     :  <span class="stringliteral">&quot;Random&quot;</span>,</div>
+<div class="line">  !<span class="stringliteral">&quot;exstatefile&quot;</span>   :  <span class="stringliteral">&quot;Random&quot;</span>,</div>
+<div class="line"></div>
+<div class="line">    ! <a class="code" href="structConfig.html">Config</a> - General</div>
+<div class="line">    <span class="stringliteral">&quot;order&quot;</span>         : 2,</div>
+<div class="line">    <span class="stringliteral">&quot;bfield&quot;</span>        : 500,</div>
+<div class="line">    <span class="stringliteral">&quot;rbath&quot;</span>         : 850,</div>
+<div class="line">    <span class="stringliteral">&quot;rdip&quot;</span>          : 620,</div>
+<div class="line">    <span class="stringliteral">&quot;deltat&quot;</span>        : 0.01,</div>
+<div class="line">    <span class="stringliteral">&quot;nstep&quot;</span>         : 300,  </div>
+<div class="line"></div>
+<div class="line">    ! <a class="code" href="structQubit.html">Qubit</a> </div>
+<div class="line">    <span class="stringliteral">&quot;alphams&quot;</span>     : -1,</div>
+<div class="line">    <span class="stringliteral">&quot;betams&quot;</span>      : 0,</div>
+<div class="line"></div>
+<div class="line">    ! <a class="code" href="structCluster.html">Cluster</a></div>
+<div class="line">    <span class="stringliteral">&quot;addsubclus&quot;</span>  : 0, ! <span class="keyword">true</span> / <span class="keyword">false</span></div>
+<div class="line">    <span class="stringliteral">&quot;nk&quot;</span>          : [0,0,0], ! <span class="keywordflow">default</span> : [0] (all) or [0,0,30,40,50]</div>
+<div class="line"></div>
+<div class="line">    ! <a class="code" href="structPulse.html">Pulse</a></div>
+<div class="line">    <span class="stringliteral">&quot;npulse&quot;</span>      : 1,</div>
+<div class="line"></div>
+<div class="line">    ! <a class="code" href="structConfig.html">Config</a> - Spin tensor</div>
+<div class="line">    <span class="stringliteral">&quot;hf_readmode&quot;</span>   : 0, </div>
+<div class="line">!  <span class="stringliteral">&quot;hf_tensorfile&quot;</span> : <span class="stringliteral">&quot;0&quot;</span>,</div>
+<div class="line">!  <span class="stringliteral">&quot;hf_cutoff&quot;</span>     : 0</div>
+<div class="line">!  <span class="stringliteral">&quot;qd_readmode&quot;</span>   : 0,</div>
+<div class="line"></div>
+<div class="line">    ! <a class="code" href="structOutput.html">Output</a></div>
+<div class="line">    <span class="stringliteral">&quot;savemode&quot;</span>    : <span class="stringliteral">&quot;normal&quot;</span></div>
+<div class="line"></div>
+<div class="line">,  <span class="stringliteral">&quot;Defect&quot;</span>         : [</div>
+<div class="line">        {   </div>
+<div class="line">            <span class="stringliteral">&quot;dfname&quot;</span>: <span class="stringliteral">&quot;P1&quot;</span>,</div>
+<div class="line">            <span class="stringliteral">&quot;naddspin&quot;</span> : 1,</div>
+<div class="line">            <span class="stringliteral">&quot;types&quot;</span> : [<span class="stringliteral">&quot;14N&quot;</span>],</div>
+<div class="line">            <span class="stringliteral">&quot;spins&quot;</span> : [1],</div>
+<div class="line">            <span class="stringliteral">&quot;eqs&quot;</span>   : [2.044],</div>
+<div class="line">            <span class="stringliteral">&quot;gyros&quot;</span> : [1.9337792],</div>
+<div class="line">            <span class="stringliteral">&quot;navaax&quot;</span> : 4,</div>
+<div class="line">            <span class="stringliteral">&quot;hypf&quot;</span> : [ [1, <span class="stringliteral">&quot;14N&quot;</span>, [ 81.312000 ,     0.000000 ,    0.000000 ,    0.000000 ,    81.312000 ,    0.000000 ,   0.000000 ,    0.000000 ,    114.026400]],</div>
+<div class="line">                       [2, <span class="stringliteral">&quot;14N&quot;</span>, [103.121928 ,    12.591967 ,    8.903264 ,   12.591967 ,    88.581975 ,    5.140302 ,   8.903264 ,    5.140302 ,     84.946496]],</div>
+<div class="line">                       [3, <span class="stringliteral">&quot;14N&quot;</span>, [103.121923 ,   -12.591970 ,   -8.903263 ,  -12.591970 ,    88.581981 ,    5.140303 ,  -8.903263 ,    5.140303 ,     84.946496]],</div>
+<div class="line">                       [4, <span class="stringliteral">&quot;14N&quot;</span>, [ 81.312000 ,    -0.000001 ,    0.000000 ,   -0.000001 ,   110.391904 ,  -10.280603 ,   0.000000 ,  -10.280603 ,     84.946496]]],</div>
+<div class="line">        </div>
+<div class="line">            <span class="stringliteral">&quot;efg&quot;</span> :  [ [1, <span class="stringliteral">&quot;14N&quot;</span>, [  0.521910 ,     0.000000 ,    0.000000 ,    0.000000 ,     0.522771 ,   -0.000086 ,   0.000000 ,   -0.000086 ,     -1.044681]],</div>
+<div class="line">                       [2, <span class="stringliteral">&quot;14N&quot;</span>, [ -0.522214 ,    -0.603404 ,   -0.426335 ,   -0.603404 ,     0.174349 ,   -0.246178 ,  -0.426335 ,   -0.246178 ,      0.347865]],</div>
+<div class="line">                       [3, <span class="stringliteral">&quot;14N&quot;</span>, [ -0.522354 ,     0.603323 ,    0.426364 ,    0.603323 ,     0.174489 ,   -0.246128 ,   0.426364 ,   -0.246128 ,      0.347865]],</div>
+<div class="line">                       [4, <span class="stringliteral">&quot;14N&quot;</span>, [  0.522771 ,     0.000081 ,   -0.000029 ,    0.000081 ,    -0.870636 ,    0.492306 ,  -0.000029 ,    0.492306 ,      0.347865]]]</div>
+<div class="line">        }</div>
+<div class="line">                       ]</div>
+<div class="line">}</div>
+</div><!-- fragment --> <div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH -J CCE2e2n_DiaP1_1ppm_Order_2</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH -p 24core</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --nodes=8</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --ntasks-per-node=24</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --cpus-per-task=1</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --out outfile</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --time=48:00:00</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --qos=medium</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --mem-per-cpu=5300</span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line">module purge </div>
+<div class="line">module load 22.2/icc-22.2 22.2/fftw-3.3.10 22.2/gsl-2.7.1 </div>
+<div class="line"></div>
+<div class="line">export LD_LIBRARY_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD_LIBRARY_PATH</div>
+<div class="line"></div>
+<div class="line">export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK</div>
+<div class="line">NTASKS=$(($SLURM_NTASKS_PER_NODE * $SLURM_JOB_NUM_NODES))</div>
+<div class="line"></div>
+<div class="line">echo <span class="stringliteral">&quot;NTASKS =&quot;</span> $NTASKS</div>
+<div class="line">echo <span class="stringliteral">&quot;NUM_NODES = &quot;</span> $SLURM_JOB_NUM_NODES</div>
+<div class="line">env | grep SLURM</div>
+<div class="line"></div>
+<div class="line">node_process=$NTASKS</div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor">#############################################</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor"># Main Paramaters</span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line"><span class="preprocessor">#bath number</span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line">s=<span class="stringliteral">&quot;$SLURM_ARRAY_TASK_ID&quot;</span></div>
+<div class="line">cista=<span class="stringliteral">&quot;${s}&quot;</span></div>
+<div class="line">ciend=$(( ${s} + 50 - 1  ))</div>
+<div class="line"></div>
+<div class="line">sista=<span class="stringliteral">&quot;1&quot;</span></div>
+<div class="line">siend=<span class="stringliteral">&quot;50&quot;</span></div>
+<div class="line">Nstate=$(( ${siend} - ${sista} + 1 ))</div>
+<div class="line"></div>
+<div class="line">configures=$(seq ${cista} 1 ${ciend})</div>
+<div class="line">states=$(seq ${sista} 1 ${siend})</div>
+<div class="line"></div>
+<div class="line"></div>
+<div class="line">#option input</div>
+<div class="line">CodePath=<span class="stringliteral">&quot;/home/huijin/git/CCEX/bin/main.out&quot;</span></div>
+<div class="line"></div>
+<div class="line"># inputfiles</div>
+<div class="line">mkdir <span class="stringliteral">&quot;./rawdata/&quot;</span></div>
+<div class="line">option_input=<span class="stringliteral">&quot;./ccein.json&quot;</span></div>
+<div class="line">BathFile=<span class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_&quot;</span></div>
+<div class="line">AvaaxFile=<span class="stringliteral">&quot;Random&quot;</span></div>
+<div class="line">StateFile=<span class="stringliteral">&quot;Random&quot;</span></div>
+<div class="line">ExStateFile=<span class="stringliteral">&quot;Random&quot;</span></div>
+<div class="line"></div>
+<div class="line"># outfiles</div>
+<div class="line">outFile=<span class="stringliteral">&quot;./rawdata/CCE2e2n_DiaP1_1ppm_Order_2_&quot;</span></div>
+<div class="line"></div>
+<div class="line">#time checking</div>
+<div class="line">startTime=$(date +%s.%N)</div>
+<div class="line">startTime_string=`date`</div>
+<div class="line"><span class="preprocessor">#############################################################################</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#about CCE2 calculation </span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line"><span class="keywordflow">for</span> m in $configures</div>
+<div class="line"><span class="keywordflow">do</span></div>
+<div class="line">     mpirun -n ${node_process} ${CodePath} -f ${option_input} -I <span class="stringliteral">&quot;${BathFile}${m}&quot;</span> -a <span class="stringliteral">&quot;${AvaaxFile}${m}&quot;</span> -s <span class="stringliteral">&quot;${StateFile}&quot;</span> -S <span class="stringliteral">&quot;${ExStateFile}&quot;</span> -o <span class="stringliteral">&quot;${outFile}${m}&quot;</span> -N <span class="stringliteral">&quot;$Nstate&quot;</span> &gt; <span class="stringliteral">&quot;Process_${m}&quot;</span></div>
+<div class="line"></div>
+<div class="line">    <span class="keywordflow">for</span> s in $states</div>
+<div class="line">    <span class="keywordflow">do</span></div>
+<div class="line">        mv <span class="stringliteral">&quot;${outFile}${m}_wiDiv_${s}&quot;</span> <span class="stringliteral">&quot;${outFile}${m}{${s}}_wiDiv&quot;</span></div>
+<div class="line">        mv <span class="stringliteral">&quot;${outFile}${m}_noDiv_${s}&quot;</span> <span class="stringliteral">&quot;${outFile}${m}{${s}}_noDiv&quot;</span></div>
+<div class="line">    done</div>
+<div class="line">done</div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor">#############################################################################$</span></div>
+<div class="line"><span class="preprocessor"></span>endTime=$(date +%s.%N)</div>
+<div class="line">endTime_string=`date`</div>
+<div class="line"></div>
+<div class="line">elapsed=`echo <span class="stringliteral">&quot;($endTime-$startTime)&quot;</span> |bc`</div>
+<div class="line">htime=`echo <span class="stringliteral">&quot;$elapsed/3600&quot;</span>|bc`</div>
+<div class="line">mtime=`echo <span class="stringliteral">&quot;($elapsed/60)-($htime*60)&quot;</span>|bc`</div>
+<div class="line">stime=`echo <span class="stringliteral">&quot;$elapsed-(($elapsed/60)*60)&quot;</span>|bc`</div>
+<div class="line">echo <span class="stringliteral">&quot;Start time : $startTime_string&quot;</span></div>
+<div class="line">echo <span class="stringliteral">&quot;End time   : $endTime_string&quot;</span></div>
+<div class="line">echo <span class="stringliteral">&quot;Total time : ${htime}H ${mtime}M ${stime}S&quot;</span></div>
+<div class="line"></div>
+</div><!-- fragment --> <div class="fragment"></div><!-- fragment --><h2>Result Plot</h2>
 <p>The following image shows the plot of the simulation results:</p>
 <div class="image">
 <img src="../example/Diamond_NV_P1Bath/SpinEcho_CCE2e2n/1ppm/CCE2e2n_DiaP1_1ppm_Order_2_sE_conv2500.png"  alt="Result Plot"/>
