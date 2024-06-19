@@ -7,6 +7,5 @@ var searchData=
   ['cluster',['Cluster',['../structCluster.html',1,'']]],
   ['clusterconfig',['ClusterConfig',['../structClusterConfig.html',1,'']]],
   ['config',['Config',['../structConfig.html',1,'']]],
-  ['corrtotspin',['CorrTotSpin',['../structConfig.html#ac923676eaaf0a911eb890ee419c2b8e6',1,'Config']]],
-  ['ccex_2d1_2e0_2e0',['CCEX-1.0.0',['../index.html',1,'']]]
+  ['corrtotspin',['CorrTotSpin',['../structConfig.html#ac923676eaaf0a911eb890ee419c2b8e6',1,'Config']]]
 ];

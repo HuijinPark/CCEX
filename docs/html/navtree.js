@@ -4,7 +4,8 @@ var NAVTREE =
     [ "Overview", "user", null ],
     [ "Getting started", "GettingStarted.html", null ],
     [ "Input File", "InputFile.html", null ],
-    [ "Examples", "Examples.html", [
+    [ "Examples", "Examples.html", null ],
+    [ "Overview Overview", "index.html", [
       [ "Introduction", "index.html#Introduction", null ],
       [ "the simulation", "index.html#About", null ],
       [ "Installation", "index.html#Installation", null ],
