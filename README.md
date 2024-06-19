@@ -27,13 +27,11 @@
 
 **Used language**<br/>
 <img src="https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white" style="float: left; margin-right: 10px;" />
-
 <img src="https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white" style="float: left; margin-right: 10px;" />
-
+<br/>
 <img src="https://img.shields.io/badge/github-%23121011.svg?style="float: left; margin-right: 10px;" />
-
 <img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white" style="float: left; margin-right: 10px;" />
-
+<br/>
 <br clear="left" />
 <br/>
 
