@@ -1,13 +1,16 @@
-/** \mainpage Overview 
+/** \page Overview 
+
 
 Generated on 2024.06.01 
+
 
 \section Introduction
 
 This page provides a way how to simulate the spin qubit dynamics with the CCEX software.
 The source code of this software can be found in \link https://github.com/HuijinPark/CCEX "CCEX GitHub Repository" \endlink
 
-\section About the simulation
+
+\section AboutTheSimulation About the simulation
 
 In this code, we simulate the qubit dynamics in the presence of the bath spins.
 
@@ -22,7 +25,8 @@ You can obtain the following physical quantities of qubit for evolving time:
 - Density matrix (gCCE method only)
 - Noise function (To be done for CCE, gCCE)
 
-\section Installation
+
+\section Installation Installation
 
 \code $ git clone https://github.com/HuijinPark/CCEX.git \endcode
 
@@ -33,27 +37,31 @@ You can obtain the following physical quantities of qubit for evolving time:
 \b Note \b
 - MakeFile Path should be changed.. (To be changed)
 
-\section Usage Instructions
 
-To run the code using <tt> mpirun <tt>, use the following command :
+\section UsageInstructions Usage Instructions
+
+To run the code using <tt> mpirun </tt>, use the following command :
 
 \code $ mpirun -n process_number code_path -f input_file \endcode
 
 - process_number : The number of processes to run.
 - code_path : The path to your executable code.
 - \-f input_file : The input file required for the code to run. 
-   * (input file should be <tt>.json<tt> file)
+   * (input file should be <tt>.json</tt> file)
 
 \b example \b
-
 \code $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json \endcode
 
+\b For more detailed instructions, \b\n
+see the \ref GettingStarted "Getting Started".
 
-\section Update
+
+\section Update Update
 
  ... To be written.
 
-\section To do list
+
+\section ToDoList To do list
 - Grouping of files in Model / Parser / Generator categories
 
 */
