@@ -11,7 +11,9 @@ var NAVTREE =
       [ "To do list", "index.html#ToDoList", null ]
     ] ],
     [ "Getting started", "GettingStarted.html", null ],
+    [ "Input File", "InputFile.html", null ],
     [ "Examples", "Examples.html", null ],
+    [ "Tag variable", "TagVariable.html", null ],
     [ "Class List", "annotated.html", "annotated" ]
   ] ]
 ];

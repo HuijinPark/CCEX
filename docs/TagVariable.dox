@@ -1,0 +1,90 @@
+/** \page TagVariable Tag variable
+
+Show the tages and matched variables in our code
+
+\section IN_CONFIG General condition
+- method      				 \ref Config::method                      "method"
+- quantity    				 \ref Config::quantity                    "quantity"
+- order       				 \ref Config::order                       "order"
+- bfield      				 \ref Config::bfield                      "bfield"
+- rbath       				 \ref Config::rbath                       "rbath"
+- rdip                       \ref Config::rdip                        "rdip"
+- deltat      				 \ref Config::deltat                      "deltat"
+- nstep       				 \ref Config::nstep                       "nstep"
+- rbathcut    				 \ref Config::rbathcut                    "rbathcut"
+- rdipcut     				 \ref Config::rdipcut                     "rdipcut"
+- nstate      				 \ref Config::nstate                      "nstate"
+- seed        				 \ref Config::seed                        "seed"
+- qubitfile   				 \ref Config::qubitfile                   "qubitfile"
+- gyrofile 				     \ref Config::gyrofile                    "gyrofile"
+- bathfile 				     \ref Config::bathfiles                   "bathfiles"
+- bathadjust 				 \ref Config::bathadjust                  "bathadjust"
+- avaaxfile 				 \ref Config::avaaxfile                   "avaaxfile"
+- statefile 				 \ref Config::statefile                   "statefile"
+- exstatefile 				 \ref Config::exstatefile                 "exstatefile"
+- DefectTotSpin 			 \ref Config::DefectTotSpin               "DefectTotSpin"
+- CorrTotSpin 				 \ref Config::CorrTotSpin                 "CorrTotSpin"
+- hf_readmode 				 \ref Config::hf_readmode                 "hf_readmode"
+- hf_tensorfile 			 \ref Config::hf_tensorfile               "hf_tensorfile"
+- hf_cutoff 				 \ref Config::hf_cutoff                   "hf_cutoff"
+- hf_ignore_oor 			 \ref Config::hf_ignore_oor               "hf_ignore_oor"
+- qd_readmode 				 \ref Config::qd_readmode                 "qd_readmode"
+- qd_tensorfile 			 \ref Config::qd_tensorfile               "qd_tensorfile"
+- qd_tensorfile_woqubit 	 \ref Config::qd_tensorfile_woqubit       "qd_tensorfile_woqubit"
+
+\section IN_CLUSTER Clustering condition
+- order 				     order
+- method 				     method
+- addsubclus 				 addsubclus
+- nk 				         nk
+
+\section IN_OUTPUT Output options 
+- savemode 				     savemode
+- outfile 				     outfile
+
+\section IN_PULSE Pulse condition
+- npulse 				     npulse
+- pulsename 				 pulsename
+- sequence 				     sequenceinput
+
+
+\section IN_DEFECTARR Configuration of spins on bath defect 
+- dfname 				     dfname
+- naddspin 				     naddspin
+- navaax 				     navaax
+- apprx 				     apprx
+- types 				     types
+- spins 				     spins
+- gyros 				     gyros
+- eqs 				         eqs
+- rxyzs 				     rxyzs
+- hypf 				         hypf
+- efg 				         efg
+- zfs 				         zfs
+- detuning 				     detuning
+
+\section IN_QUBITARR Configuration of qubit spins
+- nqubit 			         nqubit
+- qubit                     (sub-key)
+- name 				         name
+- spin 				         spin
+- gyro 				         gyro
+- xyz 				         xyz
+- detuning 			         detuning
+- alpha 			         alphams
+- beta 				         betams
+- intmap                    (sub-key)
+- between 			         between
+- tensor 			         tensor
+- psia 				         psiamat
+- psib 				         psibmat
+- psi0 				         psi0mat
+- overhaus 			         overhaus
+- alphaidx 			         alphaidx
+- betaidx 			         betaidx
+- qspin 			         spin
+- alphams 			         alphams
+- betams 			         betams
+
+*/
+
