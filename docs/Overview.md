@@ -1,7 +1,7 @@
 %CCEX-1.0.0 {#mainpage}
 =================
 
-Generated on \showdate "%A, %B %-d, %Y at %-I:%M %p"
+Generated on 2024.06.01 
 
 Introduction
 ============
