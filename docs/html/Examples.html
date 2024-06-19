@@ -169,6 +169,93 @@ $(document).ready(function(){initNavTree('Examples.html','');});
 <div class="line">        }</div>
 <div class="line">                       ]</div>
 <div class="line">}</div>
+</div><!-- fragment --><h2>Job File</h2>
+<p>The following is the content of job file used for the simulation:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#!/bin/sh</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH -J CCE2e2n_DiaP1_1ppm_Order_2</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH -p 24core</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --nodes=8</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --ntasks-per-node=24</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --cpus-per-task=1</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --out outfile</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --time=48:00:00</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --qos=medium</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#SBATCH --mem-per-cpu=5300</span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line">module purge </div>
+<div class="line">module load 22.2/icc-22.2 22.2/fftw-3.3.10 22.2/gsl-2.7.1 </div>
+<div class="line"></div>
+<div class="line">export LD_LIBRARY_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD_LIBRARY_PATH</div>
+<div class="line"></div>
+<div class="line">export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK</div>
+<div class="line">NTASKS=$(($SLURM_NTASKS_PER_NODE * $SLURM_JOB_NUM_NODES))</div>
+<div class="line"></div>
+<div class="line">echo <span class="stringliteral">&quot;NTASKS =&quot;</span> $NTASKS</div>
+<div class="line">echo <span class="stringliteral">&quot;NUM_NODES = &quot;</span> $SLURM_JOB_NUM_NODES</div>
+<div class="line">env | grep SLURM</div>
+<div class="line"></div>
+<div class="line">node_process=$NTASKS</div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor">#############################################</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor"># Main Paramaters</span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line"><span class="preprocessor">#bath number</span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line">s=<span class="stringliteral">&quot;$SLURM_ARRAY_TASK_ID&quot;</span></div>
+<div class="line">cista=<span class="stringliteral">&quot;${s}&quot;</span></div>
+<div class="line">ciend=$(( ${s} + 50 - 1  ))</div>
+<div class="line"></div>
+<div class="line">sista=<span class="stringliteral">&quot;1&quot;</span></div>
+<div class="line">siend=<span class="stringliteral">&quot;50&quot;</span></div>
+<div class="line">Nstate=$(( ${siend} - ${sista} + 1 ))</div>
+<div class="line"></div>
+<div class="line">configures=$(seq ${cista} 1 ${ciend})</div>
+<div class="line">states=$(seq ${sista} 1 ${siend})</div>
+<div class="line"></div>
+<div class="line"></div>
+<div class="line">#option input</div>
+<div class="line">CodePath=<span class="stringliteral">&quot;/home/huijin/git/CCEX/bin/main.out&quot;</span></div>
+<div class="line"></div>
+<div class="line"># inputfiles</div>
+<div class="line">mkdir <span class="stringliteral">&quot;./rawdata/&quot;</span></div>
+<div class="line">option_input=<span class="stringliteral">&quot;./ccein.json&quot;</span></div>
+<div class="line">BathFile=<span class="stringliteral">&quot;/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_&quot;</span></div>
+<div class="line">AvaaxFile=<span class="stringliteral">&quot;Random&quot;</span></div>
+<div class="line">StateFile=<span class="stringliteral">&quot;Random&quot;</span></div>
+<div class="line">ExStateFile=<span class="stringliteral">&quot;Random&quot;</span></div>
+<div class="line"></div>
+<div class="line"># outfiles</div>
+<div class="line">outFile=<span class="stringliteral">&quot;./rawdata/CCE2e2n_DiaP1_1ppm_Order_2_&quot;</span></div>
+<div class="line"></div>
+<div class="line">#time checking</div>
+<div class="line">startTime=$(date +%s.%N)</div>
+<div class="line">startTime_string=`date`</div>
+<div class="line"><span class="preprocessor">#############################################################################</span></div>
+<div class="line"><span class="preprocessor"></span><span class="preprocessor">#about CCE2 calculation </span></div>
+<div class="line"><span class="preprocessor"></span></div>
+<div class="line"><span class="keywordflow">for</span> m in $configures</div>
+<div class="line"><span class="keywordflow">do</span></div>
+<div class="line">     mpirun -n ${node_process} ${CodePath} -f ${option_input} -I <span class="stringliteral">&quot;${BathFile}${m}&quot;</span> -a <span class="stringliteral">&quot;${AvaaxFile}${m}&quot;</span> -s <span class="stringliteral">&quot;${StateFile}&quot;</span> -S <span class="stringliteral">&quot;${ExStateFile}&quot;</span> -o <span class="stringliteral">&quot;${outFile}${m}&quot;</span> -N <span class="stringliteral">&quot;$Nstate&quot;</span> &gt; <span class="stringliteral">&quot;Process_${m}&quot;</span></div>
+<div class="line"></div>
+<div class="line">    <span class="keywordflow">for</span> s in $states</div>
+<div class="line">    <span class="keywordflow">do</span></div>
+<div class="line">        mv <span class="stringliteral">&quot;${outFile}${m}_wiDiv_${s}&quot;</span> <span class="stringliteral">&quot;${outFile}${m}{${s}}_wiDiv&quot;</span></div>
+<div class="line">        mv <span class="stringliteral">&quot;${outFile}${m}_noDiv_${s}&quot;</span> <span class="stringliteral">&quot;${outFile}${m}{${s}}_noDiv&quot;</span></div>
+<div class="line">    done</div>
+<div class="line">done</div>
+<div class="line"></div>
+<div class="line"><span class="preprocessor">#############################################################################$</span></div>
+<div class="line"><span class="preprocessor"></span>endTime=$(date +%s.%N)</div>
+<div class="line">endTime_string=`date`</div>
+<div class="line"></div>
+<div class="line">elapsed=`echo <span class="stringliteral">&quot;($endTime-$startTime)&quot;</span> |bc`</div>
+<div class="line">htime=`echo <span class="stringliteral">&quot;$elapsed/3600&quot;</span>|bc`</div>
+<div class="line">mtime=`echo <span class="stringliteral">&quot;($elapsed/60)-($htime*60)&quot;</span>|bc`</div>
+<div class="line">stime=`echo <span class="stringliteral">&quot;$elapsed-(($elapsed/60)*60)&quot;</span>|bc`</div>
+<div class="line">echo <span class="stringliteral">&quot;Start time : $startTime_string&quot;</span></div>
+<div class="line">echo <span class="stringliteral">&quot;End time   : $endTime_string&quot;</span></div>
+<div class="line">echo <span class="stringliteral">&quot;Total time : ${htime}H ${mtime}M ${stime}S&quot;</span></div>
+<div class="line"></div>
 </div><!-- fragment --><h2>Result Plot</h2>
 <p>The following image shows the plot of the simulation results:</p>
 <div class="image">

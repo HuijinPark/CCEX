@@ -81,6 +81,101 @@ The following is the content of the input file used for the simulation\-:
 \end{DoxyCodeInclude}
 
 
+\subsection*{Job File}
+
+The following is the content of job file used for the simulation\-:
+
+
+\begin{DoxyCodeInclude}
+\textcolor{preprocessor}{#!/bin/sh}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH -J CCE2e2n\_DiaP1\_1ppm\_Order\_2}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH -p 24core}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH --nodes=8}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH --ntasks-per-node=24}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH --cpus-per-task=1}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH --out outfile}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH --time=48:00:00}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH --qos=medium}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#SBATCH --mem-per-cpu=5300}
+\textcolor{preprocessor}{}
+module purge 
+module load 22.2/icc-22.2 22.2/fftw-3.3.10 22.2/gsl-2.7.1 
+
+export LD\_LIBRARY\_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD\_LIBRARY\_PATH
+
+export OMP\_NUM\_THREADS=$SLURM\_CPUS\_PER\_TASK
+NTASKS=$(($SLURM\_NTASKS\_PER\_NODE * $SLURM\_JOB\_NUM\_NODES))
+
+echo \textcolor{stringliteral}{"NTASKS ="} $NTASKS
+echo \textcolor{stringliteral}{"NUM\_NODES = "} $SLURM\_JOB\_NUM\_NODES
+env | grep SLURM
+
+node\_process=$NTASKS
+
+\textcolor{preprocessor}{#############################################}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{# Main Paramaters}
+\textcolor{preprocessor}{}
+\textcolor{preprocessor}{#bath number}
+\textcolor{preprocessor}{}
+s=\textcolor{stringliteral}{"$SLURM\_ARRAY\_TASK\_ID"}
+cista=\textcolor{stringliteral}{"$\{s\}"}
+ciend=$(( $\{s\} + 50 - 1  ))
+
+sista=\textcolor{stringliteral}{"1"}
+siend=\textcolor{stringliteral}{"50"}
+Nstate=$(( $\{siend\} - $\{sista\} + 1 ))
+
+configures=$(seq $\{cista\} 1 $\{ciend\})
+states=$(seq $\{sista\} 1 $\{siend\})
+
+
+#option input
+CodePath=\textcolor{stringliteral}{"/home/huijin/git/CCEX/bin/main.out"}
+
+# inputfiles
+mkdir \textcolor{stringliteral}{"./rawdata/"}
+option\_input=\textcolor{stringliteral}{"./ccein.json"}
+BathFile=\textcolor{stringliteral}{"/home/huijin/tutorial/Diamond\_NV\_P1Bath/bath/14N\_1ppm/bath\_DiaP1\_1ppm\_"}
+AvaaxFile=\textcolor{stringliteral}{"Random"}
+StateFile=\textcolor{stringliteral}{"Random"}
+ExStateFile=\textcolor{stringliteral}{"Random"}
+
+# outfiles
+outFile=\textcolor{stringliteral}{"./rawdata/CCE2e2n\_DiaP1\_1ppm\_Order\_2\_"}
+
+#time checking
+startTime=$(date +%s.%N)
+startTime\_string=`date`
+\textcolor{preprocessor}{#############################################################################}
+\textcolor{preprocessor}{}\textcolor{preprocessor}{#about CCE2 calculation }
+\textcolor{preprocessor}{}
+\textcolor{keywordflow}{for} m in $configures
+\textcolor{keywordflow}{do}
+     mpirun -n $\{node\_process\} $\{CodePath\} -f $\{option\_input\} -I \textcolor{stringliteral}{"$\{BathFile\}$\{m\}"} -a \textcolor{stringliteral}{"$\{AvaaxFile\}$\{m\}"} -s
+       \textcolor{stringliteral}{"$\{StateFile\}"} -S \textcolor{stringliteral}{"$\{ExStateFile\}"} -o \textcolor{stringliteral}{"$\{outFile\}$\{m\}"} -N \textcolor{stringliteral}{"$Nstate"} > \textcolor{stringliteral}{"Process\_$\{m\}"}
+
+    \textcolor{keywordflow}{for} s in $states
+    \textcolor{keywordflow}{do}
+        mv \textcolor{stringliteral}{"$\{outFile\}$\{m\}\_wiDiv\_$\{s\}"} \textcolor{stringliteral}{"$\{outFile\}$\{m\}\{$\{s\}\}\_wiDiv"}
+        mv \textcolor{stringliteral}{"$\{outFile\}$\{m\}\_noDiv\_$\{s\}"} \textcolor{stringliteral}{"$\{outFile\}$\{m\}\{$\{s\}\}\_noDiv"}
+    done
+done
+
+\textcolor{preprocessor}{#############################################################################$}
+\textcolor{preprocessor}{}endTime=$(date +%s.%N)
+endTime\_string=`date`
+
+elapsed=`echo \textcolor{stringliteral}{"($endTime-$startTime)"} |bc`
+htime=`echo \textcolor{stringliteral}{"$elapsed/3600"}|bc`
+mtime=`echo \textcolor{stringliteral}{"($elapsed/60)-($htime*60)"}|bc`
+stime=`echo \textcolor{stringliteral}{"$elapsed-(($elapsed/60)*60)"}|bc`
+echo \textcolor{stringliteral}{"Start time : $startTime\_string"}
+echo \textcolor{stringliteral}{"End time   : $endTime\_string"}
+echo \textcolor{stringliteral}{"Total time : $\{htime\}H $\{mtime\}M $\{stime\}S"}
+
+\end{DoxyCodeInclude}
+
+
 \subsection*{Result Plot}
 
 The following image shows the plot of the simulation results\-:
