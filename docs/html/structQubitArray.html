@@ -99,18 +99,27 @@ $(document).ready(function(){initNavTree('structQubitArray.html','');});
 
 <div class="header">
   <div class="summary">
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structQubitArray-members.html">List of all members</a>  </div>
+<a href="structQubitArray-members.html">List of all members</a> &#124;
+<a href="#pub-attribs">Public Attributes</a>  </div>
   <div class="headertitle">
 <div class="title">QubitArray Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="structQubitArray.html" title="QubitArray include information of all qubits. ">QubitArray</a> include information of all qubits.  
- <a href="structQubitArray.html#details">More...</a></p>
-
 <p><code>#include &lt;<a class="el" href="qubit_8h_source.html">qubit.h</a>&gt;</code></p>
-<table class="memberdecls">
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="structQubitArray.html" title="QubitArray include information of all qubits. ">QubitArray</a> include information of all qubits. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd><p class="startdd">Check if the psia, psib, psi0, rho0 is normalied. </p>
+<p>initstate : Like above case, we need to change the format of this tag. e.g. initstate = |+1&gt;|1.5&gt;|0.5&gt; - i|+1&gt;|0.5&gt;|-0.5&gt; =&gt; generally : initstate = a|ms_1&gt;|ms_2&gt;..|ms_n&gt; + b|ms'_1&gt;|ms'_2&gt;..|ms'_n&gt; </p>
+<p class="enddd">Add doucumentation for qubitarray and cce.in "&amp;Qubit" tag </p>
+</dd></dl>
+<p>Each parameter is read from the input file or options.</p>
+<ul>
+<li>_parameter : Only use during reading input file and then free</li>
+<li>parameter : Use during simulation <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>alphastate, betastate : currently the value format of this tag in input file is : e.g. alphastate = { e, 1, 0, 0, } but we need to change this format to bracket notation: e,g. alphastate = e |-1&gt; betastate = n1 |+1.5&gt; betastate = n1 i|-0.5&gt; =&gt; generally : alphastate or betastate = qname a|ms&gt; : a is the constant (can be complex number) </dd></dl>
+</li>
+</ul>
+</div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a0a5c3875737d2a3bc14399109e89c82d"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQubitArray.html#a0a5c3875737d2a3bc14399109e89c82d">_alphaidx</a></td></tr>
@@ -132,19 +141,7 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ab1cb38fcd5640338fad8c2abc868b53e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQubitArray.html#ab1cb38fcd5640338fad8c2abc868b53e">overhaus</a></td></tr>
 <tr class="separator:ab1cb38fcd5640338fad8c2abc868b53e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="structQubitArray.html" title="QubitArray include information of all qubits. ">QubitArray</a> include information of all qubits. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd><p class="startdd">Check if the psia, psib, psi0, rho0 is normalied. </p>
-<p>initstate : Like above case, we need to change the format of this tag. e.g. initstate = |+1&gt;|1.5&gt;|0.5&gt; - i|+1&gt;|0.5&gt;|-0.5&gt; =&gt; generally : initstate = a|ms_1&gt;|ms_2&gt;..|ms_n&gt; + b|ms'_1&gt;|ms'_2&gt;..|ms'_n&gt; </p>
-<p class="enddd">Add doucumentation for qubitarray and cce.in "&amp;Qubit" tag </p>
-</dd></dl>
-<p>Each parameter is read from the input file or options.</p>
-<ul>
-<li>_parameter : Only use during reading input file and then free</li>
-<li>parameter : Use during simulation <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>alphastate, betastate : currently the value format of this tag in input file is : e.g. alphastate = { e, 1, 0, 0, } but we need to change this format to bracket notation: e,g. alphastate = e |-1&gt; betastate = n1 |+1.5&gt; betastate = n1 i|-0.5&gt; =&gt; generally : alphastate or betastate = qname a|ms&gt; : a is the constant (can be complex number) </dd></dl>
-</li>
-</ul>
-</div><h2 class="groupheader">Member Data Documentation</h2>
+<h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a0a5c3875737d2a3bc14399109e89c82d"></a>
 <div class="memitem">
 <div class="memproto">
