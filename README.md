@@ -1,3 +1,4 @@
+/** \mainpage README Readme
 
 2023.11.19
 
@@ -136,4 +137,4 @@ betaidx -> betaidx
 qspin -> spin
 alphams -> alphams
 betams -> betams
-
+*/
