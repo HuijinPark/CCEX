@@ -1,16 +1,12 @@
 /** \page README 
 
+
 2023.11.19
 
-# CCEX 
-<img src="https://komarev.com/ghpvc/?username=your-github-username&style=flat-square" style="float: left; margin-right: 10px;" />
-<img src="https://img.shields.io/github/watchers/{username}/{repo-name}.svg" style="float: left; margin-right: 10px;" />
-<br clear="left" />
+CCEX ![](https://komarev.com/ghpvc/?username=your-github-username&style=flat-square) ![](https://img.shields.io/github/watchers/{username}/{repo-name}.svg)
 ===============
 
-<img src="https://img.shields.io/badge/License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b" style="float: left; margin-right: 10px;" />
-<br clear="left" />
-
+![License](https://img.shields.io/badge/License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b)<br/>
 **This code is for the simulation of qubit coherence dynamics<br/>**
 
 **Document** [How to use "CCEX"](https://cce-x-refactoring.vercel.app/index.html)
@@ -25,17 +21,12 @@
 **Useful page**
 * [How to write "README.md"](https://docs.github.com/ko/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
 
-**Used language<br/>**
-
-<img src="https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white" style="float: left; margin-right: 10px;" />
-
-<img src="https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white" style="float: left; margin-right: 10px;" />
-
-<img src="https://img.shields.io/badge/github-%23121011.svg?style="float: left; margin-right: 10px;" />
-
-<img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white" style="float: left; margin-right: 10px;" />
-
-<br clear="left" />
+**Used language**<br/>
+![C](https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white)
+![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)
+<br/>
 
 **External library**<br/>
 Eigen (For details, see [here](https://eigen.tuxfamily.org/index.php?title=Main_Page))<br/>
@@ -62,89 +53,5 @@ $ mpicxx -v
   '-I /opt/homebrew/Cellar/mpich/4.2.1/include' [-Wunused-command-line-argument]
   The include directory : /opt/homebrew/Cellar/mpich/4.2.1/include'
 
-# All variables
 
-cJSON_readOptionConfig 함수
-method      -> method
-quantity    -> quantity
-order       -> order
-bfield      -> bfield
-rbath       -> rbath
-rdip        -> rdip
-deltat      -> deltat
-nstep       -> nstep
-rbathcut    -> rbathcut
-rdipcut     -> rdipcut
-nstate      -> nstate
-seed        -> seed
-qubitfile   -> qubitfile
-gyrofile -> gyrofile
-bathfile -> bathfiles
-bathadjust -> bathadjust
-avaaxfile -> avaaxfile
-statefile -> statefile
-exstatefile -> exstatefile
-DefectTotSpin -> DefectTotSpin
-CorrTotSpin -> CorrTotSpin
-hf_readmode -> hf_readmode
-hf_tensorfile -> hf_tensorfile
-hf_cutoff -> hf_cutoff
-hf_ignore_oor -> hf_ignore_oor
-qd_readmode -> qd_readmode
-qd_tensorfile -> qd_tensorfile
-qd_tensorfile_woqubit -> qd_tensorfile_woqubit
-
-cJSON_readOptionCluster 함수
-order -> order
-method -> method
-addsubclus -> addsubclus
-nk -> nk
-
-cJSON_readOptionOutput 함수
-savemode -> savemode
-outfile -> outfile
-
-cJSON_readOptionPulse 함수
-npulse -> npulse
-pulsename -> pulsename
-sequence -> sequenceinput
-
-
-cJSON_readOptionDefectArray 함수
-dfname -> dfname
-naddspin -> naddspin
-navaax -> navaax
-apprx -> apprx
-types -> types
-spins -> spins
-gyros -> gyros
-eqs -> eqs
-rxyzs -> rxyzs
-hypf -> hypf
-efg -> efg
-zfs -> zfs
-detuning -> detuning
-
-cJSON_readOptionQubitArray 함수
-nqubit -> nqubit
-qubit (sub-key)
-name -> name
-spin -> spin
-gyro -> gyro
-xyz -> xyz
-detuning -> detuning
-alpha -> alphams
-beta -> betams
-intmap (sub-key)
-between -> between
-tensor -> tensor
-psia -> psiamat
-psib -> psibmat
-psi0 -> psi0mat
-overhaus -> overhaus
-alphaidx -> alphaidx
-betaidx -> betaidx
-qspin -> spin
-alphams -> alphams
-betams -> betams
 */

@@ -11,3 +11,89 @@
  * \endcode
  */
 
+
+# All variables
+
+cJSON_readOptionConfig 함수
+method      -> method
+quantity    -> quantity
+order       -> order
+bfield      -> bfield
+rbath       -> rbath
+rdip        -> rdip
+deltat      -> deltat
+nstep       -> nstep
+rbathcut    -> rbathcut
+rdipcut     -> rdipcut
+nstate      -> nstate
+seed        -> seed
+qubitfile   -> qubitfile
+gyrofile -> gyrofile
+bathfile -> bathfiles
+bathadjust -> bathadjust
+avaaxfile -> avaaxfile
+statefile -> statefile
+exstatefile -> exstatefile
+DefectTotSpin -> DefectTotSpin
+CorrTotSpin -> CorrTotSpin
+hf_readmode -> hf_readmode
+hf_tensorfile -> hf_tensorfile
+hf_cutoff -> hf_cutoff
+hf_ignore_oor -> hf_ignore_oor
+qd_readmode -> qd_readmode
+qd_tensorfile -> qd_tensorfile
+qd_tensorfile_woqubit -> qd_tensorfile_woqubit
+
+cJSON_readOptionCluster 함수
+order -> order
+method -> method
+addsubclus -> addsubclus
+nk -> nk
+
+cJSON_readOptionOutput 함수
+savemode -> savemode
+outfile -> outfile
+
+cJSON_readOptionPulse 함수
+npulse -> npulse
+pulsename -> pulsename
+sequence -> sequenceinput
+
+
+cJSON_readOptionDefectArray 함수
+dfname -> dfname
+naddspin -> naddspin
+navaax -> navaax
+apprx -> apprx
+types -> types
+spins -> spins
+gyros -> gyros
+eqs -> eqs
+rxyzs -> rxyzs
+hypf -> hypf
+efg -> efg
+zfs -> zfs
+detuning -> detuning
+
+cJSON_readOptionQubitArray 함수
+nqubit -> nqubit
+qubit (sub-key)
+name -> name
+spin -> spin
+gyro -> gyro
+xyz -> xyz
+detuning -> detuning
+alpha -> alphams
+beta -> betams
+intmap (sub-key)
+between -> between
+tensor -> tensor
+psia -> psiamat
+psib -> psibmat
+psi0 -> psi0mat
+overhaus -> overhaus
+alphaidx -> alphaidx
+betaidx -> betaidx
+qspin -> spin
+alphams -> alphams
+betams -> betams
