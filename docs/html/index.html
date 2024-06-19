@@ -103,9 +103,11 @@ $(document).ready(function(){initNavTree('index.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>Generated on 2024.06.01</p>
-<h1>Introduction </h1>
+<h1><a class="anchor" id="Introduction"></a>
+Introduction</h1>
 <p>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <a href="https://github.com/HuijinPark/CCEX">here</a>.</p>
-<h1>About the simulation </h1>
+<h1><a class="anchor" id="About"></a>
+the simulation</h1>
 <p>In this code, we simulate the qubit dynamics in the presence of the bath spins.</p>
 <p>You can simulate the spin qubit dynamcis with the following methods:</p>
 <ul>
@@ -120,94 +122,12 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li>Density matrix (gCCE method only)</li>
 <li>Noise function (To be done for CCE, gCCE)</li>
 </ul>
-<h1>Installation </h1>
-<p>``` $ git clone <a href="https://github.com/HuijinPark/CCEX.git">https://github.com/HuijinPark/CCEX.git</a> ```</p>
-<h2>Requirement</h2>
-<p><a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html">Intel MKL</a> <a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5">Intel mpi</a></p>
-<h2>Note</h2>
-<p>MakeFile Path should be changed.. (To be changed)</p>
-<h1>Usage Instructions </h1>
-<p>To run the code using <code>mpirun</code>, use the following command :</p>
-<p>``` $ mpirun -n process_number code_path -f input_file</p>
-<p>```</p>
+<h1><a class="anchor" id="Installation"></a>
+Installation</h1>
+<div class="fragment"><div class="line">$ git clone https:<span class="comment">//github.com/HuijinPark/CCEX.git </span></div>
+</div><!-- fragment --><p><b>Requirement</b> <b></b> </p>
 <ul>
-<li>process_number : The number of processes to run.</li>
-<li>code_path : The path to your executable code.</li>
-<li>-f input_file : The input file required for the code to run.<ul>
-<li>(input file should be <code>.json</code><br/>
- file)</li>
-</ul>
-</li>
-</ul>
-<h1>example</h1>
-<p>``` $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json ```</p>
-<h1>Update </h1>
-<p><code>To be written.</code></p>
-<h1>To do list </h1>
-<ul>
-<li>Grouping of files in Model / Parser / Generator categories</li>
-<li>Index files based on IndexIntf<ul>
-<li>HTML navigation</li>
-<li>HTML Help (chm)</li>
-<li>Documentation Sets (XCode)</li>
-<li>Qt Help (qhp)</li>
-<li>Eclipse Help</li>
-</ul>
-</li>
-<li>Search index<ul>
-<li>JavaScript based</li>
-<li>Server based</li>
-<li>External</li>
-</ul>
-</li>
-<li>Citations<ul>
-<li>via bibtex</li>
-</ul>
-</li>
-<li>Various processing steps for a comment block<ul>
-<li>comment conversion</li>
-<li>comment scanner</li>
-<li>markdown processor</li>
-<li>doc tokenizer</li>
-<li>doc parser</li>
-<li>doc visitors</li>
-</ul>
-</li>
-<li>Diagrams and Images<ul>
-<li>builtin</li>
-<li>via Graphviz dot</li>
-<li>via mscgen</li>
-<li>PNG generation</li>
-</ul>
-</li>
-<li><a class="el" href="structOutput.html">Output</a> formats: OutputGenerator, OutputList, and DocVisitor<ul>
-<li>Html: HtmlGenerator and HtmlDocVisitor</li>
-<li>Latex: LatexGenerator and LatexDocVisitor</li>
-<li>RTF: RTFGenerator and RTFDocVisitor</li>
-<li>Man: ManGenerator and ManDocVisitor</li>
-<li>XML: generateXML() and XmlDocVisitor</li>
-<li>print: debugging via PrintDocVisitor</li>
-<li>text: TextDocVisitor for tooltips</li>
-<li>perlmod</li>
-</ul>
-</li>
-<li>i18n via Translator and language.cpp</li>
-<li>Customizing the layout via LayoutDocManager</li>
-<li>Parsers<ul>
-<li>C Preprocessing<ul>
-<li>const expression evaluation</li>
-</ul>
-</li>
-<li>C link languages</li>
-<li>Python</li>
-<li>Fortran</li>
-<li>VHDL</li>
-<li>Tag files</li>
-</ul>
-</li>
-<li>Marshaling to/from disk</li>
-<li>Portability functions</li>
-<li>Utility functions </li>
+<li>ahref="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html"&gt;IntelMKL&lt;/a&gt;\endlink-\line&lt;ahref="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5"&gt;Intelmpi&lt;/a&gt;\endlink&lt;h2&gt;Note&lt;/h2&gt;MakeFilePathshouldbechanged..(Tobechanged)@sectionUsageInstructionsTorunthecodeusing&lt;tt&gt;mpirun&lt;/tt&gt;,usethefollowingcommand:@code$mpirun-nprocess_numbercode_path-finput_file\endcode-process_number:Thenumberofprocessestorun.-code_path:Thepathtoyourexecutablecode.--finput_file:Theinputfilerequiredforthecodetorun.(inputfileshouldbe&lt;tt&gt;.json&lt;/tt&gt;&lt;br&gt;file)\bexample\b@code$mpirun-n4/usr/local/bin/mycode-fdata/input.json\endcode@sectionUpdate...Tobewritten.@sectionTodolist-GroupingoffilesinModel/Parser/Generatorcategories-IndexfilesbasedonIndexIntf-HTMLnavigation-HTMLHelp(chm)-DocumentationSets(XCode)-QtHelp(qhp)-EclipseHelp-Searchindex-JavaScriptbased-Serverbased-External-Citations-viabibtex-Variousprocessingstepsforacommentblock-commentconversion-commentscanner-markdownprocessor-doctokenizer-docparser-docvisitors-DiagramsandImages-builtin-viaGraphvizdot-viamscgen-PNGgeneration-Outputformats:OutputGenerator,OutputList,andDocVisitor-Html:HtmlGeneratorandHtmlDocVisitor-Latex:LatexGeneratorandLatexDocVisitor-RTF:RTFGeneratorandRTFDocVisitor-Man:ManGeneratorandManDocVisitor-XML:generateXML()andXmlDocVisitor-print:debuggingviaPrintDocVisitor-text:TextDocVisitorfortooltips-perlmod-i18nviaTranslatorandlanguage.cpp-CustomizingthelayoutviaLayoutDocManager-Parsers-CPreprocessing- const expressionevaluation-Clinklanguages-Python-Fortran-VHDL-Tagfiles-Marshalingto/fromdisk-Portabilityfunctions-Utilityfunctions</li>
 </ul>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
