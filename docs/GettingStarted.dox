@@ -1,6 +1,34 @@
-/**
- * \page GettingStarted Getting Started
- * 
- * This is the getting started guide.
- */
+/** \page GettingStarted Getting Started
+ 
+ This is the getting started guide.
+
+ \section HowToRun How to run
+
+To run the code using <tt> mpirun </tt>, use the following command :
+
+\code $ mpirun -n process_number code_path -f input_file \endcode
+
+- process_number : The number of processes to run.
+- code_path : The path to your executable code.
+- input_file : The input file required for the code to run. 
+  * (input file should be <tt>.json</tt> file)
+
+\b Example \b
+\code $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json \endcode
+
+\b Possble parsing option in command line \b
+
+- \-h : Help option
+- \-f : \ref InputFile "Input file" option (Required) (See \ref InputFile "Input file")
+- \-m : Method (See \ref IN_Method "method")
+- \-q : Quantity (See \ref IN_Quantity "quantity") 
+- \-I : File path to set the position of bath spins (See \ref IN_BathFiles "bathfiles")
+- \-s : File path to set the spin state of bath spins (See \ref IN_StateFile "statefile") 
+- \-a : File path to set principal axies of the defects in the bath (See \ref IN_AvaaxFile "avaaxfile")
+- \-S : File path to set the spin state of on-site spins of the defects in the bath (See \ref IN_ExStateFile "exstatefile)
+- \-N : The number of state configuration to do time ensemble average (See \ref IN_Nstate "nstate")
+- \-B : Magnetic field in z direction (Unit : G) (See \ref IN_Bfield "bfield")
+- \-o : Result file path (See \ref IN_Output "output")
+
+*/
 

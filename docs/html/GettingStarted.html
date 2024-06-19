@@ -102,7 +102,31 @@ $(document).ready(function(){initNavTree('GettingStarted.html','');});
 <div class="title">Getting Started </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>This is the getting started guide. </p>
+<div class="textblock"><p>This is the getting started guide.</p>
+<h1><a class="anchor" id="HowToRun"></a>
+How to run</h1>
+<p>To run the code using <code> mpirun </code>, use the following command :</p>
+<div class="fragment"><div class="line">$ mpirun -n process_number code_path -f input_file </div>
+</div><!-- fragment --><ul>
+<li>process_number : The number of processes to run.</li>
+<li>code_path : The path to your executable code.</li>
+<li>input_file : The input file required for the code to run. (input file should be <code>.json</code> file)</li>
+</ul>
+<p><b>Example</b> <b></b>  $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json </p>
+<p><b>Possble</b> parsing option in command line <b></b> </p>
+<ul>
+<li>-h : Help option</li>
+<li>-f : <a class="el" href="InputFile.html">Input file</a> option (Required) (See <a class="el" href="InputFile.html">Input file</a>)</li>
+<li>-m : Method (See method)</li>
+<li>-q : Quantity (See quantity)</li>
+<li>-I : File path to set the position of bath spins (See bathfiles)</li>
+<li>-s : File path to set the spin state of bath spins (See statefile)</li>
+<li>-a : File path to set principal axies of the defects in the bath (See avaaxfile)</li>
+<li>-S : File path to set the spin state of on-site spins of the defects in the bath (See exstatefile)</li>
+<li>\-N : The number of state configuration to do time ensemble average (See nstate)</li>
+<li>\-B : Magnetic field in z direction (Unit : G) (See bfield)</li>
+<li>\-o : Result file path (See output) </li>
+</ul>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
