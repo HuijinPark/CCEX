@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.5"/>
-<title>CCEX-1.0.0: Main Page</title>
+<title>CCEX-1.0.0: Overview</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -99,10 +99,62 @@ $(document).ready(function(){initNavTree('index.html','');});
 
 <div class="header">
   <div class="headertitle">
-<div class="title">CCEX-1.0.0 Documentation</div>  </div>
+<div class="title">Overview </div>  </div>
 </div><!--header-->
 <div class="contents">
-</div><!-- contents -->
+<div class="textblock"><p>Generated on 2024.06.01</p>
+<h1><a class="anchor" id="Introduction"></a>
+Introduction</h1>
+<p>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <a class="el" href="">"CCEX GitHub Repository" </a></p>
+<h1><a class="anchor" id="AboutTheSimulation"></a>
+About the simulation</h1>
+<p>In this code, we simulate the qubit dynamics in the presence of the bath spins.</p>
+<p>You can simulate the spin qubit dynamcis with the following methods:</p>
+<ul>
+<li>correlation expension method (CCE method)</li>
+<li>CCE-NeNn method</li>
+<li>Generalized CCE method</li>
+<li>Partition CCE method (To be done)</li>
+</ul>
+<p>You can obtain the following physical quantities of qubit for evolving time:</p>
+<ul>
+<li>Coherence function</li>
+<li>Density matrix (gCCE method only)</li>
+<li>Noise function (To be done for CCE, gCCE)</li>
+</ul>
+<h1><a class="anchor" id="Installation"></a>
+Installation</h1>
+<div class="fragment"><div class="line">$ git clone https:<span class="comment">//github.com/HuijinPark/CCEX.git </span></div>
+</div><!-- fragment --><p><b>Requirement</b> <b></b> </p>
+<ul>
+<li><a class="el" href="">"Intel MKL" </a></li>
+<li><a class="el" href="">"Intel mpi" </a></li>
+</ul>
+<p><b>Note</b> <b></b> </p>
+<ul>
+<li>MakeFile Path should be changed.. (To be changed)</li>
+</ul>
+<h1><a class="anchor" id="UsageInstructions"></a>
+Usage Instructions</h1>
+<p>To run the code using <code> mpirun </code>, use the following command :</p>
+<div class="fragment"><div class="line">$ mpirun -n process_number code_path -f input_file </div>
+</div><!-- fragment --><ul>
+<li>process_number : The number of processes to run.</li>
+<li>code_path : The path to your executable code.</li>
+<li>-f input_file : The input file required for the code to run. (input file should be <code>.json</code> file)</li>
+</ul>
+<p><b>example</b> <b></b>  $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json </p>
+<p><b>For</b> more detailed instructions, <b></b> <br/>
+see the <a class="el" href="GettingStarted.html">Getting Started</a>.</p>
+<h1><a class="anchor" id="Update"></a>
+Update</h1>
+<p>... To be written.</p>
+<h1><a class="anchor" id="ToDoList"></a>
+To do list</h1>
+<ul>
+<li>Grouping of files in Model / Parser / Generator categories </li>
+</ul>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

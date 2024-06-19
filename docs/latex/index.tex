@@ -1,5 +1,5 @@
 Generated on 2024.\-06.\-01\hypertarget{index_Introduction}{}\section{Introduction}\label{index_Introduction}
-This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \hyperlink{}{\char`\"{}\-C\-C\-E\-X Git\-Hub Repository\char`\"{} }\hypertarget{index_About}{}\section{the simulation}\label{index_About}
+This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \hyperlink{}{\char`\"{}\-C\-C\-E\-X Git\-Hub Repository\char`\"{} }\hypertarget{index_AboutTheSimulation}{}\section{About the simulation}\label{index_AboutTheSimulation}
 In this code, we simulate the qubit dynamics in the presence of the bath spins.
 
 You can simulate the spin qubit dynamcis with the following methods\-:
@@ -31,35 +31,28 @@ $ git clone https:\textcolor{comment}{//github.com/HuijinPark/CCEX.git }
 {\bfseries Note} {\bfseries } 
 \begin{DoxyItemize}
 \item Make\-File Path should be changed.. (To be changed)
-\end{DoxyItemize}\hypertarget{index_Usage}{}\section{Instructions}\label{index_Usage}
-To run the code using {\ttfamily  mpirun {\ttfamily , use the following command \-:}}
+\end{DoxyItemize}\hypertarget{index_UsageInstructions}{}\section{Usage Instructions}\label{index_UsageInstructions}
+To run the code using {\ttfamily  mpirun }, use the following command \-:
 
-{\ttfamily {\ttfamily 
+
 \begin{DoxyCode}
 $ mpirun -n process\_number code\_path -f input\_file 
 \end{DoxyCode}
-}}
 
-{\ttfamily {\ttfamily 
+
+
 \begin{DoxyItemize}
 \item process\-\_\-number \-: The number of processes to run.
 \item code\-\_\-path \-: The path to your executable code.
-\item -\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json{\ttfamily  file)}}
-\end{DoxyItemize}}}
+\item -\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
+\end{DoxyItemize}
 
-{\ttfamily {\ttfamily {\ttfamily {\ttfamily {\bfseries example} {\bfseries } }}}}
+{\bfseries example} {\bfseries }  \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json 
 
-{\ttfamily {\ttfamily {\ttfamily {\ttfamily 
-\begin{DoxyCode}
-$ mpirun -n 4 /usr/local/bin/mycode -f data/input.json 
-\end{DoxyCode}
-}}}}
+{\bfseries For} more detailed instructions, {\bfseries } \par
+see the \hyperlink{GettingStarted}{Getting Started}.\hypertarget{index_Update}{}\section{Update}\label{index_Update}
+... To be written.\hypertarget{index_ToDoList}{}\section{To do list}\label{index_ToDoList}
 
-{\ttfamily {\ttfamily {\ttfamily {\ttfamily }}}}\hypertarget{index_Update}{}\section{Update}\label{index_Update}
-{\ttfamily {\ttfamily {\ttfamily {\ttfamily  ... To be written.}}}}
-
-{\ttfamily {\ttfamily {\ttfamily {\ttfamily }}}}\hypertarget{index_To}{}\section{do list}\label{index_To}
-{\ttfamily {\ttfamily {\ttfamily {\ttfamily 
 \begin{DoxyItemize}
 \item Grouping of files in Model / Parser / Generator categories 
-\end{DoxyItemize}}}}}
+\end{DoxyItemize}
