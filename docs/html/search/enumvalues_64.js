@@ -1,9 +1,0 @@
-var searchData=
-[
-  ['degree',['Degree',['../classEigen_1_1Spline.html#afbaa33990081a01cc746fa9ed224c06daeb9d45bc9095c3065fa5fa2e0ac3e061',1,'Eigen::Spline::Degree()'],['../structEigen_1_1SplineTraits_3_01Spline_3_01__Scalar_00_01__Dim_00_01__Degree_01_4_00_01Dynamic_01_4.html#a7ea4e976189d03985e791403a73eaf8ba39d70871bb511aeb19f8c5a2501f0eaf',1,'Eigen::SplineTraits&lt; Spline&lt; _Scalar, _Dim, _Degree &gt;, Dynamic &gt;::Degree()']]],
-  ['derivativememorylayout',['DerivativeMemoryLayout',['../structEigen_1_1SplineTraits_3_01Spline_3_01__Scalar_00_01__Dim_00_01__Degree_01_4_00_01Dynamic_01_4.html#a58bb146b633d4b93a740d11af393f0dea3b107c361982e84a53d02e066743dcdb',1,'Eigen::SplineTraits&lt; Spline&lt; _Scalar, _Dim, _Degree &gt;, Dynamic &gt;::DerivativeMemoryLayout()'],['../structEigen_1_1SplineTraits_3_01Spline_3_01__Scalar_00_01__Dim_00_01__Degree_01_4_00_01__DerivativeOrder_01_4.html#a161db5178c10da9100f2c857d52af951a7e79c844da14c6fa961e112d05e23175',1,'Eigen::SplineTraits&lt; Spline&lt; _Scalar, _Dim, _Degree &gt;, _DerivativeOrder &gt;::DerivativeMemoryLayout()']]],
-  ['dimension',['Dimension',['../classEigen_1_1Spline.html#aff9d98536efd413e1532a067f7b9940cae0308df454dc12fe04b50909acccc432',1,'Eigen::Spline::Dimension()'],['../structEigen_1_1SplineTraits_3_01Spline_3_01__Scalar_00_01__Dim_00_01__Degree_01_4_00_01Dynamic_01_4.html#a587bcaa7080780af480e12e63fbb776da14c4a4e9fe5d03a6ba00511dacf018b3',1,'Eigen::SplineTraits&lt; Spline&lt; _Scalar, _Dim, _Degree &gt;, Dynamic &gt;::Dimension()']]],
-  ['directaccessors',['DirectAccessors',['../group__enums.html#gga9f93eac38eb83deb0e8dbd42ddf11d5da50108ad00095928de06228470ceab09e',1,'Eigen']]],
-  ['directwriteaccessors',['DirectWriteAccessors',['../group__enums.html#gga9f93eac38eb83deb0e8dbd42ddf11d5dacbe59d09ba2fdf8eac127bff1a1f0234',1,'Eigen']]],
-  ['dontalign',['DontAlign',['../group__enums.html#ggaacded1a18ae58b0f554751f6cdf9eb13a56908522e51443a0aa0567f879c2e78a',1,'Eigen']]]
-];

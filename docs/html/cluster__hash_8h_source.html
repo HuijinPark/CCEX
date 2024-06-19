@@ -46,11 +46,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
-      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -94,7 +92,7 @@ $(document).ready(function(){initNavTree('cluster__hash_8h_source.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -137,7 +135,7 @@ $(document).ready(function(){initNavTree('cluster__hash_8h_source.html','');});
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="comment">// count : The number that you have to multi. or div.</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">int</span> count;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="structUT__hash__handle.html">UT_hash_handle</a> hh;   </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    UT_hash_handle hh;   </div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;} <a class="code" href="structProperty.html">Property</a>; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structHashCluster.html">   33</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
@@ -145,7 +143,7 @@ $(document).ready(function(){initNavTree('cluster__hash_8h_source.html','');});
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="comment">//prop : cluster properties</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span>* N;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="structProperty.html">Property</a> *prop; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="structUT__hash__handle.html">UT_hash_handle</a> hh;   </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    UT_hash_handle hh;   </div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;} <a class="code" href="structHashCluster.html">HashCluster</a>;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keywordtype">void</span> clusterizeHash(<a class="code" href="structCluster.html">Cluster</a>* CCE, <span class="keywordtype">int</span> nspin, <span class="keywordtype">int</span>** spmap, <span class="keywordtype">float</span>** stmap);</div>
@@ -186,7 +184,6 @@ $(document).ready(function(){initNavTree('cluster__hash_8h_source.html','');});
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">#endif // __CCEX_CLUSTER_HASH_H_</span></div>
 <div class="ttc" id="structHashCluster_html"><div class="ttname"><a href="structHashCluster.html">HashCluster</a></div><div class="ttdef"><b>Definition:</b> cluster_hash.h:33</div></div>
-<div class="ttc" id="structUT__hash__handle_html"><div class="ttname"><a href="structUT__hash__handle.html">UT_hash_handle</a></div><div class="ttdef"><b>Definition:</b> uthash.h:1129</div></div>
 <div class="ttc" id="structCluster_html"><div class="ttname"><a href="structCluster.html">Cluster</a></div><div class="ttdef"><b>Definition:</b> cluster.h:16</div></div>
 <div class="ttc" id="structProperty_html"><div class="ttname"><a href="structProperty.html">Property</a></div><div class="ttdef"><b>Definition:</b> cluster_hash.h:12</div></div>
 </div><!-- fragment --></div><!-- contents -->

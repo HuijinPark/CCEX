@@ -46,11 +46,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
-      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
-      <li><a href="examples.html"><span>Examples</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -94,7 +92,7 @@ $(document).ready(function(){initNavTree('memory_8h_source.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Groups</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -172,13 +170,13 @@ $(document).ready(function(){initNavTree('memory_8h_source.html','');});
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keywordtype">void</span> freeChar3d(<span class="keywordtype">char</span> ****ptr, <span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n);</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">// MatrixXcd </span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<a class="code" href="classEigen_1_1Matrix.html">MatrixXcd</a>* allocMatrixXcd1d(<span class="keywordtype">size_t</span> m);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<a class="code" href="classEigen_1_1Matrix.html">MatrixXcd</a>** allocMatrixXcd2d(<span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<a class="code" href="classEigen_1_1Matrix.html">MatrixXcd</a>*** allocMatrixXcd3d(<span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n, <span class="keywordtype">size_t</span> l);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;MatrixXcd* allocMatrixXcd1d(<span class="keywordtype">size_t</span> m);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;MatrixXcd** allocMatrixXcd2d(<span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;MatrixXcd*** allocMatrixXcd3d(<span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n, <span class="keywordtype">size_t</span> l);</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keywordtype">void</span> freeMatrixXcd1d(<a class="code" href="classEigen_1_1Matrix.html">MatrixXcd</a> **ptr);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">void</span> freeMatrixXcd2d(<a class="code" href="classEigen_1_1Matrix.html">MatrixXcd</a> ***ptr, <span class="keywordtype">size_t</span> m);</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span> freeMatrixXcd3d(<a class="code" href="classEigen_1_1Matrix.html">MatrixXcd</a> ****ptr, <span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keywordtype">void</span> freeMatrixXcd1d(MatrixXcd **ptr);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">void</span> freeMatrixXcd2d(MatrixXcd ***ptr, <span class="keywordtype">size_t</span> m);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span> freeMatrixXcd3d(MatrixXcd ****ptr, <span class="keywordtype">size_t</span> m, <span class="keywordtype">size_t</span> n);</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">// DoubleTensor</span></div>
@@ -241,7 +239,6 @@ $(document).ready(function(){initNavTree('memory_8h_source.html','');});
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="preprocessor">#endif // __CCEX_MEMORY_H_</span></div>
 <div class="ttc" id="structDoubleTensor_html"><div class="ttname"><a href="structDoubleTensor.html">DoubleTensor</a></div><div class="ttdoc">Tensor with double precision. </div><div class="ttdef"><b>Definition:</b> utilities.h:37</div></div>
-<div class="ttc" id="classEigen_1_1Matrix_html"><div class="ttname"><a href="classEigen_1_1Matrix.html">Eigen::Matrix</a></div><div class="ttdoc">The matrix class, also used for vectors and row-vectors. </div><div class="ttdef"><b>Definition:</b> Matrix.h:178</div></div>
 <div class="ttc" id="structDoubleComplex_html"><div class="ttname"><a href="structDoubleComplex.html">DoubleComplex</a></div><div class="ttdoc">Complex number with double precision. </div><div class="ttdef"><b>Definition:</b> utilities.h:28</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
