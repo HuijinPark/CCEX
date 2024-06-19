@@ -1,7 +1,7 @@
 import os
-import subprocess
+import sys
 
-subprocess.call('doxygen', shell=True)
+sys.path.insert(0, os.path.abspath('.'))
 
 extensions = ['breathe']
 
