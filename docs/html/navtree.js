@@ -1,22 +1,21 @@
 var NAVTREE =
 [
   [ "CCEX-1.0.0", "index.html", [
-    [ "Overview", "@ref MainPage", null ],
-    [ "Getting started", "GettingStarted.html", null ],
-    [ "Input File Description", "InputFile.html", null ],
-    [ "Examples", "Examples.html", null ],
-    [ "Mainpage Overview", "index.html", [
+    [ "Overview", "index.html", [
       [ "Introduction", "index.html#intro", null ],
       [ "Example Page", "index.html#example", null ],
       [ "Tag Page", "index.html#tag", null ]
     ] ],
+    [ "Getting started", "GettingStarted.html", null ],
+    [ "Input File", "InputFile.html", null ],
+    [ "Examples", "Examples.html", null ],
     [ "Class List", "annotated.html", "annotated" ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"@ref MainPage"
+"Examples.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

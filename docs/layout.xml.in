@@ -2,15 +2,59 @@
 <doxygenlayout version="1.0">
   <!-- Navigation index tabs for HTML output -->
   <navindex>
-    <tab type="user" url="@ref MainPage" title="Overview" />
-    <tab type="user" url="@ref GettingStarted" title="Getting started" />
-    <tab type="user" url="@ref InputFile" title="Input File Description" />
-    <tab type="user" url="@ref Examples" title="Examples" />
+    <tab type="mainpage" visible="yes" title="Overview"/>
+    <tab type="user" visible="yes" title="Getting started" url="@ref GettingStarted"/>
+    <tab type="user" visible="yes" title="Input File" url="@ref InputFile"/>
+    <tab type="user" visible="yes" title="Examples" url="@ref Examples"/>
     <tab type="modules" visible="yes" title="Chapters" intro=""/>
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="classlist" visible="yes" title="" intro=""/>
 <!--     <tab type="classmembers" visible="yes" title="" intro=""/> -->
   </navindex>
+
+
+  <!-- Layout definition for a page -->
+  <page>
+    <title>Overview</title>
+    <sections>
+      <sectiondef id="mainpage">
+        <title>Main Page</title>
+        <memberdef/>
+      </sectiondef>
+    </sections>
+  </page>
+
+  <page id="GettingStarted">
+    <title>Getting Started</title>
+    <sections>
+      <sectiondef>
+        <title>Introduction</title>
+        <memberdef/>
+      </sectiondef>
+    </sections>
+  </page>
+
+  <page id="InputFile">
+    <title>Input File</title>
+    <sections>
+      <sectiondef>
+        <title>File List</title>
+        <memberdef/>
+      </sectiondef>
+    </sections>
+  </page>
+
+  <page id="Examples">
+    <title>Examples</title>
+    <sections>
+      <sectiondef>
+        <title>Example Code</title>
+        <memberdef/>
+      </sectiondef>
+    </sections>
+  </page>
+</doxygenlayout>
+
 
   <!-- Layout definition for a class page -->
   <class>
