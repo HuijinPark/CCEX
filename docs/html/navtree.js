@@ -5,6 +5,14 @@ var NAVTREE =
     [ "Getting started", "user", null ],
     [ "Input File", "user", null ],
     [ "Examples", "user", null ],
+    [ "Overview", "index.html", [
+      [ "Introduction", "index.html#Introduction", null ],
+      [ "the simulation", "index.html#About", null ],
+      [ "Installation", "index.html#Installation", null ],
+      [ "Instructions", "index.html#Usage", null ],
+      [ "Update", "index.html#Update", null ],
+      [ "do list", "index.html#To", null ]
+    ] ],
     [ "Class List", "annotated.html", "annotated" ]
   ] ]
 ];

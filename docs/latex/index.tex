@@ -1,16 +1,10 @@
-Generated on 2024.\-06.\-01
-
-\section*{Introduction }
-
-This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \href{https://github.com/HuijinPark/CCEX}{\tt here}.
-
-\section*{About the simulation }
-
+Generated on 2024.\-06.\-01\hypertarget{index_Introduction}{}\section{Introduction}\label{index_Introduction}
+This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \hyperlink{}{\char`\"{}\-C\-C\-E\-X Git\-Hub Repository\char`\"{} }\hypertarget{index_About}{}\section{the simulation}\label{index_About}
 In this code, we simulate the qubit dynamics in the presence of the bath spins.
 
 You can simulate the spin qubit dynamcis with the following methods\-:
 \begin{DoxyItemize}
-\item \hyperlink{structCluster}{Cluster} correlation expension method (C\-C\-E method)
+\item correlation expension method (C\-C\-E method)
 \item C\-C\-E-\/\-Ne\-Nn method
 \item Generalized C\-C\-E method
 \item Partition C\-C\-E method (To be done)
@@ -21,112 +15,51 @@ You can obtain the following physical quantities of qubit for evolving time\-:
 \item Coherence function
 \item Density matrix (g\-C\-C\-E method only)
 \item Noise function (To be done for C\-C\-E, g\-C\-C\-E)
+\end{DoxyItemize}\hypertarget{index_Installation}{}\section{Installation}\label{index_Installation}
+
+\begin{DoxyCode}
+$ git clone https:\textcolor{comment}{//github.com/HuijinPark/CCEX.git }
+\end{DoxyCode}
+
+
+{\bfseries Requirement} {\bfseries } 
+\begin{DoxyItemize}
+\item \hyperlink{}{\char`\"{}\-Intel M\-K\-L\char`\"{} }
+\item \hyperlink{}{\char`\"{}\-Intel mpi\char`\"{} }
 \end{DoxyItemize}
 
-\section*{Installation }
+{\bfseries Note} {\bfseries } 
+\begin{DoxyItemize}
+\item Make\-File Path should be changed.. (To be changed)
+\end{DoxyItemize}\hypertarget{index_Usage}{}\section{Instructions}\label{index_Usage}
+To run the code using {\ttfamily  mpirun {\ttfamily , use the following command \-:}}
 
-``` \$ git clone \href{https://github.com/HuijinPark/CCEX.git}{\tt https\-://github.\-com/\-Huijin\-Park/\-C\-C\-E\-X.\-git} ```
+{\ttfamily {\ttfamily 
+\begin{DoxyCode}
+$ mpirun -n process\_number code\_path -f input\_file 
+\end{DoxyCode}
+}}
 
-\subsection*{Requirement}
-
-\href{https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html}{\tt Intel M\-K\-L} \href{https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5}{\tt Intel mpi}
-
-\subsection*{Note}
-
-Make\-File Path should be changed.. (To be changed)
-
-\section*{Usage Instructions }
-
-To run the code using {\ttfamily mpirun}, use the following command \-:
-
-``` \$ mpirun -\/n process\-\_\-number code\-\_\-path -\/f input\-\_\-file
-
-```
-
-
+{\ttfamily {\ttfamily 
 \begin{DoxyItemize}
 \item process\-\_\-number \-: The number of processes to run.
 \item code\-\_\-path \-: The path to your executable code.
-\item -\/f input\-\_\-file \-: The input file required for the code to run.
-\begin{DoxyItemize}
-\item (input file should be {\ttfamily .json}\par
- file)
-\end{DoxyItemize}
-\end{DoxyItemize}
+\item -\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json{\ttfamily  file)}}
+\end{DoxyItemize}}}
 
-\section*{example}
+{\ttfamily {\ttfamily {\ttfamily {\ttfamily {\bfseries example} {\bfseries } }}}}
 
-``` \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json ```
+{\ttfamily {\ttfamily {\ttfamily {\ttfamily 
+\begin{DoxyCode}
+$ mpirun -n 4 /usr/local/bin/mycode -f data/input.json 
+\end{DoxyCode}
+}}}}
 
-\section*{Update }
+{\ttfamily {\ttfamily {\ttfamily {\ttfamily }}}}\hypertarget{index_Update}{}\section{Update}\label{index_Update}
+{\ttfamily {\ttfamily {\ttfamily {\ttfamily  ... To be written.}}}}
 
-{\ttfamily To be written.}
-
-\section*{To do list }
-
-
+{\ttfamily {\ttfamily {\ttfamily {\ttfamily }}}}\hypertarget{index_To}{}\section{do list}\label{index_To}
+{\ttfamily {\ttfamily {\ttfamily {\ttfamily 
 \begin{DoxyItemize}
-\item Grouping of files in Model / Parser / Generator categories
-\item Index files based on Index\-Intf
-\begin{DoxyItemize}
-\item H\-T\-M\-L navigation
-\item H\-T\-M\-L Help (chm)
-\item Documentation Sets (X\-Code)
-\item Qt Help (qhp)
-\item Eclipse Help
-\end{DoxyItemize}
-\item Search index
-\begin{DoxyItemize}
-\item Java\-Script based
-\item Server based
-\item External
-\end{DoxyItemize}
-\item Citations
-\begin{DoxyItemize}
-\item via bibtex
-\end{DoxyItemize}
-\item Various processing steps for a comment block
-\begin{DoxyItemize}
-\item comment conversion
-\item comment scanner
-\item markdown processor
-\item doc tokenizer
-\item doc parser
-\item doc visitors
-\end{DoxyItemize}
-\item Diagrams and Images
-\begin{DoxyItemize}
-\item builtin
-\item via Graphviz dot
-\item via mscgen
-\item P\-N\-G generation
-\end{DoxyItemize}
-\item \hyperlink{structOutput}{Output} formats\-: Output\-Generator, Output\-List, and Doc\-Visitor
-\begin{DoxyItemize}
-\item Html\-: Html\-Generator and Html\-Doc\-Visitor
-\item Latex\-: Latex\-Generator and Latex\-Doc\-Visitor
-\item R\-T\-F\-: R\-T\-F\-Generator and R\-T\-F\-Doc\-Visitor
-\item Man\-: Man\-Generator and Man\-Doc\-Visitor
-\item X\-M\-L\-: generate\-X\-M\-L() and Xml\-Doc\-Visitor
-\item print\-: debugging via Print\-Doc\-Visitor
-\item text\-: Text\-Doc\-Visitor for tooltips
-\item perlmod
-\end{DoxyItemize}
-\item i18n via Translator and language.\-cpp
-\item Customizing the layout via Layout\-Doc\-Manager
-\item Parsers
-\begin{DoxyItemize}
-\item C Preprocessing
-\begin{DoxyItemize}
-\item const expression evaluation
-\end{DoxyItemize}
-\item C link languages
-\item Python
-\item Fortran
-\item V\-H\-D\-L
-\item Tag files
-\end{DoxyItemize}
-\item Marshaling to/from disk
-\item Portability functions
-\item Utility functions 
-\end{DoxyItemize}
+\item Grouping of files in Model / Parser / Generator categories 
+\end{DoxyItemize}}}}}
