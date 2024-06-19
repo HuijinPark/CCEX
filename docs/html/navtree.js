@@ -1,28 +1,22 @@
 var NAVTREE =
 [
   [ "CCEX-1.0.0", "index.html", [
-    [ "README", "md__home_huijin_git_CCEX_README.html", null ],
-    [ "Todo List", "todo.html", null ],
-    [ "Namespaces", null, [
-      [ "Namespace List", "namespaces.html", "namespaces" ]
+    [ "Overview", "@ref MainPage", null ],
+    [ "Getting started", "GettingStarted.html", null ],
+    [ "Input File Description", "InputFile.html", null ],
+    [ "Examples", "Examples.html", null ],
+    [ "Mainpage Overview", "index.html", [
+      [ "Introduction", "index.html#intro", null ],
+      [ "Example Page", "index.html#example", null ],
+      [ "Tag Page", "index.html#tag", null ]
     ] ],
-    [ "Classes", null, [
-      [ "Class List", "annotated.html", "annotated" ],
-      [ "Class Index", "classes.html", null ],
-      [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
-        [ "Variables", "functions_vars.html", null ]
-      ] ]
-    ] ],
-    [ "Files", null, [
-      [ "File List", "files.html", "files" ]
-    ] ]
+    [ "Class List", "annotated.html", "annotated" ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"annotated.html"
+"@ref MainPage"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

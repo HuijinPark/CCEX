@@ -3,9 +3,12 @@
 }
 
 
-\hyperlink{structQubit}{Qubit} structure contains each qubit's information.  
+\subsection{Detailed Description}
+\hyperlink{structQubit}{Qubit} structure contains each qubit's information. 
 
-
+\begin{DoxyNote}{Note}
+When you make this structure, the following action would be done automatically. (1) alpha, beta value would be allocated (2) The dimension of alpha, beta would be checked if it is 2$\ast$spin+1 (3) The alpha, beta would be normalized 
+\end{DoxyNote}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -25,14 +28,6 @@ Matrix\-Xcd \hyperlink{structQubit_accc3b309d802ab6f269b7d8a7536a4a0}{alpha}
 \begin{DoxyCompactList}\small\item\em The projected state of a qubit (alpha) \end{DoxyCompactList}\item 
 Matrix\-Xcd \hyperlink{structQubit_a6c73eb8c49fdb6db06179b21b5a2923d}{beta}
 \begin{DoxyCompactList}\small\item\em The projected state of a qubit (beta) \end{DoxyCompactList}\end{DoxyCompactItemize}
-
-
-\subsection{Detailed Description}
-\hyperlink{structQubit}{Qubit} structure contains each qubit's information. 
-
-\begin{DoxyNote}{Note}
-When you make this structure, the following action would be done automatically. (1) alpha, beta value would be allocated (2) The dimension of alpha, beta would be checked if it is 2$\ast$spin+1 (3) The alpha, beta would be normalized 
-\end{DoxyNote}
 
 
 \subsection{Member Data Documentation}

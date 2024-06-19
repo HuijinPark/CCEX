@@ -3,14 +3,28 @@
 }
 
 
-\hyperlink{structQubitArray}{Qubit\-Array} include information of all qubits.  
-
-
-
-
 {\ttfamily \#include $<$qubit.\-h$>$}
 
-\subsection*{Public Attributes}
+
+
+\subsection{Detailed Description}
+\hyperlink{structQubitArray}{Qubit\-Array} include information of all qubits. 
+
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000013}{Todo}]Check if the psia, psib, psi0, rho0 is normalied. 
+
+initstate \-: Like above case, we need to change the format of this tag. e.\-g. initstate = $|$+1$>$$|$1.5$>$$|$0.5$>$ -\/ i$|$+1$>$$|$0.5$>$$|$-\/0.5$>$ =$>$ generally \-: initstate = a$|$ms\-\_\-1$>$$|$ms\-\_\-2$>$..$|$ms\-\_\-n$>$ + b$|$ms'\-\_\-1$>$$|$ms'\-\_\-2$>$..$|$ms'\-\_\-n$>$ 
+
+Add doucumentation for qubitarray and cce.\-in \char`\"{}\&\-Qubit\char`\"{} tag \end{DoxyRefDesc}
+
+
+Each parameter is read from the input file or options.
+\begin{DoxyItemize}
+\item \-\_\-parameter \-: Only use during reading input file and then free
+\item parameter \-: Use during simulation \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000014}{Todo}]alphastate, betastate \-: currently the value format of this tag in input file is \-: e.\-g. alphastate = \{ e, 1, 0, 0, \} but we need to change this format to bracket notation\-: e,g. alphastate = e $|$-\/1$>$ betastate = n1 $|$+1.5$>$ betastate = n1 i$|$-\/0.5$>$ =$>$ generally \-: alphastate or betastate = qname a$|$ms$>$ \-: a is the constant (can be complex number) \end{DoxyRefDesc}
+
+\end{DoxyItemize}\subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 int $\ast$ \hyperlink{structQubitArray_a0a5c3875737d2a3bc14399109e89c82d}{\-\_\-alphaidx}
@@ -32,25 +46,6 @@ Matrix\-Xcd \hyperlink{structQubitArray_a17543dd30e2e5ef672ff5f751119beea}{psi0}
 bool \hyperlink{structQubitArray_ab1cb38fcd5640338fad8c2abc868b53e}{overhaus}
 \end{DoxyCompactItemize}
 
-
-\subsection{Detailed Description}
-\hyperlink{structQubitArray}{Qubit\-Array} include information of all qubits. 
-
-\begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000013}{Todo}]Check if the psia, psib, psi0, rho0 is normalied. 
-
-initstate \-: Like above case, we need to change the format of this tag. e.\-g. initstate = $|$+1$>$$|$1.5$>$$|$0.5$>$ -\/ i$|$+1$>$$|$0.5$>$$|$-\/0.5$>$ =$>$ generally \-: initstate = a$|$ms\-\_\-1$>$$|$ms\-\_\-2$>$..$|$ms\-\_\-n$>$ + b$|$ms'\-\_\-1$>$$|$ms'\-\_\-2$>$..$|$ms'\-\_\-n$>$ 
-
-Add doucumentation for qubitarray and cce.\-in \char`\"{}\&\-Qubit\char`\"{} tag \end{DoxyRefDesc}
-
-
-Each parameter is read from the input file or options.
-\begin{DoxyItemize}
-\item \-\_\-parameter \-: Only use during reading input file and then free
-\item parameter \-: Use during simulation \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000014}{Todo}]alphastate, betastate \-: currently the value format of this tag in input file is \-: e.\-g. alphastate = \{ e, 1, 0, 0, \} but we need to change this format to bracket notation\-: e,g. alphastate = e $|$-\/1$>$ betastate = n1 $|$+1.5$>$ betastate = n1 i$|$-\/0.5$>$ =$>$ generally \-: alphastate or betastate = qname a$|$ms$>$ \-: a is the constant (can be complex number) \end{DoxyRefDesc}
-
-\end{DoxyItemize}
 
 \subsection{Member Data Documentation}
 \hypertarget{structQubitArray_a0a5c3875737d2a3bc14399109e89c82d}{\index{Qubit\-Array@{Qubit\-Array}!\-\_\-alphaidx@{\-\_\-alphaidx}}
