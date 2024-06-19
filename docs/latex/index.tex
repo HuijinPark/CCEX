@@ -1,90 +1,57 @@
-This is navigator to find the input file tags\hypertarget{index_IN_CONFIG}{}\section{General condition}\label{index_IN_CONFIG}
+Generated on 2024.\-06.\-01\hypertarget{index_Introduction}{}\section{Introduction}\label{index_Introduction}
+This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \hyperlink{}{\char`\"{}\-C\-C\-E\-X Git\-Hub Repository\char`\"{} }\hypertarget{index_AboutTheSimulation}{}\section{About the simulation}\label{index_AboutTheSimulation}
+In this code, we simulate the qubit dynamics in the presence of the bath spins.
+
+You can simulate the spin qubit dynamcis with the following methods\-:
+\begin{DoxyItemize}
+\item \hyperlink{structCluster}{Cluster} correlation expension method (C\-C\-E method)
+\item C\-C\-E-\/\-Ne\-Nn method
+\item Generalized C\-C\-E method
+\item Partition C\-C\-E method (To be done)
+\end{DoxyItemize}
+
+You can obtain the following physical quantities of qubit for evolving time\-:
+\begin{DoxyItemize}
+\item Coherence function
+\item Density matrix (g\-C\-C\-E method only)
+\item Noise function (To be done for C\-C\-E, g\-C\-C\-E)
+\end{DoxyItemize}\hypertarget{index_Installation}{}\section{Installation}\label{index_Installation}
+
+\begin{DoxyCode}
+$ git clone https:\textcolor{comment}{//github.com/HuijinPark/CCEX.git }
+\end{DoxyCode}
+
+
+{\bfseries Requirement} {\bfseries } 
+\begin{DoxyItemize}
+\item \hyperlink{}{\char`\"{}\-Intel M\-K\-L\char`\"{} }
+\item \hyperlink{}{\char`\"{}\-Intel mpi\char`\"{} }
+\end{DoxyItemize}
+
+{\bfseries Note} {\bfseries } 
+\begin{DoxyItemize}
+\item Make\-File Path should be changed.. (To be changed)
+\end{DoxyItemize}\hypertarget{index_UsageInstructions}{}\section{Usage Instructions}\label{index_UsageInstructions}
+To run the code using {\ttfamily  mpirun }, use the following command \-:
+
+
+\begin{DoxyCode}
+$ mpirun -n process\_number code\_path -f input\_file 
+\end{DoxyCode}
+
+
 
 \begin{DoxyItemize}
-\item method method
-\item quantity quantity
-\item order order
-\item bfield bfield
-\item rbath rbath
-\item rdip rdip
-\item deltat deltat
-\item nstep nstep
-\item rbathcut rbathcut
-\item rdipcut rdipcut
-\item nstate nstate
-\item seed seed
-\item qubitfile qubitfile
-\item gyrofile gyrofile
-\item bathfile bathfiles
-\item bathadjust bathadjust
-\item avaaxfile avaaxfile
-\item statefile statefile
-\item exstatefile exstatefile
-\item Defect\-Tot\-Spin Defect\-Tot\-Spin
-\item Corr\-Tot\-Spin Corr\-Tot\-Spin
-\item hf\-\_\-readmode hf\-\_\-readmode
-\item hf\-\_\-tensorfile hf\-\_\-tensorfile
-\item hf\-\_\-cutoff hf\-\_\-cutoff
-\item hf\-\_\-ignore\-\_\-oor hf\-\_\-ignore\-\_\-oor
-\item qd\-\_\-readmode qd\-\_\-readmode
-\item qd\-\_\-tensorfile qd\-\_\-tensorfile
-\item qd\-\_\-tensorfile\-\_\-woqubit qd\-\_\-tensorfile\-\_\-woqubit
-\end{DoxyItemize}\hypertarget{index_IN_CLUSTER}{}\section{Clustering condition}\label{index_IN_CLUSTER}
+\item process\-\_\-number \-: The number of processes to run.
+\item code\-\_\-path \-: The path to your executable code.
+\item -\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
+\end{DoxyItemize}
+
+{\bfseries example} {\bfseries }  \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json 
+
+{\bfseries $\ast$} For more detailed instructions, see the \hyperlink{GettingStarted}{Getting Started}.{\bfseries } \hypertarget{index_Update}{}\section{Update}\label{index_Update}
+... To be written.\hypertarget{index_ToDoList}{}\section{To do list}\label{index_ToDoList}
 
 \begin{DoxyItemize}
-\item order order
-\item method method
-\item addsubclus addsubclus
-\item nk nk
-\end{DoxyItemize}\hypertarget{index_IN_OUTPUT}{}\section{Output options}\label{index_IN_OUTPUT}
-
-\begin{DoxyItemize}
-\item savemode savemode
-\item outfile outfile
-\end{DoxyItemize}\hypertarget{index_IN_PULSE}{}\section{Pulse condition}\label{index_IN_PULSE}
-
-\begin{DoxyItemize}
-\item npulse npulse
-\item pulsename pulsename
-\item sequence sequenceinput
-\end{DoxyItemize}\hypertarget{index_IN_DEFECTARR}{}\section{Configuration of spins on bath defect}\label{index_IN_DEFECTARR}
-
-\begin{DoxyItemize}
-\item dfname dfname
-\item naddspin naddspin
-\item navaax navaax
-\item apprx apprx
-\item types types
-\item spins spins
-\item gyros gyros
-\item eqs eqs
-\item rxyzs rxyzs
-\item hypf hypf
-\item efg efg
-\item zfs zfs
-\item detuning detuning
-\end{DoxyItemize}\hypertarget{index_IN_QUBITARR}{}\section{Configuration of qubit spins}\label{index_IN_QUBITARR}
-
-\begin{DoxyItemize}
-\item nqubit nqubit
-\item qubit (sub-\/key)
-\item name name
-\item spin spin
-\item gyro gyro
-\item xyz xyz
-\item detuning detuning
-\item alpha alphams
-\item beta betams
-\item intmap (sub-\/key)
-\item between between
-\item tensor tensor
-\item psia psiamat
-\item psib psibmat
-\item psi0 psi0mat
-\item overhaus overhaus
-\item alphaidx alphaidx
-\item betaidx betaidx
-\item qspin spin
-\item alphams alphams
-\item betams betams 
+\item Grouping of files in Model / Parser / Generator categories 
 \end{DoxyItemize}
