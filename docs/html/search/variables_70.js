@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['packetaccessbit',['PacketAccessBit',['../group__flags.html#ga1a306a438e1ab074e8be59512e887b9f',1,'Eigen']]],
   ['prop_5fgyros',['prop_gyros',['../structBathArray.html#a79ff244bc7666f22c2bbb8072d3e3fa2',1,'BathArray']]],
   ['prop_5fnames',['prop_names',['../structBathArray.html#a8349ee706336e916dd546a613fbb51e2',1,'BathArray']]],
   ['prop_5fnspecies',['prop_nspecies',['../structBathArray.html#a23c43fd398472286b1f80c5159896daf',1,'BathArray']]],

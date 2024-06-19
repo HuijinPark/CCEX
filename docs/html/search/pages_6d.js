@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['my_20project_20documentation',['My Project Documentation',['../index.html',1,'']]]
+  ['mainpage_20overview',['Mainpage Overview',['../index.html',1,'']]],
+  ['matrix_20manipulation_20via_20nullary_2dexpressions',['Matrix manipulation via nullary-expressions',['../TopicCustomizing_NullaryExpr.html',1,'UserManual_CustomizingEigen']]]
 ];
