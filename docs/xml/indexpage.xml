@@ -17,9 +17,9 @@
 <sect1 id="index_1Installation">
 <title>Installation</title>
 <para><programlisting><codeline><highlight class="normal">$<sp/>git<sp/>clone<sp/>https:</highlight><highlight class="comment">//github.com/HuijinPark/CCEX.git</highlight></codeline>
-</programlisting></para><para><bold>Requirement</bold> <bold></bold> </para><para><itemizedlist>
+</programlisting></para><para><bold>Requirement</bold> </para><para><itemizedlist>
 <listitem><para><ulink url="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html">Intel MKL</ulink></para></listitem><listitem><para><ulink url="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html">Intel mpi</ulink></para></listitem></itemizedlist>
-</para><para><bold>Note</bold> <bold></bold> </para><para><itemizedlist>
+</para><para><bold>Note</bold> </para><para><itemizedlist>
 <listitem><para>MakeFile Path should be changed.. (To be changed)</para></listitem></itemizedlist>
 </para></sect1>
 <sect1 id="index_1UsageInstructions">
@@ -27,8 +27,8 @@
 <para>To run the code using <computeroutput> mpirun </computeroutput>, use the following command :</para><para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>process_number<sp/>code_path<sp/>-f<sp/>input_file</highlight></codeline>
 </programlisting></para><para><itemizedlist>
 <listitem><para>process_number : The number of processes to run.</para></listitem><listitem><para>code_path : The path to your executable code.</para></listitem><listitem><para>-f input_file : The input file required for the code to run. (input file should be <computeroutput>.json</computeroutput> file)</para></listitem></itemizedlist>
-</para><para><bold>example</bold> <bold></bold> </para><para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>4<sp/>/usr/local/bin/mycode<sp/>-f<sp/>data/input.json</highlight></codeline>
-</programlisting></para><para><bold>*</bold> For more detailed instructions, see the <ref refid="GettingStarted" kindref="compound">Getting Started</ref>. <bold></bold> </para></sect1>
+</para><para><bold>example</bold> </para><para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>4<sp/>/usr/local/bin/mycode<sp/>-f<sp/>data/input.json</highlight></codeline>
+</programlisting></para><para><bold>For</bold> <bold>more</bold> <bold>detailed</bold> <bold>instructions</bold>, <bold>see</bold> <bold>the</bold> <ref refid="GettingStarted" kindref="compound">Getting Started</ref>.</para></sect1>
 <sect1 id="index_1Update">
 <title>Update</title>
 <para>... To be written.</para></sect1>

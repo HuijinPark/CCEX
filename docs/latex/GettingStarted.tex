@@ -11,18 +11,19 @@ $ mpirun -n process\_number code\_path -f input\_file
 \begin{DoxyItemize}
 \item process\-\_\-number \-: The number of processes to run.
 \item code\-\_\-path \-: The path to your executable code.
-\item input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
+\item input\-\_\-file \-: The input file required for the code to run. \par
+ (input file should be {\ttfamily .json} file)
 \end{DoxyItemize}
 
-{\bfseries  Example $<${\bfseries } $>$}
+{\bfseries Example} 
 
-{\bfseries 
+
 \begin{DoxyCode}
 $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json 
 \end{DoxyCode}
-}
 
-{\bfseries {\bfseries  Possble command-\/line options $<${\bfseries } $>$
+
+{\bfseries Possble} {\bfseries command-\/line} {\bfseries options} 
 \begin{DoxyItemize}
 \item -\/h \-: Help option
 \item -\/f \-: \hyperlink{InputFile}{Input file} option (Required) (See \hyperlink{InputFile}{Input file})
@@ -35,22 +36,20 @@ $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
 \item -\/\-N \-: The number of state configuration to do time ensemble average (See nstate)
 \item -\/\-B \-: Magnetic field in z direction (Unit \-: G) (See bfield)
 \item -\/o \-: Result file path (See output)
-\end{DoxyItemize}}}
+\end{DoxyItemize}
 
-{\bfseries {\bfseries {\bfseries  About options $<${\bfseries } $>$}}}
+{\bfseries About} {\bfseries options} 
 
-{\bfseries {\bfseries {\bfseries The code read options twice \-:
+The code read options twice \-:
 \begin{DoxyItemize}
 \item Read options from input file called as In-\/file options
 \item Read optoins from command line called as Command-\/line options \par
  Command-\/line options are \char`\"{}priority\char`\"{}
-\end{DoxyItemize}}}}
+\end{DoxyItemize}\hypertarget{GettingStarted_Workflow}{}\section{Workflow}\label{GettingStarted_Workflow}
+The C\-C\-E\-X software follow the below work process.
 
-{\bfseries {\bfseries {\bfseries }}}\hypertarget{GettingStarted_Workflow}{}\section{Workflow}\label{GettingStarted_Workflow}
-{\bfseries {\bfseries {\bfseries  The C\-C\-E\-X software follow the below work process.}}}
+When you give the arguments in the command line, the code frist read the arguments. Note that if you don't give the input file accesible with -\/f option, then the code doesn't work.
 
-{\bfseries {\bfseries {\bfseries When you give the arguments in the command line, the code frist read the arguments. Note that if you don't give the input file accesible with -\/f option, then the code doesn't work.}}}
+Code read the all tags in input file and update the
 
-{\bfseries {\bfseries {\bfseries Code read the all tags in input file and update the}}}
-
-{\bfseries {\bfseries {\bfseries   }}}
+  

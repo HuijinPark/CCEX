@@ -14,16 +14,16 @@ $ mpirun -n process_number code_path -f input_file
 
 - process_number : The number of processes to run.  
 - code_path : The path to your executable code.  
-- input_file : The input file required for the code to run.
+- input_file : The input file required for the code to run. \n
   (input file should be <tt>.json</tt> file)  
 
-<b> Example <\b>
+\b Example 
 
 \code 
 $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json 
 \endcode
 
-<b> Possble command-line options <\b>
+\b Possble \b command-line \b options
 - -h : Help option  
 - -f : \ref InputFile "Input file" option (Required) (See \ref InputFile "Input file")  
 - -m : Method (See \ref Config_Method "method")  
@@ -36,7 +36,7 @@ $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
 - -B : Magnetic field in z direction (Unit : G) (See \ref Config_Bfield "bfield")  
 - -o : Result file path (See \ref Config_Output "output")  
 
-<b> About options <\b>
+\b About \b options
 
 The code read options twice :
 - Read options from input file called as In-file options
