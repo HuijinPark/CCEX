@@ -11,12 +11,16 @@ $ mpirun -n process\_number code\_path -f input\_file
 \begin{DoxyItemize}
 \item process\-\_\-number \-: The number of processes to run.
 \item code\-\_\-path \-: The path to your executable code.
-\item input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
+\item input\-\_\-file \-: The input file required for the code to run. \par
+
+\begin{DoxyItemize}
+\item (input file should be {\ttfamily .json} file)
+\end{DoxyItemize}
 \end{DoxyItemize}
 
 {\bfseries Example} {\bfseries }  \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json 
 
-{\bfseries Possble} parsing option in command line {\bfseries } 
+{\bfseries Possble} command-\/line options {\bfseries } 
 
 
 \begin{DoxyItemize}
@@ -27,8 +31,24 @@ $ mpirun -n process\_number code\_path -f input\_file
 \item -\/\-I \-: File path to set the position of bath spins (See bathfiles)
 \item -\/s \-: File path to set the spin state of bath spins (See statefile)
 \item -\/a \-: File path to set principal axies of the defects in the bath (See avaaxfile)
-\item -\/\-S \-: File path to set the spin state of on-\/site spins of the defects in the bath (See exstatefile)
+\item -\/\-S \-: File path to set the spin state of on-\/site spins of the defects in the bath (See exstatefile) 
 \item \textbackslash{}-\/\-N \-: The number of state configuration to do time ensemble average (See nstate)
 \item \textbackslash{}-\/\-B \-: Magnetic field in z direction (Unit \-: G) (See bfield)
-\item \textbackslash{}-\/o \-: Result file path (See output) 
+\item \textbackslash{}-\/o \-: Result file path (See output)
 \end{DoxyItemize}
+
+{\bfseries About} options {\bfseries } 
+
+The code read options twice \-:
+\begin{DoxyItemize}
+\item Read options from input file called as In-\/file options
+\item Read optoins from command line called as Command-\/line options \par
+ Command-\/line options are \char`\"{}priority\char`\"{}
+\end{DoxyItemize}\hypertarget{GettingStarted_Workflow}{}\section{Workflow}\label{GettingStarted_Workflow}
+The C\-C\-E\-X software follow the below work process.
+
+When you give the arguments in the command line, the code frist read the arguments. Note that if you don't give the input file accesible with -\/f option, then the code doesn't work.
+
+Code read the all tags in input file and update the
+
+ 

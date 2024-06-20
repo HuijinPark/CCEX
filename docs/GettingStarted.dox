@@ -1,34 +1,57 @@
 /** \page GettingStarted Getting Started
+  
+  This is the getting started guide.
  
- This is the getting started guide.
+  \section HowToRun How to run  
+ 
+ To run the code using <tt> mpirun </tt>, use the following command :  
+ 
+ \code $ mpirun -n process_number code_path -f input_file \endcode  
+ 
+ - process_number : The number of processes to run.  
+ - code_path : The path to your executable code.  
+ - input_file : The input file required for the code to run. \n
+   \* (input file should be <tt>.json</tt> file)  
+ 
+ \b Example \b
+ \code 
+ $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json 
+ \endcode
+ 
+ \b Possble command-line options \b  
+ 
+ - \-h : Help option  
+ - \-f : \ref InputFile "Input file" option (Required) (See \ref InputFile "Input file")  
+ - \-m : Method (See \ref Config_Method "method")  
+ - \-q : Quantity (See \ref Config_Quantity "quantity")   
+ - \-I : File path to set the position of bath spins (See \ref Config_BathFiles "bathfiles")  
+ - \-s : File path to set the spin state of bath spins (See \ref Config_StateFile "statefile")   
+ - \-a : File path to set principal axies of the defects in the bath (See \ref Config_AvaaxFile "avaaxfile")  
+ - \-S : File path to set the spin state of on-site spins of the defects in the bath (See \ref Config_ExStateFile "exstatefile)  
+ - \-N : The number of state configuration to do time ensemble average (See \ref Config_Nstate "nstate")  
+ - \-B : Magnetic field in z direction (Unit : G) (See \ref Config_Bfield "bfield")  
+ - \-o : Result file path (See \ref Config_Output "output")  
 
- \section HowToRun How to run
+ \b About options \b  
 
-To run the code using <tt> mpirun </tt>, use the following command :
+ The code read options twice :
+ - Read options from input file called as In-file options
+ - Read optoins from command line called as Command-line options
+ \n
+ * Command-line options are "priority"
 
-\code $ mpirun -n process_number code_path -f input_file \endcode
 
-- process_number : The number of processes to run.
-- code_path : The path to your executable code.
-- input_file : The input file required for the code to run. 
-  * (input file should be <tt>.json</tt> file)
+ \section Workflow Workflow
 
-\b Example \b
-\code $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json \endcode
+ The CCEX software follow the below work process. 
 
-\b Possble parsing option in command line \b
+ When you give the arguments in the command line, the code frist read the arguments.
+ Note that if you don't give the input file accesible with -f option, then the code doesn't work.
+ 
+ Code read the all tags in input file and update the 
 
-- \-h : Help option
-- \-f : \ref InputFile "Input file" option (Required) (See \ref InputFile "Input file")
-- \-m : Method (See \ref IN_Method "method")
-- \-q : Quantity (See \ref IN_Quantity "quantity") 
-- \-I : File path to set the position of bath spins (See \ref IN_BathFiles "bathfiles")
-- \-s : File path to set the spin state of bath spins (See \ref IN_StateFile "statefile") 
-- \-a : File path to set principal axies of the defects in the bath (See \ref IN_AvaaxFile "avaaxfile")
-- \-S : File path to set the spin state of on-site spins of the defects in the bath (See \ref IN_ExStateFile "exstatefile)
-- \-N : The number of state configuration to do time ensemble average (See \ref IN_Nstate "nstate")
-- \-B : Magnetic field in z direction (Unit : G) (See \ref IN_Bfield "bfield")
-- \-o : Result file path (See \ref IN_Output "output")
+ <img src="CCEX_workflow.png" alt="" width="600">
 
+ 
 */
 

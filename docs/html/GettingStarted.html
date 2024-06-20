@@ -110,10 +110,14 @@ How to run</h1>
 </div><!-- fragment --><ul>
 <li>process_number : The number of processes to run.</li>
 <li>code_path : The path to your executable code.</li>
-<li>input_file : The input file required for the code to run. (input file should be <code>.json</code> file)</li>
+<li>input_file : The input file required for the code to run. <br/>
+<ul>
+<li>(input file should be <code>.json</code> file)</li>
+</ul>
+</li>
 </ul>
 <p><b>Example</b> <b></b>  $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json </p>
-<p><b>Possble</b> parsing option in command line <b></b> </p>
+<p><b>Possble</b> command-line options <b></b> </p>
 <ul>
 <li>-h : Help option</li>
 <li>-f : <a class="el" href="InputFile.html">Input file</a> option (Required) (See <a class="el" href="InputFile.html">Input file</a>)</li>
@@ -122,12 +126,27 @@ How to run</h1>
 <li>-I : File path to set the position of bath spins (See bathfiles)</li>
 <li>-s : File path to set the spin state of bath spins (See statefile)</li>
 <li>-a : File path to set principal axies of the defects in the bath (See avaaxfile)</li>
-<li>-S : File path to set the spin state of on-site spins of the defects in the bath (See exstatefile)</li>
+<li>-S : File path to set the spin state of on-site spins of the defects in the bath (See exstatefile) </li>
 <li>\-N : The number of state configuration to do time ensemble average (See nstate)</li>
 <li>\-B : Magnetic field in z direction (Unit : G) (See bfield)</li>
-<li>\-o : Result file path (See output) </li>
+<li>\-o : Result file path (See output)</li>
 </ul>
-</div></div><!-- contents -->
+<p><b>About</b> options <b></b> </p>
+<p>The code read options twice :</p>
+<ul>
+<li>Read options from input file called as In-file options</li>
+<li>Read optoins from command line called as Command-line options <br/>
+ Command-line options are "priority"</li>
+</ul>
+<h1><a class="anchor" id="Workflow"></a>
+Workflow</h1>
+<p>The CCEX software follow the below work process.</p>
+<p>When you give the arguments in the command line, the code frist read the arguments. Note that if you don't give the input file accesible with -f option, then the code doesn't work.</p>
+<p>Code read the all tags in input file and update the</p>
+<div class="image">
+<img src="CCEX_workflow.png"  width="600"/>
+</div>
+ </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
