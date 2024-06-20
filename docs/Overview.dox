@@ -1,65 +1,65 @@
 /** \mainpage Overview 
-
-Generated on 2024.06.01 
-
-
-\section Introduction
-
-This page provides a way how to simulate the spin qubit dynamics with the CCEX software.
-The source code of this software can be found in \link https://github.com/HuijinPark/CCEX "CCEX GitHub Repository" \endlink
-
-
-\section AboutTheSimulation About the simulation
-
-In this code, we simulate the qubit dynamics in the presence of the bath spins.
-
-You can simulate the spin qubit dynamcis with the following methods:
-- Cluster correlation expension method (CCE method)
-- CCE-NeNn method
-- Generalized CCE method
-- Partition CCE method (To be done)
-
-You can obtain the following physical quantities of qubit for evolving time:
-- Coherence function
-- Density matrix (gCCE method only)
-- Noise function (To be done for CCE, gCCE)
-
-
-\section Installation Installation
-
-\code $ git clone https://github.com/HuijinPark/CCEX.git \endcode
-
-\b Requirement \b
-- \link https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html "Intel MKL" \endlink
-- \link https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5 "Intel mpi" \endlink
-
-\b Note \b
-- MakeFile Path should be changed.. (To be changed)
-
-
-\section UsageInstructions Usage Instructions
-
-To run the code using <tt> mpirun </tt>, use the following command :
-
-\code $ mpirun -n process_number code_path -f input_file \endcode
-
-- process_number : The number of processes to run.
-- code_path : The path to your executable code.
-- \-f input_file : The input file required for the code to run. 
-   * (input file should be <tt>.json</tt> file)
-
-\b example \b
-\code $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json \endcode
-
-\b * For more detailed instructions, see the \ref GettingStarted "Getting Started".\b
-
-
-\section Update Update
-
- ... To be written.
-
-
-\section ToDoList To do list
-- Grouping of files in Model / Parser / Generator categories
-
+* 
+* Generated on 2024.06.01 
+* 
+* 
+* \section Introduction
+* 
+* This page provides a way how to simulate the spin qubit dynamics with the CCEX software.
+* The source code of this software can be found in [CCEX GitHub Repository](https://github.com/HuijinPark/CCEX)
+* 
+* 
+* \section AboutTheSimulation About the simulation
+* 
+* In this code, we simulate the qubit dynamics in the presence of the bath spins.
+* 
+* You can simulate the spin qubit dynamcis with the following methods:
+* - Cluster correlation expension method (CCE method)
+* - CCE-NeNn method
+* - Generalized CCE method
+* - Partition CCE method (To be done)
+* 
+* You can obtain the following physical quantities of qubit for evolving time:
+* - Coherence function
+* - Density matrix (gCCE method only)
+* - Noise function (To be done for CCE, gCCE)
+* 
+* 
+* \section Installation Installation
+* 
+* \code $ git clone https://github.com/HuijinPark/CCEX.git \endcode
+* 
+* \b Requirement \b
+* - [Intel MKL](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html)
+* - [Intel mpi](https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5)
+* 
+* \b Note \b
+* - MakeFile Path should be changed.. (To be changed)
+* 
+* 
+* \section UsageInstructions Usage Instructions
+* 
+* To run the code using <tt> mpirun </tt>, use the following command :
+* 
+* \code $ mpirun -n process_number code_path -f input_file \endcode
+* 
+* - process_number : The number of processes to run.
+* - code_path : The path to your executable code.
+* - \-f input_file : The input file required for the code to run. 
+*    * (input file should be <tt>.json</tt> file)
+* 
+* \b example \b
+* \code $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json \endcode
+* 
+* \b * For more detailed instructions, see the \ref GettingStarted "Getting Started".\b
+* 
+* 
+* \section Update Update
+* 
+*  ... To be written.
+* 
+* 
+* \section ToDoList To do list
+* - Grouping of files in Model / Parser / Generator categories
+* 
 */

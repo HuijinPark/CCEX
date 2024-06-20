@@ -1,5 +1,5 @@
 Generated on 2024.\-06.\-01\hypertarget{index_Introduction}{}\section{Introduction}\label{index_Introduction}
-This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \hyperlink{}{\char`\"{}\-C\-C\-E\-X Git\-Hub Repository\char`\"{} }\hypertarget{index_AboutTheSimulation}{}\section{About the simulation}\label{index_AboutTheSimulation}
+This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \href{https://github.com/HuijinPark/CCEX}{\tt C\-C\-E\-X Git\-Hub Repository}\hypertarget{index_AboutTheSimulation}{}\section{About the simulation}\label{index_AboutTheSimulation}
 In this code, we simulate the qubit dynamics in the presence of the bath spins.
 
 You can simulate the spin qubit dynamcis with the following methods\-:
@@ -24,8 +24,8 @@ $ git clone https:\textcolor{comment}{//github.com/HuijinPark/CCEX.git }
 
 {\bfseries Requirement} {\bfseries } 
 \begin{DoxyItemize}
-\item \hyperlink{}{\char`\"{}\-Intel M\-K\-L\char`\"{} }
-\item \hyperlink{}{\char`\"{}\-Intel mpi\char`\"{} }
+\item \href{https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html}{\tt Intel M\-K\-L}
+\item \href{https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5}{\tt Intel mpi}
 \end{DoxyItemize}
 
 {\bfseries Note} {\bfseries } 
@@ -44,7 +44,10 @@ $ mpirun -n process\_number code\_path -f input\_file
 \begin{DoxyItemize}
 \item process\-\_\-number \-: The number of processes to run.
 \item code\-\_\-path \-: The path to your executable code.
-\item -\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
+\item -\/f input\-\_\-file \-: The input file required for the code to run.
+\begin{DoxyItemize}
+\item (input file should be {\ttfamily .json} file)
+\end{DoxyItemize}
 \end{DoxyItemize}
 
 {\bfseries example} {\bfseries }  \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json 

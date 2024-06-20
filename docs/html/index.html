@@ -44,7 +44,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </script>
   <div id="navrow1" class="tabs">
     <ul class="tablist">
-      <li><a href="@ref README"><span>Readme</span></a></li>
       <li class="current"><a href="index.html"><span>Overview</span></a></li>
       <li><a href="GettingStarted.html"><span>Getting&#160;started</span></a></li>
       <li><a href="InputFile.html"><span>Input&#160;File</span></a></li>
@@ -106,7 +105,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <div class="textblock"><p>Generated on 2024.06.01</p>
 <h1><a class="anchor" id="Introduction"></a>
 Introduction</h1>
-<p>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <a class="el" href="">"CCEX GitHub Repository" </a></p>
+<p>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <a href="https://github.com/HuijinPark/CCEX">CCEX GitHub Repository</a></p>
 <h1><a class="anchor" id="AboutTheSimulation"></a>
 About the simulation</h1>
 <p>In this code, we simulate the qubit dynamics in the presence of the bath spins.</p>
@@ -128,8 +127,8 @@ Installation</h1>
 <div class="fragment"><div class="line">$ git clone https:<span class="comment">//github.com/HuijinPark/CCEX.git </span></div>
 </div><!-- fragment --><p><b>Requirement</b> <b></b> </p>
 <ul>
-<li><a class="el" href="">"Intel MKL" </a></li>
-<li><a class="el" href="">"Intel mpi" </a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html">Intel MKL</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5">Intel mpi</a></li>
 </ul>
 <p><b>Note</b> <b></b> </p>
 <ul>
@@ -142,7 +141,10 @@ Usage Instructions</h1>
 </div><!-- fragment --><ul>
 <li>process_number : The number of processes to run.</li>
 <li>code_path : The path to your executable code.</li>
-<li>-f input_file : The input file required for the code to run. (input file should be <code>.json</code> file)</li>
+<li>-f input_file : The input file required for the code to run.<ul>
+<li>(input file should be <code>.json</code> file)</li>
+</ul>
+</li>
 </ul>
 <p><b>example</b> <b></b>  $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json </p>
 <p><b>*</b> For more detailed instructions, see the <a class="el" href="GettingStarted.html">Getting Started</a>.<b></b> </p>
