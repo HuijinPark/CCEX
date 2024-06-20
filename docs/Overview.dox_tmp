@@ -1,16 +1,15 @@
-/**
-\\mainpage Overview 
+/** \mainpage Overview 
 
 Generated on 2024.06.01 
 
 
-\\section Introduction
+\section Introduction
 
 This page provides a way how to simulate the spin qubit dynamics with the CCEX software.
 The source code of this software can be found in [CCEX GitHub Repository](https://github.com/HuijinPark/CCEX)
 
 
-\\section AboutTheSimulation About the simulation
+\section AboutTheSimulation About the simulation
 
 In this code, we simulate the qubit dynamics in the presence of the bath spins.
 
@@ -26,49 +25,49 @@ You can obtain the following physical quantities of qubit for evolving time:
 - Noise function (To be done for CCE, gCCE)
 
 
-\\section Installation Installation
+\section Installation Installation
 
-\\code
+\code
 $ git clone https://github.com/HuijinPark/CCEX.git
-\\endcode
+\endcode
 
-\\b Requirement \\b  
+\b Requirement \b 
 
 - [Intel MKL](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html) 
 - [Intel mpi](https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html) 
 
-\\b Note \\b  
+\b Note \b 
 
 - MakeFile Path should be changed.. (To be changed)
 
-\\section UsageInstructions Usage Instructions
+\section UsageInstructions Usage Instructions
 
 To run the code using <tt> mpirun </tt>, use the following command :
 
-\\code
+\code
 $ mpirun -n process_number code_path -f input_file
-\\endcode
+\endcode
 
 - process_number : The number of processes to run.
 - code_path : The path to your executable code.
-- \\-f input_file : The input file required for the code to run.
+- \-f input_file : The input file required for the code to run.
    * (input file should be <tt>.json</tt> file)
 
-\\b example \\b  
+\b example \b 
 
-\\code
+\code
 $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
-\\endcode
+\endcode
 
-\\b * For more detailed instructions, see the \\ref GettingStarted "Getting Started". \\b  
+\b * For more detailed instructions, see the \ref GettingStarted "Getting Started". \b 
 
 
-\\section Update Update
+\section Update Update
 
  ... To be written.
 
 
-\\section ToDoList To do list
+\section ToDoList To do list
 - Grouping of files in Model / Parser / Generator categories
 
 */
