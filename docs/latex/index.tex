@@ -23,12 +23,16 @@ $ git clone https:\textcolor{comment}{//github.com/HuijinPark/CCEX.git }
 
 
 {\bfseries Requirement} {\bfseries } 
+
+
 \begin{DoxyItemize}
 \item \href{https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html}{\tt Intel M\-K\-L}
-\item \href{https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5}{\tt Intel mpi}
+\item \href{https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html}{\tt Intel mpi}
 \end{DoxyItemize}
 
 {\bfseries Note} {\bfseries } 
+
+
 \begin{DoxyItemize}
 \item Make\-File Path should be changed.. (To be changed)
 \end{DoxyItemize}\hypertarget{index_UsageInstructions}{}\section{Usage Instructions}\label{index_UsageInstructions}
@@ -44,13 +48,16 @@ $ mpirun -n process\_number code\_path -f input\_file
 \begin{DoxyItemize}
 \item process\-\_\-number \-: The number of processes to run.
 \item code\-\_\-path \-: The path to your executable code.
-\item -\/f input\-\_\-file \-: The input file required for the code to run.
-\begin{DoxyItemize}
-\item (input file should be {\ttfamily .json} file)
-\end{DoxyItemize}
+\item -\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
 \end{DoxyItemize}
 
-{\bfseries example} {\bfseries }  \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json 
+{\bfseries example} {\bfseries } 
+
+
+\begin{DoxyCode}
+$ mpirun -n 4 /usr/local/bin/mycode -f data/input.json 
+\end{DoxyCode}
+
 
 {\bfseries $\ast$} For more detailed instructions, see the \hyperlink{GettingStarted}{Getting Started}.{\bfseries } \hypertarget{index_Update}{}\section{Update}\label{index_Update}
 ... To be written.\hypertarget{index_ToDoList}{}\section{To do list}\label{index_ToDoList}

@@ -17,19 +17,18 @@
 <sect1 id="index_1Installation">
 <title>Installation</title>
 <para><programlisting><codeline><highlight class="normal">$<sp/>git<sp/>clone<sp/>https:</highlight><highlight class="comment">//github.com/HuijinPark/CCEX.git<sp/></highlight></codeline>
-</programlisting></para><para><bold>Requirement</bold> <bold></bold> <itemizedlist>
-<listitem><para><ulink url="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html">Intel MKL</ulink></para></listitem><listitem><para><ulink url="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html#gs.b1bib5">Intel mpi</ulink></para></listitem></itemizedlist>
-</para><para><bold>Note</bold> <bold></bold> <itemizedlist>
+</programlisting></para><para><bold>Requirement</bold> <bold></bold> </para><para><itemizedlist>
+<listitem><para><ulink url="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html">Intel MKL</ulink></para></listitem><listitem><para><ulink url="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html">Intel mpi</ulink></para></listitem></itemizedlist>
+</para><para><bold>Note</bold> <bold></bold> </para><para><itemizedlist>
 <listitem><para>MakeFile Path should be changed.. (To be changed)</para></listitem></itemizedlist>
 </para></sect1>
 <sect1 id="index_1UsageInstructions">
 <title>Usage Instructions</title>
 <para>To run the code using <computeroutput> mpirun </computeroutput>, use the following command :</para><para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>process_number<sp/>code_path<sp/>-f<sp/>input_file<sp/></highlight></codeline>
 </programlisting></para><para><itemizedlist>
-<listitem><para>process_number : The number of processes to run.</para></listitem><listitem><para>code_path : The path to your executable code.</para></listitem><listitem><para>-f input_file : The input file required for the code to run.<itemizedlist>
-<listitem><para>(input file should be <computeroutput>.json</computeroutput> file)</para></listitem></itemizedlist>
-</para></listitem></itemizedlist>
-</para><para><bold>example</bold> <bold></bold>  $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json </para><para><bold>*</bold> For more detailed instructions, see the <ref refid="GettingStarted" kindref="compound">Getting Started</ref>.<bold></bold> </para></sect1>
+<listitem><para>process_number : The number of processes to run.</para></listitem><listitem><para>code_path : The path to your executable code.</para></listitem><listitem><para>-f input_file : The input file required for the code to run. (input file should be <computeroutput>.json</computeroutput> file)</para></listitem></itemizedlist>
+</para><para><bold>example</bold> <bold></bold> </para><para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>4<sp/>/usr/local/bin/mycode<sp/>-f<sp/>data/input.json<sp/></highlight></codeline>
+</programlisting></para><para><bold>*</bold> For more detailed instructions, see the <ref refid="GettingStarted" kindref="compound">Getting Started</ref>.<bold></bold> </para></sect1>
 <sect1 id="index_1Update">
 <title>Update</title>
 <para>... To be written.</para></sect1>
