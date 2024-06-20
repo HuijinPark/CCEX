@@ -27,7 +27,9 @@ You can obtain the following physical quantities of qubit for evolving time:
 
 \section Installation Installation
 
-\code $ git clone https://github.com/HuijinPark/CCEX.git \endcode
+\code
+$ git clone https://github.com/HuijinPark/CCEX.git
+\endcode
 
 \b Requirement \b 
 
@@ -42,18 +44,22 @@ You can obtain the following physical quantities of qubit for evolving time:
 
 To run the code using <tt> mpirun </tt>, use the following command :
 
-\code $ mpirun -n process_number code_path -f input_file \endcode
+\code
+$ mpirun -n process_number code_path -f input_file
+\endcode
 
 - process_number : The number of processes to run.
 - code_path : The path to your executable code.
-- \-f input_file : The input file required for the code to run. 
+- \-f input_file : The input file required for the code to run.
    * (input file should be <tt>.json</tt> file)
 
 \b example \b 
 
-\code $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json \endcode
+\code
+$ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
+\endcode
 
-\b * For more detailed instructions, see the \ref GettingStarted "Getting Started".\b 
+\b * For more detailed instructions, see the \ref GettingStarted "Getting Started". \b 
 
 
 \section Update Update
@@ -65,3 +71,4 @@ To run the code using <tt> mpirun </tt>, use the following command :
 - Grouping of files in Model / Parser / Generator categories
 
 */
+
