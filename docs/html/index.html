@@ -103,9 +103,11 @@ $(document).ready(function(){initNavTree('index.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>Generated on 2024.06.01</p>
-<p>\section Introduction</p>
+<h1><a class="anchor" id="Introduction"></a>
+Introduction</h1>
 <p>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <a href="https://github.com/HuijinPark/CCEX">CCEX GitHub Repository</a></p>
-<p>\section AboutTheSimulation About the simulation</p>
+<h1><a class="anchor" id="AboutTheSimulation"></a>
+About the simulation</h1>
 <p>In this code, we simulate the qubit dynamics in the presence of the bath spins.</p>
 <p>You can simulate the spin qubit dynamcis with the following methods:</p>
 <ul>
@@ -120,31 +122,35 @@ $(document).ready(function(){initNavTree('index.html','');});
 <li>Density matrix (gCCE method only)</li>
 <li>Noise function (To be done for CCE, gCCE)</li>
 </ul>
-<p>\section Installation Installation</p>
-<p>\code $ git clone <a href="https://github.com/HuijinPark/CCEX.git">https://github.com/HuijinPark/CCEX.git</a> \endcode</p>
-<p>\b Requirement \b</p>
+<h1><a class="anchor" id="Installation"></a>
+Installation</h1>
+<div class="fragment"><div class="line">$ git clone https:<span class="comment">//github.com/HuijinPark/CCEX.git</span></div>
+</div><!-- fragment --><p><b>Requirement</b> <b></b> </p>
 <ul>
 <li><a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html">Intel MKL</a></li>
 <li><a href="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html">Intel mpi</a></li>
 </ul>
-<p>\b Note \b</p>
+<p><b>Note</b> <b></b> </p>
 <ul>
 <li>MakeFile Path should be changed.. (To be changed)</li>
 </ul>
-<p>\section UsageInstructions Usage Instructions</p>
+<h1><a class="anchor" id="UsageInstructions"></a>
+Usage Instructions</h1>
 <p>To run the code using <code> mpirun </code>, use the following command :</p>
-<p>\code $ mpirun -n process_number code_path -f input_file \endcode</p>
-<ul>
+<div class="fragment"><div class="line">$ mpirun -n process_number code_path -f input_file</div>
+</div><!-- fragment --><ul>
 <li>process_number : The number of processes to run.</li>
 <li>code_path : The path to your executable code.</li>
-<li>\-f input_file : The input file required for the code to run. (input file should be <code>.json</code> file)</li>
+<li>-f input_file : The input file required for the code to run. (input file should be <code>.json</code> file)</li>
 </ul>
-<p>\b example \b</p>
-<p>\code $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json \endcode</p>
-<p>\b * For more detailed instructions, see the \ref GettingStarted "Getting Started". \b</p>
-<p>\section Update Update</p>
+<p><b>example</b> <b></b> </p>
+<div class="fragment"><div class="line">$ mpirun -n 4 /usr/local/bin/mycode -f data/input.json</div>
+</div><!-- fragment --><p><b>*</b> For more detailed instructions, see the <a class="el" href="GettingStarted.html">Getting Started</a>. <b></b> </p>
+<h1><a class="anchor" id="Update"></a>
+Update</h1>
 <p>... To be written.</p>
-<p>\section ToDoList To do list</p>
+<h1><a class="anchor" id="ToDoList"></a>
+To do list</h1>
 <ul>
 <li>Grouping of files in Model / Parser / Generator categories </li>
 </ul>

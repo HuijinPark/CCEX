@@ -1,11 +1,5 @@
-Generated on 2024.\-06.\-01
-
-\textbackslash{}section Introduction
-
-This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \href{https://github.com/HuijinPark/CCEX}{\tt C\-C\-E\-X Git\-Hub Repository}
-
-\textbackslash{}section About\-The\-Simulation About the simulation
-
+Generated on 2024.\-06.\-01\hypertarget{index_Introduction}{}\section{Introduction}\label{index_Introduction}
+This page provides a way how to simulate the spin qubit dynamics with the C\-C\-E\-X software. The source code of this software can be found in \href{https://github.com/HuijinPark/CCEX}{\tt C\-C\-E\-X Git\-Hub Repository}\hypertarget{index_AboutTheSimulation}{}\section{About the simulation}\label{index_AboutTheSimulation}
 In this code, we simulate the qubit dynamics in the presence of the bath spins.
 
 You can simulate the spin qubit dynamcis with the following methods\-:
@@ -21,13 +15,14 @@ You can obtain the following physical quantities of qubit for evolving time\-:
 \item Coherence function
 \item Density matrix (g\-C\-C\-E method only)
 \item Noise function (To be done for C\-C\-E, g\-C\-C\-E)
-\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{index_Installation}{}\section{Installation}\label{index_Installation}
 
-\textbackslash{}section Installation Installation
+\begin{DoxyCode}
+$ git clone https:\textcolor{comment}{//github.com/HuijinPark/CCEX.git}
+\end{DoxyCode}
 
-\textbackslash{}code \$ git clone \href{https://github.com/HuijinPark/CCEX.git}{\tt https\-://github.\-com/\-Huijin\-Park/\-C\-C\-E\-X.\-git} \textbackslash{}endcode
 
-\textbackslash{}b Requirement \textbackslash{}b
+{\bfseries Requirement} {\bfseries } 
 
 
 \begin{DoxyItemize}
@@ -35,37 +30,38 @@ You can obtain the following physical quantities of qubit for evolving time\-:
 \item \href{https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html}{\tt Intel mpi}
 \end{DoxyItemize}
 
-\textbackslash{}b Note \textbackslash{}b
+{\bfseries Note} {\bfseries } 
 
 
 \begin{DoxyItemize}
 \item Make\-File Path should be changed.. (To be changed)
-\end{DoxyItemize}
-
-\textbackslash{}section Usage\-Instructions Usage Instructions
-
+\end{DoxyItemize}\hypertarget{index_UsageInstructions}{}\section{Usage Instructions}\label{index_UsageInstructions}
 To run the code using {\ttfamily  mpirun }, use the following command \-:
 
-\textbackslash{}code \$ mpirun -\/n process\-\_\-number code\-\_\-path -\/f input\-\_\-file \textbackslash{}endcode
+
+\begin{DoxyCode}
+$ mpirun -n process\_number code\_path -f input\_file
+\end{DoxyCode}
+
 
 
 \begin{DoxyItemize}
 \item process\-\_\-number \-: The number of processes to run.
 \item code\-\_\-path \-: The path to your executable code.
-\item \textbackslash{}-\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
+\item -\/f input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
 \end{DoxyItemize}
 
-\textbackslash{}b example \textbackslash{}b
+{\bfseries example} {\bfseries } 
 
-\textbackslash{}code \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json \textbackslash{}endcode
 
-\textbackslash{}b $\ast$ For more detailed instructions, see the \textbackslash{}ref Getting\-Started \char`\"{}\-Getting Started\char`\"{}. \textbackslash{}b
+\begin{DoxyCode}
+$ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
+\end{DoxyCode}
 
-\textbackslash{}section Update Update
 
-... To be written.
+{\bfseries $\ast$} For more detailed instructions, see the \hyperlink{GettingStarted}{Getting Started}. {\bfseries } \hypertarget{index_Update}{}\section{Update}\label{index_Update}
+... To be written.\hypertarget{index_ToDoList}{}\section{To do list}\label{index_ToDoList}
 
-\textbackslash{}section To\-Do\-List To do list
 \begin{DoxyItemize}
 \item Grouping of files in Model / Parser / Generator categories 
 \end{DoxyItemize}

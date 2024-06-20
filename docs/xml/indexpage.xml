@@ -4,18 +4,39 @@
     <compoundname>index</compoundname>
     <title>Overview</title>
     <detaileddescription>
-<para>Generated on 2024.06.01</para><para>\section Introduction</para><para>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <ulink url="https://github.com/HuijinPark/CCEX">CCEX GitHub Repository</ulink></para><para>\section AboutTheSimulation About the simulation</para><para>In this code, we simulate the qubit dynamics in the presence of the bath spins.</para><para>You can simulate the spin qubit dynamcis with the following methods:<itemizedlist>
+<para>Generated on 2024.06.01</para><sect1 id="index_1Introduction">
+<title>Introduction</title>
+<para>This page provides a way how to simulate the spin qubit dynamics with the CCEX software. The source code of this software can be found in <ulink url="https://github.com/HuijinPark/CCEX">CCEX GitHub Repository</ulink></para></sect1>
+<sect1 id="index_1AboutTheSimulation">
+<title>About the simulation</title>
+<para>In this code, we simulate the qubit dynamics in the presence of the bath spins.</para><para>You can simulate the spin qubit dynamcis with the following methods:<itemizedlist>
 <listitem><para><ref refid="structCluster" kindref="compound">Cluster</ref> correlation expension method (CCE method)</para></listitem><listitem><para>CCE-NeNn method</para></listitem><listitem><para>Generalized CCE method</para></listitem><listitem><para>Partition CCE method (To be done)</para></listitem></itemizedlist>
 </para><para>You can obtain the following physical quantities of qubit for evolving time:<itemizedlist>
 <listitem><para>Coherence function</para></listitem><listitem><para>Density matrix (gCCE method only)</para></listitem><listitem><para>Noise function (To be done for CCE, gCCE)</para></listitem></itemizedlist>
-</para><para>\section Installation Installation</para><para>\code $ git clone <ulink url="https://github.com/HuijinPark/CCEX.git">https://github.com/HuijinPark/CCEX.git</ulink> \endcode</para><para>\b Requirement \b</para><para><itemizedlist>
+</para></sect1>
+<sect1 id="index_1Installation">
+<title>Installation</title>
+<para><programlisting><codeline><highlight class="normal">$<sp/>git<sp/>clone<sp/>https:</highlight><highlight class="comment">//github.com/HuijinPark/CCEX.git</highlight></codeline>
+</programlisting></para><para><bold>Requirement</bold> <bold></bold> </para><para><itemizedlist>
 <listitem><para><ulink url="https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl.html">Intel MKL</ulink></para></listitem><listitem><para><ulink url="https://www.intel.com/content/www/us/en/developer/tools/oneapi/mpi-library.html">Intel mpi</ulink></para></listitem></itemizedlist>
-</para><para>\b Note \b</para><para><itemizedlist>
+</para><para><bold>Note</bold> <bold></bold> </para><para><itemizedlist>
 <listitem><para>MakeFile Path should be changed.. (To be changed)</para></listitem></itemizedlist>
-</para><para>\section UsageInstructions Usage Instructions</para><para>To run the code using <computeroutput> mpirun </computeroutput>, use the following command :</para><para>\code $ mpirun -n process_number code_path -f input_file \endcode</para><para><itemizedlist>
-<listitem><para>process_number : The number of processes to run.</para></listitem><listitem><para>code_path : The path to your executable code.</para></listitem><listitem><para>\-f input_file : The input file required for the code to run. (input file should be <computeroutput>.json</computeroutput> file)</para></listitem></itemizedlist>
-</para><para>\b example \b</para><para>\code $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json \endcode</para><para>\b * For more detailed instructions, see the \ref GettingStarted &quot;Getting Started&quot;. \b</para><para>\section Update Update</para><para>... To be written.</para><para>\section ToDoList To do list<itemizedlist>
+</para></sect1>
+<sect1 id="index_1UsageInstructions">
+<title>Usage Instructions</title>
+<para>To run the code using <computeroutput> mpirun </computeroutput>, use the following command :</para><para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>process_number<sp/>code_path<sp/>-f<sp/>input_file</highlight></codeline>
+</programlisting></para><para><itemizedlist>
+<listitem><para>process_number : The number of processes to run.</para></listitem><listitem><para>code_path : The path to your executable code.</para></listitem><listitem><para>-f input_file : The input file required for the code to run. (input file should be <computeroutput>.json</computeroutput> file)</para></listitem></itemizedlist>
+</para><para><bold>example</bold> <bold></bold> </para><para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>4<sp/>/usr/local/bin/mycode<sp/>-f<sp/>data/input.json</highlight></codeline>
+</programlisting></para><para><bold>*</bold> For more detailed instructions, see the <ref refid="GettingStarted" kindref="compound">Getting Started</ref>. <bold></bold> </para></sect1>
+<sect1 id="index_1Update">
+<title>Update</title>
+<para>... To be written.</para></sect1>
+<sect1 id="index_1ToDoList">
+<title>To do list</title>
+<para><itemizedlist>
 <listitem><para>Grouping of files in Model / Parser / Generator categories </para></listitem></itemizedlist>
-</para>    </detaileddescription>
+</para></sect1>
+    </detaileddescription>
   </compounddef>
 </doxygen>
