@@ -44,7 +44,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </script>
   <div id="navrow1" class="tabs">
     <ul class="tablist">
-      <li><a href="README.html"><span>Readme</span></a></li>
+      <li><a href="@ref README"><span>Readme</span></a></li>
       <li><a href="index.html"><span>Overview</span></a></li>
       <li><a href="GettingStarted.html"><span>Getting&#160;started</span></a></li>
       <li><a href="InputFile.html"><span>Input&#160;File</span></a></li>
@@ -103,7 +103,72 @@ $(document).ready(function(){initNavTree('md__home_huijin_git_CCEX_README.html',
 <div class="title">README </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>/** </p>
+<div class="textblock"><p>2023.11.19</p>
+<h1>CCEX   </h1>
+<div class="image">
+<img src="https://img.shields.io/badge/License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b"  alt="License"/>
+</div>
+<p><br/>
+ <b>This code is for the simulation of qubit coherence dynamics<br/>
+</b></p>
+<p><b>Document</b> <a href="https://ccex-huijinparks-projects.vercel.app/index.html">How to use "CCEX"</a></p>
+<p><b>TODO</b></p>
+<ul>
+<li>Add additional spins for spin defects</li>
+<li>Bath tensor file</li>
+<li>qintmap self, easy for zfs tensor -&gt; { D= xxx , E= xxx }</li>
+<li>pulse operator for each qubit <br/>
+</li>
+</ul>
+<p><b>Useful page</b></p>
+<ul>
+<li><a href="https://docs.github.com/ko/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax">How to write "README.md"</a></li>
+</ul>
+<p><b>Used language</b><br/>
+ </p>
+<div class="image">
+<img src="https://img.shields.io/badge/c-%2300599C.svg?style=for-the-badge&logo=c&logoColor=white"  alt="C"/>
+</div>
+ <div class="image">
+<img src="https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white"  alt="C++"/>
+</div>
+ <div class="image">
+<img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"  alt="GitHub"/>
+</div>
+ <div class="image">
+<img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white"  alt="Git"/>
+</div>
+<p> <br/>
+</p>
+<p><b>External library</b><br/>
+ <a class="el" href="namespaceEigen.html" title="Eigen namespace. ">Eigen</a> (For details, see <a href="https://eigen.tuxfamily.org/index.php?title=Main_Page">here</a>)<br/>
+ uthash (For details, see <a href="https://troydhanson.github.io/uthash/userguide.html#_a_hash_in_c">here</a>)<br/>
+ <br/>
+</p>
+<blockquote class="doxtable">
+<p>[!NOTE] Highlights information that users should take into account, even when skimming.</p>
+<p></p>
+</blockquote>
+<blockquote class="doxtable">
+<p>[!IMPORTANT] intel MPI library is required</p>
+<p></p>
+</blockquote>
+<blockquote class="doxtable">
+<p>[!WARNING] Critical content demanding immediate user attention due to potential risks.</p>
+<p></p>
+</blockquote>
+<h1>Installation external library</h1>
+<p>How to install and connect the library of mpich (mpi stuff) in mac-os </p>
+<h4>mpich</h4>
+<ul>
+<li>brew install mpich</li>
+<li>mpicxx &ndash;version</li>
+</ul>
+<p>$ mpicxx -v</p>
+<ul>
+<li>'-I /opt/homebrew/Cellar/mpich/4.2.1/include' [-Wunused-command-line-argument]</li>
+<li>The include directory : /opt/homebrew/Cellar/mpich/4.2.1/include' </li>
+</ul>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

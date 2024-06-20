@@ -1,7 +1,7 @@
 var NAVTREE =
 [
   [ "CCEX-1.0.0", "index.html", [
-    [ "Readme", "README.html", null ],
+    [ "Readme", "@ref README", null ],
     [ "Overview", "index.html", [
       [ "Introduction", "index.html#Introduction", null ],
       [ "About the simulation", "index.html#AboutTheSimulation", null ],
@@ -20,7 +20,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"Examples.html"
+"@ref README"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

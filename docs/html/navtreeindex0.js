@@ -1,9 +1,9 @@
 var NAVTREEINDEX0 =
 {
+"@ref README":[0],
 "Examples.html":[4],
 "GettingStarted.html":[2],
 "InputFile.html":[3],
-"README.html":[0],
 "TagVariable.html":[5],
 "annotated.html":[6],
 "index.html":[1],
