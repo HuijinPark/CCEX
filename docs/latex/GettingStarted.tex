@@ -32,9 +32,9 @@ $ mpirun -n process\_number code\_path -f input\_file
 \item -\/s \-: File path to set the spin state of bath spins (See statefile)
 \item -\/a \-: File path to set principal axies of the defects in the bath (See avaaxfile)
 \item -\/\-S \-: File path to set the spin state of on-\/site spins of the defects in the bath (See exstatefile) 
-\item \textbackslash{}-\/\-N \-: The number of state configuration to do time ensemble average (See nstate)
-\item \textbackslash{}-\/\-B \-: Magnetic field in z direction (Unit \-: G) (See bfield)
-\item \textbackslash{}-\/o \-: Result file path (See output)
+\item -\/\-N \-: The number of state configuration to do time ensemble average (See nstate)
+\item -\/\-B \-: Magnetic field in z direction (Unit \-: G) (See bfield)
+\item -\/o \-: Result file path (See output)
 \end{DoxyItemize}
 
 {\bfseries About} options {\bfseries } 
@@ -43,7 +43,9 @@ The code read options twice \-:
 \begin{DoxyItemize}
 \item Read options from input file called as In-\/file options
 \item Read optoins from command line called as Command-\/line options \par
- Command-\/line options are \char`\"{}priority\char`\"{}
+
+\item Command-\/line options are \char`\"{}priority\char`\"{} \par
+
 \end{DoxyItemize}\hypertarget{GettingStarted_Workflow}{}\section{Workflow}\label{GettingStarted_Workflow}
 The C\-C\-E\-X software follow the below work process.
 
