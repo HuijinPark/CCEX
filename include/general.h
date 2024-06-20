@@ -12,7 +12,25 @@
 typedef struct {
 
     // Method
-    char method[MAX_CHARARRAY_LENGTH];    /**< CCE method : ensemble  | single | gcce */
+    /**
+     * @brief Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | pcce
+     * @details The following is the description of each algorithm.
+     * 
+     *  - cce    : Conventional CCE method *using hash algorithm
+     *  - gcce   : Generalized CCE method *using hash algorithm
+     *  - dsj    : Disjoint clustering algorithm
+     *             , meaning that it consider the disjointed cluster
+     *  - itb    : Inter-bathcluster clustering algorithm
+     *             , meaning that it consider the pair interaction between disjointed bath cluster
+     *  - dsjitb : Disjoint + inter-bathcluster clustering algorithm
+     *             , meaning that it consider the disjointed group 
+     *             and the interaction between disjointed clusters.
+     *             (dsjitb with order = 2 gives the same result as normal CCE2)
+     * @todo add pcce-related description HS_pcce
+     * @ref Cluster::method
+     * 
+    */
+    char method[MAX_CHARARRAY_LENGTH];
     char quantity[MAX_CHARARRAY_LENGTH];  /**< Measurment : coherence | noise  | dm   */
 
     // General options

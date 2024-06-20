@@ -16,31 +16,18 @@
 typedef struct {
 
     /**
-     * @brief The order of CCE (default : 0)
-     * @details Maximum nuclear spins included in a cluster (order >= 0)
+     * @brief Clusterizing order : See details in @ref Config::order 
     */
     int order;
 
     /** pcce
-
+       @brief 
+       @todo HS_pcce
     */
     int sK;
 
     /**
-     * @brief Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | kmeans
-     * @details The following is the description of each algorithm.
-     * 
-     *  - cce    : Conventional CCE method *using hash algorithm
-     *  - gcce   : Generalized CCE method *using hash algorithm
-     *  - dsj    : Disjoint clustering algorithm
-     *             , meaning that it consider the disjointed cluster
-     *  - itb    : Inter-bathcluster clustering algorithm
-     *             , meaning that it consider the pair interaction between disjointed bath cluster
-     *  - dsjitb : Disjoint + inter-bathcluster clustering algorithm
-     *             , meaning that it consider the disjointed group 
-     *             and the interaction between disjointed clusters.
-     *             (dsjitb with order = 2 gives the same result as normal CCE2)
-     * 
+     * @brief Clustering algorithm : See details in @ref Config::method 
     */
     char method[MAX_CHARARRAY_LENGTH];
 

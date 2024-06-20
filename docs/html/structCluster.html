@@ -109,13 +109,15 @@ $(document).ready(function(){initNavTree('structCluster.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ae77394af156e2e278a34f12e83d66cb7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCluster.html#ae77394af156e2e278a34f12e83d66cb7">order</a></td></tr>
-<tr class="memdesc:ae77394af156e2e278a34f12e83d66cb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The order of CCE (default : 0)  <a href="#ae77394af156e2e278a34f12e83d66cb7">More...</a><br/></td></tr>
+<tr class="memitem:ae77394af156e2e278a34f12e83d66cb7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae77394af156e2e278a34f12e83d66cb7"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCluster.html#ae77394af156e2e278a34f12e83d66cb7">order</a></td></tr>
+<tr class="memdesc:ae77394af156e2e278a34f12e83d66cb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clusterizing order : See details in <a class="el" href="structConfig.html#a3a9071ea9a9409cefb8cbcea2184c879">Config::order</a>. <br/></td></tr>
 <tr class="separator:ae77394af156e2e278a34f12e83d66cb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c4d583750b7f37eb2ca537e23ad334f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCluster.html#a7c4d583750b7f37eb2ca537e23ad334f">sK</a></td></tr>
 <tr class="separator:a7c4d583750b7f37eb2ca537e23ad334f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acfc81556c4ed78e0bce4c36119fe7150"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCluster.html#acfc81556c4ed78e0bce4c36119fe7150">method</a> [MAX_CHARARRAY_LENGTH]</td></tr>
-<tr class="memdesc:acfc81556c4ed78e0bce4c36119fe7150"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | kmeans.  <a href="#acfc81556c4ed78e0bce4c36119fe7150">More...</a><br/></td></tr>
+<tr class="memitem:acfc81556c4ed78e0bce4c36119fe7150"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acfc81556c4ed78e0bce4c36119fe7150"></a>
+char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCluster.html#acfc81556c4ed78e0bce4c36119fe7150">method</a> [MAX_CHARARRAY_LENGTH]</td></tr>
+<tr class="memdesc:acfc81556c4ed78e0bce4c36119fe7150"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clustering algorithm : See details in <a class="el" href="structConfig.html#a73d927bf5bdb0f39d024b23dc66f0c1c">Config::method</a>. <br/></td></tr>
 <tr class="separator:acfc81556c4ed78e0bce4c36119fe7150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1385a76b03a7f2f862526ff2bf449755"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCluster.html#a1385a76b03a7f2f862526ff2bf449755">nk</a></td></tr>
 <tr class="memdesc:a1385a76b03a7f2f862526ff2bf449755"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of clusters for each order "k".  <a href="#a1385a76b03a7f2f862526ff2bf449755">More...</a><br/></td></tr>
@@ -159,28 +161,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="acfc81556c4ed78e0bce4c36119fe7150"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">char Cluster::method[MAX_CHARARRAY_LENGTH]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | kmeans. </p>
-<p>The following is the description of each algorithm.</p>
-<ul>
-<li>cce : Conventional CCE method *using hash algorithm</li>
-<li>gcce : Generalized CCE method *using hash algorithm</li>
-<li>dsj : Disjoint clustering algorithm , meaning that it consider the disjointed cluster</li>
-<li>itb : Inter-bathcluster clustering algorithm , meaning that it consider the pair interaction between disjointed bath cluster</li>
-<li>dsjitb : Disjoint + inter-bathcluster clustering algorithm , meaning that it consider the disjointed group and the interaction between disjointed clusters. (dsjitb with order = 2 gives the same result as normal CCE2) </li>
-</ul>
-
-</div>
-</div>
 <a class="anchor" id="a1385a76b03a7f2f862526ff2bf449755"></a>
 <div class="memitem">
 <div class="memproto">
@@ -198,21 +178,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae77394af156e2e278a34f12e83d66cb7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int Cluster::order</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>The order of CCE (default : 0) </p>
-<p>Maximum nuclear spins included in a cluster (order &gt;= 0) </p>
-
-</div>
-</div>
 <a class="anchor" id="a7c4d583750b7f37eb2ca537e23ad334f"></a>
 <div class="memitem">
 <div class="memproto">
@@ -223,6 +188,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>pcce </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd>HS_pcce </dd></dl>
 
 </div>
 </div>

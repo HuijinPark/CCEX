@@ -27,7 +27,7 @@ jobs:
       - name: Doxygen Action
         uses: mattnotmitt/doxygen-action@edge
         with:
-          doxyfile-path: "./Doxyfile"
+          doxyfile-path: "./docs/Doxyfile"
           working-directory: "."
 
       - name: Add .nojekyll

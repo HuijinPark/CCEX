@@ -110,6 +110,7 @@ $(document).ready(function(){initNavTree('structConfig.html','');});
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a73d927bf5bdb0f39d024b23dc66f0c1c"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structConfig.html#a73d927bf5bdb0f39d024b23dc66f0c1c">method</a> [MAX_CHARARRAY_LENGTH]</td></tr>
+<tr class="memdesc:a73d927bf5bdb0f39d024b23dc66f0c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | pcce.  <a href="#a73d927bf5bdb0f39d024b23dc66f0c1c">More...</a><br/></td></tr>
 <tr class="separator:a73d927bf5bdb0f39d024b23dc66f0c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a408cf9618ed41aefd0b0c323f57e0730"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structConfig.html#a408cf9618ed41aefd0b0c323f57e0730">quantity</a> [MAX_CHARARRAY_LENGTH]</td></tr>
 <tr class="separator:a408cf9618ed41aefd0b0c323f57e0730"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -377,7 +378,17 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>CCE method : ensemble | single | gcce </p>
+
+<p>Clustering algorithm : cce (default) | gcce | dsj | itb | dsjitb | pcce. </p>
+<p>The following is the description of each algorithm.</p>
+<ul>
+<li>cce : Conventional CCE method *using hash algorithm</li>
+<li>gcce : Generalized CCE method *using hash algorithm</li>
+<li>dsj : Disjoint clustering algorithm , meaning that it consider the disjointed cluster</li>
+<li>itb : Inter-bathcluster clustering algorithm , meaning that it consider the pair interaction between disjointed bath cluster</li>
+<li>dsjitb : Disjoint + inter-bathcluster clustering algorithm , meaning that it consider the disjointed group and the interaction between disjointed clusters. (dsjitb with order = 2 gives the same result as normal CCE2) <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000014">Todo:</a></b></dt><dd>add pcce-related description HS_pcce <a class="el" href="structCluster.html#acfc81556c4ed78e0bce4c36119fe7150">Cluster::method</a></dd></dl>
+</li>
+</ul>
 
 </div>
 </div>

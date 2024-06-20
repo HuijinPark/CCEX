@@ -5,7 +5,7 @@
 \begin{DoxyCompactItemize}
 \item 
 char \hyperlink{structConfig_a73d927bf5bdb0f39d024b23dc66f0c1c}{method} \mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}
-\item 
+\begin{DoxyCompactList}\small\item\em Clustering algorithm \-: cce (default) $|$ gcce $|$ dsj $|$ itb $|$ dsjitb $|$ pcce. \end{DoxyCompactList}\item 
 char \hyperlink{structConfig_a408cf9618ed41aefd0b0c323f57e0730}{quantity} \mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}
 \item 
 int \hyperlink{structConfig_a3a9071ea9a9409cefb8cbcea2184c879}{order}
@@ -117,7 +117,22 @@ Read mode for hyperfine tensor file \-: 0 \-: off , 1$\sim$3 \-: fermi \& D\-F\-
 Hyperfine tensor file name \hypertarget{structConfig_a73d927bf5bdb0f39d024b23dc66f0c1c}{\index{Config@{Config}!method@{method}}
 \index{method@{method}!Config@{Config}}
 \subsubsection[{method}]{\setlength{\rightskip}{0pt plus 5cm}char Config\-::method\mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}}}\label{structConfig_a73d927bf5bdb0f39d024b23dc66f0c1c}
-C\-C\-E method \-: ensemble $|$ single $|$ gcce \hypertarget{structConfig_a26827d7c075042372d21965a827328c3}{\index{Config@{Config}!nbathfiles@{nbathfiles}}
+
+
+Clustering algorithm \-: cce (default) $|$ gcce $|$ dsj $|$ itb $|$ dsjitb $|$ pcce. 
+
+The following is the description of each algorithm.
+
+
+\begin{DoxyItemize}
+\item cce \-: Conventional C\-C\-E method $\ast$using hash algorithm
+\item gcce \-: Generalized C\-C\-E method $\ast$using hash algorithm
+\item dsj \-: Disjoint clustering algorithm , meaning that it consider the disjointed cluster
+\item itb \-: Inter-\/bathcluster clustering algorithm , meaning that it consider the pair interaction between disjointed bath cluster
+\item dsjitb \-: Disjoint + inter-\/bathcluster clustering algorithm , meaning that it consider the disjointed group and the interaction between disjointed clusters. (dsjitb with order = 2 gives the same result as normal C\-C\-E2) \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000014}{Todo}]add pcce-\/related description H\-S\-\_\-pcce \hyperlink{structCluster_acfc81556c4ed78e0bce4c36119fe7150}{Cluster\-::method}\end{DoxyRefDesc}
+
+\end{DoxyItemize}\hypertarget{structConfig_a26827d7c075042372d21965a827328c3}{\index{Config@{Config}!nbathfiles@{nbathfiles}}
 \index{nbathfiles@{nbathfiles}!Config@{Config}}
 \subsubsection[{nbathfiles}]{\setlength{\rightskip}{0pt plus 5cm}int Config\-::nbathfiles}}\label{structConfig_a26827d7c075042372d21965a827328c3}
 Number of bath files \hypertarget{structConfig_a91b2aadf805896022127036ded259e79}{\index{Config@{Config}!nstate@{nstate}}
