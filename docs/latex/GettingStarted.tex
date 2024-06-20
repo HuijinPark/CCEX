@@ -1,4 +1,7 @@
-This is the getting started guide.\hypertarget{GettingStarted_HowToRun}{}\section{How to run}\label{GettingStarted_HowToRun}
+This is the getting started guide.
+
+\subsection*{How\-To\-Run How to run}
+
 To run the code using {\ttfamily  mpirun }, use the following command \-:
 
 
@@ -11,11 +14,7 @@ $ mpirun -n process\_number code\_path -f input\_file
 \begin{DoxyItemize}
 \item process\-\_\-number \-: The number of processes to run.
 \item code\-\_\-path \-: The path to your executable code.
-\item input\-\_\-file \-: The input file required for the code to run. \par
-
-\begin{DoxyItemize}
-\item (input file should be {\ttfamily .json} file)
-\end{DoxyItemize}
+\item input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
 \end{DoxyItemize}
 
 {\bfseries Example} {\bfseries }  \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json 
@@ -37,16 +36,16 @@ $ mpirun -n process\_number code\_path -f input\_file
 \item -\/o \-: Result file path (See output)
 \end{DoxyItemize}
 
-{\bfseries About} options {\bfseries } 
+{\bfseries About\-Options} About options {\bfseries } 
 
 The code read options twice \-:
 \begin{DoxyItemize}
 \item Read options from input file called as In-\/file options
-\item Read optoins from command line called as Command-\/line options \par
+\item Read optoins from command line called as Command-\/line options Command-\/line options are \char`\"{}priority\char`\"{}
+\end{DoxyItemize}
 
-\item Command-\/line options are \char`\"{}priority\char`\"{} \par
+\subsection*{Workflow Workflow}
 
-\end{DoxyItemize}\hypertarget{GettingStarted_Workflow}{}\section{Workflow}\label{GettingStarted_Workflow}
 The C\-C\-E\-X software follow the below work process.
 
 When you give the arguments in the command line, the code frist read the arguments. Note that if you don't give the input file accesible with -\/f option, then the code doesn't work.
