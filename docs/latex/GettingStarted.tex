@@ -1,7 +1,4 @@
-This is the getting started guide.
-
-\subsection*{How\-To\-Run How to run}
-
+This is the getting started guide.\hypertarget{GettingStarted_HowToRun}{}\section{How to run}\label{GettingStarted_HowToRun}
 To run the code using {\ttfamily  mpirun }, use the following command \-:
 
 
@@ -17,11 +14,15 @@ $ mpirun -n process\_number code\_path -f input\_file
 \item input\-\_\-file \-: The input file required for the code to run. (input file should be {\ttfamily .json} file)
 \end{DoxyItemize}
 
-{\bfseries Example} {\bfseries }  \$ mpirun -\/n 4 /usr/local/bin/mycode -\/f data/input.\-json 
+{\bfseries  Example $<${\bfseries } $>$}
 
-{\bfseries Possble} command-\/line options {\bfseries } 
+{\bfseries 
+\begin{DoxyCode}
+$ mpirun -n 4 /usr/local/bin/mycode -f data/input.json 
+\end{DoxyCode}
+}
 
-
+{\bfseries {\bfseries  Possble command-\/line options $<${\bfseries } $>$
 \begin{DoxyItemize}
 \item -\/h \-: Help option
 \item -\/f \-: \hyperlink{InputFile}{Input file} option (Required) (See \hyperlink{InputFile}{Input file})
@@ -34,22 +35,22 @@ $ mpirun -n process\_number code\_path -f input\_file
 \item -\/\-N \-: The number of state configuration to do time ensemble average (See nstate)
 \item -\/\-B \-: Magnetic field in z direction (Unit \-: G) (See bfield)
 \item -\/o \-: Result file path (See output)
-\end{DoxyItemize}
+\end{DoxyItemize}}}
 
-{\bfseries About\-Options} About options {\bfseries } 
+{\bfseries {\bfseries {\bfseries  About options $<${\bfseries } $>$}}}
 
-The code read options twice \-:
+{\bfseries {\bfseries {\bfseries The code read options twice \-:
 \begin{DoxyItemize}
 \item Read options from input file called as In-\/file options
-\item Read optoins from command line called as Command-\/line options Command-\/line options are \char`\"{}priority\char`\"{}
-\end{DoxyItemize}
+\item Read optoins from command line called as Command-\/line options \par
+ Command-\/line options are \char`\"{}priority\char`\"{}
+\end{DoxyItemize}}}}
 
-\subsection*{Workflow Workflow}
+{\bfseries {\bfseries {\bfseries }}}\hypertarget{GettingStarted_Workflow}{}\section{Workflow}\label{GettingStarted_Workflow}
+{\bfseries {\bfseries {\bfseries  The C\-C\-E\-X software follow the below work process.}}}
 
-The C\-C\-E\-X software follow the below work process.
+{\bfseries {\bfseries {\bfseries When you give the arguments in the command line, the code frist read the arguments. Note that if you don't give the input file accesible with -\/f option, then the code doesn't work.}}}
 
-When you give the arguments in the command line, the code frist read the arguments. Note that if you don't give the input file accesible with -\/f option, then the code doesn't work.
+{\bfseries {\bfseries {\bfseries Code read the all tags in input file and update the}}}
 
-Code read the all tags in input file and update the
-
- 
+{\bfseries {\bfseries {\bfseries   }}}
