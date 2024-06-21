@@ -120,7 +120,7 @@ typedef struct {
 // init
 Cluster* Cluster_init();
 void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config);
-void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, Config* config);
+void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config, int rank);
 
 // free
 void Cluster_freeAll(Cluster* cls);
@@ -171,6 +171,11 @@ void Cluster_allocNk(Cluster* cls);
 void Cluster_freeNk(Cluster* qa);
 int Cluster_getNk_order(Cluster* cls, int i); // get the number of clusters at ith-orderr at ith-order
 int* Cluster_getNk(Cluster* cls);
+int Cluster_getSk(Cluster* cls);
+int Cluster_getMax_iter(Cluster* cls);
+int Cluster_getMax_trial(Cluster* cls);
+bool Cluster_getKmeans_pp(Cluster* cls);
+bool Cluster_getIter_detail(Cluster* cls);
 
 // others controller
 char* Cluster_getMethod(Cluster* cls);
@@ -178,6 +183,11 @@ int Cluster_getOrder(Cluster* cls);
 bool Cluster_getAddsubclus(Cluster* cls);
 
 // set 
+void Cluster_setSk(Cluster* cls,          int sK);
+void Cluster_setMax_trial(Cluster* cls,   int max_trial);
+void Cluster_setMax_iter(Cluster* cls,    int max_iter);
+void Cluster_setKmeans_pp(Cluster* cls,   bool kmeans_pp);
+void Cluster_setIter_detail(Cluster* cls, bool iter_detail);
 void Cluster_setOrder(Cluster* cls, int order);
 void Cluster_setMethod(Cluster* cls, char* method);
 void Cluster_setAddsubclus(Cluster* cls, bool addsubclus);

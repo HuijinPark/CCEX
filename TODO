@@ -16,3 +16,17 @@
 * nbathfiles_fccein, nbathfiles_current in main.cpp error when -I , fccein file tag value is not comparable
 
 * when qubitfile is read, intmap is not produced error. 
+
+* makeHashClusterOn change for CCE-N without n-clustered spins 
+   cluster_hash.cpp
+   // Higher order clusters                                                                               
+   makeHashClusterOn(&hashClusters,order,nspin,spmap,stmap,nks);                                          
+   updateNk(&(nks),order,hashClusters);                                                                   
+   if (rank==0 && verbosity){                                                                             
+       printClusters(hashClusters);                                                                       
+   }                                                                                                      
+   //////////////////////////////////////////////////                                                     
+   // Add all sub clusters                                                                                
+   //////////////////////////////
+
+* "print cluster information" location change into after doing "addsubclus" 

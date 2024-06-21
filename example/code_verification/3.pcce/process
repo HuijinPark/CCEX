@@ -1,0 +1,2624 @@
+
+
+    ======================================================================
+
+                   ______   ______  _______ ___   ___ 
+                  /      | /      ||   ____|\  \ /  / 
+                 |  ,----'|  ,----'|  |__    \  V  /  
+                 |  |     |  |     |   __|    >   <   
+                 |  `----.|  `----.|  |____  /  .  \  
+                  \______| \______||_______|/__/ \__\ 
+                __   _   _   _  _       _   _     _   _   _ _   
+               / _| / \ | \_/ || |     //  / \   | | / \ | | |  
+              ( (_ ( o )| \_/ || |_   //  | o |n_| |( o )| U |  
+               \__| \_,7|_| |_||___| //   |_n_|\__/  \_/ |___|  
+
+
+            Program CCEX starts on Sat Jun 22 01:25:27 2024
+                The CCEX code has compiled at 'Jun 20 2024' 
+    ======================================================================
+
+        Option filename : './cce.json' 
+
+        Read Config Options ...
+
+          - General option-related keys : 
+            [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] 
+
+          - File-related keys :
+            [ qubitfile, gyrofile, bathfile, bathadjust, avaaxfile, statefile, exstatefile ] 
+
+          - Tensorfile-related keys :
+            [ DefectTotSpin, CorrTotSpin, 
+              hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, 
+              qd_readmode, qd_tensorfile, qd_tensorfile_woqubit ] 
+
+        Read Qubit Options ...
+
+          - Read values of main-key 'Qubit'
+            sub-key : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] 
+
+          - Read values of sub-key 'qubit'
+            sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] 
+
+          - Read values of sub-key 'intmap'
+            sub-sub-key : [ between, tensor ] 
+
+        Read Defect Options ...
+
+          - Read values of main-key 'Defect' (Array format)
+            sub-key : [ dfname, naddspin, navaax, apprx,   ( type : single value) 
+                        types, spins, gyros, eqs,          ( type : array ) 
+                        rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) 
+
+        Read Cluster Options ...
+          [ order, method, addsubclus, nk ] 
+
+        Read Pulse Options ...
+          [ npulse, pulsename, sequence ] 
+
+        Read Output Options ...
+          [ savemode, outfile ] 
+
+	>> Read ./cce.json file successfully ..
+
+
+    ======================================================================
+        Report all structures 
+    ======================================================================
+
+    ----------------------------------------------------------------------
+    < Structure Config > 
+
+      method            :   pCCE                 
+      quantity          :   coherence            
+      order             :   3                    
+      bfield            :   [ 0.00      , 0.00      , 500.00     ]
+      rbath             :   200                  
+      rdip              :   180                  
+      deltat            :   0.01                 
+      nstep             :   300                  
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   1                    
+      seed              :   8805                 
+      qubitfile         :   ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_Defect
+      gyrofile          :   ./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro
+      nbathfiles        :   1                    
+      bathfiles         :   ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      avaaxfile         :   ./../CCE_Reprod/Bath_Data/1.single_data/bathJT_DiaP1detun_1
+      statefile         :   ./../CCE_Reprod/Bath_Data/1.single_data/state_DiaP1_1ppm_
+      exstatefile       :   ./../CCE_Reprod/Bath_Data/1.single_data/stateEx_DiaP1_1ppm_
+      DefectTotSpin     :   1                    
+      CorrTotSpin       :   0                    
+      hf_readmode       :   0                    
+      qd_readmode       :   0                    
+
+
+    ----------------------------------------------------------------------
+    < Structure QubitArray > 
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+      -------------------------------------------------
+
+      qubit name        :   q0                   
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   (+1+0j) |-1 >  
+      beta              :   (+1+0j) | 0 >  
+
+      -------------------------------------------------
+
+    >> Interactions (radkHz)
+
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ----------------------------------------------------------------------
+    < DefectArray > 
+
+    >> DefectArray->defect[0]
+
+      dfname            :   P1                   
+      apprx             :   true                 
+      naddspin          :   0                    
+      navaax            :   13 - 1 # ( possible axis : 1 ~ 12 )
+      types             :   [ ]
+      spins             :   [ ]
+      gyros (radkHz/G)  :   [ ]
+      eqs (10e-30 m^2)  :   [ ]
+      ________________________________________________________________
+
+      Relative distance (A) : rxyz[iax][isp] 
+       - iax : principal axis index 
+       - isp : additional spin index 
+      ________________________________________________________________
+
+      Hyperfine tensor (MHz) : hypf[iax][isp] 
+      ________________________________________________________________
+
+      Electric field gradient (Hartree/Bohr_radius^2) : efg[iax][isp] 
+      ________________________________________________________________
+
+      Zero-field splitting tensor (MHz) : zfs[iax] 
+      zfs[1]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[2]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[3]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[4]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[5]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[6]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[7]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[8]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[9]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[10]           :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[11]           :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[12]           :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      ________________________________________________________________
+
+      Detuning (MHz) : detuning[iax] 
+      detuning[1]       :   84.9                 
+      detuning[2]       :   84.9                 
+      detuning[3]       :   84.9                 
+      detuning[4]       :   0                    
+      detuning[5]       :   0                    
+      detuning[6]       :   0                    
+      detuning[7]       :   -84.9                
+      detuning[8]       :   -84.9                
+      detuning[9]       :   -84.9                
+      detuning[10]      :   114                  
+      detuning[11]      :   0                    
+      detuning[12]      :   -114                 
+      ________________________________________________________________
+
+
+    ----------------------------------------------------------------------
+    < Structure Cluster > 
+
+    >> General properties
+
+      order             :   3                    
+      method            :   pcce                 
+      addsubclus        :   true                 
+      sK                :   2                    
+      max_iter          :   100                  
+      max_trial         :   100                  
+      kmeans_pp         :   true                 
+      iter_detail       :   false                
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0    ,   2 : 0    ,   3 : 0     ]
+
+
+
+    ----------------------------------------------------------------------
+    < Structure Pulse > 
+
+      pulsename         :   HahnEcho             
+      npulse            :   1                    
+      pulseiter         :   false                
+                            * ture  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+    >> Sequence
+
+      -------------------------------------------------
+                        start      end     diff   index
+ 
+       sequence[0] :    0.000    0.500    0.500    0.000 
+       sequence[1] :    0.500    1.000    0.500    0.000 
+      -------------------------------------------------
+
+
+    ----------------------------------------------------------------------
+    < Structure Output > 
+
+      savemode          :   normal               
+      outfile           :   CCE2_DetunedP1Bath_1ppm_1
+
+
+    ===============================================================
+
+
+
+    ======================================================================
+        Read files 
+    ======================================================================
+
+    >> Qubit file
+
+        Read QubitFile : ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_Defect ... 
+        Qubit[0].xyz    :   [ 1123.60   , 1124.86   , 1124.38    ]
+
+    >> Gyromagnetic ratio file
+
+        Read GyroFile : ./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+
+    >> Bath configuration files
+
+      -------------------------------------------------
+        Read BathFile[0] : ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1
+
+        - Number of bath spins : 9 (nspin = 9)
+      [  0]    P1 1035.322 1171.459 965.812   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  1]    P1 977.314 1151.073 1200.057   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  2]    P1 1113.507 1251.547 1255.658   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  3]    P1 1160.166 971.241 1202.631   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  4]    P1 1189.170 1143.793 1247.421   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  5]    P1 1136.206 1027.302 1109.448   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  6]    P1 1081.981 1249.362 1099.666   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  7]    P1 1044.149 1207.135 1235.065   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  8]    P1 1233.307 1019.293 1105.329   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      -------------------------------------------------
+
+    >> Read the Hyperfine interaction from DFT inputfile...
+
+      HF Readmode       :      0 ( Point-dipole tensor )
+
+    >> Bath Hyperfine tensors (radkHz) 
+
+      hypf[ib][iq] (ib : bath spin index, iq : qubit index)
+      hypf[0][0]        :   [ 16.61j+0.00, 17.47j+0.00, -59.46j+0.00, 17.47j+0.00, 40.49j+0.00, 31.39j+0.00, -59.46j+0.00, 31.39j+0.00, -57.10j+0.00 ]
+      hypf[1][0]        :   [ -92.22j+0.00, 29.15j+0.00, 84.18j+0.00, 29.15j+0.00, 65.27j+0.00, -15.08j+0.00, 84.18j+0.00, -15.08j+0.00, 26.95j+0.00 ]
+      hypf[2][0]        :   [ 53.11j+0.00, 6.16j+0.00, 6.38j+0.00, 6.16j+0.00, -23.70j+0.00, -80.11j+0.00, 6.38j+0.00, -80.11j+0.00, -29.41j+0.00 ]
+      hypf[3][0]        :   [ 52.02j+0.00, 32.41j+0.00, -16.51j+0.00, 32.41j+0.00, -76.42j+0.00, 69.35j+0.00, -16.51j+0.00, 69.35j+0.00, 24.40j+0.00 ]
+      hypf[4][0]        :   [ 40.90j+0.00, -22.08j+0.00, -143.51j+0.00, -22.08j+0.00, 111.01j+0.00, -41.43j+0.00, -143.51j+0.00, -41.43j+0.00, -151.91j+0.00 ]
+      hypf[5][0]        :   [ 315.95j+0.00, 123.75j+0.00, 18.94j+0.00, 123.75j+0.00, -625.48j+0.00, -146.52j+0.00, 18.94j+0.00, -146.52j+0.00, 309.53j+0.00 ]
+      hypf[6][0]        :   [ 97.25j+0.00, 119.51j+0.00, -23.72j+0.00, 119.51j+0.00, -220.35j+0.00, 70.97j+0.00, -23.72j+0.00, 70.97j+0.00, 123.11j+0.00 ]
+      hypf[7][0]        :   [ 20.48j+0.00, 62.78j+0.00, 84.46j+0.00, 62.78j+0.00, 16.09j+0.00, -87.46j+0.00, 84.46j+0.00, -87.46j+0.00, -36.57j+0.00 ]
+      hypf[8][0]        :   [ -48.30j+0.00, 133.57j+0.00, 24.10j+0.00, 133.57j+0.00, -38.02j+0.00, -23.19j+0.00, 24.10j+0.00, -23.19j+0.00, 86.33j+0.00 ]
+
+
+    ===============================================================
+
+    >> Defect Paxes File
+
+        Read AvaaxFile : ./../CCE_Reprod/Bath_Data/1.single_data/bathJT_DiaP1detun_1
+
+    >> DefectArray->paxes
+
+      nbathspin (#)     :   9                    
+      -------------------------------------------------
+      paxes[0]          :   8                    
+      paxes[1]          :   12                   
+      paxes[2]          :   8                    
+      paxes[3]          :   5                    
+      paxes[4]          :   1                    
+      paxes[5]          :   9                    
+      paxes[6]          :   10                   
+      paxes[7]          :   10                   
+      paxes[8]          :   8                    
+      -------------------------------------------------
+
+    >> DefectArray->naddspins
+
+      nbathspin (#)     :   9                    
+      -------------------------------------------------
+      naddspins[0]      :   0                    
+      naddspins[1]      :   0                    
+      naddspins[2]      :   0                    
+      naddspins[3]      :   0                    
+      naddspins[4]      :   0                    
+      naddspins[5]      :   0                    
+      naddspins[6]      :   0                    
+      naddspins[7]      :   0                    
+      naddspins[8]      :   0                    
+      -------------------------------------------------
+
+    >> DefectArray->subbath
+
+      nbathspin (#)     :   9                    
+      -------------------------------------------------
+       No sub-bath  
+      -------------------------------------------------
+
+    >> SubBath Hyperfine tensors (Qubit-SubBath)
+
+        SubBath[ibs][isp].hypf[iq] (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+         * iq  : Qubit index
+
+
+    >> SubBath Quadrupole tensors (Depending on principal axis)
+
+        SubBath[ibs][isp].quad (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+
+    >> SubBath Hyperfine tensors (MainDefect-SubBath)
+
+        SubBath[ibs][isp].hypf_sub (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+
+    ----------------------------------------------------------------------
+    < BathArray > 
+
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   9                    
+      -------------------------------------------------
+      [  0]    P1 1035.322 1171.459 965.812   ( S = 0.5, gyro = -17608.597, mainspidx = 0 )
+      [  1]    P1 977.314 1151.073 1200.057   ( S = 0.5, gyro = -17608.597, mainspidx = 1 )
+      [  2]    P1 1113.507 1251.547 1255.658   ( S = 0.5, gyro = -17608.597, mainspidx = 2 )
+      [  3]    P1 1160.166 971.241 1202.631   ( S = 0.5, gyro = -17608.597, mainspidx = 3 )
+      [  4]    P1 1189.170 1143.793 1247.421   ( S = 0.5, gyro = -17608.597, mainspidx = 4 )
+      [  5]    P1 1136.206 1027.302 1109.448   ( S = 0.5, gyro = -17608.597, mainspidx = 5 )
+      [  6]    P1 1081.981 1249.362 1099.666   ( S = 0.5, gyro = -17608.597, mainspidx = 6 )
+      [  7]    P1 1044.149 1207.135 1235.065   ( S = 0.5, gyro = -17608.597, mainspidx = 7 )
+      [  8]    P1 1233.307 1019.293 1105.329   ( S = 0.5, gyro = -17608.597, mainspidx = 8 )
+
+      -------------------------------------------------
+
+      -------------------------------------------------
+          Wall time = 0.02547 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Clusterize 
+   ======================================================================
+
+
+------------------------------
+Total Bath Spin: 9
+Qubit #: 1
+npartition: 4
+partition_nspin: 8
+rest_nspin: 1
+
+------------------------------
+Rank: 0
+trials_per_proc: 5
+start_trial: 0
+end_trial: 5
+
+=======================================================
+
+Rank: 1
+trials_per_proc: 5
+start_trial: 5
+end_trial: 10
+
+=======================================================
+
+Rank: 2
+trials_per_proc: 5
+start_trial: 10
+end_trial: 15
+
+=======================================================
+
+Rank: 3
+trials_per_proc: 5
+start_trial: 15
+end_trial: 20
+
+=======================================================
+
+Rank: 4
+trials_per_proc: 5
+start_trial: 20
+end_trial: 25
+
+=======================================================
+
+Rank: 5
+trials_per_proc: 5
+start_trial: 25
+end_trial: 30
+
+=======================================================
+
+Rank: 6
+trials_per_proc: 5
+start_trial: 30
+end_trial: 35
+
+=======================================================
+
+Rank: 7
+trials_per_proc: 5
+start_trial: 35
+end_trial: 40
+
+=======================================================
+
+Rank: 8
+trials_per_proc: 5
+start_trial: 40
+end_trial: 45
+
+=======================================================
+
+Rank: 9
+trials_per_proc: 5
+start_trial: 45
+end_trial: 50
+
+=======================================================
+
+Rank: 10
+trials_per_proc: 5
+start_trial: 50
+end_trial: 55
+
+=======================================================
+
+Rank: 11
+trials_per_proc: 5
+start_trial: 55
+end_trial: 60
+
+=======================================================
+
+Rank: 12
+trials_per_proc: 5
+start_trial: 60
+end_trial: 65
+
+=======================================================
+
+Rank: 13
+trials_per_proc: 5
+start_trial: 65
+end_trial: 70
+
+=======================================================
+
+Rank: 14
+trials_per_proc: 5
+start_trial: 70
+end_trial: 75
+
+=======================================================
+
+Rank: 15
+trials_per_proc: 5
+start_trial: 75
+end_trial: 80
+
+=======================================================
+
+Rank: 16
+trials_per_proc: 5
+start_trial: 80
+end_trial: 85
+
+=======================================================
+
+Rank: 17
+trials_per_proc: 5
+start_trial: 85
+end_trial: 90
+
+=======================================================
+
+Rank: 18
+trials_per_proc: 5
+start_trial: 90
+end_trial: 95
+
+=======================================================
+
+Rank: 19
+trials_per_proc: 5
+start_trial: 95
+end_trial: 100
+
+=======================================================
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 0 
+
+    - 0 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 1 
+
+    - 5 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 2 
+
+    - 10 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 3 
+
+    - 15 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.010 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 4 
+
+    - 20 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 5 
+
+    - 25 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 6 
+
+    - 30 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 7 
+
+    - 35 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 8 
+
+    - 40 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 9 
+
+    - 45 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 10 
+
+    - 50 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 11 
+
+    - 55 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 12 
+
+    - 60 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 13 
+
+    - 65 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 14 
+
+    - 70 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 15 
+
+    - 75 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 16 
+
+    - 80 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 17 
+
+    - 85 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 18 
+
+    - 90 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 19 
+
+    - 95 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 0 
+
+    - 1 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+======
+
+
+
+
+
+
+
+
+
+
+
+
+
+=================================================
+
+
+
+
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 1 
+
+    - 6 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 2 
+
+    - 11 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 3 
+
+    - 16 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 4 
+
+    - 21 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 5 
+
+    - 26 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 6 
+
+    - 31 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 7 
+
+    - 36 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 8 
+
+    - 41 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 9 
+
+    - 46 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 10 
+
+    - 51 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 11 
+
+    - 56 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 12 
+
+    - 61 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 13 
+
+    - 66 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 14 
+
+    - 71 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 15 
+
+    - 76 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 16 
+
+    - 81 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 17 
+
+    - 86 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 18 
+
+    - 91 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 19 
+
+    - 96 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 57251.28 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+========================================
+===============
+
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 0 
+
+    - 2 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+==============================================
+
+
+
+
+
+
+
+
+
+
+
+=========
+
+
+
+
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 1 
+
+    - 7 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 2 
+
+    - 12 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 3 
+
+    - 17 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 4 
+
+    - 22 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 5 
+
+    - 27 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 6 
+
+    - 32 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 7 
+
+    - 37 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 8 
+
+    - 42 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 9 
+
+    - 47 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 10 
+
+    - 52 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 11 
+
+    - 57 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 12 
+
+    - 62 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 13 
+
+    - 67 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 14 
+
+    - 72 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 15 
+
+    - 77 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 16 
+
+    - 82 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 17 
+
+    - 87 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 18 
+
+    - 92 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 19 
+
+    - 97 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 38149.38 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 0 
+
+    - 3 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 1 
+
+    - 8 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 2 
+
+    - 13 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 3 
+
+    - 18 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 4 
+
+    - 23 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 5 
+
+    - 28 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 6 
+
+    - 33 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 7 
+
+    - 38 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 8 
+
+    - 43 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 9 
+
+    - 48 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 10 
+
+    - 53 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 11 
+
+    - 58 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 12 
+
+    - 63 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 13 
+
+    - 68 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 14 
+
+    - 73 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 15 
+
+    - 78 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 16 
+
+    - 83 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 17 
+
+    - 88 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 18 
+
+    - 93 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 19 
+
+    - 98 trials & 3 iterations.
+
+    - Iner. & Best Iner. : 42102.93 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 0 
+
+    - 4 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+===================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+====================================
+
+
+
+
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 1 
+
+    - 9 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 2 
+
+    - 14 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 3 
+
+    - 19 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 4 
+
+    - 24 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 5 
+
+    - 29 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 6 
+
+    - 34 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 7 
+
+    - 39 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 8 
+
+    - 44 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 9 
+
+    - 49 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 10 
+
+    - 54 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 11 
+
+    - 59 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 12 
+
+    - 64 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 13 
+
+    - 69 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 14 
+
+    - 74 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 15 
+
+    - 79 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 16 
+
+    - 84 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 17 
+
+    - 89 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 18 
+
+    - 94 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+||------------- Optimization Infomation -------------||
+
+    - Rank: 19 
+
+    - 99 trials & 2 iterations.
+
+    - Iner. & Best Iner. : 40016.22 & 38149.38
+
+    - Best Sil.  : 0.11
+
+
+||---------------- Optimization Time ----------------||
+
+                     0 : 0 : 0.000 
+
+
+=======================================================
+
+
+
+=======================================================
+
+Best rank: 0, Iner.: 38149.38, Sil.: 0.11, Trial: 2
+
+
+=======================================================
+
+
+||-------------------------------------------------------||
+
+||----------------! FINISH OPTIMIZATION !----------------||
+
+||-------------------------------------------------------||
+
+
+||-----------------! Center Information !----------------||
+
+
+-------------------------------------------------------
+  - Rank: 0
+
+ Point     0:   1097.744   1250.455   1177.662
+ Point     1:   1184.756   1023.298   1107.389
+ Point     2:   1174.668   1057.517   1225.026
+ Point     3:   1010.732   1179.104   1217.561
+
+||--------------! Assigned Index for Center !------------||
+
+ || Point assignments to centers ||
+
+ - Rank: 0
+
+ Point     0 -> Center    1
+ Point     1 -> Center    0
+ Point     2 -> Center    2
+ Point     3 -> Center    1
+ Point     4 -> Center    3
+ Point     5 -> Center    3
+ Point     6 -> Center    2
+ Point     7 -> Center    0
+
+
+
+=======================================================
+r =  253.19906
+r =  213.03897
+r =  119.39008
+r =  122.92808
+r =  258.26005
+r =  204.24088
+r =  253.19906
+r =  213.03897
+r =  119.39008
+r =  122.92808
+r =  258.26005
+r =  204.24088
+r =  253.19906
+r =  213.03897
+r =  119.39008
+r =  122.92808
+r =  258.26005
+r =  204.24088
+r =  253.19906
+r =  213.03897
+r =  119.39008
+r =  122.92808
+r =  258.26005
+r =  204.24088
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   PID 134306 RUNNING AT hpc
+=   EXIT CODE: 11
+=   CLEANING UP REMAINING PROCESSES
+=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
+===================================================================================
+YOUR APPLICATION TERMINATED WITH THE EXIT STRING: Segmentation fault (signal 11)
+This typically refers to a problem with your application.
+Please see the FAQ page for debugging suggestions
