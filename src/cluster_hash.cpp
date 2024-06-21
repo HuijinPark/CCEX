@@ -28,8 +28,8 @@ void clusterizeHash(Cluster* CCE, int nspin, int** spmap, float** stmap){
     updateNk(&(nks),order,hashClusters);
     
     // Higher order clusters
-    makeHashClusterOn(&hashClusters,order,nspin,spmap,stmap,nks);
     exit(1);
+    makeHashClusterOn(&hashClusters,order,nspin,spmap,stmap,nks);
     updateNk(&(nks),order,hashClusters);
     if (rank==0 && verbosity){
         printClusters(hashClusters);
