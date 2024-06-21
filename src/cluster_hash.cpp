@@ -28,7 +28,7 @@ void clusterizeHash(Cluster* CCE, int nspin, int** spmap, float** stmap){
     updateNk(&(nks),order,hashClusters);
     
     // Higher order clusters
-    exit(1);
+    //exit(1);
     makeHashClusterOn(&hashClusters,order,nspin,spmap,stmap,nks);
     updateNk(&(nks),order,hashClusters);
     if (rank==0 && verbosity){
@@ -270,6 +270,7 @@ void makeHashClusterOn(HashCluster** hashclusters, int order, int nspin, int** s
                         int IsExistInPossibleSpins = binarySearch(possibleSpins,1,nPossibleSpins-1,possibleSpin);
 
 //                        printf("possible spin : %2d , (judge : %2d,%2d => ",possibleSpin,IsExistInCurrentCluster,IsExistInPossibleSpins);
+                        exit(1);
                         if (IsExistInCurrentCluster == -1 && IsExistInPossibleSpins == -1){
 //                            printf(" possible )\n");
                             // Get possible spin list
