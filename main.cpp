@@ -59,6 +59,10 @@ int main(int argc, char* argv[]){
     Pulse*       pls = Pulse_init();
     Output*      op  = Output_init();
 
+    //Cluster* cls_pcce = Cluster_init();
+    //if (strcasecmp(cls->method, "pcce")==0){
+    //    Cluster* cls_pcce = Cluster_init();
+    //}
     //=======================================================
     // Read options
     //=======================================================
@@ -339,7 +343,13 @@ int main(int argc, char* argv[]){
         time_start_step = MPI_Wtime();
     }
 
-    Cluster_clusterize(cls,ba,qa,cnf);
+    if (strcasecmp(cls->method, "pcce") ==0){
+        Cluster_clusterize_pcce(cls, ba, qa, cnf, rank);
+        //Cluster_clusterize_pcce(cls_pcce, cls, ba, qa, cnf, rank);
+    }
+    printf("In main.cpp: Finish the \" Cluster_clusterize_pcce \" function !! \n\n");
+    //exit(1);
+    
 
     if (rank==0){
         Cluster_reportClusinfo(cls);

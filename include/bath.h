@@ -5,9 +5,6 @@
 #include "qubit.h"
 #include "general.h"
 
-typedef struct{
-    double x, y, z;
-} Point;
 
 /**
  * @struct BathSpin structure
@@ -124,7 +121,6 @@ typedef struct {
     /* &Defect */
     MatrixXcd hypf_sub; // the hyperfine interaction with bath spin (if there is dft data)
     int mainspidx; // the connected main spin index with the coupling strength of hypf_sub
-
     double min_dist;
     
 } BathSpin;
@@ -156,9 +152,9 @@ typedef struct {
 
 
 // spin pairs
-void        BathArray_connectivity(int*** cmap, float*** stmap, BathArray* ba, float rdip, float rdipcut); // connectivity between bath spins
-void BathArray_connectivity_pcce(int*** cmap, float*** stmap, BathArray* ba, float rdip, float rdipcut);
-void        makeSparsemap(int*** spmap, int** cmap, int nspin); // sparsemap
+void BathArray_connectivity(int*** cmap, float*** stmap, BathArray* ba, float rdip, float rdipcut); // connectivity between bath spins
+//void BathArray_connectivity_pcce(int*** cmap, float*** stmap, BathArray* ba, float rdip, float rdipcut);
+void makeSparsemap(int*** spmap, int** cmap, int nspin); // sparsemap
 
 // spin interactions
 MatrixXcd   BathArray_int_i_j(BathArray* ba, int i, int j);

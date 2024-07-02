@@ -1,0 +1,18 @@
+#!/bin/sh
+
+rm -rf "../../../bin/main.out"
+PwdDir="`pwd`"
+
+cd ../../../
+
+    make
+
+cd "${PwdDir}" 
+
+code="../../../bin/main.out"
+ccein="./cce.json"
+
+process=2
+
+mpirun -n ${process} ${code} -f ${ccein} -I "./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1" -v | tee process
+#mpirun -n ${process} ${code} -f ${ccein} -I "./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1" > process

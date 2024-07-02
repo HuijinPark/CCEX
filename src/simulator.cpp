@@ -12,7 +12,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     ////////////////////////////////
 
     // Method-related parameters
-    int order = Config_getOrder(cnf);
     char* method = Config_getMethod(cnf);
     char* quantity = Config_getQuantity(cnf);
     int nstate = Config_getNstate(cnf);
@@ -29,9 +28,10 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     char* savemode = Output_getSavemode(op);
 
     // Power of the 0th cluster
+    int order = Cluster_getOrder(cls); // is this right?
     int iter_0th = Cluster_getClusinfo_iter(cls,0,0);
     bool isGCCE = false;
-    
+  
     ////////////////////////////////
     // Print the calculation method
     ////////////////////////////////
@@ -278,7 +278,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     int power = localclusters[n][ic][0];
 
                     // Create the bath array for the cluster
-                    BathArray* ba_cluster = createBathArray(cluster,n,ba,dfa,nqubit);
+                    BathArray* ba_cluster = createBathArray(cluster,n,ba,dfa,nqubit); // dfa + ba
                     // BathArray_report(ba_cluster);
 
                     // Calculate the coherence

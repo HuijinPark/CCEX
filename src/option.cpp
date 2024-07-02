@@ -471,9 +471,9 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
         int default_max_trial = 30000;
         int default_max_iter  = 30000;
 
-        int sK           = cJSON_ReadInt(root,"sK"          , false, defaultSk ); 
-        int max_trial    = cJSON_ReadInt(root,"max_trial"   , true , &default_max_trial); 
-        int max_iter     = cJSON_ReadInt(root,"max_iter"    , true , &default_max_iter); 
+        int sK           = cJSON_ReadInt(root,"sK"          , false, *defaultSk ); 
+        int max_trial    = cJSON_ReadInt(root,"max_trial"   , true , default_max_trial); 
+        int max_iter     = cJSON_ReadInt(root,"max_iter"    , true , default_max_iter); 
         bool kmeans_pp   = cJSON_ReadBool(root,"kmeans_pp"  , true , true);
         bool iter_detail = cJSON_ReadBool(root,"iter_detail", true , false);
 

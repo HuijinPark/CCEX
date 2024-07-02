@@ -130,43 +130,43 @@ void BathArray_connectivity(int*** cmap, float*** stmap, BathArray* ba, float rd
     }
 }
 
-void BathArray_connectivity_pcce(int*** cmap, float*** stmap, Point* centers, float rdip, float rdipcut, int nspin){
-     
-    //int nspin = BathArray_getNspin(ba);
-    //Point* centers = ba->centers;
-    // cmap [nspin][nspin] = 1 if connected else 0
-    // stmap [nspin][nspin] = strength of the connection
-
-    // Connectivity Map and Strength Map
-    *cmap  =   allocInt2d(nspin,nspin);
-    *stmap = allocFloat2d(nspin,nspin);
-
-    // Find connectivity Map and strength Map
-    double r = 0.0;
-    float strength = 0.0;
-    MatrixXcd tensor;
-
-    for (int sp1=0; sp1<nspin; sp1++){
-        for (int sp2=sp1+1; sp2<nspin; sp2++){
-            
-            Point c1 = centers[sp1];  double cxyz1[3] = {c1.x, c1.y, c1.z};
-            Point c2 = centers[sp2];  double cxyz2[3] = {c2.x, c2.y, c2.z};
-        
-            r        = dist(cxyz1, cxyz2);
-            tensor   = calPointDipoleTensor(cxyz1, cxyz2, 1, 1);
-            strength = tensor(2,2).real();
-
-            printf("r = %10.5lf\n", r);
-            if ( r < rdip && r > rdipcut){
-                (*cmap)[sp1][sp2] = 1;
-                (*cmap)[sp2][sp1] = 1;
-            }
-
-            (*stmap)[sp1][sp2] = fabs(strength);
-            (*stmap)[sp2][sp1] = fabs(strength);
-        }
-    }
-}
+//void BathArray_connectivity_pcce(int*** cmap, float*** stmap, Point* centers, float rdip, float rdipcut, int nspin){
+//     
+//    //int nspin = BathArray_getNspin(ba);
+//    //Point* centers = ba->centers;
+//    // cmap [nspin][nspin] = 1 if connected else 0
+//    // stmap [nspin][nspin] = strength of the connection
+//
+//    // Connectivity Map and Strength Map
+//    *cmap  =   allocInt2d(nspin,nspin);
+//    *stmap = allocFloat2d(nspin,nspin);
+//
+//    // Find connectivity Map and strength Map
+//    double r = 0.0;
+//    float strength = 0.0;
+//    MatrixXcd tensor;
+//
+//    for (int sp1=0; sp1<nspin; sp1++){
+//        for (int sp2=sp1+1; sp2<nspin; sp2++){
+//            
+//            Point c1 = centers[sp1];  double cxyz1[3] = {c1.x, c1.y, c1.z};
+//            Point c2 = centers[sp2];  double cxyz2[3] = {c2.x, c2.y, c2.z};
+//        
+//            r        = dist(cxyz1, cxyz2);
+//            tensor   = calPointDipoleTensor(cxyz1, cxyz2, 1, 1);
+//            strength = tensor(2,2).real();
+//
+//            printf("r = %10.5lf\n", r);
+//            if ( r < rdip && r > rdipcut){
+//                (*cmap)[sp1][sp2] = 1;
+//                (*cmap)[sp2][sp1] = 1;
+//            }
+//
+//            (*stmap)[sp1][sp2] = fabs(strength);
+//            (*stmap)[sp2][sp1] = fabs(strength);
+//        }
+//    }
+//}
 
 void makeSparsemap(int*** spmap, int** cmap, int nspin){
 
