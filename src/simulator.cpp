@@ -395,10 +395,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     MatrixXcd psib = QubitArray_getPsib(qa);
                     normalization = psia.adjoint() * rho0 * psib;
                     normalization_inv = powMatrixXcdElementWise(normalization,-1); 
-                }
-                else if ( strcasecmp(quantity,"dm")==0 && isGCCE ){
-                    normalization = rho0;
-                    normalization_inv = powMatrixXcdElementWise(normalization,-1); 
                 }else{
                     normalization = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));
                     normalization_inv = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));

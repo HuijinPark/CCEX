@@ -17,11 +17,13 @@ $ mpirun -n process_number code_path -f input_file
 - input_file : The input file required for the code to run. \n
   (input file should be <tt>.json</tt> file)  
 
+
 \b Example 
 
 \code 
 $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json 
 \endcode
+
 
 \b Possble \b command-line \b options
 - -h : Help option  
@@ -36,21 +38,23 @@ $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
 - -B : Magnetic field in z direction (Unit : G) (See \ref Config_Bfield "bfield")  
 - -o : Result file path (See \ref Config_Output "output")  
 
+
 \b About \b options
 
 The code read options twice :
 - Read options from input file called as In-file options
 - Read optoins from command line called as Command-line options \n
-* Command-line options are "priority"
+\note Command-line options are "priority"
 
+<hr>
 \section Workflow Workflow
 
 The CCEX software follow the below work process. 
 
-When you give the arguments in the command line, the code frist read the arguments.
-Note that if you don't give the input file accesible with -f option, then the code doesn't work.
+When you give the arguments in the command line, the code frist read the arguments. \n
+Note that if you don't give the input file accesible with -f option, then the code doesn't work. \n
 
-Code read the all tags in input file and update the 
+Code read the all tags in input file and update the ...  
 
 <img src="CCEX_workflow.png" alt="" width="600">
 
