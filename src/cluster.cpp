@@ -88,27 +88,28 @@ void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config
             exit(1);
         }
 
-    // ========================== //
-    // Setting cls_pcce !! <= cls //
-    // ========================== //
-    int** cs2dArr = Cluster_setCenterIdx_spinIdx_2dArr(ncenter, cls->sK, pcce_nspin, best_assigned_idx);
-    //if (rank == 0){
-    //    for (int tempi=0; tempi<ncenter; tempi++){
-    //        for (int tempj=0; tempj<cls->sK; tempj++){
-    //            printf("cs2dArr[%d][%d]=%d\n", tempi, tempj, cs2dArr[tempi][tempj]);
-    //        }
-    //    }
-    //}
-    int*** pcceClusInfo = convert_centerIdx_to_spinIdx(cls, cls->order, cls->sK, cs2dArr);
-    freeInt2d(&cs2dArr, ncenter);
-    
-    int spinOrder = (cls->order * cls->sK);
-    cls->clusinfo = pcceClusInfo;
-    Cluster_setOrder(cls, spinOrder);
-    printf("! ================= !\n");
-    printf("! -- cls print --!!\n\n");
-    reportClusinfo(cls->clusinfo, 4);
-    printf("\n! ================= !\n");
+        // ========================== //
+        // Setting cls_pcce !! <= cls //
+        // ========================== //
+        int** cs2dArr = Cluster_setCenterIdx_spinIdx_2dArr(ncenter, cls->sK, pcce_nspin, best_assigned_idx);
+        //if (rank == 0){
+        //    for (int tempi=0; tempi<ncenter; tempi++){
+        //        for (int tempj=0; tempj<cls->sK; tempj++){
+        //            printf("cs2dArr[%d][%d]=%d\n", tempi, tempj, cs2dArr[tempi][tempj]);
+        //        }
+        //    }
+        //}
+        int*** pcceClusInfo = convert_centerIdx_to_spinIdx(cls, cls->order, cls->sK, cs2dArr);
+        freeInt2d(&cs2dArr, ncenter);
+        
+        int spinOrder = (cls->order * cls->sK);
+        Cluster_freeClusinfo(cls);
+        cls->clusinfo = pcceClusInfo;
+        Cluster_setOrder(cls, spinOrder);
+        //printf("! ================= !\n");
+        //printf("! -- cls print --!!\n\n");
+        //reportClusinfo(cls->clusinfo, 4);
+        //printf("\n! ================= !\n");
 
     }
 }

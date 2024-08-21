@@ -578,20 +578,19 @@ int*** MPI_getLocalClusters(int order, int*** clusters){
         }
     }
 
-    //if (rank==0){
-    //    printf("nprocess : %d\n",nprocess);
-    //    for (int n=0; n<order+1; n++){
-    //        printf("size[%d] : %d\n",n,MPI_size[n]);
-    //        for (int ir=0; ir<nprocess; ir++){
-    //            printf("ista[%d][%d] : %d\n",n,ir,MPI_ista[n][ir]);
-    //            printf("iend[%d][%d] : %d\n",n,ir,MPI_iend[n][ir]);
-    //            printf("sendcount[%d][%d] : %d\n",n,ir,MPI_sendcount[n][ir]);
-    //        }
-    //    }
-    //}
+    if (rank==0){
+        printf("nprocess : %d\n",nprocess);
+        for (int n=0; n<order+1; n++){
+            printf("size[%d] : %d\n",n,MPI_size[n]);
+            for (int ir=0; ir<nprocess; ir++){
+                printf("ista[%d][%d] : %d\n",n,ir,MPI_ista[n][ir]);
+                printf("iend[%d][%d] : %d\n",n,ir,MPI_iend[n][ir]);
+                printf("sendcount[%d][%d] : %d\n",n,ir,MPI_sendcount[n][ir]);
+            }
+        }
+    }
 
     MPI_Barrier(MPI_COMM_WORLD);
-
 
     // make local clusters for each rank
     int*** localClusters = (int***)calloc(order+1,sizeof(int**));

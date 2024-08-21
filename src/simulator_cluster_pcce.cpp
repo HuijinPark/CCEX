@@ -20,19 +20,21 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     //////////////////////////////////////////////////////////
     int max_trial       = cls      -> max_trial;
     int trials_per_proc = max_trial / nprocess;
-    int start_trial     = rank      * trials_per_proc;
-    int end_trial       = (rank == nprocess - 1) ? max_trial : start_trial + trials_per_proc;
+    if (trials_per_proc == 0){trials_per_proc = 1;}
 
-    //for (int i=0; i<nprocess; i++){
-    //    if (rank == i){
-    //        printf("Rank: %d\n", rank);
-    //        printf("trials_per_proc: %d\n", trials_per_proc);
-    //        printf("start_trial: %d\n", start_trial);
-    //        printf("end_trial: %d\n", end_trial);
-    //        print_BD("=", 55);printf("\n");
-    //    }
-    //    MPI_Barrier(MPI_COMM_WORLD);
-    //}
+    //int start_trial     = rank      * trials_per_proc;
+    //int end_trial       = (rank == nprocess - 1) ? max_trial : start_trial + trials_per_proc;
+
+    for (int i=0; i<nprocess; i++){
+        if (rank == i){
+            printf(" || Rank: %d\n", rank);
+            printf(" || trials_per_proc: %d\n", trials_per_proc);
+            //printf("start_trial: %d\n", start_trial);
+            //printf("end_trial: %d\n", end_trial);
+            print_BD("=", 55);printf("\n");
+        }
+        MPI_Barrier(MPI_COMM_WORLD);
+    }
     MPI_Barrier(MPI_COMM_WORLD);
 
     //////////////////////////////////////////////////////////
@@ -57,7 +59,8 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     MPI_Barrier(MPI_COMM_WORLD);
 
     //////////////////////////////////////////////////////////
-    for (int trial = start_trial; trial < end_trial; trial++){
+    //for (int trial = start_trial; trial < end_trial; trial++){
+    for (int trial = 0; trial < trials_per_proc; trial++){
 
         Point* local_spins          = (Point*) malloc(sizeof(Point) * pcce_nspin);
         Point* local_centers        = (Point*) malloc(sizeof(Point) * ncenter  );

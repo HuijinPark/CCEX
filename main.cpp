@@ -348,6 +348,7 @@ int main(int argc, char* argv[]){
         //Cluster_clusterize_pcce(cls_pcce, cls, ba, qa, cnf, rank);
     }
     printf("In main.cpp: Finish the \" Cluster_clusterize_pcce \" function !! \n\n");
+    MPI_Barrier(MPI_COMM_WORLD);
     //exit(1);
     
 
@@ -376,14 +377,26 @@ int main(int argc, char* argv[]){
     // MPI distribution for the clusters
     int order = Cluster_getOrder(cls);
     int*** clusters = Cluster_getClusinfo(cls);
+
+    if (rank == 0){
+        printf("rank: %d\n", rank);
+        reportClusinfo(clusters,order);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    //exit(1);
+
     int*** localclusters = MPI_getLocalClusters(order,clusters);
     // int*** localclusters = clusters; // No MPI
     // reportClusinfo(localclusters,order);
     MPI_Barrier(MPI_COMM_WORLD);
+    if (rank==0){
+        printf("Done");
+    }
 
     // Calculate the dynamics
     calculate(qa,ba,dfa,cnf,pls,cls,op,localclusters);
     MPI_Barrier(MPI_COMM_WORLD);
+    exit(1);
 
     //=======================================================
     // Free memory
