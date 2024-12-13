@@ -4,7 +4,7 @@ CXX = mpiicpc
 CXXFLAGS = -std=c++11 -O3 -g #-Wall Higher level warning
 #CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
 CXXFLAGS += -Wno-deprecated-declarations
-CXXFLAGS += -diag-disable=2196
+CXXFLAGS += -diag-disable=2196 -diag-disable=10441
 #CXXFLAGS += -Wno-writable-strings
 
 SRC_DIR=./src
