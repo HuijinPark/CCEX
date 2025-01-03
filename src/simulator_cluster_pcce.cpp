@@ -43,8 +43,8 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     int pcce_nspin = pinfo -> pcce_nspin;
     int ncenter    = pinfo -> ncenter;
 
-    Point* local_best_spins      = (Point*) malloc(sizeof(Point) * pcce_nspin);
-    Point* local_best_centers    = (Point*) malloc(sizeof(Point) * ncenter  );
+    Point* local_best_spins      = (Point*) calloc(pcce_nspin, sizeof(Point));
+    Point* local_best_centers    = (Point*) calloc(ncenter,    sizeof(Point));
     int* local_best_assigned_idx = (int*)   calloc(pcce_nspin, sizeof(int));
     int* local_best_shuffle_idx  = (int*)   calloc(pcce_nspin, sizeof(int));
 
@@ -62,8 +62,8 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     //for (int trial = start_trial; trial < end_trial; trial++){
     for (int trial = 0; trial < trials_per_proc; trial++){
 
-        Point* local_spins          = (Point*) malloc(sizeof(Point) * pcce_nspin);
-        Point* local_centers        = (Point*) malloc(sizeof(Point) * ncenter  );
+        Point* local_spins          = (Point*) calloc(pcce_nspin, sizeof(Point));
+        Point* local_centers        = (Point*) calloc(ncenter,    sizeof(Point));
         int* local_assigned_idx     = (int*)   calloc(pcce_nspin, sizeof(int));
         int* local_shuffle_idx      = (int*)   calloc(pcce_nspin, sizeof(int));
         copy_bath_to_point_type(bath, local_spins, pcce_nspin);
@@ -197,9 +197,9 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
         free(all_best_sil);
         free(all_best_trial);
 
-        printf("\n"); print_BD("=", 55); printf("\n");
-        printf("Best rank: %d, Iner.: %.2lf, Sil.: %.2lf, Trial: %d\n", best_rank, global_best_inertia, global_best_sil, global_best_trial);
-        printf("\n"); print_BD("=", 55); printf("\n");
+        //printf("\n"); print_BD("=", 55); printf("\n");
+        //printf("Best rank: %d, Iner.: %.2lf, Sil.: %.2lf, Trial: %d\n", best_rank, global_best_inertia, global_best_sil, global_best_trial);
+        //printf("\n"); print_BD("=", 55); printf("\n");
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
@@ -241,17 +241,17 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
-    if (rank == 0){
-        printf("\n||-------------------------------------------------------||\n");
-        printf("\n||----------------! FINISH OPTIMIZATION !----------------||\n");
-        printf("\n||-------------------------------------------------------||\n\n");
-        printf("\n||-----------------! Center Information !----------------||\n\n");
-        print_centers(ncenter, best_centers, rank);
-        printf("\n||--------------! Assigned Index for Center !------------||\n");
-        print_assign_idx(best_assigned_idx, pcce_nspin, rank);
-        print_BD("=", 55);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
+    //if (rank == 0){
+    //    printf("\n||-------------------------------------------------------||\n");
+    //    printf("\n||----------------! FINISH OPTIMIZATION !----------------||\n");
+    //    printf("\n||-------------------------------------------------------||\n\n");
+    //    printf("\n||-----------------! Center Information !----------------||\n\n");
+    //    print_centers(ncenter, best_centers, rank);
+    //    printf("\n||--------------! Assigned Index for Center !------------||\n");
+    //    print_assign_idx(best_assigned_idx, pcce_nspin, rank);
+    //    print_BD("=", 55);
+    //}
+    //MPI_Barrier(MPI_COMM_WORLD);
 
     //////////////////////////////////////////////////////////
     ////      !!  Close the dynamical allocation !!         //

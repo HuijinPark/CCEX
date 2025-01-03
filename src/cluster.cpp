@@ -29,15 +29,15 @@ void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config
 
         int ncenter              = pinfo.ncenter;
         int pcce_nspin           = pinfo.pcce_nspin;
-        Point* best_centers      = (Point*) malloc(sizeof(Point) * ncenter);
-        int*   best_assigned_idx = (int*)   malloc(sizeof(int)   * pcce_nspin);
+        Point* best_centers      = (Point*) calloc(ncenter, sizeof(Point));
+        int*   best_assigned_idx = (int*)   calloc(pcce_nspin, sizeof(int));
         
         // Find the Center position & assigned index // 
         // bath >> center 
         simulator_cluster_partition(ba->bath, &pinfo, cls, best_centers, best_assigned_idx);
 
         int order = Cluster_getOrder(cls);
-        //int nspin = BathArray_getNspin(ba);
+        //int nspin = BathArray_getNspin(ba); 
 
         // cls->info alloc => cls_pcce 
         Cluster_allocClusinfo(cls, order); // clusinfo[order+1] : 0 ~ order, clusinfo[i][0][0] = 1
@@ -50,13 +50,12 @@ void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config
             if (rank==0){printf("\n\t Clustering 1st order ... \n");}
 
             int cluster[1] = {0};
-            int iter = 1;
+            int iter = 1; // clusinfo[N][i][0]
             // center >> cls->info for o1
             for (int centeridx = 0; centeridx < ncenter; centeridx++){
-                cluster[0] = centeridx;
+                cluster[0] = centeridx; 
                 Cluster_setClusinfo_addcluster(cls, order, iter, cluster);
             }
-
         }
         else if (order > 1){ 
 
@@ -78,7 +77,6 @@ void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config
                 printf("Error: clusterize: method is not defined\n");
                 exit(1);
             }
-
             freeInt2d(   &cmap, ncenter);
             freeInt2d(  &spmap, ncenter);
             freeFloat2d(&stmap, ncenter); 
@@ -92,13 +90,17 @@ void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config
         // Setting cls_pcce !! <= cls //
         // ========================== //
         int** cs2dArr = Cluster_setCenterIdx_spinIdx_2dArr(ncenter, cls->sK, pcce_nspin, best_assigned_idx);
-        //if (rank == 0){
-        //    for (int tempi=0; tempi<ncenter; tempi++){
-        //        for (int tempj=0; tempj<cls->sK; tempj++){
-        //            printf("cs2dArr[%d][%d]=%d\n", tempi, tempj, cs2dArr[tempi][tempj]);
-        //        }
-        //    }
-        //}
+        if (rank == 0){
+            for (int tempi=0; tempi<ncenter; tempi++){
+                printf("cs2dArr[%d] ", tempi);
+                for (int tempj=0; tempj<cls->sK; tempj++){
+                    printf("%d ", cs2dArr[tempi][tempj]);
+                }
+                printf("\n");
+            }
+        }
+        printf("\n");
+
         int*** pcceClusInfo = convert_centerIdx_to_spinIdx(cls, cls->order, cls->sK, cs2dArr);
         freeInt2d(&cs2dArr, ncenter);
         
@@ -110,7 +112,6 @@ void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config
         //printf("! -- cls print --!!\n\n");
         //reportClusinfo(cls->clusinfo, 4);
         //printf("\n! ================= !\n");
-
     }
 }
 
@@ -291,6 +292,9 @@ void Cluster_reportClusinfo(Cluster* cls){
 
 void reportClusinfo(int*** clusinfo, int order){
  
+    printf("   | ================================ |\n");
+    printf("   | Calling Function: reportClusinfo |\n");
+    printf("   | ================================ |\n");
     // 0-th order
     int iter_0th = clusinfo[0][0][0];
     int ncluster_0th = 1;

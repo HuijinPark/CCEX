@@ -386,6 +386,11 @@ int main(int argc, char* argv[]){
     //exit(1);
 
     int*** localclusters = MPI_getLocalClusters(order,clusters);
+    //printf("======================\n");
+    //printf("FINISH FINISH FINISH\n");
+    //printf("======================\n");
+    //exit(1);
+    
     // int*** localclusters = clusters; // No MPI
     // reportClusinfo(localclusters,order);
     MPI_Barrier(MPI_COMM_WORLD);

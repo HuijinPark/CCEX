@@ -584,6 +584,7 @@ int** Cluster_setCenterIdx_spinIdx_2dArr(int ncenter, int sK, int pcce_nspin, in
 
         cs2dArr[centerIdx][assignNum] = i;
         assignNumArr[centerIdx] += 1;
+
         if (assignNumArr[centerIdx] > sK){
             perror("Too many spins are assigned in center!!\n");
             exit(EXIT_FAILURE);
@@ -628,13 +629,13 @@ int*** convert_centerIdx_to_spinIdx(Cluster* cls, int cOrder, int sK, int** cs2d
     pcceClusInfo[0][0][0] = 1;
     
     // When cOrder > 0 // 
-    for (int sorder=1; sorder<=(sOrder+1); sorder++){
+    for (int sorder = 1; sorder <= sOrder; sorder++){
 
         if (sorder % sK==0){
-            int corder                 = sorder/sK;
+            int corder                 = int(sorder/sK);
             int n_cInfo                = cls->clusinfo[corder][0][0] - 1;               // n_clnfo: The number of "center clusinfo"'s n-th order cluster //
             pcceClusInfo[sorder]       = (int**)allocArray1d(n_cInfo+1, sizeof(int*));
-            //print_clusinfo_sorder_i(pcceClusInfo, sorder, n_cInfo+1);
+            print_clusinfo_sorder_i(pcceClusInfo, sorder, n_cInfo+1);
 
             if (n_cInfo != 0) {
                 pcceClusInfo[sorder][0]    = (int* )allocArray1d(1, sizeof(int));

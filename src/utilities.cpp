@@ -592,9 +592,17 @@ int*** MPI_getLocalClusters(int order, int*** clusters){
 
     MPI_Barrier(MPI_COMM_WORLD);
 
+    //printf("HELLO!!\n");
+    //printf("HELLO!!\n");
+    //printf("HELLO!!\n");
+    //exit(1);
+
+    // ==================================== //
+    // ==================================== //
+    // ==================================== //
+    // ==================================== //
     // make local clusters for each rank
     int*** localClusters = (int***)calloc(order+1,sizeof(int**));
-
     // zeroth cluster 
     localClusters[0] = (int**)calloc(1,sizeof(int*));
     localClusters[0][0] = (int*)calloc(1,sizeof(int));
