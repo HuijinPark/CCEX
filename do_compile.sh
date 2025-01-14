@@ -2,18 +2,15 @@
 
 if [ $# -ne 1 ]; then
     echo "Error, no input value"
-    echo "[1] Server : idm / mac / idm3"
+    echo "[1] Server : idm4 / mac / idm3"
     exit 1
 fi
 
 
-if [ ${1} == "idm" ]; then
+if [ ${1} == "idm4" ]; then
 
 module purge 
-module load icc18 icc18.impi fftw
-
-#export LD_LIBRARY_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD_LIBRARY_PATH
-#export INCLUDE=/home/CQML/lib/gsl-2.7.1/include:$INCLUDE
+module load intel-23.2/fftw-3.3.10 intel-23.2/icc-23.2
 
 cat << EOF > ./Makefile
 
