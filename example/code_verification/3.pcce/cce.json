@@ -1,0 +1,52 @@
+{
+    "method" : "pcce",
+    "quantity" : "coherence",
+
+    "qubitfile" : "./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_Defect",
+    "gyrofile" : "./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro",
+    "bathfile" : ["./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1"],
+    "avaaxfile" : "./../CCE_Reprod/Bath_Data/1.single_data/bathJT_DiaP1detun_1",
+    "statefile" : "Random",
+
+    "order" : 2,
+    "npulse" : 1,
+    "bfield" : 500,
+    "deltat": 0.01,
+    "nstep": 300, 
+    "seed" : 8805,
+
+    "sK"            : 1,
+    "max_iter"      : 20,
+    "max_trial"     : 20,
+    "kmeans_pp"     : true,
+    "iter_detail"   : false,
+
+    "rbath":  850,
+    "rdip":   620,
+    "nstate" : 50, 
+    
+    "outfile" : "CCE2_DetunedP1Bath_1ppm_1",
+
+    "alphams" : -1,
+    "betams" : 0,
+
+    "Defect" : [
+        {
+            "dfname": "P1",
+            "naddspin" : 0,
+            "navaax" : 12,
+            "detuning" : [ [1,  "e",   84.946496],
+                           [2,  "e",   84.946496],
+                           [3,  "e",   84.946496],
+                           [4,  "e",     0.00000],
+                           [5,  "e",     0.00000],
+                           [6,  "e",     0.00000],
+                           [7,  "e",  -84.946496],
+                           [8,  "e",  -84.946496],
+                           [9,  "e",  -84.946496],
+                           [10, "e",  114.026400],
+                           [11, "e",     0.00000],
+                           [12, "e", -114.026400]]
+        }
+    ]
+}

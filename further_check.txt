@@ -1,0 +1,37 @@
+
+----------------------------------
+include/bath.h
+----------------------------------
+min_dist; // 여기에 꼭 넣어야 하나?
+
+void BathArray_connectivity_pcce(int*** cmap, float*** stmap, BathArray* ba, float rdip, float rdipcut); // BathArray_connectivity 이미 있는데 둘이 차이가 뭔지 확인 필요 
+----------------------------------
+----------------------------------
+include/cluster.h
+----------------------------------
+int  sK; // 각 인자에 대한 설명 추가 필요.
+int  max_trial;
+int  max_iter;
+                 
+bool kmeans_pp;
+bool iter_detail;
+
+void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config); // qa를 포함한 부분을 main쪽으로 뺄 가능성이 있음. 또는 min_dist를 이용?
+
+-int Cluster_getSk(Cluster* cls); //인자 수정여부
+-int Cluster_getMax_iter(Cluster* cls);
+-int Cluster_getMax_trial(Cluster* cls);
+-bool Cluster_getKmeans_pp(Cluster* cls);
+-bool Cluster_getIter_detail(Cluster* cls);
+
+----------------------------------
+----------------------------------
+include/general.h
+----------------------------------
+char method 에서 pcce에 대한 설명 추가 
+----------------------------------
+----------------------------------
+src/cluster.cpp
+----------------------------------
+
+----------------------------------

@@ -21,10 +21,15 @@ typedef struct {
     int order;
 
     /** pcce
-       @brief 
-       @todo HS_pcce
+       @brief parameters of pCCE
+       @todo Hyeonsu should be write this part in detail.
     */
-    int sK;
+    int  sK;
+    int  max_trial;
+    int  max_iter;
+
+    bool kmeans_pp;
+    bool iter_detail;
 
     /**
      * @brief Clustering algorithm : See details in @ref Config::method 
@@ -91,7 +96,7 @@ typedef struct {
      *       The spin index in j-th cluster at 1st order
      * 
     */
-    int*** clusinfo; 
+    int*** clusinfo;
 
 } Cluster;
 
@@ -101,7 +106,7 @@ typedef struct {
 
 // init
 Cluster* Cluster_init();
-void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config);
+void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config);
 
 // free
 void Cluster_freeAll(Cluster* cls);
@@ -128,6 +133,8 @@ void reportClusinfo(int*** clusinfo, int order);
 void Cluster_allocClusinfo(Cluster* cls, int order); // alloc clusinfo[order+1] : 0 ~ order
 void Cluster_freeClusinfo(Cluster* cls);
 
+void Cluster_setClusinfo_0th(Cluster* cls); // Actually do nothing
+void Cluster_setClusinfo_1th(Cluster* cls, BathArray* ba); // bathspins = clusinfo[1][j][k]
 int Cluster_setClusinfo_addcluster(Cluster* cls, int order, int iter, int* cluster); // add new cluster, return the index of the cluster
 void Cluster_setClusinfo_chgcluster(Cluster* cls, int order, int* cluster, int ic); // change cluster at ic-th cluster
 void Cluster_setClusinfo_chgiter(Cluster* cls, int order, int iter, int ic); // change iter at ic-th cluster 
@@ -157,12 +164,21 @@ int* Cluster_getNk(Cluster* cls);
 char* Cluster_getMethod(Cluster* cls);
 int Cluster_getOrder(Cluster* cls);
 bool Cluster_getAddsubclus(Cluster* cls);
+int Cluster_getSk(Cluster* cls);
+int Cluster_getMax_iter(Cluster* cls);
+int Cluster_getMax_trial(Cluster* cls);
+bool Cluster_getKmeans_pp(Cluster* cls);
+bool Cluster_getIter_detail(Cluster* cls);
 
 // set 
 void Cluster_setOrder(Cluster* cls, int order);
 void Cluster_setMethod(Cluster* cls, char* method);
 void Cluster_setAddsubclus(Cluster* cls, bool addsubclus);
 void Cluster_setNk(Cluster* cls, int* nk); // set the number of clusters at ith-order
-
+void Cluster_setSk(Cluster* cls, int sK);
+void Cluster_setMax_trial(Cluster* cls, int max_trial);
+void Cluster_setMax_iter(Cluster* cls, int max_iter);
+void Cluster_setKmeans_pp(Cluster* cls, bool kmeans_pp);
+void Cluster_setIter_detail(Cluster* cls, bool iter_detail);
 
 #endif // __CCEX_CLUSTER_H_

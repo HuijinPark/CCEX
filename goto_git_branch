@@ -1,10 +1,18 @@
 #!/bin/sh
 
+if [ "$#" -eq 1 ]; then
+    message=$1 
+else
+    echo "Error!!"
+    echo "For conduct \"commit\", message should be provided"
+    exit
+fi
+
 git checkout -b "main"
 wait
 git add --all
 wait
-git commit -m " - "
+git commit -m " $message"
 wait
 git push origin "main"
 wait

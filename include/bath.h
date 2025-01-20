@@ -120,7 +120,8 @@ typedef struct {
     /* &Defect */
     MatrixXcd hypf_sub; // the hyperfine interaction with bath spin (if there is dft data)
     int mainspidx; // the connected main spin index with the coupling strength of hypf_sub
-    
+    double min_dist; // pCCE관련인데 뭔지 모르지만 일단 여기에 놓고 추후 수정필요!
+
 } BathSpin;
 
 /*!

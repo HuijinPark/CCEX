@@ -12,7 +12,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     ////////////////////////////////
 
     // Method-related parameters
-    int order = Config_getOrder(cnf);
     char* method = Config_getMethod(cnf);
     char* quantity = Config_getQuantity(cnf);
     int nstate = Config_getNstate(cnf);
@@ -29,6 +28,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     char* savemode = Output_getSavemode(op);
 
     // Power of the 0th cluster
+    int order = Cluster_getOrder(cls);
     int iter_0th = Cluster_getClusinfo_iter(cls,0,0);
     bool isGCCE = false;
     
