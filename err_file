@@ -1,0 +1,467 @@
+diff --git a/src/cluster.cpp b/src/cluster.cpp
+index f42f0b0..793b76b 100644
+--- a/src/cluster.cpp
++++ b/src/cluster.cpp
+@@ -3,7 +3,6 @@
+ #include "../include/memory.h"
+ #include "../include/cluster_hash.h"
+ #include "../include/cluster_pcce.h"
+-#include "../include/bath.h"
+ 
+ /* High Level --------------------------------------------------------*/
+ 
+@@ -19,184 +18,121 @@ Cluster* Cluster_init(){
+     return cls;
+ }
+ 
+-void Cluster_clusterize_pcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config, int rank){
+-//void Cluster_clusterize_pcce(Cluster* cls_pcce, Cluster* cls, BathArray* ba, QubitArray* qa, Config* config, int rank){
+-
+-    if (strcasecmp(cls->method, "pcce")==0){
+-        Partition_info pinfo;
+-        // Cut the # of spins (pcce grouping) //
+-        set_spinfinite(ba, qa, cls->sK, &pinfo, rank);
+-
+-        int ncenter              = pinfo.ncenter;
+-        int pcce_nspin           = pinfo.pcce_nspin;
+-        Point* best_centers      = (Point*) calloc(ncenter, sizeof(Point));
+-        int*   best_assigned_idx = (int*)   calloc(pcce_nspin, sizeof(int));
+-        
+-        // Find the Center position & assigned index // 
+-        // bath >> center 
+-        simulator_cluster_partition(ba->bath, &pinfo, cls, best_centers, best_assigned_idx);
+-
+-        int order = Cluster_getOrder(cls);
+-        //int nspin = BathArray_getNspin(ba); 
+-
+-        // cls->info alloc => cls_pcce 
+-        Cluster_allocClusinfo(cls, order); // clusinfo[order+1] : 0 ~ order, clusinfo[i][0][0] = 1
+-
+-        if (order==0){
+-            if (rank==0){printf("\n\t Clustering 0th order ... \n");}
+-        }
+-        else if (order == 1){ // For pCCE, + k=1 (order = n)
+-            
+-            if (rank==0){printf("\n\t Clustering 1st order ... \n");}
+-
+-            int cluster[1] = {0};
+-            int iter = 1; // clusinfo[N][i][0]
+-            // center >> cls->info for o1
+-            for (int centeridx = 0; centeridx < ncenter; centeridx++){
+-                cluster[0] = centeridx; 
+-                Cluster_setClusinfo_addcluster(cls, order, iter, cluster);
+-            }
+-        }
+-        else if (order > 1){ 
+-
+-            int** cmap    = NULL;  // connectivity map : cmap[nspin][nspin] = 1 if connected else 0
+-            float** stmap = NULL;  // strength map : stmap[nspin][nspin] = strength
+-            int** spmap   = NULL;  // sparse map : spmap[nspin][ncol] = n connected spin + 1d array of connected spins index
+-
+-            float rdip    = Config_getRdip(config);
+-            float rdipcut = Config_getRdipcut(config);
+-
+-            // center >> cls->info for on
+-            if (strcasecmp(cls->method, "pcce")==0){
+-                BathArray_connectivity_pcce(&cmap, &stmap, best_centers, rdip, rdipcut, ncenter);
+-                makeSparsemap(&spmap, cmap, ncenter);
+-                // main
+-                clusterizeHash(cls, ncenter, spmap, stmap); // clusterize + solve tilde
+-            }
+-            else{
+-                printf("Error: clusterize: method is not defined\n");
+-                exit(1);
+-            }
+-            freeInt2d(   &cmap, ncenter);
+-            freeInt2d(  &spmap, ncenter);
+-            freeFloat2d(&stmap, ncenter); 
+-
+-        }else{
+-            fprintf(stderr,"Error: Cluster_clusterize: order(%d) is not defined\n",order);
+-            exit(1);
+-        }
+-
+-        // ========================== //
+-        // Setting cls_pcce !! <= cls //
+-        // ========================== //
+-        int** cs2dArr = Cluster_setCenterIdx_spinIdx_2dArr(ncenter, cls->sK, pcce_nspin, best_assigned_idx);
+-        if (rank == 0){
+-            for (int tempi=0; tempi<ncenter; tempi++){
+-                printf("cs2dArr[%d] ", tempi);
+-                for (int tempj=0; tempj<cls->sK; tempj++){
+-                    printf("%d ", cs2dArr[tempi][tempj]);
+-                }
+-                printf("\n");
+-            }
+-        }
+-        printf("\n");
+-
+-        int*** pcceClusInfo = convert_centerIdx_to_spinIdx(cls, cls->order, cls->sK, cs2dArr);
+-        freeInt2d(&cs2dArr, ncenter);
+-        
+-        int spinOrder = (cls->order * cls->sK);
+-        Cluster_freeClusinfo(cls);
+-        cls->clusinfo = pcceClusInfo;
+-        Cluster_setOrder(cls, spinOrder);
+-        //printf("! ================= !\n");
+-        //printf("! -- cls print --!!\n\n");
+-        //reportClusinfo(cls->clusinfo, 4);
+-        //printf("\n! ================= !\n");
+-    }
+-}
+-
+ void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config){
+ 
+     int order = Cluster_getOrder(cls);
+     int nspin = BathArray_getNspin(ba);
++    char* method = Cluster_getMethod(cls);
+ 
+-    Cluster_allocClusinfo(cls, order); // clusinfo[order+1] : 0 ~ order, clusinfo[i][0][0] = 1
+-
+-    if (order==0){
+-        if (rank==0){printf("\n\t Clustering 0th order ... \n");}
+-    }
+-    else if (order == 1){ // For pCCE, + k=1 (order = n)
+-        
+-        if (rank==0){printf("\n\t Clustering 1st order ... \n");}
++    ///////////////////////////////////////////////////////////////////
++    // Alloc. memory for storing cluster information at cls.clusinfo
++    // --
++    // cls.clusinfo[i]       : i = 0 ~ order  (alloc "order+1" memory)
++    // cls.clusinfo[i][j]    : j = 0          (alloc "   1   " memory)
++    // cls.clusinfo[i][j][k] : k = 0          (alloc "   1   " memory)
++    // --
++    //  >> cls.clusinfo[i][0][0] = 1          
++    //  (save data as "1", 
++    //   meaning that there are "1-1" number of cluster)
++    ///////////////////////////////////////////////////////////////////
++    Cluster_allocClusinfo(cls, order); 
++
++    ///////////////////////////////////////////////////////////////////
++    // If order is larger than 1, 
++    // the following variables are required for creating clusters
++    ///////////////////////////////////////////////////////////////////
++
++    // Connectivity map : 
++    // To know whether the distance between two spins within rdip
++    // cmap[nspin][nspin] = 1 if connected 
++    //                     = 0 else 
++    int** cmap = NULL; 
++
++    // Strength map : 
++    // To know the strength between two spins 
++    // stmap[nspin][nspin] = strength (radkHz)
++    float** stmap = NULL; 
++
++    // Sparse map : 
++    // For cluster algorithm, cmap is shrinked if an element is 0
++    // spmap[nspin][ncol], ncol = the number of connected spin + 1
++    // spmap[ispin][0] = the number of connected spin + 1
++    // spmap[ispin][k] = k-th connected spin index 
++    int** spmap = NULL; 
++
++    // Cutoff for second order cluster
++    float rdip = Config_getRdip(config);
++    float rdipcut = Config_getRdipcut(config);
++
++    ///////////////////////////////////////////////////////////////////
++    // After clusterizing, 
++    // the information would stored at cls.clusinfo
++    ///////////////////////////////////////////////////////////////////
++    if (strcasecmp(method, "cce")==0 
++            || strcasecmp(method, "gcce")==0){
++
++        Cluster_setClusinfo_0th(cls);    // if order == 0
++        Cluster_setClusinfo_1th(cls,ba); // if order == 1
++
++        if (order > 1){                  // if order >= 2
++            // Get connectivity map 
++            // Args Returns : cmap, stmap, spmap
++            BathArray_connectivity(&cmap, &stmap, ba, rdip, rdipcut);
++            makeSparsemap(&spmap, cmap, nspin);
++
++            // Clusterize for order > 1 
++            // and Solve tilde (Division) of coherence function
++            // Args Returns : cls->clusinfo
++            clusterizeHash(cls, nspin, spmap, stmap);
++
++            freeInt2d(&cmap,nspin);
++            freeInt2d(&spmap,nspin);
++            freeFloat2d(&stmap,nspin); 
+ 
+-        int cluster[1] = {0};
+-        int iter = 1;
+-        for (int spinidx = 0; spinidx < nspin; spinidx++){
+-            cluster[0] = spinidx;
+-            Cluster_setClusinfo_addcluster(cls, order, iter, cluster);
+         }
+-
++    } 
++    else if (strcasecmp(method, "pcce")==0){
++        // Clusterize for all order 
++        // and Solve tilde (Division) of coherence function
++        // Args Returns : cls->clusinfo (new address)
++        clusterizePcce(cls, ba, qa, config); 
+     }
+-    else if (order > 1){ 
+-
+-        int** cmap    = NULL; // connectivity map : cmap[nspin][nspin] = 1 if connected else 0
+-        float** stmap = NULL; // strength map : stmap[nspin][nspin] = strength
+-        int** spmap   = NULL; // sparse map : spmap[nspin][ncol] = n connected spin + 1d array of connected spins index
+-
+-        //!!if (strcasecmp(cls->method, "pcce")==0){
+-        //!!    double** centerpositions = NULL; // start from 0
+-        //!!    int centerarraylength = 0;
+-        //!!    int* spinidx = NULL ; // start from 0
+-        //!!    getCenters(&centerpositions, &centerarraylength, &spinidx, ba);
+-        //!!    int BathArray_getNspin(ba)
+-        //!!}
+-
+-        float rdip    = Config_getRdip(config);
+-        float rdipcut = Config_getRdipcut(config);
+-
+-        // Connectivity Map
+-        BathArray_connectivity(&cmap, &stmap, ba, rdip, rdipcut);
+-        makeSparsemap(&spmap, cmap, nspin);
+-
+-        if (strcasecmp(cls->method, "cce")==0 || strcasecmp(cls->method, "gcce")==0){
+-            clusterizeHash(cls, nspin, spmap, stmap); // clusterize + solve tilde
+-        }
+-        // else if (strcmp(cls->method, "dsj")==0){
+-        //     clusterizeDsj(cls, cmap, stmap, spmap, ba, config);
+-        // }
+-        // else if (strcmp(cls->method, "itb")==0){
+-        //     // clusterizeItb(cls, cmap, stmap, spmap, ba, config);
+-        // }
+-        // else if (strcmp(cls->method, "dsjitb")==0){
+-        //     // clusterizeDsjitb(cls, cmap, stmap, spmap, ba, config);
+-        // }
+-        // else if (strcmp(cls->method, "pcce")==0){
+-        //     // clusterizePcce(cls, cmap, stmap, spmap, ba, config);
+-        else{
+-            printf("Error: clusterize: method is not defined\n");
+-            exit(1);
+-        }
+-
+-        freeInt2d(&cmap,nspin);
+-        freeInt2d(&spmap,nspin);
+-        freeFloat2d(&stmap,nspin); 
+-
+-    }else{
+-        fprintf(stderr,"Error: Cluster_clusterize: order(%d) is not defined\n",order);
++    else if (strcmp(method, "dsj")==0){
++        Cluster_setClusinfo_0th(cls);    // if order == 0
++        Cluster_setClusinfo_1th(cls,ba); // if order == 1
++        // clusterizeDsj(cls, cmap, stmap, spmap, ba, config);
++        printf("Error: clusterize: method is not defined\n");
+         exit(1);
+     }
+-
+-    char* method = Cluster_getMethod(cls);
+-    if (strcasecmp(method, "gcce")!=0 and strcasecmp(method, "cce")!=0){
+-        // cls -> hash
+-        HashCluster* hashClusters = NULL;
+-        convertClusinfoToHash(&hashClusters, cls);
+-        Cluster_freeClusinfo(cls);
+-
+-        // solve tilde, hash -> cls
+-        solveTilde(&hashClusters, cls, nspin);
+-        freeHashCluster(&hashClusters, order);
++    else if (strcmp(method, "itb")==0){
++        Cluster_setClusinfo_0th(cls);    // if order == 0
++        Cluster_setClusinfo_1th(cls,ba); // if order == 1
++        // clusterizeItb(cls, cmap, stmap, spmap, ba, config);
++        printf("Error: clusterize: method is not defined\n");
++        exit(1);
++    }
++    else if (strcmp(method, "dsjitb")==0){
++        Cluster_setClusinfo_0th(cls);    // if order == 0
++        Cluster_setClusinfo_1th(cls,ba); // if order == 1
++        // clusterizeDsjitb(cls, cmap, stmap, spmap, ba, config);
++        printf("Error: clusterize: method is not defined\n");
++        exit(1);
+     }
++    else{
++        printf("Error: clusterize: method is not defined\n");
++        exit(1);
++    }
++
++    //if (strcasecmp(method, "gcce")!=0 and strcasecmp(method, "cce")!=0){
++    //    // cls -> hash
++    //    HashCluster* hashClusters = NULL;
++    //    convertClusinfoToHash(&hashClusters, cls);
++    //    Cluster_freeClusinfo(cls);
++
++    //    // solve tilde, hash -> cls
++    //    solveTilde(&hashClusters, cls, nspin);
++    //    freeHashCluster(&hashClusters, order);
++    //}
+ 
+     if (strcasecmp(method, "gcce")!=0){
+         Cluster_setClusinfo_chgiter(cls, 0, 0, 0);
+@@ -204,11 +140,6 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* con
+ }
+ 
+ 
+-void change_clusinfo_for_pcce(int*** clusinfo_pcce, int*** clusinfo_old){
+-    
+-    reportClusinfo(clusinfo_old, 2);
+-}
+-
+ // free
+ void Cluster_freeAll(Cluster* cls){
+     freeArray1d((void**)&cls);
+@@ -226,14 +157,6 @@ void Cluster_report(Cluster* cls){
+     printStructElementChar("method",cls->method);
+     printStructElementBool("addsubclus",Cluster_getAddsubclus(cls));
+     
+-    if (strcasecmp(Cluster_getMethod(cls),"pcce") == 0){
+-        printStructElementInt("sK",Cluster_getSk(cls));
+-        printStructElementInt("max_iter",Cluster_getMax_iter(cls));
+-        printStructElementInt("max_trial",Cluster_getMax_trial(cls));
+-        printStructElementBool("kmeans_pp",Cluster_getKmeans_pp(cls));
+-        printStructElementBool("iter_detail",Cluster_getIter_detail(cls));
+-    }
+-
+     if (cls->nk!=NULL){
+         printSubTitle("The number of clusters for each order");
+         Cluster_reportNk(cls);
+@@ -292,9 +215,6 @@ void Cluster_reportClusinfo(Cluster* cls){
+ 
+ void reportClusinfo(int*** clusinfo, int order){
+  
+-    printf("   | ================================ |\n");
+-    printf("   | Calling Function: reportClusinfo |\n");
+-    printf("   | ================================ |\n");
+     // 0-th order
+     int iter_0th = clusinfo[0][0][0];
+     int ncluster_0th = 1;
+@@ -344,7 +264,29 @@ void Cluster_allocClusinfo(Cluster* cls, int order){
+         cls->clusinfo[i][0] = (int*)allocArray1d(1,sizeof(int));
+         cls->clusinfo[i][0][0] = 1;
+     }
++}
+ 
++void Cluster_setClusinfo_0th(Cluster* cls){
++    // Actually do nothing
++    if (cls->order==0){
++        if (rank==0){printf("\n\t Clustering 0th order ... \n");}
++    }
++}
++
++void Cluster_setClusinfo_1th(Cluster* cls, BathArray* ba){
++    //////////////////////////////////////////////
++    // Simply insert bathspin index in cls.clusinfo
++    // Faster than using Hash algorithm
++    //////////////////////////////////////////////
++    if (cls->order == 1){ 
++        if (rank==0){printf("\n\t Clustering 1st order ... \n");}
++        int cluster[1] = {0};
++        int iter = 1;
++        for (int spinidx = 0; spinidx < ba->nspin; spinidx++){
++            cluster[0] = spinidx;
++            Cluster_setClusinfo_addcluster(cls, 1, iter, cluster);
++        }
++    }
+ }
+ 
+ int Cluster_setClusinfo_addcluster(Cluster* cls, int order, int iter, int* cluster){
+@@ -464,25 +406,6 @@ int Cluster_getNk_order(Cluster* cls, int i){
+     }
+ }
+ 
+-int Cluster_getSk(Cluster* cls){
+-    return cls->sK;
+-}
+-
+-int Cluster_getMax_iter(Cluster* cls){
+-    return cls->max_iter;
+-}
+-
+-int Cluster_getMax_trial(Cluster* cls){
+-    return cls->max_trial;
+-}
+-
+-bool Cluster_getKmeans_pp(Cluster* cls){
+-    return cls->kmeans_pp;
+-}
+-
+-bool Cluster_getIter_detail(Cluster* cls){
+-    return cls->iter_detail;
+-}
+ 
+ 
+ // set 
+@@ -496,51 +419,32 @@ void Cluster_setMethod(Cluster* cls, char* method){
+ void Cluster_setAddsubclus(Cluster* cls, bool addsubclus){
+     cls->addsubclus = addsubclus;
+ }
+-
+ void Cluster_setNk(Cluster* cls, int* nk){
+     copyInt1d(cls->nk,nk,cls->order+1);
+ }
+ 
+ void Cluster_setSk(Cluster* cls, int sK){
+     cls->sK = sK;
+-}
+-
+-void Cluster_setMax_trial(Cluster* cls, int max_trial){
+-    cls->max_trial = max_trial;
+-}
+-
+-void Cluster_setMax_iter(Cluster* cls, int max_iter){
+-    cls->max_iter = max_iter;
+-}
+-
+-void Cluster_setKmeans_pp(Cluster* cls, bool kmeans_pp){
+-    cls->kmeans_pp= kmeans_pp;
+-}
+-
+-void Cluster_setIter_detail(Cluster* cls, bool iter_detail){
+-    cls->iter_detail= iter_detail;
+-}
+-
+-
+-
++}                                                           
+ 
+ // free
+ void Cluster_freeNk(Cluster* cls){
+-    freeInt1d(&(cls->nk));
+-}
+-
+-void Cluster_freeClusinfo(Cluster* cls){
+-    
+-    int order = cls->order;
+-
+-    if (cls->clusinfo!=NULL){
+-        for (int i=0; i<=order; i++){
+ 
+-            int ncluster = Cluster_getClusinfo_ncluster(cls,i);
++                                                                void Cluster_setMax_trial(Cluster* cls, int max_trial){         freeInt1d(&(cls->nk));
++    cls->max_trial = max_trial;                             }
++}
++                                                            void Cluster_freeClusinfo(Cluster* cls){
++void Cluster_setMax_iter(Cluster* cls, int max_iter){           
++    cls->max_iter = max_iter;                                   int order = cls->order;
++}
++                                                                if (cls->clusinfo!=NULL){
++void Cluster_setKmeans_pp(Cluster* cls, bool kmeans_pp){            for (int i=0; i<=order; i++){
++    cls->kmeans_pp= kmeans_pp;
++}                                                                       int ncluster = Cluster_getClusinfo_ncluster(cls,i);
+ 
+-            if (i==0){
+-                freeArray2d((void***)&(cls->clusinfo[i]),1);
+-            }
++void Cluster_setIter_detail(Cluster* cls, bool iter_detail){            if (i==0){
++    cls->iter_detail= iter_detail;                                          freeArray2d((void***)&(cls->clusinfo[i]),1);
++}                                                                       }
+             else{
+                 freeArray2d((void***)&(cls->clusinfo[i]),ncluster);
+             }
+@@ -549,5 +453,3 @@ void Cluster_freeClusinfo(Cluster* cls){
+         cls->clusinfo = NULL;
+     }
+ }
+-
+-

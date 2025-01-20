@@ -1,0 +1,24 @@
+#!/bin/sh
+
+module purge 
+#module load icc18 icc18.impi fftw mkl2018
+#module load 22.2/icc-22.2 22.2/fftw-3.3.10 22.2/gsl-2.7.1 
+module load  intel-23.2/icc-23.2  intel-23.2/gsl-2.8  intel-23.2/eigen-3.4.0
+
+#PwdDir="`pwd`"
+#
+#cd ../../../../
+#
+#    make clean
+#    make -j$(nproc)
+#
+#cd "${PwdDir}" 
+
+code="../../../../bin/main.out"
+ccein="./cce.json"
+
+process=20
+
+#mpirun -n ${process} ${code} -f ${ccein} -v -I "./../../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1" -N 1 > process
+mpirun -n ${process} ${code} -f ${ccein} -I "./../../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1" -N 1 > process
+#${code} -f ${ccein} -v > process
