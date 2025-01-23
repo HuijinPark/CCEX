@@ -76,6 +76,21 @@ void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config)
         // center >> cls->info for on
         if (strcasecmp(cls->method, "pcce")==0){
             BathArray_connectivity_pcce(&cmap, &stmap, best_centers, rdip, rdipcut, ncenter);
+
+            printf("       ");
+            for (int j=0; j<ncenter; j++){
+                printf(" %3d  ",j );
+            }
+
+
+            for (int i=0; i<ncenter; i++){
+                printf(" %3d | ",i);
+                for (int j=0; j<ncenter; j++){
+                    printf(" %3d  | ",j );
+                }
+            }
+
+
             makeSparsemap(&spmap, cmap, ncenter);
             // main
             clusterizeHash(cls, ncenter, spmap, stmap); // clusterize + solve tilde
