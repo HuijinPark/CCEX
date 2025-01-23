@@ -6,7 +6,8 @@
     "gyrofile" : "./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro",
     "bathfile" : ["./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1"],
     "avaaxfile" : "./../CCE_Reprod/Bath_Data/1.single_data/bathJT_DiaP1detun_1",
-    "statefile" : "Random",
+    "statefile" : "./../CCE_Reprod/Bath_Data/1.single_data/state_DiaP1_1ppm_",
+    "exstatefile" : "./../CCE_Reprod/Bath_Data/1.single_data/stateEx_DiaP1_1ppm_",
 
     "order" : 2,
     "npulse" : 1,
@@ -23,7 +24,7 @@
 
     "rbath":  850,
     "rdip":   620,
-    "nstate" : 50, 
+    "nstate" : 1, 
     
     "outfile" : "CCE2_DetunedP1Bath_1ppm_1",
 
@@ -33,6 +34,7 @@
     "Defect" : [
         {
             "dfname": "P1",
+            "apprx": true,
             "naddspin" : 0,
             "navaax" : 12,
             "detuning" : [ [1,  "e",   84.946496],
