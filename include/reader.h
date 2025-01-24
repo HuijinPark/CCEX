@@ -5,7 +5,6 @@
 #include "bath.h"
 #include "defect.h"
 #include "general.h"
-#include "cluster.h"
 
 
 void readQubitfile(QubitArray* qa, Config* cnf);
@@ -18,10 +17,7 @@ void setBathStates(BathArray* ba, Config* cnf, int i); // read or random set
 void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf); // read or random set
 void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i); // read or random set
 
-
-void setBathFinite(BathArray* ba, QubitArray* qa, Cluster* cls);
 int compare_dist(const void *a, const void *b);
-void shrink_restspins(BathArray* ba, int rest_nspin);
 
 // Read tensor files
 bool READ_BD_vertex(const char* inputfile, double*** vertex, double*** center, double*** normal, char** vertex_condi);

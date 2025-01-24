@@ -8,13 +8,12 @@
 #include "../include/cluster_hash.h"
 #include "../include/cluster_pcce.h"
 #include "../include/memory.h"
-#include "../include/qubit.h"
 #include "../include/cluster.h"
 #include "../include/bath.h"
 #include "../include/hamiltonian.h"
 
 
-void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config){
+void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
 
     ////////////////////////////////////////////////////
     // About pCCE method :
@@ -37,7 +36,7 @@ void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config)
     // Cut the # of spins (pcce grouping)
     // Total number of spins : ba.nspin -> NK
     ////////////////////////////////////////////////////
-    //set_spinfinite(ba, qa, cls->sK, &pinfo, rank);
+    shrink_restspins(ba, pinfo.rest_nspin);
 
     ////////////////////////////////////////////////////
     // Find the center position & assigned index 
@@ -420,6 +419,21 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     //    printf("                 "); print_time(start, end);
     //    print_BD("=", 55); printf("\n");
     //}   
+}
+
+void shrink_restspins(BathArray* ba, int rest_nspin){
+
+    if (rest_nspin > ba->nspin){
+        printf("Rest_nspin exceeds the size of the BathArray ba.\n");
+    }
+    
+    ba->nspin -= rest_nspin;
+    BathSpin** temp = (BathSpin**)realloc(ba->bath, ba->nspin * sizeof(BathSpin*));
+    if (ba->bath == NULL && ba->nspin>0){
+        perror("Failed to realloc ba->bath\n");
+        exit(EXIT_FAILURE);
+    }
+    ba->bath = temp;
 }
 
 ///////////////////////////////////////////////////

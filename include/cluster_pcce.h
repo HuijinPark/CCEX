@@ -8,8 +8,6 @@
 #include "mpi.h"
 #include "cluster.h"
 #include "general.h"
-#include "qubit.h"
-
 
 typedef struct{
     double x, y, z;
@@ -23,12 +21,11 @@ typedef struct{
     int rest_nspin;
 } Partition_info;
 
-void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config);
+void clusterizePcce(Cluster* cls, BathArray* ba, Config* config);
 void simulator_cluster_partition(BathSpin** bath, Partition_info* pinfo, Cluster* cls, Point* best_centers, int* best_assigned_idx);
+void shrink_restspins(BathArray* ba, int rest_nspin);
 void update_global_best(int index, double *inertia, double *sil, int *trial, double *global_best_inertia, double *global_best_sil, int *global_best_trial);
 void print_pcce_info(int bath_nspin, int nqubit, int ncenter, int pcce_nspin, int rest_nspin);
-//void shrink_restspins(BathArray* ba, int rest_nspin);
-//void set_spinfinite(BathArray* ba, QubitArray* qa, int sK, Partition_info* pinfo, int rank);
 void initializeCentroids(Point* spins, Point* centers, int ncenter, int pcce_nspin) ;
 void choose_initial_method(bool kmeans_pp, Point* spins, Point* centers, int pcce_nspin, int ncenter);
 void kMeansPlusPlus(Point *spins, Point *centers, int pcce_nspin, int ncenter) ;

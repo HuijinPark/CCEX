@@ -270,7 +270,6 @@ int main(int argc, char* argv[]){
         printSubTitle("Bath configuration files");
     }
     readBathfiles(ba,qa,cnf);  // set bath xyz position and properties
-    setBathFinite(ba,qa,cls);
 
     // Hyperfine tensor
     readHftensorfile(ba,qa,cnf); // set hyperfine tensor only from file
