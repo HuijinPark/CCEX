@@ -106,7 +106,7 @@ typedef struct {
 
 // init
 Cluster* Cluster_init();
-void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config);
+void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config);
 
 // free
 void Cluster_freeAll(Cluster* cls);

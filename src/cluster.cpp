@@ -18,7 +18,7 @@ Cluster* Cluster_init(){
     return cls;
 }
 
-void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config){
+void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
 
     int order = Cluster_getOrder(cls);
     int nspin = BathArray_getNspin(ba);
