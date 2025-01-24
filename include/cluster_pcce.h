@@ -27,8 +27,8 @@ void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config)
 void simulator_cluster_partition(BathSpin** bath, Partition_info* pinfo, Cluster* cls, Point* best_centers, int* best_assigned_idx);
 void update_global_best(int index, double *inertia, double *sil, int *trial, double *global_best_inertia, double *global_best_sil, int *global_best_trial);
 void print_pcce_info(int bath_nspin, int nqubit, int ncenter, int pcce_nspin, int rest_nspin);
-void shrink_restspins(BathArray* ba, int rest_nspin);
-void set_spinfinite(BathArray* ba, QubitArray* qa, int sK, Partition_info* pinfo, int rank);
+//void shrink_restspins(BathArray* ba, int rest_nspin);
+//void set_spinfinite(BathArray* ba, QubitArray* qa, int sK, Partition_info* pinfo, int rank);
 void initializeCentroids(Point* spins, Point* centers, int ncenter, int pcce_nspin) ;
 void choose_initial_method(bool kmeans_pp, Point* spins, Point* centers, int pcce_nspin, int ncenter);
 void kMeansPlusPlus(Point *spins, Point *centers, int pcce_nspin, int ncenter) ;
@@ -57,7 +57,7 @@ double silhouetteCoefficient(Point *spins, int *assignments, Point *centers, int
 double calculateInertia(Point *spins, Point *centers, int *assignments, int pcce_nspin, int ncenter);
 double calc_dist(double* arr1, double* arr2);
 double distance(Point p1, Point p2);
-int compare_dist(const void *a, const void *b);
+//int compare_dist(const void *a, const void *b);
 int if_contain(int* arr, int arr_size, int value) ;
 bool updateCentroids(Point *spins, int *assignments, Point *centers, int pcce_nspin, int ncenter) ;
 

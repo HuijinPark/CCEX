@@ -78,6 +78,25 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* con
             // Get connectivity map 
             // Args Returns : cmap, stmap, spmap
             BathArray_connectivity(&cmap, &stmap, ba, rdip, rdipcut);
+            printf("       ");
+            for (int j=0; j<BathArray_getNspin(ba); j++){
+                printf(" %3d ",j );
+            }
+            printf("\n");
+            printf("       ");
+            for (int j=0; j<BathArray_getNspin(ba); j++){
+                printf("-----");
+            }
+            printf("\n");
+
+            for (int i=0; i<BathArray_getNspin(ba); i++){
+                printf(" %3d | ",i);
+                for (int j=0; j<BathArray_getNspin(ba); j++){
+                    printf(" %3d ",cmap[i][j] );
+                }
+                printf("\n");
+            }
+
             makeSparsemap(&spmap, cmap, nspin);
 
             // Clusterize for order > 1 

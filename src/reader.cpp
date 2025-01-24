@@ -1,6 +1,7 @@
 #include "../include/reader.h"
 #include "../include/memory.h"
 #include "../include/utilities.h"
+#include "../include/cluster.h"
 #include "../include/hamiltonian.h"
 
 void readQubitfile(QubitArray* qa, Config* cnf){
@@ -126,6 +127,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
                     // set the bath
                     BathArray_setBath_i_name(ba, name, nspin-1);
                     BathArray_setBath_i_xyz(ba, xyz, nspin-1);
+                    BathArray_setBath_i_mindist(ba, r, nspin-1);
 
                     // set fline
                     Config_set_nflines(cnf, nspin);
@@ -277,6 +279,46 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
     }
 
     return;
+}
+
+void setBathFinite(BathArray* ba, QubitArray* qa, Cluster* cls){
+
+    qsort(ba->bath, ba->nspin, sizeof(BathSpin*), compare_dist);
+
+    if (strcasecmp(cls->method, "pcce")==0){
+        int totnspin = BathArray_getNspin(ba);
+
+        int sK         = cls->sK;
+        int ncenter    = int(totnspin / sK);
+        int pcce_nspin = int( ncenter * sK);
+        int rest_nspin = int(totnspin % sK);
+
+        // A set of minimum distance between qubit set and a bath spin
+        shrink_restspins(ba, rest_nspin);
+    }
+}
+
+int compare_dist(const void *a, const void *b){
+    BathSpin* s1 = *(BathSpin**)a;
+    BathSpin* s2 = *(BathSpin**)b;
+    if (s1->mindist < s2->mindist) return -1;
+    if (s1->mindist > s2->mindist) return  1;
+    return 0;
+}
+
+void shrink_restspins(BathArray* ba, int rest_nspin){
+
+    if (rest_nspin > ba->nspin){
+        printf("Rest_nspin exceeds the size of the BathArray ba.\n");
+    }
+    
+    ba->nspin -= rest_nspin;
+    BathSpin** temp = (BathSpin**)realloc(ba->bath, ba->nspin * sizeof(BathSpin*));
+    if (ba->bath == NULL && ba->nspin>0){
+        perror("Failed to realloc ba->bath\n");
+        exit(EXIT_FAILURE);
+    }
+    ba->bath = temp;
 }
 
 void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
