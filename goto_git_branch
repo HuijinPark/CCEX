@@ -12,7 +12,9 @@ make clean
 
 git checkout -b "main"
 wait
-git add --all
+git add .
+wait
+git status
 wait
 git commit -m " $message"
 wait

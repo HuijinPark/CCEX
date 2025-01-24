@@ -49,11 +49,6 @@ void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
     Point* best_centers      = (Point*) calloc(ncenter, sizeof(Point));
     int*   best_assigned_idx = (int*)   calloc(pcce_nspin, sizeof(int));
     simulator_cluster_partition(ba->bath, &pinfo, cls, best_centers, best_assigned_idx);
-
-    for (int i=0; i<pcce_nspin; i++){
-        printf("[%3d] %d \n",i,best_assigned_idx[i]);
-    }
-
     ////////////////////////////////////////////////////
     // Clusterize for the center
     ////////////////////////////////////////////////////
@@ -101,10 +96,7 @@ void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
         fprintf(stderr,"Error: Cluster_clusterize: order(%d) is not defined\n",order);
         exit(1);
     }
-    printf("===================================\n");
-    printf("Center\n");
-    printf("===================================\n");
-    Cluster_reportClusinfo(cls); 
+
     // ========================== //
     // Setting cls_pcce !! <= cls //
     // ========================== //
@@ -127,13 +119,6 @@ void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
     Cluster_freeClusinfo(cls);
     cls->clusinfo = pcceClusInfo;
     Cluster_setOrder(cls, spinOrder);
-
-    printf("===================================\n");
-    printf("Spins\n");
-    printf("===================================\n");
-
-    Cluster_reportClusinfo(cls); 
-    
 
     //printf("! ================= !\n");
     //printf("! -- cls print --!!\n\n");
