@@ -759,7 +759,10 @@ void BathArray_setBath_i_hypf_sub(BathArray* ba, const MatrixXcd hypf_sub, int i
 
 void BathArray_setBath_i_mainspidx(BathArray* ba, const int mainspidx, int i){
     ba->bath[i]->mainspidx = mainspidx;
+}
 
+void BathArray_setBath_i_mindist(BathArray* ba, const double mindist, int i){
+    ba->bath[i]->mindist = mindist;
 }
 
 void BathArray_setProp_nspecies(BathArray* ba, const int nspecies){
@@ -849,6 +852,8 @@ MatrixXcd BathArray_getBath_i_hypf_sub(BathArray* ba, int i){
 int BathArray_getBath_i_mainspidx(BathArray* ba, int i){
     return ba->bath[i]->mainspidx;
 }
+
+
 
 // free
 void BathArray_freeAll(BathArray* ba){

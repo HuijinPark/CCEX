@@ -8,13 +8,12 @@
 #include "../include/cluster_hash.h"
 #include "../include/cluster_pcce.h"
 #include "../include/memory.h"
-#include "../include/qubit.h"
 #include "../include/cluster.h"
 #include "../include/bath.h"
 #include "../include/hamiltonian.h"
 
 
-void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config){
+void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
 
     ////////////////////////////////////////////////////
     // About pCCE method :
@@ -26,13 +25,19 @@ void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config)
     // pCCE related information : 
     //   sK, ncenter, pcce_nspin, rest_nspin 
     Partition_info pinfo;
+    int totnspin = BathArray_getNspin(ba);
+
+    pinfo.sK         = cls->sK;
+    pinfo.ncenter    = int(totnspin / (pinfo.sK));
+    pinfo.pcce_nspin = int((pinfo.ncenter) * (pinfo.sK));
+    pinfo.rest_nspin = int(totnspin % (pinfo.sK));
 
     ////////////////////////////////////////////////////
     // Cut the # of spins (pcce grouping)
     // Total number of spins : ba.nspin -> NK
     ////////////////////////////////////////////////////
-    set_spinfinite(ba, qa, cls->sK, &pinfo, rank);
-    
+    shrink_restspins(ba, pinfo.rest_nspin);
+
     ////////////////////////////////////////////////////
     // Find the center position & assigned index 
     // (Find a representative position of a cluster 
@@ -40,11 +45,10 @@ void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config)
     //  Arg return : best_centers, best_assigned_idx
     ////////////////////////////////////////////////////
     int ncenter              = pinfo.ncenter; 
-    int pcce_nspin           = pinfo.pcce_nspin;
+    int pcce_nspin           = pinfo.pcce_nspin; 
     Point* best_centers      = (Point*) calloc(ncenter, sizeof(Point));
     int*   best_assigned_idx = (int*)   calloc(pcce_nspin, sizeof(int));
     simulator_cluster_partition(ba->bath, &pinfo, cls, best_centers, best_assigned_idx);
-    
     ////////////////////////////////////////////////////
     // Clusterize for the center
     ////////////////////////////////////////////////////
@@ -92,21 +96,21 @@ void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config)
         fprintf(stderr,"Error: Cluster_clusterize: order(%d) is not defined\n",order);
         exit(1);
     }
-    
+
     // ========================== //
     // Setting cls_pcce !! <= cls //
     // ========================== //
     int** cs2dArr = Cluster_setCenterIdx_spinIdx_2dArr(ncenter, cls->sK, pcce_nspin, best_assigned_idx);
-    if (rank == 0){
-        for (int tempi=0; tempi<ncenter; tempi++){
-            printf("cs2dArr[%d] ", tempi);
-            for (int tempj=0; tempj<cls->sK; tempj++){
-                printf("%d ", cs2dArr[tempi][tempj]);
-            }
-            printf("\n");
-        }
-    }
-    printf("\n");
+    //if (rank == 0){
+    //    for (int tempi=0; tempi<ncenter; tempi++){
+    //        printf("cs2dArr[%d] ", tempi);
+    //        for (int tempj=0; tempj<cls->sK; tempj++){
+    //            printf("%d ", cs2dArr[tempi][tempj]);
+    //        }
+    //        printf("\n");
+    //    }
+    //}
+    //printf("\n");
     
     int*** pcceClusInfo = convert_centerIdx_to_spinIdx(cls, cls->order, cls->sK, cs2dArr);
     freeInt2d(&cs2dArr, ncenter);
@@ -115,6 +119,7 @@ void clusterizePcce(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config)
     Cluster_freeClusinfo(cls);
     cls->clusinfo = pcceClusInfo;
     Cluster_setOrder(cls, spinOrder);
+
     //printf("! ================= !\n");
     //printf("! -- cls print --!!\n\n");
     //reportClusinfo(cls->clusinfo, 4);
@@ -138,23 +143,23 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     //int start_trial     = rank      * trials_per_proc;
     //int end_trial       = (rank == nprocess - 1) ? max_trial : start_trial + trials_per_proc;
 
-    for (int i=0; i<nprocess; i++){
-        if (rank == i){
-            printf(" || Rank: %d\n", rank);
-            printf(" || trials_per_proc: %d\n", trials_per_proc);
-            //printf("start_trial: %d\n", start_trial);
-            //printf("end_trial: %d\n", end_trial);
-            print_BD("=", 55);printf("\n");
-        }
-        MPI_Barrier(MPI_COMM_WORLD);
-    }
+    //for (int i=0; i<nprocess; i++){
+    //    if (rank == i){
+    //        printf(" || Rank: %d\n", rank);
+    //        printf(" || trials_per_proc: %d\n", trials_per_proc);
+    //        //printf("start_trial: %d\n", start_trial);
+    //        //printf("end_trial: %d\n", end_trial);
+    //        print_BD("=", 55);printf("\n");
+    //    }
+    //    MPI_Barrier(MPI_COMM_WORLD);
+    //}
     MPI_Barrier(MPI_COMM_WORLD);
 
     //////////////////////////////////////////////////////////
     ////        !!  Setting the information array !!        //
     //////////////////////////////////////////////////////////
-    int pcce_nspin = pinfo -> pcce_nspin;
-    int ncenter    = pinfo -> ncenter;
+    int pcce_nspin = pinfo -> pcce_nspin;  // ncenter * sK
+    int ncenter    = pinfo -> ncenter;     // nspin / sK (truncated)
 
     Point* local_best_spins      = (Point*) calloc(pcce_nspin, sizeof(Point));
     Point* local_best_centers    = (Point*) calloc(ncenter,    sizeof(Point));
@@ -178,6 +183,7 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
         Point* local_centers        = (Point*) calloc(ncenter,    sizeof(Point));
         int* local_assigned_idx     = (int*)   calloc(pcce_nspin, sizeof(int));
         int* local_shuffle_idx      = (int*)   calloc(pcce_nspin, sizeof(int));
+
         copy_bath_to_point_type(bath, local_spins, pcce_nspin);
 
         for (int i=0; i<pcce_nspin; i++){ 
@@ -201,9 +207,9 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
             converged = updateCentroids(local_spins, local_assigned_idx, local_centers, pcce_nspin, ncenter);
             iteration++;
 
-            if (cls->iter_detail == true){
-                print_kmeans_converge_info(trial, iteration, ncenter, &local_centers);
-            }
+            //if (cls->iter_detail == true){
+            //    print_kmeans_converge_info(trial, iteration, ncenter, &local_centers);
+            //}
         }
 
         // Find the local optimization centers configuration. // 
@@ -238,17 +244,17 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
         }
 
         ////////////////////////////////////////////////////////
-        clock_t trial_end = clock();
-        for (int i=0; i < nprocess; i++){
-            if (rank==i){
-                print_optimize_kmeans_info(trial, iteration, local_inertia, local_best_inertia, local_best_sil, rank);
-                printf("\n||---------------- Optimization Time ----------------||\n\n");
-                printf("                 "); print_time(trial_start, trial_end);
-                print_BD("=", 55); printf("\n");
-                fflush(stdout);
-            }
-        MPI_Barrier(MPI_COMM_WORLD);
-        }
+        //clock_t trial_end = clock();
+        //for (int i=0; i < nprocess; i++){
+        //    if (rank==i){
+        //        print_optimize_kmeans_info(trial, iteration, local_inertia, local_best_inertia, local_best_sil, rank);
+        //        printf("\n||---------------- Optimization Time ----------------||\n\n");
+        //        printf("                 "); print_time(trial_start, trial_end);
+        //        print_BD("=", 55); printf("\n");
+        //        fflush(stdout);
+        //    }
+        //MPI_Barrier(MPI_COMM_WORLD);
+        //}
         ////////////////////////////////////////////////////////
         free(local_spins);
         free(local_centers);
@@ -371,14 +377,14 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     FILE *c_savefile; 
     FILE *s_savefile; 
     
-    if (rank == 0){
-        //write_centers(&c_savefile, &(ba->centers), ncenter);
-        //write_spins(&s_savefile, &global_best_inverse_spins, &(ba->assigned_idx), pcce_nspin);
-        //write_centers(&c_savefile, &best_centers, ncenter);
-        //write_spins(&s_savefile, &global_best_inverse_spins, &best_assigned_idx, pcce_nspin);
-        print_best_centers(&best_centers, ncenter);
-        print_best_spins(&global_best_inverse_spins, &best_assigned_idx, pcce_nspin);
-    }
+    //if (rank == 0){
+    //    //write_centers(&c_savefile, &(ba->centers), ncenter);
+    //    //write_spins(&s_savefile, &global_best_inverse_spins, &(ba->assigned_idx), pcce_nspin);
+    //    //write_centers(&c_savefile, &best_centers, ncenter);
+    //    //write_spins(&s_savefile, &global_best_inverse_spins, &best_assigned_idx, pcce_nspin);
+    //    print_best_centers(&best_centers, ncenter);
+    //    print_best_spins(&global_best_inverse_spins, &best_assigned_idx, pcce_nspin);
+    //}
 
     free(global_best_centers);
     free(global_best_inverse_spins);
@@ -391,13 +397,28 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     ////////////////////////////////////////////////////////
     //                   !!  Finish  !!                   //
     ////////////////////////////////////////////////////////
-    clock_t end = clock();
+    //clock_t end = clock();
 
-    if (rank==0) {
-        printf("\n||--------------- Total Execution Time ---------------||\n\n");
-        printf("                 "); print_time(start, end);
-        print_BD("=", 55); printf("\n");
-    }   
+    //if (rank==0) {
+    //    printf("\n||--------------- Total Execution Time ---------------||\n\n");
+    //    printf("                 "); print_time(start, end);
+    //    print_BD("=", 55); printf("\n");
+    //}   
+}
+
+void shrink_restspins(BathArray* ba, int rest_nspin){
+
+    if (rest_nspin > ba->nspin){
+        printf("Rest_nspin exceeds the size of the BathArray ba.\n");
+    }
+    
+    ba->nspin -= rest_nspin;
+    BathSpin** temp = (BathSpin**)realloc(ba->bath, ba->nspin * sizeof(BathSpin*));
+    if (ba->bath == NULL && ba->nspin>0){
+        perror("Failed to realloc ba->bath\n");
+        exit(EXIT_FAILURE);
+    }
+    ba->bath = temp;
 }
 
 ///////////////////////////////////////////////////
@@ -422,14 +443,6 @@ double calc_dist(double* arr1, double* arr2){
     return dist;
 }
 
-int compare_dist(const void *a, const void *b){
-    BathSpin* s1 = *(BathSpin**)a;
-    BathSpin* s2 = *(BathSpin**)b;
-    if (s1->min_dist < s2->min_dist) return -1;
-    if (s1->min_dist > s2->min_dist) return  1;
-    return 0;
-}
-
 void print_pcce_info(int bath_nspin, int nqubit, int ncenter, int pcce_nspin, int rest_nspin){
     print_BD("-", 30);
     printf("Total Bath Spin: %d\n", bath_nspin);
@@ -438,54 +451,6 @@ void print_pcce_info(int bath_nspin, int nqubit, int ncenter, int pcce_nspin, in
     printf("pcce_nspin: %d\n", pcce_nspin);
     printf("rest_nspin: %d\n", rest_nspin);
     print_BD("-", 30);
-}
-
-void shrink_restspins(BathArray* ba, int rest_nspin){
-
-    if (rest_nspin > ba->nspin){
-        printf("Rest_nspin exceeds the size of the BathArray ba.\n");
-    }
-    
-    ba->nspin -= rest_nspin;
-    BathSpin** temp = (BathSpin**)realloc(ba->bath, ba->nspin * sizeof(BathSpin*));
-    if (ba->bath == NULL && ba->nspin>0){
-        perror("Failed to realloc ba->bath\n");
-        exit(EXIT_FAILURE);
-    }
-    ba->bath = temp;
-}
-
-void set_spinfinite(BathArray* ba, QubitArray* qa, int sK, Partition_info* pinfo, int rank){
-    
-    int ncenter    = (ba->nspin / sK);
-    int pcce_nspin = (  ncenter * sK);
-    int rest_nspin = (ba->nspin % sK);
-
-    pinfo->sK         = sK;
-    pinfo->ncenter    = ncenter;
-    pinfo->pcce_nspin = pcce_nspin;
-    pinfo->rest_nspin = rest_nspin;
-    
-    if (rank == 0){
-        print_pcce_info(ba->nspin, qa->nqubit, ncenter, pcce_nspin, rest_nspin);
-    }
-
-    for (int spinIdx=0; spinIdx<(ba->nspin); spinIdx++){
-
-        double min_dist = -1;
-        for (int qubitIdx=0; qubitIdx<(qa->nqubit); qubitIdx++){
-
-            //double dist = dist((qa->qubit[qubitIdx]->xyz), ba->bath[spinIdx]->xyz);
-            double dist = calc_dist((qa->qubit[qubitIdx]->xyz), ba->bath[spinIdx]->xyz);
-            if (min_dist == -1 || dist < min_dist){
-                min_dist = dist;
-            }
-        }
-        ba->bath[spinIdx]->min_dist = min_dist;
-    }
-
-    qsort(ba->bath, ba->nspin, sizeof(BathSpin*), compare_dist);
-    shrink_restspins(ba, rest_nspin);
 }
 
 ///////////////////////////////////////////////
@@ -542,7 +507,7 @@ void choose_initial_method(bool kmeans_pp, Point* spins, Point* centers, int pcc
         //print_BD("=", 55);
         initializeCentroids(spins, centers, ncenter, pcce_nspin);
     }
-    printf("\n");
+    //printf("\n");
 }
 
 void kMeansPlusPlus(Point *spins, Point *centers, int pcce_nspin, int ncenter) {
@@ -1023,7 +988,7 @@ int*** convert_centerIdx_to_spinIdx(Cluster* cls, int cOrder, int sK, int** cs2d
             int corder                 = int(sorder/sK);
             int n_cInfo                = cls->clusinfo[corder][0][0] - 1;               // n_clnfo: The number of "center clusinfo"'s n-th order cluster //
             pcceClusInfo[sorder]       = (int**)allocArray1d(n_cInfo+1, sizeof(int*));
-            print_clusinfo_sorder_i(pcceClusInfo, sorder, n_cInfo+1);
+            //print_clusinfo_sorder_i(pcceClusInfo, sorder, n_cInfo+1);
 
             if (n_cInfo != 0) {
                 pcceClusInfo[sorder][0]    = (int* )allocArray1d(1, sizeof(int));
@@ -1071,6 +1036,6 @@ int*** convert_centerIdx_to_spinIdx(Cluster* cls, int cOrder, int sK, int** cs2d
             //printf("=======\n");
         }
     }
-    printf("!! FINSIH: Function \"Convert center indices => spin indices. \" !!\n");
+    //printf("!! FINSIH: Function \"Convert center indices => spin indices. \" !!\n");
     return pcceClusInfo;
 }

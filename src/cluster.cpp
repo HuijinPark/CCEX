@@ -18,7 +18,7 @@ Cluster* Cluster_init(){
     return cls;
 }
 
-void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* config){
+void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
 
     int order = Cluster_getOrder(cls);
     int nspin = BathArray_getNspin(ba);
@@ -95,7 +95,7 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, QubitArray* qa, Config* con
         // Clusterize for all order 
         // and Solve tilde (Division) of coherence function
         // Args Returns : cls->clusinfo (new address)
-        clusterizePcce(cls, ba, qa, config); 
+        clusterizePcce(cls, ba, config); 
     }
     else if (strcmp(method, "dsj")==0){
         Cluster_setClusinfo_0th(cls);    // if order == 0

@@ -1,16 +1,11 @@
 #!/bin/sh
 
-PwdDir="`pwd`"
-
-cd ../../../
-
-    make
-
-cd "${PwdDir}" 
+module purge 
+module load intel-23.2/fftw-3.3.10 intel-23.2/icc-23.2
 
 code="../../../bin/main.out"
 ccein="./cce.json"
 
-process=20
+process=1
 
-mpirun -n ${process} ${code} -f ${ccein} -v > process
+mpirun -n ${process} ${code} -f ${ccein} -I "./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1" -v > process

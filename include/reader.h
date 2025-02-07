@@ -17,7 +17,7 @@ void setBathStates(BathArray* ba, Config* cnf, int i); // read or random set
 void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf); // read or random set
 void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i); // read or random set
 
-
+int compare_dist(const void *a, const void *b);
 
 // Read tensor files
 bool READ_BD_vertex(const char* inputfile, double*** vertex, double*** center, double*** normal, char** vertex_condi);
