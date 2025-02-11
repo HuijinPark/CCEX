@@ -1,0 +1,46 @@
+#!/bin/sh
+
+tool="VASP"
+JT=$1
+addspin="14N"
+
+fposcar="./4_modPOSCAR/contcar_N2p${JT}_up_mod"
+dfname="ele"
+foutcar="./3_OUTCAR/outcar_N2p${JT}_up"
+
+case="$2"
+
+if [ $case == "1-1" ];then
+## case 1-1
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --version v1 --fidentify False --addhfcore False --ccein ./6_ccein/cce_v1.in --JT ${JT} --addspin ${addspin} --cceindiag ./6_ccein/ccediag_v1.in --rangeformat coord > out_v1
+mv Afile ./5_spHamil/Afile_v1
+mv Qfile ./5_spHamil/Qfile_v1
+
+elif [ $case == "1-2" ];then
+## case 1-2
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --version v2 --fidentify False --addhfcore False --ccein ./6_ccein/cce_v2.in --JT ${JT} --addspin ${addspin} --cceindiag ./6_ccein/ccediag_v2.in --rangeformat coord > out_v2
+mv Afile ./5_spHamil/Afile_v2
+mv Qfile ./5_spHamil/Qfile_v2
+
+elif [ $case == "2-1" ];then
+## case 2-1
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --version v1 --fidentify False --addhfcore True --ccein ./6_ccein/cce_v1_addhfcore.in --JT ${JT} --addspin ${addspin} --cceindiag ./6_ccein/ccediag_v1_addhfcore.in --rangeformat coord > out_v1_addhfcore
+mv Afile ./5_spHamil/Afile_v1_addhfcore
+mv Qfile ./5_spHamil/Qfile_v1_addhfcore
+
+elif [ $case == "2-2" ];then
+## case 2-2
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --version v2 --fidentify False --addhfcore True --ccein ./6_ccein/cce_v2_addhfcore.in --JT ${JT} --addspin ${addspin} --cceindiag ./6_ccein/ccediag_v2_addhfcore.in  --rangeformat coord > out_v2_addhfcore
+mv Afile ./5_spHamil/Afile_v2_addhfcore
+mv Qfile ./5_spHamil/Qfile_v2_addhfcore
+
+else
+    echo "error."
+fi
+
+################################################################################
+<< END
+
+    NOTE!
+END
+################################################################################

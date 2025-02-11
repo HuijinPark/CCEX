@@ -1,0 +1,126 @@
+#!/bin/sh
+
+Exspins="NVHn"
+
+avaax=12
+
+#data arrangment
+#opt=1  
+
+#AQfile&modify
+#opt=2
+dfname=VC
+
+#cce.in file
+opt=3
+addspin="14N 1H"
+fcce='cce_14N.in'
+
+#move data to bath folder
+#opt=4
+
+dwchk='on'
+
+######################################################################
+# Data arrangment 
+
+NV_Numbering=( 0 1 1 1 2 2 2 3 3 3 4 4 4 )
+H_Numbering=( 0 2 3 4 1 3 4 1 2 4 1 2 3 )
+
+if [ ${opt} == 1 ]; then
+
+mkdir 1_POSCAR
+mkdir 2_CONTCAR
+mkdir 3_OUTCAR
+
+for i in $(seq 1 1 ${avaax} )
+do
+
+echo "${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}"
+
+cp up_relax/${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}_up/POSCAR  "./1_POSCAR/poscar_${Exspins}${i}_up.vasp"
+cp dw_relax/${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}_dw/POSCAR  "./1_POSCAR/poscar_${Exspins}${i}_dw.vasp"
+echo "${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}_up   >>  poscar_${Exspins}${i}_up.vasp" >> info
+echo "${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}_dw   >>  poscar_${Exspins}${i}_dw.vasp" >> info
+
+cp up_relax/${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}_up/CONTCAR  "./2_CONTCAR/contcar_${Exspins}${i}_up.vasp"
+cp dw_relax/${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}_dw/CONTCAR  "./2_CONTCAR/contcar_${Exspins}${i}_dw.vasp"
+
+cp up_HF_Q/${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}_up/OUTCAR  "./3_OUTCAR/outcar_${Exspins}${i}_up"
+cp dw_HF_Q/${NV_Numbering[i]}${H_Numbering[i]}.NV${NV_Numbering[i]}_H${H_Numbering[i]}_dw/OUTCAR  "./3_OUTCAR/outcar_${Exspins}${i}_dw"
+
+done
+fi
+######################################################################
+# Make A,Q file & modify the contcar 
+
+if [ ${opt} == 2 ]; then
+
+mkdir 4_modPOSCAR
+mkdir 5_spinHamil
+
+for i in $(seq 1 1 ${avaax} )
+do
+
+python /home/huijin/scrp/pyFunction/15.mkExSpinData/ExPOSCARMod.py "./2_CONTCAR/contcar_${Exspins}${i}_up.vasp" "./4_modPOSCAR/contcar_${Exspins}${i}_up_mod.vasp" ${Exspins}_up2
+python /home/huijin/scrp/pyFunction/12.3.AQtensor_reader/do_mkAQfile.py VASP "./4_modPOSCAR/contcar_${Exspins}${i}_up_mod.vasp" "${dfname}" on on "./3_OUTCAR/outcar_${Exspins}${i}_up"
+
+mv Afile "./5_spinHamil/${Exspins}${i}_up_Afile"
+mv Qfile "./5_spinHamil/${Exspins}${i}_up_Qfile"
+
+    if [ ${dwchk} == 'on' ];then
+
+        python /home/huijin/scrp/pyFunction/15.mkExSpinData/ExPOSCARMod.py "./2_CONTCAR/contcar_${Exspins}${i}_dw.vasp" "./4_modPOSCAR/contcar_${Exspins}${i}_dw_mod.vasp" ${Exspins}_dw2
+        python /home/huijin/scrp/pyFunction/12.3.AQtensor_reader/do_mkAQfile.py VASP "./4_modPOSCAR/contcar_${Exspins}${i}_dw_mod.vasp" "${dfname}" on on "./3_OUTCAR/outcar_${Exspins}${i}_dw"
+        
+        mv Afile "./5_spinHamil/${Exspins}${i}_dw_Afile"
+        mv Qfile "./5_spinHamil/${Exspins}${i}_dw_Qfile"
+    
+    fi
+
+done
+fi
+
+######################################################################
+# Make ExspinData 
+
+if [ ${opt} == 3 ]; then
+
+mkdir 6_ExSpinData
+fAs=""
+fQs=""
+JTs=""
+for i in $(seq 1 1 ${avaax} )
+do
+    fAs+="./5_spinHamil/NVHn${i}_up_Afile " 
+    fQs+="./5_spinHamil/NVHn${i}_up_Qfile " 
+    JTs+="${i} "
+done
+for i in $(seq 1 1 ${avaax} )
+do
+    fAs+="./5_spinHamil/NVHn${i}_dw_Afile " 
+    fQs+="./5_spinHamil/NVHn${i}_dw_Qfile " 
+    JT=$(( ${i} + ${avaax} ))
+    JTs+="${JT} "
+done
+
+python /home/huijin/scrp/pyFunction/15.mkExSpinData/do_mkExSpinCCEfile.py "$fAs" "$fQs" "$JTs" "./6_ExSpinData/${fcce}" "$addspin" 
+
+fi
+######################################################################
+# Move data to bathfiles
+ 
+if [ ${opt} == 4 ]; then
+
+path="/home/huijin/cal/bath/5.DiaExspins/${Exspins}/"
+
+cp 1_POSCAR     ${path}  -r     
+cp 2_CONTCAR    ${path}  -r
+cp 3_OUTCAR     ${path}  -r
+cp 4_modPOSCAR  ${path}  -r 
+cp 5_spinHamil  ${path}  -r
+cp 6_ExSpinData ${path}  -r
+echo "`pwd`"  > ${path}originalpath
+
+fi
+

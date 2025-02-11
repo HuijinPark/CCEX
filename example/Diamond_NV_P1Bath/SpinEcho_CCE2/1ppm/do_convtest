@@ -1,0 +1,73 @@
+#!/bin/sh
+
+unit=""
+VariableName="Order"
+varOpt="2"
+
+tolerance=
+which="sE"
+##############################################################
+configs="$(seq 1 1 50)"
+states="$(seq 1 1 50)"
+
+ConvTestCode="/home/huijin/scrp/pyFunction/22.ConvTest/do_convTest.py"
+
+ECDir="./summary/${VariableName}/ErrorCorr/"
+tEDir="./summary/${VariableName}/TimeEnsemble/"
+sEDir="./summary/${VariableName}/SpatialEnsemble/"
+##############################################################
+for c in ${configs} 
+do
+    ##################################################################################
+    # Error Correction
+    if [ $which == "EC" ]; then
+    for s in ${states}
+    do
+        ECdataList=""
+        for var in ${varOpt} 
+        do
+            ECdatahead="CCE2_DiaP1_1ppm_${VariableName}_${var}${unit}_EC_"
+            ECouthead="CCE2_DiaP1_1ppm_${VariableName}_EC_"
+            ECdata="${ECDir}${ECdatahead}${c}{${s}}"
+            ECdataList+=" ${ECdata}"
+        done
+        ECout="${ECDir}${ECouthead}${c}{${s}}"
+        ${ConvTestCode} "${ECdataList}" "${varOpt}" "${VariableName}" "${unit}" "${tolerance}" "${ECout}"
+    done
+    fi
+    ##################################################################################
+    ##################################################################################
+    # Time Ensemble
+    if [ $which == "tE" ]; then
+    tEdataList=""
+    for var in ${varOpt} 
+    do
+        tEdatahead="CCE2_DiaP1_1ppm_${VariableName}_${var}${unit}_tE_"
+        tEdatatail="{1T50}_conv50"
+        tEouthead="CCE2_DiaP1_1ppm_${VariableName}_tE_"
+        tEdata="${tEDir}${tEdatahead}${c}${tEdatatail}"
+        tEdataList+=" ${tEdata}"
+    done
+    tEout="${tEDir}${tEouthead}${c}${tEdatatail}"
+    ${ConvTestCode} "${tEdataList}" "${varOpt}" "${VariableName}" "${unit}" "${tolerance}" "${tEout}"
+    fi
+    #################################################################################
+done
+
+####################################################################################
+# Spatial Ensemble
+if [ $which == "sE" ]; then
+sEdataList=""
+for var in ${varOpt} 
+do
+    sEdatahead="CCE2_DiaP1_1ppm_${VariableName}_${var}${unit}_sE_"
+    sEdatatail="conv50x50"
+    sEouthead="CCE2_DiaP1_1ppm_${VariableName}_sE_"
+    sEdata="${sEDir}${sEdatahead}${sEdatatail}"
+    sEdataList+=" ${sEdata}"
+done
+sEout="${sEDir}${sEouthead}${sEdatatail}"
+${ConvTestCode} "${sEdataList}" "${varOpt}" "${VariableName}" "${unit}" "${tolerance}" "${sEout}" > out
+fi
+###################################################################################
+

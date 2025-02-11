@@ -1,0 +1,48 @@
+#!/bin/sh
+
+size=30
+prob=example/prob_h_BN
+
+case=1
+
+############################################################
+#1. generate the simple configure
+if [ ${case} == "1" ]; then
+Defect=B
+inputfile=example/POSCAR_UnitCell_h_BN_pbesol_30
+
+Configure=example/config_simple
+mpirun ./BathGenerator.py -o $Configure -i $inputfile  -p $prob --size $size --Defect $Defect --opt2D \
+                     --test  > Process_test_1
+
+############################################################
+#2. generate the defect configure
+elif [ ${case} == "2" ]; then
+Defect=VB
+inputfile=example/POSCAR_UnitCell_h_BN_pbesol_30
+insert=example/POSCAR_lorentshape_Z_2_5_FWHM_8_VB
+
+Configure=example/config_insert
+mpirun ./BathGenerator.py -o $Configure -i $inputfile -I $insert -p $prob --size $size --Defect $Defect --opt2D --Defect_center 0.4 0.6 0.8 --test > Process_test_2
+
+############################################################
+#3. generate the lattice deformation configure
+elif [ ${case} == "3" ]; then
+Defect=VB
+inputfile=example/POSCAR_UnitCell_h_BN_pbesol_30
+insert=example/POSCAR_lorentshape_Z_2_5_FWHM_8_VB
+straininput_x=example/POSCAR_lorentshape_Z_2_5_FWHM_8_x
+straininput_y=example/POSCAR_lorentshape_Z_2_5_FWHM_8_x
+strain_axis='x y'
+
+Configure=example/config_deform
+mpirun ./BathGenerator.py -o $Configure -i $inputfile -I $insert -p $prob --size $size --Defect $Defect --opt2D -D $straininput_x $straininput_y --axis $strain_axis --test > Process_test_3
+
+############################################################
+#4. convert the configure to POSCAR
+elif [ ${case} == "4" ]; then
+output=example/POSCAR_simple_rev
+input_confi=example/config_simple
+
+mpirun -n 4 ./BathGenerator.py -o $output -i $input_confi --convert  --minbond > Process_test_4
+fi

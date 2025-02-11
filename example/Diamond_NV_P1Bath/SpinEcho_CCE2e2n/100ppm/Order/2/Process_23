@@ -1,0 +1,5217 @@
+
+
+    ======================================================================
+
+                   ______   ______  _______ ___   ___ 
+                  /      | /      ||   ____|\  \ /  / 
+                 |  ,----'|  ,----'|  |__    \  V  /  
+                 |  |     |  |     |   __|    >   <   
+                 |  `----.|  `----.|  |____  /  .  \  
+                  \______| \______||_______|/__/ \__\ 
+                __   _   _   _  _       _   _     _   _   _ _   
+               / _| / \ | \_/ || |     //  / \   | | / \ | | |  
+              ( (_ ( o )| \_/ || |_   //  | o |n_| |( o )| U |  
+               \__| \_,7|_| |_||___| //   |_n_|\__/  \_/ |___|  
+
+
+            Program CCEX starts on Sat Jun 15 14:35:51 2024
+                The CCEX code has compiled at 'Jun 11 2024' 
+    ======================================================================
+
+        Option filename : './ccein.json' 
+
+        Read Config Options ...
+
+          - General option-related keys : 
+            [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] 
+
+          - File-related keys :
+            [ qubitfile, gyrofile, bathfile, bathadjust, avaaxfile, statefile, exstatefile ] 
+
+          - Tensorfile-related keys :
+            [ DefectTotSpin, CorrTotSpin, 
+              hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, 
+              qd_readmode, qd_tensorfile, qd_tensorfile_woqubit ] 
+
+        Read Qubit Options ...
+
+          - Read values of main-key 'Qubit'
+            sub-key : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] 
+
+          - Read values of sub-key 'qubit'
+            sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] 
+
+          - Read values of sub-key 'intmap'
+            sub-sub-key : [ between, tensor ] 
+
+        Read Defect Options ...
+
+          - Read values of main-key 'Defect' (Array format)
+            sub-key : [ dfname, naddspin, navaax, apprx,   ( type : single value) 
+                        types, spins, gyros, eqs,          ( type : array ) 
+                        rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) 
+
+        Read Cluster Options ...
+          [ order, method, addsubclus, nk ] 
+
+        Read Pulse Options ...
+          [ npulse, pulsename, sequence ] 
+
+        Read Output Options ...
+          [ savemode, outfile ] 
+
+	>> Read ./ccein.json file successfully ..
+
+
+    ======================================================================
+        Report all structures 
+    ======================================================================
+
+    ----------------------------------------------------------------------
+    < Structure Config > 
+
+      method            :   CCE                  
+      quantity          :   coherence            
+      order             :   2                    
+      bfield            :   [ 0.00      , 0.00      , 500.00     ]
+      rbath             :   160                  
+      rdip              :   130                  
+      deltat            :   0.0001               
+      nstep             :   300                  
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   50                   
+      seed              :   1718429751           
+      qubitfile         :   /home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_100ppm/bath_DiaP1_100ppm_Defect
+      gyrofile          :   /home/huijin/tutorial/Diamond_NV_P1Bath/bath/DiaP1_gyro
+      nbathfiles        :   1                    
+      bathfiles         :   /home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_100ppm/bath_DiaP1_100ppm_23
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      avaaxfile         :   Random               
+      statefile         :   Random               
+      exstatefile       :   Random               
+      DefectTotSpin     :   1                    
+      CorrTotSpin       :   0                    
+      hf_readmode       :   0                    
+      qd_readmode       :   0                    
+
+
+    ----------------------------------------------------------------------
+    < Structure QubitArray > 
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+      -------------------------------------------------
+
+      qubit name        :   q0                   
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   (+1+0j) |-1 >  
+      beta              :   (+1+0j) | 0 >  
+
+      -------------------------------------------------
+
+    >> Interactions (radkHz)
+
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ----------------------------------------------------------------------
+    < DefectArray > 
+
+    >> DefectArray->defect[0]
+
+      dfname            :   P1                   
+      apprx             :   true                 
+      naddspin          :   1                    
+      navaax            :   5 - 1 # ( possible axis : 1 ~ 4 )
+      types             :   [ 14N        ]
+      spins             :   [ 1.00       ]
+      gyros (radkHz/G)  :   [ 1.93       ]
+      eqs (10e-30 m^2)  :   [ 2.04       ]
+      ________________________________________________________________
+
+      Relative distance (A) : rxyz[iax][isp] 
+       - iax : principal axis index 
+       - isp : additional spin index 
+      rxyz[1][0]        :   [ 0.00      , 0.00      , 0.00       ]
+      rxyz[2][0]        :   [ 0.00      , 0.00      , 0.00       ]
+      rxyz[3][0]        :   [ 0.00      , 0.00      , 0.00       ]
+      rxyz[4][0]        :   [ 0.00      , 0.00      , 0.00       ]
+      ________________________________________________________________
+
+      Hyperfine tensor (MHz) : hypf[iax][isp] 
+      hypf[1][0]        :   [ 81.31j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 81.31j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 114.03j+0.00 ]
+      hypf[2][0]        :   [ 103.12j+0.00, 12.59j+0.00, 8.90j+0.00, 12.59j+0.00, 88.58j+0.00, 5.14j+0.00, 8.90j+0.00, 5.14j+0.00, 84.95j+0.00 ]
+      hypf[3][0]        :   [ 103.12j+0.00, -12.59j+0.00, -8.90j+0.00, -12.59j+0.00, 88.58j+0.00, 5.14j+0.00, -8.90j+0.00, 5.14j+0.00, 84.95j+0.00 ]
+      hypf[4][0]        :   [ 81.31j+0.00, -0.00j+0.00, 0.00j+0.00, -0.00j+0.00, 110.39j+0.00, -10.28j+0.00, 0.00j+0.00, -10.28j+0.00, 84.95j+0.00 ]
+      ________________________________________________________________
+
+      Electric field gradient (Hartree/Bohr_radius^2) : efg[iax][isp] 
+      efg[1][0]         :   [ 0.52j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.52j+0.00, -0.00j+0.00, 0.00j+0.00, -0.00j+0.00, -1.04j+0.00 ]
+      efg[2][0]         :   [ -0.52j+0.00, -0.60j+0.00, -0.43j+0.00, -0.60j+0.00, 0.17j+0.00, -0.25j+0.00, -0.43j+0.00, -0.25j+0.00, 0.35j+0.00 ]
+      efg[3][0]         :   [ -0.52j+0.00, 0.60j+0.00, 0.43j+0.00, 0.60j+0.00, 0.17j+0.00, -0.25j+0.00, 0.43j+0.00, -0.25j+0.00, 0.35j+0.00 ]
+      efg[4][0]         :   [ 0.52j+0.00, 0.00j+0.00, -0.00j+0.00, 0.00j+0.00, -0.87j+0.00, 0.49j+0.00, -0.00j+0.00, 0.49j+0.00, 0.35j+0.00 ]
+      ________________________________________________________________
+
+      Zero-field splitting tensor (MHz) : zfs[iax] 
+      zfs[1]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[2]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[3]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      zfs[4]            :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      ________________________________________________________________
+
+      Detuning (MHz) : detuning[iax] 
+      detuning[1]       :   0                    
+      detuning[2]       :   0                    
+      detuning[3]       :   0                    
+      detuning[4]       :   0                    
+      ________________________________________________________________
+
+
+    ----------------------------------------------------------------------
+    < Structure Cluster > 
+
+    >> General properties
+
+      order             :   2                    
+      method            :   CCE                  
+      addsubclus        :   true                 
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0    ,   2 : 0     ]
+
+
+
+    ----------------------------------------------------------------------
+    < Structure Pulse > 
+
+      pulsename         :   HahnEcho             
+      npulse            :   1                    
+      pulseiter         :   false                
+                            * ture  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+    >> Sequence
+
+      -------------------------------------------------
+                        start      end     diff   index
+ 
+       sequence[0] :    0.000    0.500    0.500    0.000 
+       sequence[1] :    0.500    1.000    0.500    0.000 
+      -------------------------------------------------
+
+
+    ----------------------------------------------------------------------
+    < Structure Output > 
+
+      savemode          :   normal               
+      outfile           :   ./rawdata/CCE2e2n_DiaP1_100ppm_Order_2_23
+
+
+    ===============================================================
+
+
+
+    ======================================================================
+        Read files 
+    ======================================================================
+
+    >> Qubit file
+
+        Read QubitFile : /home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_100ppm/bath_DiaP1_100ppm_Defect ... 
+        Qubit[0].xyz    :   [ 249.69    , 249.00    , 247.12     ]
+
+    >> Gyromagnetic ratio file
+
+        Read GyroFile : /home/huijin/tutorial/Diamond_NV_P1Bath/bath/DiaP1_gyro
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+
+    >> Bath configuration files
+
+      -------------------------------------------------
+        Read BathFile[0] : /home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_100ppm/bath_DiaP1_100ppm_23
+
+        - Number of bath spins : 307 (nspin = 307)
+      [  0]    P1 295.086 318.893 216.226   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  1]    P1 219.423 308.700 378.911   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  2]    P1 175.286 246.815 148.270   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+           : 
+
+      [305]    P1 243.383 245.358 133.340   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [306]    P1 109.711 224.973 265.650   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      -------------------------------------------------
+
+    >> Read the Hyperfine interaction from DFT inputfile...
+
+      HF Readmode       :      0 ( Point-dipole tensor )
+
+    >> Bath Hyperfine tensors (radkHz) 
+
+      hypf[ib][iq] (ib : bath spin index, iq : qubit index)
+      hypf[0][0]        :   [ 101.23j+0.00, -561.06j+0.00, 247.96j+0.00, -561.06j+0.00, -398.16j+0.00, 381.76j+0.00, 247.96j+0.00, 381.76j+0.00, 296.93j+0.00 ]
+      hypf[1][0]        :   [ 88.51j+0.00, 25.12j+0.00, 55.44j+0.00, 25.12j+0.00, 51.70j+0.00, -109.37j+0.00, 55.44j+0.00, -109.37j+0.00, -140.20j+0.00 ]
+      hypf[2][0]        :   [ -14.61j+0.00, -5.50j+0.00, -248.70j+0.00, -5.50j+0.00, 172.43j+0.00, -7.30j+0.00, -248.70j+0.00, -7.30j+0.00, -157.82j+0.00 ]
+         :
+
+      hypf[305][0]      :   [ 218.63j+0.00, -1.17j+0.00, -36.54j+0.00, -1.17j+0.00, 219.98j+0.00, -21.09j+0.00, -36.54j+0.00, -21.09j+0.00, -438.60j+0.00 ]
+      hypf[306][0]      :   [ -207.59j+0.00, -54.73j+0.00, 42.22j+0.00, -54.73j+0.00, 101.89j+0.00, 7.25j+0.00, 42.22j+0.00, 7.25j+0.00, 105.70j+0.00 ]
+
+
+    ===============================================================
+
+    >> Defect Paxes File
+
+        Warning(setPaxes): Cannot open the avaax file (Random)
+        The paxes is randomly generated
+
+    >> DefectArray->paxes
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      paxes[0]          :   4                    
+      paxes[1]          :   3                    
+      paxes[2]          :   2                    
+         :
+      paxes[305]        :   4                    
+      paxes[306]        :   2                    
+      -------------------------------------------------
+
+    >> DefectArray->naddspins
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      naddspins[0]      :   1                    
+      naddspins[1]      :   1                    
+      naddspins[2]      :   1                    
+         :
+      naddspins[305]    :   1                    
+      naddspins[306]    :   1                    
+      -------------------------------------------------
+
+    >> DefectArray->subbath
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      SubBath[  0][  0]  P1_14N 295.086 318.893 216.226   ( S = 1.0, gyro =   1.934 , mainspidx = 0 ) 
+      SubBath[  1][  0]  P1_14N 219.423 308.700 378.911   ( S = 1.0, gyro =   1.934 , mainspidx = 1 ) 
+      SubBath[  2][  0]  P1_14N 175.286 246.815 148.270   ( S = 1.0, gyro =   1.934 , mainspidx = 2 ) 
+         :
+      SubBath[305][  0]  P1_14N 243.383 245.358 133.340   ( S = 1.0, gyro =   1.934 , mainspidx = 305 ) 
+      SubBath[306][  0]  P1_14N 109.711 224.973 265.650   ( S = 1.0, gyro =   1.934 , mainspidx = 306 ) 
+      -------------------------------------------------
+
+    >> SubBath Hyperfine tensors (Qubit-SubBath)
+
+        SubBath[ibs][isp].hypf[iq] (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+         * iq  : Qubit index
+
+      SubBath[0][0].hypf[0]:   [ -0.01j-0.00, 0.06j-0.00, -0.03j-0.00, 0.06j-0.00, 0.04j-0.00, -0.04j-0.00, -0.03j-0.00, -0.04j-0.00, -0.03j-0.00 ]
+      SubBath[1][0].hypf[0]:   [ -0.01j-0.00, -0.00j-0.00, -0.01j-0.00, -0.00j-0.00, -0.01j-0.00, 0.01j-0.00, -0.01j-0.00, 0.01j-0.00, 0.02j-0.00 ]
+      SubBath[2][0].hypf[0]:   [ 0.00j-0.00, 0.00j-0.00, 0.03j-0.00, 0.00j-0.00, -0.02j-0.00, 0.00j-0.00, 0.03j-0.00, 0.00j-0.00, 0.02j-0.00 ]
+         :
+      SubBath[305][0].hypf[0]:   [ -0.02j-0.00, 0.00j-0.00, 0.00j-0.00, 0.00j-0.00, -0.02j-0.00, 0.00j-0.00, 0.00j-0.00, 0.00j-0.00, 0.05j-0.00 ]
+      SubBath[306][0].hypf[0]:   [ 0.02j-0.00, 0.01j-0.00, -0.00j-0.00, 0.01j-0.00, -0.01j-0.00, -0.00j-0.00, -0.00j-0.00, -0.00j-0.00, -0.01j-0.00 ]
+
+    >> SubBath Quadrupole tensors (Depending on principal axis)
+
+        SubBath[ibs][isp].quad (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].quad:   [ 7887.60j+0.00, 1.22j+0.00, -0.44j+0.00, 1.22j+0.00, -13136.21j+0.00, 7427.95j+0.00, -0.44j+0.00, 7427.95j+0.00, 5248.61j+0.00 ]
+      SubBath[1][0].quad:   [ -7881.31j+0.00, 9102.98j+0.00, 6433.01j+0.00, 9102.98j+0.00, 2632.70j+0.00, -3713.60j+0.00, 6433.01j+0.00, -3713.60j+0.00, 5248.61j+0.00 ]
+      SubBath[2][0].quad:   [ -7879.20j+0.00, -9104.20j+0.00, -6432.57j+0.00, -9104.20j+0.00, 2630.59j+0.00, -3714.35j+0.00, -6432.57j+0.00, -3714.35j+0.00, 5248.61j+0.00 ]
+         :
+      SubBath[305][0].quad:   [ 7887.60j+0.00, 1.22j+0.00, -0.44j+0.00, 1.22j+0.00, -13136.21j+0.00, 7427.95j+0.00, -0.44j+0.00, 7427.95j+0.00, 5248.61j+0.00 ]
+      SubBath[306][0].quad:   [ -7879.20j+0.00, -9104.20j+0.00, -6432.57j+0.00, -9104.20j+0.00, 2630.59j+0.00, -3714.35j+0.00, -6432.57j+0.00, -3714.35j+0.00, 5248.61j+0.00 ]
+
+    >> SubBath Hyperfine tensors (MainDefect-SubBath)
+
+        SubBath[ibs][isp].hypf_sub (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].hypf_sub:   [ 510898.36j+0.00, -0.01j+0.00, 0.00j+0.00, -0.01j+0.00, 693612.79j+0.00, -64594.93j+0.00, 0.00j+0.00, -64594.93j+0.00, 533734.58j+0.00 ]
+      SubBath[1][0].hypf_sub:   [ 647934.15j+0.00, -79117.68j+0.00, -55940.85j+0.00, -79117.68j+0.00, 556577.00j+0.00, 32297.48j+0.00, -55940.85j+0.00, 32297.48j+0.00, 533734.58j+0.00 ]
+      SubBath[2][0].hypf_sub:   [ 647934.18j+0.00, 79117.66j+0.00, 55940.86j+0.00, 79117.66j+0.00, 556576.96j+0.00, 32297.47j+0.00, 55940.86j+0.00, 32297.47j+0.00, 533734.58j+0.00 ]
+         :
+      SubBath[305][0].hypf_sub:   [ 510898.36j+0.00, -0.01j+0.00, 0.00j+0.00, -0.01j+0.00, 693612.79j+0.00, -64594.93j+0.00, 0.00j+0.00, -64594.93j+0.00, 533734.58j+0.00 ]
+      SubBath[306][0].hypf_sub:   [ 647934.18j+0.00, 79117.66j+0.00, 55940.86j+0.00, 79117.66j+0.00, 556576.96j+0.00, 32297.47j+0.00, 55940.86j+0.00, 32297.47j+0.00, 533734.58j+0.00 ]
+
+    ----------------------------------------------------------------------
+    < BathArray > 
+
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   307                  
+      -------------------------------------------------
+      [  0]    P1 295.086 318.893 216.226   ( S = 0.5, gyro = -17608.597, mainspidx = 0 )
+      [  1]    P1 219.423 308.700 378.911   ( S = 0.5, gyro = -17608.597, mainspidx = 1 )
+      [  2]    P1 175.286 246.815 148.270   ( S = 0.5, gyro = -17608.597, mainspidx = 2 )
+         :
+      [305]    P1 243.383 245.358 133.340   ( S = 0.5, gyro = -17608.597, mainspidx = 305 )
+      [306]    P1 109.711 224.973 265.650   ( S = 0.5, gyro = -17608.597, mainspidx = 306 )
+
+      -------------------------------------------------
+
+      -------------------------------------------------
+          Wall time = 0.00557 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Clusterize 
+   ======================================================================
+
+
+	 CCE1 ... 
+		 update "Nk"
+		 0:0  1:307  2:0  
+
+
+	 CCE2 ... 
+		 update "Nk"
+		 0:0  1:307  2:14004  
+
+		 update "Nk"
+		 0:0  1:307  2:14004  
+
+		 update "Nk"
+		 0:0  1:307  2:14004  
+
+      clusinfo          :   
+
+           0-th order ... 
+           Cluster[0][    0] :   0 (Iter)
+
+           Total 0-Cluster # :  1 # 
+
+
+
+           1-th order ... 
+           Cluster[1][    1] : -121 [0   ]
+           Cluster[1][    2] : -72 [1   ]
+           Cluster[1][    3] : -82 [2   ]
+           Cluster[1][    4] : -92 [3   ]
+                : 
+           Cluster[1][  304] : -59 [303 ]
+           Cluster[1][  305] : -154 [304 ]
+           Cluster[1][  306] : -100 [305 ]
+           Cluster[1][  307] : -73 [306 ]
+
+           Total 1-Cluster # :  307 # 
+
+
+
+           2-th order ... 
+           Cluster[2][    1] :   1 [5  , 176 ]
+           Cluster[2][    2] :   1 [18 , 293 ]
+           Cluster[2][    3] :   1 [123, 226 ]
+           Cluster[2][    4] :   1 [209, 283 ]
+                : 
+           Cluster[2][14001] :   1 [30 , 174 ]
+           Cluster[2][14002] :   1 [102, 116 ]
+           Cluster[2][14003] :   1 [59 , 256 ]
+           Cluster[2][14004] :   1 [20 , 301 ]
+
+           Total 2-Cluster # :  14004 # 
+
+
+      -------------------------------------------------
+          Wall time = 0.16677 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Main calculation 
+   ======================================================================
+
+    < CCE calculation (Single-sample approach) : Iteration # 1 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random1)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random1)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.97e+05            
+      Bath[1].disorder  :   2.96e+04             
+      Bath[2].disorder  :   -5.28e+05            
+         :
+      Bath[305].disorder:   5.29e+05             
+      Bath[306].disorder:   5.69e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from qubit alpha, beta...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from psia, psib...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.11 s
+        At rank 0, 58-th cluster (69%) is computed at 4.25 s
+        At rank 0, 84-th cluster (100%) is computed at 6.17 s
+
+        # Wall time : 6.17[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 6.20682 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 2 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random2)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random2)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -4.98e+05            
+      Bath[1].disorder  :   -5.59e+05            
+      Bath[2].disorder  :   -5.25e+05            
+         :
+      Bath[305].disorder:   1.19e+04             
+      Bath[306].disorder:   5.62e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.15 s
+        At rank 0, 58-th cluster (69%) is computed at 4.29 s
+        At rank 0, 84-th cluster (100%) is computed at 6.21 s
+
+        # Wall time : 6.21[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 6.25110 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 3 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random3)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random3)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   3.28e+04             
+      Bath[1].disorder  :   -5.35e+05            
+      Bath[2].disorder  :   1.1e+04              
+         :
+      Bath[305].disorder:   -5.28e+05            
+      Bath[306].disorder:   5.5e+05              
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.02 s
+
+        # Wall time : 0.02[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.16 s
+        At rank 0, 58-th cluster (69%) is computed at 4.44 s
+        At rank 0, 84-th cluster (100%) is computed at 6.66 s
+
+        # Wall time : 6.66[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 6.67492 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 4 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random4)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random4)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.03e+05            
+      Bath[1].disorder  :   -5.3e+05             
+      Bath[2].disorder  :   1.12e+04             
+         :
+      Bath[305].disorder:   5.37e+05             
+      Bath[306].disorder:   5.11e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.49 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.23 s
+
+        # Wall time : 7.23[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.47705 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 5 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random5)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random5)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.61e+05            
+      Bath[1].disorder  :   1.52e+04             
+      Bath[2].disorder  :   -5.26e+05            
+         :
+      Bath[305].disorder:   -5.34e+05            
+      Bath[306].disorder:   2.1e+04              
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.51 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.24 s
+
+        # Wall time : 7.24[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.48859 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 6 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random6)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random6)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -4.74e+05            
+      Bath[1].disorder  :   5.23e+05             
+      Bath[2].disorder  :   -5.26e+05            
+         :
+      Bath[305].disorder:   -5.45e+05            
+      Bath[306].disorder:   -5.05e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.50 s
+        At rank 0, 58-th cluster (69%) is computed at 4.97 s
+        At rank 0, 84-th cluster (100%) is computed at 7.23 s
+
+        # Wall time : 7.23[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.57562 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 7 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random7)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random7)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -4.77e+05            
+      Bath[1].disorder  :   -5.09e+05            
+      Bath[2].disorder  :   -5.37e+05            
+         :
+      Bath[305].disorder:   5.29e+05             
+      Bath[306].disorder:   5.72e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.53 s
+        At rank 0, 58-th cluster (69%) is computed at 5.05 s
+        At rank 0, 84-th cluster (100%) is computed at 7.31 s
+
+        # Wall time : 7.31[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.54117 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 8 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random8)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random8)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.55e+05             
+      Bath[1].disorder  :   5.07e+05             
+      Bath[2].disorder  :   5.37e+05             
+         :
+      Bath[305].disorder:   -1.21e+04            
+      Bath[306].disorder:   5.53e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.53 s
+        At rank 0, 58-th cluster (69%) is computed at 5.04 s
+        At rank 0, 84-th cluster (100%) is computed at 7.30 s
+
+        # Wall time : 7.30[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.52858 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 9 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random9)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random9)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   4.79e+05             
+      Bath[1].disorder  :   1.12e+04             
+      Bath[2].disorder  :   -5.26e+05            
+         :
+      Bath[305].disorder:   -5.36e+05            
+      Bath[306].disorder:   5.16e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.22 s
+
+        # Wall time : 7.22[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.56422 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 10 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random10)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random10)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.91e+05             
+      Bath[1].disorder  :   5.18e+05             
+      Bath[2].disorder  :   -5.42e+05            
+         :
+      Bath[305].disorder:   5.26e+05             
+      Bath[306].disorder:   5.65e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.53 s
+        At rank 0, 58-th cluster (69%) is computed at 5.06 s
+        At rank 0, 84-th cluster (100%) is computed at 7.31 s
+
+        # Wall time : 7.31[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.49863 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 11 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random11)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random11)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.72e+05             
+      Bath[1].disorder  :   -5.26e+05            
+      Bath[2].disorder  :   5.37e+05             
+         :
+      Bath[305].disorder:   -5.41e+05            
+      Bath[306].disorder:   5.23e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.23 s
+
+        # Wall time : 7.23[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.57257 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 12 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random12)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random12)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.54e+05            
+      Bath[1].disorder  :   -1.57e+04            
+      Bath[2].disorder  :   5.48e+05             
+         :
+      Bath[305].disorder:   -5.47e+05            
+      Bath[306].disorder:   -5.65e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.53 s
+        At rank 0, 58-th cluster (69%) is computed at 5.04 s
+        At rank 0, 84-th cluster (100%) is computed at 7.28 s
+
+        # Wall time : 7.28[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.51590 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 13 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random13)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random13)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -4.96e+04            
+      Bath[1].disorder  :   2.58e+04             
+      Bath[2].disorder  :   7.81e+03             
+         :
+      Bath[305].disorder:   -5.42e+05            
+      Bath[306].disorder:   -1.84e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.50 s
+        At rank 0, 58-th cluster (69%) is computed at 5.01 s
+        At rank 0, 84-th cluster (100%) is computed at 7.25 s
+
+        # Wall time : 7.25[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.47841 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 14 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random14)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random14)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.64e+05            
+      Bath[1].disorder  :   5.31e+05             
+      Bath[2].disorder  :   5.43e+05             
+         :
+      Bath[305].disorder:   5.29e+05             
+      Bath[306].disorder:   5.01e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.03 s
+        At rank 0, 84-th cluster (100%) is computed at 7.29 s
+
+        # Wall time : 7.29[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.48927 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 15 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random15)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random15)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.55e+05             
+      Bath[1].disorder  :   -5.27e+05            
+      Bath[2].disorder  :   3.02e+03             
+         :
+      Bath[305].disorder:   -5.29e+05            
+      Bath[306].disorder:   -5.1e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.01 s
+        At rank 0, 84-th cluster (100%) is computed at 7.25 s
+
+        # Wall time : 7.25[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.54992 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 16 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random16)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random16)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.92e+05             
+      Bath[1].disorder  :   3.03e+04             
+      Bath[2].disorder  :   5.26e+05             
+         :
+      Bath[305].disorder:   1.1e+04              
+      Bath[306].disorder:   5.55e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.50 s
+        At rank 0, 58-th cluster (69%) is computed at 5.02 s
+        At rank 0, 84-th cluster (100%) is computed at 7.24 s
+
+        # Wall time : 7.24[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.45605 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 17 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random17)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random17)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -2.86e+04            
+      Bath[1].disorder  :   -5.36e+05            
+      Bath[2].disorder  :   -5.29e+05            
+         :
+      Bath[305].disorder:   -5.31e+05            
+      Bath[306].disorder:   -2.36e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.02 s
+
+        # Wall time : 0.02[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.22 s
+
+        # Wall time : 7.22[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.52777 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 18 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random18)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random18)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.52e+05             
+      Bath[1].disorder  :   1.38e+04             
+      Bath[2].disorder  :   -5.36e+05            
+         :
+      Bath[305].disorder:   2.82e+03             
+      Bath[306].disorder:   5.66e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.51 s
+        At rank 0, 58-th cluster (69%) is computed at 5.01 s
+        At rank 0, 84-th cluster (100%) is computed at 7.25 s
+
+        # Wall time : 7.25[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.48964 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 19 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random19)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random19)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.59e+05            
+      Bath[1].disorder  :   7.8e+03              
+      Bath[2].disorder  :   -5.33e+05            
+         :
+      Bath[305].disorder:   -5.28e+05            
+      Bath[306].disorder:   -5e+05               
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.53 s
+        At rank 0, 58-th cluster (69%) is computed at 5.02 s
+        At rank 0, 84-th cluster (100%) is computed at 7.26 s
+
+        # Wall time : 7.26[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.51681 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 20 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random20)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random20)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -6.02e+05            
+      Bath[1].disorder  :   5.3e+05              
+      Bath[2].disorder  :   5.47e+05             
+         :
+      Bath[305].disorder:   5.36e+05             
+      Bath[306].disorder:   -5.4e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.50 s
+        At rank 0, 58-th cluster (69%) is computed at 5.02 s
+        At rank 0, 84-th cluster (100%) is computed at 7.25 s
+
+        # Wall time : 7.25[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.51927 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 21 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random21)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random21)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.53e+05             
+      Bath[1].disorder  :   5.36e+05             
+      Bath[2].disorder  :   5.23e+05             
+         :
+      Bath[305].disorder:   7.27e+03             
+      Bath[306].disorder:   5.57e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.51 s
+        At rank 0, 58-th cluster (69%) is computed at 4.99 s
+        At rank 0, 84-th cluster (100%) is computed at 7.22 s
+
+        # Wall time : 7.22[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.54370 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 22 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random22)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random22)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.94e+05             
+      Bath[1].disorder  :   -1.81e+04            
+      Bath[2].disorder  :   5.37e+05             
+         :
+      Bath[305].disorder:   5.33e+05             
+      Bath[306].disorder:   2.88e+04             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.49 s
+        At rank 0, 58-th cluster (69%) is computed at 4.99 s
+        At rank 0, 84-th cluster (100%) is computed at 7.22 s
+
+        # Wall time : 7.22[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.53902 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 23 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random23)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random23)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   2.91e+04             
+      Bath[1].disorder  :   -5.43e+05            
+      Bath[2].disorder  :   -2.46e+03            
+         :
+      Bath[305].disorder:   1.3e+04              
+      Bath[306].disorder:   -5.52e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.02 s
+        At rank 0, 84-th cluster (100%) is computed at 7.28 s
+
+        # Wall time : 7.28[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.51581 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 24 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random24)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random24)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.04e+05             
+      Bath[1].disorder  :   -5.49e+05            
+      Bath[2].disorder  :   -5.2e+05             
+         :
+      Bath[305].disorder:   5.3e+05              
+      Bath[306].disorder:   -5.24e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.48 s
+        At rank 0, 58-th cluster (69%) is computed at 4.98 s
+        At rank 0, 84-th cluster (100%) is computed at 7.21 s
+
+        # Wall time : 7.21[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.60093 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 25 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random25)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random25)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   6.31e+04             
+      Bath[1].disorder  :   5.46e+05             
+      Bath[2].disorder  :   -5.33e+05            
+         :
+      Bath[305].disorder:   5.34e+05             
+      Bath[306].disorder:   -9.1e+03             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.50 s
+        At rank 0, 58-th cluster (69%) is computed at 5.01 s
+        At rank 0, 84-th cluster (100%) is computed at 7.23 s
+
+        # Wall time : 7.23[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.60417 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 26 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random26)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random26)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.02e+05            
+      Bath[1].disorder  :   1.24e+04             
+      Bath[2].disorder  :   3.98e+03             
+         :
+      Bath[305].disorder:   -5.32e+05            
+      Bath[306].disorder:   -1.98e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.02 s
+
+        # Wall time : 0.02[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.26 s
+
+        # Wall time : 7.26[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.58300 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 27 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random27)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random27)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.97e+05             
+      Bath[1].disorder  :   5.17e+05             
+      Bath[2].disorder  :   -5.36e+05            
+         :
+      Bath[305].disorder:   -5.33e+05            
+      Bath[306].disorder:   -2.41e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.04 s
+        At rank 0, 84-th cluster (100%) is computed at 7.26 s
+
+        # Wall time : 7.26[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.50767 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 28 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random28)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random28)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.97e+04             
+      Bath[1].disorder  :   -5.07e+05            
+      Bath[2].disorder  :   5.43e+05             
+         :
+      Bath[305].disorder:   -5.33e+05            
+      Bath[306].disorder:   -9.59e+03            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.54 s
+        At rank 0, 58-th cluster (69%) is computed at 5.05 s
+        At rank 0, 84-th cluster (100%) is computed at 7.31 s
+
+        # Wall time : 7.31[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.46882 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 29 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random29)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random29)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.39e+04            
+      Bath[1].disorder  :   4.32e+03             
+      Bath[2].disorder  :   5.38e+05             
+         :
+      Bath[305].disorder:   5.29e+05             
+      Bath[306].disorder:   5.52e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.04 s
+        At rank 0, 84-th cluster (100%) is computed at 7.27 s
+
+        # Wall time : 7.27[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.59081 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 30 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random30)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random30)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   4.89e+05             
+      Bath[1].disorder  :   -5.21e+05            
+      Bath[2].disorder  :   -5.19e+05            
+         :
+      Bath[305].disorder:   -1.71e+03            
+      Bath[306].disorder:   -1.97e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.04 s
+        At rank 0, 84-th cluster (100%) is computed at 7.30 s
+
+        # Wall time : 7.30[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.47711 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 31 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random31)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random31)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.96e+05            
+      Bath[1].disorder  :   -2.22e+04            
+      Bath[2].disorder  :   5.12e+05             
+         :
+      Bath[305].disorder:   -5.27e+05            
+      Bath[306].disorder:   -5.65e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.49 s
+        At rank 0, 58-th cluster (69%) is computed at 4.99 s
+        At rank 0, 84-th cluster (100%) is computed at 7.25 s
+
+        # Wall time : 7.25[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.50232 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 32 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random32)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random32)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.51e+05             
+      Bath[1].disorder  :   -5.61e+05            
+      Bath[2].disorder  :   -5.39e+05            
+         :
+      Bath[305].disorder:   -5.39e+05            
+      Bath[306].disorder:   -2.92e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.02 s
+
+        # Wall time : 0.02[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.03 s
+        At rank 0, 84-th cluster (100%) is computed at 7.27 s
+
+        # Wall time : 7.27[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.50359 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 33 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random33)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random33)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.64e+05             
+      Bath[1].disorder  :   -5.3e+05             
+      Bath[2].disorder  :   5.56e+05             
+         :
+      Bath[305].disorder:   5.37e+05             
+      Bath[306].disorder:   5.12e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.49 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.26 s
+
+        # Wall time : 7.26[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.48968 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 34 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random34)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random34)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -4.59e+05            
+      Bath[1].disorder  :   1.7e+04              
+      Bath[2].disorder  :   -5.23e+05            
+         :
+      Bath[305].disorder:   5.33e+05             
+      Bath[306].disorder:   -5.17e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.05 s
+        At rank 0, 84-th cluster (100%) is computed at 7.28 s
+
+        # Wall time : 7.28[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.50723 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 35 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random35)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random35)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   7.1e+04              
+      Bath[1].disorder  :   5.41e+05             
+      Bath[2].disorder  :   5.39e+05             
+         :
+      Bath[305].disorder:   5.41e+05             
+      Bath[306].disorder:   -5.14e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.51 s
+        At rank 0, 58-th cluster (69%) is computed at 5.02 s
+        At rank 0, 84-th cluster (100%) is computed at 7.26 s
+
+        # Wall time : 7.26[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.47247 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 36 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random36)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random36)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -4.76e+05            
+      Bath[1].disorder  :   -5.44e+03            
+      Bath[2].disorder  :   984                  
+         :
+      Bath[305].disorder:   -5.38e+05            
+      Bath[306].disorder:   -5.55e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.01 s
+        At rank 0, 84-th cluster (100%) is computed at 7.26 s
+
+        # Wall time : 7.26[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.55687 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 37 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random37)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random37)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -1.62e+04            
+      Bath[1].disorder  :   5.2e+05              
+      Bath[2].disorder  :   5.38e+05             
+         :
+      Bath[305].disorder:   -6.97e+03            
+      Bath[306].disorder:   -5.02e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.03 s
+        At rank 0, 84-th cluster (100%) is computed at 7.27 s
+
+        # Wall time : 7.27[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.51775 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 38 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random38)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random38)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   1.9e+04              
+      Bath[1].disorder  :   5.2e+05              
+      Bath[2].disorder  :   -8.44e+03            
+         :
+      Bath[305].disorder:   2.82e+03             
+      Bath[306].disorder:   5.44e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.49 s
+        At rank 0, 58-th cluster (69%) is computed at 4.99 s
+        At rank 0, 84-th cluster (100%) is computed at 7.24 s
+
+        # Wall time : 7.24[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.50483 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 39 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random39)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random39)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   2.51e+04             
+      Bath[1].disorder  :   -5.35e+05            
+      Bath[2].disorder  :   -5.28e+05            
+         :
+      Bath[305].disorder:   5.33e+05             
+      Bath[306].disorder:   3.61e+04             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.25 s
+
+        # Wall time : 7.25[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.50333 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 40 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random40)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random40)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.09e+05            
+      Bath[1].disorder  :   1.02e+04             
+      Bath[2].disorder  :   5.28e+05             
+         :
+      Bath[305].disorder:   -291                 
+      Bath[306].disorder:   5.04e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.53 s
+        At rank 0, 58-th cluster (69%) is computed at 5.01 s
+        At rank 0, 84-th cluster (100%) is computed at 7.26 s
+
+        # Wall time : 7.26[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.59594 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 41 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random41)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random41)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.53e+05            
+      Bath[1].disorder  :   -5.09e+05            
+      Bath[2].disorder  :   2.1e+03              
+         :
+      Bath[305].disorder:   -5.25e+05            
+      Bath[306].disorder:   -5.61e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.53 s
+        At rank 0, 58-th cluster (69%) is computed at 5.03 s
+        At rank 0, 84-th cluster (100%) is computed at 7.24 s
+
+        # Wall time : 7.24[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.54855 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 42 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random42)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random42)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 0.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ -1.00      ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.07e+05             
+      Bath[1].disorder  :   1.58e+03             
+      Bath[2].disorder  :   -1.52e+04            
+         :
+      Bath[305].disorder:   -5.37e+05            
+      Bath[306].disorder:   -5.25e+05            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.02 s
+
+        # Wall time : 0.02[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.00 s
+        At rank 0, 84-th cluster (100%) is computed at 7.23 s
+
+        # Wall time : 7.23[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.57690 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 43 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random43)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random43)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.62e+05            
+      Bath[1].disorder  :   -5.5e+05             
+      Bath[2].disorder  :   -5.31e+05            
+         :
+      Bath[305].disorder:   -5.37e+05            
+      Bath[306].disorder:   5.12e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.50 s
+        At rank 0, 58-th cluster (69%) is computed at 4.99 s
+        At rank 0, 84-th cluster (100%) is computed at 7.22 s
+
+        # Wall time : 7.22[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.55511 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 44 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random44)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random44)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ -1.00      ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -5.75e+05            
+      Bath[1].disorder  :   5.46e+05             
+      Bath[2].disorder  :   5.27e+05             
+         :
+      Bath[305].disorder:   -1.22e+03            
+      Bath[306].disorder:   2.57e+04             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.02 s
+
+        # Wall time : 0.02[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 4.98 s
+        At rank 0, 84-th cluster (100%) is computed at 7.20 s
+
+        # Wall time : 7.20[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.50490 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 45 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random45)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random45)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.97e+05             
+      Bath[1].disorder  :   5.18e+05             
+      Bath[2].disorder  :   5.14e+05             
+         :
+      Bath[305].disorder:   5.27e+05             
+      Bath[306].disorder:   -3.07e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.02 s
+        At rank 0, 84-th cluster (100%) is computed at 7.27 s
+
+        # Wall time : 7.27[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.57736 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 46 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random46)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random46)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   -2.84e+04            
+      Bath[1].disorder  :   5.11e+05             
+      Bath[2].disorder  :   -5.34e+05            
+         :
+      Bath[305].disorder:   5.2e+05              
+      Bath[306].disorder:   -1.44e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.54 s
+        At rank 0, 58-th cluster (69%) is computed at 5.07 s
+        At rank 0, 84-th cluster (100%) is computed at 7.33 s
+
+        # Wall time : 7.34[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.55745 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 47 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random47)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random47)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ -1.00      ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.92e+05             
+      Bath[1].disorder  :   -5.22e+05            
+      Bath[2].disorder  :   -5.41e+05            
+         :
+      Bath[305].disorder:   -5.31e+05            
+      Bath[306].disorder:   5.09e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.53 s
+        At rank 0, 58-th cluster (69%) is computed at 5.05 s
+        At rank 0, 84-th cluster (100%) is computed at 7.33 s
+
+        # Wall time : 7.33[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.55065 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 48 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random48)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random48)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ -1.00      ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   4.73e+05             
+      Bath[1].disorder  :   -1.55e+04            
+      Bath[2].disorder  :   5.18e+05             
+         :
+      Bath[305].disorder:   -5.42e+05            
+      Bath[306].disorder:   -2.22e+04            
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.52 s
+        At rank 0, 58-th cluster (69%) is computed at 5.03 s
+        At rank 0, 84-th cluster (100%) is computed at 7.28 s
+
+        # Wall time : 7.28[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.57552 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 49 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random49)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   -0.5                 
+      bath[2].state     :   0.5                  
+         :
+      bath[305].state   :   0.5                  
+      bath[306].state   :   0.5                  
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random49)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 0.00       ]
+      subbath[1].state  :   [ 1.00       ]
+      subbath[2].state  :   [ -1.00      ]
+         :
+      subbath[305].state :   [ 1.00       ]
+      subbath[306].state :   [ 0.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   6.02e+04             
+      Bath[1].disorder  :   5.45e+05             
+      Bath[2].disorder  :   -5.33e+05            
+         :
+      Bath[305].disorder:   5.31e+05             
+      Bath[306].disorder:   1.22e+04             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   2.67e+05             
+      SubBath[1][0].disorder:   -2.67e+05            
+      SubBath[2][0].disorder:   2.67e+05             
+         :
+      SubBath[305][0].disorder:   2.67e+05             
+      SubBath[306][0].disorder:   2.67e+05             
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.51 s
+        At rank 0, 58-th cluster (69%) is computed at 5.01 s
+        At rank 0, 84-th cluster (100%) is computed at 7.27 s
+
+        # Wall time : 7.27[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.53173 s
+      -------------------------------------------------
+
+
+    < CCE calculation (Single-sample approach) : Iteration # 50 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file (Random50)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[305].state   :   -0.5                 
+      bath[306].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random50)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   307                  
+      -------------------------------------------------
+      subbath[0].state  :   [ 1.00       ]
+      subbath[1].state  :   [ 0.00       ]
+      subbath[2].state  :   [ 1.00       ]
+         :
+      subbath[305].state :   [ 0.00       ]
+      subbath[306].state :   [ 1.00       ]
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   5.66e+05             
+      Bath[1].disorder  :   2.67e+04             
+      Bath[2].disorder  :   5.29e+05             
+         :
+      Bath[305].disorder:   1.87e+03             
+      Bath[306].disorder:   5.02e+05             
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+      SubBath[0][0].disorder:   -2.67e+05            
+      SubBath[1][0].disorder:   2.67e+05             
+      SubBath[2][0].disorder:   -2.67e+05            
+         :
+      SubBath[305][0].disorder:   -2.67e+05            
+      SubBath[306][0].disorder:   -2.67e+05            
+
+    >> Set psia, psib from input...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from input...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 2-th cluster (100%) is computed at 0.01 s
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 29-th cluster (34%) is computed at 2.51 s
+        At rank 0, 58-th cluster (69%) is computed at 4.99 s
+        At rank 0, 84-th cluster (100%) is computed at 7.23 s
+
+        # Wall time : 7.23[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 7.53262 s
+      -------------------------------------------------
+
+
+
+    ===============================================================
+
+        JOB DONE : Wall time = 373.32929 s
+
+    ===============================================================
+
+

@@ -1,0 +1,202 @@
+#!/bin/sh
+
+#_________________________________________________
+#
+# Main Optionions (Required)
+#_________________________________________________
+
+Option="$1"
+SourceFileName="${SourceFileName}"
+VariableName="sK"
+
+#_________________________________________________
+#
+# Sub-Optionions (Optional) 
+#_________________________________________________
+
+PwdDir=`pwd`
+
+# Path of source files 
+SourceFileDir="${SourceFileDir}"
+MkjobFileDir="$(git rev-parse --show-toplevel)/example/z.Runner/MkCCEJobs/mkjobs.sngapp"
+
+# Configurations and Bath templates
+cista=1 ; cstep=50 ; ciend=50 ; 
+sista=1 ; siend=50 ;
+
+# Convergence test related variables
+Tolerance=1
+ConvTestCode="$(git rev-parse --show-toplevel)/example/z.ConvTest/ConvTest/do_convTest.py"
+ConvTestSortCode="$(git rev-parse --show-toplevel)/example/z.ConvTest/ConvTest/sort.py"
+
+# Select versions of source file in "MakeCCEJob" 
+# vsrcjob : "" "_ConfigArray" "_VariableArray" 
+# vsrcjob : "{Nstate}_ConfigArray" "{Nstate}_VariableArray" 
+vsrcfin="_pcce"
+vsrcjob="{Nstate}_VariableArray"
+vsrcdo=""
+
+# Select qos of the job file
+NodeNum="2"
+Qos="3"
+
+# Code path
+CodePath="$(git rev-parse --show-toplevel)/bin/main.out"
+FittingCode="$(git rev-parse --show-toplevel)/example/z.Analyzer/CoherenceAnalyzer.v1/run.py"
+
+#_________________________________________________
+#
+# Process  
+#_________________________________________________
+
+
+# Export parameters  
+
+export PwdDir; export MkjobFileDir;
+export NodeNum; export Qos;
+export CodePath; export FittingCode; export ConvTestCode;
+export cista; export cstep; export ciend; 
+export sista; export siend;
+export vsrcfin; export vsrcjob; export vsrcdo;
+export Tolerance;
+
+# Main process part 
+
+if [ "$#" == "0" ] || [ $Option == '-h' ] ;then
+cat << END
+
+    ########################################
+    #                                      #
+    #   Options                            #
+    #                                      #
+    #   [MKE] Make Environment             #
+    #   [RunL] Run jobs (large job)        #
+    #   [RunS] Run jobs (small job)        #
+    #   [DS]  Do summary                   #
+    #   [DC]  Do convtest                  #
+    #   [DSA] Do summary all               #
+    #   [RM]  rm do files in --ppm dir.    #
+    #                                      #
+    ########################################
+     
+        Current Conditions :
+    
+        SourceFileName  = ${SourceFileName}
+        VariableName    = ${VariableName}
+        PwdDir          = ${PwdDir}
+        Tolerance       = ${Tolerance} 
+        Option          = ${Option}
+     
+    ########################################
+
+END
+exit
+fi
+
+
+#_________________________________________________
+#
+# Functions
+#_________________________________________________
+
+rmDos(){
+    echo " * Remove the following files in \"${1}\" "
+    echo " *   do | do_summary | do_convtest "
+    rm "./${1}/do" -rf
+    rm "./${1}/do_summary" -rf
+    rm "./${1}/do_convtest" -rf
+}
+
+doSummary() {
+    cd ${1}
+    ./do_summary
+    cd ..
+}
+
+doConvTest() {
+    cd ${1}
+    tolerance_pre=`grep "tolerance=" do_convtest`
+    sed -i "s/${tolerance_pre}/tolerance=${tolerance}/g" do_convtest
+    ./do_convtest
+    ConvPoint=`grep ! out`
+    ConvPoint=`GetElement "${ConvPoint}" 2`
+    echo "${1} (ppm) ${ConvPoint} (A)" >> ${PwdDir}/Res_${VariableName}_tol${tolerance}
+    cd ..
+}
+
+
+
+#_________________________________________________
+#
+# Make Environment
+#_________________________________________________
+
+if [ $Option == "MKE" ];then
+    ${MkjobFileDir}/MakeCCEJob ${SourceFileDir} ${SourceFileName} ${VariableName}
+fi
+
+#_________________________________________________
+#
+# Run jobs (large)
+#_________________________________________________
+
+if [ $Option == "RunL" ];then
+    cd ./${SourceFileName}/${VariableName}
+    sbatch largejob
+    cd ../../
+fi
+
+#_________________________________________________
+#
+# Run jobs (small)
+#_________________________________________________
+
+if [ $Option == "RunS" ];then
+    cd ./${SourceFileName}/
+    bash "do"
+    cd ..
+fi
+
+#_________________________________________________
+#
+# rm do
+#_________________________________________________
+
+if [ $Option == "RM" ];then
+    rmDos ${SourceFileName}
+fi
+
+#_________________________________________________
+#
+# Run do summary
+#_________________________________________________
+
+if [ $Option == "DS" ];then
+    doSummary ${SourceFileName} 
+fi
+
+#_________________________________________________
+#
+# Run do convergence test
+#_________________________________________________
+
+if [ $Option == "DC" ];then
+    doConvTest ${Exspin}${i}
+    python ${ConvTestSortCode} ${PwdDir}/Res_${VariableName}_tol${Tolerance} 
+fi
+
+#_________________________________________________
+#
+# Run do convergence test
+#_________________________________________________
+
+if [ $Option == "DSA" ];then
+
+mkdir summary
+mkdir summary/${VariableName}
+source "${SourceFileDir}/${SourceFileName}"
+
+cp -r ./${SourceFileName}/summary/${VariableName}/SpatialEnsemble/${OutFileHead}${VariableName}_*_conv* ./summary/${VariableName}/
+
+fi
+

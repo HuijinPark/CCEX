@@ -466,6 +466,11 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
 
 
     if (strcasecmp(Cluster_getMethod(clus),"pcce") == 0){
+
+        if (rank==0){
+            printMessage("  [ sK , max_trial, max_iter, kmeans_pp, iter_detail ] \n");
+        }
+
         int* defaultSk        = NULL;
         int default_max_trial = 30000;
         int default_max_iter  = 30000;
@@ -718,7 +723,7 @@ char* cJSON_ReadFccein(char* fccein){
     size_t currentLength = 0; 
 
     while (fgets(line, sizeof(line), inputFile) != NULL) {
-        char* commentStart = strstr(line, "!");
+        char* commentStart = strpbrk(line, "!#");
         if (commentStart != NULL) {
             *commentStart = '\0'; 
         }

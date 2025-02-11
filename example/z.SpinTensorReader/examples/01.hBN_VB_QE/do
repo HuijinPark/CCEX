@@ -1,0 +1,45 @@
+#!/bin/sh
+
+tool="QE"
+fposcar="./QE_POSCAR_flat"
+dfname="VB"
+fhf="./QE_Hyper_flat.out"
+fefg="./QE_EFG_flat.out"
+
+#python ./../../main.py -h
+
+# case 1-1
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg} --fidentify False
+
+# case 1-2
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg}
+
+# case 1-3
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg} --fidentify False --rangeformat coord
+
+# case 1-4
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg} --fidentify False --rangeformat vertex
+
+# case 2
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} 
+
+# case 3
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --Q ${fefg} 
+
+
+
+################################################################################
+<< END
+
+    NOTE!
+
+    1) The outfile name is intrinsically determined as Afile/Qfile
+
+    2) Q tensor file : 
+        
+        eQ value in efg.in have to be 1.0 
+        we don't consider the eQ value in this code
+    
+    3) In the case of QE, Version 1 = Version 2
+END
+################################################################################

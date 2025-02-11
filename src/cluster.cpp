@@ -156,6 +156,14 @@ void Cluster_report(Cluster* cls){
     printStructElementInt("order",Cluster_getOrder(cls));
     printStructElementChar("method",cls->method);
     printStructElementBool("addsubclus",Cluster_getAddsubclus(cls));
+
+    if (strcasecmp(cls->method,"pcce")==0){
+        printSubTitle("Conduct pCCE method");
+        printStructElementInt("max_trial",Cluster_getMax_trial(cls));
+        printStructElementInt("max_iter",Cluster_getMax_iter(cls));
+        printStructElementBool("kmeans_pp",Cluster_getKmeans_pp(cls));
+        printStructElementBool("iter_detail",Cluster_getIter_detail(cls));
+    }
     
     if (cls->nk!=NULL){
         printSubTitle("The number of clusters for each order");

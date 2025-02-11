@@ -1,0 +1,112 @@
+#!/bin/sh
+#############################################################
+#section 1. Make the empty directory & put the atom directory name
+conc='500'
+Dir_Name="${conc}ppm"
+Atom_Name='DiaP1'
+
+#where is the Sourcefile position
+Nowpwd=`pwd`
+
+#PBS VERSION########################################################
+#Codepwd="/home01/x1860a02/0.0.CCE_General"
+#Bathpwd="/home01/x1860a02/bath_info/1.Diamond/P1bath_${Dir_Name}"
+#Sourcepwd="/home01/x1860a02/bath_info/1.Diamond/source"
+#####################################################################
+
+#SLURM VERSION######################################################
+Codepwd="/home/huijin/CCE_cal/0.0.CCE_General"
+Bathpwd="/home/huijin/CCE_cal/bath_info/1.Diamond/P1bath_${Dir_Name}"
+Sourcepwd="/home/huijin/CCE_cal/bath_info/1.Diamond/source"
+#####################################################################
+
+Defect="NV_${Dir_Name}"
+Gyrofile='Dia_gyro_mixed14N'
+
+P1bath="bath_${Atom_Name}_${Dir_Name}_" #At the end you should attach "_" to config number
+C13bath="bath_Dia13C_15_espVer"
+P1state="state_${Atom_Name}_${Dir_Name}_" #At the end you should attach "_" to config number
+C13state="state_Dia13C_15_espVer"
+HF_file=${Sourcepwd}'/Dia_FC_JT'
+#############################################################
+#section 3. Make the option dir
+#do you want to run the section 3?
+Run_section3=true
+
+#option directory
+#if you want to control the certain option, only use that option 
+#option='1.rDip' 
+#option='2.rBath'
+option='5.rDsrdr'
+
+rDipOpt='10 30 50 70 90 110 130'
+BathOpt='10 30 50 70 90 110 130'
+B0Opt='100'   # 3rd
+Bath4C13Opt=''
+rDsrdrOpt='45'
+
+#frist option  (inital option)
+order_time=2
+BathOptone=110
+rDipOptone=90
+B0Optone=100
+Bath4C13Optone=0
+rDsrdrOptOne=45
+r13CP1OptOne=0
+r13C13COptOne=0
+
+deltaTone='0.000002'
+nStepone='200'
+
+Num_Runfig_Init=1
+Num_Runfig=50
+Num_State_Runfig_Init='1'
+Num_State_Runfig=50
+
+Q_const='1'
+JT_const='2'
+HF_const='0'
+
+
+#Job related
+#PBS VERSION########################################################
+#Option_Jobnode=40
+#Option_process=68
+#Option_Jobtime=48 #hour
+#Option_Jobqos="normal"
+####################################################################
+#SLURM VERSION########################################################
+Option_Jobnode=4
+Option_process=24
+Option_Jobtime="2-00" #hour
+Option_Jobqos="small-2"
+####################################################################
+
+#code
+Complie_Name="CCEXv5_single.out"
+
+#T2 Process related
+Unit="us" #Time Unit ( !!!*** code version v10_gca_mixed_*.cpp is set the time unit as "us" )
+toleranceOpt=1 # Error Correction tolerance
+intervalOpt=20 # T2 fitting interval
+
+
+#############################################################
+#section 4. Make the all sbatch do file
+#do you want to run the section 4?
+Run_section4=false
+
+Name_opt_all_bath_sbatch="do1_opt_run"
+
+
+#############################################################
+#section 5. Make the all sbatch do file
+#do you want to run the section 4?
+Run_section5=false
+
+Name_T2dataPrc="T2Proc_run"
+Name_gatherT2_run="gatherT2_run"
+
+
+#############################################################
+

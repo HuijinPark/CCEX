@@ -63,7 +63,7 @@ int main(int argc, char* argv[]){
     // Read options
     //=======================================================
     int c;
-    int nbathfiles_fromfccein = 0;
+    //int nbathfiles_fromfccein = 0;
     int nbathfiles_current = 0;
 
     //  Declare and initialize the variables 
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]){
 
                 // read the input file
                 cJSON_readOptionConfig      (cnf, fccein); // general.h
-                cJSON_readOptionQubitArray  (qa,  fccein); //qubit.h
+                cJSON_readOptionQubitArray  (qa,  fccein); // qubit.h
                 cJSON_readOptionDefectArray (dfa, fccein); // defect.h
                 cJSON_readOptionCluster     (cls, fccein); // cluster.h
                 cJSON_readOptionPulse       (pls, fccein); // pulse.h
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]){
 					printf("\n	>> Read %s file successfully ..\n",optarg);
 				}
 
-				nbathfiles_fromfccein = Config_getNbathfiles(cnf);
+				//nbathfiles_fromfccein = Config_getNbathfiles(cnf);
                 break;
 
             case 'm':
@@ -191,12 +191,12 @@ int main(int argc, char* argv[]){
         exit(EXIT_FAILURE);
     }
 
-    if (nbathfiles_current != nbathfiles_fromfccein){
-        fprintf(stderr, "Error: number of bath files is not consistent\n");
-        fprintf(stderr, "nbathfiles_fromfccein = %d\n", nbathfiles_fromfccein);
-        fprintf(stderr, "nbathfiles_current = %d\n", nbathfiles_current);
-        exit(EXIT_FAILURE);
-    }
+    //if (nbathfiles_current != nbathfiles_fromfccein){
+    //    fprintf(stderr, "Error: number of bath files is not consistent\n");
+    //    fprintf(stderr, "nbathfiles_fromfccein = %d\n", nbathfiles_fromfccein);
+    //    fprintf(stderr, "nbathfiles_current = %d\n", nbathfiles_current);
+    //    exit(EXIT_FAILURE);
+    //}
 
     //=======================================================
     // Report options

@@ -1,0 +1,74 @@
+#!/bin/sh
+
+
+System="DiaVp"
+spin=""
+
+CCEinFile=""
+CalModel="CCE2"
+#enJTEOpt="3"
+
+ConcList=(   10ppm 12ppm  50ppm ) 
+rBathList=(  370 370 240 )
+rDipList=(   330 330 220 )
+deltatList=( '0.0005' '0.0005' '0.0002' )
+
+for (( i=0; i<${#ConcList[@]}; i++))
+do
+
+fopt="${ConcList[i]}"
+
+cat << EOF > ${fopt}
+#!/bin/sh
+Method="CCE"
+
+Directory="\$(git rev-parse --show-toplevel)/example/Diamond_NV_VpBath/bath"
+
+DefectFile="\${Directory}/${ConcList[i]}/bath_${System}_${ConcList[i]}_Defect"
+BathFile="\${Directory}/${ConcList[i]}/bath_${System}_${ConcList[i]}_"
+GyroFile="\${Directory}/${System}_gyro"
+AvaaxFile="Random"
+StateFile="Random"
+ExStateFile="Random"
+CCEinFile="\${Directory}/${CCEinFile}"
+
+## Variables ##
+rBathOpt="${rBathList[i]}"
+rDipOpt="${rDipList[i]}"
+B0Opt="500"
+OrderOpt="2"
+NkOpt=""
+
+## Fixed parameters ## 
+OrderFix="2"
+PulseFix="1"
+deltaTFix="${deltatList[i]}"
+nStepFix="300"
+
+B0Fix="500"
+rBathFix="${rBathList[i]}"
+rDipFix="${rDipList[i]}"
+alphaFix="-1"
+betaFix="0"
+
+# clustering algo
+ClusAlgo="0"
+addClus="0"
+NkFix="[0,0,0]"
+
+# Hamiltonian
+HFOpt=0
+HFFile=0 
+HFCutoff=0
+QuadOpt=0
+
+# JOB
+JOBNAME="${CalModel}_${System}_${ConcList[i]}_"
+OutFileDir="./rawdata/"
+OutFileHead="${CalModel}_${System}_${ConcList[i]}_"
+OutFileTail=""
+
+EOF
+################################################################
+done
+

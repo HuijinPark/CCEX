@@ -1,0 +1,195 @@
+#!/bin/sh
+
+if [ $# != 8 ];then
+    echo "============================="
+    echo "[1] Exspin"
+    echo "[2] avaax"
+    echo "[3] tetlist"
+    echo "[4] dfname"
+    echo "[5] fccein"
+    echo "[6] addspin"
+    echo "[7] A (T/F)"
+    echo "[8] Q (T/F)"
+    echo "[9] D (T/F)"
+    echo ""
+    echo "example)"
+    echo "./do_summary \"NV0\" \"4\" \"up dw\" \"VC\" \"cce_14N\" \"14N\" \"T\" \"T\" \"F\""
+    echo "./do_summary \"NVHn\" \"1\" \"up dw\" \"VC\" \"cce_14N\" \"14N 1H\" \"T\" \"T\" \"F\""
+    echo "============================="
+fi
+# exspin name
+Exspins="$1"
+# jt axis
+avaax=$2
+# tetrahedral directions
+tetlist="$3"
+# defect name
+dfname="$4"
+# cce.in file
+fcce="$5"
+addspin="$6"
+
+# compute option
+opt=1  # [SUMM]summarized files
+opt=2  # [AQDC]modifiy file, AQDCfile 
+#opt=3  # [FINA]final path 
+
+# options
+A=$7
+Q=$8
+D=$9
+
+######################################################################
+#                                                                    #
+#                           CODE START                               #
+#                                                                    #
+######################################################################
+for d in $tetlist 
+do
+for i in $(seq 1 1 ${avaax} )
+do
+######################################################################
+#                                                                    #
+#                           PARAMETERS                               #
+#                                                                    #
+######################################################################
+# [SUMM]Parameters : Option 1 
+
+# Original directory & files
+dirPorig="${d}_relax/${i}_0.${Exspins}_${d}"
+dirCorig="${d}_relax/${i}_0.${Exspins}_${d}"
+dirOorig="${d}_HF_Q/${i}_0.${Exspins}_${d}"
+fPorig="${dirPCOorig}/POSCAR"
+fCorig="${dirPCOorig}/CONTCAR"
+fOorig="${dirPCOorig}/OUTCAR"
+
+# Target directory & files
+dirPtarg="1_POSCAR"
+dirCtarg="2_CONTCAR"
+dirOtarg="3_OUTCAR"
+fPtarg="${dirPtarg}/poscar_${Exspins}${i}_${d}.vasp"
+fCtarg="${dirCtarg}/contcar_${Exspins}${i}_${d}.vasp"
+fOtarg="${dirOtarg}/outcar_${Exspins}${i}_${d}"
+
+######################################################################
+# [AQDC]Parameters : Option 2
+
+# Main python code
+pyMcode="/home/huijin/scrp/pyFunction/12.6.AQtensor_reader/runningScripts/ExPOSCARMod.py"
+pySEcode="/home/huijin/scrp/pyFunction/12.6.AQtensor_reader/main.py"
+
+# Target directory & files
+dirMtarg="4_modPOSCAR"
+dirStarg="5_spinHamil"
+dirEtarg="6_ExSpinData"
+
+# modified file
+fMtarg="${dirMtarg}/contcar_${Exspins}${i}_${d}.vasp"
+
+# no hf core 
+fStargA="${dirStarg}/${Exspins}${i}_${d}_Afile_v2.vasp"
+fStargQ="${dirStarg}/${Exspins}${i}_${d}_Qfile_v2.vasp"
+fEtargN="${dirEtarg}/${fcce}_v2.in"
+fEtargND="${dirEtarg}/${fcce}diag_v2.in"
+
+# add hf core 
+fStargAC="${dirStarg}/${Exspins}${i}_${d}_Afile_v2_addhfcore.vasp"
+fStargQC="${dirStarg}/${Exspins}${i}_${d}_Qfile_v2_addhfcore.vasp"
+fEtargC="${dirEtarg}/${fcce}_v2_addhfcore.in"
+fEtargCD="${dirEtarg}/${fcce}diag_v2_addhfcore.in"
+
+#tag modified python file "if tag"
+pyMopt="${Exspins}_${d}2"
+
+######################################################################
+# [FINA]Parameters : Option 3
+dirFinal="/home/huijin/cal/bath/5.DiaExspins/${Exspins}/"
+
+######################################################################
+#                                                                    #
+#                           MAIN CODE                                #
+#                                                                    #
+######################################################################
+# [SUMM]Main Code : Data arrangment 
+
+if [ ${opt} == 1 ]; then
+
+mkdir ${dirPtarg} 
+mkdir ${dirCtarg}
+mkdir ${dirOtarg}
+cp ${fPorig} ${fPtarg} 
+cp ${fCorig} ${fCtarg} 
+cp ${fOorig} ${fOtarg} 
+
+fi
+
+######################################################################
+# [AQDC]Main Code : Make A,Q file & modify the contcar 
+
+if [ ${opt} == 2 ]; then
+
+mkdir ${dirMtarg} 
+mkdir ${dirStarg} 
+mkdir ${dirEtarg} 
+
+# Modify poscar form to use next step 
+python ${pyMcode} ${fCtarg} ${fMtarg} "${pyMopt}"
+
+# AQD file option statement 
+optstatement=""
+if [ $A == "T" ];then
+    optstatement+="--A ${fOtarg} "
+fi
+if [ $Q == "T" ];then
+    optstatement+="--Q ${fOtarg} " 
+fi
+if [ $D == "T" ];then
+    optstatement+="--D ${fOtarg} " 
+fi
+
+# jt axis
+if [ $d == 'dw' ];then
+    jt=$(( i + ${avaax}))
+elif [ $d == 'up' ];then
+    jt=$i
+else
+    echo "bash , jt error"
+    exit
+fi
+
+# get spinHamil, ExData ( no core effect )
+python ${pySEcode} "VASP" ${fMtarg} ${dfname} --version "v2" --fidentify "True" \
+                                              --addhfcore "False" --rangeformat "coord" \
+                                              --JT ${jt} --addspin "${addspin}" \
+                                              --ccein ${fEtargN} --cceindiag ${fEtargND} ${optstatement} 
+mv Afile ${fStargA} 
+mv Qfile ${fStargQ} 
+
+# get spinHamil, ExData ( add core effect )
+python ${pySEcode} "VASP" ${fMtarg} ${dfname} --version "v2" --fidentify "True" \
+                                              --addhfcore "True" --rangeformat "coord" \
+                                              --JT ${jt} --addspin "${addspin}" \
+                                              --ccein ${fEtargC} --cceindiag ${fEtargCD} ${optstatement} 
+
+mv Afile ${fStargAC} 
+mv Qfile ${fStargQC} 
+
+fi
+
+######################################################################
+# [FINA]Main Code : Move data to bathfiles
+ 
+if [ ${opt} == 3 ]; then
+
+cp 1_POSCAR     ${dirFinal}  -r     
+cp 2_CONTCAR    ${dirFinal}  -r
+cp 3_OUTCAR     ${dirFinal}  -r
+cp 4_modPOSCAR  ${dirFinal}  -r 
+cp 5_spinHamil  ${dirFinal}  -r
+cp 6_ExSpinData ${dirFinal}  -r
+echo "`pwd`"  > ${dirFinal}originalpath
+
+fi
+
+done
+done

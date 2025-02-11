@@ -1,0 +1,49 @@
+#!/bin/sh
+Method="CCE"
+
+Directory="$(git rev-parse --show-toplevel)/example/Diamond_NV_VpBath/bath"
+
+DefectFile="${Directory}/10ppm/bath_DiaVp_10ppm_Defect"
+BathFile="${Directory}/10ppm/bath_DiaVp_10ppm_"
+GyroFile="${Directory}/DiaVp_gyro"
+AvaaxFile="Random"
+StateFile="Random"
+ExStateFile="Random"
+CCEinFile="${Directory}/"
+
+## Variables ##
+rBathOpt="370"
+rDipOpt="330"
+B0Opt="500"
+OrderOpt="2"
+NkOpt=""
+
+## Fixed parameters ## 
+OrderFix="2"
+PulseFix="1"
+deltaTFix="0.0005"
+nStepFix="300"
+
+B0Fix="500"
+rBathFix="370"
+rDipFix="330"
+alphaFix="-1"
+betaFix="0"
+
+# clustering algo
+ClusAlgo="0"
+addClus="0"
+NkFix="[0,0,0]"
+
+# Hamiltonian
+HFOpt=0
+HFFile=0 
+HFCutoff=0
+QuadOpt=0
+
+# JOB
+JOBNAME="CCE2_DiaVp_10ppm_"
+OutFileDir="./rawdata/"
+OutFileHead="CCE2_DiaVp_10ppm_"
+OutFileTail=""
+

@@ -1,0 +1,51 @@
+#!/bin/sh
+
+tool="VASP"
+fposcar="./VASP_CONTCAR_flat"
+dfname="VB"
+foutcar="./VASP_OUTCAR_flat"
+
+
+## case 1-1
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --version v1
+#mv Afile Afile_v1
+#mv Qfile Qfile_v1
+
+## case 1-2
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --version v1 --fidentify False --addhfcore True
+#mv Afile Afile_v1
+#mv Qfile Qfile_v1
+
+# case 1-3
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --version v1 --fidentify False --addhfcore False
+mv Afile Afile_v1
+mv Qfile Qfile_v1
+
+
+# case 2
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar"
+mv Afile Afile_v2
+mv Qfile Qfile_v2
+
+# vertex test
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --rangeformat vertex
+mv Afile Afile_vertex
+mv Qfile Qfile_vertex
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A "$foutcar"  --Q "$foutcar" --rangeformat coord
+mv Afile Afile_coord 
+mv Qfile Qfile_coord
+
+################################################################################
+<< END
+
+    NOTE!
+
+    1) The outfile name is intrinsically determined as Afile/Qfile
+
+    2) Q tensor file : 
+        
+        eQ value in efg.in have to be 1.0 
+        we don't consider the eQ value in this code
+
+END
+################################################################################

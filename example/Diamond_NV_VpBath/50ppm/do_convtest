@@ -1,0 +1,77 @@
+#!/bin/sh
+
+unit=""
+VariableName="Order"
+varOpt="2"
+
+tolerance=1
+which="sE"
+##############################################################
+cista=1 ; ciend=1
+sista=1 ; siend=1
+
+configs="$(seq ${cista} 1 ${ciend})"
+states="$(seq ${sista} 1 ${siend})"
+nconvnum="$(( $(( ${ciend} - ${cista} + 1 )) * $(( ${siend} - ${sista} + 1 )) ))"
+
+ConvTestCode="/home/huijin/git/CCEX/example/z.ConvTest/ConvTest/do_convTest.py"
+
+ECDir="./summary/${VariableName}/ErrorCorr/"
+tEDir="./summary/${VariableName}/TimeEnsemble/"
+sEDir="./summary/${VariableName}/SpatialEnsemble/"
+##############################################################
+for c in ${configs} 
+do
+    ##################################################################################
+    # Error Correction
+    if [ $which == "EC" ]; then
+    for s in ${states}
+    do
+        ECdataList=""
+        for var in ${varOpt} 
+        do
+            ECdatahead="CCE2_DiaVp_50ppm_${VariableName}_${var}${unit}"
+            ECouthead="CCE2_DiaVp_50ppm_${VariableName}"
+            ECdata="${ECDir}${ECdatahead}_${c}_state${s}_ErrCorr"
+            ECdataList+=" ${ECdata}"
+        done
+        ECout="${ECDir}${ECouthead}_${c}_state${s}_ErrCorr"
+        ${ConvTestCode} "${ECdataList}" "${varOpt}" "${VariableName}" "${unit}" "${tolerance}" "${ECout}"
+    done
+    fi
+    ##################################################################################
+    ###################################################################################
+    ## Time Ensemble
+    #if [ $which == "tE" ]; then
+    #tEdataList=""
+    #for var in ${varOpt} 
+    #do
+    #    tEdatahead="CCE2_DiaVp_50ppm_${VariableName}_${var}${unit}_tE_"
+    #    tEdatatail="{1T1}_conv1"
+    #    tEouthead="CCE2_DiaVp_50ppm_${VariableName}_tE_"
+    #    tEdata="${tEDir}${tEdatahead}${c}${tEdatatail}"
+    #    tEdataList+=" ${tEdata}"
+    #done
+    #tEout="${tEDir}${tEouthead}${c}${tEdatatail}"
+    #${ConvTestCode} "${tEdataList}" "${varOpt}" "${VariableName}" "${unit}" "${tolerance}" "${tEout}"
+    #fi
+    ##################################################################################
+done
+
+####################################################################################
+# Spatial Ensemble
+if [ $which == "sE" ]; then
+sEdataList=""
+for var in ${varOpt} 
+do
+    sEdatahead="CCE2_DiaVp_50ppm_${VariableName}_${var}${unit}_EnsAvg"
+    sEdatatail="_conv${nconvnum}"
+    sEouthead="CCE2_DiaVp_50ppm_${VariableName}_EnsAvg"
+    sEdata="${sEDir}${sEdatahead}${sEdatatail}"
+    sEdataList+=" ${sEdata}"
+done
+sEout="${sEDir}${sEouthead}${sEdatatail}"
+${ConvTestCode} "${sEdataList}" "${varOpt}" "${VariableName}" "${unit}" "${tolerance}" "${sEout}" > out
+fi
+###################################################################################
+

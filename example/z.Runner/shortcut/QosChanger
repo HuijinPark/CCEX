@@ -1,0 +1,86 @@
+#!/bin/sh
+
+if [ $# != 3 ] && [ $# != 4 ] ;then
+    echo "  [1] JobPath"
+    echo "  [2] NodeNum"
+    echo "  [3] WhichQos"
+    echo "  --------------"  
+    echo "  Select number "
+    echo "   1. single"  
+    echo "   2. small-1" 
+    echo "   3. small-2" 
+    echo "   4. medium"  
+    echo "   5. large"   
+    echo "   6. infinite"
+    echo "   7. urge"    
+    echo "  --------------"
+else
+
+#args
+JobPath=$1
+NodeNum=$2
+WhichQos=$3
+
+#grep sentences
+PreNode=`grep  "\-\-nodes="         $JobPath`
+PreTime=`grep  "\-\-time="          $JobPath`
+PreQos=`grep   "\-\-qos="           $JobPath`
+PreMem=`grep   "\-\-mem-per-cpu="   $JobPath`
+
+#select qos
+if   [ "${WhichQos}" == "1" ];then PostTime="#SBATCH --time=10-00:00:00" ; WhichQos="single"   
+elif [ "${WhichQos}" == "2" ];then PostTime="#SBATCH --time=3-00:00:00"    ; WhichQos="small-1"  
+elif [ "${WhichQos}" == "3" ];then PostTime="#SBATCH --time=2-00:00:00"    ; WhichQos="small-2"  
+elif [ "${WhichQos}" == "4" ];then PostTime="#SBATCH --time=48:00:00"    ; WhichQos="medium"  
+elif [ "${WhichQos}" == "5" ];then PostTime="#SBATCH --time=24:00:00"    ; WhichQos="large"   
+elif [ "${WhichQos}" == "6" ];then PostTime="#SBATCH --time=4-00:00:00"  ; WhichQos="infinite" 
+elif [ "${WhichQos}" == "7" ];then PostTime="#SBATCH --time=4-00:00:00"  ; WhichQos="urge"     
+fi                                                                                   
+
+#change qos
+PostNode="#SBATCH --nodes=${NodeNum}"
+PostQos="#SBATCH --qos=${WhichQos}"
+PostMem="#SBATCH --mem-per-cpu=0"
+
+sed -i "s/${PreNode}/${PostNode}/g" ${JobPath}
+sed -i "s/${PreTime}/${PostTime}/g" ${JobPath}
+sed -i "s/${PreQos}/${PostQos}/g"   ${JobPath}
+sed -i "s/${PreMem}/${PostMem}/g"   ${JobPath}
+
+####################################################################
+if [ $# == 4 ];then prt=$4 ; fi
+
+if  [ $# == 3 ] || [ ${prt} != "off" ];then
+    echo "   "
+    echo "   _______________________________________"
+    echo "   "
+    echo "   Previous job condition -------"
+    echo ${PreNode}
+    echo ${PreTime}
+    echo ${PreQos}
+    echo ${PreMem}
+    
+    echo "   "
+    echo "   Current job condition -------"
+    echo ${PostNode}
+    echo ${PostTime}
+    echo ${PostQos}
+    echo ${PostMem}
+    echo "   _______________________________________"
+    echo "   "
+fi
+####################################################################
+#
+#      Name       MaxTRES  MaxCPUs     MaxWall MaxJobs MaxSubmit 
+#---------- ------------- -------- ----------- ------- --------- 
+#    normal                                                      
+#  infinite       cpu=384      384  4-00:00:00       1         1 
+#   small-1        cpu=48       48  4-00:00:00      16        16 
+#   small-2        cpu=96       96  3-00:00:00       4        12 
+#    medium       cpu=192      192  2-00:00:00       2         4 
+#     large       cpu=384      384  1-00:00:00       1         2 
+#    single         cpu=1        1 15-00:00:00     192       192 
+#      urge       cpu=384      384  4-00:00:00     384       436 
+#
+####################################################################
+fi

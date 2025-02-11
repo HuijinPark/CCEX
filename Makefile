@@ -25,7 +25,7 @@ INCLUDE_MAIN = -I./include/
 
 INCLUDE_MKL = -I /opt/intel/mkl/include
 LIBRARY_MKL = -L /opt/intel/mkl/lib/intel64
-LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lpthread -m64 #-lgsl -lgslcblas 
+LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lpthread -liomp5 -m64 -xCORE-AVX512  #-lgsl -lgslcblas 
 
 INCLUDE = $(INCLUDE_EIGEN) $(INCLUDE_MKL) $(INCLUDE_UTHASH) $(INCLUDE_MAIN) #$(INCLUDE_MPICH)
 LIBRARY = $(LIBRARY_MKL) $(LDFLAGS_MKL)

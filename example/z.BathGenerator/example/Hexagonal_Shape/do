@@ -1,0 +1,21 @@
+#!/bin/sh
+
+Num_Runfig=1
+
+#configure=`seq 1 1 ${Num_Runfig}`
+configure=$(seq 1 1 ${Num_Runfig})
+
+iniPOSCAR="POSCAR_hBN_2layer_hexa_unitcellAEXX32Relax_VDWParameterHSE_Supercell662"
+defPOSCAR="CONTCAR_hBN_Cn_hexa_2layerHSEBulkRelax"
+
+
+for m in ${configure}
+
+do
+    BathGenerator.py -i ${iniPOSCAR} -I ${defPOSCAR} -p prob_h_BN -o bath_${m} --size 50 --Defect C > res
+    #python BathGenerator.py -i ${iniPOSCAR} -I ${defPOSCAR} -p prob_h_BN -o ./config20/bath_${m} --size 65 --Defect C --opt2D > resout
+
+done
+
+
+BathGenerator.py -o POSCAR_test -i bath_1 --convert

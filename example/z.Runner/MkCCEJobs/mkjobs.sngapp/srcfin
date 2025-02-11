@@ -1,0 +1,80 @@
+#!/bin/sh
+
+source ${src} 
+
+B0Fix=${B0Fix}
+rBathFix=${rBathFix}
+rDipFix=${rDipFix}
+#rDsrdrFix=${rDsrdrFix}
+OrderFix=${OrderFix}
+NkFix=${NkFix}
+PulseFix=${PulseFix}
+
+if [ ${VariableName} == "B0" ];then
+    B0Fix=${var}
+elif [ ${VariableName} == "rBath" ];then
+    rBathFix=${var}
+elif [ ${VariableName} == "rDip" ];then
+    rDipFix=${var}
+elif [ ${VariableName} == "Order" ];then
+    OrderFix=${var}
+elif [ ${VariableName} == "Nk" ];then
+    NkFix="${NkFix}  ${var}"
+elif [ ${VariableName} == "Pulse" ];then
+    PulseFix=${var}
+fi
+
+cat << EOF > ${fccein}
+{
+    # Config - Method 
+    "method"        : "${Method}", 
+    "quantity"      : "coherence",
+    
+    # Config - File
+    "qubitfile"     :  "${DefectFile}",
+    "gyrofile"      :  "${GyroFile}",
+    "bathfile"      : ["${BathFile}"],
+  #"avaaxfile"     :  "${AvaaxFile}",
+  #"statefile"     :  "${StateFile}",
+  #"exstatefile"   :  "${ExStateFile}",
+
+    # Config - General
+    "order"         : ${OrderFix},
+    "bfield"        : ${B0Fix},
+    "rbath"         : ${rBathFix},
+    "rdip"          : ${rDipFix},
+    "deltat"        : ${deltaTFix},
+    "nstep"         : ${nStepFix},  
+
+    # Qubit 
+    "alphams"     : ${alphaFix},
+    "betams"      : ${betaFix},
+
+    # Cluster
+    "addsubclus"  : ${addClus}, # true / false
+    "nk"          : ${NkFix}, # default : [0] (all) or [0,0,30,40,50]
+
+    # Pulse
+    "npulse"      : ${PulseFix},
+
+    # Config - Spin tensor
+    "hf_readmode"   : ${HFOpt}, 
+#  "hf_tensorfile" : "${HFFile}",
+#  "hf_cutoff"     : ${HFCutoff}
+#  "qd_readmode"   : ${QuadOpt},
+
+    # Output
+    "savemode"    : "normal"
+
+EOF
+
+if [ -f ${CCEinFile} ]; then
+    echo ",  \"Defect\"         : [" >> ${fccein}
+    cat ${CCEinFile} >> ${fccein}
+    echo "                       ]" >> ${fccein}
+else
+    echo "   ! Warning. CCEinFile :  ${CCEinFile} doesn't exist"
+fi
+
+echo "}" >> ${fccein}
+

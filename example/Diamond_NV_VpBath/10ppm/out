@@ -1,0 +1,61 @@
+
+    ============================================================
+
+    <Summary> Data Convergence test 
+
+    This code include processes which are following:
+    1) Find Converged Point according to tolerance
+    2) Get coherence graph
+    3) Get difference graph
+    * Convergence test based on the following equation :
+      (1) reference data : coherence at the last condition (fully converged data)
+      (2) certain data : coherence at a certain condition (usually not converged data)
+      (3) area difference = sum(certain data - reference data)
+      (3) area of reference data = sum(reference data)
+      (4) difference(%) = (area difference) / (area of reference data) * 100
+      (5) Converged point : if difference < tolerance , then the variable would be converged point
+
+
+    Latest update :  Tue Feb 11 14:05:10 2025
+
+    Current time  :  Tue Feb 11 15:51:49 2025
+
+    ____________________________________________________________
+
+
+
+    Author        : Huijin Park
+
+    update1       : (2023.03.21) Key : [33m--add[0m
+    		    If you want to average out the input data and convergence test for them
+    		    Use this option
+
+    ____________________________________________________________
+
+
+	Input argument : 
+
+	 [1] fins    :  ./summary/Order/SpatialEnsemble/CCE2_DiaVp_10ppm_Order_2_EnsAvg_conv1
+	 [2] variables : 2
+	 [3] varialbe_name : Order
+	 [4] unit    : 
+	 [5] tolerance : 1.0
+	 [6] savefig : ./summary/Order/SpatialEnsemble/CCE2_DiaVp_10ppm_Order_EnsAvg_conv1
+
+
+	 opt. --add     : False
+	 opt. --findconv : True
+2.0 0j 0.0
+	 ! Converged_Point: 2.0 ()
+
+    ____________________________________________________________
+
+    memory_usage_percent  :     5.500 %
+
+    Current memory KB     :   138.488 KB
+
+    Wall clock time       : 0:00:00.348406(s)
+
+    ============================================================
+        JOB DONE    
+    ============================================================

@@ -1,0 +1,32 @@
+#!/bin/sh
+
+tool="VASP"
+fposcar="./MoS2_POSCAR"
+dfname="ele"
+foutcar="./MoS2_OUTCAR"
+ignoreatm="C"
+
+# case 1
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${foutcar} --Q ${foutcar} --ignoreatm ${ignoreatm} --version v1
+
+################################################################################
+<< END
+
+    NOTE!
+
+    1) The outfile name is intrinsically determined as Afile/Qfile
+
+    2) Q tensor file : 
+        
+        eQ value in efg.in have to be 1.0 
+        we don't consider the eQ value in this code
+
+    3) when the defect is not a vacancy, 
+        you should add "ele"(electron) in POSCAR as a atom 
+        
+        and then the defect in the code should become the "ele"
+        And the ignoreatm would be the real defect atom which is in defect site
+        (ignore to make the "etc Q tensor")   
+ 
+END
+################################################################################

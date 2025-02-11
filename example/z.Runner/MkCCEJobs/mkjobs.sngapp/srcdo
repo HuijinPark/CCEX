@@ -1,0 +1,325 @@
+#!/bin/sh
+
+opt=$1
+fdo=$2
+
+source ${src}
+
+#############################################
+# function to add VariableName, varOpt
+addConvVar() {
+
+    nline=0
+    certainline=0
+    lastvarOpt=0
+    while read line; do
+        if [[ "$line" =~ "VariableName=\"${VariableName}\"" ]]; then
+            certainline=$nline
+        fi
+        if [[ "$line" =~ "varOpt=" ]]; then
+            lastvarOpt=$nline
+        fi
+        nline=$(( ${nline} + 1))
+    done < "$fdo"
+
+    # Add new convergence test option
+    line1=$(( ${lastvarOpt} + 2))
+    line2=$(( ${lastvarOpt} + 3))
+    line3=$(( ${lastvarOpt} + 4))
+    sed -i "${line1} a unit=\"${unit}\"" "$fdo"
+    sed -i "${line2} a VariableName=\"${VariableName}\"" "$fdo"
+    sed -i "${line3} a varOpt=\"${varOpt}\"\n" "$fdo"
+
+    if [ "$certainline" != "0" ];then
+    # Remove old convergence test option
+    line1=$(( ${certainline} - 1 ))
+    line2=$(( ${certainline} + 0 ))
+    line3=$(( ${certainline} + 1 ))
+    line4=$(( ${certainline} + 2 ))
+    sed -i "${line1}d;${line2}d;${line3}d;${line4}d;$d" "$fdo"
+    fi
+
+}
+
+#############################################
+# do_small_job
+if [ ${opt} == "runjob" ]; then 
+
+if [ -f "$fdo" ]; then
+    addConvVar
+else
+
+cat << EOF > ${fdo} 
+#!/bin/sh
+
+unit="${unit}"
+VariableName="${VariableName}"
+varOpt="${varOpt}"
+
+node=${NodeNum}
+qos=${Qos}
+
+vsrcjob="${vsrcjob}"
+
+#############################################
+# Run jobs for variables
+#############################################
+if [[ "\${vsrcjob}" == *"_VariableArray"* ]];then 
+
+    echo ""
+    echo "  Run job version : \${vsrcjob}"
+
+    varOptArray=(\${varOpt})
+    nVarOptArray=\${#varOptArray[@]}
+
+    varOptSta=0
+    varOptEnd=\$(( \${nVarOptArray} - 1 ))
+
+    cd ./\${VariableName}/
+    
+        QosChanger job \$node \$qos "off"
+        sbatch --array=\${varOptSta}-\${varOptEnd} job
+
+        for (( i=\${varOptSta}; i<=\${varOptEnd}; i++))
+        do
+            echo "  \${VariableName} = \${varOptArray[i]}"
+        done        
+    cd ..
+
+    echo ""
+fi
+#############################################
+# Run jobs for the number of configurations 
+#############################################
+if [[ "\${vsrcjob}" == *"_ConfigArray"* ]];then 
+
+    echo ""
+    echo "   Run job version : \${vsrcjob}"
+
+    for var in \${varOpt} 
+    do
+        cd ./\${VariableName}/\${var}\${unit}
+        
+        #############################################
+        # Make array 
+        #############################################
+        ArrayValues=""
+    
+        for (( i=${cista}; i<${ciend}; i=(( \${i} + ${cstep} )) ))
+        do
+            if [ "\${i}" == "${cista}" ];then
+                ArrayValues+="\${i}"
+            else
+                ArrayValues+=",\${i}"
+            fi
+        done
+        #############################################
+    
+        QosChanger job \$node \$qos "off"
+        sbatch --array=\${ArrayValues} job
+    
+        cd ../../
+    
+        echo "   \${VariableName} = \${var}"
+    done
+
+    echo ""
+fi
+#############################################
+EOF
+chmod +x "${fdo}"
+
+fi
+
+fi
+#############################################
+# result summary (Need to add )
+if [ ${opt} == "summary" ]; then 
+
+if [ -f "$fdo" ]; then
+    addConvVar
+else
+
+cat << EOF > ${fdo} 
+#!/bin/sh
+
+unit="${unit}"
+VariableName="${VariableName}"
+varOpt="${varOpt}"
+
+##############################################################
+cista=${cista}
+ciend=${ciend}
+configs="\$(seq \${cista} 1 \${ciend})"
+
+sista=${sista}
+siend=${siend}
+states="\$(seq \${sista} 1 \${siend})"
+
+fittingCode="${FittingCode}"
+
+CdMkDir ./summary/
+CdMkDir ./summary/\${VariableName}/
+CdMkDir ./summary/\${VariableName}/ErrorCorr
+CdMkDir ./summary/\${VariableName}/TimeEnsemble
+CdMkDir ./summary/\${VariableName}/SpatialEnsemble
+##############################################################
+for var in \${varOpt} 
+do
+    
+    datadirectory="./\${VariableName}/\${var}\${unit}"
+    rawdatadirectory="\${datadirectory}/rawdata"
+    rawdatahead="${OutFileHead}\${VariableName}_\${var}\${unit}"
+
+    ###################################################
+    # File information
+	variable_name_1="CONF"
+	variable_values_1="\${configs}"
+	variable_name_2="STATE"
+	variable_values_2="\${states}"
+
+    ###################################################
+    # Error correction
+
+    # Input files
+	data_directory="./\${VariableName}/\${var}\${unit}/rawdata/"
+	data_filename_format="\${rawdatahead}_\${variable_name_1}_state\${variable_name_2}_wiDiv"
+    data_filename_format_ref="\${rawdatahead}_\${variable_name_1}_state\${variable_name_2}_noDiv"
+
+    # Output files
+	result_directory="./summary/\${VariableName}/ErrorCorr/"
+	result="\${result_directory}\${rawdatahead}_\${variable_name_1}_state\${variable_name_2}_ErrCorr"
+
+    # Calculate
+	python \${fittingCode} -d "\${data_directory}" -fi "\${data_filename_format}" -vn \${variable_name_1} \${variable_name_2} -v \${variable_values_1} -v \${variable_values_2} -uc "ms" -err -ntn -fo "\${result}" -err_d "\${data_directory}" -err_fi "\${data_filename_format_ref}" 
+
+    ###################################################
+    # Ensemble Average
+
+    # Input files
+	data_directory="./summary/\${VariableName}/ErrorCorr/"
+	data_filename_format="\${rawdatahead}_\${variable_name_1}_state\${variable_name_2}_ErrCorr"
+
+    # Output files
+	result_directory="./summary/\${VariableName}/SpatialEnsemble/"
+	result_filename="\${rawdatahead}_EnsAvg"
+
+    # Calculate
+    python \${fittingCode} -d "\${data_directory}" -fi "\${data_filename_format}" -vn \${variable_name_1} \${variable_name_2} -v \${variable_values_1} -v \${variable_values_2} -uc "ms" -ea -fo "\${result_directory}\${result_filename}" 
+
+    ###################################################
+    # Fitting and Plot
+
+    # Convergence number
+    ncnf=\$(( \${ciend} - \${cista} + 1  ))
+    nstat=\$(( \${siend} - \${sista} + 1  ))
+    convnum=\$(( \${ncnf} * \${nstat} ))
+
+    python \${fittingCode} -d "\${result_directory}" -fi "\${result_filename}_conv\${convnum}" -vn "__NONE__" -v \${var} -uc "us" -fit -fit_initp 1 -fit_space 1 -fit_w -fo "\${result_directory}\${result_filename}" -pl
+
+done
+
+##################################################################
+# Intensity plot for variable (You can turn off by hand)
+
+# python \${fittingCode} -d "\${result_directory}" -fi "\${result_filename}" -vn \${variable_name} -v \${varOpt} -uc "us" -ntn -fo "\${result_directory}\${result_filename}" -pl_i 
+
+##################################################################
+
+
+EOF
+chmod +x "${fdo}"
+fi
+
+fi
+#############################################
+# Convergence test  
+if [ ${opt} == "convtest" ]; then 
+
+if [ -f "$fdo" ]; then
+    addConvVar
+else
+
+cat << EOF > ${fdo} 
+#!/bin/sh
+
+unit="${unit}"
+VariableName="${VariableName}"
+varOpt="${varOpt}"
+
+tolerance=${Tolerance}
+which="sE"
+##############################################################
+cista=${cista} ; ciend=${ciend}
+sista=${sista} ; siend=${siend}
+
+configs="\$(seq \${cista} 1 \${ciend})"
+states="\$(seq \${sista} 1 \${siend})"
+nconvnum="\$(( \$(( \${ciend} - \${cista} + 1 )) * \$(( \${siend} - \${sista} + 1 )) ))"
+
+ConvTestCode="${ConvTestCode}"
+
+ECDir="./summary/\${VariableName}/ErrorCorr/"
+tEDir="./summary/\${VariableName}/TimeEnsemble/"
+sEDir="./summary/\${VariableName}/SpatialEnsemble/"
+##############################################################
+for c in \${configs} 
+do
+    ##################################################################################
+    # Error Correction
+    if [ \$which == "EC" ]; then
+    for s in \${states}
+    do
+        ECdataList=""
+        for var in \${varOpt} 
+        do
+            ECdatahead="${OutFileHead}\${VariableName}_\${var}\${unit}"
+            ECouthead="${OutFileHead}\${VariableName}"
+            ECdata="\${ECDir}\${ECdatahead}_\${c}_state\${s}_ErrCorr"
+            ECdataList+=" \${ECdata}"
+        done
+        ECout="\${ECDir}\${ECouthead}_\${c}_state\${s}_ErrCorr"
+        \${ConvTestCode} "\${ECdataList}" "\${varOpt}" "\${VariableName}" "\${unit}" "\${tolerance}" "\${ECout}"
+    done
+    fi
+    ##################################################################################
+    ###################################################################################
+    ## Time Ensemble
+    #if [ \$which == "tE" ]; then
+    #tEdataList=""
+    #for var in \${varOpt} 
+    #do
+    #    tEdatahead="${OutFileHead}\${VariableName}_\${var}\${unit}_tE_"
+    #    tEdatatail="{${sista}T${siend}}_conv$(( $(( ${siend} - ${sista} )) + 1 ))"
+    #    tEouthead="${OutFileHead}\${VariableName}_tE_"
+    #    tEdata="\${tEDir}\${tEdatahead}\${c}\${tEdatatail}"
+    #    tEdataList+=" \${tEdata}"
+    #done
+    #tEout="\${tEDir}\${tEouthead}\${c}\${tEdatatail}"
+    #\${ConvTestCode} "\${tEdataList}" "\${varOpt}" "\${VariableName}" "\${unit}" "\${tolerance}" "\${tEout}"
+    #fi
+    ##################################################################################
+done
+
+####################################################################################
+# Spatial Ensemble
+if [ \$which == "sE" ]; then
+sEdataList=""
+for var in \${varOpt} 
+do
+    sEdatahead="${OutFileHead}\${VariableName}_\${var}\${unit}_EnsAvg"
+    sEdatatail="_conv\${nconvnum}"
+    sEouthead="${OutFileHead}\${VariableName}_EnsAvg"
+    sEdata="\${sEDir}\${sEdatahead}\${sEdatatail}"
+    sEdataList+=" \${sEdata}"
+done
+sEout="\${sEDir}\${sEouthead}\${sEdatatail}"
+\${ConvTestCode} "\${sEdataList}" "\${varOpt}" "\${VariableName}" "\${unit}" "\${tolerance}" "\${sEout}" > out
+fi
+###################################################################################
+
+EOF
+chmod +x "${fdo}"
+fi
+
+fi

@@ -1,0 +1,40 @@
+#!/bin/sh
+
+tool="QE"
+fposcar="./QE_POSCAR_flat"
+dfname="VB"
+fhf="./QE_Hyper_flat.out"
+fefg="./QE_EFG_flat.out"
+
+
+# case 1
+HF="on"
+Q="on"
+python ./../../do_mkAQfile.py ${tool} ${fposcar} ${dfname} ${HF} ${Q} "${fhf}" --foutcar2 "${fefg}"
+
+## case 2
+#HF="off"
+#Q="on"
+#python ./../../do_mkAQfile.py ${tool} ${fposcar} ${dfname} ${HF} ${Q} "${fefg}" 
+#
+## case 3
+#HF="on"
+#Q="off"
+#python ./../../do_mkAQfile.py ${tool} ${fposcar} ${dfname} ${HF} ${Q} "${fhf}" 
+
+
+
+################################################################################
+<< END
+
+    NOTE!
+
+    1) The outfile name is intrinsically determined as Afile/Qfile
+
+    2) Q tensor file : 
+        
+        eQ value in efg.in have to be 1.0 
+        we don't consider the eQ value in this code
+
+END
+################################################################################
