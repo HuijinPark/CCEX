@@ -1,0 +1,86 @@
+#!/bin/sh
+
+unit=""
+VariableName="Order"
+varOpt="2"
+
+##############################################################
+cista=1
+ciend=50
+configs="$(seq ${cista} 1 ${ciend})"
+
+sista=1
+siend=50
+states="$(seq ${sista} 1 ${siend})"
+
+fittingCode="/home/huijin/git/CCEX/example/z.Analyzer/CoherenceAnalyzer.v1/run.py"
+
+CdMkDir ./summary/
+CdMkDir ./summary/${VariableName}/
+CdMkDir ./summary/${VariableName}/ErrorCorr
+CdMkDir ./summary/${VariableName}/TimeEnsemble
+CdMkDir ./summary/${VariableName}/SpatialEnsemble
+##############################################################
+for var in ${varOpt} 
+do
+    
+    datadirectory="./${VariableName}/${var}${unit}"
+    rawdatadirectory="${datadirectory}/rawdata"
+    rawdatahead="CCE2_DiaP1_1ppm_${VariableName}_${var}${unit}"
+
+    ###################################################
+    # File information
+	variable_name_1="CONF"
+	variable_values_1="${configs}"
+	variable_name_2="STATE"
+	variable_values_2="${states}"
+
+    ###################################################
+    # Error correction
+
+    # Input files
+	data_directory="./${VariableName}/${var}${unit}/rawdata/"
+	data_filename_format="${rawdatahead}_${variable_name_1}_state${variable_name_2}_wiDiv"
+    data_filename_format_ref="${rawdatahead}_${variable_name_1}_state${variable_name_2}_noDiv"
+
+    # Output files
+	result_directory="./summary/${VariableName}/ErrorCorr/"
+	result="${result_directory}${rawdatahead}_${variable_name_1}_state${variable_name_2}_ErrCorr"
+
+    # Calculate
+	python ${fittingCode} -d "${data_directory}" -fi "${data_filename_format}" -vn ${variable_name_1} ${variable_name_2} -v ${variable_values_1} -v ${variable_values_2} -uc "ms" -err -ntn -fo "${result}" -err_d "${data_directory}" -err_fi "${data_filename_format_ref}" 
+
+    ###################################################
+    # Ensemble Average
+
+    # Input files
+	data_directory="./summary/${VariableName}/ErrorCorr/"
+	data_filename_format="${rawdatahead}_${variable_name_1}_state${variable_name_2}_ErrCorr"
+
+    # Output files
+	result_directory="./summary/${VariableName}/SpatialEnsemble/"
+	result_filename="${rawdatahead}_EnsAvg"
+
+    # Calculate
+    python ${fittingCode} -d "${data_directory}" -fi "${data_filename_format}" -vn ${variable_name_1} ${variable_name_2} -v ${variable_values_1} -v ${variable_values_2} -uc "ms" -ea -fo "${result_directory}${result_filename}" 
+
+    ###################################################
+    # Fitting and Plot
+
+    # Convergence number
+    ncnf=$(( ${ciend} - ${cista} + 1  ))
+    nstat=$(( ${siend} - ${sista} + 1  ))
+    convnum=$(( ${ncnf} * ${nstat} ))
+
+    python ${fittingCode} -d "${result_directory}" -fi "${result_filename}_conv${convnum}" -vn "__NONE__" -v ${var} -uc "us" -fit -fit_initp 1 -fit_space 1 -fit_w -fo "${result_directory}${result_filename}" -pl
+
+done
+
+##################################################################
+# Intensity plot for variable (You can turn off by hand)
+
+# python ${fittingCode} -d "${result_directory}" -fi "${result_filename}" -vn ${variable_name} -v ${varOpt} -uc "us" -ntn -fo "${result_directory}${result_filename}" -pl_i 
+
+##################################################################
+
+
