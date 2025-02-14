@@ -216,8 +216,8 @@ void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, in
 
 void Output_setSavemode(Output* op, char* savemode){
 
-    const int opsize = 4;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"all", "normal", "info"};
+    const int opsize = 5;
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"all", "normal", "info","allfull"};
     int idx = findIndexCharFix(options,0,opsize-1,savemode);
     if (idx == -1) {
         fprintf(stderr, "Error: current savemode options (%s) is not available\n",savemode);

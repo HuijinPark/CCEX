@@ -1,8 +1,8 @@
 #include "../include/simulator.h"
 #include "../include/hamiltonian.h"
+#include "../include/memory.h"
 
-
-MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls){
+MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op){
 
     int nqubit = QubitArray_getNqubit(qa);
     int nspin = BathArray_getNspin(ba);
@@ -76,6 +76,7 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     int nstep = Config_getNstep(cnf);
     double deltat = (double)Config_getDeltat(cnf);
     MatrixXcd* result = new MatrixXcd[nstep];
+    MatrixXcd* result_tot = new MatrixXcd[nstep]; //!
 
     double tfree = 0.0;
 
@@ -86,6 +87,7 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
 
         // Density matrix for time
         MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
+        result_tot[i] = rhot; //!
 
         // Trace for tha bath state
         MatrixXcd reducedRhot = rhot;
@@ -108,6 +110,15 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
 
         // Update tFree
         tfree += deltat;
+    }
+
+    if (strcasecmp(op->savemode,"allfull")==0){
+        int* cluster = allocInt1d(nspin);
+        for (int i = 0; i<nspin; i++){
+            cluster[i] = i;
+        }
+        Output_save_all(op,result_tot,nstep,deltat,cluster,nspin+nqubit,0);
+        freeInt1d(&cluster);
     }
 
     // free

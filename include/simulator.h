@@ -15,7 +15,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cc, Puls
 
 BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* dfa, int nqubit);
 
-MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls);
+MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op);
 MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls);
 
 MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pls, double tfree);

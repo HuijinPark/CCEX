@@ -1,0 +1,328 @@
+
+
+    ======================================================================
+
+                   ______   ______  _______ ___   ___ 
+                  /      | /      ||   ____|\  \ /  / 
+                 |  ,----'|  ,----'|  |__    \  V  /  
+                 |  |     |  |     |   __|    >   <   
+                 |  `----.|  `----.|  |____  /  .  \  
+                  \______| \______||_______|/__/ \__\ 
+                __   _   _   _  _       _   _     _   _   _ _   
+               / _| / \ | \_/ || |     //  / \   | | / \ | | |  
+              ( (_ ( o )| \_/ || |_   //  | o |n_| |( o )| U |  
+               \__| \_,7|_| |_||___| //   |_n_|\__/  \_/ |___|  
+
+
+            Program CCEX starts on Fri Feb 14 18:03:52 2025
+                The CCEX code has compiled at 'Feb 14 2025' 
+    ======================================================================
+
+        Option filename : './ccein.js' 
+
+        Read Config Options ...
+
+          - General option-related keys : 
+            [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] 
+
+          - File-related keys :
+            [ qubitfile, gyrofile, bathfile, bathadjust, avaaxfile, statefile, exstatefile ] 
+
+          - Tensorfile-related keys :
+            [ DefectTotSpin, CorrTotSpin, 
+              hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, 
+              qd_readmode, qd_tensorfile, qd_tensorfile_woqubit ] 
+
+        Read Qubit Options ...
+
+          - Read values of main-key 'Qubit'
+            sub-key : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] 
+
+          - Read values of sub-key 'qubit'
+            sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] 
+
+          - Read values of sub-key 'intmap'
+            sub-sub-key : [ between, tensor ] 
+
+        Read Defect Options ...
+
+          - Read values of main-key 'Defect' (Array format)
+            sub-key : [ dfname, naddspin, navaax, apprx,   ( type : single value) 
+                        types, spins, gyros, eqs,          ( type : array ) 
+                        rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) 
+
+        Read Cluster Options ...
+          [ order, method, addsubclus, nk ] 
+
+        Read Pulse Options ...
+          [ npulse, pulsename, sequence ] 
+
+        Read Output Options ...
+          [ savemode, outfile ] 
+
+	>> Read ./ccein.js file successfully ..
+
+
+    ======================================================================
+        Report all structures 
+    ======================================================================
+
+    ----------------------------------------------------------------------
+    < Structure Config > 
+
+      method            :   gCCE                 
+      quantity          :   dm                   
+      order             :   1                    
+      bfield            :   [ 0.00      , 0.00      , 500.00     ]
+      rbath             :   500                  
+      rdip              :   100                  
+      deltat            :   0.001                
+      nstep             :   2000                 
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   1                    
+      seed              :   1739523832           
+      qubitfile         :   (null)               
+      gyrofile          :   ./gyro_13C           
+      nbathfiles        :   1                    
+      bathfiles         :   ./bath               
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      avaaxfile         :   (null)               
+      statefile         :   (null)               
+      exstatefile       :   (null)               
+      DefectTotSpin     :   1                    
+      CorrTotSpin       :   0                    
+      hf_readmode       :   0                    
+      qd_readmode       :   0                    
+
+
+    ----------------------------------------------------------------------
+    < Structure QubitArray > 
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+      -------------------------------------------------
+
+      qubit name        :   qubit1               
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   (+1+0j) | 1 >  
+      beta              :   (+1+0j) | 0 >  
+
+      -------------------------------------------------
+
+    >> Interactions (radkHz)
+
+      intmap[0][0]      :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ----------------------------------------------------------------------
+    < Structure Cluster > 
+
+    >> General properties
+
+      order             :   1                    
+      method            :   gCCE                 
+      addsubclus        :   true                 
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0     ]
+
+
+
+    ----------------------------------------------------------------------
+    < Structure Pulse > 
+
+      pulsename         :   HahnEcho             
+      npulse            :   1                    
+      pulseiter         :   false                
+                            * ture  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+    >> Sequence
+
+      -------------------------------------------------
+                        start      end     diff   index
+ 
+       sequence[0] :    0.000    0.500    0.500    0.000 
+       sequence[1] :    0.500    1.000    0.500    0.000 
+      -------------------------------------------------
+
+
+    ----------------------------------------------------------------------
+    < Structure Output > 
+
+      savemode          :   allfull              
+      outfile           :   ./results/CCE2_Diamond_NV_natab_1
+
+
+    ===============================================================
+
+
+
+    ======================================================================
+        Read files 
+    ======================================================================
+
+    >> Qubit file
+
+        QubitArray already set with option ...
+
+    >> Gyromagnetic ratio file
+
+        Read GyroFile : ./gyro_13C
+      nspecies          :   1                    
+      names             :   [ 13C        ]
+      gyros             :   [ 6.73       ]
+      spins             :   [ 0.50       ]
+
+    >> Bath configuration files
+
+      -------------------------------------------------
+        Read BathFile[0] : ./bath
+
+        - Number of bath spins : 1 (nspin = 1)
+      [  0]   13C  10.000  20.000  30.000   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+      -------------------------------------------------
+
+    >> Read the Hyperfine interaction from DFT inputfile...
+
+      HF Readmode       :      0 ( Point-dipole tensor )
+
+    >> Bath Hyperfine tensors (radkHz) 
+
+      hypf[ib][iq] (ib : bath spin index, iq : qubit index)
+      hypf[0][0]        :   [ -1.87j-0.00, 1.02j-0.00, 1.53j-0.00, 1.02j-0.00, -0.34j-0.00, 3.07j-0.00, 1.53j-0.00, 3.07j-0.00, 2.21j-0.00 ]
+
+
+    ===============================================================
+
+    ----------------------------------------------------------------------
+    < BathArray > 
+
+      nspecies          :   1                    
+      names             :   [ 13C        ]
+      gyros             :   [ 6.73       ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   1                    
+      -------------------------------------------------
+      [  0]   13C  10.000  20.000  30.000   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+
+      -------------------------------------------------
+
+      -------------------------------------------------
+          Wall time = 0.00040 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Clusterize 
+   ======================================================================
+
+
+	 Clustering 1st order ... 
+      clusinfo          :   
+
+           0-th order ... 
+           Cluster[0][    0] :   1 (Iter)
+
+           Total 0-Cluster # :  1 # 
+
+
+
+           1-th order ... 
+           Cluster[1][    1] :   1 [0   ]
+
+           Total 1-Cluster # :  1 # 
+
+
+      -------------------------------------------------
+          Wall time = 0.00001 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Main calculation 
+   ======================================================================
+
+    < gCCE calculation (Single-sample approach) : Iteration # 1 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file ((null)1)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   1                    
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   0                    
+
+    >> Set psia, psib from qubit alpha, beta...
+
+      psia              :   [ 1.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from psia, psib...
+
+      psi0              :   [ 0.71j+0.00, 0.71j+0.00, 0.00j+0.00 ]
+
+    >> Calculate 0-th cluster...
+
+        # Wall time : 0.03[s]
+      -------------------------------------------------
+
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 1-th cluster (100%) is computed at 0.12 s
+
+        # Wall time : 0.12[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 0.11961 s
+      -------------------------------------------------
+
+
+
+    ===============================================================
+
+        JOB DONE : Wall time = 0.12011 s
+
+    ===============================================================
+
+

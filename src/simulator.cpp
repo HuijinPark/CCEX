@@ -232,7 +232,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     printSubTitle("Calculate 0-th cluster...");
                 }
                 
-                result_0th = calCoherenceGcce(qa,NULL,cnf,pls);
+                result_0th = calCoherenceGcce(qa,NULL,cnf,pls,op);
                 for (int istep=0; istep<nstep; istep++){
                     result_0th_inv[istep] = powMatrixXcdElementWise(result_0th[istep],-1);
                 }
@@ -266,7 +266,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
                 // Number of clusters
                 int ncluster = localclusters[n][0][0]-1;
-                
                 // Create BathArray for the cluster (defect spins can be added)
                 for (int ic=1; ic<=ncluster; ic++){
 
@@ -283,7 +282,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
                     // Calculate the coherence
                     if (isGCCE){ // gcce
-                        result_nth = calCoherenceGcce(qa, ba_cluster, cnf, pls);
+                        result_nth = calCoherenceGcce(qa, ba_cluster, cnf, pls,op);
                     }else{ // cce
                         result_nth = calCoherenceCce(qa, ba_cluster, cnf, pls);
                     }

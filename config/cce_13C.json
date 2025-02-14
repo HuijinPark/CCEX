@@ -1,0 +1,110 @@
+{
+    "Method": {
+      "method": "gcce",
+      "quantity": "dm"
+    },
+    "Qubit": {
+      "nqubit": 1,
+      "qubit": [
+        {
+          "name": "13C",
+          "spin": 0.5,
+          "gyro": -17608.597050,
+          "xyz": [1.0, 11.0, 1123.123],
+          "alpha": [0.0],
+          "beta": [1.0],
+          "detuning": [0.0]
+        },
+        {
+          "name": "qubit2",
+          "spin": 1.0,
+          "gyro": -17608.597050,
+          "xyz": [2.0, 22.0, 2246.246],
+          "alpha": [0.0],
+          "beta": [1.0],
+          "detuning": [0.0]
+        },
+        {
+          "name": "qubit3",
+          "spin": 1.0,
+          "gyro": -17608.597050,
+          "xyz": [3.0, 33.0, 3346.246],
+          "alpha": [0.0],
+          "beta": [1.0],
+          "detuning": [0.0]
+        }
+      ],
+      "intmap": [
+        {
+            "between": ["qubit1", "qubit1"],
+            "tensor": [
+              [1.0, 2.0, 3.0],
+              [4.0, 5.0, 6.0],
+              [7.0, 8.0, 9.0]
+            ]
+        },
+        {
+          "between": ["qubit1", "qubit2"],
+          "tensor": [
+            [1.0, 2.0, 3.0],
+            [4.0, 5.0, 6.0],
+            [7.0, 8.0, 9.0]
+          ]
+        }
+      ],
+      "psia": [0.0, 0.0, 0.0],
+      "psib": [0.0, 0.0, 0.0],
+      "psi0": [0.0, 0.0, 0.0],
+      "overhaus" : true,
+      "alphaidx" : 0,
+      "betaidx" : 1
+    },
+    "Bath": {
+      "bathfile": "path/to/bathfile.json",
+      "bathfileadj": [[0.0]],
+      "gyrofile": "path/to/gyrofile.json",
+      "statefile": "path/to/statefile.json",
+      "nspin": 1,
+      "species": [
+        {
+          "name": "species1",
+          "spin": 0.5,
+          "gyro": 0.0,
+          "eq": 0.0
+        }
+      ],
+      "bathspins": [
+        {
+          "name": "bathspin1",
+          "xyz": [0.0, 0.0, 0.0],
+          "state": 0.5,
+          "detuning": [0.0],
+          "A": [0.0],
+          "Q": [0.0]
+        }
+      ]
+    },
+    "Clustering": {
+      "order": 0,
+      "clusalgo": "hash",
+      "nk": 0,
+      "addsubclus": true
+    },
+    "General": {
+      "bfield": 0.0,
+      "rbath": 0.0,
+      "rdip": 0.0,
+      "deltat": 0.0,
+      "nstep": 0,
+      "rbathcut": 0.0,
+      "rdipcut": 0.0,
+      "nstate": 0,
+      "seed": 0
+    },
+    "Pulse": {
+      "npulse": 0,
+      "pulsename": "HahnEcho",
+      "sequence": [0.0]
+    }
+
+}  

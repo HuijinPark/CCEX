@@ -10,7 +10,8 @@ fi
 if [ ${1} == "idm4" ]; then
 
 module purge 
-module load intel-23.2/fftw-3.3.10 intel-23.2/icc-23.2
+#module load intel-23.2/fftw-3.3.10 intel-23.2/icc-23.2
+module load intel-23.2/icc-23.2
 
 cat << EOF > ./Makefile
 
@@ -38,8 +39,8 @@ INCLUDE_EIGEN = -I./zlib/eigen
 INCLUDE_UTHASH = -I./zlib/uthash/include/
 INCLUDE_MAIN = -I./include/
 
-INCLUDE_MKL = -I /opt/intel/mkl/include
-LIBRARY_MKL = -L /opt/intel/mkl/lib/intel64
+#INCLUDE_MKL = -I /opt/intel/mkl/include
+#LIBRARY_MKL = -L /opt/intel/mkl/lib/intel64
 LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lpthread -liomp5 -m64 -xCORE-AVX512  #-lgsl -lgslcblas 
 
 INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
