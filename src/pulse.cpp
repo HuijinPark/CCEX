@@ -160,7 +160,7 @@ void Pulse_report(Pulse* pulse){
     printStructElementInt("npulse", Pulse_getNpulse(pulse));
     
     printStructElementBool("pulseiter", Pulse_getPulseiter(pulse));
-    printf("%27s * ture  - pulse is applied to each qubit\n"," ");
+    printf("%27s * true  - pulse is applied to each qubit\n"," ");
     printf("%27s * false - pulse is applied to qubit-array\n"," ");
     
     if (sequence != NULL){
