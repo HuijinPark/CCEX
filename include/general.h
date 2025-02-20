@@ -92,7 +92,7 @@ typedef struct {
     int qd_readmode; /**< Read mode for quadrupole tensor file : 0 : off , 1 : exp , 2: dft */
     char* qd_tensorfile; /**< Quadrupole tensor file name */
     char* qd_tensorfile_woqubit ; /**< Quadrupole tensor file name without qubit */
-    
+    double qd_cellpara[3]; 
 
     // semi-classical options
     // int Interval_filter; // Default : 500      //gsl interval in integration
@@ -145,6 +145,7 @@ int     Config_getHf_ignore_oor(Config* cnf);
 int     Config_getHf_readmode(Config* cnf);
 char*   Config_getQd_tensorfile(Config* cnf);
 char*   Config_getQd_tensorfile_woqubit(Config* cnf);
+double* Config_getQd_cellpara(Config* cnf);
 int     Config_getQd_readmode(Config* cnf);
 
 // set 
@@ -181,11 +182,13 @@ void Config_setHf_readmode(Config* cnf, int hf_readmode);
 void Config_setQd_tensorfile(Config* cnf, char* qd_tensorfile);
 void Config_setQd_tensorfile_woqubit(Config* cnf, char* qd_tensorfile_woqubit);
 void Config_setQd_readmode(Config* cnf, int qd_readmode);
+void Config_setQd_cellpara(Config* cnf, double* qd_cellpara);
 
 // alloc
 void Config_allocBathfiles(Config* cnf);
 void Config_reallocBathfiles(Config* cnf, int oldsize, int newsize);
 void Config_allocBathadjust(Config* cnf);
+void Config_reallocBathadjust(Config* cnf, int oldsize, int newsize);
 void Config_allocGyrofile(Config* cnf);
 void Config_allocQubitfile(Config* cnf);
 void Config_allocAvaaxfile(Config* cnf);

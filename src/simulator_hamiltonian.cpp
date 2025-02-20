@@ -4,7 +4,6 @@
 MatrixXcd HamilQubit(QubitArray* qa, BathArray* ba, MatrixXcd** sigmas, Config* cnf){
 
     int nspin = BathArray_getNspin(ba);
-
     int nqubit = QubitArray_getNqubit(qa);
     int qdim = QubitArray_dim(qa);
     float* bfield = Config_getBfield(cnf);
@@ -13,7 +12,6 @@ MatrixXcd HamilQubit(QubitArray* qa, BathArray* ba, MatrixXcd** sigmas, Config* 
     MatrixXcd Hq = MatrixXcd::Zero(qdim,qdim);
     
     Hq = QubitArray_TotalHamil(qa, sigmas, bfield);
-
     // Subtract the double counted Overhauser fields
     MatrixXcd Hq_i_overlapped = MatrixXcd::Zero(qdim,qdim);
     for (int iq = 0; iq < nqubit; iq++){

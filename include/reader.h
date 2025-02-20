@@ -11,7 +11,7 @@ void readQubitfile(QubitArray* qa, Config* cnf);
 void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf);
 void readGyrofile(BathArray* ba, Config* cnf);
 void readHftensorfile(BathArray* ba, QubitArray* qa, Config* config);
-// void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* config);
+void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* config);
 
 void setBathStates(BathArray* ba, Config* cnf, int i); // read or random set
 void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf); // read or random set

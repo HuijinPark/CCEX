@@ -159,7 +159,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         printMessage("  - Tensorfile-related keys :");
         printMessage("    [ DefectTotSpin, CorrTotSpin, ");
         printMessage("      hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, ");
-        printMessage("      qd_readmode, qd_tensorfile, qd_tensorfile_woqubit ] \n");
+        printMessage("      qd_readmode, qd_tensorfile, qd_tensorfile_woqubit, qd_cellpara ] \n");
     }
 
     double DefectTotSpin = cJSON_ReadDouble(root,"DefectTotSpin",true,1.0);
@@ -192,14 +192,39 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     int qd_readmode = cJSON_ReadInt(root,"qd_readmode",true,0);
     Config_setQd_readmode(cnf,qd_readmode);
 
-    if (qd_readmode != 0){
-        char* qd_tensorfile = cJSON_ReadFilePath(root,"qd_tensorfile",false,NULL);
-        Config_allocQd_tensorfile(cnf);
-        Config_setQd_tensorfile(cnf,qd_tensorfile);
+    char* qd_tensorfile = NULL;
+    char* qd_tensorfile_woqubit = NULL;
+    double* qd_cellpara = NULL;
 
-        char* qd_tensorfile_woqubit = cJSON_ReadFilePath(root,"qd_tensorfile_woqubit",true,NULL);
-        Config_allocQd_tensorfile_woqubit(cnf);
-        Config_setQd_tensorfile_woqubit(cnf,qd_tensorfile_woqubit);
+    switch (qd_readmode){
+        case 1:
+            if (rank==0){
+                printf("Error! qd readmode = 1 is removed option. use 0,2-4\n");
+            }
+            exit(1);
+            break;
+        case 2:
+            qd_tensorfile = cJSON_ReadFilePath(root,"qd_tensorfile",false,NULL);
+            Config_allocQd_tensorfile(cnf);
+            Config_setQd_tensorfile(cnf,qd_tensorfile);
+
+            break;
+        case 3: case 4:
+            qd_tensorfile = cJSON_ReadFilePath(root,"qd_tensorfile",false,NULL);
+            Config_allocQd_tensorfile(cnf);
+            Config_setQd_tensorfile(cnf,qd_tensorfile);
+
+            qd_tensorfile_woqubit = cJSON_ReadFilePath(root,"qd_tensorfile_woqubit",true,NULL);
+            Config_allocQd_tensorfile_woqubit(cnf);
+            Config_setQd_tensorfile_woqubit(cnf,qd_tensorfile_woqubit);
+
+            double* qd_cellpara = cJSON_ReadDouble1d(root, "qd_cellpara", "false", NULL,3);
+            Config_setQd_cellpara(cnf,qd_cellpara);
+            Config_allocQd_tensorfile(cnf);
+            freeDouble1d(&qd_cellpara);
+
+            break;
+
     }
     ////////////////////////////////////////////////////////////////////////
 
@@ -216,11 +241,12 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
     if (rank==0){
         printMessage("Read Qubit Options ...\n");
         printMessage("  - Read values of main-key 'Qubit'");
-        printMessage("    sub-key : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] \n");
+        printMessage("    sub-key of 'Qubit' : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] \n");
         printMessage("  - Read values of sub-key 'qubit'");
         printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] \n");
         printMessage("  - Read values of sub-key 'intmap'");
         printMessage("    sub-sub-key : [ between, tensor ] \n");
+        printMessage("  - Read values of main-key 'qubitfile', 'zfs', 'qspin', 'alphams', betams'");
     }
 
     char* data = cJSON_ReadFccein(fccein);
@@ -277,9 +303,19 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         float betams = cJSON_ReadFloat(root,"betams",true,betaMsDefault);
         QubitArray_setQubit_i_alpha_fromMs(qa,alphams,0);
         QubitArray_setQubit_i_beta_fromMs(qa,betams,0);
-        
+
+        ////////////////////////////////////////////////////////////////////////
+        //  Intmap
+        ////////////////////////////////////////////////////////////////////////
         // set the options of qubit-related Hamiltonian tensor
-        // Dtensor
+        //
+        // alloc Interaction map
+        QubitArray_allocIntmap(qa);
+
+        // read interaction map
+        MatrixXcd tensor = cJSON_ReadTensor(root,"zfs",true,intmapDefault);
+        tensor = KHZ_TO_RADKHZ(tensor);
+
         // mediatedTerm IO
         cJSON_Delete(root);
         return;

@@ -1,0 +1,227 @@
+
+
+=========================================
+
+		do_mkAQDdata : 
+
+=========================================
+
+
+./hBN_VB_t110_OUTCAR
+./hBN_VB_t110_CONTCAR
+VB
+hBN_VB_t110_ATensor
+hBN_VB_t110_QTensor
+None
+Read INCAR part in OUTCAR ...
+Read A tensor : .TRUE.
+Read Q tensor : .TRUE.
+Read D tensor : .TRUE.
+NGYROMAG : NONE 
+QUAD_EFG : NONE 
+Read POSCAR(simple) part in OUTCAR ...
+ atoms # = 107
+ atomic species = ['B', 'N']
+Read Quadrupole tensor part in OUTCAR ...
+Read Hyperfine tensor part in OUTCAR ...
+Read ZFS tensor part in OUTCAR ...
+['B', 'N']
+atm: B
+isotopeData {'10B': (3.0, 2.8747, 0.08459, 0.1990), '11B': (1.5, 8.5847, 0.04059, 0.8010)}
+iso B {'10B': (3.0, 2.8747, 0.08459, 0.1990), '11B': (1.5, 8.5847, 0.04059, 0.8010)}
+atm: N
+isotopeData {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+iso N {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+	Read POSCAR file - ./hBN_VB_t110_CONTCAR
+	 --------------------------------------------------
+
+
+
+=========================================
+ READ OUTCAR (KEY : outcar_spHam) 
+=========================================
+
+
+----------------------------------------
+extSpinHamilTensors : 
+----------------------------------------
+
+Atomic data from OUTCAR (KEY : atomicdata)
+------------------------------
+ *atom_data : ['B', 'N']
+ *total_atom_num : 107
+ *unit_cell_information :  
+
+    idx    frac_x    frac_y    frac_z
+
+    (1)     0.055     0.165     0.500
+    (2)     0.055     0.498     0.500
+    (3)     0.055     0.832     0.500
+      :
+  (106)     0.431     0.442     0.500
+  (107)     0.500     0.620     0.500
+
+Quadrupole tensor (KEY : Qdata)
+------------------------------
+
+*EFG : EFG tensor (V/A^2) 
+
+    idx       Vxx       Vxy       Vxz       Vyx       Vyy       Vyz       Vzx       Vzy       Vzz
+
+    (1)   -12.677     0.334    -0.000     0.334   -18.774    -0.000    -0.000    -0.000    31.451
+    (2)   -12.799     0.408     0.000     0.408   -18.777    -0.000     0.000    -0.000    31.577
+    (3)   -12.783     0.436    -0.000     0.436   -18.698    -0.000    -0.000    -0.000    31.481
+      :
+  (106)    19.098    24.789     0.000    24.789    -5.061     0.000     0.000     0.000   -14.037
+  (107)     7.983     0.000    -0.000     0.000    20.067     0.000    -0.000     0.000   -28.050
+
+*EFG_diag : Diagonalized EFG tensor (V/A^2) 
+
+    idx    Vxx(D)    Vyy(D)    Vzz(D)
+
+    (1)   -18.792   -12.659    31.451
+    (2)   -18.805   -12.772    31.577
+    (3)   -18.730   -12.751    31.481
+      :
+  (106)   -20.557   -14.037    34.594
+  (107)    20.067     7.983   -28.050
+
+NMR quadrupolar parameters
+
+*Cq  : quadrupolar parameter	Cq=e*Q*V_zz/h (MHz) 
+*eta : asymmetry parameters	 (V_yy - V_xx)/ V_zz 
+*Q   : nuclear electric quadrupole moment in mb (millibarn = 10^-31 m^2) 
+
+    idx        Cq       eta         q
+
+    (1)     0.076     0.195     1.000
+    (2)     0.076     0.191     1.000
+    (3)     0.076     0.190     1.000
+      :
+  (106)     0.084     0.188     1.000
+  (107)    -0.068     0.431     1.000
+------------------------------
+
+Hyperfine tensor (KEY : Adata)
+------------------------------
+
+Hyperfine tensor 
+
+*Aiso : Fermi contact term (MHz) 
+*Adip : Dipolar coupling term (MHz) 
+
+    idx      Aiso       Axx       Axy       Axz       Ayx       Ayy       Ayz       Azx       Azy       Azz
+
+    (1)    -0.000     0.004     0.000    -0.000     0.000    -0.001     0.000    -0.000     0.000    -0.003
+    (2)     0.001     0.005    -0.000    -0.000    -0.000    -0.002    -0.000    -0.000    -0.000    -0.003
+    (3)    -0.000     0.004    -0.000     0.000    -0.000    -0.001     0.000     0.000     0.000    -0.002
+      :
+  (106)    14.390     3.649     6.798     0.000     6.798     0.675     0.000     0.000     0.000    -4.324
+  (107)    15.633    -4.667     0.000    -0.000     0.000     9.051     0.000    -0.000     0.000    -4.384
+
+*Adiag : Diagonalized total Hyperfine tensor (MHz) 
+
+    idx    Axx(D)    Ayy(D)    Azz(D)
+
+    (1)    -0.003    -0.002     0.004
+    (2)    -0.002    -0.001     0.006
+    (3)    -0.002    -0.001     0.004
+      :
+  (106)    10.066     9.593    23.511
+  (107)    11.249    10.966    24.684
+------------------------------
+
+Zero Field splitting tensor (KEY : Ddata)
+------------------------------
+
+*ZFS : ZFS tensor (MHz) 
+
+   -58.688     0.000     0.000
+     0.000 -1098.798     0.000
+     0.000     0.000  1157.486
+
+Diagonalized ZFS tensor 
+*D_diag : Diagonalized ZFS tensor (MHz) 
+*D_eigvec : Eigenvectors for diagonalized ZFS tensor 
+
+    idx    Dii(D)  eigvec_x  eigvec_y  eigvec_z
+
+    (1)   -58.688     1.000     0.000     0.000
+    (2) -1098.798     0.000     1.000     0.000
+    (3)  1157.486     0.000     0.000     1.000
+
+ZFS parameters (MHz) 
+*D : axial component D = 3/2*D_zz (MHz) 
+*E : transverse component E = (D_xx-D_yy)/2 (MHz) 
+
+   D =   1736.229
+   E =    520.055
+------------------------------
+
+Isotopic data (KEY : isodata)
+------------------------------
+
+ Atom : { Isotopes : ( S, gyro, eQ, conc) }
+
+example) 
+ isodata['B']['10B'].s          : spin          (no unit)
+ isodata['B']['11B'].gyro       : gyro          (rad/ms/G)
+ isodata['N']['14N'].q          : eQ            (barn = 10^-28 m^2)
+ isodata['N']['15N'].conc       : concentration (%/100)
+
+ B : {'10B': (3.0, 2.8747, 0.08459, 0.1990), '11B': (1.5, 8.5847, 0.04059, 0.8010)} 
+ N : {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)} 
+
+
+=========================================
+ READ POSCAR (KEY : poscar or poscarmod) 
+=========================================
+
+
+ POSCAR from ./hBN_VB_t110_CONTCAR (KEY : poscar)
+------------------------------
+ *atom_data : ['B', 'N']
+ *atom_data_num : [53, 54]
+ *unit_cell_information :  
+
+    idx    frac_x    frac_y    frac_z
+
+    (1)     0.055     0.165     0.500
+    (2)     0.055     0.498     0.500
+    (3)     0.055     0.832     0.500
+      :
+  (106)     0.431     0.442     0.500
+  (107)     0.500     0.620     0.500
+
+
+=========================================
+          MAKE A,Q FILE          		   
+=========================================
+
+
+ Relative positions from central defect (KEY : relativepos)
+------------------------------
+
+ *MinDif[A] : [-12.4446789, -6.401730866285168, 0.0]
+ *MaxDif[A] : [11.073921597129736, 6.374309149765709, 0.0]
+ *farthest_atoms_idx : [28, 79]
+ *farthest_atom_info : [['B', -12.4446789, 6.362877317190657, 0.0], ['N', -12.4446789, -4.993969883259297, 0.0]]
+ *r_1i (cart) :  
+
+    idx      atom     r_1ix     r_1iy     r_1iz
+
+    (1)         B   -11.070    -4.306     0.000
+    (2)         B   -11.074    -0.036     0.000
+    (3)         B   -11.068     4.231     0.000
+      :
+  (106)         N    -1.721    -0.760     0.000
+  (107)         N     0.000     1.521     0.000
+
+--- Save files --- 
+Afile : hBN_VB_t110_ATensor
+Qfile : hBN_VB_t110_QTensor
+
+
+=========================================
+                 DONE          		   
+=========================================

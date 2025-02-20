@@ -563,11 +563,13 @@ void BathArray_reportBath_hypf(BathArray* ba, int nqubit){
         }
         printf("\n");
     }
-
-    printLineSection();
 }
 
 void BathArray_reportBath_quad(BathArray* ba){
+
+    printSubTitle("Bath Quadrupole tensors (radkHz) \
+            \n       *Note : Q = eQV/(2I(2I-1)h), V = EFG tensor (Hartree/Bohr^2)");
+    printf("      quad[ib][iq] (ib : bath spin index, iq : qubit index)\n");
 
     int nspin = BathArray_getNspin(ba);
     for (int i=0; i<nspin; i++){
@@ -581,6 +583,7 @@ void BathArray_reportBath_quad(BathArray* ba){
             printf("         :\n");
         }
     }
+    printf("\n");
 }
 
 void BathArray_reportBath_hypf_sub(BathArray* ba){

@@ -166,7 +166,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 }
             }else{
                 if (rank==0){
-                    printSubTitle("Set psia, psib from input...");
+                    printSubTitle("Set psia, psib from input...\n");
                 }
             }
 
@@ -231,7 +231,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     printf("\n");
                     printSubTitle("Calculate 0-th cluster...");
                 }
-                
                 result_0th = calCoherenceGcce(qa,NULL,cnf,pls,op);
                 for (int istep=0; istep<nstep; istep++){
                     result_0th_inv[istep] = powMatrixXcdElementWise(result_0th[istep],-1);

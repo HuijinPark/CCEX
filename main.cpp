@@ -122,13 +122,16 @@ int main(int argc, char* argv[]){
                 nbathfiles_current++;
                 if (nbathfiles_current == 1){
                     Config_freeBathfiles(cnf);
+                    Config_freeBathadjust(cnf);
                     Config_setNbathfiles(cnf,nbathfiles_current);
                     Config_allocBathfiles(cnf);
+                    Config_allocBathadjust(cnf);
                     Config_setBathfiles_i(cnf,optarg,nbathfiles_current-1);
                 }
                 else{
                     Config_setNbathfiles(cnf,nbathfiles_current);
                     Config_reallocBathfiles(cnf, nbathfiles_current-1, nbathfiles_current);
+                    Config_reallocBathadjust(cnf, nbathfiles_current-1, nbathfiles_current);
                     Config_setBathfiles_i(cnf,optarg,nbathfiles_current-1);
                 }
                 break;
@@ -275,7 +278,7 @@ int main(int argc, char* argv[]){
     readHftensorfile(ba,qa,cnf); // set hyperfine tensor only from file
 
     // Quadrupole tensor
-    // readQdtensorfile(ba,qa,cnf);
+    readQdtensorfile(ba,qa,cnf); // set quadrupole tensor only from file
 
     // Defect
     if (DefectArray_getNdefect(dfa) > 0){
@@ -313,10 +316,16 @@ int main(int argc, char* argv[]){
     }
 
     if (rank==0){
+        //printf("    ----------------------------------------------------------------------\n");
+        //printTitle("QubitArray");
+        //QubitArray_report(qa);
+        //printf("\n");
+
         printf("    ----------------------------------------------------------------------\n");
         printTitle("BathArray");
         BathArray_report(ba);
         printf("\n");
+
     }
 
     if (rank==0){

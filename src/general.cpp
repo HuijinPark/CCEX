@@ -24,6 +24,11 @@ void Config_allocBathadjust(Config* cnf){
     cnf->bathadjust = allocDouble2d(cnf->nbathfiles,3);
 }
 
+void Config_reallocBathadjust(Config* cnf, int oldrow, int newrow){
+    int col = 3;
+    reallocDouble2d(&(cnf->bathadjust),oldrow,newrow,col);
+}
+
 void Config_allocGyrofile(Config* cnf){
     cnf->gyrofile = allocChar1d(MAX_FILEPATH);
 }
@@ -250,6 +255,10 @@ char*   Config_getQd_tensorfile(Config* cnf){
 
 char*   Config_getQd_tensorfile_woqubit(Config* cnf){
     return cnf->qd_tensorfile_woqubit;
+}
+
+double*   Config_getQd_cellpara(Config* cnf){
+    return cnf->qd_cellpara;
 }
 
 int     Config_getQd_readmode(Config* cnf){
@@ -533,10 +542,14 @@ void Config_setQd_tensorfile_woqubit(Config* cnf, char* qd_tensorfile_woqubit){
     strcpy(cnf->qd_tensorfile_woqubit,qd_tensorfile_woqubit);
 }
 
+void Config_setQd_cellpara(Config* cnf, double* qd_cellpara){
+    copyDouble1d(cnf->qd_cellpara,qd_cellpara,3);
+}
+
 void Config_setQd_readmode(Config* cnf, int qd_readmode){
 
-    if (qd_readmode < 0 && qd_readmode > 2) {
-        fprintf(stderr, "Error: possible qd_readmode is 0, 1, 2\n");
+    if (qd_readmode < 0 && qd_readmode > 4) {
+        fprintf(stderr, "Error: possible qd_readmode is 0, 1, 2, 3, 4\n");
         exit(EXIT_FAILURE);
     }
     cnf->qd_readmode = qd_readmode;
@@ -584,8 +597,11 @@ void Config_report(Config* cnf){
     }
 
     printStructElementInt("qd_readmode",Config_getQd_readmode(cnf));
-    if (Config_getQd_readmode(cnf)!=0){
+    if (Config_getQd_readmode(cnf)==2){
+        printStructElementChar("qd_tensorfile",Config_getQd_tensorfile(cnf));
+    }else if (Config_getQd_readmode(cnf)==3 || Config_getQd_readmode(cnf)==4 ){
         printStructElementChar("qd_tensorfile",Config_getQd_tensorfile(cnf));
         printStructElementChar("qd_tensorfile_woqubit",Config_getQd_tensorfile_woqubit(cnf));
-    }    
+        printStructElementDouble1d("qd_cellpara",Config_getQd_cellpara(cnf),3);
+    }
 }
