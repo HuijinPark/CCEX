@@ -266,7 +266,7 @@ void printInlineMatrixXcd(char* key, MatrixXcd mat){
         for (int i = 0; i < mat.rows(); ++i) {
             for (int j = 0; j < mat.cols(); ++j) {
                 std::complex<double> z = mat(i, j);
-                printf("%3.2fj%+-3.2f", z.real(), z.imag());
+                printf("%3.2f%+-3.2fj", z.real(), z.imag());
                 if (i != mat.rows() - 1 || j != mat.cols() - 1) {
                     printf(", ");
                 }
@@ -280,7 +280,7 @@ void printInlineMatrixXcd(char* key, MatrixXcd mat){
         for (int i = 0; i < mat.rows(); ++i) {
             for (int j = 0; j < mat.cols(); ++j) {
                 std::complex<double> z = mat(i, j);
-                printf("%3.2fj%+-3.2f", z.real(), z.imag());
+                printf("%3.2f%+-3.2fj", z.real(), z.imag());
                 if (i != mat.rows() - 1 || j != mat.cols() - 1) {
                     printf(", ");
                 }
