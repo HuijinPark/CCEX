@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="simulator__hamiltonian_8cpp" kind="file">
+    <compoundname>simulator_hamiltonian.cpp</compoundname>
+    <includes refid="simulator_8h" local="yes">../include/simulator.h</includes>
+    <includes refid="hamiltonian_8h" local="yes">../include/hamiltonian.h</includes>
+    <incdepgraph>
+      <node id="456">
+        <label>../include/hamiltonian.h</label>
+        <link refid="hamiltonian_8h_source"/>
+        <childnode refid="444" relation="include">
+        </childnode>
+      </node>
+      <node id="453">
+        <label>output.h</label>
+        <link refid="output_8h_source"/>
+        <childnode refid="451" relation="include">
+        </childnode>
+        <childnode refid="450" relation="include">
+        </childnode>
+        <childnode refid="444" relation="include">
+        </childnode>
+      </node>
+      <node id="442">
+        <label>../include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+        <childnode refid="443" relation="include">
+        </childnode>
+        <childnode refid="444" relation="include">
+        </childnode>
+        <childnode refid="449" relation="include">
+        </childnode>
+        <childnode refid="450" relation="include">
+        </childnode>
+        <childnode refid="452" relation="include">
+        </childnode>
+        <childnode refid="453" relation="include">
+        </childnode>
+        <childnode refid="454" relation="include">
+        </childnode>
+        <childnode refid="455" relation="include">
+        </childnode>
+        <childnode refid="451" relation="include">
+        </childnode>
+      </node>
+      <node id="443">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+      <node id="450">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="444" relation="include">
+        </childnode>
+        <childnode refid="449" relation="include">
+        </childnode>
+        <childnode refid="451" relation="include">
+        </childnode>
+      </node>
+      <node id="449">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="444" relation="include">
+        </childnode>
+      </node>
+      <node id="445">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="452">
+        <label>defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="444" relation="include">
+        </childnode>
+        <childnode refid="450" relation="include">
+        </childnode>
+      </node>
+      <node id="448">
+        <label>unistd.h</label>
+      </node>
+      <node id="451">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="444" relation="include">
+        </childnode>
+      </node>
+      <node id="441">
+        <label>/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp</label>
+        <link refid="simulator_hamiltonian.cpp"/>
+        <childnode refid="442" relation="include">
+        </childnode>
+        <childnode refid="456" relation="include">
+        </childnode>
+      </node>
+      <node id="446">
+        <label>iostream</label>
+      </node>
+      <node id="455">
+        <label>cluster.h</label>
+        <link refid="cluster_8h_source"/>
+        <childnode refid="451" relation="include">
+        </childnode>
+        <childnode refid="450" relation="include">
+        </childnode>
+        <childnode refid="444" relation="include">
+        </childnode>
+      </node>
+      <node id="454">
+        <label>pulse.h</label>
+        <link refid="pulse_8h_source"/>
+        <childnode refid="444" relation="include">
+        </childnode>
+      </node>
+      <node id="447">
+        <label>mpi.h</label>
+      </node>
+      <node id="444">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="445" relation="include">
+        </childnode>
+        <childnode refid="446" relation="include">
+        </childnode>
+        <childnode refid="447" relation="include">
+        </childnode>
+        <childnode refid="448" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="simulator__hamiltonian_8cpp_1a06350445b4a7a52d61e791052ea9da91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd HamilQubit</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, MatrixXcd **sigmas, Config *cnf)</argsstring>
+        <name>HamilQubit</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" line="4" column="1" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="4" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator__hamiltonian_8cpp_1a875ebff295b343d5541a6825ed8695dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd HamilBath</definition>
+        <argsstring>(BathArray *ba, MatrixXcd **sigmas, Config *cnf)</argsstring>
+        <name>HamilBath</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" line="33" column="1" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="33" bodyend="124"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator__hamiltonian_8cpp_1aa6dda483876a7c31131690da87cfb780" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd HamilQubitBath</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, MatrixXcd **qsigmas, MatrixXcd **bsigmas, Config *cnf)</argsstring>
+        <name>HamilQubitBath</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>qsigmas</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>bsigmas</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" line="126" column="1" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="126" bodyend="172"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator__hamiltonian_8cpp_1a6260d81873b3fdf9fdea80b144f1b3a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd* HamilQubitBathSecularApp</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, MatrixXcd **bsigmas, Config *cnf)</argsstring>
+        <name>HamilQubitBathSecularApp</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>bsigmas</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>hyperfine mediated term if (hfmedi){</para><para>} </para>        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" line="174" column="1" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="174" bodyend="230"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;../include/simulator.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../include/hamiltonian.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal">MatrixXcd<sp/>HamilQubit(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf){</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin<sp/>=<sp/>BathArray_getNspin(ba);</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit<sp/>=<sp/>QubitArray_getNqubit(qa);</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>qdim<sp/>=<sp/>QubitArray_dim(qa);</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>bfield<sp/>=<sp/>Config_getBfield(cnf);</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Qubit<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hq<sp/>=<sp/>MatrixXcd::Zero(qdim,qdim);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>Hq<sp/>=<sp/>QubitArray_TotalHamil(qa,<sp/>sigmas,<sp/>bfield);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Subtract<sp/>the<sp/>double<sp/>counted<sp/>Overhauser<sp/>fields</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hq_i_overlapped<sp/>=<sp/>MatrixXcd::Zero(qdim,qdim);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq<sp/>=<sp/>0;<sp/>iq<sp/>&lt;<sp/>nqubit;<sp/>iq++){</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>overhaus<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib<sp/>=<sp/>0;<sp/>ib<sp/>&lt;<sp/>nspin;<sp/>ib++){</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>overhaus<sp/>+=<sp/>BathArray_getBath_i_overhaus_j(ba,ib,iq);<sp/></highlight><highlight class="comment">//<sp/>if<sp/>ensemble<sp/>calculation,<sp/>overhaus<sp/>=<sp/>0.0<sp/>(ms<sp/>=<sp/>0.0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>vecOverhaus<sp/>=<sp/>calOverhauserVector(overhaus);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hq_i_overlapped_tmp<sp/>=<sp/>calHamiltonianSingleInt(vecOverhaus,sigmas[iq]);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hq_i_overlapped<sp/>=<sp/>expandHamiltonian(sigmas,<sp/>Hq_i_overlapped_tmp,<sp/>nqubit,<sp/>iq);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hq<sp/>-=<sp/>Hq_i_overlapped;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Hq;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">MatrixXcd<sp/>HamilBath(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf){</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin<sp/>=<sp/>BathArray_getNspin(ba);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>bdim<sp/>=<sp/>BathArray_dim(ba);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>bfield<sp/>=<sp/>Config_getBfield(cnf);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nstate<sp/>=<sp/>Config_getNstate(cnf);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Bath<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>zeros_bdim<sp/>=<sp/>MatrixXcd::Zero(bdim,bdim);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hb<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>zeros_bdim;<sp/></highlight><highlight class="comment">//<sp/>total<sp/>bath<sp/>spin<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hb_single<sp/><sp/>=<sp/>zeros_bdim;<sp/></highlight><highlight class="comment">//<sp/>bath<sp/>spin&apos;s<sp/>total<sp/>single<sp/>spin<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hb_pair<sp/><sp/><sp/><sp/>=<sp/>zeros_bdim;<sp/></highlight><highlight class="comment">//<sp/>bath<sp/>spin&apos;s<sp/>total<sp/>paired<sp/>spin<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Single<sp/>correlation<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib=0;<sp/>ib&lt;nspin;<sp/>ib++){</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Zeeman<sp/>Hamiltonian<sp/><sp/><sp/><sp/><sp/>:<sp/>-1.0<sp/>*<sp/>gamma<sp/>*<sp/>vec{B0}<sp/>*<sp/>vec{Spin<sp/>Operator}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Detuning<sp/>Hamiltonian<sp/><sp/><sp/>:<sp/>[0,0,detuning]<sp/>*<sp/>vec{Spin<sp/>Operator}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Quad<sp/>/<sp/>ZFS<sp/>Hamiltonian<sp/>:<sp/>vec{Spin<sp/>Operator}<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>tensor{quad/zfs}<sp/>*<sp/>vec{Spin<sp/>Operator}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Disorder<sp/>Hamiltonian<sp/><sp/><sp/>:<sp/>[0,0,disorder]<sp/>*<sp/>vec{Spin<sp/>Operator}<sp/>(Only<sp/>single<sp/>app.)</highlight></codeline>
+<codeline lineno="57"><highlight class="comment"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Declare<sp/>i-th<sp/>bath<sp/>Hamiltonian<sp/>for<sp/>each<sp/>interaction</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>bdim_i<sp/>=<sp/>BathArray_dimBath_i(ba,ib);<sp/></highlight><highlight class="comment">//<sp/>i-th<sp/>spin<sp/>dimension</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>zeros_bdim_i<sp/><sp/>=<sp/>MatrixXcd::Zero(bdim_i,bdim_i);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hbi<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>zeros_bdim_i;<sp/></highlight><highlight class="comment">//<sp/>single<sp/><sp/><sp/>Hamiltonian<sp/>of<sp/>i-th<sp/>bath<sp/>spin<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hbi_Zeeman<sp/><sp/><sp/><sp/>=<sp/>zeros_bdim_i;<sp/></highlight><highlight class="comment">//<sp/>Zeeman<sp/><sp/><sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hbi_Detuning<sp/><sp/>=<sp/>zeros_bdim_i;<sp/></highlight><highlight class="comment">//<sp/>Detuning<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hbi_Quad<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>zeros_bdim_i;<sp/></highlight><highlight class="comment">//<sp/>Quad/ZFS<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hbi_Disorder<sp/><sp/>=<sp/>zeros_bdim_i;<sp/></highlight><highlight class="comment">//<sp/>Disorder<sp/>Hamiltonian<sp/>(Only<sp/>single<sp/>app)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>Hbi_Disorder_rm_overlap<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>Remove<sp/>overlapped<sp/>disorder</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Subtract<sp/>the<sp/>double<sp/>counted<sp/>disorders</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>each<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hbi_Zeeman<sp/><sp/><sp/>=<sp/>BathArray_ZeemanHamil(ba,sigmas,ib,bfield);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hbi_Detuning<sp/>=<sp/>BathArray_DetuningHamil(ba,sigmas,ib);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hbi_Quad<sp/><sp/><sp/><sp/><sp/>=<sp/>BathArray_QuadHamil(ba,sigmas,ib);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(nstate<sp/>&gt;<sp/>0){<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Single-sample<sp/>app.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hbi_Disorder<sp/>=<sp/>BathArray_DisorderHamil(ba,sigmas,ib,<sp/>\</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hbi_Disorder_rm_overlap);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{<sp/></highlight><highlight class="comment">//<sp/>Ensemble<sp/>app.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hbi_Disorder<sp/>=<sp/>zeros_bdim_i;<sp/></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sum<sp/>all<sp/>single<sp/>interaction<sp/>of<sp/>i-th<sp/>spin</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hbi<sp/>=<sp/>Hbi_Zeeman<sp/>+<sp/>Hbi_Detuning<sp/>+<sp/>Hbi_Quad<sp/>+<sp/>Hbi_Disorder;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>mesg[500];</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sprintf(mesg,&quot;Spin[%d]<sp/>:<sp/>%s&quot;,ib,&quot;ZE&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printInlineMatrixXcd(mesg,Hbi_Zeeman);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sprintf(mesg,&quot;Spin[%d]<sp/>:<sp/>%s&quot;,ib,&quot;Detun&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printInlineMatrixXcd(mesg,Hbi_Detuning);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sprintf(mesg,&quot;Spin[%d]<sp/>:<sp/>%s&quot;,ib,&quot;Quad&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printInlineMatrixXcd(mesg,Hbi_Quad);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sprintf(mesg,&quot;Spin[%d]<sp/>:<sp/>%s&quot;,ib,&quot;Disd&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printInlineMatrixXcd(mesg,Hbi_Disorder);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Expand<sp/>dimension</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hb_single<sp/>+=<sp/>expandHamiltonian(sigmas,<sp/>Hbi,<sp/>nspin,<sp/>ib);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pair<sp/>correlation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;nspin;<sp/>i++){</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j=i+1;<sp/>j&lt;nspin;<sp/>j++){</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hbij<sp/>=<sp/>BathArray_InteractionHamil(ba,sigmas,i,j);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hb_pair<sp/>+=<sp/>Hbij;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//char<sp/>mesg[500];</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sprintf(mesg,&quot;Spin[%d]<sp/>-<sp/>Spin[%d]<sp/>(%s)<sp/>&quot;,i,j,&quot;Pair&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printInlineMatrixXcd(mesg,Hbij);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Bath<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>Hb<sp/>=<sp/>Hb_single<sp/>+<sp/>Hb_pair;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Hb;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal">MatrixXcd<sp/>HamilQubitBath(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>qsigmas,<sp/>MatrixXcd**<sp/>bsigmas,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf){</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit<sp/>=<sp/>QubitArray_getNqubit(qa);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin<sp/>=<sp/>BathArray_getNspin(ba);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ntotspin<sp/>=<sp/>nqubit<sp/>+<sp/>nspin;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>qdim<sp/>=<sp/>QubitArray_dim(qa);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>bdim<sp/>=<sp/>BathArray_dim(ba);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>totdim<sp/>=<sp/>qdim*bdim;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pauli<sp/>matrices</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd**<sp/>sigmas<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>MatrixXcd*[nqubit+nspin];</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;ntotspin;<sp/>i++){</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i]<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>MatrixXcd[4];</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i&lt;nqubit){</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i][0]<sp/>=<sp/>qsigmas[i][0];</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i][1]<sp/>=<sp/>qsigmas[i][1];</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i][2]<sp/>=<sp/>qsigmas[i][2];</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i][3]<sp/>=<sp/>qsigmas[i][3];</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i][0]<sp/>=<sp/>bsigmas[i-nqubit][0];</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i][1]<sp/>=<sp/>bsigmas[i-nqubit][1];</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i][2]<sp/>=<sp/>bsigmas[i-nqubit][2];</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigmas[i][3]<sp/>=<sp/>bsigmas[i-nqubit][3];</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Qubit<sp/>-<sp/>Bath<sp/>Interaction<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hqb<sp/>=<sp/>MatrixXcd::Zero(totdim,totdim);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq<sp/>=<sp/>0;<sp/>iq<sp/>&lt;<sp/>nqubit;<sp/>iq++){</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib<sp/>=<sp/>0;<sp/>ib<sp/>&lt;<sp/>nspin;<sp/>ib++){</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>tensor<sp/>=<sp/>BathArray_getBath_i_hypf_j(ba,ib,iq);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hqbij<sp/>=<sp/>calHamiltonianHeteroInt(sigmas,<sp/>tensor,<sp/>ntotspin,<sp/>iq,<sp/>ib+nqubit);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hqb<sp/>+=<sp/>Hqbij;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>free</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;ntotspin;<sp/>i++){</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">[]<sp/>sigmas[i];</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">delete</highlight><highlight class="normal">[]<sp/>sigmas;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Hqb;</highlight></codeline>
+<codeline lineno="172"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal">MatrixXcd*<sp/>HamilQubitBathSecularApp(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>bsigmas,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf){</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit<sp/>=<sp/>QubitArray_getNqubit(qa);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin<sp/>=<sp/>BathArray_getNspin(ba);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>bdim<sp/>=<sp/>BathArray_dim(ba);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Qubit<sp/>-<sp/>Bath<sp/>Interaction<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hqb<sp/>=<sp/>MatrixXcd::Zero(bdim,bdim);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>nqubit<sp/>&gt;<sp/>1,<sp/>err</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(nqubit<sp/>&gt;<sp/>1){</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(stderr,</highlight><highlight class="stringliteral">&quot;Error<sp/>:<sp/>nqubit<sp/>&gt;<sp/>1,<sp/>current<sp/>nqubit<sp/>=<sp/>%d\n&quot;</highlight><highlight class="normal">,nqubit);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>SzAzzIz<sp/>+<sp/>SzAzxIx<sp/>+<sp/>SzAzyIy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Here,<sp/>Sz<sp/>is<sp/>defined<sp/>for<sp/>alpha,beta</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hqbij;</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib<sp/>=<sp/>0;<sp/>ib<sp/>&lt;<sp/>nspin;<sp/>ib++){</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>tensor<sp/>=<sp/>BathArray_getBath_i_hypf_j(ba,ib,iq);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>vector<sp/>=<sp/>MatrixXcd::Zero(3,1);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vector(0,0)<sp/>=<sp/>tensor(2,0).real();<sp/></highlight><highlight class="comment">//<sp/>Azx</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vector(1,0)<sp/>=<sp/>tensor(2,1).real();<sp/></highlight><highlight class="comment">//<sp/>Azy</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vector(2,0)<sp/>=<sp/>tensor(2,2).real();<sp/></highlight><highlight class="comment">//<sp/>Azz</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hqbij_tmp<sp/>=<sp/>calHamiltonianSingleInt(vector,bsigmas[ib]);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hqbij<sp/>=<sp/>expandHamiltonian(bsigmas,<sp/>Hqbij_tmp,<sp/>nspin,<sp/>ib);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>mesg[500];</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//sprintf(mesg,&quot;Qubit<sp/>-<sp/>Spin[%d]&quot;,<sp/>ib);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printInlineMatrixXcd(mesg,Hqbij);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Hqb<sp/>+=<sp/>Hqbij;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>get<sp/>qubit<sp/>sublevel</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>MatrixXcd*<sp/>qsigmas_general<sp/>=<sp/>QubitArray_PauliOperator_fromPsiaPsib(qa);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>MatrixXcd<sp/>qsz<sp/>=<sp/>qsigmas_general[3];</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>psia<sp/>=<sp/>QubitArray_getPsia(qa);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>psib<sp/>=<sp/>QubitArray_getPsib(qa);</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ms_a<sp/>=<sp/>findZbasisSubLevel(psia);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ms_b<sp/>=<sp/>findZbasisSubLevel(psib);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Hqb</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd*<sp/>Hqb_PsiaPsib<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>MatrixXcd[2];</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>Hqb_PsiaPsib[0]<sp/>=<sp/>ms_a<sp/>*<sp/>Hqb;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>Hqb_PsiaPsib[1]<sp/>=<sp/>ms_b<sp/>*<sp/>Hqb;</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Hqb_PsiaPsib;</highlight></codeline>
+<codeline lineno="230"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp"/>
+  </compounddef>
+</doxygen>

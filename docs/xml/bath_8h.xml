@@ -1,0 +1,2506 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="bath_8h" kind="file">
+    <compoundname>bath.h</compoundname>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includes refid="qubit_8h" local="yes">qubit.h</includes>
+    <includes refid="general_8h" local="yes">general.h</includes>
+    <includedby refid="cluster_8h" local="yes">/home/huijin/git/CCEX/include/cluster.h</includedby>
+    <includedby refid="defect_8h" local="yes">/home/huijin/git/CCEX/include/defect.h</includedby>
+    <includedby refid="output_8h" local="yes">/home/huijin/git/CCEX/include/output.h</includedby>
+    <includedby refid="reader_8h" local="yes">/home/huijin/git/CCEX/include/reader.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
+    <includedby refid="bath_8cpp" local="yes">/home/huijin/git/CCEX/src/bath.cpp</includedby>
+    <incdepgraph>
+      <node id="10">
+        <label>/home/huijin/git/CCEX/include/bath.h</label>
+        <link refid="bath.h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="15">
+        <label>unistd.h</label>
+      </node>
+      <node id="17">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>iostream</label>
+      </node>
+      <node id="14">
+        <label>mpi.h</label>
+      </node>
+      <node id="11">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="21">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
+        <link refid="option_8h_source"/>
+      </node>
+      <node id="24">
+        <label>/home/huijin/git/CCEX/include/reader.h</label>
+        <link refid="reader_8h_source"/>
+      </node>
+      <node id="25">
+        <label>/home/huijin/git/CCEX/include/output.h</label>
+        <link refid="output_8h_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>/home/huijin/git/CCEX/include/cluster_hash.h</label>
+        <link refid="cluster__hash_8h_source"/>
+      </node>
+      <node id="22">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+      </node>
+      <node id="18">
+        <label>/home/huijin/git/CCEX/include/bath.h</label>
+        <link refid="bath.h"/>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>/home/huijin/git/CCEX/include/defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>/home/huijin/git/CCEX/include/cluster.h</label>
+        <link refid="cluster_8h_source"/>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structBathSpin" prot="public">BathSpin</innerclass>
+    <innerclass refid="structBathArray" prot="public">BathArray</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="bath_8h_1ab808ba7f4983db0d101a839606a410ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_connectivity</definition>
+        <argsstring>(int ***cmap, float ***stmap, BathArray *ba, float rdip, float rdipcut)</argsstring>
+        <name>BathArray_connectivity</name>
+        <param>
+          <type>int ***</type>
+          <declname>cmap</declname>
+        </param>
+        <param>
+          <type>float ***</type>
+          <declname>stmap</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>rdip</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>rdipcut</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="153" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="99" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1aed62874976dd2c174274f295b6030d23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void makeSparsemap</definition>
+        <argsstring>(int ***spmap, int **cmap, int nspin)</argsstring>
+        <name>makeSparsemap</name>
+        <param>
+          <type>int ***</type>
+          <declname>spmap</declname>
+        </param>
+        <param>
+          <type>int **</type>
+          <declname>cmap</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="154" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="133" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a50aca27e900b42cb19b89c0eddc866a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_int_i_j</definition>
+        <argsstring>(BathArray *ba, int i, int j)</argsstring>
+        <name>BathArray_int_i_j</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="157" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="195" bodyend="277"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a652958988b338231529a98b1e2aff9b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathArray_dist_i_j</definition>
+        <argsstring>(BathArray *ba, int i, int j)</argsstring>
+        <name>BathArray_dist_i_j</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="158" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="279" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a81c020b081e36f936880d8faa4290237" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBathHypfs</definition>
+        <argsstring>(BathArray *ba, QubitArray *qa)</argsstring>
+        <name>BathArray_setBathHypfs</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="160" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="8" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1aeb73e9db6199ed476acfdf9dbb857938" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBathDisorders</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_setBathDisorders</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="162" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="61" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1aff34caea98b5c6ed32272cbac780db4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathArray_getBath_i_disorder_j</definition>
+        <argsstring>(BathArray *ba, int isp, int jsp)</argsstring>
+        <name>BathArray_getBath_i_disorder_j</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>jsp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="165" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="74" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a4e9f1673e36f161f1853f4ba085b59b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathArray_getOverhaus</definition>
+        <argsstring>(BathArray *ba, int iq)</argsstring>
+        <name>BathArray_getOverhaus</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="167" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="41" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a6cc52af9548c40d4c0bed58d277e4757" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathArray_getBath_i_overhaus_j</definition>
+        <argsstring>(BathArray *ba, int isp, int iq)</argsstring>
+        <name>BathArray_getBath_i_overhaus_j</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="170" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="53" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a45a6abad8cc50619a87a1c38e73cdf26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBathStatesRandom</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_setBathStatesRandom</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="173" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="30" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1af288865607cf89c6c72e4cdbf990397c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int BathArray_dim</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_dim</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="176" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="180" bodyend="192"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a9f50bfa65d8d5839e8c70e1bb1c532cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int BathArray_dimBath_i</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_dimBath_i</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="177" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="159" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a47df79b6685933f06624a558befceba1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int BathSpin_dim</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_dim</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="178" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="170" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a5f536d30ff372e51e030bac0bb03ee32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_ZeemanHamil</definition>
+        <argsstring>(BathArray *ba, MatrixXcd **sigmas, int ib, float *bfield)</argsstring>
+        <name>BathArray_ZeemanHamil</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ib</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>bfield</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="181" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="286" bodyend="299"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a1990df26fee1f51da5b026f94920157d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_DetuningHamil</definition>
+        <argsstring>(BathArray *ba, MatrixXcd **sigmas, int ib)</argsstring>
+        <name>BathArray_DetuningHamil</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ib</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="182" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="301" bodyend="313"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a97afda17a4c78436b7ca8d90a374eff9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_DisorderHamil</definition>
+        <argsstring>(BathArray *ba, MatrixXcd **sigmas, int ib, bool rm_overlap)</argsstring>
+        <name>BathArray_DisorderHamil</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ib</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>rm_overlap</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="183" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="315" bodyend="342"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a2d839859884bd8c333d038dcbe3caa26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_QuadHamil</definition>
+        <argsstring>(BathArray *ba, MatrixXcd **sigmas, int ib)</argsstring>
+        <name>BathArray_QuadHamil</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ib</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="184" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="344" bodyend="356"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a7aebe0d1c4d9e2f002355308393f2985" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_InteractionHamil</definition>
+        <argsstring>(BathArray *ba, MatrixXcd **sigmas, int ib, int jb)</argsstring>
+        <name>BathArray_InteractionHamil</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ib</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>jb</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="185" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="358" bodyend="380"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a06053d5bec282391e6dc52636f3a3834" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd **</type>
+        <definition>MatrixXcd** BathArray_PauliOperators</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_PauliOperators</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="186" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="382" bodyend="396"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a748372df2699f4aa1b9c48ed856d1544" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_Rho0</definition>
+        <argsstring>(BathArray *ba, bool isEnsemble)</argsstring>
+        <name>BathArray_Rho0</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>isEnsemble</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="189" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="399" bodyend="410"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1aad7a61a9794ce21248ddecc65fc68a35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_Psi0</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_Psi0</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="190" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="412" bodyend="430"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a415ed28f1ee2838f0b9a7988ef5d4cbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+        <definition>BathArray* BathArray_init</definition>
+        <argsstring>()</argsstring>
+        <name>BathArray_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="194" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="435" bodyend="445"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a14e20ca8a70b18dabae4789cbb4147f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_report</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_report</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="197" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="447" bodyend="450"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a37e620fa24a875511a5a78e2df2ae74b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportBath</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_reportBath</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="198" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="459" bodyend="477"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a438f139c9112579ccc54c053f910c3ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportBath_i_props</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_reportBath_i_props</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="199" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="480" bodyend="487"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a64a3915ad301e490b49f1a1b594ce3fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportBath_states</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_reportBath_states</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="200" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="489" bodyend="509"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a58e4092f9590d027d73d1ad51d3d4755" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportBath_detunings</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_reportBath_detunings</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="201" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="511" bodyend="525"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a8c0e49529570d6676fd6ece297a7641c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportBath_disorders</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_reportBath_disorders</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="202" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="527" bodyend="542"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a6c400315638c2aadffde3d344108b6e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportBath_hypf</definition>
+        <argsstring>(BathArray *ba, int nqubit)</argsstring>
+        <name>BathArray_reportBath_hypf</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="203" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="544" bodyend="568"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a730f3c2dedfef16b5821a37b2e04f2e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportBath_quad</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_reportBath_quad</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="204" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="570" bodyend="584"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ab97e04089a2b9c944201ca934c635ee6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportBath_hypf_sub</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_reportBath_hypf_sub</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="205" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="586" bodyend="602"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a944278376a9bd66f28b2aab1dd8fd3bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reportSpinProperties</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_reportSpinProperties</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="206" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="452" bodyend="457"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1af4dab15aab62b1227f4794d5421effbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_allocBath</definition>
+        <argsstring>(BathArray *ba, int nqubit)</argsstring>
+        <name>BathArray_allocBath</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="209" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="606" bodyend="623"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a4ad61974ad41347aa597a2f1c3e3fe0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reallocBath</definition>
+        <argsstring>(BathArray *ba, int nspin_old, int nspin_new, int nqubit)</argsstring>
+        <name>BathArray_reallocBath</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin_old</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin_new</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="210" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="625" bodyend="647"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a3969246637ea0200b4a38644b431223d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_allocProp</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_allocProp</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="211" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="649" bodyend="654"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ad094cd86f1978df9a25b5aa96a7b0a74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_reallocProp</definition>
+        <argsstring>(BathArray *ba, int nspin_old, int nspin_new)</argsstring>
+        <name>BathArray_reallocProp</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin_old</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin_new</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="212" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="656" bodyend="664"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ad9b9ed532f0bff53ddf3f2406a674819" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_allocBath_i_hypf</definition>
+        <argsstring>(BathArray *ba, int i, int nqubit)</argsstring>
+        <name>BathArray_allocBath_i_hypf</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="213" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="666" bodyend="668"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1adba87aaf8bae0958da78715474ef935c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setNspin</definition>
+        <argsstring>(BathArray *ba, const int nspin)</argsstring>
+        <name>BathArray_setNspin</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="216" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="671" bodyend="673"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a09d95004e5ea7a8cd37e2e1b41234629" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i</definition>
+        <argsstring>(BathArray *ba, const BathSpin *bath, int i, int nqubit)</argsstring>
+        <name>BathArray_setBath_i</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bath</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="217" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="675" bodyend="697"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1af07a71b01cf698bb2dbeeead1b30d854" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_name</definition>
+        <argsstring>(BathArray *ba, const char *name, int i)</argsstring>
+        <name>BathArray_setBath_i_name</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="218" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="699" bodyend="701"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1aceb87976791c2bca86bc8075df4a24e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_spin</definition>
+        <argsstring>(BathArray *ba, const float spin, int i)</argsstring>
+        <name>BathArray_setBath_i_spin</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const float</type>
+          <declname>spin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="219" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="703" bodyend="705"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ae2dc94602f35c05bfbb84488ce7f11ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_gyro</definition>
+        <argsstring>(BathArray *ba, const double gyro, int i)</argsstring>
+        <name>BathArray_setBath_i_gyro</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>gyro</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="220" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="707" bodyend="709"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a4b770d35bc90be99331e39933cd9c1f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_xyz</definition>
+        <argsstring>(BathArray *ba, const double *xyz, int i)</argsstring>
+        <name>BathArray_setBath_i_xyz</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const double *</type>
+          <declname>xyz</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="221" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="711" bodyend="715"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a87c6db78cecb6c93041773cd00d6084f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_state</definition>
+        <argsstring>(BathArray *ba, const float state, int i)</argsstring>
+        <name>BathArray_setBath_i_state</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const float</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="222" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="717" bodyend="729"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a50fb3f2c6d63ddc983990a94c57e639d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_detuning</definition>
+        <argsstring>(BathArray *ba, const double detuning, int i)</argsstring>
+        <name>BathArray_setBath_i_detuning</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>detuning</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="223" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="731" bodyend="733"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a657433e87570063c7c144cfccb137104" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_disorder</definition>
+        <argsstring>(BathArray *ba, const double disorder, int i)</argsstring>
+        <name>BathArray_setBath_i_disorder</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>disorder</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="224" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="735" bodyend="737"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1afbfbe9015a392def5373f06b4541e2d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_hypf_j</definition>
+        <argsstring>(BathArray *ba, const MatrixXcd hypf, int i, int j)</argsstring>
+        <name>BathArray_setBath_i_hypf_j</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>hypf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="225" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="739" bodyend="741"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ae368af7e204c16e2175e0c46a8916896" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_quad</definition>
+        <argsstring>(BathArray *ba, const MatrixXcd quad, int i)</argsstring>
+        <name>BathArray_setBath_i_quad</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>quad</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="226" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="743" bodyend="754"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a6414438c8a08b0c19f8c00abf3ca9f7a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_hypf_sub</definition>
+        <argsstring>(BathArray *ba, const MatrixXcd hypf_sub, int i)</argsstring>
+        <name>BathArray_setBath_i_hypf_sub</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const MatrixXcd</type>
+          <declname>hypf_sub</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="227" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="756" bodyend="758"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a90539ae67669123e69fde14e1e740749" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setBath_i_mainspidx</definition>
+        <argsstring>(BathArray *ba, const int mainspidx, int i)</argsstring>
+        <name>BathArray_setBath_i_mainspidx</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>mainspidx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="228" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="760" bodyend="763"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a998df8a27a219de72e8c5e649fabfba0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setProp_nspecies</definition>
+        <argsstring>(BathArray *ba, const int nspecies)</argsstring>
+        <name>BathArray_setProp_nspecies</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>nspecies</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="229" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="765" bodyend="767"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ab522fd89a2f7735fce49717657fc2ad6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setProp_names_i</definition>
+        <argsstring>(BathArray *ba, const char *name, const int i)</argsstring>
+        <name>BathArray_setProp_names_i</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="230" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="769" bodyend="771"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ad1fcfbf71aa5f651a927fabf55139bc6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setProp_gyros_i</definition>
+        <argsstring>(BathArray *ba, const double gyro, const int i)</argsstring>
+        <name>BathArray_setProp_gyros_i</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>gyro</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="231" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="773" bodyend="775"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ab8add2946cbccdd4b285c7967693887a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_setProp_spins_i</definition>
+        <argsstring>(BathArray *ba, const float spin, const int i)</argsstring>
+        <name>BathArray_setProp_spins_i</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>const float</type>
+          <declname>spin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="232" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="777" bodyend="779"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ab3d9e90371702f02d3079d92d350c9b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int BathArray_getNspin</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_getNspin</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="235" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="782" bodyend="787"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a0f22c6aa6634564441b38120dbe7d1d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int BathArray_getProp_nspecies</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_getProp_nspecies</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="236" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="789" bodyend="791"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a77b5f1b50d73c86272d8dfca76b602ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char **</type>
+        <definition>char** BathArray_getProp_names</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_getProp_names</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="237" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="793" bodyend="795"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a904324f03aa4fc83ed7b66c7d11ca5e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double* BathArray_getProp_gyros</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_getProp_gyros</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="238" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="797" bodyend="799"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a3567c9fbf5ecf1edc60c6da299a5784d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float *</type>
+        <definition>float* BathArray_getProp_spins</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_getProp_spins</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="239" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="801" bodyend="803"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a52cb736aa4f55111561afef60814bd2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+        <definition>BathSpin* BathArray_getBath_i</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="240" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="805" bodyend="807"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a1cbe81e69032a42d7fb0ba525567b2a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* BathArray_getBath_i_name</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_name</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="241" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="809" bodyend="811"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1aef1b755648dd480d242c9d74c5567133" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float BathArray_getBath_i_spin</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_spin</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="242" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="813" bodyend="815"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a9ffc1ce6293e0d06fb84d46dd2366ed0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathArray_getBath_i_gyro</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_gyro</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="243" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="817" bodyend="819"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ab06988abed01e1efb1e61bbad7787c42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double* BathArray_getBath_i_xyz</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_xyz</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="244" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="821" bodyend="823"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1aad47df482af1d1fade54b3325b31b139" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float BathArray_getBath_i_state</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_state</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="245" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="825" bodyend="827"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a798fb92c19dcf0498ebe0b85e2fa9ad6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathArray_getBath_i_detuning</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_detuning</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="246" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="829" bodyend="831"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a0cb71295a4e71afbff3bc3935b435017" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathArray_getBath_i_disorder</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_disorder</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="247" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="833" bodyend="835"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a26d6d16ab0175646daf567de762b1485" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_getBath_i_hypf_j</definition>
+        <argsstring>(BathArray *ba, int i, int j)</argsstring>
+        <name>BathArray_getBath_i_hypf_j</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>j</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="248" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="837" bodyend="839"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a99917466fbbe6d0806953918202043ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_getBath_i_quad</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_quad</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="249" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="841" bodyend="843"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ac19c5f1c1d4257a664bd95089429f0c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathArray_getBath_i_hypf_sub</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_hypf_sub</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="250" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="845" bodyend="847"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a407bd7d22d5fc648965272720d5be624" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int BathArray_getBath_i_mainspidx</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_getBath_i_mainspidx</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="251" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="849" bodyend="851"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a2d114ccf24d82d900f1bfafa82c1da0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_freeAll</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_freeAll</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="254" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="854" bodyend="860"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1acda53d63906c3eca93de86bed5e47408" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_freeProp_names</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_freeProp_names</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="255" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="862" bodyend="864"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a2236be7dbf2a5a8aebf7e62e2949b6b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_freeProp_gyros</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_freeProp_gyros</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="256" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="866" bodyend="868"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a86777f6285d332d90f6e5278677e019d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_freeProp_spins</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_freeProp_spins</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="257" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="870" bodyend="872"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a378b3a6a9054b5e0c8ec95497de8283c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_freeBath</definition>
+        <argsstring>(BathArray *ba)</argsstring>
+        <name>BathArray_freeBath</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="258" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="874" bodyend="879"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a00a0d3daa4ec6bcf52b18b76730ee5ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_freeBath_i_hypf</definition>
+        <argsstring>(BathArray *ba, int i)</argsstring>
+        <name>BathArray_freeBath_i_hypf</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="259" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="881" bodyend="883"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ade7c821862291d5b92b87da7e495f408" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setName</definition>
+        <argsstring>(BathSpin *bs, char *name)</argsstring>
+        <name>BathSpin_setName</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="262" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="889" bodyend="891"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1adaf5f7854dd74f058217319885f4691c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setName_withType</definition>
+        <argsstring>(BathSpin *bs, char *name, char *type)</argsstring>
+        <name>BathSpin_setName_withType</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="263" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="894" bodyend="898"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a25c89b5891205421bc4bc1ec59b89c3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setSpin</definition>
+        <argsstring>(BathSpin *bs, float spin)</argsstring>
+        <name>BathSpin_setSpin</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>spin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="264" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="901" bodyend="903"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a83883e57549af52a3ce49be77924f840" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setGyro</definition>
+        <argsstring>(BathSpin *bs, double gyro)</argsstring>
+        <name>BathSpin_setGyro</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>gyro</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="265" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="906" bodyend="908"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a7c12af66dc9d385d39f57ea7fb0e9af2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setXyz</definition>
+        <argsstring>(BathSpin *bs, double *xyz)</argsstring>
+        <name>BathSpin_setXyz</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>xyz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="266" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="911" bodyend="915"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a70ae83571d0bc05152207a8e40189552" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setXyz_fromRxyz</definition>
+        <argsstring>(BathSpin *bs, double *xyz0, double *rxyz)</argsstring>
+        <name>BathSpin_setXyz_fromRxyz</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>xyz0</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>rxyz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="267" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="918" bodyend="922"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a7c1684fd5fb3c7628df240a7932c618c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setState</definition>
+        <argsstring>(BathSpin *bs, float state)</argsstring>
+        <name>BathSpin_setState</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="268" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="925" bodyend="933"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a6ca36740d4ed9cb98e3237adbd149d13" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setDetuning</definition>
+        <argsstring>(BathSpin *bs, double detuning)</argsstring>
+        <name>BathSpin_setDetuning</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>detuning</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="269" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="936" bodyend="938"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a656711de9d7b20032486ef2e7231fc13" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setDisorder</definition>
+        <argsstring>(BathSpin *bs, double disorder)</argsstring>
+        <name>BathSpin_setDisorder</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>disorder</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="270" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="941" bodyend="943"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a53280b39f443866429a7e9617d23912e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setHypf_i</definition>
+        <argsstring>(BathSpin *bs, MatrixXcd hypf, int iq)</argsstring>
+        <name>BathSpin_setHypf_i</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>hypf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="271" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="946" bodyend="948"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ad6d9410082a5cb435c3807ff06183c33" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setQuad</definition>
+        <argsstring>(BathSpin *bs, MatrixXcd quad)</argsstring>
+        <name>BathSpin_setQuad</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>quad</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="272" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="951" bodyend="953"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1aa29f90af0f1bcd6bede3197310bb73cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setQuad_fromEFG</definition>
+        <argsstring>(BathSpin *bs, MatrixXcd efg, double eq, float spin)</argsstring>
+        <name>BathSpin_setQuad_fromEFG</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>efg</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>eq</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>spin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="273" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="956" bodyend="980"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a7933c22cb29f34bb719d4db38259342a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setHypfSub</definition>
+        <argsstring>(BathSpin *bs, MatrixXcd hypf_sub)</argsstring>
+        <name>BathSpin_setHypfSub</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>hypf_sub</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="274" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="984" bodyend="986"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a18099f1b8f2c87110840322ba7667faf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathSpin_setMainspidx</definition>
+        <argsstring>(BathSpin *bs, int mainspidx)</argsstring>
+        <name>BathSpin_setMainspidx</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>mainspidx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="275" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="989" bodyend="991"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ab514bb5d414aa090c7693373943470ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* BathSpin_getName</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getName</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="277" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="995" bodyend="997"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a2cb17e985a46f93221bd7edc256d6f67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float BathSpin_getSpin</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getSpin</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="278" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1000" bodyend="1002"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a51f78c4bffdc0e37ecd92a4408ab28b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathSpin_getGyro</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getGyro</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="279" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1005" bodyend="1007"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1ad03adfb1af4997899bc7f8b4707e8283" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double* BathSpin_getXyz</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getXyz</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="280" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1010" bodyend="1012"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a4da97f94bb37ea4be9360e89886a0623" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float BathSpin_getState</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getState</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="281" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1015" bodyend="1017"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1af1718e18c6c3a1c4fa2f2e307bfc8f05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathSpin_getDetuning</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getDetuning</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="282" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1020" bodyend="1022"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a72bc4a7c7ef327b08196b1822fc5f6d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double BathSpin_getDisorder</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getDisorder</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="283" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1025" bodyend="1027"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a05f599220b6ac032bbdfa85e1ccae571" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathSpin_getHypf_i</definition>
+        <argsstring>(BathSpin *bs, int iq)</argsstring>
+        <name>BathSpin_getHypf_i</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iq</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="284" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1030" bodyend="1032"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a0002a756c54b9f00fbb19f298bdb4a5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathSpin_getQuad</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getQuad</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="285" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1035" bodyend="1037"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a99c04b6dfda4cc999acbc62beec252c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathSpin_getHypfSub</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getHypfSub</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="286" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1040" bodyend="1042"/>
+      </memberdef>
+      <memberdef kind="function" id="bath_8h_1a7cf2da09b53b10dda60600718edb3733" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int BathSpin_getMainspidx</definition>
+        <argsstring>(BathSpin *bs)</argsstring>
+        <name>BathSpin_getMainspidx</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
+          <declname>bs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="287" column="1" bodyfile="/home/huijin/git/CCEX/src/bath.cpp" bodystart="1045" bodyend="1047"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_BATH_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_BATH_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;qubit.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;general.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="structBathSpin" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Basic<sp/>spin<sp/>information<sp/>(Essential)<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="structBathSpin_1a2158c37aefcd8093520106945f5f7463" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>name[MAX_CHARARRAY_LENGTH];<sp/></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32" refid="structBathSpin_1a0738a356e1f78530032d8bc8de02fbd8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structBathSpin_1a0738a356e1f78530032d8bc8de02fbd8" kindref="member">spin</ref>;<sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="structBathSpin_1a8c6487e73c2ef39b7a12d293ff5a1e4d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structBathSpin_1a8c6487e73c2ef39b7a12d293ff5a1e4d" kindref="member">gyro</ref>;<sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>/**</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/>@brief<sp/>Quadrupole<sp/>moment<sp/>(Unit<sp/>:<sp/>10^-30<sp/>[m^2])</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/>@details<sp/>Value<sp/>can<sp/>be<sp/>obtained<sp/>from<sp/>&amp;Bath<sp/>-&gt;<sp/>qtensorfile<sp/>(default<sp/>:<sp/>0.0)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/>-<sp/>cf.<sp/>eQ<sp/>=<sp/>20.44[Q/millibarn<sp/>=<sp/>Q<sp/>*<sp/>10^-31<sp/>m^2]<sp/>,<sp/>in<sp/>DFT<sp/>eQ<sp/>=<sp/>2.044<sp/>*<sp/>10^-30<sp/>[m^2]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/>@note<sp/>Unit<sp/>in<sp/>input<sp/>file<sp/>(cce.in)<sp/>:<sp/>(Unit<sp/>:<sp/>10^-30<sp/>[m^2])</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/>@todo<sp/>Add<sp/>documentation<sp/>for<sp/>cce.in<sp/>:<sp/>&amp;Bath<sp/>-&gt;<sp/>qtensorfile<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/>@todo<sp/>When<sp/>you<sp/>read<sp/>quadrupole<sp/>tensor,<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/>-<sp/>you<sp/>have<sp/>to<sp/>get<sp/>them<sp/>with<sp/>unit<sp/>Hatree/Bohr_radius^2<sp/>(QE)<sp/>-&gt;<sp/>Think<sp/>about<sp/>How<sp/>to<sp/>do<sp/>this</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/>-<sp/>you<sp/>have<sp/>to<sp/>get<sp/>them<sp/>with<sp/>unit<sp/>MHz<sp/>(VASP)<sp/>-&gt;<sp/>Think<sp/>about<sp/>How<sp/>to<sp/>do<sp/>this</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/>-<sp/>which<sp/>one<sp/>is<sp/>better?<sp/>-&gt;<sp/>Think<sp/>about<sp/>How<sp/>to<sp/>do<sp/>this</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>*<sp/>@todo<sp/>Now,<sp/>there<sp/>is<sp/>no<sp/>default<sp/>value<sp/>for<sp/>eq.<sp/>In<sp/>future,<sp/>add<sp/>the<sp/>information<sp/>of<sp/>each<sp/>spin&apos;<sp/>eQ<sp/>in<sp/>code<sp/>internally.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>*/<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>double<sp/>eq;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="61" refid="structBathSpin_1ae88f65d01b379916181269efa6c33e8a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>xyz[3];<sp/></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Spin<sp/>state<sp/>(Optional)*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78" refid="structBathSpin_1a6348f965fe820b03094f4c620ab7ffe0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><ref refid="structBathSpin_1a6348f965fe820b03094f4c620ab7ffe0" kindref="member">state</ref>;<sp/></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Interaction<sp/>Information<sp/>(Optional)<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="structBathSpin_1a045005fcc1f5517a81e47e4a8b30e2f4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structBathSpin_1a045005fcc1f5517a81e47e4a8b30e2f4" kindref="member">detuning</ref>;<sp/></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97" refid="structBathSpin_1aad59ec954d15643047790f148dcca39b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="structBathSpin_1aad59ec954d15643047790f148dcca39b" kindref="member">disorder</ref>;<sp/></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="structBathSpin_1aad4ead2e39f4ae27fab5701662e7ee27" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd*<sp/><ref refid="structBathSpin_1aad4ead2e39f4ae27fab5701662e7ee27" kindref="member">hypf</ref>;<sp/></highlight><highlight class="comment">//<sp/>2024.01.26<sp/>change<sp/>naming<sp/>due<sp/>to<sp/>&amp;Defect.defect.hypf<sp/>:<sp/>hypf<sp/>to<sp/>intqb<sp/>보류</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="structBathSpin_1a304f556a5ba51a1275171e40d212d0d2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/><ref refid="structBathSpin_1a304f556a5ba51a1275171e40d212d0d2" kindref="member">quad</ref>;<sp/></highlight><highlight class="comment">//<sp/>2024.01.26<sp/>change<sp/>naming<sp/>due<sp/>to<sp/>&amp;Defect.defect.quad<sp/>:<sp/>quad<sp/>to<sp/>intself<sp/>보류</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>&amp;Defect<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>hypf_sub;<sp/></highlight><highlight class="comment">//<sp/>the<sp/>hyperfine<sp/>interaction<sp/>with<sp/>bath<sp/>spin<sp/>(if<sp/>there<sp/>is<sp/>dft<sp/>data)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mainspidx;<sp/></highlight><highlight class="comment">//<sp/>the<sp/>connected<sp/>main<sp/>spin<sp/>index<sp/>with<sp/>the<sp/>coupling<sp/>strength<sp/>of<sp/>hypf_sub</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="124"><highlight class="normal">}<sp/><ref refid="structBathSpin" kindref="compound">BathSpin</ref>;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="structBathArray" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136" refid="structBathArray_1ac71d275f6b9a2293d80fe8edf69fc46f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structBathArray_1ac71d275f6b9a2293d80fe8edf69fc46f" kindref="member">nspin</ref>;<sp/></highlight></codeline>
+<codeline lineno="142" refid="structBathArray_1a807633d8e314f488e12dfc95040ecc01" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structBathSpin" kindref="compound">BathSpin</ref>**<sp/><ref refid="structBathArray_1a807633d8e314f488e12dfc95040ecc01" kindref="member">bath</ref>;<sp/><sp/></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>spin<sp/>properties</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145" refid="structBathArray_1a23c43fd398472286b1f80c5159896daf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structBathArray_1a23c43fd398472286b1f80c5159896daf" kindref="member">prop_nspecies</ref>;<sp/></highlight></codeline>
+<codeline lineno="146" refid="structBathArray_1a8349ee706336e916dd546a613fbb51e2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/><ref refid="structBathArray_1a8349ee706336e916dd546a613fbb51e2" kindref="member">prop_names</ref>;<sp/></highlight></codeline>
+<codeline lineno="147" refid="structBathArray_1a79ff244bc7666f22c2bbb8072d3e3fa2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/><ref refid="structBathArray_1a79ff244bc7666f22c2bbb8072d3e3fa2" kindref="member">prop_gyros</ref>;<sp/></highlight></codeline>
+<codeline lineno="148" refid="structBathArray_1aca533199f1899634d7c1827864c89478" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/><ref refid="structBathArray_1aca533199f1899634d7c1827864c89478" kindref="member">prop_spins</ref>;<sp/></highlight></codeline>
+<codeline lineno="149"><highlight class="normal">}<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="comment">//<sp/>spin<sp/>pairs</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_connectivity(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>cmap,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">***<sp/>stmap,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>rdip,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>rdipcut);<sp/></highlight><highlight class="comment">//<sp/>connectivity<sp/>between<sp/>bath<sp/>spins</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>makeSparsemap(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>spmap,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>cmap,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin);<sp/></highlight><highlight class="comment">//<sp/>sparsemap</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight><highlight class="comment">//<sp/>spin<sp/>interactions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_int_i_j(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_dist_i_j(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBathHypfs(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBathDisorders(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="comment">//<sp/>!<sp/>update<sp/>bath<sp/>disorder<sp/>if<sp/>there<sp/>is<sp/>additional<sp/>spins</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_disorder_j(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>jsp);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getOverhaus(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq);<sp/></highlight><highlight class="comment">//<sp/>overhaus<sp/>field<sp/>for<sp/>i-th<sp/>qubit</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight><highlight class="comment">//<sp/>!<sp/>update<sp/>bath<sp/>overhausers<sp/>if<sp/>there<sp/>is<sp/>additional<sp/>spins</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_overhaus_j(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isp,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq);<sp/></highlight><highlight class="comment">//<sp/>overhaus<sp/>field<sp/>for<sp/>i-th<sp/>qubit</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="comment">//<sp/>random<sp/>state<sp/>generator</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBathStatesRandom(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);<sp/></highlight><highlight class="comment">//<sp/>random<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/>physics</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_dim(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_dimBath_i(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_dim(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_ZeemanHamil(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>bfield);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_DetuningHamil(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_DisorderHamil(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>rm_overlap);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_QuadHamil(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_InteractionHamil(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ib,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>jb);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal">MatrixXcd**<sp/>BathArray_PauliOperators(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//<sp/>density<sp/>matrix</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_Rho0(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isEnsemble);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_Psi0(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Low<sp/>level<sp/>functions<sp/>--------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/><sp/>BathArray_init();</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="comment">//report</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_report(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportBath(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportBath_i_props(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportBath_states(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportBath_detunings(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportBath_disorders(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportBath_hypf(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportBath_quad(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportBath_hypf_sub(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reportSpinProperties(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="comment">//alloc</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_allocBath(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reallocBath(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin_old,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin_new,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_allocProp(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_reallocProp(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin_old,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin_new);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_allocBath_i_hypf(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="comment">//sets</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setNspin(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bath,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_name(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>name,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_spin(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>spin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_gyro(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gyro,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_xyz(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>xyz,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_state(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>state,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_detuning(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>detuning,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_disorder(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>disorder,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_hypf_j(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>hypf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j);<sp/></highlight><highlight class="comment">//<sp/>j<sp/>:<sp/>qubit<sp/>index</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_quad(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>quad,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_hypf_sub(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixXcd<sp/>hypf_sub,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setBath_i_mainspidx(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mainspidx,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setProp_nspecies(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspecies);</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setProp_names_i(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>name,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setProp_gyros_i(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gyro,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_setProp_spins_i(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>spin,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight><highlight class="comment">//<sp/>get</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getNspin(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getProp_nspecies(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getProp_names(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/>BathArray_getProp_gyros(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getProp_spins(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/><sp/><sp/>BathArray_getBath_i(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_name(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_spin(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_gyro(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_xyz(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_state(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_detuning(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_disorder(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_getBath_i_hypf_j(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j);</highlight></codeline>
+<codeline lineno="249"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_getBath_i_quad(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal">MatrixXcd<sp/><sp/><sp/>BathArray_getBath_i_hypf_sub(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_getBath_i_mainspidx(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight><highlight class="comment">//<sp/>free</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_freeAll(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_freeProp_names(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_freeProp_gyros(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_freeProp_spins(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_freeBath(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathArray_freeBath_i_hypf(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight><highlight class="comment">//<sp/>BathSpin</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setName(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>name);</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setName_withType(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>name,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>type);<sp/></highlight><highlight class="comment">//<sp/>name<sp/>:<sp/>mainspin<sp/>name,<sp/>type<sp/>:<sp/>subspin</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setSpin(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>spin);</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setGyro(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gyro);</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setXyz(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>xyz);</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setXyz_fromRxyz(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>xyz0,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>rxyz);<sp/></highlight><highlight class="comment">//<sp/>Input<sp/>:<sp/>xyz0<sp/>:<sp/>main<sp/>spin<sp/>position,<sp/>rxyz<sp/>:<sp/>sub<sp/>spin<sp/>relative<sp/>position,<sp/>Output<sp/>:<sp/>xyz<sp/>:<sp/>sub<sp/>spin<sp/>position</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setState(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>state);</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setDetuning(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>detuning);</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setDisorder(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>disorder);</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setHypf_i(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/>MatrixXcd<sp/>hypf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq);</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setQuad(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/>MatrixXcd<sp/>quad);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setQuad_fromEFG(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/>MatrixXcd<sp/>efg,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>eq,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>spin);<sp/></highlight><highlight class="comment">//<sp/>Input<sp/>:<sp/>efg<sp/>:<sp/>Hartree/Bohr^2,<sp/>eq<sp/>:<sp/>10e-30<sp/>m^2<sp/>,<sp/>spin<sp/>number,<sp/>Output<sp/>:<sp/>quad<sp/>:<sp/>radkHz</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setHypfSub(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/>MatrixXcd<sp/>hypf_sub);</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_setMainspidx(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mainspidx);</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_getName(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_getSpin(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>BathSpin_getGyro(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/><sp/><sp/><sp/>BathSpin_getXyz(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_getState(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>BathSpin_getDetuning(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>BathSpin_getDisorder(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="284"><highlight class="normal">MatrixXcd<sp/><sp/>BathSpin_getHypf_i(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iq);</highlight></codeline>
+<codeline lineno="285"><highlight class="normal">MatrixXcd<sp/><sp/>BathSpin_getQuad(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="286"><highlight class="normal">MatrixXcd<sp/><sp/>BathSpin_getHypfSub(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>BathSpin_getMainspidx(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>*<sp/>bs);</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_BATH_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/bath.h"/>
+  </compounddef>
+</doxygen>

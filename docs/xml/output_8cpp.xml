@@ -1,0 +1,628 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="output_8cpp" kind="file">
+    <compoundname>output.cpp</compoundname>
+    <includes refid="output_8h" local="yes">../include/output.h</includes>
+    <includes refid="memory_8h" local="yes">../include/memory.h</includes>
+    <incdepgraph>
+      <node id="342">
+        <label>../include/output.h</label>
+        <link refid="output_8h_source"/>
+        <childnode refid="343" relation="include">
+        </childnode>
+        <childnode refid="349" relation="include">
+        </childnode>
+        <childnode refid="344" relation="include">
+        </childnode>
+      </node>
+      <node id="349">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="344" relation="include">
+        </childnode>
+        <childnode refid="350" relation="include">
+        </childnode>
+        <childnode refid="343" relation="include">
+        </childnode>
+      </node>
+      <node id="350">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="344" relation="include">
+        </childnode>
+      </node>
+      <node id="345">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="348">
+        <label>unistd.h</label>
+      </node>
+      <node id="343">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="344" relation="include">
+        </childnode>
+      </node>
+      <node id="346">
+        <label>iostream</label>
+      </node>
+      <node id="341">
+        <label>/home/huijin/git/CCEX/src/output.cpp</label>
+        <link refid="output.cpp"/>
+        <childnode refid="342" relation="include">
+        </childnode>
+        <childnode refid="351" relation="include">
+        </childnode>
+      </node>
+      <node id="351">
+        <label>../include/memory.h</label>
+        <link refid="memory_8h_source"/>
+        <childnode refid="344" relation="include">
+        </childnode>
+      </node>
+      <node id="347">
+        <label>mpi.h</label>
+      </node>
+      <node id="344">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="345" relation="include">
+        </childnode>
+        <childnode refid="346" relation="include">
+        </childnode>
+        <childnode refid="347" relation="include">
+        </childnode>
+        <childnode refid="348" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="output_8cpp_1a246bbb4bdade1fec37a74f52288bd0fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+        <definition>Output* Output_init</definition>
+        <argsstring>()</argsstring>
+        <name>Output_init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="4" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="4" bodyend="9"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1afd9a47af9edc67e492f1b5890b6c595b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_save</definition>
+        <argsstring>(Output *op, MatrixXcd *result_wD, MatrixXcd *result_nD, int nstep, float deltat, int istate)</argsstring>
+        <name>Output_save</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result_wD</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result_nD</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nstep</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>deltat</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>istate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="11" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="11" bodyend="92"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1a89057c68815c5f25f19e7f5b17fc2a8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_save_all</definition>
+        <argsstring>(Output *op, MatrixXcd *result, int nstep, float deltat, int *cluster, int nspin, int istate)</argsstring>
+        <name>Output_save_all</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nstep</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>deltat</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>cluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>istate</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="94" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="94" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1aa0cea37b91d5d895f1a06e19d551f011" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_save_info</definition>
+        <argsstring>(Output *op, MatrixXcd *result_wD, MatrixXcd *result_nD, int nstep, float deltat, int istate, double Azx, double Azz, char *bathfile)</argsstring>
+        <name>Output_save_info</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result_wD</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>result_nD</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nstep</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>deltat</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>istate</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>Azx</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>Azz</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>bathfile</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="129" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="129" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1a45c1e74132e535964cf887914fbbf092" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_setSavemode</definition>
+        <argsstring>(Output *op, char *savemode)</argsstring>
+        <name>Output_setSavemode</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>savemode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="217" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="217" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1abaefd91d3e41c0ce7e57f9af5f0800a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* Output_getSavemode</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_getSavemode</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="229" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="229" bodyend="231"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1a738ebf5a2d75f03d3baac8073c56b8cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_allocOutfile</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_allocOutfile</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="233" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="233" bodyend="235"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1acea267bd1b794ed21eb61b565a0bdefa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_freeOutfile</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_freeOutfile</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="237" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="237" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1abd65ea9be94348ea3e83cf15beeb1e7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_setOutfile</definition>
+        <argsstring>(Output *op, char *outfile)</argsstring>
+        <name>Output_setOutfile</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>outfile</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="241" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="241" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1a58a735c4720b4fcb58831a9209cc5509" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* Output_getOutfile</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_getOutfile</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="245" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="245" bodyend="247"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1a787e1d765898041179cf2cb9163ccd1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_freeAll</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_freeAll</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="249" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="249" bodyend="252"/>
+      </memberdef>
+      <memberdef kind="function" id="output_8cpp_1a45e362c64a844fde067befad21c5d3c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void Output_report</definition>
+        <argsstring>(Output *op)</argsstring>
+        <name>Output_report</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/src/output.cpp" line="254" column="1" bodyfile="/home/huijin/git/CCEX/src/output.cpp" bodystart="254" bodyend="261"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&quot;../include/output.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../include/memory.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"><ref refid="structOutput" kindref="compound">Output</ref>*<sp/>Output_init(){</highlight></codeline>
+<codeline lineno="5"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op<sp/>=<sp/>(<ref refid="structOutput" kindref="compound">Output</ref>*)allocArray1d(1,</highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<ref refid="structOutput" kindref="compound">Output</ref>));</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/><sp/><sp/>op-&gt;<ref refid="structOutput_1a7f85059a943e07bad7f1b76d4e5a99d8" kindref="member">savemode</ref>[0]<sp/>=<sp/></highlight><highlight class="charliteral">&apos;\0&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/><sp/><sp/>op-&gt;outfile<sp/>=<sp/>NULL;</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>op;</highlight></codeline>
+<codeline lineno="9"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_save(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/>MatrixXcd*<sp/>result_wD,<sp/>MatrixXcd*<sp/>result_nD,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nstep,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>deltat,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>istate){</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile<sp/>=<sp/>Output_getOutfile(op);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>istate<sp/>to<sp/>string</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>istate_str[10];</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(istate==0){</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>istate_str[0]<sp/>=<sp/></highlight><highlight class="charliteral">&apos;\0&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sprintf(istate_str,<sp/></highlight><highlight class="stringliteral">&quot;_state%d&quot;</highlight><highlight class="normal">,<sp/>istate);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>dim<sp/>=<sp/>result_wD[0].rows();</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile_wD<sp/>=<sp/>allocChar1d(MAX_FILEPATH);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile_nD<sp/>=<sp/>allocChar1d(MAX_FILEPATH);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(outfile_wD,<sp/>outfile);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(outfile_wD,<sp/>istate_str);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(outfile_wD,<sp/></highlight><highlight class="stringliteral">&quot;_wiDiv&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(outfile_nD,<sp/>outfile);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(outfile_nD,<sp/>istate_str);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(outfile_nD,<sp/></highlight><highlight class="stringliteral">&quot;_noDiv&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>fp_wD<sp/>=<sp/>fopen(outfile_wD,<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>fp_nD<sp/>=<sp/>fopen(outfile_nD,<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fp_wD<sp/>==<sp/>NULL<sp/>||<sp/>fp_nD<sp/>==<sp/>NULL){</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;Error:<sp/>cannot<sp/>open<sp/>file<sp/>%s\n&quot;</highlight><highlight class="normal">,<sp/>outfile_wD);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;Error:<sp/>cannot<sp/>open<sp/>file<sp/>%s\n&quot;</highlight><highlight class="normal">,<sp/>outfile_nD);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>write<sp/>format<sp/>:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>for<sp/>all<sp/>nstate<sp/>,<sp/>write<sp/>time<sp/>dm00<sp/>dm01<sp/>dm02<sp/>...<sp/>dmnn<sp/>(write<sp/>only)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;nstep;<sp/>i++){</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%15g\t&quot;</highlight><highlight class="normal">,<sp/>(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal">)i*deltat);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%15g\t&quot;</highlight><highlight class="normal">,<sp/>(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal">)i*deltat);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j=0;<sp/>j&lt;dim;<sp/>j++){</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>k=0;<sp/>k&lt;dim;<sp/>k++){</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%+15.10lf&quot;</highlight><highlight class="normal">,<sp/>result_wD[i](j,k).real());</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%+15.10lf&quot;</highlight><highlight class="normal">,<sp/>result_nD[i](j,k).real());</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::isnan(result_wD[i](j,k).imag())){</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%+-4lfj%10s\t&quot;</highlight><highlight class="normal">,<sp/>result_wD[i](j,k).imag(),</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%+-13.10lfj\t&quot;</highlight><highlight class="normal">,<sp/>result_wD[i](j,k).imag());</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::isnan(result_nD[i](j,k).imag())){</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%+-4lfj%10s\t&quot;</highlight><highlight class="normal">,<sp/>result_nD[i](j,k).imag(),</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%+-13.10lfj\t&quot;</highlight><highlight class="normal">,<sp/>result_nD[i](j,k).imag());</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((c%3==2)<sp/>&amp;&amp;<sp/>(j*k!=(dim-1)*(dim-1))){</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%15s\t&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%15s\t&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>c++;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>fclose(fp_wD);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>fclose(fp_nD);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>freeChar1d(&amp;outfile_wD);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>freeChar1d(&amp;outfile_nD);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_save_all(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/>MatrixXcd*<sp/>result,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nstep,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>deltat,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>istate){</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Save<sp/>the<sp/>original<sp/>one</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile_original<sp/>=<sp/>allocChar1d(MAX_FILEPATH);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(outfile_original,<sp/>Output_getOutfile(op));</highlight></codeline>
+<codeline lineno="101"></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Change<sp/>outfile<sp/>name</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>cluster<sp/>to<sp/>string</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>cluster_str[100]<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;nspin;<sp/>i++){</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>spin_str[100];</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sprintf(spin_str,<sp/></highlight><highlight class="stringliteral">&quot;_%d&quot;</highlight><highlight class="normal">,<sp/>cluster[i]);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>strcat(cluster_str,<sp/>spin_str);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>add<sp/>string<sp/>outfilehead,<sp/>cluster,<sp/>istate<sp/>to<sp/>outfile</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(op-&gt;outfile,<sp/>cluster_str);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>Output_save(op,<sp/>result,<sp/>result,<sp/>nstep,<sp/>deltat,<sp/>istate);</highlight></codeline>
+<codeline lineno="118"></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Restore<sp/>outfile<sp/>name</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(op-&gt;outfile,<sp/>outfile_original);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>freeChar1d(&amp;outfile_original);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_save_info(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/>MatrixXcd*<sp/>result_wD,<sp/>MatrixXcd*<sp/>result_nD,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nstep,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>deltat,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>istate,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Azx,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Azz,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>bathfile){</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>savemode<sp/>=<sp/>Output_getSavemode(op);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(strcasecmp(savemode,<sp/></highlight><highlight class="stringliteral">&quot;info&quot;</highlight><highlight class="normal">)<sp/>!=<sp/>0){</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;Error:<sp/>savemode<sp/>is<sp/>not<sp/>info\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile<sp/>=<sp/>Output_getOutfile(op);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>istate<sp/>to<sp/>string</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>istate_str[10];</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(istate==0){</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>istate_str[0]<sp/>=<sp/></highlight><highlight class="charliteral">&apos;\0&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sprintf(istate_str,<sp/></highlight><highlight class="stringliteral">&quot;_state%d&quot;</highlight><highlight class="normal">,<sp/>istate);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>dim<sp/>=<sp/>result_wD[0].rows();</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile_wD<sp/>=<sp/>allocChar1d(MAX_FILEPATH);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile_nD<sp/>=<sp/>allocChar1d(MAX_FILEPATH);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(outfile_wD,<sp/>outfile);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(outfile_wD,<sp/>istate_str);</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(outfile_wD,<sp/></highlight><highlight class="stringliteral">&quot;_wiDiv&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(outfile_nD,<sp/>outfile);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(outfile_nD,<sp/>istate_str);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>strcat(outfile_nD,<sp/></highlight><highlight class="stringliteral">&quot;_noDiv&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>fp_wD<sp/>=<sp/>fopen(outfile_wD,<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/>FILE*<sp/>fp_nD<sp/>=<sp/>fopen(outfile_nD,<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fp_wD<sp/>==<sp/>NULL){</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;Error:<sp/>cannot<sp/>open<sp/>file<sp/>%s\n&quot;</highlight><highlight class="normal">,<sp/>outfile_wD);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i=0;<sp/>i&lt;nstep;<sp/>i++){</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%15g\t&quot;</highlight><highlight class="normal">,<sp/>(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal">)i*deltat);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%15g\t&quot;</highlight><highlight class="normal">,<sp/>(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal">)i*deltat);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j=0;<sp/>j&lt;dim;<sp/>j++){</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>k=0;<sp/>k&lt;dim;<sp/>k++){</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%+15.10lf&quot;</highlight><highlight class="normal">,<sp/>result_wD[i](j,k).real());</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%+15.10lf&quot;</highlight><highlight class="normal">,<sp/>result_nD[i](j,k).real());</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::isnan(result_wD[i](j,k).imag())){</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%+-4lfj%10s\t&quot;</highlight><highlight class="normal">,<sp/>result_wD[i](j,k).imag(),</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%+-13.10lfj\t&quot;</highlight><highlight class="normal">,<sp/>result_wD[i](j,k).imag());</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::isnan(result_nD[i](j,k).imag())){</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%+-4lfj%10s\t&quot;</highlight><highlight class="normal">,<sp/>result_nD[i](j,k).imag(),</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%+-13.10lfj\t&quot;</highlight><highlight class="normal">,<sp/>result_nD[i](j,k).imag());</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>((c%3==2)<sp/>&amp;&amp;<sp/>(j*k!=(dim-1)*(dim-1))){</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%15s\t&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%15s\t&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>c++;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>write<sp/>Azx,<sp/>Azz,<sp/>bathfile</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_wD,<sp/></highlight><highlight class="stringliteral">&quot;%+.10lf\t%+.10lf\t%s\n&quot;</highlight><highlight class="normal">,<sp/>Azx,<sp/>Azz,<sp/>bathfile);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(fp_nD,<sp/></highlight><highlight class="stringliteral">&quot;%+.10lf\t%+.10lf\t%s\n&quot;</highlight><highlight class="normal">,<sp/>Azx,<sp/>Azz,<sp/>bathfile);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>fclose(fp_wD);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>fclose(fp_nD);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>freeChar1d(&amp;outfile_wD);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>freeChar1d(&amp;outfile_nD);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="215"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_setSavemode(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>savemode){</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>opsize<sp/>=<sp/>4;</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>options[opsize][MAX_CHARARRAY_LENGTH]<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;all&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;normal&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;info&quot;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>idx<sp/>=<sp/>findIndexCharFix(options,0,opsize-1,savemode);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(idx<sp/>==<sp/>-1)<sp/>{</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;Error:<sp/>current<sp/>savemode<sp/>options<sp/>(%s)<sp/>is<sp/>not<sp/>available\n&quot;</highlight><highlight class="normal">,savemode);</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(EXIT_FAILURE);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(op-&gt;<ref refid="structOutput_1a7f85059a943e07bad7f1b76d4e5a99d8" kindref="member">savemode</ref>,<sp/>savemode);</highlight></codeline>
+<codeline lineno="227"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Output_getSavemode(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op){</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>op-&gt;<ref refid="structOutput_1a7f85059a943e07bad7f1b76d4e5a99d8" kindref="member">savemode</ref>;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_allocOutfile(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op){</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/>op-&gt;outfile<sp/>=<sp/>allocChar1d(MAX_FILEPATH);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_freeOutfile(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op){</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>freeArray1d((</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">**)&amp;(op-&gt;outfile));</highlight></codeline>
+<codeline lineno="239"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_setOutfile(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>outfile){</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/>strcpy(op-&gt;outfile,<sp/>outfile);</highlight></codeline>
+<codeline lineno="243"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>Output_getOutfile(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op){</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>op-&gt;outfile;</highlight></codeline>
+<codeline lineno="247"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_freeAll(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op){</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>Output_freeOutfile(op);</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/>freeArray1d((</highlight><highlight class="keywordtype">void</highlight><highlight class="normal">**)&amp;op);</highlight></codeline>
+<codeline lineno="252"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Output_report(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op){</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/>printTitle(</highlight><highlight class="stringliteral">&quot;Structure<sp/>Output&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/>printStructElementChar(</highlight><highlight class="stringliteral">&quot;savemode&quot;</highlight><highlight class="normal">,<sp/>op-&gt;<ref refid="structOutput_1a7f85059a943e07bad7f1b76d4e5a99d8" kindref="member">savemode</ref>);</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/>printStructElementChar(</highlight><highlight class="stringliteral">&quot;outfile&quot;</highlight><highlight class="normal">,<sp/>op-&gt;outfile);</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/src/output.cpp"/>
+  </compounddef>
+</doxygen>

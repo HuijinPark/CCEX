@@ -1,0 +1,2020 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="memory_8h" kind="file">
+    <compoundname>memory.h</compoundname>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includedby refid="bath_8cpp" local="yes">/home/huijin/git/CCEX/src/bath.cpp</includedby>
+    <includedby refid="cluster_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster.cpp</includedby>
+    <includedby refid="defect_8cpp" local="yes">/home/huijin/git/CCEX/src/defect.cpp</includedby>
+    <includedby refid="general_8cpp" local="yes">/home/huijin/git/CCEX/src/general.cpp</includedby>
+    <includedby refid="hamiltonian_8cpp" local="yes">/home/huijin/git/CCEX/src/hamiltonian.cpp</includedby>
+    <includedby refid="memory_8cpp" local="yes">/home/huijin/git/CCEX/src/memory.cpp</includedby>
+    <includedby refid="option_8cpp" local="yes">/home/huijin/git/CCEX/src/option.cpp</includedby>
+    <includedby refid="output_8cpp" local="yes">/home/huijin/git/CCEX/src/output.cpp</includedby>
+    <includedby refid="pulse_8cpp" local="yes">/home/huijin/git/CCEX/src/pulse.cpp</includedby>
+    <includedby refid="qubit_8cpp" local="yes">/home/huijin/git/CCEX/src/qubit.cpp</includedby>
+    <includedby refid="reader_8cpp" local="yes">/home/huijin/git/CCEX/src/reader.cpp</includedby>
+    <includedby refid="simulator_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator.cpp</includedby>
+    <includedby refid="utilities_8cpp" local="yes">/home/huijin/git/CCEX/src/utilities.cpp</includedby>
+    <incdepgraph>
+      <node id="98">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="101">
+        <label>unistd.h</label>
+      </node>
+      <node id="99">
+        <label>iostream</label>
+      </node>
+      <node id="96">
+        <label>/home/huijin/git/CCEX/include/memory.h</label>
+        <link refid="memory.h"/>
+        <childnode refid="97" relation="include">
+        </childnode>
+      </node>
+      <node id="100">
+        <label>mpi.h</label>
+      </node>
+      <node id="97">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="99" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+        <childnode refid="101" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="memory_8h_1a3cb8db1d55063ce809ca15698555d1fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int* allocInt1d</definition>
+        <argsstring>(size_t m)</argsstring>
+        <name>allocInt1d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="13" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="5" bodyend="7"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a10d56311c506ff61bd1e0ed9b19c293c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int **</type>
+        <definition>int** allocInt2d</definition>
+        <argsstring>(size_t m, size_t n)</argsstring>
+        <name>allocInt2d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="14" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="9" bodyend="11"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1af5f58611b4753685463223935135b711" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int ***</type>
+        <definition>int*** allocInt3d</definition>
+        <argsstring>(size_t m, size_t n, size_t l)</argsstring>
+        <name>allocInt3d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="15" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="13" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a10eb6c8390d29cc8f33e0ea56b6ee9ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocInt1d</definition>
+        <argsstring>(int **ptr, size_t newrow)</argsstring>
+        <name>reallocInt1d</name>
+        <param>
+          <type>int **</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="17" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="17" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a0404e6c1166ae1c0d933738b732c67f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocInt2d</definition>
+        <argsstring>(int ***ptr, size_t oldrow, size_t newrow, size_t col)</argsstring>
+        <name>reallocInt2d</name>
+        <param>
+          <type>int ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="18" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="21" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a75f338991cc82d1c6fca0b66f207ca67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocInt3d</definition>
+        <argsstring>(int ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2)</argsstring>
+        <name>reallocInt3d</name>
+        <param>
+          <type>int ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col1</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="19" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="25" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a2d2931bbb7e0f10a2b1863f387c525a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeInt1d</definition>
+        <argsstring>(int **ptr)</argsstring>
+        <name>freeInt1d</name>
+        <param>
+          <type>int **</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="21" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="29" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a68bfeb1b2a0a0f15f9377384ca69c08f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeInt2d</definition>
+        <argsstring>(int ***ptr, size_t m)</argsstring>
+        <name>freeInt2d</name>
+        <param>
+          <type>int ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="22" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="33" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ac74f85e3ab97b01cd30c0d46526970af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeInt3d</definition>
+        <argsstring>(int ****ptr, size_t m, size_t n)</argsstring>
+        <name>freeInt3d</name>
+        <param>
+          <type>int ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="23" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="37" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a5b6cbba6ea5a6163d38e651bdf01184f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double* allocDouble1d</definition>
+        <argsstring>(size_t m)</argsstring>
+        <name>allocDouble1d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="26" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="42" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a8b57b170601f16ea432d9d46e36d9de1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double **</type>
+        <definition>double** allocDouble2d</definition>
+        <argsstring>(size_t m, size_t n)</argsstring>
+        <name>allocDouble2d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="27" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="46" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a59b376e2bdbfb20b3e5a64b94e034c50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double ***</type>
+        <definition>double*** allocDouble3d</definition>
+        <argsstring>(size_t m, size_t n, size_t l)</argsstring>
+        <name>allocDouble3d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="28" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="50" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ae443161b6e9abc8ebdfcc78fc7f41cff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocDouble1d</definition>
+        <argsstring>(double **ptr, size_t newrow)</argsstring>
+        <name>reallocDouble1d</name>
+        <param>
+          <type>double **</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="30" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="54" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a4064bc02973da353c0e15ccba52fa2da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocDouble2d</definition>
+        <argsstring>(double ***ptr, size_t oldrow, size_t newrow, size_t col)</argsstring>
+        <name>reallocDouble2d</name>
+        <param>
+          <type>double ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="31" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="58" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1accd1ea1d834fa90eb69b4a1a60a6c8c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocDouble3d</definition>
+        <argsstring>(double ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2)</argsstring>
+        <name>reallocDouble3d</name>
+        <param>
+          <type>double ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col1</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="32" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="62" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1abc35d0114f94dc82fcd0e172d3328858" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeDouble1d</definition>
+        <argsstring>(double **ptr)</argsstring>
+        <name>freeDouble1d</name>
+        <param>
+          <type>double **</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="34" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="66" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1aa69535e3c103c2f26fdd32acc7bd6eaf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeDouble2d</definition>
+        <argsstring>(double ***ptr, size_t m)</argsstring>
+        <name>freeDouble2d</name>
+        <param>
+          <type>double ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="35" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="70" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1aec282ca23f89d1bfb485424fa4fccea3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeDouble3d</definition>
+        <argsstring>(double ****ptr, size_t m, size_t n)</argsstring>
+        <name>freeDouble3d</name>
+        <param>
+          <type>double ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="36" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="74" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a532ae5e19c8fd778b4c964176a7b1418" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float *</type>
+        <definition>float* allocFloat1d</definition>
+        <argsstring>(size_t m)</argsstring>
+        <name>allocFloat1d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="39" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="79" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a45b0ad39e132be4e80d4cb36dd7a837f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float **</type>
+        <definition>float** allocFloat2d</definition>
+        <argsstring>(size_t m, size_t n)</argsstring>
+        <name>allocFloat2d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="40" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="83" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a448f8a97b5642a40a305be37783ddd3f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float ***</type>
+        <definition>float*** allocFloat3d</definition>
+        <argsstring>(size_t m, size_t n, size_t l)</argsstring>
+        <name>allocFloat3d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="41" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="87" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1aee87abbe73442e0cbd97ebda24bd79d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocFloat1d</definition>
+        <argsstring>(float **ptr, size_t newrow)</argsstring>
+        <name>reallocFloat1d</name>
+        <param>
+          <type>float **</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="43" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="91" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ab48436f9e9de0d2c4cf1c8a498f623af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocFloat2d</definition>
+        <argsstring>(float ***ptr, size_t oldrow, size_t newrow, size_t col)</argsstring>
+        <name>reallocFloat2d</name>
+        <param>
+          <type>float ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="44" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="95" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a76ee96e1f60e3a253dc3ad7daa28527e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocFloat3d</definition>
+        <argsstring>(float ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2)</argsstring>
+        <name>reallocFloat3d</name>
+        <param>
+          <type>float ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col1</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="45" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="99" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1abc1142ec4de2ca14707d793174fd0f46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeFloat1d</definition>
+        <argsstring>(float **ptr)</argsstring>
+        <name>freeFloat1d</name>
+        <param>
+          <type>float **</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="47" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="103" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a2e4119d480261486ac6f679e08e31ced" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeFloat2d</definition>
+        <argsstring>(float ***ptr, size_t m)</argsstring>
+        <name>freeFloat2d</name>
+        <param>
+          <type>float ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="48" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="107" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1acfe219819fa297c10aa2c0f7b971d689" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeFloat3d</definition>
+        <argsstring>(float ****ptr, size_t m, size_t n)</argsstring>
+        <name>freeFloat3d</name>
+        <param>
+          <type>float ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="49" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="111" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a1e932cd487007fdbd1ecbf2735074e4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* allocChar1d</definition>
+        <argsstring>(size_t m)</argsstring>
+        <name>allocChar1d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="52" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="116" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a40e1314389e6d75466689cd0ad221576" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char **</type>
+        <definition>char** allocChar2d</definition>
+        <argsstring>(size_t m, size_t n)</argsstring>
+        <name>allocChar2d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="53" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="120" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a362685c323bcf9bb2c964ed3ce6efb3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char ***</type>
+        <definition>char*** allocChar3d</definition>
+        <argsstring>(size_t m, size_t n, size_t l)</argsstring>
+        <name>allocChar3d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="54" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="124" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a3f9aff48853931f2c180b7876938379c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocChar1d</definition>
+        <argsstring>(char **ptr, size_t newrow)</argsstring>
+        <name>reallocChar1d</name>
+        <param>
+          <type>char **</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="56" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="128" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a35d549313b1dce7ed8bfcf38580fb532" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocChar2d</definition>
+        <argsstring>(char ***ptr, size_t oldrow, size_t newrow, size_t col)</argsstring>
+        <name>reallocChar2d</name>
+        <param>
+          <type>char ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="57" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="132" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1aa5dcaabef2cac3790016b34f88a5a6f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocChar3d</definition>
+        <argsstring>(char ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2)</argsstring>
+        <name>reallocChar3d</name>
+        <param>
+          <type>char ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col1</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="58" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="136" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a5177edfbc8cf0f07d0a1e4e24edc9118" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeChar1d</definition>
+        <argsstring>(char **ptr)</argsstring>
+        <name>freeChar1d</name>
+        <param>
+          <type>char **</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="60" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="140" bodyend="142"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1af666c88324ad27080d462ec6c1fa87d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeChar2d</definition>
+        <argsstring>(char ***ptr, size_t m)</argsstring>
+        <name>freeChar2d</name>
+        <param>
+          <type>char ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="61" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="144" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a2c22e55cc0e94c3a77895bc12d00ea08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeChar3d</definition>
+        <argsstring>(char ****ptr, size_t m, size_t n)</argsstring>
+        <name>freeChar3d</name>
+        <param>
+          <type>char ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="62" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="148" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a0d95fc022c2c62fad196f20a66e8603a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd* allocMatrixXcd1d</definition>
+        <argsstring>(size_t m)</argsstring>
+        <name>allocMatrixXcd1d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="65" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="153" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a7348d898d8effef9f72ad069373d0f3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd **</type>
+        <definition>MatrixXcd** allocMatrixXcd2d</definition>
+        <argsstring>(size_t m, size_t n)</argsstring>
+        <name>allocMatrixXcd2d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="66" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="158" bodyend="164"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1aa3e85b06be5594f4fb46e32013c5d97c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd ***</type>
+        <definition>MatrixXcd*** allocMatrixXcd3d</definition>
+        <argsstring>(size_t m, size_t n, size_t l)</argsstring>
+        <name>allocMatrixXcd3d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="67" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="166" bodyend="175"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a18ae919c8a78c8d6d6e66e10dbc6103c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeMatrixXcd1d</definition>
+        <argsstring>(MatrixXcd **ptr)</argsstring>
+        <name>freeMatrixXcd1d</name>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="69" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="177" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a3c3534e208dd35b87947214940871c70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeMatrixXcd2d</definition>
+        <argsstring>(MatrixXcd ***ptr, size_t m)</argsstring>
+        <name>freeMatrixXcd2d</name>
+        <param>
+          <type>MatrixXcd ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="70" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="182" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a76ad4248c8e0c37ba210082494e02ea9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeMatrixXcd3d</definition>
+        <argsstring>(MatrixXcd ****ptr, size_t m, size_t n)</argsstring>
+        <name>freeMatrixXcd3d</name>
+        <param>
+          <type>MatrixXcd ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="71" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="190" bodyend="199"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a123fb36d3877af7b86546215ba0a89e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> *</type>
+        <definition>DoubleTensor* allocDoubleTensor1d</definition>
+        <argsstring>(size_t m)</argsstring>
+        <name>allocDoubleTensor1d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="75" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="204" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a46b66a5e79d6d21560ccd332c880c511" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> **</type>
+        <definition>DoubleTensor** allocDoubleTensor2d</definition>
+        <argsstring>(size_t m, size_t n)</argsstring>
+        <name>allocDoubleTensor2d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="76" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="209" bodyend="211"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a7dc8d8e2faf060b6ff08059297abed6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> ***</type>
+        <definition>DoubleTensor*** allocDoubleTensor3d</definition>
+        <argsstring>(size_t m, size_t n, size_t l)</argsstring>
+        <name>allocDoubleTensor3d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="77" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="214" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ad5ce8e72390637d3079ce74b5b5276ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocDoubleTensor1d</definition>
+        <argsstring>(DoubleTensor **ptr, size_t newrow)</argsstring>
+        <name>reallocDoubleTensor1d</name>
+        <param>
+          <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> **</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="79" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="220" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a08cf471a6b8caa128a17eae73d457fc5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocDoubleTensor2d</definition>
+        <argsstring>(DoubleTensor ***ptr, size_t oldrow, size_t newrow, size_t col)</argsstring>
+        <name>reallocDoubleTensor2d</name>
+        <param>
+          <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="80" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="225" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a0106be117f3b2350b4b2afa1364f89dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocDoubleTensor3d</definition>
+        <argsstring>(DoubleTensor ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2)</argsstring>
+        <name>reallocDoubleTensor3d</name>
+        <param>
+          <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col1</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="81" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="230" bodyend="232"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ae0e177577e93e434d1b241f5fd507f92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeDoubleTensor1d</definition>
+        <argsstring>(DoubleTensor **ptr)</argsstring>
+        <name>freeDoubleTensor1d</name>
+        <param>
+          <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> **</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="83" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="236" bodyend="238"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a6f912a61d9ea2bf679c97508969d6d40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeDoubleTensor2d</definition>
+        <argsstring>(DoubleTensor ***ptr, size_t m)</argsstring>
+        <name>freeDoubleTensor2d</name>
+        <param>
+          <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="84" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="241" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1aff71313f16bb4038f8ac37811a137f0d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeDoubleTensor3d</definition>
+        <argsstring>(DoubleTensor ****ptr, size_t m, size_t n)</argsstring>
+        <name>freeDoubleTensor3d</name>
+        <param>
+          <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="85" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="246" bodyend="248"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1aa265fda5937761764ca1b338547b205f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* allocArray1d</definition>
+        <argsstring>(size_t m, size_t size)</argsstring>
+        <name>allocArray1d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="90" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="303" bodyend="310"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a235014f3aef0304a918cff31a174632d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void **</type>
+        <definition>void** allocArray2d</definition>
+        <argsstring>(size_t m, size_t n, size_t size)</argsstring>
+        <name>allocArray2d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="91" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="313" bodyend="323"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a0a99c65092aea575f0d54b01c8b0f58d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void ***</type>
+        <definition>void*** allocArray3d</definition>
+        <argsstring>(size_t m, size_t n, size_t l, size_t size)</argsstring>
+        <name>allocArray3d</name>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="92" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="326" bodyend="336"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a7ecd70ee2110d66f4763fccc4743e0aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocArray1d</definition>
+        <argsstring>(void **ptr, size_t newrow, size_t size)</argsstring>
+        <name>reallocArray1d</name>
+        <param>
+          <type>void **</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="95" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="339" bodyend="345"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ab0597e5b06582506367d5f8a98bd8561" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocArray2d</definition>
+        <argsstring>(void ***ptr, size_t oldrow, size_t newrow, size_t col, size_t size)</argsstring>
+        <name>reallocArray2d</name>
+        <param>
+          <type>void ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="96" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="348" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ac883ccfb6471f54d9297c348ce98f8ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void reallocArray3d</definition>
+        <argsstring>(void ****ptr, size_t oldrow, size_t newrow, size_t col1, size_t col2, size_t size)</argsstring>
+        <name>reallocArray3d</name>
+        <param>
+          <type>void ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>oldrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>newrow</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col1</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>col2</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="97" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="359" bodyend="368"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a8c1377d960254d7416bf5849d699987d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeArray1d</definition>
+        <argsstring>(void **ptr)</argsstring>
+        <name>freeArray1d</name>
+        <param>
+          <type>void **</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="100" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="371" bodyend="377"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a02d990dcd44bda3d08548665c2bf2759" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeArray2d</definition>
+        <argsstring>(void ***ptr, size_t m)</argsstring>
+        <name>freeArray2d</name>
+        <param>
+          <type>void ***</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="101" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="382" bodyend="391"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ace4692e5df32da5ce249abfabf5ec389" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void freeArray3d</definition>
+        <argsstring>(void ****ptr, size_t m, size_t n)</argsstring>
+        <name>freeArray3d</name>
+        <param>
+          <type>void ****</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="102" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="394" bodyend="403"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ad5d71981509d1512d901f36f73a557e2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyInt1d</definition>
+        <argsstring>(int *dest, const int *src, size_t m)</argsstring>
+        <name>copyInt1d</name>
+        <param>
+          <type>int *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const int *</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="108" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="408" bodyend="410"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a059231751c16694f0f3d629242223bae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyInt1dPart</definition>
+        <argsstring>(int *dest, const int *src, size_t ista, size_t iend)</argsstring>
+        <name>copyInt1dPart</name>
+        <param>
+          <type>int *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const int *</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>ista</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>iend</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="109" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="412" bodyend="414"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1ae815774c7b7993dd93b370a3cf99e4b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyInt2d</definition>
+        <argsstring>(int **dest, const int **src, size_t m, size_t n)</argsstring>
+        <name>copyInt2d</name>
+        <param>
+          <type>int **</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const int **</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="110" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="416" bodyend="420"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1aee4e6efbd0296d3fba195aedade37a66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyInt3d</definition>
+        <argsstring>(int ***dest, const int ***src, size_t m, size_t n, size_t l)</argsstring>
+        <name>copyInt3d</name>
+        <param>
+          <type>int ***</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const int ***</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="111" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="422" bodyend="428"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1abe5b5b7e1666a108b705cef64f38d5c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyDouble1d</definition>
+        <argsstring>(double *dest, const double *src, size_t m)</argsstring>
+        <name>copyDouble1d</name>
+        <param>
+          <type>double *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const double *</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="114" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="432" bodyend="434"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a3a3e972507eacf11b8d94caa3b6f13bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyDouble2d</definition>
+        <argsstring>(double **dest, const double **src, size_t m, size_t n)</argsstring>
+        <name>copyDouble2d</name>
+        <param>
+          <type>double **</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const double **</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="115" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="436" bodyend="440"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a68324efa77ad0f4a53e69329743787bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyDouble3d</definition>
+        <argsstring>(double ***dest, const double ***src, size_t m, size_t n, size_t l)</argsstring>
+        <name>copyDouble3d</name>
+        <param>
+          <type>double ***</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const double ***</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="116" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="442" bodyend="448"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a220ec545dbcdab16953f79746d1f7e88" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyFloat1d</definition>
+        <argsstring>(float *dest, const float *src, size_t m)</argsstring>
+        <name>copyFloat1d</name>
+        <param>
+          <type>float *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const float *</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="119" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="451" bodyend="453"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1adcbf32562a15b9ea14ea956f04d205bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyFloat2d</definition>
+        <argsstring>(float **dest, const float **src, size_t m, size_t n)</argsstring>
+        <name>copyFloat2d</name>
+        <param>
+          <type>float **</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const float **</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="120" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="455" bodyend="459"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a76ec9e3e65b9d294f6dbf876cb648ae6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyFloat3d</definition>
+        <argsstring>(float ***dest, const float ***src, size_t m, size_t n, size_t l)</argsstring>
+        <name>copyFloat3d</name>
+        <param>
+          <type>float ***</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const float ***</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="121" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="461" bodyend="467"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a90f66d9d360764ca1712b2216dc70b7b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyDoubleComplex1d</definition>
+        <argsstring>(DoubleComplex *dest, const DoubleComplex *src, size_t m)</argsstring>
+        <name>copyDoubleComplex1d</name>
+        <param>
+          <type><ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref> *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref> *</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="124" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="470" bodyend="472"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a0f6e684e9f767f9951e04253937db492" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyDoubleComplex2d</definition>
+        <argsstring>(DoubleComplex **dest, const DoubleComplex **src, size_t m, size_t n)</argsstring>
+        <name>copyDoubleComplex2d</name>
+        <param>
+          <type><ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref> **</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref> **</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="125" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="474" bodyend="478"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a32787cc5ce73f1085b3b065dbd744598" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyDoubleComplex3d</definition>
+        <argsstring>(DoubleComplex ***dest, const DoubleComplex ***src, size_t m, size_t n, size_t l)</argsstring>
+        <name>copyDoubleComplex3d</name>
+        <param>
+          <type><ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref> ***</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref> ***</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="126" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="480" bodyend="486"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1abd8437cea1eb6e0cf9c6a4f23ee6a698" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyDoubleTensor</definition>
+        <argsstring>(DoubleTensor *dest, const DoubleTensor src)</argsstring>
+        <name>copyDoubleTensor</name>
+        <param>
+          <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref></type>
+          <declname>src</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="129" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="489" bodyend="493"/>
+      </memberdef>
+      <memberdef kind="function" id="memory_8h_1a452cbec85f095191f00ec64a3e836b41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copyDoubleTensor1d</definition>
+        <argsstring>(DoubleTensor **dest, const DoubleTensor *src, size_t m)</argsstring>
+        <name>copyDoubleTensor1d</name>
+        <param>
+          <type><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> **</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref> *</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/memory.h" line="130" column="1" bodyfile="/home/huijin/git/CCEX/src/memory.cpp" bodystart="495" bodyend="497"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_MEMORY_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_MEMORY_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>__CCEX_UTILITIES_H_</highlight></codeline>
+<codeline lineno="5"><highlight class="preprocessor"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+<codeline lineno="7"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>what<sp/>to<sp/>do<sp/>:<sp/>copy,<sp/>alloc,<sp/>realloc,<sp/>free</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Memory<sp/>control<sp/>for<sp/>each<sp/>type<sp/>----------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//<sp/>int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>allocInt1d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>allocInt2d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>allocInt3d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocInt1d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>**ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocInt2d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocInt3d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col1,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col2);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeInt1d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>**ptr);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeInt2d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeInt3d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//<sp/>double</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>allocDouble1d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>allocDouble2d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>allocDouble3d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocDouble1d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocDouble2d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocDouble3d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col1,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col2);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeDouble1d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**ptr);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeDouble2d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeDouble3d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/>float</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>allocFloat1d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>allocFloat2d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">***<sp/>allocFloat3d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocFloat1d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>**ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocFloat2d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocFloat3d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col1,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col2);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeFloat1d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>**ptr);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeFloat2d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeFloat3d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">//<sp/>char</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>allocChar1d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>allocChar2d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">***<sp/>allocChar3d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocChar1d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocChar2d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocChar3d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col1,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col2);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeChar1d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>**ptr);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeChar2d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeChar3d(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/>MatrixXcd<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal">MatrixXcd*<sp/>allocMatrixXcd1d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">MatrixXcd**<sp/>allocMatrixXcd2d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">MatrixXcd***<sp/>allocMatrixXcd3d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeMatrixXcd1d(MatrixXcd<sp/>**ptr);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeMatrixXcd2d(MatrixXcd<sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeMatrixXcd3d(MatrixXcd<sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DoubleTensor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref>*<sp/>allocDoubleTensor1d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref>**<sp/>allocDoubleTensor2d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref>***<sp/>allocDoubleTensor3d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocDoubleTensor1d(<ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>**ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocDoubleTensor2d(<ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocDoubleTensor3d(<ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col1,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col2);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeDoubleTensor1d(<ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>**ptr);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeDoubleTensor2d(<ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeDoubleTensor3d(<ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Basic<sp/>Memory<sp/>control<sp/>------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//<sp/>basic<sp/>memory<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>allocArray1d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">**<sp/>allocArray2d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">***<sp/>allocArray3d(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="comment">//<sp/>basic<sp/>memory<sp/>reallocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocArray1d(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>**ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocArray2d(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>reallocArray3d(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>oldrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>newrow,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col1,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>col2,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/>basic<sp/>memory<sp/>free</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeArray1d(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>**ptr);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeArray2d(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>***ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>freeArray3d(</highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>****ptr,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Copy<sp/>dynamically<sp/>allocated<sp/>array<sp/>------------------------*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="comment">//<sp/>int</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyInt1d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyInt1dPart(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>ista,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>iend);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyInt2d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyInt3d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight><highlight class="comment">//<sp/>double</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyDouble1d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyDouble2d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>**src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyDouble3d(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>***dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>***src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="comment">//<sp/>float</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyFloat1d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>*dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>*src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyFloat2d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>**dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>**src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyFloat3d(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>***dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>***src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DoubleComplex</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyDoubleComplex1d(<ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref><sp/>*dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref><sp/>*src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyDoubleComplex2d(<ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref><sp/>**dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref><sp/>**src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyDoubleComplex3d(<ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref><sp/>***dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structDoubleComplex" kindref="compound">DoubleComplex</ref><sp/>***src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>l);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DoubleTensor</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyDoubleTensor(<ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>*dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>src);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyDoubleTensor1d(<ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>**dest,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structDoubleTensor" kindref="compound">DoubleTensor</ref><sp/>*src,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_MEMORY_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/memory.h"/>
+  </compounddef>
+</doxygen>

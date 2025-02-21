@@ -1,0 +1,404 @@
+
+
+    ======================================================================
+
+                   ______   ______  _______ ___   ___ 
+                  /      | /      ||   ____|\  \ /  / 
+                 |  ,----'|  ,----'|  |__    \  V  /  
+                 |  |     |  |     |   __|    >   <   
+                 |  `----.|  `----.|  |____  /  .  \  
+                  \______| \______||_______|/__/ \__\ 
+                __   _   _   _  _       _   _     _   _   _ _   
+               / _| / \ | \_/ || |     //  / \   | | / \ | | |  
+              ( (_ ( o )| \_/ || |_   //  | o |n_| |( o )| U |  
+               \__| \_,7|_| |_||___| //   |_n_|\__/  \_/ |___|  
+
+
+            Program CCEX starts on Tue Jun 11 23:59:52 2024
+                The CCEX code has compiled at 'Jun 11 2024' 
+    ======================================================================
+
+        Option filename : './cce.json' 
+
+        Read Config Options ...
+
+          - General option-related keys : 
+            [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] 
+
+          - File-related keys :
+            [ qubitfile, gyrofile, bathfile, bathadjust, avaaxfile, statefile, exstatefile ] 
+
+          - Tensorfile-related keys :
+            [ DefectTotSpin, CorrTotSpin, 
+              hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, 
+              qd_readmode, qd_tensorfile, qd_tensorfile_woqubit ] 
+
+        Read Qubit Options ...
+
+          - Read values of main-key 'Qubit'
+            sub-key : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] 
+
+          - Read values of sub-key 'qubit'
+            sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] 
+
+          - Read values of sub-key 'intmap'
+            sub-sub-key : [ between, tensor ] 
+
+        Read Defect Options ...
+
+          - Read values of main-key 'Defect' (Array format)
+            sub-key : [ dfname, naddspin, navaax, apprx,   ( type : single value) 
+                        types, spins, gyros, eqs,          ( type : array ) 
+                        rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) 
+
+        Read Cluster Options ...
+          [ order, method, addsubclus, nk ] 
+
+        Read Pulse Options ...
+          [ npulse, pulsename, sequence ] 
+
+        Read Output Options ...
+          [ savemode, outfile ] 
+
+	>> Read ./cce.json file successfully ..
+
+
+    ======================================================================
+        Report all structures 
+    ======================================================================
+
+    ----------------------------------------------------------------------
+    < Structure Config > 
+
+      method            :   gCCE                 
+      quantity          :   coherence            
+      order             :   2                    
+      bfield            :   [ 0.00      , 0.00      , 512.00     ]
+      rbath             :   850                  
+      rdip              :   620                  
+      deltat            :   5e-05                
+      nstep             :   300                  
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   1                    
+      seed              :   8805                 
+      qubitfile         :   (null)               
+      gyrofile          :   ./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro
+      nbathfiles        :   1                    
+      bathfiles         :   ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      avaaxfile         :   ./../CCE_Reprod/Bath_Data/1.single_data/bathJT_DiaP1_1ppm_1
+      statefile         :   ./../CCE_Reprod/Bath_Data/1.single_data/state_DiaP1_1ppm_
+      exstatefile       :   ./../CCE_Reprod/Bath_Data/1.single_data/stateEx_DiaP1_1ppm_
+      DefectTotSpin     :   1                    
+      CorrTotSpin       :   0                    
+      hf_readmode       :   0                    
+      qd_readmode       :   0                    
+
+
+    ----------------------------------------------------------------------
+    < Structure QubitArray > 
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+      -------------------------------------------------
+
+      qubit name        :   qubit1               
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 1123.60   , 1124.86   , 1124.38    ]
+      alpha             :   (+1+0j) |-1 >  
+      beta              :   (+1+0j) | 0 >  
+
+      -------------------------------------------------
+
+    >> Interactions (radkHz)
+
+      intmap[0][0]      :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ----------------------------------------------------------------------
+    < Structure Cluster > 
+
+    >> General properties
+
+      order             :   2                    
+      method            :   gcce                 
+      addsubclus        :   true                 
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0    ,   2 : 0     ]
+
+
+
+    ----------------------------------------------------------------------
+    < Structure Pulse > 
+
+      pulsename         :   HahnEcho             
+      npulse            :   1                    
+      pulseiter         :   false                
+                            * ture  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+    >> Sequence
+
+      -------------------------------------------------
+                        start      end     diff   index
+ 
+       sequence[0] :    0.000    0.500    0.500    0.000 
+       sequence[1] :    0.500    1.000    0.500    0.000 
+      -------------------------------------------------
+
+
+    ----------------------------------------------------------------------
+    < Structure Output > 
+
+      savemode          :   normal               
+      outfile           :   CCE2_ElectronSpinBath_1ppm_1
+
+
+    ===============================================================
+
+
+
+    ======================================================================
+        Read files 
+    ======================================================================
+
+    >> Qubit file
+
+        QubitArray already set with option ...
+
+    >> Gyromagnetic ratio file
+
+        Read GyroFile : ./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+
+    >> Bath configuration files
+
+      -------------------------------------------------
+        Read BathFile[0] : ./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1
+
+        - Number of bath spins : 469 (nspin = 469)
+      [  0]    P1 1634.321 942.118 1529.545   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  1]    P1 583.866 1420.458 615.216   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  2]    P1 1209.347 1819.439 1539.842   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+           : 
+
+      [467]    P1 1063.065 1494.721 571.971   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [468]    P1 411.102 1105.205 1335.971   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      -------------------------------------------------
+
+    >> Read the Hyperfine interaction from DFT inputfile...
+
+      HF Readmode       :      0 ( Point-dipole tensor )
+
+    >> Bath Hyperfine tensors (radkHz) 
+
+      hypf[ib][iq] (ib : bath spin index, iq : qubit index)
+      hypf[0][0]        :   [ -0.74j+0.00, 0.64j+0.00, -1.43j+0.00, 0.64j+0.00, 0.82j+0.00, 0.51j+0.00, -1.43j+0.00, 0.51j+0.00, -0.08j+0.00 ]
+      hypf[1][0]        :   [ -0.24j+0.00, 0.48j+0.00, -0.83j+0.00, 0.48j+0.00, 0.38j+0.00, 0.45j+0.00, -0.83j+0.00, 0.45j+0.00, -0.14j+0.00 ]
+      hypf[2][0]        :   [ 0.59j+0.00, -0.16j+0.00, -0.10j+0.00, -0.16j+0.00, -0.72j+0.00, -0.79j+0.00, -0.10j+0.00, -0.79j+0.00, 0.13j+0.00 ]
+         :
+
+      hypf[467][0]      :   [ 1.07j+0.00, 0.17j+0.00, -0.25j+0.00, 0.17j+0.00, 0.09j+0.00, 1.51j+0.00, -0.25j+0.00, 1.51j+0.00, -1.16j+0.00 ]
+      hypf[468][0]      :   [ -1.40j+0.00, -0.06j+0.00, 0.65j+0.00, -0.06j+0.00, 0.79j+0.00, 0.02j+0.00, 0.65j+0.00, 0.02j+0.00, 0.60j+0.00 ]
+
+
+    ===============================================================
+
+    ----------------------------------------------------------------------
+    < BathArray > 
+
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   469                  
+      -------------------------------------------------
+      [  0]    P1 1634.321 942.118 1529.545   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  1]    P1 583.866 1420.458 615.216   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [  2]    P1 1209.347 1819.439 1539.842   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+         :
+      [467]    P1 1063.065 1494.721 571.971   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+      [468]    P1 411.102 1105.205 1335.971   ( S = 0.5, gyro = -17608.597, mainspidx = -1 )
+
+      -------------------------------------------------
+
+      -------------------------------------------------
+          Wall time = 0.01318 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Clusterize 
+   ======================================================================
+
+
+	 CCE1 ... 
+		 update "Nk"
+		 0:0  1:469  2:0  
+
+
+	 CCE2 ... 
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+      clusinfo          :   
+
+           0-th order ... 
+           Cluster[0][    0] :   1 (Iter)
+
+           Total 0-Cluster # :  1 # 
+
+
+
+           1-th order ... 
+           Cluster[1][    1] : -101 [0   ]
+           Cluster[1][    2] : -73 [1   ]
+           Cluster[1][    3] : -80 [2   ]
+           Cluster[1][    4] : -138 [3   ]
+                : 
+           Cluster[1][  466] : -165 [465 ]
+           Cluster[1][  467] : -83 [466 ]
+           Cluster[1][  468] : -108 [467 ]
+           Cluster[1][  469] : -87 [468 ]
+
+           Total 1-Cluster # :  469 # 
+
+
+
+           2-th order ... 
+           Cluster[2][    1] :   1 [137, 362 ]
+           Cluster[2][    2] :   1 [163, 390 ]
+           Cluster[2][    3] :   1 [268, 431 ]
+           Cluster[2][    4] :   1 [192, 465 ]
+                : 
+           Cluster[2][25926] :   1 [334, 343 ]
+           Cluster[2][25927] :   1 [143, 257 ]
+           Cluster[2][25928] :   1 [269, 317 ]
+           Cluster[2][25929] :   1 [12 , 415 ]
+
+           Total 2-Cluster # :  25929 # 
+
+
+      -------------------------------------------------
+          Wall time = 0.82817 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Main calculation 
+   ======================================================================
+
+    < gCCE calculation (Single-sample approach) : Iteration # 1 > 
+
+    >> Randomize main-bath states...
+
+        Read StateFile : ./../CCE_Reprod/Bath_Data/1.single_data/state_DiaP1_1ppm_1
+
+      nbathspin (#)     :   469                  
+      -------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[467].state   :   -0.5                 
+      bath[468].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   18.8                 
+      Bath[1].disorder  :   -228                 
+      Bath[2].disorder  :   32.6                 
+         :
+      Bath[467].disorder:   -276                 
+      Bath[468].disorder:   101                  
+
+    >> Set psia, psib from qubit alpha, beta...
+
+      psia              :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from psia, psib...
+
+      psi0              :   [ 0.00j+0.00, 0.71j+0.00, 0.71j+0.00 ]
+
+    >> Calculate 0-th cluster...
+
+        # Wall time : 0.01[s]
+      -------------------------------------------------
+
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 16-th cluster (100%) is computed at 0.48 s
+
+        # Wall time : 0.48[s]
+      -------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 166-th cluster (19%) is computed at 22.61 s
+        At rank 0, 332-th cluster (38%) is computed at 45.40 s
+        At rank 0, 498-th cluster (57%) is computed at 70.10 s
+        At rank 0, 664-th cluster (76%) is computed at 95.44 s
+        At rank 0, 830-th cluster (95%) is computed at 121.01 s
+        At rank 0, 865-th cluster (100%) is computed at 126.71 s
+
+        # Wall time : 126.71[s]
+      -------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+      -------------------------------------------------
+          Wall time = 127.03763 s
+      -------------------------------------------------
+
+
+
+    ===============================================================
+
+        JOB DONE : Wall time = 127.95879 s
+
+    ===============================================================
+
+

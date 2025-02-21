@@ -1,0 +1,27 @@
+#!/bin/sh
+
+tool="VASP"
+fposcar="./VASP_CONTCAR_flat"
+dfname="VB"
+foutcar="./VASP_OUTCAR_flat"
+
+
+# case 1
+HF="on"
+Q="on"
+python ./../../do_mkAQfile.py ${tool} ${fposcar} ${dfname} ${HF} ${Q} ${foutcar}
+
+################################################################################
+<< END
+
+    NOTE!
+
+    1) The outfile name is intrinsically determined as Afile/Qfile
+
+    2) Q tensor file : 
+        
+        eQ value in efg.in have to be 1.0 
+        we don't consider the eQ value in this code
+
+END
+################################################################################

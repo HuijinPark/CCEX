@@ -1,0 +1,52 @@
+&CONTROL
+!calMethod=ensemble
+/
+
+&File
+DefectFile = ../Bath_Data/2.ensemble_data/bath_MoS2_1L_Cimpurity_Defect
+GyroFile= ../Bath_Data/2.ensemble_data/Gyro_MoS2
+!SaveFile= CCE2Out_h_BN_bubble_single_VB_Z_1_FWHM_2
+!SaveFileNoDiv= CCE2Out_h_BN_bubble_single_VB_Z_1_FWHM_2_noDiv
+!SaveFileWiDiv= CCE2Out_h_BN_bubble_single_VB_Z_1_FWHM_2_wiDiv
+!BathFile=  
+!BathStateFile= 
+!P1BathFile = 
+!P1StateFile = 
+/
+
+&DetailOption
+Order = 2
+Pulse = 1
+B0= 500
+deltaT= 0.01
+nStep = 100
+
+alpha =1
+beta =0
+
+rBath = 10
+rDip = 10
+#rDsrdr = 100
+!rBath4C13C = 0
+!r13CP1 = 0
+!r13C13C = 0
+/
+
+&HAMILTONIAN
+enJTEOpt = 0
+!JTEvalue(3) = 4 5 6
+!JTEvalue(4) = 1 2 3 3 3 3 3 
+!JTEvalue(1) = 1 2 3 
+
+HFOpt = 0
+HFFile = 0
+HFCutoff = 0
+
+QuadOpt = 0
+!QuadExp(1)={0,11}    # 95Mo
+!QuadExp(2)=21    # 97Mo
+!QuadExp(3)=311    # 33S
+!QuadFileWiDefect = /home/dlwodnr95/CCE/13.1.TMDC_test_MoS2/3.Config/Qtensor_MoS2_1L_Cimpurity_DFT.dat
+!QuadFileWoDefect = 
+!QuadCellPara = {0, 0, 11.9772682}
+/

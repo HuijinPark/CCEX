@@ -1,0 +1,118 @@
+#!/bin/sh
+
+source ${src} 
+
+B0Fix=${B0Fix}
+rBathFix=${rBathFix}
+rDipFix=${rDipFix}
+#rDsrdrFix=${rDsrdrFix}
+OrderFix=${OrderFix}
+NkFix=${NkFix}
+PulseFix=${PulseFix}
+
+if [ ${VariableName} == "B0" ];then
+    B0Fix=${var}
+elif [ ${VariableName} == "rBath" ];then
+    rBathFix=${var}
+elif [ ${VariableName} == "rDip" ];then
+    rDipFix=${var}
+#elif [ ${VariableName} == "rDsrdr" ];then
+#    rDsrdrFix=${var}
+elif [ ${VariableName} == "Order" ];then
+    OrderFix=${var}
+elif [ ${VariableName} == "Nk" ];then
+    NkFix="${NkFix}  ${var}"
+elif [ ${VariableName} == "Pulse" ];then
+    PulseFix=${var}
+fi
+
+qxyz_tmp="`cat "${DefectFile}"`"
+qxyz=" [ "
+i=0
+for pos in $qxyz_tmp
+do
+	i=$(( ${i} + 1))
+	if [ $i == 3 ]; then
+		qxyz+=" ${pos}]"
+	else
+		qxyz+=" ${pos},"
+	fi
+done
+echo $qxyz
+
+cat << EOF > ${fccein}
+{
+    # Config - Method 
+    "method"        : "${Method}", 
+    "quantity"      : "coherence",
+    
+    # Config - File
+    "gyrofile"      :  "${GyroFile}",
+    "bathfile"      : ["${BathFile}"],
+  #"avaaxfile"     :  "${AvaaxFile}",
+  #"statefile"     :  "${StateFile}",
+  #"exstatefile"   :  "${ExStateFile}",
+
+    # Config - General
+    "order"         : ${OrderFix},
+    "bfield"        : ${B0Fix},
+    "rbath"         : ${rBathFix},
+    "rdip"          : ${rDipFix},
+    "deltat"        : ${deltaTFix},
+    "nstep"         : ${nStepFix},  
+    "seed"          : ${SeedFix},
+
+    # Qubit 
+    "Qubit"   : { 
+                   "nqubit" : 1,
+                   "qubit"  : [ 
+                   {   
+                       "name"   : "qubit1",
+                       "spin"   : 1.0,
+                       "gyro"   : -17608.597050,
+                       "xyz"    : ${qxyz},
+                       "alphams": ${alphaFix},
+                       "betams" : ${betaFix},
+                       "detuning": [0.0]
+                   }],  
+
+					#(unit : kHz),  D = 2.88GHz 
+        			"intmap": [ 
+        			{
+        			    "between": ["qubit1", "qubit1"],
+        			    "tensor": [
+        			        [-960000, 0, 0],
+        			        [0, -960000, 0 ],
+        			        [0, 0, 1920000 ]
+        			    ]
+        			}]
+    }, 
+
+    # Cluster
+    "addsubclus"  : ${addClus}, # true / false
+    "nk"          : ${NkFix}, # default : [0] (all) or [0,0,30,40,50]
+
+    # Pulse
+    "npulse"      : ${PulseFix},
+
+    # Config - Spin tensor
+    "hf_readmode"   : ${HFOpt}, 
+#  "hf_tensorfile" : "${HFFile}",
+#  "hf_cutoff"     : ${HFCutoff}
+#  "qd_readmode"   : ${QuadOpt},
+
+    # Output
+    "savemode"    : "normal"
+
+EOF
+
+if [ -f ${CCEinFile} ]; then
+    echo ",  \"Defect\"         : [" >> ${fccein}
+    cat ${CCEinFile} >> ${fccein}
+    echo "                       ]" >> ${fccein}
+else
+    echo "   ! Warning. CCEinFile :  ${CCEinFile} doesn't exist"
+fi
+
+echo "}" >> ${fccein}
+

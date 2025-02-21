@@ -1,0 +1,89 @@
+#!/bin/sh
+#SBATCH -J CCE2_DiaVp_12ppm_Order
+#SBATCH -p 64core
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=64
+#SBATCH --cpus-per-task=1
+#SBATCH --out outfile
+#SBATCH --time=2-00:00:00
+#SBATCH --qos=small-2
+#SBATCH --mem-per-cpu=0
+
+module purge 
+module load  intel-23.2/icc-23.2  intel-23.2/gsl-2.8  intel-23.2/eigen-3.4.0
+
+NTASKS=$(($SLURM_NTASKS_PER_NODE * $SLURM_JOB_NUM_NODES))
+
+echo "NTASKS =" $NTASKS
+echo "NUM_NODES = " $SLURM_JOB_NUM_NODES
+env | grep SLURM
+
+node_process=$NTASKS
+
+#############################################
+# VariableName
+
+varOpt=( 2 )
+
+s="$SLURM_ARRAY_TASK_ID"
+varDir="${varOpt[s]}"
+
+cd ${varDir}
+
+#############################################
+# Main Paramaters
+
+#bath number
+cista="1"
+ciend="1"
+
+sista="1"
+siend="1"
+
+configures="$(seq -s ' ' ${cista} 1 ${ciend})"
+states="$(seq -s ' ' ${sista} 1 ${siend})"
+
+Nstate=$(( ${siend} - ${sista} + 1 ))
+
+#option input
+CodePath="/home/huijin/git/CCEX/bin/main.out"
+
+# inputfiles
+mkdir "./rawdata/"
+option_input="./ccein.js"
+BathFile="/home/huijin/git/CCEX/example/Diamond_NV_VpBath/bath/12ppm/bath_DiaVp_12ppm_"
+AvaaxFile="Random"
+StateFile="Random"
+ExStateFile="Random"
+
+# outfiles
+outFile="./rawdata/CCE2_DiaVp_12ppm_Order_${varDir}_"
+
+#time checking
+startTime=$(date +%s.%N)
+startTime_string=`date`
+#############################################################################
+#about CCE2 calculation 
+
+for m in $configures
+do
+   	 mpirun -n ${node_process} ${CodePath} -f ${option_input} -I "${BathFile}${m}" -a "${AvaaxFile}${m}" -s "${StateFile}" -S "${ExStateFile}" -o "${outFile}${m}" -N "$Nstate" > "Process_${m}"
+
+done
+
+
+#############################################################################$
+endTime=$(date +%s.%N)
+endTime_string=`date`
+
+elapsed=`echo "($endTime-$startTime)" |bc`
+htime=`echo "$elapsed/3600"|bc`
+mtime=`echo "($elapsed/60)-($htime*60)"|bc`
+stime=`echo "$elapsed-(($elapsed/60)*60)"|bc`
+echo "Start time : $startTime_string"
+echo "End time   : $endTime_string"
+echo "Total time : ${htime}H ${mtime}M ${stime}S"
+#############################################
+
+cd ..
+

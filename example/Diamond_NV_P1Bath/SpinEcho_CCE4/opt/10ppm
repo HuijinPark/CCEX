@@ -1,0 +1,49 @@
+#!/bin/sh
+
+Method="CCE"
+
+Directory="/home/huijin/tutorial/Diamond_NV_P1Bath/bath"
+
+DefectFile="${Directory}/14N_10ppm/bath_DiaP1_10ppm_Defect"
+BathFile="${Directory}/14N_10ppm/bath_DiaP1_10ppm_"
+GyroFile="${Directory}/DiaP1_gyro"
+AvaaxFile="Random"
+StateFile="Random"
+ExStateFile="Random"
+CCEinFile="${Directory}/DiaP1detun_14N_exp.json"
+
+## Variables ##
+rBathOpt="370"
+rDipOpt="330"
+B0Opt="500"
+OrderOpt="4"
+NkOpt=""
+
+## Fixed parameters ## 
+OrderFix="4"
+PulseFix="1"
+deltaTFix="0.0005"
+nStepFix="300"
+
+B0Fix="500"
+rBathFix="370"
+rDipFix="330"
+alphaFix="-1"
+betaFix="0"
+
+# clustering algo
+addClus="true"
+NkFix="[0, 0, 0, 5000, 10000]"
+
+# Hamiltonian
+HFOpt=0
+HFFile=0 
+HFCutoff=0
+QuadOpt=0
+
+# JOB
+JOBNAME="CCE4_DiaP1_10ppm_"
+OutFileDir="./rawdata/"
+OutFileHead="CCE4_DiaP1_10ppm_"
+OutFileTail=""
+

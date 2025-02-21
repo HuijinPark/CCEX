@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="structPulse" kind="struct" prot="public">
+    <compoundname>Pulse</compoundname>
+    <includes refid="pulse_8h" local="no">pulse.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structPulse_1ab083ce764799722049dac44ad7479bad" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int Pulse::npulse</definition>
+        <argsstring></argsstring>
+        <name>npulse</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The number of pulse (default : 0) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="12" column="1" bodyfile="/home/huijin/git/CCEX/include/pulse.h" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structPulse_1a4fcad551982a417a36f160cd0a6f0975" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Pulse::pulseiter</definition>
+        <argsstring></argsstring>
+        <name>pulseiter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The pulse iteration (default : false) About npulse (Details) npulse = 0 : Ramsey (default) npulse = 1 : HahnEcho (default) npulse &gt; 1 : CPMG (default) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="13" column="1" bodyfile="/home/huijin/git/CCEX/include/pulse.h" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char Pulse::pulsename[100]</definition>
+        <argsstring>[100]</argsstring>
+        <name>pulsename</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The pulsename (default : &quot;None&quot;) About pulsename (Details) pulsename = HahnEcho | Ramsey | CPMG above pulsename option doesn&apos;t need a sequence </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="20" column="1" bodyfile="/home/huijin/git/CCEX/include/pulse.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" prot="public" static="no" mutable="no">
+        <type>double **</type>
+        <definition>double** Pulse::sequence</definition>
+        <argsstring></argsstring>
+        <name>sequence</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>pulse sequence (default : NULL) About sequence (Details) By using this parameter, we can adjust/delay pulse timing. (No unit)</para><para>Input file format: sequence = { t1, t2, t3, ... , tn } (tn &lt; 1.0, n = npulse) (only pulse timing) ti is the time fraction of i-th pulse</para><para>Array format: sequence is started with 0.0 and end with 1.0 sequence[npulse+1][4] (defulat : NULL) sequence[ipulse][0] = Fraction of Previous pulse sequence[ipulse][1] = Fraction of current pulse sequence[ipulse][2] = Difference of Fractions &quot;[i][1] - [i][0]&quot; sequence[ipulse][3] = The Index that have the same difference value if there is no the same difference value then give the current index ( This would reduce the calculational time cost ) e.g. Input file format : npulse = 0 (Ramasey) sequence parameter : sequence[0] = 0.0 , 1.0 , 1.0 , 0 e.g. Input file format : sequence = { 0.5 } (HahnEcho) sequence parameter : sequence[0] = 0.0 , 0.5 , 0.5 , 0 sequence[1] = 0.5 , 1.0 , 0.5 , 0 e.g. Input file format : sequence = { 0.25, 0.75 } (CPMG) sequence parameter : sequence[0] = 0.0 , 0.25 , 0.25 , 0 sequence[1] = 0.25 , 0.75 , 0.5 , 1 sequence[2] = 0.75 , 1.0 , 0.25 , 0 </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/pulse.h" line="26" column="1" bodyfile="/home/huijin/git/CCEX/include/pulse.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This structure contains the pulse-related parameters. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/huijin/git/CCEX/include/pulse.h" line="10" column="1" bodyfile="/home/huijin/git/CCEX/include/pulse.h" bodystart="10" bodyend="61"/>
+    <listofallmembers>
+      <member refid="structPulse_1ab083ce764799722049dac44ad7479bad" prot="public" virt="non-virtual"><scope>Pulse</scope><name>npulse</name></member>
+      <member refid="structPulse_1a4fcad551982a417a36f160cd0a6f0975" prot="public" virt="non-virtual"><scope>Pulse</scope><name>pulseiter</name></member>
+      <member refid="structPulse_1a94ae332f008b81e37d8df344a3c7d9b7" prot="public" virt="non-virtual"><scope>Pulse</scope><name>pulsename</name></member>
+      <member refid="structPulse_1af1bd05f903769ac217b18fb0c2ebc31a" prot="public" virt="non-virtual"><scope>Pulse</scope><name>sequence</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

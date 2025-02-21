@@ -1,0 +1,11 @@
+#!/bin/sh
+
+doxygen Doxyfile
+
+wkdir="`pwd`"
+
+cd ../
+
+./goto_git_branch
+
+cd ${wkdir}

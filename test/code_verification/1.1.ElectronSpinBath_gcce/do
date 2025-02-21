@@ -1,0 +1,17 @@
+#!/bin/sh
+
+PwdDir="`pwd`"
+
+cd ../../../
+
+    make
+
+cd "${PwdDir}" 
+
+code="../../../bin/main.out"
+ccein="./cce.json"
+
+process=30
+bathfile="./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1"
+
+mpirun -n ${process} ${code} -f ${ccein} -I ${bathfile} > process

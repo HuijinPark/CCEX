@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="structBathSpin" kind="struct" prot="public">
+    <compoundname>BathSpin</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structBathSpin_1a2158c37aefcd8093520106945f5f7463" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char BathSpin::name[MAX_CHARARRAY_LENGTH]</definition>
+        <argsstring>[MAX_CHARARRAY_LENGTH]</argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>the name of spin </para>        </briefdescription>
+        <detaileddescription>
+<para>Value can be obtained from &amp;Bath -&gt; bathfile (no default value) <xrefsect id="todo_1_todo000001"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; bathfile </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="26" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1a0738a356e1f78530032d8bc8de02fbd8" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float BathSpin::spin</definition>
+        <argsstring></argsstring>
+        <name>spin</name>
+        <briefdescription>
+<para>Spin quantum number. </para>        </briefdescription>
+        <detaileddescription>
+<para>Value can be obtained from &amp;Bath -&gt; gyrofile (no default value) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="32" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1a8c6487e73c2ef39b7a12d293ff5a1e4d" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double BathSpin::gyro</definition>
+        <argsstring></argsstring>
+        <name>gyro</name>
+        <briefdescription>
+<para>Gyromagnetic ratio (Unit : radkHz/Gauss) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value can be obtained from &amp;Bath -&gt; gyrofile (no default value) <xrefsect id="todo_1_todo000002"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; gyrofile </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="39" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="39" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1ae88f65d01b379916181269efa6c33e8a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double BathSpin::xyz[3]</definition>
+        <argsstring>[3]</argsstring>
+        <name>xyz</name>
+        <briefdescription>
+<para>Quadrupole moment (Unit : 10^-30 [m^2]) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value can be obtained from &amp;Bath -&gt; qtensorfile (default : 0.0)<itemizedlist>
+<listitem><para>cf. eQ = 20.44[Q/millibarn = Q * 10^-31 m^2] , in DFT eQ = 2.044 * 10^-30 [m^2] <simplesect kind="note"><para>Unit in input file (cce.in) : (Unit : 10^-30 [m^2]) </para></simplesect>
+<xrefsect id="todo_1_todo000003"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; qtensorfile </para><para>When you read quadrupole tensor,<itemizedlist>
+<listitem><para>you have to get them with unit Hatree/Bohr_radius^2 (QE) -&gt; Think about How to do this</para></listitem><listitem><para>you have to get them with unit MHz (VASP) -&gt; Think about How to do this</para></listitem><listitem><para>which one is better? -&gt; Think about How to do this </para></listitem></itemizedlist>
+</para><para>Now, there is no default value for eq. In future, add the information of each spin&apos; eQ in code internally. </para></xrefdescription></xrefsect>Spin position (Unit : Angstrom)</para></listitem></itemizedlist>
+</para><para>Value can be obtained from &amp;Bath -&gt; bathfile (no default value) <simplesect kind="note"><para>The x,y,z position can be adjusted by &amp;Bath -&gt; bathadjust for each bath file </para></simplesect>
+<xrefsect id="todo_1_todo000004"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; bathfile </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="61" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1a6348f965fe820b03094f4c620ab7ffe0" prot="public" static="no" mutable="no">
+        <type>float</type>
+        <definition>float BathSpin::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+<para>Spin sub-level in z-basis (if &amp;General -&gt; nstate != 0, i.e. single-sample approach) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value can be obtained from the following : (no default value)<itemizedlist>
+<listitem><para>&amp;Bath -&gt; statefile (fixed) // old version</para></listitem><listitem><para>&amp;General -&gt; nstate (randomly generated)</para></listitem><listitem><para>&amp;General -&gt; seed (fixed) // new version to fix <simplesect kind="note"><para>The state would be normalized and The length of state = 2*spin+1 </para></simplesect>
+<xrefsect id="todo_1_todo000005"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; &quot;statefile&quot; -&gt; &quot;substatefile&quot; tag </para><para>Add documentation for cce.in : &amp;General -&gt; &quot;nstate&quot; and &amp;General -&gt; &quot;seed&quot; tag </para><para>Replace the way to get fixed state from reading &quot;file&quot; to using &quot;seed&quot; </para></xrefdescription></xrefsect></para></listitem></itemizedlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="78" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1a045005fcc1f5517a81e47e4a8b30e2f4" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double BathSpin::detuning</definition>
+        <argsstring></argsstring>
+        <name>detuning</name>
+        <briefdescription>
+<para>The detuning value of a bath spin (Unit : radkHz) </para>        </briefdescription>
+        <detaileddescription>
+<para>The artifitial effect to shift energy level of a qubit. Value can be obtained from &amp;Bath -&gt; &quot;bdetuning&quot; (default : 0.0) <simplesect kind="note"><para>Unit in input file (cce.in) : MHz </para></simplesect>
+<xrefsect id="todo_1_todo000006"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; &quot;bdetuning&quot; tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="90" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1aad59ec954d15643047790f148dcca39b" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double BathSpin::disorder</definition>
+        <argsstring></argsstring>
+        <name>disorder</name>
+        <briefdescription>
+<para>The mean-field effect from zz-coupling with other bath spins (Unit : radkHz) </para>        </briefdescription>
+        <detaileddescription>
+<para>Automatically set if &amp;General -&gt; &quot;nstate&quot; tag is non-zero (default : 0.0) <xrefsect id="todo_1_todo000007"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; &quot;disorder&quot; tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="97" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1aad4ead2e39f4ae27fab5701662e7ee27" prot="public" static="no" mutable="no">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd* BathSpin::hypf</definition>
+        <argsstring></argsstring>
+        <name>hypf</name>
+        <briefdescription>
+<para>The hyperfine interaction between qubits and a bath spin (Unit : radkHz) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value is obtained from &amp;Bath -&gt; &quot;Atensorfile&quot; (default : 0.0)<itemizedlist>
+<listitem><para>hypf[i] : the hyperfine interaction with i-th qubit <simplesect kind="note"><para>Unit in input file (cce.in) : MHz </para></simplesect>
+<xrefsect id="todo_1_todo000008"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; &quot;Atensorfile&quot; tag </para><para>IMPORTANT : The hyperfine interaction to be deleted if <ref refid="structQubitArray" kindref="compound">QubitArray</ref> include the one of the bath spin in A tensor file </para></xrefdescription></xrefsect></para></listitem></itemizedlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="107" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1a304f556a5ba51a1275171e40d212d0d2" prot="public" static="no" mutable="no">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathSpin::quad</definition>
+        <argsstring></argsstring>
+        <name>quad</name>
+        <briefdescription>
+<para>The quadrupole interaction a bath spin (Unit : radkHz) </para>        </briefdescription>
+        <detaileddescription>
+<para>Value is obtained from &amp;Bath -&gt; &quot;qtensorfile&quot; (default : 0.0) <simplesect kind="note"><para>- Unit in input file (cce.in) &amp;<ref refid="structDefect" kindref="compound">Defect</ref> -&gt; &quot;dquad&quot; : MHz<itemizedlist>
+<listitem><para>Unit in input file (cce.in) &amp;Bath -&gt; &quot;qtensorfile&quot; : Hatree/Bohr_radius^2 </para></listitem></itemizedlist>
+</para></simplesect>
+<xrefsect id="todo_1_todo000009"><xreftitle>Todo</xreftitle><xrefdescription><para>Above </para><para>IMPORTANT : The quadrupole interaction to be deleted if <ref refid="structQubitArray" kindref="compound">QubitArray</ref> include the one of the bath spin in Q tensor file </para></xrefdescription></xrefsect><simplesect kind="note"><para>have to be unified with one unit (MHz seems better.. but the problem is how to get Qtensorfile..) </para></simplesect>
+<xrefsect id="todo_1_todo000010"><xreftitle>Todo</xreftitle><xrefdescription><para>Add documentation for cce.in : &amp;Bath -&gt; &quot;qtensorfile&quot; tag </para></xrefdescription></xrefsect></para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="118" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1afb32f13329ea501039ad7d62d0e6e2a5" prot="public" static="no" mutable="no">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd BathSpin::hypf_sub</definition>
+        <argsstring></argsstring>
+        <name>hypf_sub</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="121" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structBathSpin_1a26db008dfcd1cbdff57b63dfdbfbaf78" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int BathSpin::mainspidx</definition>
+        <argsstring></argsstring>
+        <name>mainspidx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/bath.h" line="122" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="structBathSpin" kindref="compound">BathSpin</ref> structure contains each <ref refid="structBathSpin" kindref="compound">BathSpin</ref>&apos;s information. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>When you make this structure, the following action would be done automatically. (1) state value would be allocated (2) The dimension of alpha, beta would be checked if it is 2*spin+1 (3) The state would be normalized </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/home/huijin/git/CCEX/include/bath.h" line="17" column="1" bodyfile="/home/huijin/git/CCEX/include/bath.h" bodystart="17" bodyend="124"/>
+    <listofallmembers>
+      <member refid="structBathSpin_1a045005fcc1f5517a81e47e4a8b30e2f4" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>detuning</name></member>
+      <member refid="structBathSpin_1aad59ec954d15643047790f148dcca39b" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>disorder</name></member>
+      <member refid="structBathSpin_1a8c6487e73c2ef39b7a12d293ff5a1e4d" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>gyro</name></member>
+      <member refid="structBathSpin_1aad4ead2e39f4ae27fab5701662e7ee27" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>hypf</name></member>
+      <member refid="structBathSpin_1afb32f13329ea501039ad7d62d0e6e2a5" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>hypf_sub</name></member>
+      <member refid="structBathSpin_1a26db008dfcd1cbdff57b63dfdbfbaf78" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>mainspidx</name></member>
+      <member refid="structBathSpin_1a2158c37aefcd8093520106945f5f7463" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>name</name></member>
+      <member refid="structBathSpin_1a304f556a5ba51a1275171e40d212d0d2" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>quad</name></member>
+      <member refid="structBathSpin_1a0738a356e1f78530032d8bc8de02fbd8" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>spin</name></member>
+      <member refid="structBathSpin_1a6348f965fe820b03094f4c620ab7ffe0" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>state</name></member>
+      <member refid="structBathSpin_1ae88f65d01b379916181269efa6c33e8a" prot="public" virt="non-virtual"><scope>BathSpin</scope><name>xyz</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

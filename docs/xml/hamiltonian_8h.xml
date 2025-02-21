@@ -1,0 +1,680 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="hamiltonian_8h" kind="file">
+    <compoundname>hamiltonian.h</compoundname>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includedby refid="bath_8cpp" local="yes">/home/huijin/git/CCEX/src/bath.cpp</includedby>
+    <includedby refid="defect_8cpp" local="yes">/home/huijin/git/CCEX/src/defect.cpp</includedby>
+    <includedby refid="hamiltonian_8cpp" local="yes">/home/huijin/git/CCEX/src/hamiltonian.cpp</includedby>
+    <includedby refid="qubit_8cpp" local="yes">/home/huijin/git/CCEX/src/qubit.cpp</includedby>
+    <includedby refid="reader_8cpp" local="yes">/home/huijin/git/CCEX/src/reader.cpp</includedby>
+    <includedby refid="simulator_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator.cpp</includedby>
+    <includedby refid="simulator__cce_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator_cce.cpp</includedby>
+    <includedby refid="simulator__gcce_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator_gcce.cpp</includedby>
+    <includedby refid="simulator__hamiltonian_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp</includedby>
+    <incdepgraph>
+      <node id="85">
+        <label>/home/huijin/git/CCEX/include/hamiltonian.h</label>
+        <link refid="hamiltonian.h"/>
+        <childnode refid="86" relation="include">
+        </childnode>
+      </node>
+      <node id="87">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="90">
+        <label>unistd.h</label>
+      </node>
+      <node id="88">
+        <label>iostream</label>
+      </node>
+      <node id="89">
+        <label>mpi.h</label>
+      </node>
+      <node id="86">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="87" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="89" relation="include">
+        </childnode>
+        <childnode refid="90" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="hamiltonian_8h_1a4dc8afed37093f4cc043cfc9dd2c2db5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd Pauli_matrix_I</definition>
+        <argsstring>(int size)</argsstring>
+        <name>Pauli_matrix_I</name>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="6" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="331" bodyend="343"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a32881a50d19996cd349deb8870b7ff7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd Pauli_matrix_X</definition>
+        <argsstring>(int size)</argsstring>
+        <name>Pauli_matrix_X</name>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="7" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="345" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a5bce21904c25db932bf41194ab7c27b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd Pauli_matrix_Y</definition>
+        <argsstring>(int size)</argsstring>
+        <name>Pauli_matrix_Y</name>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="8" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="359" bodyend="373"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1adac30a826d9f0385f1a0929c89a2669d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd Pauli_matrix_Z</definition>
+        <argsstring>(int size)</argsstring>
+        <name>Pauli_matrix_Z</name>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="9" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="375" bodyend="387"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1aefa0a04f882701f9145227945bcc7e22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd* getGeneralPauliOperators</definition>
+        <argsstring>(MatrixXcd alpha, MatrixXcd beta)</argsstring>
+        <name>getGeneralPauliOperators</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>alpha</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>beta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="10" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="399" bodyend="436"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1aaf58877c21f9a36357989f8b5bd3a3da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd* getPauliOperators</definition>
+        <argsstring>(int size)</argsstring>
+        <name>getPauliOperators</name>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="11" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="389" bodyend="396"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1acff04356cf31a922d9bdfe2ec68bba41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd calZeemanVector</definition>
+        <argsstring>(double gamma, float *bfield)</argsstring>
+        <name>calZeemanVector</name>
+        <param>
+          <type>double</type>
+          <declname>gamma</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>bfield</declname>
+          <defname>B0</defname>
+        </param>
+        <briefdescription>
+<para>Zeeman Interaction vector[rad kHz]. </para>        </briefdescription>
+        <detaileddescription>
+<para>The Zeeman Interaction vector is given by mu_B (B * g) g&apos; = eye(3) * -gamma Zeeman vector = [ Bxgx , Bygy , Bzgz ] <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">gamma</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>gyromagnetic ratio [radkHz/G] </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">B0</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>magnetic field vector [G] </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zeeman Interaction vector [rad kHz] </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="13" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="50" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1ab515e2dc05fdd7f2524c9aee6e4d15ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd calDetuningVector</definition>
+        <argsstring>(double detuning)</argsstring>
+        <name>calDetuningVector</name>
+        <param>
+          <type>double</type>
+          <declname>detuning</declname>
+          <defname>detun</defname>
+        </param>
+        <briefdescription>
+<para>Detuning Interaction vector[rad kHz]. </para>        </briefdescription>
+        <detaileddescription>
+<para>The Detuning Interaction vector is given by [0,0,detun] <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">detun</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>detuning [rad kHz] </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Detuning Interaction vector [rad kHz] </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="14" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="65" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a282204e16abcfff12f7edac731610754" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd calOverhauserVector</definition>
+        <argsstring>(double overhauser)</argsstring>
+        <name>calOverhauserVector</name>
+        <param>
+          <type>double</type>
+          <declname>overhauser</declname>
+          <defname>overhaus</defname>
+        </param>
+        <briefdescription>
+<para>Overhausler Interaction vector[rad kHz]. </para>        </briefdescription>
+        <detaileddescription>
+<para>The Overhausler Interaction vector is given by [0,0,overhaus] <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">overhaus</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>overhausler effect [rad kHz] </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Overhausler Interaction vector [rad kHz] </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="15" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="78" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a593082ae4bd73c95fcc0cc8fe363c286" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd calPointDipoleTensor</definition>
+        <argsstring>(double xyz1[3], double xyz2[3], double gamma1, double gamma2)</argsstring>
+        <name>calPointDipoleTensor</name>
+        <param>
+          <type>double</type>
+          <declname>xyz1</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>xyz2</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>gamma1</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>gamma2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="16" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="85" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a1a44d89897af7cc84d1d5ef126e3198d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd calHamiltonianHeteroInt</definition>
+        <argsstring>(MatrixXcd **pmats, MatrixXcd tensor, int nspin, int ispin, int jspin)</argsstring>
+        <name>calHamiltonianHeteroInt</name>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>pmats</declname>
+          <defname>Pmats</defname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>tensor</declname>
+          <defname>Tensor</defname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+          <defname>nSpin</defname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ispin</declname>
+          <defname>iSpin</defname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>jspin</declname>
+          <defname>jSpin</defname>
+        </param>
+        <briefdescription>
+<para>Hamiltonian for interacting two spins. </para>        </briefdescription>
+        <detaileddescription>
+<para>The Hamiltonian is given by (S1 * Tensor * S2) <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">Pmat1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Spin operator vector for first spin </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">Tensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>3x3 interaction tensor </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">Pmat2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Spin operator vector for second spin </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Hamiltonian interacting two spins (Pmat1[0,1,2] * Tensor * Pmat2[0,1,2]) </para></simplesect>
+<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix X Pmat[1] = Pauli matrix Y Pmat[2] = Pauli matrix Z </para><simplesectsep/><para>The dimension of Returned Hamiltonian is expanded based on two spins </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="18" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="151" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1abe11bc189bce1ee541497230b5b5ae91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd calHamiltonianSelfInt</definition>
+        <argsstring>(MatrixXcd *pmat, MatrixXcd tensor)</argsstring>
+        <name>calHamiltonianSelfInt</name>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>pmat</declname>
+          <defname>Pmat</defname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>tensor</declname>
+          <defname>Tensor</defname>
+        </param>
+        <briefdescription>
+<para>Hamiltonian for self interaction. </para>        </briefdescription>
+        <detaileddescription>
+<para>The Hamiltonian is given by (Pmat * Tensor * Pmat) <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">Pmat</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Spin operator vector for single spin </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">Tensor</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>3x3 interaction tensor </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix I Pmat[1] = Pauli matrix X Pmat[2] = Pauli matrix Y Pmat[3] = Pauli matrix Z </para></simplesect>
+<simplesect kind="return"><para>Hamiltonian for self interaction (Pmat * Tensor * Pmat) </para></simplesect>
+<simplesect kind="note"><para>The dimension of Returned Hamiltonian is the same dimension as the single spin </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="19" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="315" bodyend="329"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a9e4b5942cc2603bf186ba957859173d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd calHamiltonianSingleInt</definition>
+        <argsstring>(MatrixXcd Vector, MatrixXcd *pmat1)</argsstring>
+        <name>calHamiltonianSingleInt</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>Vector</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>pmat1</declname>
+          <defname>Pmat1</defname>
+        </param>
+        <briefdescription>
+<para>Hamiltonian for single spin. </para>        </briefdescription>
+        <detaileddescription>
+<para>The Hamiltonian is given by (Vector * Pmat) <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">Vector</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>1x3 matrix </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">Pmat</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pauli matrix for single spin </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix I Pmat[1] = Pauli matrix X Pmat[2] = Pauli matrix Y Pmat[3] = Pauli matrix Z </para></simplesect>
+<simplesect kind="return"><para>Hamiltonian for single spin (Vector * Pmat) </para></simplesect>
+<simplesect kind="note"><para>The dimension of Returned Hamiltonian is the same dimension as the single spin </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="20" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="278" bodyend="299"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1adfea46d311e2e68e70ca00cda8cda30a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd expandHamiltonian</definition>
+        <argsstring>(MatrixXcd **pmats, MatrixXcd Hi, int nspin, int ispin)</argsstring>
+        <name>expandHamiltonian</name>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>pmats</declname>
+          <defname>Pmats</defname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>Hi</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+          <defname>nSpin</defname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ispin</declname>
+          <defname>iSpin</defname>
+        </param>
+        <briefdescription>
+<para>Matrix expand to the whole Hilbert space. </para>        </briefdescription>
+        <detaileddescription>
+<para>The matrix is expanded to the whole Hilbert space <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">Pmats</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Spin operator vector for single spin </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">Hi</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Hamiltonian for single spin </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">nSpin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The number of spins </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">iSpin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The index of spin </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expanded Hamiltonian </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="21" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="226" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a736140376172e612dad1a5d2783caf93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd ZeemanInt</definition>
+        <argsstring>(double gamma, float *B0, MatrixXcd *pmat, int m)</argsstring>
+        <name>ZeemanInt</name>
+        <param>
+          <type>double</type>
+          <declname>gamma</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>B0</declname>
+        </param>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>pmat</declname>
+          <defname>Pmat</defname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>m</declname>
+        </param>
+        <briefdescription>
+<para>point-dipole interaction tensor </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername direction="in">xyz1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>position of spin 1 </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">xyz2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>position of spin 2 </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">gamma1</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>gyromagnetic ratio of spin 1 </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername direction="in">gamma2</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>gyromagnetic ratio of spin 2 </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>point-dipole interaction tensor</para></simplesect>
+The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi * hbar) ) * (gamma1 * gamma2 * mu_B^2) * (S1 dot S2 - 3(S1 dot r)(S2 dot r)/r^2 unit : (1/r^3) * (mu_0 / (4 * pi * hbar) ) * (gamma1 * gamma2 * mu_B^2) 1/r^3 : A^-3 mu_0 : N/A^2 hbar : J*s gamma1 : radkHz/G -&gt; radkHz/T gamma2 : radkHz/G -&gt; radkHz/T mu_B : J/T </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="23" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="25" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a736673e374275abc5e2121d6d58a3365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int* getIndexInOrder</definition>
+        <argsstring>(VectorXcd eigenValues)</argsstring>
+        <name>getIndexInOrder</name>
+        <param>
+          <type>VectorXcd</type>
+          <declname>eigenValues</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="25" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="478" bodyend="498"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a6a5afd891b7cbf5044236d29d4c501b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>VectorXcd</type>
+        <definition>VectorXcd sortEigenValues</definition>
+        <argsstring>(VectorXcd eigenValues, int *idx)</argsstring>
+        <name>sortEigenValues</name>
+        <param>
+          <type>VectorXcd</type>
+          <declname>eigenValues</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="26" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="500" bodyend="511"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1a6ca9fa8e295520b6f9feaf132d6e5aeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd sortEigenVectors</definition>
+        <argsstring>(MatrixXcd eigenVectors, int *idx)</argsstring>
+        <name>sortEigenVectors</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>eigenVectors</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="27" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="513" bodyend="527"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1ab8a2bf369cc969225922b0240f6a5009" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool isInvolutory</definition>
+        <argsstring>(MatrixXcd a)</argsstring>
+        <name>isInvolutory</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="29" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="440" bodyend="459"/>
+      </memberdef>
+      <memberdef kind="function" id="hamiltonian_8h_1acdf8fdfd0fa0f7568262d98de16e97e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool isSame</definition>
+        <argsstring>(MatrixXcd a, MatrixXcd b)</argsstring>
+        <name>isSame</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/hamiltonian.h" line="30" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="461" bodyend="475"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_HAMILTONIAN_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_HAMILTONIAN_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal">MatrixXcd<sp/>Pauli_matrix_I(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="7"><highlight class="normal">MatrixXcd<sp/>Pauli_matrix_X(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="8"><highlight class="normal">MatrixXcd<sp/>Pauli_matrix_Y(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="9"><highlight class="normal">MatrixXcd<sp/>Pauli_matrix_Z(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="10"><highlight class="normal">MatrixXcd*<sp/>getGeneralPauliOperators(MatrixXcd<sp/>alpha,<sp/>MatrixXcd<sp/>beta);</highlight></codeline>
+<codeline lineno="11"><highlight class="normal">MatrixXcd*<sp/>getPauliOperators(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size);</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal">MatrixXcd<sp/>calZeemanVector(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gamma,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>bfield);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">MatrixXcd<sp/>calDetuningVector(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>detuning);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal">MatrixXcd<sp/>calOverhauserVector(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>overhauser);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">MatrixXcd<sp/>calPointDipoleTensor(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>xyz1[3],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>xyz2[3],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gamma1,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gamma2);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">MatrixXcd<sp/>calHamiltonianHeteroInt(MatrixXcd**<sp/>pmats,<sp/>MatrixXcd<sp/>tensor,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ispin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>jspin);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">MatrixXcd<sp/>calHamiltonianSelfInt(MatrixXcd*<sp/>pmat,<sp/>MatrixXcd<sp/>tensor);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">MatrixXcd<sp/>calHamiltonianSingleInt(MatrixXcd<sp/>Vector,<sp/>MatrixXcd*<sp/>pmat1);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal">MatrixXcd<sp/>expandHamiltonian(MatrixXcd**<sp/>pmats,<sp/>MatrixXcd<sp/>Hi,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ispin);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal">MatrixXcd<sp/>ZeemanInt(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gamma,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>B0,<sp/>MatrixXcd*<sp/>pmat,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>m);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>getIndexInOrder(VectorXcd<sp/>eigenValues);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">VectorXcd<sp/>sortEigenValues(VectorXcd<sp/>eigenValues,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>idx);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">MatrixXcd<sp/>sortEigenVectors(MatrixXcd<sp/>eigenVectors,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>idx);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isInvolutory(MatrixXcd<sp/>a);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isSame(MatrixXcd<sp/>a,<sp/>MatrixXcd<sp/>b);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_HAMILTONIAN_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/hamiltonian.h"/>
+  </compounddef>
+</doxygen>

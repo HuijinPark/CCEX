@@ -1,0 +1,18 @@
+#!/bin/sh
+
+ConcList=( 1 )
+
+for (( i=0; i<${#ConcList[@]}; i++)) 
+do
+    SourceFileName="${ConcList[i]}ppm"
+    SourceFileDir="./opt/"
+    export SourceFileDir;
+    export SourceFileName;
+
+    ./domkjobs RM
+    ./domkjobs MKE 
+#    ./domkjobs RunS 
+#    ./domkjobs DS 
+#    ./domkjobs DSA 
+
+done 

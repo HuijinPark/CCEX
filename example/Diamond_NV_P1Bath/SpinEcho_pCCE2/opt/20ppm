@@ -1,0 +1,56 @@
+#!/bin/sh
+
+Method="pCCE"
+
+Directory="/home/huijin/git/CCEX/example/Diamond_NV_P1Bath/bath"
+
+DefectFile="${Directory}/14N_20ppm/bath_DiaP1_20ppm_Defect"
+BathFile="${Directory}/14N_20ppm/bath_DiaP1_20ppm_"
+GyroFile="${Directory}/DiaP1_gyro"
+AvaaxFile="Random"
+StateFile="Random"
+ExStateFile="Random"
+CCEinFile="${Directory}/DiaP1detun_14N_exp.json"
+
+## Variables ##
+rBathOpt="320"
+rDipOpt="290"
+B0Opt="500"
+OrderOpt="2"
+NkOpt=""
+sKOpt="1 2 3 4"
+
+## Fixed parameters ## 
+OrderFix="2"
+PulseFix="1"
+deltaTFix="0.0004"
+nStepFix="300"
+
+B0Fix="500"
+rBathFix="320"
+rDipFix="290"
+alphaFix="-1"
+betaFix="0"
+
+# clustering algo
+ClusAlgo="0"
+addClus="0"
+NkFix="[0,0,0]"
+sKFix=1 
+MaxIterFix=1000
+MaxTrialFix=1000
+KmeansPpFix=true
+IterDetailFix=true
+
+# Hamiltonian
+HFOpt=0
+HFFile=0 
+HFCutoff=0
+QuadOpt=0
+
+# JOB
+JOBNAME="CCE2_DiaP1_20ppm_"
+OutFileDir="./rawdata/"
+OutFileHead="CCE2_DiaP1_20ppm_"
+OutFileTail=""
+

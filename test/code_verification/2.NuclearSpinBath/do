@@ -1,0 +1,14 @@
+#!/bin/sh
+
+cd ../../../
+
+    make
+
+cd ./example/code_verification/2.NuclearSpinBath/
+
+code="../../../bin/main.out"
+ccein="./cce.json"
+
+process=1
+
+mpirun -np ${process} ${code} -f ${ccein} > process

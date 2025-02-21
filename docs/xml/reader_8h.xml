@@ -1,0 +1,1010 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+  <compounddef id="reader_8h" kind="file">
+    <compoundname>reader.h</compoundname>
+    <includes refid="qubit_8h" local="yes">qubit.h</includes>
+    <includes refid="bath_8h" local="yes">bath.h</includes>
+    <includes refid="defect_8h" local="yes">defect.h</includes>
+    <includes refid="general_8h" local="yes">general.h</includes>
+    <includedby refid="reader_8cpp" local="yes">/home/huijin/git/CCEX/src/reader.cpp</includedby>
+    <includedby refid="simulator_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator.cpp</includedby>
+    <incdepgraph>
+      <node id="155">
+        <label>/home/huijin/git/CCEX/include/reader.h</label>
+        <link refid="reader.h"/>
+        <childnode refid="156" relation="include">
+        </childnode>
+        <childnode refid="162" relation="include">
+        </childnode>
+        <childnode refid="164" relation="include">
+        </childnode>
+        <childnode refid="163" relation="include">
+        </childnode>
+      </node>
+      <node id="162">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="157" relation="include">
+        </childnode>
+        <childnode refid="156" relation="include">
+        </childnode>
+        <childnode refid="163" relation="include">
+        </childnode>
+      </node>
+      <node id="156">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="157" relation="include">
+        </childnode>
+      </node>
+      <node id="158">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="164">
+        <label>defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="157" relation="include">
+        </childnode>
+        <childnode refid="162" relation="include">
+        </childnode>
+      </node>
+      <node id="161">
+        <label>unistd.h</label>
+      </node>
+      <node id="163">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="157" relation="include">
+        </childnode>
+      </node>
+      <node id="159">
+        <label>iostream</label>
+      </node>
+      <node id="160">
+        <label>mpi.h</label>
+      </node>
+      <node id="157">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="158" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="161" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="reader_8h_1a11aee6a56f2eaec828fabab3466213ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void readQubitfile</definition>
+        <argsstring>(QubitArray *qa, Config *cnf)</argsstring>
+        <name>readQubitfile</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="10" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="6" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1ad5baa9fa3d6dc1ac257407571015384e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void readBathfiles</definition>
+        <argsstring>(BathArray *ba, QubitArray *qa, Config *cnf)</argsstring>
+        <name>readBathfiles</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="11" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="59" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1aa060f345db95720f4c3b4ee9cea2ee08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void readGyrofile</definition>
+        <argsstring>(BathArray *ba, Config *cnf)</argsstring>
+        <name>readGyrofile</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="12" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="487" bodyend="529"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1ad7526402d975046c6adf55b693ef1bd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void readHftensorfile</definition>
+        <argsstring>(BathArray *ba, QubitArray *qa, Config *config)</argsstring>
+        <name>readHftensorfile</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="13" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="531" bodyend="777"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a0c4a3ecfc059a21baad9e8c08195e8b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void setBathStates</definition>
+        <argsstring>(BathArray *ba, Config *cnf, int i)</argsstring>
+        <name>setBathStates</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ba</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>: <ref refid="structBathArray" kindref="compound">BathArray</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cnf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>: <ref refid="structConfig" kindref="compound">Config</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>: index of the state file ( 1 &lt;= i &lt;= nstate )</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+If i is zero, this calculation is for the ensemble approach Therefore, the bath states shouldn&apos;t be set</para>        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="16" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="189" bodyend="280"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a3d61585a5a93956e940e0367d8e4e8ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void setDefectPaxes</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba, Config *cnf)</argsstring>
+        <name>setDefectPaxes</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="17" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="282" bodyend="371"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a4e032662bc2cc8580c63b0b9ad1a7cf9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void setSubbathStates</definition>
+        <argsstring>(DefectArray *dfa, BathArray *ba, Config *cnf, int i)</argsstring>
+        <name>setSubbathStates</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>i</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ba</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>: <ref refid="structBathArray" kindref="compound">BathArray</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dfa</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>: <ref refid="structDefectArray" kindref="compound">DefectArray</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cnf</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>: <ref refid="structConfig" kindref="compound">Config</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>i</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>: index of the state file ( 1 &lt;= i &lt;= nstate )</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+If i is zero, this calculation is for the ensemble approach Therefore, the bath states shouldn&apos;t be set</para>        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="18" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="373" bodyend="485"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a247030c028f67ca3f6e20b035c386fcb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool READ_BD_vertex</definition>
+        <argsstring>(const char *inputfile, double ***vertex, double ***center, double ***normal, char **vertex_condi)</argsstring>
+        <name>READ_BD_vertex</name>
+        <param>
+          <type>const char *</type>
+          <declname>inputfile</declname>
+        </param>
+        <param>
+          <type>double ***</type>
+          <declname>vertex</declname>
+        </param>
+        <param>
+          <type>double ***</type>
+          <declname>center</declname>
+        </param>
+        <param>
+          <type>double ***</type>
+          <declname>normal</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>vertex_condi</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="23" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1194" bodyend="1238"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1ad1ffb6b7fbce494fab7761e4422e4b51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void READ_Tensor</definition>
+        <argsstring>(const char *inputfile, double ***Tensor, int numCol)</argsstring>
+        <name>READ_Tensor</name>
+        <param>
+          <type>const char *</type>
+          <declname>inputfile</declname>
+        </param>
+        <param>
+          <type>double ***</type>
+          <declname>Tensor</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>numCol</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="24" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1247" bodyend="1305"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1acee0b7e60785d5571ca5c6808cc0bcbf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void READ_Tensor_etc</definition>
+        <argsstring>(const char *inputfile, char **names, int nspecies, double ***Tensor, char *condition, int numCol)</argsstring>
+        <name>READ_Tensor_etc</name>
+        <param>
+          <type>const char *</type>
+          <declname>inputfile</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>names</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspecies</declname>
+        </param>
+        <param>
+          <type>double ***</type>
+          <declname>Tensor</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>condition</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>numCol</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="25" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1308" bodyend="1379"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1ad7136a80e8d0f73e1e3457e976f02ded" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void READ_Tensor_const</definition>
+        <argsstring>(const char *inputfile, char **names, int nspecies, double **Array, char *condition)</argsstring>
+        <name>READ_Tensor_const</name>
+        <param>
+          <type>const char *</type>
+          <declname>inputfile</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>names</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspecies</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>Array</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>condition</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="26" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1382" bodyend="1443"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a503d1a006e3f5267f6c1c8e0547e06cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool READ_Tensor_array</definition>
+        <argsstring>(const char *inputfile, double(*Array)[3], char *condition, int numCol)</argsstring>
+        <name>READ_Tensor_array</name>
+        <param>
+          <type>const char *</type>
+          <declname>inputfile</declname>
+        </param>
+        <param>
+          <type>double(*)</type>
+          <declname>Array</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>condition</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>numCol</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="27" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1446" bodyend="1488"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a136737537377e32a79839072564f1fc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int READ_Tensor_ver</definition>
+        <argsstring>(const char *inputfile, double *SpinFactor, double DefectTotSpin, double *CorrTotSpin)</argsstring>
+        <name>READ_Tensor_ver</name>
+        <param>
+          <type>const char *</type>
+          <declname>inputfile</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>SpinFactor</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>DefectTotSpin</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>CorrTotSpin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="28" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1491" bodyend="1567"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a1908af1178ad6f23fb67411d9677c320" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printHfInfo_version</definition>
+        <argsstring>(int version, double DefectTotSpin, double CorrTotSpin, double SpinFactor)</argsstring>
+        <name>printHfInfo_version</name>
+        <param>
+          <type>int</type>
+          <declname>version</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>DefectTotSpin</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>CorrTotSpin</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>SpinFactor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="30" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1572" bodyend="1597"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1aca744283e805606bf1978c1c0974df83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printHfInfo_BD</definition>
+        <argsstring>(double **vertex, double **center, double **normal, double MinDif[3], double MaxDif[3], bool Usingvertex)</argsstring>
+        <name>printHfInfo_BD</name>
+        <param>
+          <type>double **</type>
+          <declname>vertex</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>center</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>normal</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>MinDif</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>MaxDif</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>Usingvertex</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="31" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1599" bodyend="1622"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a1576f283a1f60da53d4ca2a510e25e8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printHfInfo_etc</definition>
+        <argsstring>(double **A_Etc, double *A_Gfactor, char **names, int nspecies, int mode)</argsstring>
+        <name>printHfInfo_etc</name>
+        <param>
+          <type>double **</type>
+          <declname>A_Etc</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>A_Gfactor</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>names</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspecies</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>mode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="32" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1624" bodyend="1656"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a92236040162516b1fb750fc046b75c22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void printHfInfo_tensor</definition>
+        <argsstring>(double **AtensorArray, int mode)</argsstring>
+        <name>printHfInfo_tensor</name>
+        <param>
+          <type>double **</type>
+          <declname>AtensorArray</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>mode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="33" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1658" bodyend="1695"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a0c93181e1b7c3233df076ba4f4719fd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool CheckPosition</definition>
+        <argsstring>(const double Posi[3], double *refPosi)</argsstring>
+        <name>CheckPosition</name>
+        <param>
+          <type>const double</type>
+          <declname>Posi</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>refPosi</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="36" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1699" bodyend="1712"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a88261ed24b41a59dc7882765ae966dae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool FIND_AtomPosi</definition>
+        <argsstring>(const double refPosi[3], double **TensorValue, int *num)</argsstring>
+        <name>FIND_AtomPosi</name>
+        <param>
+          <type>const double</type>
+          <declname>refPosi</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>TensorValue</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="37" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1713" bodyend="1725"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a8998a82c4bab8c3473b0e8e36fadfa13" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool CheckBD_Range</definition>
+        <argsstring>(const double Posi[3], const double minRange[3], const double maxRange[3], double err)</argsstring>
+        <name>CheckBD_Range</name>
+        <param>
+          <type>const double</type>
+          <declname>Posi</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minRange</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>maxRange</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="38" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1728" bodyend="1741"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1af1431cd7aad880405b248a764e4e7e98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool CheckBD_vertex</definition>
+        <argsstring>(const double Posi[3], double **vertex, double **center, double **normal, double err)</argsstring>
+        <name>CheckBD_vertex</name>
+        <param>
+          <type>const double</type>
+          <declname>Posi</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>vertex</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>center</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>normal</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="39" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1744" bodyend="1784"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a5cb3d8a1effbc55450601fb0ff8d4769" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool CheckingUniqeBD</definition>
+        <argsstring>(const double Posi[3], double **center, double **normal)</argsstring>
+        <name>CheckingUniqeBD</name>
+        <param>
+          <type>const double</type>
+          <declname>Posi</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>center</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>normal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="40" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1787" bodyend="1806"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a5246f8565b72d5ccdef21b4599413b29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CreatePlaneInfo</definition>
+        <argsstring>(double **vertex, double ***center, double ***normal)</argsstring>
+        <name>CreatePlaneInfo</name>
+        <param>
+          <type>double **</type>
+          <declname>vertex</declname>
+        </param>
+        <param>
+          <type>double ***</type>
+          <declname>center</declname>
+        </param>
+        <param>
+          <type>double ***</type>
+          <declname>normal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="41" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1809" bodyend="1856"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a35263c1e7f525b97bb5f9154c23f861f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double ReDefinediff</definition>
+        <argsstring>(double difXYZ, const double minRange, const double maxRange, const double Copy_Length)</argsstring>
+        <name>ReDefinediff</name>
+        <param>
+          <type>double</type>
+          <declname>difXYZ</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>minRange</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>maxRange</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>Copy_Length</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="42" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1860" bodyend="1895"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1ad8883c83bfecdd6e49e1d4cea69fb6c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CalCenter</definition>
+        <argsstring>(double **center, double p1[], double p2[], double p3[], double p4[])</argsstring>
+        <name>CalCenter</name>
+        <param>
+          <type>double **</type>
+          <declname>center</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>p1</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>p2</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>p3</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>p4</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="43" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1899" bodyend="1903"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a2b54af5097e8459fd9ee16ab16e73e1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void CalNormal</definition>
+        <argsstring>(double **normal, double u[], double v[])</argsstring>
+        <name>CalNormal</name>
+        <param>
+          <type>double **</type>
+          <declname>normal</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>v</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="44" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1905" bodyend="1907"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a138d43600ebcfc7f5e7ea570a45233d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vector_diff</definition>
+        <argsstring>(double(*result)[3], double p1[], double p2[])</argsstring>
+        <name>vector_diff</name>
+        <param>
+          <type>double(*)</type>
+          <declname>result</declname>
+          <array>[3]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>p1</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>p2</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="45" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1911" bodyend="1917"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1ab21f02756544991a4cd07eb08701eb33" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double vector_dot</definition>
+        <argsstring>(double u[], double v[])</argsstring>
+        <name>vector_dot</name>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>v</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="46" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1919" bodyend="1925"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a2a2cbeca011e6b9104eaaab25b1449e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void vector_cross</definition>
+        <argsstring>(double **cross_P, double u[], double v[], bool norm)</argsstring>
+        <name>vector_cross</name>
+        <param>
+          <type>double **</type>
+          <declname>cross_P</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>u</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>v</declname>
+          <array>[]</array>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>norm</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/reader.h" line="47" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1926" bodyend="1940"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_READER_H_</highlight></codeline>
+<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_READER_H_</highlight></codeline>
+<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;qubit.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;bath.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;defect.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;general.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>readQubitfile(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>readBathfiles(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>readGyrofile(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>readHftensorfile(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>config);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>readQdtensorfile(BathArray*<sp/>ba,<sp/>QubitArray*<sp/>qa,<sp/>Config*<sp/>config);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setBathStates(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);<sp/></highlight><highlight class="comment">//<sp/>read<sp/>or<sp/>random<sp/>set</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setDefectPaxes(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);<sp/></highlight><highlight class="comment">//<sp/>read<sp/>or<sp/>random<sp/>set</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSubbathStates(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);<sp/></highlight><highlight class="comment">//<sp/>read<sp/>or<sp/>random<sp/>set</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Read<sp/>tensor<sp/>files</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>READ_BD_vertex(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>inputfile,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>vertex,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>center,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>normal,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>vertex_condi);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>READ_Tensor(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>inputfile,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>Tensor,</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numCol);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>READ_Tensor_etc(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>inputfile,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>names,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspecies,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>Tensor,</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>condition,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numCol);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>READ_Tensor_const(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>inputfile,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>names,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspecies,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>Array,</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>condition);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>READ_Tensor_array(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>inputfile,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">(*Array)[3],</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>condition,</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numCol);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>READ_Tensor_ver(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>inputfile,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>SpinFactor,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>DefectTotSpin,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>CorrTotSpin);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printHfInfo_version(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>version,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>DefectTotSpin,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>CorrTotSpin,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>SpinFactor);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printHfInfo_BD(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>vertex,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>center,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>normal,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>MinDif[3],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>MaxDif[3],<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>Usingvertex);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printHfInfo_etc(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>A_Etc,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>A_Gfactor,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>names,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspecies,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mode);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>printHfInfo_tensor(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>AtensorArray,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>mode);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CheckPosition(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Posi[3],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>refPosi);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>FIND_AtomPosi(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>refPosi[3],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>TensorValue,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>num);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CheckBD_Range(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Posi[3],</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minRange[3],</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxRange[3],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CheckBD_vertex(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Posi[3],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>vertex,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>center,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>normal,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>err);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>CheckingUniqeBD(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Posi[3],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>center,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>normal);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>CreatePlaneInfo(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>vertex,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>center,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>normal);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ReDefinediff(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>difXYZ,</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>minRange,</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>maxRange,</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Copy_Length);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>CalCenter(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>center,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>p1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>p2[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>p3[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>p4[]);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>CalNormal(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>normal,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>v[]);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>vector_diff(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>(*result)[3],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>p1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>p2[]);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>vector_dot(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>v[]);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>vector_cross(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>cross_P,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>v[],<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>norm);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_READER_H_</highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/reader.h"/>
+  </compounddef>
+</doxygen>

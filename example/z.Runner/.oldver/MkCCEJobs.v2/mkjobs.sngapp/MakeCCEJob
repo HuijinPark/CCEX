@@ -1,0 +1,127 @@
+#!/bin/sh
+
+#_________________________________________________
+#
+# Obtain variables 
+#_________________________________________________
+
+SourceFileDir="$1"
+SourceFileName="$2"
+VariableName="$3"
+
+if [ $# != 3 ]; then 
+    echo "[1] SourceFileDir "
+    echo "[2] SourceFileName"
+    echo "[3] VariableName  " 
+    echo "    - B0          "
+    echo "    - rBath       "
+    echo "    - rDip        "
+    echo "    - Nk          "
+#    echo "    - rDsrdr      "
+    exit
+fi
+
+#_________________________________________________
+#
+# Declare file-related variables
+#_________________________________________________
+
+src="${SourceFileDir}/${SourceFileName}"
+export src;
+
+WorkingMainDir="${PwdDir}/${SourceFileName}"
+WorkingSubDir="${PwdDir}/${SourceFileName}/${VariableName}"
+
+FileSrcVars="${MkjobFileDir}/srcvars"         # variable source 
+FileSrcFin="${MkjobFileDir}/srcfin${vsrcfin}" # ccein.json source
+FileSrcJob="${MkjobFileDir}/srcjob${vsrcjob}" # job source
+FileSrcDo="${MkjobFileDir}/srcdo${vsrcdo}"    # do source
+
+#_________________________________________________
+#
+#  Make working directory
+#_________________________________________________
+
+if [ ! -d "${WorkingMainDir}" ];then
+    mkdir "${WorkingMainDir}"
+fi
+
+if [ ! -d "${WorkingSubDir}" ];then
+    mkdir "${WorkingSubDir}"
+fi
+
+export WorkingMainDir
+export WorkingSubDir
+
+#_________________________________________________
+#
+#  Get variables from "srcvars"
+#_________________________________________________
+
+source ${FileSrcVars}
+export VariableName
+export unit
+export varOpt
+
+#_________________________________________________
+#
+#  Make calculation environment for each varaibles 
+#_________________________________________________
+
+echo "   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+echo "   "
+echo "   Make Files \"ccein.json\""
+echo "   Make Files \"job\"   "
+echo "   "
+echo "   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+echo "   Source File       : ${src}"
+echo "   Working directory : ${WorkingMainDir}"
+echo "   VariableName      : ${VariableName}"
+echo "   Variable          : ${varOpt}"
+echo "   (unit : $unit)"
+echo "   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+for var in ${varOpt}
+do  
+    export var
+
+    WorkingSubVarDir="${WorkingSubDir}/${var}${unit}"
+    if [ ! -d "${WorkingSubVarDir}" ];then
+        mkdir "${WorkingSubVarDir}"
+    fi
+    export WorkingSubVarDir
+
+    fccein="${WorkingSubVarDir}/ccein.json"
+    fjob="${WorkingSubVarDir}/job"
+    export fccein
+    export fjob
+
+    # Make "ccein.json" 
+    ${FileSrcFin} 
+
+    # Make "small job" 
+    ${FileSrcJob} 
+
+done
+
+#_________________________________________________
+#
+#  Make do files 
+#_________________________________________________
+
+# Make "do" 
+
+echo "   Make Files \"do\""
+${FileSrcDo} "runjob"  "${WorkingMainDir}/do"
+
+# Make "do_summary" 
+
+echo "   Make Files \"do_summary\""
+${FileSrcDo} "summary" "${WorkingMainDir}/do_summary"
+
+# Make "do_convTest" 
+
+echo "   Make Files \"do_convtest\""
+${FileSrcDo} "convtest" "${WorkingMainDir}/do_convtest"
+
+
