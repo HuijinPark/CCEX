@@ -1,96 +1,96 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
-  <compounddef id="defect_8h" kind="file">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="defect_8h" kind="file" language="C++">
     <compoundname>defect.h</compoundname>
     <includes refid="utilities_8h" local="yes">utilities.h</includes>
     <includes refid="bath_8h" local="yes">bath.h</includes>
-    <includedby refid="option_8h" local="yes">/home/huijin/git/CCEX/include/option.h</includedby>
-    <includedby refid="reader_8h" local="yes">/home/huijin/git/CCEX/include/reader.h</includedby>
-    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
-    <includedby refid="defect_8cpp" local="yes">/home/huijin/git/CCEX/src/defect.cpp</includedby>
+    <includedby refid="option_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/option.h</includedby>
+    <includedby refid="reader_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/reader.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/simulator.h</includedby>
+    <includedby refid="defect_8cpp" local="yes">/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp</includedby>
     <incdepgraph>
-      <node id="63">
+      <node id="7">
         <label>bath.h</label>
         <link refid="bath_8h_source"/>
-        <childnode refid="58" relation="include">
+        <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="64" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="65" relation="include">
-        </childnode>
-      </node>
-      <node id="64">
-        <label>qubit.h</label>
-        <link refid="qubit_8h_source"/>
-        <childnode refid="58" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="59">
-        <label>Eigen/Dense</label>
-      </node>
-      <node id="57">
-        <label>/home/huijin/git/CCEX/include/defect.h</label>
-        <link refid="defect.h"/>
-        <childnode refid="58" relation="include">
+      <node id="1">
+        <label>/Users/huijin/Documents/GitHub/CCEX/include/defect.h</label>
+        <link refid="defect_8h"/>
+        <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="63" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
-      <node id="62">
-        <label>unistd.h</label>
-      </node>
-      <node id="65">
+      <node id="9">
         <label>general.h</label>
         <link refid="general_8h_source"/>
-        <childnode refid="58" relation="include">
+        <childnode refid="2" relation="include">
         </childnode>
       </node>
-      <node id="60">
-        <label>iostream</label>
+      <node id="8">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
       </node>
-      <node id="61">
-        <label>mpi.h</label>
-      </node>
-      <node id="58">
+      <node id="2">
         <label>utilities.h</label>
         <link refid="utilities_8h_source"/>
-        <childnode refid="59" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="60" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="61" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="62" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
+      </node>
+      <node id="3">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="4">
+        <label>iostream</label>
+      </node>
+      <node id="5">
+        <label>mpi.h</label>
+      </node>
+      <node id="6">
+        <label>unistd.h</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="67">
-        <label>/home/huijin/git/CCEX/include/option.h</label>
+      <node id="1">
+        <label>/Users/huijin/Documents/GitHub/CCEX/include/defect.h</label>
+        <link refid="defect_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>/Users/huijin/Documents/GitHub/CCEX/include/option.h</label>
         <link refid="option_8h_source"/>
       </node>
-      <node id="68">
-        <label>/home/huijin/git/CCEX/include/reader.h</label>
+      <node id="3">
+        <label>/Users/huijin/Documents/GitHub/CCEX/include/reader.h</label>
         <link refid="reader_8h_source"/>
       </node>
-      <node id="69">
-        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+      <node id="4">
+        <label>/Users/huijin/Documents/GitHub/CCEX/include/simulator.h</label>
         <link refid="simulator_8h_source"/>
-      </node>
-      <node id="66">
-        <label>/home/huijin/git/CCEX/include/defect.h</label>
-        <link refid="defect.h"/>
-        <childnode refid="67" relation="include">
-        </childnode>
-        <childnode refid="68" relation="include">
-        </childnode>
-        <childnode refid="69" relation="include">
-        </childnode>
       </node>
     </invincdepgraph>
     <innerclass refid="structDefect" prot="public">Defect</innerclass>
     <innerclass refid="structDefectArray" prot="public">DefectArray</innerclass>
-      <sectiondef kind="func">
+    <sectiondef kind="func">
       <memberdef kind="function" id="defect_8h_1a8f08e0dc32156449f475af220706d094" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void updateMainSpins_fromDefectArray</definition>
@@ -110,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="59" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="441" bodyend="496"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="59" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="441" bodyend="496" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="59" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a3ea32b46b0daa88628f319f33e514873" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -131,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="60" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="498" bodyend="592"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="60" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="498" bodyend="592" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="60" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a41abcd25dae2f2336b9d9d653f31c20f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -148,7 +148,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="61" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="594" bodyend="679"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="61" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="594" bodyend="679" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="61" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a0334b31e67f3325af30e7b35c2d5d769" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -169,11 +169,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="62" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="681" bodyend="723"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="62" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="681" bodyend="723" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="62" declcolumn="6"/>
       </memberdef>
-      <memberdef kind="function" id="defect_8h_1a594f6496fbe2beffb66f7a9f6676f897" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="defect_8h_1a104be9c492351b82f29de56d55027c75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
-        <definition>DefectArray* DefectArray_init</definition>
+        <definition>DefectArray * DefectArray_init</definition>
         <argsstring>()</argsstring>
         <name>DefectArray_init</name>
         <briefdescription>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="67" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="56" bodyend="65"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="67" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="56" bodyend="65" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="67" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a92e592e423feb06322258098e2fcb036" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -203,7 +203,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="70" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="68" bodyend="70"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="70" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="68" bodyend="70" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="70" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a8fa56bf286f6fcf64d2dc047d01b918c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -228,7 +228,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="71" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="98" bodyend="100"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="71" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="98" bodyend="100" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="71" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a5b02d2ac15f48e856dc77b217a40d50f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -253,7 +253,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="72" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="102" bodyend="104"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="72" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="102" bodyend="104" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="72" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1abf13b685a00e2bca791525c42d7ed322" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -278,7 +278,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="73" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="106" bodyend="108"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="73" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="106" bodyend="108" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="73" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a8cce64a381a9420aef267dac3d2e0350" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -303,7 +303,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="74" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="110" bodyend="114"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="74" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="110" bodyend="114" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="74" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1ad3fc00f5c269cfc80d79fa4c734133e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -328,7 +328,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="75" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="116" bodyend="120"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="75" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="116" bodyend="120" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="75" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a4acc76c5be56d692708099dbda367b2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -353,7 +353,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="76" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="122" bodyend="126"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="76" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="122" bodyend="126" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="76" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1aaf14496555fe212f232f3555fb2db9f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -378,7 +378,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="77" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="128" bodyend="132"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="77" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="128" bodyend="132" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="77" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a22b975bb45d623f3cd40116fb062fbd3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -403,7 +403,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="78" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="134" bodyend="136"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="78" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="134" bodyend="136" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="78" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1ada9f91638deae71eee0f7dab44282822" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -436,7 +436,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="79" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="138" bodyend="142"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="79" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="138" bodyend="142" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="79" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1acbb90ee7348f37b4c968eb71f0d407e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -469,7 +469,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="80" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="143" bodyend="145"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="80" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="143" bodyend="145" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="80" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a6dddd196c3d014c2d5c1cdcdea99e790" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -502,7 +502,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="81" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="146" bodyend="148"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="81" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="146" bodyend="148" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="81" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a1eb4f15b7acb6173c791b5278ae88c70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -531,7 +531,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="82" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="149" bodyend="151"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="82" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="149" bodyend="151" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="82" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a23c2644c16be8383a93b6a005f2eaa40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -560,7 +560,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="83" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="152" bodyend="154"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="83" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="152" bodyend="154" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="83" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a9054b7960f6ab8ecc76d69a9722b685a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -581,7 +581,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="86" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="169" bodyend="176"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="86" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="169" bodyend="176" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="86" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a99dcb7dc57b5706c7a5764c703c43ca5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -598,11 +598,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="89" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="182" bodyend="184"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="89" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="182" bodyend="184" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="89" declcolumn="5"/>
       </memberdef>
-      <memberdef kind="function" id="defect_8h_1a73e2b6a037540876244b726e3fa9cc1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="defect_8h_1afa6a926a9c6a5679b7f769cf7600e11b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>char *</type>
-        <definition>char* DefectArray_getDefect_idf_dfname</definition>
+        <definition>char * DefectArray_getDefect_idf_dfname</definition>
         <argsstring>(DefectArray *dfa, int idf)</argsstring>
         <name>DefectArray_getDefect_idf_dfname</name>
         <param>
@@ -619,7 +619,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="90" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="186" bodyend="188"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="90" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="186" bodyend="188" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="90" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a0dd45f0baee4bdee08fb7415d990f186" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -640,7 +640,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="91" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="190" bodyend="192"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="91" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="190" bodyend="192" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="91" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a6b3addea84c2c80f4f7ba619c97f7014" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -661,11 +661,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="92" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="194" bodyend="196"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="92" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="194" bodyend="196" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="92" declcolumn="5"/>
       </memberdef>
-      <memberdef kind="function" id="defect_8h_1ae3db7c03d4c1f7741f0e909c6db161ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="defect_8h_1a59976b5cdefa9ec523d1b83c1d5b7c40" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>char *</type>
-        <definition>char* DefectArray_getDefect_idf_isp_types</definition>
+        <definition>char * DefectArray_getDefect_idf_isp_types</definition>
         <argsstring>(DefectArray *dfa, int idf, int isp)</argsstring>
         <name>DefectArray_getDefect_idf_isp_types</name>
         <param>
@@ -686,7 +686,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="93" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="198" bodyend="200"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="93" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="198" bodyend="200" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="93" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a700a1bcf079ce7c809eedba6aee86e3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -711,7 +711,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="94" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="202" bodyend="204"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="94" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="202" bodyend="204" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="94" declcolumn="7"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a4367f6d21dd7e9aaa0c045e56372c37d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -736,7 +736,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="95" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="206" bodyend="209"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="95" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="206" bodyend="209" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="95" declcolumn="8"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a36134ae748439bd5393d05f8563170fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -761,7 +761,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="96" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="211" bodyend="213"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="96" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="211" bodyend="213" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="96" declcolumn="8"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a5b59c3eda7bbe60bca788968e6acc1f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -782,11 +782,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="97" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="215" bodyend="217"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="97" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="215" bodyend="217" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="97" declcolumn="5"/>
       </memberdef>
-      <memberdef kind="function" id="defect_8h_1acc17e7cc692affa60d8f0657d7c10857" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="defect_8h_1aa54322900cc328444095d5b9384ca889" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double *</type>
-        <definition>double* DefectArray_getDefect_idf_iax_isp_rxyz</definition>
+        <definition>double * DefectArray_getDefect_idf_iax_isp_rxyz</definition>
         <argsstring>(DefectArray *dfa, int idf, int iax, int isp)</argsstring>
         <name>DefectArray_getDefect_idf_iax_isp_rxyz</name>
         <param>
@@ -811,7 +811,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="98" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="219" bodyend="221"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="98" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="219" bodyend="221" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="98" declcolumn="8"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a8c6789ea6779f6a33936b2b44cb0e61b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -840,7 +840,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="99" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="223" bodyend="225"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="99" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="223" bodyend="225" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="99" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1af12fb02836624f669e30abc9fca511c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -869,7 +869,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="100" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="227" bodyend="229"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="100" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="227" bodyend="229" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="100" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1ad797f4747bdd9da9db55ffac2a47a4d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -894,7 +894,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="101" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="231" bodyend="233"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="101" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="231" bodyend="233" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="101" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a2dea28641862ee32ba74000f620e4c1d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -919,7 +919,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="102" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="235" bodyend="237"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="102" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="235" bodyend="237" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="102" declcolumn="8"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1ab4f111640c471a92439340e842b9e9d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -936,7 +936,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="105" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="73" bodyend="75"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="105" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="73" bodyend="75" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="105" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a0050ddceb6923987c25359df9fe9afa6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -965,7 +965,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="106" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="77" bodyend="95"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="106" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="77" bodyend="95" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="106" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a9d1ffd714f6d004e81b7783cd0f781d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -990,7 +990,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="109" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="178" bodyend="180"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="109" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="178" bodyend="180" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="109" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a19b3232ef7141b1d483fcd131731a6bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1011,7 +1011,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="110" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="7" bodyend="30"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="110" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="7" bodyend="30" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="110" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1adbf80bb27c87982f8f79a99f114ef800" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1032,7 +1032,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="111" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="32" bodyend="51"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="111" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="32" bodyend="51" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="111" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a2b8c0f7d319e660dedb3a26e8722acf0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1053,7 +1053,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="112" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="157" bodyend="167"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="112" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="157" bodyend="167" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="112" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1ac61086b1cdc942187538f7dabb7d4a91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1078,11 +1078,17 @@
         </detaileddescription>
         <inbodydescription>
 <para>What we do here :<orderedlist>
-<listitem><para>Set subbath name, xyz, spin, gyro, (eq,) hypf, mainspidx,</para></listitem><listitem><para>Set quad(zfs),hypf_sub (depending on principal axis)</para></listitem></orderedlist>
+<listitem><para>Set subbath name, xyz, spin, gyro, (eq,) hypf, mainspidx,</para>
+</listitem><listitem><para>Set quad(zfs),hypf_sub (depending on principal axis)</para>
+</listitem></orderedlist>
 <orderedlist>
-<listitem><para>Set detuning = 0.0 (No detuning)</para></listitem><listitem><para>Set state = 0.0 and disorder = 0.0 (will be updated later)</para></listitem></orderedlist>
-</para><para><ref refid="structBathSpin" kindref="compound">BathSpin</ref> information (Main spins - electron) </para>        </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="113" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="349" bodyend="437"/>
+<listitem><para>Set detuning = 0.0 (No detuning)</para>
+</listitem><listitem><para>Set state = 0.0 and disorder = 0.0 (will be updated later)</para>
+</listitem></orderedlist>
+</para>
+<para><ref refid="structBathSpin" kindref="compound">BathSpin</ref> information (Main spins - electron)</para>
+        </inbodydescription>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="113" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="349" bodyend="437" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="113" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1aabbb4d5951ee06d5080d938362e1f9e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1103,7 +1109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="116" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="322" bodyend="325"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="116" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="322" bodyend="325" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="116" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1acd5198b4a91cb4d3288e3ef9d91b55ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1124,7 +1130,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="117" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="327" bodyend="330"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="117" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="327" bodyend="330" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="117" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a02f7c16af447c48a85bd63a0114f3d70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1149,7 +1155,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="118" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="332" bodyend="347"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="118" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="332" bodyend="347" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="118" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a30164208870664d2aa4ecf3407245ac6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1166,7 +1172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="121" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="239" bodyend="241"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="121" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="239" bodyend="241" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="121" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a543d31330dc4e4f9f22a318a54bac71d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1187,7 +1193,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="122" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="243" bodyend="245"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="122" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="243" bodyend="245" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="122" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a772a0fb2689253810d970dd40b08feab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1208,11 +1214,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="123" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="247" bodyend="250"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="123" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="247" bodyend="250" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="123" declcolumn="5"/>
       </memberdef>
-      <memberdef kind="function" id="defect_8h_1a01df5d3c3fef2f9b173a49681a931299" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="defect_8h_1a9849d69511ec8bbbf15aa0d5ad866640" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
-        <definition>BathSpin* DefectArray_getSubbath_i_isp</definition>
+        <definition>BathSpin * DefectArray_getSubbath_i_isp</definition>
         <argsstring>(DefectArray *dfa, int ibs, int isp)</argsstring>
         <name>DefectArray_getSubbath_i_isp</name>
         <param>
@@ -1233,7 +1239,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="124" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="252" bodyend="254"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="124" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="252" bodyend="254" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="124" declcolumn="10"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a5d406904c0c33a69c999c59eeb488342" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1250,7 +1256,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="127" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="286" bodyend="292"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="127" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="286" bodyend="292" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="127" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a501bdca25ce75b807315c91ad7d08402" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1267,7 +1273,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="128" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="294" bodyend="300"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="128" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="294" bodyend="300" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="128" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1af1c1d3150f60f0ccfac4982daf48dd5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1284,7 +1290,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="129" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="303" bodyend="318"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="129" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="303" bodyend="318" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="129" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1ad154028adc7e11112674b19eefd4ee99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1301,7 +1307,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="130" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="257" bodyend="284"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="130" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="257" bodyend="284" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="130" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1ab3b91ce949bd9c96def61b061a36816f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1318,7 +1324,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="136" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="1066" bodyend="1068"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="136" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="1066" bodyend="1068" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="136" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1aadedde4ee1d0202e97b81046b3fdc253" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1335,7 +1341,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="138" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="1030" bodyend="1062"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="138" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="1030" bodyend="1062" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="138" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a82ef176eb196703e1d427ff2f27eafd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1352,7 +1358,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="139" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="826" bodyend="859"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="139" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="826" bodyend="859" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="139" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1afd169753382554b2fcef9d5e0c71a7ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1373,7 +1379,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="140" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="896" bodyend="930"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="140" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="896" bodyend="930" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="140" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1ae26a04ddf49de944f6058b152e5c01db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1390,7 +1396,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="141" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="932" bodyend="962"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="141" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="932" bodyend="962" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="141" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1af504499b24f5e825f3908c6144b501d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1407,7 +1413,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="142" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="964" bodyend="995"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="142" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="964" bodyend="995" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="142" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a36daca4f61f14082d034289f37f823b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1424,7 +1430,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="143" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="997" bodyend="1028"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="143" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="997" bodyend="1028" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="143" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a506efd820c19c5095fdef50c5e35e3ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1445,7 +1451,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="146" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="725" bodyend="800"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="146" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="725" bodyend="800" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="146" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1abc581fcf88cfa9812e9613bfec4af3e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1462,7 +1468,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="147" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="802" bodyend="824"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="147" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="802" bodyend="824" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="147" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="defect_8h_1a5a93fbad4d518932076c6fe0e757d6ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1479,21 +1485,21 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/defect.h" line="148" column="1" bodyfile="/home/huijin/git/CCEX/src/defect.cpp" bodystart="861" bodyend="883"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" line="148" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/defect.cpp" bodystart="861" bodyend="883" declfile="/Users/huijin/Documents/GitHub/CCEX/include/defect.h" declline="148" declcolumn="6"/>
       </memberdef>
-      </sectiondef>
+    </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <programlisting>
-<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_DEFECT_H_</highlight></codeline>
-<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_DEFECT_H_</highlight></codeline>
-<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_DEFECT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_DEFECT_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;bath.h&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight></codeline>
-<codeline lineno="11" refid="structDefect" refkind="compound"><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="11" refid="structDefect" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="12"><highlight class="normal"></highlight></codeline>
 <codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Defect<sp/>information<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>dfname[MAX_CHARARRAY_LENGTH];</highlight></codeline>
@@ -1632,8 +1638,8 @@
 <codeline lineno="147"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportPaxes(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
 <codeline lineno="148"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>DefectArray_reportNaddspins(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa);</highlight></codeline>
 <codeline lineno="149"><highlight class="normal"></highlight></codeline>
-<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//__CCEX_DEFECT_H_</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//__CCEX_DEFECT_H_</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/huijin/git/CCEX/include/defect.h"/>
+    <location file="/Users/huijin/Documents/GitHub/CCEX/include/defect.h"/>
   </compounddef>
 </doxygen>

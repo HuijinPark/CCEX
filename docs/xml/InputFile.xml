@@ -1,42 +1,493 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
   <compounddef id="InputFile" kind="page">
     <compoundname>InputFile</compoundname>
     <title>Input File</title>
+    <briefdescription>
+    </briefdescription>
     <detaileddescription>
-<para>This is navigator to find the input file tags</para><sect1 id="InputFile_1HowToWrite">
-<title>HowToWrite</title>
+<para>This is navigator to find the input file tags</para>
+<sect1 id="InputFile_1HowToWrite">
+<title>How to Write the Input File</title><para>The input file consists of key-value pairs where each key represents a specific setting. Each parameter should be written in the following format:</para>
+<para><programlisting><codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_1<sp/>=<sp/>value_1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_2<sp/>=<sp/>value_2,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_N<sp/>=<sp/>value_N</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Lines beginning with <computeroutput># or !</computeroutput> are considered comments and are ignored.</para>
+<para><table rows="29" cols="1"><row>
+<entry thead="yes"><para>Tag (General)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_method" kindref="member">method</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_quantity" kindref="member">quantity</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_order" kindref="member">order</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_bfield" kindref="member">bfield</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_rbath" kindref="member">rbath</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_rdip" kindref="member">rdip</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_deltat" kindref="member">deltat</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_nstep" kindref="member">nstep</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_rbathcut" kindref="member">rbathcut</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_rdipcut" kindref="member">rdipcut</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_nstate" kindref="member">nstate</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_seed" kindref="member">seed</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>gyrofile    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>bathfile    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>bathadjust    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>avaaxfile    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>statefile    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>exstatefile    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>DefectTotSpin    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>CorrTotSpin    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>hf_readmode    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>hf_tensorfile    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>hf_cutoff    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>hf_ignore_oor    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>qd_readmode    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>qd_tensorfile    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>cell_para    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>qd_tensorfile_woqubit   </para>
+</entry></row>
+</table>
+</para>
+<para><table rows="29" cols="1"><row>
+<entry thead="yes"><para>Tag (<ref refid="structQubitArray" kindref="compound">QubitArray</ref>)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>nqubit    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>name    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>spin    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>qubitfile    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>qspin    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>alphams    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>betams    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>qzfs    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>-----------------------------------<mdash/>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>Qubit    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>nqubit    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>qubit    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>name    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>spin    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>gyro    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>xyz    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>detuning    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>alphams    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>betams    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>intmap    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>between    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>tensor    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>psia    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>psib    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>psi0    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>overhaus    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>alphaidx    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>betaidx   </para>
+</entry></row>
+</table>
+</para>
+<para><table rows="10" cols="1"><row>
+<entry thead="yes"><para>Tag (<ref refid="structCluster" kindref="compound">Cluster</ref>)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_order" kindref="member">order</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><ref refid="InputFile_1tag_method" kindref="member">method</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>addsubclus    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>nk    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>sK    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>max_trial    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>max_iter    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>kmeans_pp    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>iter_detail   </para>
+</entry></row>
+</table>
+</para>
+<para><table rows="4" cols="1"><row>
+<entry thead="yes"><para>Tag (<ref refid="structPulse" kindref="compound">Pulse</ref>)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>npulse    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>pulsename    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>sequence   </para>
+</entry></row>
+</table>
+</para>
+<para><table rows="15" cols="1"><row>
+<entry thead="yes"><para>Tag (<ref refid="structDefectArray" kindref="compound">DefectArray</ref>)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>Defect    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>dfname    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>apprx    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>naddspin    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>navaax    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>types    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>spins    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>gyros    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>eqs    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>rxyzs    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>hypf    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>efg    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>zfs    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>detuning   </para>
+</entry></row>
+</table>
+</para>
+<para><table rows="3" cols="1"><row>
+<entry thead="yes"><para>Tag (<ref refid="structOutput" kindref="compound">Output</ref>)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>savemode    </para>
+</entry></row>
+<row>
+<entry thead="no"><para>outfile   </para>
+</entry></row>
+</table>
+</para>
 </sect1>
 <sect1 id="InputFile_1Config_CONFIG">
-<title>General condition</title>
-<para><itemizedlist>
-<listitem><para>method method</para></listitem><listitem><para>quantity quantity</para></listitem><listitem><para>order order</para></listitem><listitem><para>bfield bfield</para></listitem><listitem><para>rbath rbath</para></listitem><listitem><para>rdip rdip</para></listitem><listitem><para>deltat deltat</para></listitem><listitem><para>nstep nstep</para></listitem><listitem><para>rbathcut rbathcut</para></listitem><listitem><para>rdipcut rdipcut</para></listitem><listitem><para>nstate nstate</para></listitem><listitem><para>seed seed</para></listitem><listitem><para>qubitfile qubitfile</para></listitem><listitem><para>gyrofile gyrofile</para></listitem><listitem><para>bathfile bathfiles</para></listitem><listitem><para>bathadjust bathadjust</para></listitem><listitem><para>avaaxfile avaaxfile</para></listitem><listitem><para>statefile statefile</para></listitem><listitem><para>exstatefile exstatefile</para></listitem><listitem><para>DefectTotSpin DefectTotSpin</para></listitem><listitem><para>CorrTotSpin CorrTotSpin</para></listitem><listitem><para>hf_readmode hf_readmode</para></listitem><listitem><para>hf_tensorfile hf_tensorfile</para></listitem><listitem><para>hf_cutoff hf_cutoff</para></listitem><listitem><para>hf_ignore_oor hf_ignore_oor</para></listitem><listitem><para>qd_readmode qd_readmode</para></listitem><listitem><para>qd_tensorfile qd_tensorfile</para></listitem><listitem><para>qd_tensorfile_woqubit qd_tensorfile_woqubit</para></listitem></itemizedlist>
-</para></sect1>
-<sect1 id="InputFile_1Config_CLUSTER">
-<title>Clustering condition</title>
-<para><itemizedlist>
-<listitem><para>order order</para></listitem><listitem><para>method method</para></listitem><listitem><para>addsubclus addsubclus</para></listitem><listitem><para>nk nk</para></listitem></itemizedlist>
-</para></sect1>
-<sect1 id="InputFile_1Config_OUTPUT">
-<title>Output options</title>
-<para><itemizedlist>
-<listitem><para>savemode savemode</para></listitem><listitem><para>outfile outfile</para></listitem></itemizedlist>
-</para></sect1>
-<sect1 id="InputFile_1Config_PULSE">
-<title>Pulse condition</title>
-<para><itemizedlist>
-<listitem><para>npulse npulse</para></listitem><listitem><para>pulsename pulsename</para></listitem><listitem><para>sequence sequenceinput</para></listitem></itemizedlist>
-</para></sect1>
-<sect1 id="InputFile_1Config_DEFECTARR">
-<title>Configuration of spins on bath defect</title>
-<para><itemizedlist>
-<listitem><para>dfname dfname</para></listitem><listitem><para>naddspin naddspin</para></listitem><listitem><para>navaax navaax</para></listitem><listitem><para>apprx apprx</para></listitem><listitem><para>types types</para></listitem><listitem><para>spins spins</para></listitem><listitem><para>gyros gyros</para></listitem><listitem><para>eqs eqs</para></listitem><listitem><para>rxyzs rxyzs</para></listitem><listitem><para>hypf hypf</para></listitem><listitem><para>efg efg</para></listitem><listitem><para>zfs zfs</para></listitem><listitem><para>detuning detuning</para></listitem></itemizedlist>
-</para></sect1>
-<sect1 id="InputFile_1Config_QUBITARR">
-<title>Configuration of qubit spins</title>
-<para><itemizedlist>
-<listitem><para>nqubit nqubit</para></listitem><listitem><para>qubit (sub-key)</para></listitem><listitem><para>name name</para></listitem><listitem><para>spin spin</para></listitem><listitem><para>gyro gyro</para></listitem><listitem><para>xyz xyz</para></listitem><listitem><para>detuning detuning</para></listitem><listitem><para>alpha alphams</para></listitem><listitem><para>beta betams</para></listitem><listitem><para>intmap (sub-key)</para></listitem><listitem><para>between between</para></listitem><listitem><para>tensor tensor</para></listitem><listitem><para>psia psiamat</para></listitem><listitem><para>psib psibmat</para></listitem><listitem><para>psi0 psi0mat</para></listitem><listitem><para>overhaus overhaus</para></listitem><listitem><para>alphaidx alphaidx</para></listitem><listitem><para>betaidx betaidx</para></listitem><listitem><para>qspin spin</para></listitem><listitem><para>alphams alphams</para></listitem><listitem><para>betams betams </para></listitem></itemizedlist>
-</para></sect1>
+<title>General condition</title><para>Below are the descriptions of various configuration tags used in the input file.</para>
+<para><anchor id="InputFile_1tag_method"/></para>
+<sect2 id="InputFile_1autotoc_md7">
+<title>method</title><para><bold>Description:</bold><linebreak/>
+ CCE Methods to calculate the dynamics of the system.</para>
+<para><bold>Data Type:</bold> String</para>
+<para><bold>Options:</bold><linebreak/>
+ <table rows="4" cols="2"><row>
+<entry thead="yes"><para>Option   </para>
+</entry><entry thead="yes"><para>Description    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>CCE</computeroutput>   </para>
+</entry><entry thead="no"><para>Conventional CCE method    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>gCCE</computeroutput>   </para>
+</entry><entry thead="no"><para>Generalized CCE method    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>pCCE</computeroutput>   </para>
+</entry><entry thead="no"><para>Partition CCE method   </para>
+</entry></row>
+</table>
+</para>
+<para><bold>Default:</bold> <computeroutput>CCE</computeroutput></para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">method<sp/>:<sp/>CCE<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" kindref="member">Config::order</ref> </para>
+<para><anchor id="InputFile_1tag_quantity"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md8">
+<title>quantity</title><para><bold>Description:</bold><linebreak/>
+ Quantity to calculate the dynamics of the system.</para>
+<para><bold>Data Type:</bold> String</para>
+<para><bold>Options:</bold><linebreak/>
+ <table rows="3" cols="2"><row>
+<entry thead="yes"><para>Option   </para>
+</entry><entry thead="yes"><para>Description    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>coherence</computeroutput>   </para>
+</entry><entry thead="no"><para>Coherence function    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>dm</computeroutput>   </para>
+</entry><entry thead="no"><para>Density matrix   </para>
+</entry></row>
+</table>
+</para>
+<para><bold>Unit:</bold> arbitrary unit (a.u.)</para>
+<para><bold>Default:</bold> <computeroutput>coherence</computeroutput></para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">quantity<sp/>:<sp/>coherence<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a408cf9618ed41aefd0b0c323f57e0730" kindref="member">Config::quantity</ref> </para>
+<para><anchor id="InputFile_1tag_order"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md9">
+<title>order</title><para><bold>Description:</bold><linebreak/>
+ Order of the CCE method.</para>
+<para><bold>Data Type:</bold> Integer</para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">order<sp/>:<sp/>2<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" kindref="member">Config::order</ref> </para>
+<para><anchor id="InputFile_1tag_bfield"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md10">
+<title>bfield</title><para><bold>Description:</bold><linebreak/>
+ Magnetic field.</para>
+<para><bold>Data Type:</bold> Float or Float List</para>
+<para><bold>Unit:</bold> gauss (G)</para>
+<para><bold>Default:</bold> 0.0</para>
+<para><bold>Example:</bold></para>
+<para><programlisting><codeline><highlight class="normal">bfield<sp/>:<sp/>0.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><programlisting><codeline><highlight class="normal">bfield<sp/>:<sp/>[0.0,<sp/>0.0,<sp/>0.0]<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1abf4c62b17ba762512fab9da0f1e193be" kindref="member">Config::bfield</ref> </para>
+<para><anchor id="InputFile_1tag_rbath"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md11">
+<title>rbath</title><para><bold>Description:</bold><linebreak/>
+ Bath radius </para>
+<para><bold>Data Type:</bold> Float</para>
+<para><bold>Unit:</bold> angstrom </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">rbath<sp/>:<sp/>0.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a79389333cffeb4063cf1d39e89234c57" kindref="member">Config::rbath</ref> </para>
+<para><anchor id="InputFile_1tag_rdip"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md12">
+<title>rdip</title><para><bold>Description:</bold><linebreak/>
+ Dipolar radius </para>
+<para><bold>Data Type:</bold> Float</para>
+<para><bold>Unit:</bold> angstrom </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">rdip<sp/>:<sp/>0.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1af9d5e3a3b185555cbe04ad12733612b1" kindref="member">Config::rdip</ref> </para>
+<para><anchor id="InputFile_1tag_deltat"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md13">
+<title>deltat</title><para><bold>Description:</bold><linebreak/>
+ Time interval. </para>
+<para><bold>Data Type:</bold> Float</para>
+<para><bold>Unit:</bold> ms </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">deltat<sp/>:<sp/>0.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a6539de558079f55df76dce79c4079b33" kindref="member">Config::deltat</ref> </para>
+<para><anchor id="InputFile_1tag_nstep"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md14">
+<title>nstep</title><para><bold>Description:</bold><linebreak/>
+ Number of time steps. </para>
+<para><bold>Data Type:</bold> Integer</para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">nstep<sp/>:<sp/>10<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1acd1675410784e93a9c9866de0c64807e" kindref="member">Config::nstep</ref> </para>
+<para><anchor id="InputFile_1tag_rbathcut"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md15">
+<title>rbathcut</title><para><bold>Description:</bold><linebreak/>
+ Bath inner-cutoff radius. </para>
+<para><bold>Data Type:</bold> Float</para>
+<para><bold>Unit:</bold> angstrom </para>
+<para><bold>Default:</bold> 0.0 </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">rbathcut<sp/>:<sp/>0.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a2eeef76fa44792c24c3320ff6b4d19c8" kindref="member">Config::rbathcut</ref> </para>
+<para><anchor id="InputFile_1tag_rdipcut"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md16">
+<title>rdipcut</title><para><bold>Description:</bold><linebreak/>
+ Dipolar inner-cutoff radius. </para>
+<para><bold>Data Type:</bold> Float</para>
+<para><bold>Unit:</bold> angstrom </para>
+<para><bold>Default:</bold> 0.0 </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">rdipcut<sp/>:<sp/>0.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a39b6cf20220772b2326ddf423bf3a3f7" kindref="member">Config::rdipcut</ref> </para>
+<para><anchor id="InputFile_1tag_nstate"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md17">
+<title>nstate</title><para><bold>Description:</bold><linebreak/>
+ Number of state templates to be generated. </para>
+<para><bold>Data Type:</bold> Integer</para>
+<para><bold>Options:</bold><linebreak/>
+ <table rows="3" cols="2"><row>
+<entry thead="yes"><para>Option   </para>
+</entry><entry thead="yes"><para>Description    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>0</computeroutput>   </para>
+</entry><entry thead="no"><para>No state template will be generated (Ensemble approach)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>&gt;0</computeroutput>   </para>
+</entry><entry thead="no"><para>State template will be generated (Single-sample approach) <linebreak/>
+ Mean-field effect will be automatically added   </para>
+</entry></row>
+</table>
+</para>
+<para><bold>Default:</bold> 0 </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">nstate<sp/>:<sp/>10<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_seed" kindref="member">seed</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a91b2aadf805896022127036ded259e79" kindref="member">Config::nstate</ref> </para>
+<para><anchor id="InputFile_1tag_seed"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md18">
+<title>seed</title><para><bold>Description:</bold><linebreak/>
+ Seed for random number generator. <linebreak/>
+ If you want to generate the same state templates, you should set the same seed value. </para>
+<para><bold>Data Type:</bold> Integer</para>
+<para><bold>Default:</bold> Time(NULL) </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">seed<sp/>:<sp/>1241798<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_nstate" kindref="member">nstate</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a92ed038fd7676ed62640f59270a60545" kindref="member">Config::seed</ref> </para>
+<para>\ </para>
+</sect2>
+</sect1>
     </detaileddescription>
+    <location file="InputFile.dox"/>
   </compounddef>
 </doxygen>

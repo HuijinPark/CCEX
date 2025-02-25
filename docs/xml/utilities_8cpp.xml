@@ -1,59 +1,59 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
-  <compounddef id="utilities_8cpp" kind="file">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="utilities_8cpp" kind="file" language="C++">
     <compoundname>utilities.cpp</compoundname>
     <includes refid="utilities_8h" local="yes">../include/utilities.h</includes>
     <includes refid="memory_8h" local="yes">../include/memory.h</includes>
     <includes local="no">float.h</includes>
     <includes local="yes">mpi.h</includes>
     <incdepgraph>
-      <node id="458">
-        <label>/home/huijin/git/CCEX/src/utilities.cpp</label>
-        <link refid="utilities.cpp"/>
-        <childnode refid="459" relation="include">
-        </childnode>
-        <childnode refid="464" relation="include">
-        </childnode>
-        <childnode refid="465" relation="include">
-        </childnode>
-        <childnode refid="462" relation="include">
-        </childnode>
-      </node>
-      <node id="465">
-        <label>float.h</label>
-      </node>
-      <node id="460">
-        <label>Eigen/Dense</label>
-      </node>
-      <node id="463">
-        <label>unistd.h</label>
-      </node>
-      <node id="461">
-        <label>iostream</label>
-      </node>
-      <node id="464">
+      <node id="7">
         <label>../include/memory.h</label>
         <link refid="memory_8h_source"/>
-        <childnode refid="459" relation="include">
+        <childnode refid="2" relation="include">
         </childnode>
       </node>
-      <node id="462">
-        <label>mpi.h</label>
-      </node>
-      <node id="459">
+      <node id="2">
         <label>../include/utilities.h</label>
         <link refid="utilities_8h_source"/>
-        <childnode refid="460" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="461" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="462" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="463" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
       </node>
+      <node id="1">
+        <label>/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp</label>
+        <link refid="utilities_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="8">
+        <label>float.h</label>
+      </node>
+      <node id="4">
+        <label>iostream</label>
+      </node>
+      <node id="5">
+        <label>mpi.h</label>
+      </node>
+      <node id="6">
+        <label>unistd.h</label>
+      </node>
     </incdepgraph>
-      <sectiondef kind="func">
+    <sectiondef kind="func">
       <memberdef kind="function" id="utilities_8cpp_1a9c7f009c4cdeea19fb03a6062b19ba4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
         <definition>MatrixXcd Double1dToMatrixXcd</definition>
@@ -73,11 +73,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="7" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="7" bodyend="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="7" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="7" bodyend="13"/>
       </memberdef>
-      <memberdef kind="function" id="utilities_8cpp_1a4b255578067c0937e13f2ef0078241ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="utilities_8cpp_1a828e0299e17fa409e86d4cb5d9353ba6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double *</type>
-        <definition>double* MatrixXcdToDouble1d</definition>
+        <definition>double * MatrixXcdToDouble1d</definition>
         <argsstring>(MatrixXcd mat)</argsstring>
         <name>MatrixXcdToDouble1d</name>
         <param>
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="15" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="15" bodyend="21"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="15" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="15" bodyend="21"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a2aefe88dad8d53dec31e792d2e9b9fa6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -113,7 +113,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="26" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="26" bodyend="30"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="26" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="26" bodyend="30"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a4d139712825bcde2ae1aed0d3ec5ad5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -140,7 +140,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="33" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="33" bodyend="36"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="33" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="33" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a5b934a224579933ac378e74bab0b68cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -167,7 +167,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="38" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="38" bodyend="41"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="38" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="38" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a10b6615e47dfd70c43029c037751f9e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -190,7 +190,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="44" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="44" bodyend="48"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="44" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="44" bodyend="48"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a15fe4cc12d3ce405f46b3012de0440b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -213,11 +213,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="49" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="49" bodyend="53"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="49" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="49" bodyend="53"/>
       </memberdef>
-      <memberdef kind="function" id="utilities_8cpp_1acf1c2b8c239acc495284035dd3e2f755" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="utilities_8cpp_1ab89078e8492554a27cf0c82a53dd3fdb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float *</type>
-        <definition>float* substates</definition>
+        <definition>float * substates</definition>
         <argsstring>(float S)</argsstring>
         <name>substates</name>
         <param>
@@ -230,7 +230,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="60" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="60" bodyend="68"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="60" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="60" bodyend="68"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a9426ec76eb56e1975c68e8670e96ae88" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -251,7 +251,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="70" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="70" bodyend="78"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="70" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="70" bodyend="78"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a0af91089d5fcaa976b033ce4e6264c81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -272,7 +272,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="81" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="81" bodyend="116"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="81" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="81" bodyend="116"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1ad2e62dabe77182c3a080de3c2bf8633a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -293,7 +293,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="119" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="119" bodyend="127"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="119" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="119" bodyend="127"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a48dd05e439c0be45622f701086fbb244" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -305,21 +305,25 @@
           <declname>m</declname>
         </param>
         <briefdescription>
-<para>Calculate the norm of the matrix. </para>        </briefdescription>
+<para>Calculate the norm of the matrix. </para>
+        </briefdescription>
         <detaileddescription>
 <para>Spinor Properties : normalized set <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">m</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>gsl_matrix_complex </para></parameterdescription>
+<para>gsl_matrix_complex </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>norm of the matrix </para></simplesect>
-</para>        </detaileddescription>
+<simplesect kind="return"><para>norm of the matrix </para>
+</simplesect>
+</para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="136" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="136" bodyend="156"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="136" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="136" bodyend="156"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1ab6733ca1dc8e846d6aefa625620df43d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -336,7 +340,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="159" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="159" bodyend="171"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="159" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="159" bodyend="171"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a0c8e632eac324b8529a548082a3954f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -353,7 +357,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="173" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="173" bodyend="200"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="173" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="173" bodyend="200"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a9b51b0619b40657054c85a7785c867c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -378,7 +382,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="202" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="202" bodyend="236"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="202" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="202" bodyend="236"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1ac633c6b52e7ecccb79afb1e156b5f1e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -399,7 +403,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="238" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="238" bodyend="254"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="238" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="238" bodyend="254"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1ad062f8a5dabc3641ca77f3b4acae0774" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -420,7 +424,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="256" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="256" bodyend="258"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="256" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="256" bodyend="258"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a6e936e0f958d89c5ef7bac7993d985f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -441,7 +445,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="261" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="261" bodyend="291"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="261" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="261" bodyend="291"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a4a73d5d44cbb32db1094c77e8c1ab4eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -462,7 +466,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="293" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="293" bodyend="310"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="293" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="293" bodyend="310"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1abbe8b03682b2ed276d90898f027e2ee7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -483,7 +487,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="312" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="312" bodyend="314"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="312" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="312" bodyend="314"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a373dfb50c0cd57d41b73c300a74eb36c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -508,7 +512,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="316" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="316" bodyend="327"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="316" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="316" bodyend="327"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1aad89de3b2cfb3e3407d6c076c68026f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -529,7 +533,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="329" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="329" bodyend="331"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="329" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="329" bodyend="331"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a3ddea3fc0335b0c4c2b55f75a08b5abd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -554,7 +558,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="333" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="333" bodyend="344"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="333" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="333" bodyend="344"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1afa6c1b7d859474f91277a6eb127c2d58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -575,7 +579,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="346" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="346" bodyend="348"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="346" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="346" bodyend="348"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a11539e572f45c8cf0d75c149a0bd99d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -600,7 +604,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="350" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="350" bodyend="361"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="350" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="350" bodyend="361"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a7bda98546c1fc0fb42f240c9b3a762c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -621,7 +625,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="363" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="363" bodyend="365"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="363" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="363" bodyend="365"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a2e1b74556d20b16d3a8e18042398fcc9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -646,7 +650,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="367" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="367" bodyend="378"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="367" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="367" bodyend="378"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a99f2bc03fafde10029d172c288e8d264" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -667,7 +671,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="380" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="380" bodyend="382"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="380" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="380" bodyend="382"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a22f0047ca1e195cb409fbb3540cb86e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -680,7 +684,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="384" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="384" bodyend="386"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="384" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="384" bodyend="386"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1af76e568be9cffb9fd84a8d47ae73c859" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -693,7 +697,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="388" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="388" bodyend="390"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="388" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="388" bodyend="390"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a5564a74283c7de4315aa6c31e3a18cd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -710,7 +714,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="392" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="392" bodyend="394"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="392" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="392" bodyend="394"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a4e488695843bcdf98056b5a27f932694" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -727,7 +731,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="396" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="396" bodyend="398"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="396" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="396" bodyend="398"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a0c45cccb1126bdc61aa9558fc99ea574" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -744,7 +748,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="400" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="400" bodyend="402"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="400" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="400" bodyend="402"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a03c6e91a2ab8765bbcf642edf3a0916f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -773,7 +777,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="405" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="405" bodyend="412"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="405" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="405" bodyend="412"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1aa6fc66444ea4320ad797232437f46372" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -803,7 +807,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="414" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="414" bodyend="421"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="414" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="414" bodyend="421"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1aa81ad629712eb5ea1d3567e334c133fb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -832,7 +836,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="423" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="423" bodyend="430"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="423" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="423" bodyend="430"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1ac432f8aeae10d2635ea20ed8191742c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -861,7 +865,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="432" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="432" bodyend="439"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="432" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="432" bodyend="439"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a331eade4c4bc4635171db82a4d11faa9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -886,7 +890,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="443" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="443" bodyend="449"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="443" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="443" bodyend="449"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a409d692e2bfdb78dd777abb5aed007c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -911,7 +915,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="451" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="451" bodyend="468"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="451" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="451" bodyend="468"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a06a4ca14041fa08f3ab7956d0c5c84b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -936,7 +940,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="470" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="470" bodyend="474"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="470" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="470" bodyend="474"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1accb541fe6da91628724b5bffd79da87c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -953,7 +957,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="479" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="479" bodyend="499"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="479" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="479" bodyend="499"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a652d438c6c223d76ea7226c2adbb715b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -990,7 +994,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="502" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="502" bodyend="510"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="502" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="502" bodyend="510"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1aebfa23dbf6ec30f35f2986a654bd47c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1011,11 +1015,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="512" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="512" bodyend="518"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="512" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="512" bodyend="518"/>
       </memberdef>
-      <memberdef kind="function" id="utilities_8cpp_1a1613a6675e0ab3d37ec64934b9d8d5d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="utilities_8cpp_1a8ebb9dc3df6963f77db001d564c9f77c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int ***</type>
-        <definition>int*** MPI_getLocalClusters</definition>
+        <definition>int *** MPI_getLocalClusters</definition>
         <argsstring>(int order, int ***clusters)</argsstring>
         <name>MPI_getLocalClusters</name>
         <param>
@@ -1032,7 +1036,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="521" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="521" bodyend="635"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="521" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="521" bodyend="635"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1aeb93e25e95d089d3e1c79baf4a71b594" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1045,7 +1049,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="675" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="675" bodyend="704"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="675" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="675" bodyend="704"/>
       </memberdef>
       <memberdef kind="function" id="utilities_8cpp_1a0d20b69b0ad703df78459e1033d5c1d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1058,9 +1062,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/utilities.cpp" line="706" column="1" bodyfile="/home/huijin/git/CCEX/src/utilities.cpp" bodystart="706" bodyend="757"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" line="706" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp" bodystart="706" bodyend="757"/>
       </memberdef>
-      </sectiondef>
+    </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -1090,13 +1094,13 @@
 <codeline lineno="22"><highlight class="normal"></highlight></codeline>
 <codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>math<sp/>functions<sp/>-----------------------------------------------*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="24"><highlight class="normal"></highlight></codeline>
-<codeline lineno="26"><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[]){</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[]){</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist<sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>dist<sp/>=<sp/>sqrt(pow(spin1[0]<sp/>-<sp/>spin2[0],2)<sp/>+<sp/>pow(spin1[1]<sp/>-<sp/>spin2[1],2)<sp/>+<sp/>pow(spin1[2]<sp/>-<sp/>spin2[2],2));</highlight></codeline>
 <codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>dist;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>cosTheta(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist){<sp/></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>cosTheta(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[],</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dist){<sp/></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/></highlight><highlight class="comment">//Note<sp/>that<sp/>spin_m[0]<sp/>=<sp/>gyromagnetic<sp/>ratio,<sp/>spin_m[0<sp/>~<sp/>2]<sp/>--&gt;<sp/>x,<sp/>y,<sp/>z<sp/>coordinates</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(spin2[2]<sp/>-<sp/>spin1[2])<sp/>/<sp/>dist;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">}</highlight></codeline>
@@ -1106,7 +1110,7 @@
 <codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tmp_mn<sp/>/<sp/>dist;</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>cosPhi(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[]){</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>cosPhi(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin1[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spin2[]){</highlight></codeline>
 <codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tmp_mn<sp/>=<sp/>sqrt(pow(spin2[0]<sp/>-<sp/>spin1[0],<sp/>2)<sp/>+<sp/>pow(spin2[1]<sp/>-<sp/>spin1[1],<sp/>2));<sp/></highlight><highlight class="comment">//<sp/>x^2<sp/>+<sp/>y^2</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tmp_mn<sp/>==<sp/>0)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>1.0;</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(spin2[0]<sp/>-<sp/>spin1[0])<sp/>/<sp/>tmp_mn;</highlight></codeline>
@@ -1117,8 +1121,8 @@
 <codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(spin2[1]<sp/>-<sp/>spin1[1])<sp/>/<sp/>tmp_mn;</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="comment">//<sp/>Physics<sp/>functions</highlight></codeline>
-<codeline lineno="58"><highlight class="comment"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Physics<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Obtain<sp/>possible<sp/>substates<sp/>of<sp/>the<sp/>spin</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>substates(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>S){</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>ms=NULL;</highlight></codeline>
@@ -1190,7 +1194,7 @@
 <codeline lineno="127"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
 <codeline lineno="129"><highlight class="normal"></highlight></codeline>
-<codeline lineno="136"><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>calNorm(MatrixXcd<sp/>m){</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>calNorm(MatrixXcd<sp/>m){</highlight></codeline>
 <codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>row<sp/>=<sp/>m.rows();</highlight></codeline>
 <codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>col<sp/>=<sp/>m.cols();</highlight></codeline>
 <codeline lineno="139"><highlight class="normal"></highlight></codeline>
@@ -1323,7 +1327,7 @@
 <codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>mat.rows();<sp/>++i)<sp/>{</highlight></codeline>
 <codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>mat.cols();<sp/>++j)<sp/>{</highlight></codeline>
 <codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::complex&lt;double&gt;<sp/>z<sp/>=<sp/>mat(i,<sp/>j);</highlight></codeline>
-<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%3.2fj%+-3.2f&quot;</highlight><highlight class="normal">,<sp/>z.real(),<sp/>z.imag());</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%3.2f%+-3.2fj&quot;</highlight><highlight class="normal">,<sp/>z.real(),<sp/>z.imag());</highlight></codeline>
 <codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i<sp/>!=<sp/>mat.rows()<sp/>-<sp/>1<sp/>||<sp/>j<sp/>!=<sp/>mat.cols()<sp/>-<sp/>1)<sp/>{</highlight></codeline>
 <codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
@@ -1337,7 +1341,7 @@
 <codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>mat.rows();<sp/>++i)<sp/>{</highlight></codeline>
 <codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>mat.cols();<sp/>++j)<sp/>{</highlight></codeline>
 <codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::complex&lt;double&gt;<sp/>z<sp/>=<sp/>mat(i,<sp/>j);</highlight></codeline>
-<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%3.2fj%+-3.2f&quot;</highlight><highlight class="normal">,<sp/>z.real(),<sp/>z.imag());</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%3.2f%+-3.2fj&quot;</highlight><highlight class="normal">,<sp/>z.real(),<sp/>z.imag());</highlight></codeline>
 <codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(i<sp/>!=<sp/>mat.rows()<sp/>-<sp/>1<sp/>||<sp/>j<sp/>!=<sp/>mat.cols()<sp/>-<sp/>1)<sp/>{</highlight></codeline>
 <codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;,<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
@@ -1813,6 +1817,6 @@
 <codeline lineno="756"><highlight class="normal"><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="757"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/home/huijin/git/CCEX/src/utilities.cpp"/>
+    <location file="/Users/huijin/Documents/GitHub/CCEX/src/utilities.cpp"/>
   </compounddef>
 </doxygen>

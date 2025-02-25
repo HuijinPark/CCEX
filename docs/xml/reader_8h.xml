@@ -1,82 +1,82 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
-  <compounddef id="reader_8h" kind="file">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="reader_8h" kind="file" language="C++">
     <compoundname>reader.h</compoundname>
     <includes refid="qubit_8h" local="yes">qubit.h</includes>
     <includes refid="bath_8h" local="yes">bath.h</includes>
     <includes refid="defect_8h" local="yes">defect.h</includes>
     <includes refid="general_8h" local="yes">general.h</includes>
-    <includedby refid="reader_8cpp" local="yes">/home/huijin/git/CCEX/src/reader.cpp</includedby>
-    <includedby refid="simulator_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator.cpp</includedby>
+    <includedby refid="reader_8cpp" local="yes">/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp</includedby>
+    <includedby refid="simulator_8cpp" local="yes">/Users/huijin/Documents/GitHub/CCEX/src/simulator.cpp</includedby>
     <incdepgraph>
-      <node id="155">
-        <label>/home/huijin/git/CCEX/include/reader.h</label>
-        <link refid="reader.h"/>
-        <childnode refid="156" relation="include">
-        </childnode>
-        <childnode refid="162" relation="include">
-        </childnode>
-        <childnode refid="164" relation="include">
-        </childnode>
-        <childnode refid="163" relation="include">
-        </childnode>
-      </node>
-      <node id="162">
+      <node id="8">
         <label>bath.h</label>
         <link refid="bath_8h_source"/>
-        <childnode refid="157" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="156" relation="include">
+        <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="163" relation="include">
-        </childnode>
-      </node>
-      <node id="156">
-        <label>qubit.h</label>
-        <link refid="qubit_8h_source"/>
-        <childnode refid="157" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="158">
-        <label>Eigen/Dense</label>
-      </node>
-      <node id="164">
+      <node id="10">
         <label>defect.h</label>
         <link refid="defect_8h_source"/>
-        <childnode refid="157" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="162" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
       </node>
-      <node id="161">
-        <label>unistd.h</label>
-      </node>
-      <node id="163">
+      <node id="9">
         <label>general.h</label>
         <link refid="general_8h_source"/>
-        <childnode refid="157" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
       </node>
-      <node id="159">
-        <label>iostream</label>
+      <node id="2">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
       </node>
-      <node id="160">
-        <label>mpi.h</label>
+      <node id="1">
+        <label>/Users/huijin/Documents/GitHub/CCEX/include/reader.h</label>
+        <link refid="reader_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
       </node>
-      <node id="157">
+      <node id="3">
         <label>utilities.h</label>
         <link refid="utilities_8h_source"/>
-        <childnode refid="158" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="159" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="160" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="161" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
+      <node id="4">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="5">
+        <label>iostream</label>
+      </node>
+      <node id="6">
+        <label>mpi.h</label>
+      </node>
+      <node id="7">
+        <label>unistd.h</label>
+      </node>
     </incdepgraph>
-      <sectiondef kind="func">
+    <sectiondef kind="func">
       <memberdef kind="function" id="reader_8h_1a11aee6a56f2eaec828fabab3466213ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void readQubitfile</definition>
@@ -96,7 +96,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="10" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="6" bodyend="57"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="10" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="7" bodyend="58" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="10" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1ad5baa9fa3d6dc1ac257407571015384e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -121,7 +121,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="11" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="59" bodyend="187"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="11" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="60" bodyend="189" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="11" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1aa060f345db95720f4c3b4ee9cea2ee08" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -142,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="12" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="487" bodyend="529"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="12" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="500" bodyend="542" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="12" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1ad7526402d975046c6adf55b693ef1bd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -167,7 +167,32 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="13" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="531" bodyend="777"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="13" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="544" bodyend="799" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="13" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1a541e46f165242e6a0c8d5faefddd02f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void readQdtensorfile</definition>
+        <argsstring>(BathArray *ba, QubitArray *qa, Config *config)</argsstring>
+        <name>readQdtensorfile</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="14" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="801" bodyend="1393" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="14" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a0c4a3ecfc059a21baad9e8c08195e8b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -196,25 +221,29 @@
 <parametername>ba</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>: <ref refid="structBathArray" kindref="compound">BathArray</ref> </para></parameterdescription>
+<para>: <ref refid="structBathArray" kindref="compound">BathArray</ref> </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>cnf</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>: <ref refid="structConfig" kindref="compound">Config</ref> </para></parameterdescription>
+<para>: <ref refid="structConfig" kindref="compound">Config</ref> </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>i</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>: index of the state file ( 1 &lt;= i &lt;= nstate )</para></parameterdescription>
+<para>: index of the state file ( 1 &lt;= i &lt;= nstate )</para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-If i is zero, this calculation is for the ensemble approach Therefore, the bath states shouldn&apos;t be set</para>        </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="16" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="189" bodyend="280"/>
+If i is zero, this calculation is for the ensemble approach Therefore, the bath states shouldn&apos;t be set</para>
+        </inbodydescription>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="16" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="191" bodyend="284" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="16" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a3d61585a5a93956e940e0367d8e4e8ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -239,7 +268,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="17" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="282" bodyend="371"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="17" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="295" bodyend="384" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="17" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a4e032662bc2cc8580c63b0b9ad1a7cf9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -272,32 +301,58 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
 <parametername>ba</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>: <ref refid="structBathArray" kindref="compound">BathArray</ref> </para></parameterdescription>
+<para>: <ref refid="structBathArray" kindref="compound">BathArray</ref> </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>dfa</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>: <ref refid="structDefectArray" kindref="compound">DefectArray</ref> </para></parameterdescription>
+<para>: <ref refid="structDefectArray" kindref="compound">DefectArray</ref> </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>cnf</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>: <ref refid="structConfig" kindref="compound">Config</ref> </para></parameterdescription>
+<para>: <ref refid="structConfig" kindref="compound">Config</ref> </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername>i</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>: index of the state file ( 1 &lt;= i &lt;= nstate )</para></parameterdescription>
+<para>: index of the state file ( 1 &lt;= i &lt;= nstate )</para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-If i is zero, this calculation is for the ensemble approach Therefore, the bath states shouldn&apos;t be set</para>        </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="18" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="373" bodyend="485"/>
+If i is zero, this calculation is for the ensemble approach Therefore, the bath states shouldn&apos;t be set</para>
+        </inbodydescription>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="18" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="386" bodyend="498" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="18" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="reader_8h_1ada5a331e68c4c1d3318c192dc3d96413" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int compare_dist</definition>
+        <argsstring>(const void *a, const void *b)</argsstring>
+        <name>compare_dist</name>
+        <param>
+          <type>const void *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="20" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="287" bodyend="293" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="20" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a247030c028f67ca3f6e20b035c386fcb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -330,7 +385,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="23" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1194" bodyend="1238"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="23" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1403" bodyend="1447" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="23" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1ad1ffb6b7fbce494fab7761e4422e4b51" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -355,7 +410,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="24" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1247" bodyend="1305"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="24" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1456" bodyend="1514" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="24" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1acee0b7e60785d5571ca5c6808cc0bcbf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -392,7 +447,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="25" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1308" bodyend="1379"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="25" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1517" bodyend="1588" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="25" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1ad7136a80e8d0f73e1e3457e976f02ded" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -425,7 +480,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="26" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1382" bodyend="1443"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="26" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1591" bodyend="1652" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="26" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a503d1a006e3f5267f6c1c8e0547e06cd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -455,7 +510,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="27" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1446" bodyend="1488"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="27" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1655" bodyend="1697" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="27" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a136737537377e32a79839072564f1fc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -484,7 +539,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="28" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1491" bodyend="1567"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="28" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1700" bodyend="1776" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="28" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a1908af1178ad6f23fb67411d9677c320" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -513,7 +568,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="30" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1572" bodyend="1597"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="30" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1781" bodyend="1806" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="30" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1aca744283e805606bf1978c1c0974df83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -552,7 +607,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="31" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1599" bodyend="1622"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="31" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1808" bodyend="1831" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="31" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a1576f283a1f60da53d4ca2a510e25e8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -585,7 +640,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="32" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1624" bodyend="1656"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="32" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1833" bodyend="1868" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="32" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a92236040162516b1fb750fc046b75c22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -606,7 +661,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="33" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1658" bodyend="1695"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="33" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1870" bodyend="1907" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="33" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a0c93181e1b7c3233df076ba4f4719fd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -628,7 +683,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="36" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1699" bodyend="1712"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="36" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1911" bodyend="1924" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="36" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a88261ed24b41a59dc7882765ae966dae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -654,7 +709,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="37" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1713" bodyend="1725"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="37" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1925" bodyend="1937" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="37" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a8998a82c4bab8c3473b0e8e36fadfa13" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -686,7 +741,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="38" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1728" bodyend="1741"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="38" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1940" bodyend="1953" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="38" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1af1431cd7aad880405b248a764e4e7e98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -720,7 +775,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="39" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1744" bodyend="1784"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="39" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1956" bodyend="1996" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="39" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a5cb3d8a1effbc55450601fb0ff8d4769" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -746,7 +801,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="40" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1787" bodyend="1806"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="40" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="1999" bodyend="2018" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="40" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a5246f8565b72d5ccdef21b4599413b29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -771,7 +826,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="41" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1809" bodyend="1856"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="41" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="2021" bodyend="2068" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="41" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a35263c1e7f525b97bb5f9154c23f861f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -800,7 +855,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="42" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1860" bodyend="1895"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="42" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="2072" bodyend="2107" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="42" declcolumn="8"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1ad8883c83bfecdd6e49e1d4cea69fb6c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -837,7 +892,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="43" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1899" bodyend="1903"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="43" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="2111" bodyend="2115" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="43" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a2b54af5097e8459fd9ee16ab16e73e1c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -864,7 +919,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="44" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1905" bodyend="1907"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="44" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="2117" bodyend="2119" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="44" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a138d43600ebcfc7f5e7ea570a45233d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -892,7 +947,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="45" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1911" bodyend="1917"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="45" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="2123" bodyend="2129" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="45" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1ab21f02756544991a4cd07eb08701eb33" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -915,7 +970,7 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="46" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1919" bodyend="1925"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="46" column="8" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="2131" bodyend="2137" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="46" declcolumn="8"/>
       </memberdef>
       <memberdef kind="function" id="reader_8h_1a2a2cbeca011e6b9104eaaab25b1449e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -946,17 +1001,17 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/reader.h" line="47" column="1" bodyfile="/home/huijin/git/CCEX/src/reader.cpp" bodystart="1926" bodyend="1940"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" line="47" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/reader.cpp" bodystart="2138" bodyend="2152" declfile="/Users/huijin/Documents/GitHub/CCEX/include/reader.h" declline="47" declcolumn="6"/>
       </memberdef>
-      </sectiondef>
+    </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <programlisting>
-<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_READER_H_</highlight></codeline>
-<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_READER_H_</highlight></codeline>
-<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_READER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_READER_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;qubit.h&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;bath.h&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;defect.h&quot;</highlight><highlight class="normal"></highlight></codeline>
@@ -967,13 +1022,13 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
 <codeline lineno="11"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>readBathfiles(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
 <codeline lineno="12"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>readGyrofile(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
 <codeline lineno="13"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>readHftensorfile(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>config);</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>readQdtensorfile(BathArray*<sp/>ba,<sp/>QubitArray*<sp/>qa,<sp/>Config*<sp/>config);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>readQdtensorfile(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>config);</highlight></codeline>
 <codeline lineno="15"><highlight class="normal"></highlight></codeline>
 <codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setBathStates(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);<sp/></highlight><highlight class="comment">//<sp/>read<sp/>or<sp/>random<sp/>set</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="17"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setDefectPaxes(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);<sp/></highlight><highlight class="comment">//<sp/>read<sp/>or<sp/>random<sp/>set</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="18"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSubbathStates(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i);<sp/></highlight><highlight class="comment">//<sp/>read<sp/>or<sp/>random<sp/>set</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="19"><highlight class="normal"></highlight></codeline>
-<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>compare_dist(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>*b);</highlight></codeline>
 <codeline lineno="21"><highlight class="normal"></highlight></codeline>
 <codeline lineno="22"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Read<sp/>tensor<sp/>files</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="23"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>READ_BD_vertex(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>inputfile,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>vertex,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>center,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">***<sp/>normal,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>vertex_condi);</highlight></codeline>
@@ -1003,8 +1058,8 @@ If i is zero, this calculation is for the ensemble approach Therefore, the bath 
 <codeline lineno="47"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>vector_cross(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>cross_P,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u[],<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>v[],<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>norm);</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"></highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_READER_H_</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>__CCEX_READER_H_</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/huijin/git/CCEX/include/reader.h"/>
+    <location file="/Users/huijin/Documents/GitHub/CCEX/include/reader.h"/>
   </compounddef>
 </doxygen>

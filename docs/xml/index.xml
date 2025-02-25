@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.5">
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.13.2" xml:lang="en-US">
   <compound refid="structBathArray" kind="struct"><name>BathArray</name>
     <member refid="structBathArray_1ac71d275f6b9a2293d80fe8edf69fc46f" kind="variable"><name>nspin</name></member>
     <member refid="structBathArray_1a807633d8e314f488e12dfc95040ecc01" kind="variable"><name>bath</name></member>
@@ -20,6 +20,7 @@
     <member refid="structBathSpin_1a304f556a5ba51a1275171e40d212d0d2" kind="variable"><name>quad</name></member>
     <member refid="structBathSpin_1afb32f13329ea501039ad7d62d0e6e2a5" kind="variable"><name>hypf_sub</name></member>
     <member refid="structBathSpin_1a26db008dfcd1cbdff57b63dfdbfbaf78" kind="variable"><name>mainspidx</name></member>
+    <member refid="structBathSpin_1aa0d89c49b0496d8817361825ced0f2bd" kind="variable"><name>mindist</name></member>
   </compound>
   <compound refid="structBathSpinArray" kind="struct"><name>BathSpinArray</name>
   </compound>
@@ -36,12 +37,16 @@
     <member refid="structcJSON_1aa6b47e9a4b0e0a26f519b1a2b6739983" kind="variable"><name>string</name></member>
   </compound>
   <compound refid="structcJSON__Hooks" kind="struct"><name>cJSON_Hooks</name>
-    <member refid="structcJSON__Hooks_1a71693d8b277a80a1faf8758b9589d670" kind="function"><name>malloc_fn</name></member>
+    <member refid="structcJSON__Hooks_1ae8fc738005f553ff03bc725c58d3188f" kind="function"><name>malloc_fn</name></member>
     <member refid="structcJSON__Hooks_1a42c96b388103ffb466e7335b9fc710c3" kind="function"><name>void</name></member>
   </compound>
   <compound refid="structCluster" kind="struct"><name>Cluster</name>
     <member refid="structCluster_1ae77394af156e2e278a34f12e83d66cb7" kind="variable"><name>order</name></member>
     <member refid="structCluster_1a7c4d583750b7f37eb2ca537e23ad334f" kind="variable"><name>sK</name></member>
+    <member refid="structCluster_1a1ee43f70019a1d92a9b70c5ae5ac84b3" kind="variable"><name>max_trial</name></member>
+    <member refid="structCluster_1a22956121c5d115004869950c3bd87c5c" kind="variable"><name>max_iter</name></member>
+    <member refid="structCluster_1ae16ed95d44c972143ecfcd3d9c70018e" kind="variable"><name>kmeans_pp</name></member>
+    <member refid="structCluster_1a85e14a7d5ed03ab4036531cb482e077e" kind="variable"><name>iter_detail</name></member>
     <member refid="structCluster_1acfc81556c4ed78e0bce4c36119fe7150" kind="variable"><name>method</name></member>
     <member refid="structCluster_1a1385a76b03a7f2f862526ff2bf449755" kind="variable"><name>nk</name></member>
     <member refid="structCluster_1a33621fac416bdd2eea40805e74730748" kind="variable"><name>addsubclus</name></member>
@@ -81,6 +86,7 @@
     <member refid="structConfig_1adc1119b46a95084ddd4c7bfa2a8d50d9" kind="variable"><name>qd_readmode</name></member>
     <member refid="structConfig_1a91d5741035098807bc28000a003bd35d" kind="variable"><name>qd_tensorfile</name></member>
     <member refid="structConfig_1a93e5666a93192db9d1cd361381d64301" kind="variable"><name>qd_tensorfile_woqubit</name></member>
+    <member refid="structConfig_1a6a556f62f5419389fe87348bb7754746" kind="variable"><name>qd_cellpara</name></member>
   </compound>
   <compound refid="structDefect" kind="struct"><name>Defect</name>
     <member refid="structDefect_1a146e7e006db29d11dc4ebfffe07f7ba2" kind="variable"><name>dfname</name></member>
@@ -130,9 +136,9 @@
     <member refid="structHashCluster_1aca926dea37c8b07c62d0a99b0e1f2251" kind="variable"><name>hh</name></member>
   </compound>
   <compound refid="structinternal__hooks" kind="struct"><name>internal_hooks</name>
-    <member refid="structinternal__hooks_1a872a0c28217b451331d24b8e0484b293" kind="function"><name>allocate</name></member>
+    <member refid="structinternal__hooks_1a8b8f7ff45faa5da18dd3ccd2a2c8e416" kind="function"><name>allocate</name></member>
     <member refid="structinternal__hooks_1a5cc2dd5383da5f20b19e0f27fa59e123" kind="function"><name>void</name></member>
-    <member refid="structinternal__hooks_1a5dd48d5c2f2b1cf4f6eec5df6205e15c" kind="function"><name>reallocate</name></member>
+    <member refid="structinternal__hooks_1a7c3921493fab83f33cd509145d8a5393" kind="function"><name>reallocate</name></member>
   </compound>
   <compound refid="structOutput" kind="struct"><name>Output</name>
     <member refid="structOutput_1a7f85059a943e07bad7f1b76d4e5a99d8" kind="variable"><name>savemode</name></member>
@@ -144,6 +150,17 @@
     <member refid="structparse__buffer_1af727920073077579942a79de519bb31a" kind="variable"><name>offset</name></member>
     <member refid="structparse__buffer_1af613c4ed7d73f76c60c50d1bcf4c67a0" kind="variable"><name>depth</name></member>
     <member refid="structparse__buffer_1a2c3e99b15da2935fc5d58124ffb4a894" kind="variable"><name>hooks</name></member>
+  </compound>
+  <compound refid="structPartition__info" kind="struct"><name>Partition_info</name>
+    <member refid="structPartition__info_1a0c12534cf6edaea35c80143298f5be42" kind="variable"><name>sK</name></member>
+    <member refid="structPartition__info_1a6019d9402ccc8cb53b56a92f0cd9ff79" kind="variable"><name>ncenter</name></member>
+    <member refid="structPartition__info_1a1f19bbf397c2a1fab0a061a1365cbf51" kind="variable"><name>pcce_nspin</name></member>
+    <member refid="structPartition__info_1ad94ab56ae52e7fbdb3133b09b10d0d6f" kind="variable"><name>rest_nspin</name></member>
+  </compound>
+  <compound refid="structPoint" kind="struct"><name>Point</name>
+    <member refid="structPoint_1ab99c56589bc8ad5fa5071387110a5bc7" kind="variable"><name>x</name></member>
+    <member refid="structPoint_1afa38be143ae800e6ad69ce8ed4df62d8" kind="variable"><name>y</name></member>
+    <member refid="structPoint_1a05ba3b1dfcb19430582ae953cbbfbded" kind="variable"><name>z</name></member>
   </compound>
   <compound refid="structprintbuffer" kind="struct"><name>printbuffer</name>
     <member refid="structprintbuffer_1a754f63618e91db99f7ab6cfc4e629013" kind="variable"><name>buffer</name></member>
@@ -219,10 +236,10 @@
     <member refid="bath_8h_1a97afda17a4c78436b7ca8d90a374eff9" kind="function"><name>BathArray_DisorderHamil</name></member>
     <member refid="bath_8h_1a2d839859884bd8c333d038dcbe3caa26" kind="function"><name>BathArray_QuadHamil</name></member>
     <member refid="bath_8h_1a7aebe0d1c4d9e2f002355308393f2985" kind="function"><name>BathArray_InteractionHamil</name></member>
-    <member refid="bath_8h_1a06053d5bec282391e6dc52636f3a3834" kind="function"><name>BathArray_PauliOperators</name></member>
+    <member refid="bath_8h_1a2fb127c43d650aef433b74c596bcbd74" kind="function"><name>BathArray_PauliOperators</name></member>
     <member refid="bath_8h_1a748372df2699f4aa1b9c48ed856d1544" kind="function"><name>BathArray_Rho0</name></member>
     <member refid="bath_8h_1aad7a61a9794ce21248ddecc65fc68a35" kind="function"><name>BathArray_Psi0</name></member>
-    <member refid="bath_8h_1a415ed28f1ee2838f0b9a7988ef5d4cbd" kind="function"><name>BathArray_init</name></member>
+    <member refid="bath_8h_1a540d3e73df2df1e3489f705d17b70cd0" kind="function"><name>BathArray_init</name></member>
     <member refid="bath_8h_1a14e20ca8a70b18dabae4789cbb4147f2" kind="function"><name>BathArray_report</name></member>
     <member refid="bath_8h_1a37e620fa24a875511a5a78e2df2ae74b" kind="function"><name>BathArray_reportBath</name></member>
     <member refid="bath_8h_1a438f139c9112579ccc54c053f910c3ad" kind="function"><name>BathArray_reportBath_i_props</name></member>
@@ -255,16 +272,17 @@
     <member refid="bath_8h_1ab522fd89a2f7735fce49717657fc2ad6" kind="function"><name>BathArray_setProp_names_i</name></member>
     <member refid="bath_8h_1ad1fcfbf71aa5f651a927fabf55139bc6" kind="function"><name>BathArray_setProp_gyros_i</name></member>
     <member refid="bath_8h_1ab8add2946cbccdd4b285c7967693887a" kind="function"><name>BathArray_setProp_spins_i</name></member>
+    <member refid="bath_8h_1a9b5ad21d5eb46aac364eb4f0044bbf65" kind="function"><name>BathArray_setBath_i_mindist</name></member>
     <member refid="bath_8h_1ab3d9e90371702f02d3079d92d350c9b8" kind="function"><name>BathArray_getNspin</name></member>
     <member refid="bath_8h_1a0f22c6aa6634564441b38120dbe7d1d1" kind="function"><name>BathArray_getProp_nspecies</name></member>
-    <member refid="bath_8h_1a77b5f1b50d73c86272d8dfca76b602ba" kind="function"><name>BathArray_getProp_names</name></member>
-    <member refid="bath_8h_1a904324f03aa4fc83ed7b66c7d11ca5e9" kind="function"><name>BathArray_getProp_gyros</name></member>
-    <member refid="bath_8h_1a3567c9fbf5ecf1edc60c6da299a5784d" kind="function"><name>BathArray_getProp_spins</name></member>
-    <member refid="bath_8h_1a52cb736aa4f55111561afef60814bd2a" kind="function"><name>BathArray_getBath_i</name></member>
-    <member refid="bath_8h_1a1cbe81e69032a42d7fb0ba525567b2a7" kind="function"><name>BathArray_getBath_i_name</name></member>
+    <member refid="bath_8h_1ad35652a42b2d307b2e1a37751b28b885" kind="function"><name>BathArray_getProp_names</name></member>
+    <member refid="bath_8h_1a3a8955982a3d0bbfc702b58e88803aa8" kind="function"><name>BathArray_getProp_gyros</name></member>
+    <member refid="bath_8h_1a3f7dc29643599f6c19681883ba1bda22" kind="function"><name>BathArray_getProp_spins</name></member>
+    <member refid="bath_8h_1a8fe8e1dfe811fcab239ac5a60f91546b" kind="function"><name>BathArray_getBath_i</name></member>
+    <member refid="bath_8h_1a9d790e3309b052f37358d39d4e1bee88" kind="function"><name>BathArray_getBath_i_name</name></member>
     <member refid="bath_8h_1aef1b755648dd480d242c9d74c5567133" kind="function"><name>BathArray_getBath_i_spin</name></member>
     <member refid="bath_8h_1a9ffc1ce6293e0d06fb84d46dd2366ed0" kind="function"><name>BathArray_getBath_i_gyro</name></member>
-    <member refid="bath_8h_1ab06988abed01e1efb1e61bbad7787c42" kind="function"><name>BathArray_getBath_i_xyz</name></member>
+    <member refid="bath_8h_1a76cc7b78e60b0085b46ed46c558728a2" kind="function"><name>BathArray_getBath_i_xyz</name></member>
     <member refid="bath_8h_1aad47df482af1d1fade54b3325b31b139" kind="function"><name>BathArray_getBath_i_state</name></member>
     <member refid="bath_8h_1a798fb92c19dcf0498ebe0b85e2fa9ad6" kind="function"><name>BathArray_getBath_i_detuning</name></member>
     <member refid="bath_8h_1a0cb71295a4e71afbff3bc3935b435017" kind="function"><name>BathArray_getBath_i_disorder</name></member>
@@ -292,10 +310,10 @@
     <member refid="bath_8h_1aa29f90af0f1bcd6bede3197310bb73cb" kind="function"><name>BathSpin_setQuad_fromEFG</name></member>
     <member refid="bath_8h_1a7933c22cb29f34bb719d4db38259342a" kind="function"><name>BathSpin_setHypfSub</name></member>
     <member refid="bath_8h_1a18099f1b8f2c87110840322ba7667faf" kind="function"><name>BathSpin_setMainspidx</name></member>
-    <member refid="bath_8h_1ab514bb5d414aa090c7693373943470ce" kind="function"><name>BathSpin_getName</name></member>
+    <member refid="bath_8h_1a2169b61846f26df2add391c9719b3956" kind="function"><name>BathSpin_getName</name></member>
     <member refid="bath_8h_1a2cb17e985a46f93221bd7edc256d6f67" kind="function"><name>BathSpin_getSpin</name></member>
     <member refid="bath_8h_1a51f78c4bffdc0e37ecd92a4408ab28b8" kind="function"><name>BathSpin_getGyro</name></member>
-    <member refid="bath_8h_1ad03adfb1af4997899bc7f8b4707e8283" kind="function"><name>BathSpin_getXyz</name></member>
+    <member refid="bath_8h_1abbb1f701af1739550c768748133fbdfa" kind="function"><name>BathSpin_getXyz</name></member>
     <member refid="bath_8h_1a4da97f94bb37ea4be9360e89886a0623" kind="function"><name>BathSpin_getState</name></member>
     <member refid="bath_8h_1af1718e18c6c3a1c4fa2f2e307bfc8f05" kind="function"><name>BathSpin_getDetuning</name></member>
     <member refid="bath_8h_1a72bc4a7c7ef327b08196b1822fc5f6d3" kind="function"><name>BathSpin_getDisorder</name></member>
@@ -305,7 +323,7 @@
     <member refid="bath_8h_1a7cf2da09b53b10dda60600718edb3733" kind="function"><name>BathSpin_getMainspidx</name></member>
   </compound>
   <compound refid="cluster_8h" kind="file"><name>cluster.h</name>
-    <member refid="cluster_8h_1a682c076be5339c3b7c39bc75129ac002" kind="function"><name>Cluster_init</name></member>
+    <member refid="cluster_8h_1aea5c25e6a6b3d3190ab9c55984e50c00" kind="function"><name>Cluster_init</name></member>
     <member refid="cluster_8h_1acfd4c6ef5622dbfa59942c1a7617c1c8" kind="function"><name>Cluster_clusterize</name></member>
     <member refid="cluster_8h_1a1e9067d49b0b0c7cc731eabfd0aad2c3" kind="function"><name>Cluster_freeAll</name></member>
     <member refid="cluster_8h_1a4c26ec88127ff5ef995e46cb615968af" kind="function"><name>Cluster_report</name></member>
@@ -314,25 +332,37 @@
     <member refid="cluster_8h_1a3903fe87910d2270893d1e729a0ea446" kind="function"><name>reportClusinfo</name></member>
     <member refid="cluster_8h_1ae45a1c18649e68c10d42cc910ffbb47c" kind="function"><name>Cluster_allocClusinfo</name></member>
     <member refid="cluster_8h_1aa5731c0e0c23755bd3616c71eb79c5d6" kind="function"><name>Cluster_freeClusinfo</name></member>
+    <member refid="cluster_8h_1a92ed12a2bc90c486cb58354dc3b4c0f7" kind="function"><name>Cluster_setClusinfo_0th</name></member>
+    <member refid="cluster_8h_1a15c9b80455a04a8e782aa39c6525c8a3" kind="function"><name>Cluster_setClusinfo_1th</name></member>
     <member refid="cluster_8h_1af03141d021c7ab901adcbfde55a36b32" kind="function"><name>Cluster_setClusinfo_addcluster</name></member>
     <member refid="cluster_8h_1ad278615a0ca28bd1c208e3a08c73489e" kind="function"><name>Cluster_setClusinfo_chgcluster</name></member>
     <member refid="cluster_8h_1adc3dd4b0e09252cdbdc1d90002c8b719" kind="function"><name>Cluster_setClusinfo_chgiter</name></member>
     <member refid="cluster_8h_1a651e8291700f709f85b3f856ba539a42" kind="function"><name>Cluster_getClusinfo_ncluster</name></member>
-    <member refid="cluster_8h_1a6b9c8c9df234300131441941b4bcedca" kind="function"><name>Cluster_getClusinfo_itercluster</name></member>
+    <member refid="cluster_8h_1a99653c490ddb7df5372d4d7806404e47" kind="function"><name>Cluster_getClusinfo_itercluster</name></member>
     <member refid="cluster_8h_1a85421142bc01aff90072f601750630d6" kind="function"><name>Cluster_getClusinfo_iter</name></member>
-    <member refid="cluster_8h_1a7c7ce96f1b498cd96f9947d19b36533f" kind="function"><name>Cluster_getClusinfo_cluster_copy</name></member>
-    <member refid="cluster_8h_1a5583bd2d256b68c05ae64321bedd9ce5" kind="function"><name>Cluster_getClusinfo</name></member>
+    <member refid="cluster_8h_1a0ff585f289fb0b73a3fca93e05a8a38c" kind="function"><name>Cluster_getClusinfo_cluster_copy</name></member>
+    <member refid="cluster_8h_1a419767adcec89afdb085901ff3d6cae4" kind="function"><name>Cluster_getClusinfo</name></member>
     <member refid="cluster_8h_1ac7679f34d7eeded23349753f0755b1a4" kind="function"><name>Cluster_allocNk</name></member>
     <member refid="cluster_8h_1a7dce125082c96c3fa2749d8ef6cd5d5d" kind="function"><name>Cluster_freeNk</name></member>
     <member refid="cluster_8h_1a14d2e85d18ec2ea621e6953d77716e20" kind="function"><name>Cluster_getNk_order</name></member>
-    <member refid="cluster_8h_1a4bd76920f0cef240c3a31124c14ca203" kind="function"><name>Cluster_getNk</name></member>
-    <member refid="cluster_8h_1a2873972ff65570fa0062778501cc1e82" kind="function"><name>Cluster_getMethod</name></member>
+    <member refid="cluster_8h_1a1d0ac68ba355cf7813cc12ca3f501374" kind="function"><name>Cluster_getNk</name></member>
+    <member refid="cluster_8h_1a808af65ced5973a5e08eb75977320496" kind="function"><name>Cluster_getMethod</name></member>
     <member refid="cluster_8h_1a47d752dbb15a2ffb42196cdd3954847b" kind="function"><name>Cluster_getOrder</name></member>
     <member refid="cluster_8h_1a3dda4466570a4fc20cae5575985f6bbc" kind="function"><name>Cluster_getAddsubclus</name></member>
+    <member refid="cluster_8h_1aeb2d2a54e053652334d2047bb54abcab" kind="function"><name>Cluster_getSk</name></member>
+    <member refid="cluster_8h_1a310b502f788cf7e48e32182e5b1a8ffa" kind="function"><name>Cluster_getMax_iter</name></member>
+    <member refid="cluster_8h_1a0e7ead37398b057025a24a9946877de3" kind="function"><name>Cluster_getMax_trial</name></member>
+    <member refid="cluster_8h_1a46665bd0f72724ba562bcd0beba8968d" kind="function"><name>Cluster_getKmeans_pp</name></member>
+    <member refid="cluster_8h_1a0a8c95022c0c1dda0dec29513607306f" kind="function"><name>Cluster_getIter_detail</name></member>
     <member refid="cluster_8h_1aa90dc64438d37b32233d63477faf1f12" kind="function"><name>Cluster_setOrder</name></member>
     <member refid="cluster_8h_1ababf9e54916b278727d4b425b3cc8904" kind="function"><name>Cluster_setMethod</name></member>
     <member refid="cluster_8h_1acbb70ded1b186b5dc918b75fa4d5eb70" kind="function"><name>Cluster_setAddsubclus</name></member>
     <member refid="cluster_8h_1ac788d747aa9c4b77e643ba5f0419aae9" kind="function"><name>Cluster_setNk</name></member>
+    <member refid="cluster_8h_1a5c7d020a3a223b82cb694c8a6260ce4c" kind="function"><name>Cluster_setSk</name></member>
+    <member refid="cluster_8h_1a3a1a8b02f043a2110cfcf146869960c6" kind="function"><name>Cluster_setMax_trial</name></member>
+    <member refid="cluster_8h_1ac2ca9ec65fba544ab971eb6498c97ec9" kind="function"><name>Cluster_setMax_iter</name></member>
+    <member refid="cluster_8h_1a672c4146e1cedda3097bd6248bbfa6c6" kind="function"><name>Cluster_setKmeans_pp</name></member>
+    <member refid="cluster_8h_1ab060b69cdf5630427a5b5f07f1e19ff5" kind="function"><name>Cluster_setIter_detail</name></member>
   </compound>
   <compound refid="cluster__hash_8h" kind="file"><name>cluster_hash.h</name>
     <member refid="cluster__hash_8h_1a13654ad43b75218709e205850a41f85f" kind="function"><name>clusterizeHash</name></member>
@@ -344,7 +374,7 @@
     <member refid="cluster__hash_8h_1ab2d03ad431ee0115b07f538a5844c162" kind="function"><name>freeHashCluster</name></member>
     <member refid="cluster__hash_8h_1abebc71c366d2ca94c9f085a1316f0338" kind="function"><name>addCluster</name></member>
     <member refid="cluster__hash_8h_1a3c03f282af1a291fee41e3f0f21545d2" kind="function"><name>by_strength</name></member>
-    <member refid="cluster__hash_8h_1a1c8b9255f31a154e48e5c8975a5b556d" kind="function"><name>findCluster</name></member>
+    <member refid="cluster__hash_8h_1a958b5bb518fe9055ea3d1a3cc95743b5" kind="function"><name>findCluster</name></member>
     <member refid="cluster__hash_8h_1ad1b54a9108e1b42f15f32d970e34f5fd" kind="function"><name>setMaxLengthStr</name></member>
     <member refid="cluster__hash_8h_1a2c4c9395b42b8370c566cea0ec369942" kind="function"><name>addSpin</name></member>
     <member refid="cluster__hash_8h_1a2e7e844007824dff536a437e679a8f70" kind="function"><name>typeStr</name></member>
@@ -353,7 +383,7 @@
     <member refid="cluster__hash_8h_1ade82d5910aec868945bbfbaa657b3ed6" kind="function"><name>addAllStrength</name></member>
     <member refid="cluster__hash_8h_1a38bab6a7e70e8f207f00872ab30e1a0e" kind="function"><name>printClusters</name></member>
     <member refid="cluster__hash_8h_1a3d25f0062cfd81b8dda08a8a772570b6" kind="function"><name>printProperties</name></member>
-    <member refid="cluster__hash_8h_1a3679f0299f227492571e44be455cdb4d" kind="function"><name>parseClusterIdToIntArray</name></member>
+    <member refid="cluster__hash_8h_1ad71f01df977c65d4d55567be1674a7e6" kind="function"><name>parseClusterIdToIntArray</name></member>
     <member refid="cluster__hash_8h_1a881bd0eb07e76afd42275803a1d0ca29" kind="function"><name>countDigits</name></member>
     <member refid="cluster__hash_8h_1a3c08100306289ee92372fad9d0142add" kind="function"><name>search2dArr</name></member>
     <member refid="cluster__hash_8h_1a7519d1ca541c84a4268f1ca765d6f517" kind="function"><name>updateNk</name></member>
@@ -361,12 +391,53 @@
     <member refid="cluster__hash_8h_1ac0beb7777256cc3c7eb608b497503553" kind="function"><name>generateCombinations</name></member>
     <member refid="cluster__hash_8h_1aa9f95887c42a0e4f46ddeb04e68c914f" kind="function"><name>addAllStrengthForAllSpins</name></member>
   </compound>
+  <compound refid="cluster__pcce_8h" kind="file"><name>cluster_pcce.h</name>
+    <member refid="cluster__pcce_8h_1adae31771c34b352e9e7347002af790fd" kind="function"><name>clusterizePcce</name></member>
+    <member refid="cluster__pcce_8h_1acf3a1a0dfd001487e4ae95a2937703fa" kind="function"><name>simulator_cluster_partition</name></member>
+    <member refid="cluster__pcce_8h_1a7a1445a095e496d0f8f57bfb8a8e6a66" kind="function"><name>shrink_restspins</name></member>
+    <member refid="cluster__pcce_8h_1a70bf38a7bebe453a21a295f8956b8a17" kind="function"><name>update_global_best</name></member>
+    <member refid="cluster__pcce_8h_1a576d3197256d2b37939aa26bdd7de0cc" kind="function"><name>print_pcce_info</name></member>
+    <member refid="cluster__pcce_8h_1a39f1ba7c2cfc5a8953854fbceb77d9d3" kind="function"><name>initializeCentroids</name></member>
+    <member refid="cluster__pcce_8h_1a83d1960bb1d5ff52024134e20e36e0df" kind="function"><name>choose_initial_method</name></member>
+    <member refid="cluster__pcce_8h_1a01b4f00976e0e234d92f5b7cc818b42c" kind="function"><name>kMeansPlusPlus</name></member>
+    <member refid="cluster__pcce_8h_1a7dde77302f976e84e08f8e539c140aff" kind="function"><name>shuffle_spins</name></member>
+    <member refid="cluster__pcce_8h_1aa872b13b6190f451e46a416f643d9a5c" kind="function"><name>changeIdx_inverse_shuffle_idx</name></member>
+    <member refid="cluster__pcce_8h_1a6df241c32cec4bda7e0803f62253fe27" kind="function"><name>assignCentroids</name></member>
+    <member refid="cluster__pcce_8h_1a85713ae9942c449e94912cd5ff3af8b4" kind="function"><name>calc_dist_to_centers</name></member>
+    <member refid="cluster__pcce_8h_1a2cb0a2b9e2cc3d2102a706904198c12a" kind="function"><name>copy_best_centers</name></member>
+    <member refid="cluster__pcce_8h_1a5398450f2130b0e68a8689236da62a4d" kind="function"><name>copy_best_assigned</name></member>
+    <member refid="cluster__pcce_8h_1a1bdbe8088b22e756482673bb928b1f0e" kind="function"><name>copy_best_idxList</name></member>
+    <member refid="cluster__pcce_8h_1ab399075583dba866544c4d2b039f5161" kind="function"><name>copy_best_spins</name></member>
+    <member refid="cluster__pcce_8h_1aa1cd163515f3b9b75f7ce63392a5e105" kind="function"><name>copy_bath_to_point_type</name></member>
+    <member refid="cluster__pcce_8h_1adb850cb60a1ce19a58e8cc6299135007" kind="function"><name>print_BD</name></member>
+    <member refid="cluster__pcce_8h_1a36ee04deeee2569341f12b31f397844b" kind="function"><name>print_centers</name></member>
+    <member refid="cluster__pcce_8h_1a2ee1003651338526cbfac2441dde7593" kind="function"><name>print_kmeans_converge_info</name></member>
+    <member refid="cluster__pcce_8h_1aa07c9cdb3bafd3beb401c8f2d6ebb5ca" kind="function"><name>print_optimize_kmeans_info</name></member>
+    <member refid="cluster__pcce_8h_1a2c21780bb5a4230b669f81d85ccdfd65" kind="function"><name>print_assign_idx</name></member>
+    <member refid="cluster__pcce_8h_1a638626bf18221c6f40f5b0716ad6e567" kind="function"><name>print_spins</name></member>
+    <member refid="cluster__pcce_8h_1ab329b807f003edfad95c4d2538abefd8" kind="function"><name>print_time</name></member>
+    <member refid="cluster__pcce_8h_1aef76d83cf38d2178999b8a4da5a5b07c" kind="function"><name>write_centers</name></member>
+    <member refid="cluster__pcce_8h_1addc0ffa14a8cc9df7b8fd6c9c0051709" kind="function"><name>write_spins</name></member>
+    <member refid="cluster__pcce_8h_1a6702bdd461e4fd9edbc9c54c08755315" kind="function"><name>print_best_spins</name></member>
+    <member refid="cluster__pcce_8h_1a4e5c9cb81b7e743949b321dffee89acf" kind="function"><name>print_best_centers</name></member>
+    <member refid="cluster__pcce_8h_1ab8236bdb6b61f20a61579d9a86be854d" kind="function"><name>silhouetteCoefficient</name></member>
+    <member refid="cluster__pcce_8h_1a55482fd967a823defee280d2f3597448" kind="function"><name>calculateInertia</name></member>
+    <member refid="cluster__pcce_8h_1a76a1e0caeb30010e46a84fe756629ce5" kind="function"><name>calc_dist</name></member>
+    <member refid="cluster__pcce_8h_1a59ce6bcbe05a29b4798de2db4bdbb205" kind="function"><name>distance</name></member>
+    <member refid="cluster__pcce_8h_1a40b6caf897e0081db52277ea50fd4d05" kind="function"><name>if_contain</name></member>
+    <member refid="cluster__pcce_8h_1a6e0d752f8eb34a988cd8609a9b6a051c" kind="function"><name>updateCentroids</name></member>
+    <member refid="cluster__pcce_8h_1a0e9a228dfcb40ba903f68d7b58408e5b" kind="function"><name>BathArray_connectivity_pcce</name></member>
+    <member refid="cluster__pcce_8h_1a53c541e68006be18f52f6e812a0a981b" kind="function"><name>Cluster_setCenterIdx_spinIdx_2dArr</name></member>
+    <member refid="cluster__pcce_8h_1ab4f28fdd3cf79f031367281815181883" kind="function"><name>print_clusinfo_sorder_i</name></member>
+    <member refid="cluster__pcce_8h_1a3ba2164b952020ad5a20c742bfa2e5ba" kind="function"><name>print_clusinfo_sorder_i_j</name></member>
+    <member refid="cluster__pcce_8h_1a8515a97fbccd6ee237c47c0fcc3b7969" kind="function"><name>convert_centerIdx_to_spinIdx</name></member>
+  </compound>
   <compound refid="defect_8h" kind="file"><name>defect.h</name>
     <member refid="defect_8h_1a8f08e0dc32156449f475af220706d094" kind="function"><name>updateMainSpins_fromDefectArray</name></member>
     <member refid="defect_8h_1a3ea32b46b0daa88628f319f33e514873" kind="function"><name>updateDisorder_main_sub</name></member>
     <member refid="defect_8h_1a41abcd25dae2f2336b9d9d653f31c20f" kind="function"><name>updateDisorder_sub_sub</name></member>
     <member refid="defect_8h_1a0334b31e67f3325af30e7b35c2d5d769" kind="function"><name>updateOverhaus_qubit_sub</name></member>
-    <member refid="defect_8h_1a594f6496fbe2beffb66f7a9f6676f897" kind="function"><name>DefectArray_init</name></member>
+    <member refid="defect_8h_1a104be9c492351b82f29de56d55027c75" kind="function"><name>DefectArray_init</name></member>
     <member refid="defect_8h_1a92e592e423feb06322258098e2fcb036" kind="function"><name>DefectArray_setNdefect</name></member>
     <member refid="defect_8h_1a8fa56bf286f6fcf64d2dc047d01b918c" kind="function"><name>DefectArray_setDefect_idf_dfname</name></member>
     <member refid="defect_8h_1a5b02d2ac15f48e856dc77b217a40d50f" kind="function"><name>DefectArray_setDefect_idf_apprx</name></member>
@@ -383,15 +454,15 @@
     <member refid="defect_8h_1a23c2644c16be8383a93b6a005f2eaa40" kind="function"><name>DefectArray_setDefect_idf_iax_detuning</name></member>
     <member refid="defect_8h_1a9054b7960f6ab8ecc76d69a9722b685a" kind="function"><name>DefectArray_findDefectIndex</name></member>
     <member refid="defect_8h_1a99dcb7dc57b5706c7a5764c703c43ca5" kind="function"><name>DefectArray_getNdefect</name></member>
-    <member refid="defect_8h_1a73e2b6a037540876244b726e3fa9cc1b" kind="function"><name>DefectArray_getDefect_idf_dfname</name></member>
+    <member refid="defect_8h_1afa6a926a9c6a5679b7f769cf7600e11b" kind="function"><name>DefectArray_getDefect_idf_dfname</name></member>
     <member refid="defect_8h_1a0dd45f0baee4bdee08fb7415d990f186" kind="function"><name>DefectArray_getDefect_idf_apprx</name></member>
     <member refid="defect_8h_1a6b3addea84c2c80f4f7ba619c97f7014" kind="function"><name>DefectArray_getDefect_idf_naddspin</name></member>
-    <member refid="defect_8h_1ae3db7c03d4c1f7741f0e909c6db161ba" kind="function"><name>DefectArray_getDefect_idf_isp_types</name></member>
+    <member refid="defect_8h_1a59976b5cdefa9ec523d1b83c1d5b7c40" kind="function"><name>DefectArray_getDefect_idf_isp_types</name></member>
     <member refid="defect_8h_1a700a1bcf079ce7c809eedba6aee86e3b" kind="function"><name>DefectArray_getDefect_idf_isp_spins</name></member>
     <member refid="defect_8h_1a4367f6d21dd7e9aaa0c045e56372c37d" kind="function"><name>DefectArray_getDefect_idf_isp_gyros</name></member>
     <member refid="defect_8h_1a36134ae748439bd5393d05f8563170fb" kind="function"><name>DefectArray_getDefect_idf_isp_eqs</name></member>
     <member refid="defect_8h_1a5b59c3eda7bbe60bca788968e6acc1f7" kind="function"><name>DefectArray_getDefect_idf_navaax</name></member>
-    <member refid="defect_8h_1acc17e7cc692affa60d8f0657d7c10857" kind="function"><name>DefectArray_getDefect_idf_iax_isp_rxyz</name></member>
+    <member refid="defect_8h_1aa54322900cc328444095d5b9384ca889" kind="function"><name>DefectArray_getDefect_idf_iax_isp_rxyz</name></member>
     <member refid="defect_8h_1a8c6789ea6779f6a33936b2b44cb0e61b" kind="function"><name>DefectArray_getDefect_idf_iax_isp_hypf</name></member>
     <member refid="defect_8h_1af12fb02836624f669e30abc9fca511c0" kind="function"><name>DefectArray_getDefect_idf_iax_isp_efg</name></member>
     <member refid="defect_8h_1ad797f4747bdd9da9db55ffac2a47a4d5" kind="function"><name>DefectArray_getDefect_idf_iax_zfs</name></member>
@@ -409,7 +480,7 @@
     <member refid="defect_8h_1a30164208870664d2aa4ecf3407245ac6" kind="function"><name>DefectArray_getNbathspin</name></member>
     <member refid="defect_8h_1a543d31330dc4e4f9f22a318a54bac71d" kind="function"><name>DefectArray_getPaxes_i</name></member>
     <member refid="defect_8h_1a772a0fb2689253810d970dd40b08feab" kind="function"><name>DefectArray_getNaddspins_i</name></member>
-    <member refid="defect_8h_1a01df5d3c3fef2f9b173a49681a931299" kind="function"><name>DefectArray_getSubbath_i_isp</name></member>
+    <member refid="defect_8h_1a9849d69511ec8bbbf15aa0d5ad866640" kind="function"><name>DefectArray_getSubbath_i_isp</name></member>
     <member refid="defect_8h_1a5d406904c0c33a69c999c59eeb488342" kind="function"><name>DefectArray_freePaxes</name></member>
     <member refid="defect_8h_1a501bdca25ce75b807315c91ad7d08402" kind="function"><name>DefectArray_freeNaddspins</name></member>
     <member refid="defect_8h_1af1c1d3150f60f0ccfac4982daf48dd5e" kind="function"><name>DefectArray_freeSubbath</name></member>
@@ -426,13 +497,13 @@
     <member refid="defect_8h_1a5a93fbad4d518932076c6fe0e757d6ee" kind="function"><name>DefectArray_reportNaddspins</name></member>
   </compound>
   <compound refid="general_8h" kind="file"><name>general.h</name>
-    <member refid="general_8h_1a4f952ed3569740aa89b6be7b5afd4321" kind="function"><name>Config_init</name></member>
+    <member refid="general_8h_1a70fd0c2cf20819ac5bcd6a489355ce5f" kind="function"><name>Config_init</name></member>
     <member refid="general_8h_1a5457d5f1e38782ee084dd1079d73f2e0" kind="function"><name>Config_freeAll</name></member>
     <member refid="general_8h_1a7d73746c56f3baa112a558892d0a03e0" kind="function"><name>Config_report</name></member>
-    <member refid="general_8h_1a41d726c3a7b615ddae19f3b5a50d2d57" kind="function"><name>Config_getMethod</name></member>
-    <member refid="general_8h_1a6061f91ac9ac22e546a21e9f63f027b5" kind="function"><name>Config_getQuantity</name></member>
+    <member refid="general_8h_1af2582e1736114eafbb3f3186648f56ac" kind="function"><name>Config_getMethod</name></member>
+    <member refid="general_8h_1a3c6838bb64200b8e674db31171bd5c56" kind="function"><name>Config_getQuantity</name></member>
     <member refid="general_8h_1a51c0628befb8b712ab22b2c7cd6f80ec" kind="function"><name>Config_getOrder</name></member>
-    <member refid="general_8h_1afaa2e9ce248eb4cecdcb6f7faa6a8c75" kind="function"><name>Config_getBfield</name></member>
+    <member refid="general_8h_1a3cf4cfc0c4f682e9f286e2864a9c86bf" kind="function"><name>Config_getBfield</name></member>
     <member refid="general_8h_1ad5a5b1572fcb8a48981e93575aee72ca" kind="function"><name>Config_getRbath</name></member>
     <member refid="general_8h_1aaf5b7058b0c00f08c197741e8e9a7932" kind="function"><name>Config_getRdip</name></member>
     <member refid="general_8h_1a416f16fab6ef1ee6dd757e726086d448" kind="function"><name>Config_getDeltat</name></member>
@@ -441,25 +512,26 @@
     <member refid="general_8h_1abb247e7fb9aefc5be91056f34fd14a34" kind="function"><name>Config_getRdipcut</name></member>
     <member refid="general_8h_1a5bd04bfb722b1dcfb6368d4289b6f374" kind="function"><name>Config_getNstate</name></member>
     <member refid="general_8h_1a9caeed1bd213580af2abf87e40b64a0e" kind="function"><name>Config_getSeed</name></member>
-    <member refid="general_8h_1a3c5a005f00774bb23a01d9a1f87105a8" kind="function"><name>Config_getQubitfile</name></member>
-    <member refid="general_8h_1a2def855434b90a848cc3427d387edad1" kind="function"><name>Config_getGyrofile</name></member>
+    <member refid="general_8h_1a711ccc873b383693b3aad90999a82600" kind="function"><name>Config_getQubitfile</name></member>
+    <member refid="general_8h_1a62ad64b923e92819d84c7e9718dd6495" kind="function"><name>Config_getGyrofile</name></member>
     <member refid="general_8h_1ac8cd55e10be6e7cf2eefcbfb89bc3123" kind="function"><name>Config_getNbathfiles</name></member>
-    <member refid="general_8h_1ac95305095d92a7f6ff7c257f6987d2c7" kind="function"><name>Config_getBathfiles_i</name></member>
-    <member refid="general_8h_1a9fb5259ff948259eddf043e0178f5491" kind="function"><name>Config_getBathadjust_i</name></member>
-    <member refid="general_8h_1a84c31e4b70d8a9434347ba124715270f" kind="function"><name>Config_getAvaaxfile</name></member>
-    <member refid="general_8h_1a2a371b2693462f52fd83e98f62140535" kind="function"><name>Config_getStatefile</name></member>
-    <member refid="general_8h_1ac6972377edd51d0bbe9a8b94eb162559" kind="function"><name>Config_getExstatefile</name></member>
+    <member refid="general_8h_1a37506c5317bd2bb12e3876abff8d09f7" kind="function"><name>Config_getBathfiles_i</name></member>
+    <member refid="general_8h_1a22665eee79753694687fc4e2f74176ad" kind="function"><name>Config_getBathadjust_i</name></member>
+    <member refid="general_8h_1a468e3599de2512d839539b19c50acecb" kind="function"><name>Config_getAvaaxfile</name></member>
+    <member refid="general_8h_1a6b9f7ceb7099db3c96eecee1fb56fa3a" kind="function"><name>Config_getStatefile</name></member>
+    <member refid="general_8h_1ad5983f9e2152c58ec43eca79ff158fed" kind="function"><name>Config_getExstatefile</name></member>
     <member refid="general_8h_1a2b92eae6ce48ff5272dc38e004b3fbee" kind="function"><name>Config_get_nflines</name></member>
-    <member refid="general_8h_1aa405f61d334cf85df28ebf9087d82441" kind="function"><name>Config_get_flines</name></member>
+    <member refid="general_8h_1ac3c7a4914644e9d104effd22e49fb70a" kind="function"><name>Config_get_flines</name></member>
     <member refid="general_8h_1a7856240d6340f204691b339875292897" kind="function"><name>Config_get_flines_i</name></member>
     <member refid="general_8h_1a99c936f38b92c6ab9c71ef76ec00f250" kind="function"><name>Config_getDefectTotSpin</name></member>
     <member refid="general_8h_1a2154992e78c2a40fbff7b5b05c6011d2" kind="function"><name>Config_getCorrTotSpin</name></member>
-    <member refid="general_8h_1a9d87919e3542bb96f5d32c418283fe05" kind="function"><name>Config_getHf_tensorfile</name></member>
+    <member refid="general_8h_1a32bddbf5a2584c199446cdb7a6ab2c12" kind="function"><name>Config_getHf_tensorfile</name></member>
     <member refid="general_8h_1a8d09482af389a91264acf63d59d05dfb" kind="function"><name>Config_getHf_cutoff</name></member>
     <member refid="general_8h_1a49e3eaa6fe70087cf2e93d0559d4a4a3" kind="function"><name>Config_getHf_ignore_oor</name></member>
     <member refid="general_8h_1adc4a11d8d54b6e6ad4bb85a758f3af33" kind="function"><name>Config_getHf_readmode</name></member>
-    <member refid="general_8h_1a7281e51bda7812ee4c08448a20e5bf9e" kind="function"><name>Config_getQd_tensorfile</name></member>
-    <member refid="general_8h_1af285d467111ef48ed930c8c89658ee9a" kind="function"><name>Config_getQd_tensorfile_woqubit</name></member>
+    <member refid="general_8h_1ac6ba6871de2ee8bb9c97ed4681cbfd94" kind="function"><name>Config_getQd_tensorfile</name></member>
+    <member refid="general_8h_1ad24a756574403ec0e96dfc4bd962fd41" kind="function"><name>Config_getQd_tensorfile_woqubit</name></member>
+    <member refid="general_8h_1a8fc20bc7e520e082e7488bded57d3a79" kind="function"><name>Config_getQd_cellpara</name></member>
     <member refid="general_8h_1a947cc191b3c46ae83aee0b5df9d4c25d" kind="function"><name>Config_getQd_readmode</name></member>
     <member refid="general_8h_1ab9d6cd3b59f7e86eb5db0c0e1761afd6" kind="function"><name>Config_setMethod</name></member>
     <member refid="general_8h_1aca116ace81e102559a4078672b2f28de" kind="function"><name>Config_setQuantity</name></member>
@@ -493,9 +565,11 @@
     <member refid="general_8h_1a655da4d9da8afbc2b974d76375461631" kind="function"><name>Config_setQd_tensorfile</name></member>
     <member refid="general_8h_1aae28dfc886b8d2c1ad9e9446482e6a82" kind="function"><name>Config_setQd_tensorfile_woqubit</name></member>
     <member refid="general_8h_1a23394467ea3fce27338a44df9114202b" kind="function"><name>Config_setQd_readmode</name></member>
+    <member refid="general_8h_1a65b06bf8a151cf5d0dc23954809dc10e" kind="function"><name>Config_setQd_cellpara</name></member>
     <member refid="general_8h_1a3099481301694e3b583126dd01f6b41b" kind="function"><name>Config_allocBathfiles</name></member>
     <member refid="general_8h_1a90cdf1474df25d6ff81db496cd9f391c" kind="function"><name>Config_reallocBathfiles</name></member>
     <member refid="general_8h_1a730db6d0643d20643ebf2b5466248383" kind="function"><name>Config_allocBathadjust</name></member>
+    <member refid="general_8h_1abfb10e2c8efb3edb57f6f3f67593a12e" kind="function"><name>Config_reallocBathadjust</name></member>
     <member refid="general_8h_1a8b1d3800925035ace8ce968f60c3da91" kind="function"><name>Config_allocGyrofile</name></member>
     <member refid="general_8h_1a6692a2f5f43adeff2f75d9d94eaa5cbd" kind="function"><name>Config_allocQubitfile</name></member>
     <member refid="general_8h_1aa1f67a5106cd44bb119f9f4784e0d9c9" kind="function"><name>Config_allocAvaaxfile</name></member>
@@ -523,8 +597,8 @@
     <member refid="hamiltonian_8h_1a32881a50d19996cd349deb8870b7ff7c" kind="function"><name>Pauli_matrix_X</name></member>
     <member refid="hamiltonian_8h_1a5bce21904c25db932bf41194ab7c27b0" kind="function"><name>Pauli_matrix_Y</name></member>
     <member refid="hamiltonian_8h_1adac30a826d9f0385f1a0929c89a2669d" kind="function"><name>Pauli_matrix_Z</name></member>
-    <member refid="hamiltonian_8h_1aefa0a04f882701f9145227945bcc7e22" kind="function"><name>getGeneralPauliOperators</name></member>
-    <member refid="hamiltonian_8h_1aaf58877c21f9a36357989f8b5bd3a3da" kind="function"><name>getPauliOperators</name></member>
+    <member refid="hamiltonian_8h_1ab9ca9aa49f6dbc6edd908713fd96031d" kind="function"><name>getGeneralPauliOperators</name></member>
+    <member refid="hamiltonian_8h_1a863b5a4361112b8d205b852810e022b7" kind="function"><name>getPauliOperators</name></member>
     <member refid="hamiltonian_8h_1acff04356cf31a922d9bdfe2ec68bba41" kind="function"><name>calZeemanVector</name></member>
     <member refid="hamiltonian_8h_1ab515e2dc05fdd7f2524c9aee6e4d15ec" kind="function"><name>calDetuningVector</name></member>
     <member refid="hamiltonian_8h_1a282204e16abcfff12f7edac731610754" kind="function"><name>calOverhauserVector</name></member>
@@ -534,7 +608,7 @@
     <member refid="hamiltonian_8h_1a9e4b5942cc2603bf186ba957859173d8" kind="function"><name>calHamiltonianSingleInt</name></member>
     <member refid="hamiltonian_8h_1adfea46d311e2e68e70ca00cda8cda30a" kind="function"><name>expandHamiltonian</name></member>
     <member refid="hamiltonian_8h_1a736140376172e612dad1a5d2783caf93" kind="function"><name>ZeemanInt</name></member>
-    <member refid="hamiltonian_8h_1a736673e374275abc5e2121d6d58a3365" kind="function"><name>getIndexInOrder</name></member>
+    <member refid="hamiltonian_8h_1a71128dcdc5ece9611b85ce79ec85eef1" kind="function"><name>getIndexInOrder</name></member>
     <member refid="hamiltonian_8h_1a6a5afd891b7cbf5044236d29d4c501b1" kind="function"><name>sortEigenValues</name></member>
     <member refid="hamiltonian_8h_1a6ca9fa8e295520b6f9feaf132d6e5aeb" kind="function"><name>sortEigenVectors</name></member>
     <member refid="hamiltonian_8h_1ab8a2bf369cc969225922b0240f6a5009" kind="function"><name>isInvolutory</name></member>
@@ -563,8 +637,8 @@
     <member refid="json_8h_1adab3f1e3586395bdb2da5a40059cb24b" kind="define"><name>cJSON_SetNumberValue</name></member>
     <member refid="json_8h_1a210748b11b9b4f93d29391591a37ad85" kind="define"><name>cJSON_SetBoolValue</name></member>
     <member refid="json_8h_1ac3d6e5782fb4bb3c7a25c7c5b1868f06" kind="define"><name>cJSON_ArrayForEach</name></member>
-    <member refid="json_8h_1a417c667b0692c463cf3c6c435f1d5978" kind="typedef"><name>cJSON</name></member>
-    <member refid="json_8h_1a4c24043be07442b38adc0ef79fcfb3f8" kind="typedef"><name>cJSON_Hooks</name></member>
+    <member refid="json_8h_1a4c146234dfd7b6adbf13b49505e995bc" kind="typedef"><name>cJSON</name></member>
+    <member refid="json_8h_1ab67bc592e52110fee68ab8ab4140530d" kind="typedef"><name>cJSON_Hooks</name></member>
     <member refid="json_8h_1aea0a1491f73d98b7cc4b8b791c408a4a" kind="typedef"><name>cJSON_bool</name></member>
     <member refid="json_8h_1a7beaf9b4ef5e4c7254cc3298a3424354" kind="variable"><name>buffer_length</name></member>
     <member refid="json_8h_1a7725ae4fa33fc499614c6895ee9ee44a" kind="variable"><name>return_parse_end</name></member>
@@ -598,60 +672,60 @@
     <member refid="json_8h_1a8172bffbb05eec3c761bf0b43484f62d" kind="function"><name>CJSON_PUBLIC</name></member>
   </compound>
   <compound refid="memory_8h" kind="file"><name>memory.h</name>
-    <member refid="memory_8h_1a3cb8db1d55063ce809ca15698555d1fb" kind="function"><name>allocInt1d</name></member>
-    <member refid="memory_8h_1a10d56311c506ff61bd1e0ed9b19c293c" kind="function"><name>allocInt2d</name></member>
-    <member refid="memory_8h_1af5f58611b4753685463223935135b711" kind="function"><name>allocInt3d</name></member>
+    <member refid="memory_8h_1a4a77e962a421d5e821fbaab7d5b86956" kind="function"><name>allocInt1d</name></member>
+    <member refid="memory_8h_1a3e653c3d5c2e7897316a6eda369691f7" kind="function"><name>allocInt2d</name></member>
+    <member refid="memory_8h_1ab6e8d630a307e662c123d58af9947bcd" kind="function"><name>allocInt3d</name></member>
     <member refid="memory_8h_1a10eb6c8390d29cc8f33e0ea56b6ee9ae" kind="function"><name>reallocInt1d</name></member>
     <member refid="memory_8h_1a0404e6c1166ae1c0d933738b732c67f8" kind="function"><name>reallocInt2d</name></member>
     <member refid="memory_8h_1a75f338991cc82d1c6fca0b66f207ca67" kind="function"><name>reallocInt3d</name></member>
     <member refid="memory_8h_1a2d2931bbb7e0f10a2b1863f387c525a4" kind="function"><name>freeInt1d</name></member>
     <member refid="memory_8h_1a68bfeb1b2a0a0f15f9377384ca69c08f" kind="function"><name>freeInt2d</name></member>
     <member refid="memory_8h_1ac74f85e3ab97b01cd30c0d46526970af" kind="function"><name>freeInt3d</name></member>
-    <member refid="memory_8h_1a5b6cbba6ea5a6163d38e651bdf01184f" kind="function"><name>allocDouble1d</name></member>
-    <member refid="memory_8h_1a8b57b170601f16ea432d9d46e36d9de1" kind="function"><name>allocDouble2d</name></member>
-    <member refid="memory_8h_1a59b376e2bdbfb20b3e5a64b94e034c50" kind="function"><name>allocDouble3d</name></member>
+    <member refid="memory_8h_1a4aa37a6d4999d3c57dd6c2dfa87db3cc" kind="function"><name>allocDouble1d</name></member>
+    <member refid="memory_8h_1a5fae9bb248599c92e65e9cff381742f4" kind="function"><name>allocDouble2d</name></member>
+    <member refid="memory_8h_1a970b58c0b9074a40c2c14f313007807d" kind="function"><name>allocDouble3d</name></member>
     <member refid="memory_8h_1ae443161b6e9abc8ebdfcc78fc7f41cff" kind="function"><name>reallocDouble1d</name></member>
     <member refid="memory_8h_1a4064bc02973da353c0e15ccba52fa2da" kind="function"><name>reallocDouble2d</name></member>
     <member refid="memory_8h_1accd1ea1d834fa90eb69b4a1a60a6c8c7" kind="function"><name>reallocDouble3d</name></member>
     <member refid="memory_8h_1abc35d0114f94dc82fcd0e172d3328858" kind="function"><name>freeDouble1d</name></member>
     <member refid="memory_8h_1aa69535e3c103c2f26fdd32acc7bd6eaf" kind="function"><name>freeDouble2d</name></member>
     <member refid="memory_8h_1aec282ca23f89d1bfb485424fa4fccea3" kind="function"><name>freeDouble3d</name></member>
-    <member refid="memory_8h_1a532ae5e19c8fd778b4c964176a7b1418" kind="function"><name>allocFloat1d</name></member>
-    <member refid="memory_8h_1a45b0ad39e132be4e80d4cb36dd7a837f" kind="function"><name>allocFloat2d</name></member>
-    <member refid="memory_8h_1a448f8a97b5642a40a305be37783ddd3f" kind="function"><name>allocFloat3d</name></member>
+    <member refid="memory_8h_1a8454b3ee4ca25f30d8ff2882e9ad6b3e" kind="function"><name>allocFloat1d</name></member>
+    <member refid="memory_8h_1a7743184281c1cb77100dd9e8b06bc127" kind="function"><name>allocFloat2d</name></member>
+    <member refid="memory_8h_1a3290989322bbce33ac54530d879631bd" kind="function"><name>allocFloat3d</name></member>
     <member refid="memory_8h_1aee87abbe73442e0cbd97ebda24bd79d6" kind="function"><name>reallocFloat1d</name></member>
     <member refid="memory_8h_1ab48436f9e9de0d2c4cf1c8a498f623af" kind="function"><name>reallocFloat2d</name></member>
     <member refid="memory_8h_1a76ee96e1f60e3a253dc3ad7daa28527e" kind="function"><name>reallocFloat3d</name></member>
     <member refid="memory_8h_1abc1142ec4de2ca14707d793174fd0f46" kind="function"><name>freeFloat1d</name></member>
     <member refid="memory_8h_1a2e4119d480261486ac6f679e08e31ced" kind="function"><name>freeFloat2d</name></member>
     <member refid="memory_8h_1acfe219819fa297c10aa2c0f7b971d689" kind="function"><name>freeFloat3d</name></member>
-    <member refid="memory_8h_1a1e932cd487007fdbd1ecbf2735074e4c" kind="function"><name>allocChar1d</name></member>
-    <member refid="memory_8h_1a40e1314389e6d75466689cd0ad221576" kind="function"><name>allocChar2d</name></member>
-    <member refid="memory_8h_1a362685c323bcf9bb2c964ed3ce6efb3c" kind="function"><name>allocChar3d</name></member>
+    <member refid="memory_8h_1afb4624f7aa66d7e5ec10426cc8a3feea" kind="function"><name>allocChar1d</name></member>
+    <member refid="memory_8h_1a0a133a31db58e947605fdccc99b72d5c" kind="function"><name>allocChar2d</name></member>
+    <member refid="memory_8h_1a10d36a90a539957fee6ca7c09a8e1311" kind="function"><name>allocChar3d</name></member>
     <member refid="memory_8h_1a3f9aff48853931f2c180b7876938379c" kind="function"><name>reallocChar1d</name></member>
     <member refid="memory_8h_1a35d549313b1dce7ed8bfcf38580fb532" kind="function"><name>reallocChar2d</name></member>
     <member refid="memory_8h_1aa5dcaabef2cac3790016b34f88a5a6f8" kind="function"><name>reallocChar3d</name></member>
     <member refid="memory_8h_1a5177edfbc8cf0f07d0a1e4e24edc9118" kind="function"><name>freeChar1d</name></member>
     <member refid="memory_8h_1af666c88324ad27080d462ec6c1fa87d2" kind="function"><name>freeChar2d</name></member>
     <member refid="memory_8h_1a2c22e55cc0e94c3a77895bc12d00ea08" kind="function"><name>freeChar3d</name></member>
-    <member refid="memory_8h_1a0d95fc022c2c62fad196f20a66e8603a" kind="function"><name>allocMatrixXcd1d</name></member>
-    <member refid="memory_8h_1a7348d898d8effef9f72ad069373d0f3d" kind="function"><name>allocMatrixXcd2d</name></member>
-    <member refid="memory_8h_1aa3e85b06be5594f4fb46e32013c5d97c" kind="function"><name>allocMatrixXcd3d</name></member>
+    <member refid="memory_8h_1ada2c9a9e950139e59b398a2fec8edca4" kind="function"><name>allocMatrixXcd1d</name></member>
+    <member refid="memory_8h_1a5cbb93a551c35338ad4c852cd5a88f24" kind="function"><name>allocMatrixXcd2d</name></member>
+    <member refid="memory_8h_1ae043062bc80db23cee9dd8a175437c9f" kind="function"><name>allocMatrixXcd3d</name></member>
     <member refid="memory_8h_1a18ae919c8a78c8d6d6e66e10dbc6103c" kind="function"><name>freeMatrixXcd1d</name></member>
     <member refid="memory_8h_1a3c3534e208dd35b87947214940871c70" kind="function"><name>freeMatrixXcd2d</name></member>
     <member refid="memory_8h_1a76ad4248c8e0c37ba210082494e02ea9" kind="function"><name>freeMatrixXcd3d</name></member>
-    <member refid="memory_8h_1a123fb36d3877af7b86546215ba0a89e5" kind="function"><name>allocDoubleTensor1d</name></member>
-    <member refid="memory_8h_1a46b66a5e79d6d21560ccd332c880c511" kind="function"><name>allocDoubleTensor2d</name></member>
-    <member refid="memory_8h_1a7dc8d8e2faf060b6ff08059297abed6d" kind="function"><name>allocDoubleTensor3d</name></member>
+    <member refid="memory_8h_1af7ebeb311107475f06d209648d04ef4a" kind="function"><name>allocDoubleTensor1d</name></member>
+    <member refid="memory_8h_1a5e1703846f2ea3e1e9da02274969c313" kind="function"><name>allocDoubleTensor2d</name></member>
+    <member refid="memory_8h_1a2936d245f390e1cd33959f745913c2fb" kind="function"><name>allocDoubleTensor3d</name></member>
     <member refid="memory_8h_1ad5ce8e72390637d3079ce74b5b5276ae" kind="function"><name>reallocDoubleTensor1d</name></member>
     <member refid="memory_8h_1a08cf471a6b8caa128a17eae73d457fc5" kind="function"><name>reallocDoubleTensor2d</name></member>
     <member refid="memory_8h_1a0106be117f3b2350b4b2afa1364f89dc" kind="function"><name>reallocDoubleTensor3d</name></member>
     <member refid="memory_8h_1ae0e177577e93e434d1b241f5fd507f92" kind="function"><name>freeDoubleTensor1d</name></member>
     <member refid="memory_8h_1a6f912a61d9ea2bf679c97508969d6d40" kind="function"><name>freeDoubleTensor2d</name></member>
     <member refid="memory_8h_1aff71313f16bb4038f8ac37811a137f0d" kind="function"><name>freeDoubleTensor3d</name></member>
-    <member refid="memory_8h_1aa265fda5937761764ca1b338547b205f" kind="function"><name>allocArray1d</name></member>
-    <member refid="memory_8h_1a235014f3aef0304a918cff31a174632d" kind="function"><name>allocArray2d</name></member>
-    <member refid="memory_8h_1a0a99c65092aea575f0d54b01c8b0f58d" kind="function"><name>allocArray3d</name></member>
+    <member refid="memory_8h_1af796015bd6d40f132417a433e0d57d1b" kind="function"><name>allocArray1d</name></member>
+    <member refid="memory_8h_1a12ec47e0c2b10d8d51b03e918c7ee25a" kind="function"><name>allocArray2d</name></member>
+    <member refid="memory_8h_1af40e6f3866b71caa4eaa96c4e0344bf3" kind="function"><name>allocArray3d</name></member>
     <member refid="memory_8h_1a7ecd70ee2110d66f4763fccc4743e0aa" kind="function"><name>reallocArray1d</name></member>
     <member refid="memory_8h_1ab0597e5b06582506367d5f8a98bd8561" kind="function"><name>reallocArray2d</name></member>
     <member refid="memory_8h_1ac883ccfb6471f54d9297c348ce98f8ec" kind="function"><name>reallocArray3d</name></member>
@@ -681,19 +755,19 @@
     <member refid="option_8h_1aabd14a766502f8cc34280e166ba52de9" kind="function"><name>cJSON_readOptionPulse</name></member>
     <member refid="option_8h_1a6628675ac6077650760ca4b308b987e1" kind="function"><name>cJSON_readOptionOutput</name></member>
     <member refid="option_8h_1ad15e4bc073ef18f308405afd980208a6" kind="function"><name>cJSON_readOptionDefectArray</name></member>
-    <member refid="option_8h_1a28e6763b1074d15682cfbba7e2ee3e5d" kind="function"><name>cJSON_ReadFccein</name></member>
-    <member refid="option_8h_1a3e0023ab5c647625e34f0eb0ebd8ef37" kind="function"><name>cJSON_ReadFilePath</name></member>
-    <member refid="option_8h_1adcea69a79af1dbe16a7c480a9208b8d8" kind="function"><name>cJSON_ReadString</name></member>
+    <member refid="option_8h_1a97c3a05c2947e61634872a1de1263288" kind="function"><name>cJSON_ReadFccein</name></member>
+    <member refid="option_8h_1a2009735db395f4d651bf8bad59262083" kind="function"><name>cJSON_ReadFilePath</name></member>
+    <member refid="option_8h_1a99ae54e0d171f47cbcd6fc4450e7de8a" kind="function"><name>cJSON_ReadString</name></member>
     <member refid="option_8h_1a1eb81cd1ec189abe60e9d99dd944b251" kind="function"><name>cJSON_ReadInt</name></member>
     <member refid="option_8h_1a71e76f5268d5be8c5b1fdc892c516be2" kind="function"><name>cJSON_ReadFloat</name></member>
     <member refid="option_8h_1ace4bc52a3d271b0bb2d21f3797517778" kind="function"><name>cJSON_ReadDouble</name></member>
     <member refid="option_8h_1aba7906dcd35e88eefbc1e707b1e7e958" kind="function"><name>cJSON_ReadBool</name></member>
-    <member refid="option_8h_1a7366bd135eb2edf02db5f5dd2f99b1d9" kind="function"><name>cJSON_ReadString1d</name></member>
-    <member refid="option_8h_1aac3476163ccecc2fdd26b496a31c6d8d" kind="function"><name>cJSON_ReadFilePath1d</name></member>
-    <member refid="option_8h_1a9dc2c635602ac486718c21a685254043" kind="function"><name>cJSON_ReadInt1d</name></member>
-    <member refid="option_8h_1ac5ebdf96468b6d25f388a43442cadd90" kind="function"><name>cJSON_ReadFloat1d</name></member>
-    <member refid="option_8h_1a8e02f4940c4984b35806d10df576b5ce" kind="function"><name>cJSON_ReadDouble1d</name></member>
-    <member refid="option_8h_1aafa3347b2d08043f31e55e371c83d1e1" kind="function"><name>cJSON_ReadDouble2d</name></member>
+    <member refid="option_8h_1af6e24613b66d1654c79848aae77b575a" kind="function"><name>cJSON_ReadString1d</name></member>
+    <member refid="option_8h_1ae09f523ee9a0520fe33e8181ff864130" kind="function"><name>cJSON_ReadFilePath1d</name></member>
+    <member refid="option_8h_1aa3feb7c8d2dc33e4d9b2f7ab7522ef16" kind="function"><name>cJSON_ReadInt1d</name></member>
+    <member refid="option_8h_1a8976241aee4d9aee5ed3b57abc57f6ca" kind="function"><name>cJSON_ReadFloat1d</name></member>
+    <member refid="option_8h_1a80451474d28bf53ee67bf8b182ee38d0" kind="function"><name>cJSON_ReadDouble1d</name></member>
+    <member refid="option_8h_1a2f68f51854669b01d4dddf510295340f" kind="function"><name>cJSON_ReadDouble2d</name></member>
     <member refid="option_8h_1aad7367ed50287681b3f461adacb6e783" kind="function"><name>cJSON_ReadTensor</name></member>
     <member refid="option_8h_1ad86bc6d9142752cbbea62c6b65cf09f9" kind="function"><name>cJSON_ReadDefectInfo_IntCharDoubleArray</name></member>
     <member refid="option_8h_1af4299302b065e3685848ce5ecaf8139d" kind="function"><name>cJSON_ReadDefectInfo_IntCharMatrixXcd2d</name></member>
@@ -701,21 +775,21 @@
     <member refid="option_8h_1a8a291fbe45c46e7385b5418b623c52a2" kind="function"><name>cJSON_ReadDefectInfo_IntCharDouble</name></member>
   </compound>
   <compound refid="output_8h" kind="file"><name>output.h</name>
-    <member refid="output_8h_1a246bbb4bdade1fec37a74f52288bd0fc" kind="function"><name>Output_init</name></member>
+    <member refid="output_8h_1ab161d788e792a9b6151d1f1a11845fd2" kind="function"><name>Output_init</name></member>
     <member refid="output_8h_1afd9a47af9edc67e492f1b5890b6c595b" kind="function"><name>Output_save</name></member>
     <member refid="output_8h_1a89057c68815c5f25f19e7f5b17fc2a8f" kind="function"><name>Output_save_all</name></member>
     <member refid="output_8h_1aa0cea37b91d5d895f1a06e19d551f011" kind="function"><name>Output_save_info</name></member>
     <member refid="output_8h_1a45c1e74132e535964cf887914fbbf092" kind="function"><name>Output_setSavemode</name></member>
-    <member refid="output_8h_1abaefd91d3e41c0ce7e57f9af5f0800a2" kind="function"><name>Output_getSavemode</name></member>
+    <member refid="output_8h_1a467fad78f6e8062d4639ecee3dc14fa9" kind="function"><name>Output_getSavemode</name></member>
     <member refid="output_8h_1a738ebf5a2d75f03d3baac8073c56b8cd" kind="function"><name>Output_allocOutfile</name></member>
     <member refid="output_8h_1acea267bd1b794ed21eb61b565a0bdefa" kind="function"><name>Output_freeOutfile</name></member>
     <member refid="output_8h_1abd65ea9be94348ea3e83cf15beeb1e7c" kind="function"><name>Output_setOutfile</name></member>
-    <member refid="output_8h_1a58a735c4720b4fcb58831a9209cc5509" kind="function"><name>Output_getOutfile</name></member>
+    <member refid="output_8h_1a3456010018b892fe435283f0d54ae262" kind="function"><name>Output_getOutfile</name></member>
     <member refid="output_8h_1a45e362c64a844fde067befad21c5d3c0" kind="function"><name>Output_report</name></member>
     <member refid="output_8h_1a787e1d765898041179cf2cb9163ccd1a" kind="function"><name>Output_freeAll</name></member>
   </compound>
   <compound refid="pulse_8h" kind="file"><name>pulse.h</name>
-    <member refid="pulse_8h_1a0c7619127c67d5d5aa5559d1dccf6552" kind="function"><name>Pulse_init</name></member>
+    <member refid="pulse_8h_1aa7009d836c8d5eb9334af5ebbba67d84" kind="function"><name>Pulse_init</name></member>
     <member refid="pulse_8h_1a68c4200b8c8a7219dff809fc95835007" kind="function"><name>Pulse_report</name></member>
     <member refid="pulse_8h_1a74cfa2780f1d797822ba8676a791ece4" kind="function"><name>Pulse_setNpulse</name></member>
     <member refid="pulse_8h_1ab47f98146415eee502baccfc07b644e8" kind="function"><name>Pulse_setPulsename</name></member>
@@ -723,8 +797,8 @@
     <member refid="pulse_8h_1a4d22448c11cd121fde947397d118f449" kind="function"><name>Pulse_setSequence_fromInput</name></member>
     <member refid="pulse_8h_1aad13a34668d7aa6baf2848bb076c3dff" kind="function"><name>Pulse_setPulseiter</name></member>
     <member refid="pulse_8h_1a6a09cffba4cc0f91199bef3c1cdf874a" kind="function"><name>Pulse_getNpulse</name></member>
-    <member refid="pulse_8h_1a27ac15f8163d1ce64bc5aab3c32d1faf" kind="function"><name>Pulse_getPulsename</name></member>
-    <member refid="pulse_8h_1a28893dfeabe0b3e18e3be3550e6e49f4" kind="function"><name>Pulse_getSequence</name></member>
+    <member refid="pulse_8h_1a8994512669fa1459dc448eee185c3453" kind="function"><name>Pulse_getPulsename</name></member>
+    <member refid="pulse_8h_1aa512540b0350986219df2f6d6b8a27b0" kind="function"><name>Pulse_getSequence</name></member>
     <member refid="pulse_8h_1a4ad30025483afe5de1cde4ab00ef464b" kind="function"><name>Pulse_getPulseiter</name></member>
     <member refid="pulse_8h_1a7bba76df2b32cdb55943e1114e334bad" kind="function"><name>Pulse_allocSequence</name></member>
     <member refid="pulse_8h_1a441f4594a769b4009d7a59a4e0445c03" kind="function"><name>Pulse_freeSequence</name></member>
@@ -748,11 +822,11 @@
     <member refid="qubit_8h_1a8c70c7b57898ae70255cb38924209c47" kind="function"><name>QubitArray_OverhausHamil</name></member>
     <member refid="qubit_8h_1ac2e1f870ff753b199cc23bf1e5343753" kind="function"><name>QubitArray_ZFSHamil</name></member>
     <member refid="qubit_8h_1a67df31b547ae3a0fb500b9e110eaa09c" kind="function"><name>QubitArray_InteractionHamil</name></member>
-    <member refid="qubit_8h_1a7e7823e37fdb6382040ae9a06b2a5e55" kind="function"><name>QubitArray_PauliOperators</name></member>
-    <member refid="qubit_8h_1a5b696572e7a81abe12ec84088a69b5a4" kind="function"><name>QubitArray_PauliOperator_fromPsiaPsib</name></member>
+    <member refid="qubit_8h_1a46a67de2f012aa002869a33473dc79bf" kind="function"><name>QubitArray_PauliOperators</name></member>
+    <member refid="qubit_8h_1a4f1e7c7df12e8e85cde3e2c112cffb14" kind="function"><name>QubitArray_PauliOperator_fromPsiaPsib</name></member>
     <member refid="qubit_8h_1a4ea75a66fcf852fa6ef49a13a212e737" kind="function"><name>QubitArray_Rho0</name></member>
     <member refid="qubit_8h_1a122e8cc3fe04fda22236538ab1330e5f" kind="function"><name>QubitArray_getQubitIdx_fromName</name></member>
-    <member refid="qubit_8h_1aa167a0f05ddabdfd98cc9a617adae9d6" kind="function"><name>QubitArray_init</name></member>
+    <member refid="qubit_8h_1aa8da720f7badcaef81650225a556db3c" kind="function"><name>QubitArray_init</name></member>
     <member refid="qubit_8h_1aebb7ea793f0187bcc49214923c8df639" kind="function"><name>QubitArray_report</name></member>
     <member refid="qubit_8h_1a18adfd484d631b24ea39effb17baff4b" kind="function"><name>QubitArray_reportQubit_i</name></member>
     <member refid="qubit_8h_1af42cb87cfbf86dab8dac7b57dfb8c6cc" kind="function"><name>QubitArray_reportIntmap</name></member>
@@ -783,17 +857,17 @@
     <member refid="qubit_8h_1a9aba66f88595c3a6427a67e1ed434e82" kind="function"><name>QubitArray_setQubit_i_beta_fromMs</name></member>
     <member refid="qubit_8h_1a92d53023231774329afb43515ae426af" kind="function"><name>QubitArray_getNqubit</name></member>
     <member refid="qubit_8h_1a43602ef791226ac908285556eea20b77" kind="function"><name>QubitArray_getOverhaus</name></member>
-    <member refid="qubit_8h_1a808ead69b0d40f547fffe9f17e050555" kind="function"><name>QubitArray_get_alphaidx</name></member>
-    <member refid="qubit_8h_1ae4c72d491b573e505ceffd71913952f2" kind="function"><name>QubitArray_get_betaidx</name></member>
-    <member refid="qubit_8h_1adc59782eac519b790b11f0454b09084b" kind="function"><name>QubitArray_getIntmap</name></member>
+    <member refid="qubit_8h_1a871a60183fc08c7afe14facece6a1f8a" kind="function"><name>QubitArray_get_alphaidx</name></member>
+    <member refid="qubit_8h_1a91703901a507a52d9e26bd7a16e8a21e" kind="function"><name>QubitArray_get_betaidx</name></member>
+    <member refid="qubit_8h_1a789505486835402072a8519b15d83974" kind="function"><name>QubitArray_getIntmap</name></member>
     <member refid="qubit_8h_1aa6e1e16173a894c62d3ba6e321899b84" kind="function"><name>QubitArray_getIntmap_i_j</name></member>
     <member refid="qubit_8h_1ace3511c49f18f11b931cc1dc2482993b" kind="function"><name>QubitArray_getPsia</name></member>
     <member refid="qubit_8h_1a49773f2cf68d5f6f6bd48548ed0b0af8" kind="function"><name>QubitArray_getPsib</name></member>
     <member refid="qubit_8h_1abc14c288673cc49fda527e1be63be7c9" kind="function"><name>QubitArray_getPsi0</name></member>
-    <member refid="qubit_8h_1a1e11046357a6772005291e9fa7d8fbe2" kind="function"><name>QubitArray_getQubit_i_name</name></member>
+    <member refid="qubit_8h_1a287e038431f226d4c8cd87bb85a42820" kind="function"><name>QubitArray_getQubit_i_name</name></member>
     <member refid="qubit_8h_1a5185ffc14ec13d30ee5024a9b8045091" kind="function"><name>QubitArray_getQubit_i_spin</name></member>
     <member refid="qubit_8h_1a3e9f9e838128b9f9eb6a733d5e64ad42" kind="function"><name>QubitArray_getQubit_i_gyro</name></member>
-    <member refid="qubit_8h_1a795ccf110d3bca40d498849468cf5d92" kind="function"><name>QubitArray_getQubit_i_xyz</name></member>
+    <member refid="qubit_8h_1a02dfada0b662b2ce8eb9036fe1d4e915" kind="function"><name>QubitArray_getQubit_i_xyz</name></member>
     <member refid="qubit_8h_1a8f6dc3eee81c414eaeca4a87378349fc" kind="function"><name>QubitArray_getQubit_i_detuning</name></member>
     <member refid="qubit_8h_1a0cfb5cd962893c658becd7f4b6065b6e" kind="function"><name>QubitArray_getQubit_i_overhaus</name></member>
     <member refid="qubit_8h_1aa2ac9548d4bcfa2ad0ef89a53680f45c" kind="function"><name>QubitArray_getQubit_i_alpha</name></member>
@@ -808,9 +882,11 @@
     <member refid="reader_8h_1ad5baa9fa3d6dc1ac257407571015384e" kind="function"><name>readBathfiles</name></member>
     <member refid="reader_8h_1aa060f345db95720f4c3b4ee9cea2ee08" kind="function"><name>readGyrofile</name></member>
     <member refid="reader_8h_1ad7526402d975046c6adf55b693ef1bd7" kind="function"><name>readHftensorfile</name></member>
+    <member refid="reader_8h_1a541e46f165242e6a0c8d5faefddd02f7" kind="function"><name>readQdtensorfile</name></member>
     <member refid="reader_8h_1a0c4a3ecfc059a21baad9e8c08195e8b9" kind="function"><name>setBathStates</name></member>
     <member refid="reader_8h_1a3d61585a5a93956e940e0367d8e4e8ac" kind="function"><name>setDefectPaxes</name></member>
     <member refid="reader_8h_1a4e032662bc2cc8580c63b0b9ad1a7cf9" kind="function"><name>setSubbathStates</name></member>
+    <member refid="reader_8h_1ada5a331e68c4c1d3318c192dc3d96413" kind="function"><name>compare_dist</name></member>
     <member refid="reader_8h_1a247030c028f67ca3f6e20b035c386fcb" kind="function"><name>READ_BD_vertex</name></member>
     <member refid="reader_8h_1ad1ffb6b7fbce494fab7761e4422e4b51" kind="function"><name>READ_Tensor</name></member>
     <member refid="reader_8h_1acee0b7e60785d5571ca5c6808cc0bcbf" kind="function"><name>READ_Tensor_etc</name></member>
@@ -836,14 +912,14 @@
   </compound>
   <compound refid="simulator_8h" kind="file"><name>simulator.h</name>
     <member refid="simulator_8h_1ad3027e845b2436c5e8176bfdb2e2c996" kind="function"><name>calculate</name></member>
-    <member refid="simulator_8h_1a532da164f34c45b48af84e78d5144946" kind="function"><name>createBathArray</name></member>
-    <member refid="simulator_8h_1af833443c0a88461503235260caa29c40" kind="function"><name>calCoherenceGcce</name></member>
-    <member refid="simulator_8h_1a214c802c4266064d829665cc20a060b6" kind="function"><name>calCoherenceCce</name></member>
+    <member refid="simulator_8h_1ac51d9c9dce82efc03a2b441892396e99" kind="function"><name>createBathArray</name></member>
+    <member refid="simulator_8h_1a1501f4664e2008e614a90187de05edc4" kind="function"><name>calCoherenceGcce</name></member>
+    <member refid="simulator_8h_1af33e1a04593c780ca81d43984e744d7e" kind="function"><name>calCoherenceCce</name></member>
     <member refid="simulator_8h_1a786766da1e60bea6ff70988a91c1e344" kind="function"><name>calPropagatorGcce</name></member>
     <member refid="simulator_8h_1a06350445b4a7a52d61e791052ea9da91" kind="function"><name>HamilQubit</name></member>
     <member refid="simulator_8h_1a875ebff295b343d5541a6825ed8695dd" kind="function"><name>HamilBath</name></member>
     <member refid="simulator_8h_1aa6dda483876a7c31131690da87cfb780" kind="function"><name>HamilQubitBath</name></member>
-    <member refid="simulator_8h_1a6260d81873b3fdf9fdea80b144f1b3a2" kind="function"><name>HamilQubitBathSecularApp</name></member>
+    <member refid="simulator_8h_1a7981db3eed9183d026cf5fb1cc418627" kind="function"><name>HamilQubitBathSecularApp</name></member>
   </compound>
   <compound refid="utilities_8h" kind="file"><name>utilities.h</name>
     <member refid="utilities_8h_1a5bd13fea2d52009d82048504cb75e7c1" kind="define"><name>EIGEN_USE_MKL_ALL</name></member>
@@ -860,19 +936,19 @@
     <member refid="utilities_8h_1a182419ed9c53c0404cfc85826267a63d" kind="define"><name>MAX_CHARARRAY_LENGTH</name></member>
     <member refid="utilities_8h_1adfbb314f85ef42f51d066fcc5c205fe3" kind="define"><name>MAX_MAINTAG_SUBOPTION_NUMBER</name></member>
     <member refid="utilities_8h_1a6723497da67f8a714b7fc737df434313" kind="define"><name>MAX_MAINTAG_SUBOPTION_LINE_LENGTH</name></member>
-    <member refid="utilities_8h_1a6553282014bd97f1615ca44da7f3dc5d" kind="typedef"><name>doublec</name></member>
-    <member refid="utilities_8h_1a467aba7c12859cb5af2608e517b42e0e" kind="typedef"><name>MatrixXcd</name></member>
+    <member refid="utilities_8h_1aeaf94046e92f1f7382aaf11098b02ca5" kind="typedef"><name>doublec</name></member>
+    <member refid="utilities_8h_1ac182a57d49b4dc766ed5d3b5ce7cf84b" kind="typedef"><name>MatrixXcd</name></member>
     <member refid="utilities_8h_1a6cfd95afd0afebd625b889fb6e58371c" kind="variable"><name>rank</name></member>
     <member refid="utilities_8h_1ad63755d2adcd7229a0435675214f9c43" kind="variable"><name>nprocess</name></member>
     <member refid="utilities_8h_1a05f20aa9cc609764dd25d474e78d3ea7" kind="variable"><name>verbosity</name></member>
-    <member refid="utilities_8h_1a4b255578067c0937e13f2ef0078241ce" kind="function"><name>MatrixXcdToDouble1d</name></member>
+    <member refid="utilities_8h_1a828e0299e17fa409e86d4cb5d9353ba6" kind="function"><name>MatrixXcdToDouble1d</name></member>
     <member refid="utilities_8h_1a9c7f009c4cdeea19fb03a6062b19ba4a" kind="function"><name>Double1dToMatrixXcd</name></member>
     <member refid="utilities_8h_1a2aefe88dad8d53dec31e792d2e9b9fa6" kind="function"><name>dist</name></member>
     <member refid="utilities_8h_1a4d139712825bcde2ae1aed0d3ec5ad5b" kind="function"><name>cosTheta</name></member>
     <member refid="utilities_8h_1a5b934a224579933ac378e74bab0b68cc" kind="function"><name>sinTheta</name></member>
     <member refid="utilities_8h_1a10b6615e47dfd70c43029c037751f9e4" kind="function"><name>cosPhi</name></member>
     <member refid="utilities_8h_1a15fe4cc12d3ce405f46b3012de0440b0" kind="function"><name>sinPhi</name></member>
-    <member refid="utilities_8h_1acf1c2b8c239acc495284035dd3e2f755" kind="function"><name>substates</name></member>
+    <member refid="utilities_8h_1ab89078e8492554a27cf0c82a53dd3fdb" kind="function"><name>substates</name></member>
     <member refid="utilities_8h_1a9426ec76eb56e1975c68e8670e96ae88" kind="function"><name>isSubLevel</name></member>
     <member refid="utilities_8h_1a0af91089d5fcaa976b033ce4e6264c81" kind="function"><name>getSpinor</name></member>
     <member refid="utilities_8h_1ae85976047fe576da4e47a0d7fff7b78a" kind="function"><name>kron</name></member>
@@ -908,7 +984,7 @@
     <member refid="utilities_8h_1a06a4ca14041fa08f3ab7956d0c5c84b3" kind="function"><name>Swap</name></member>
     <member refid="utilities_8h_1a652d438c6c223d76ea7226c2adbb715b" kind="function"><name>para_range</name></member>
     <member refid="utilities_8h_1aebfa23dbf6ec30f35f2986a654bd47c1" kind="function"><name>min</name></member>
-    <member refid="utilities_8h_1a1613a6675e0ab3d37ec64934b9d8d5d4" kind="function"><name>MPI_getLocalClusters</name></member>
+    <member refid="utilities_8h_1a8ebb9dc3df6963f77db001d564c9f77c" kind="function"><name>MPI_getLocalClusters</name></member>
     <member refid="utilities_8h_1aeb93e25e95d089d3e1c79baf4a71b594" kind="function"><name>printBanner</name></member>
     <member refid="utilities_8h_1a0d20b69b0ad703df78459e1033d5c1d4" kind="function"><name>printHelp</name></member>
   </compound>
@@ -940,10 +1016,10 @@
     <member refid="bath_8cpp_1a97afda17a4c78436b7ca8d90a374eff9" kind="function"><name>BathArray_DisorderHamil</name></member>
     <member refid="bath_8cpp_1a2d839859884bd8c333d038dcbe3caa26" kind="function"><name>BathArray_QuadHamil</name></member>
     <member refid="bath_8cpp_1a7aebe0d1c4d9e2f002355308393f2985" kind="function"><name>BathArray_InteractionHamil</name></member>
-    <member refid="bath_8cpp_1a06053d5bec282391e6dc52636f3a3834" kind="function"><name>BathArray_PauliOperators</name></member>
+    <member refid="bath_8cpp_1a2fb127c43d650aef433b74c596bcbd74" kind="function"><name>BathArray_PauliOperators</name></member>
     <member refid="bath_8cpp_1a748372df2699f4aa1b9c48ed856d1544" kind="function"><name>BathArray_Rho0</name></member>
     <member refid="bath_8cpp_1aad7a61a9794ce21248ddecc65fc68a35" kind="function"><name>BathArray_Psi0</name></member>
-    <member refid="bath_8cpp_1a415ed28f1ee2838f0b9a7988ef5d4cbd" kind="function"><name>BathArray_init</name></member>
+    <member refid="bath_8cpp_1a540d3e73df2df1e3489f705d17b70cd0" kind="function"><name>BathArray_init</name></member>
     <member refid="bath_8cpp_1a14e20ca8a70b18dabae4789cbb4147f2" kind="function"><name>BathArray_report</name></member>
     <member refid="bath_8cpp_1a944278376a9bd66f28b2aab1dd8fd3bc" kind="function"><name>BathArray_reportSpinProperties</name></member>
     <member refid="bath_8cpp_1a37e620fa24a875511a5a78e2df2ae74b" kind="function"><name>BathArray_reportBath</name></member>
@@ -972,20 +1048,21 @@
     <member refid="bath_8cpp_1ae368af7e204c16e2175e0c46a8916896" kind="function"><name>BathArray_setBath_i_quad</name></member>
     <member refid="bath_8cpp_1a6414438c8a08b0c19f8c00abf3ca9f7a" kind="function"><name>BathArray_setBath_i_hypf_sub</name></member>
     <member refid="bath_8cpp_1a90539ae67669123e69fde14e1e740749" kind="function"><name>BathArray_setBath_i_mainspidx</name></member>
+    <member refid="bath_8cpp_1a9b5ad21d5eb46aac364eb4f0044bbf65" kind="function"><name>BathArray_setBath_i_mindist</name></member>
     <member refid="bath_8cpp_1a998df8a27a219de72e8c5e649fabfba0" kind="function"><name>BathArray_setProp_nspecies</name></member>
     <member refid="bath_8cpp_1ab522fd89a2f7735fce49717657fc2ad6" kind="function"><name>BathArray_setProp_names_i</name></member>
     <member refid="bath_8cpp_1ad1fcfbf71aa5f651a927fabf55139bc6" kind="function"><name>BathArray_setProp_gyros_i</name></member>
     <member refid="bath_8cpp_1ab8add2946cbccdd4b285c7967693887a" kind="function"><name>BathArray_setProp_spins_i</name></member>
     <member refid="bath_8cpp_1ab3d9e90371702f02d3079d92d350c9b8" kind="function"><name>BathArray_getNspin</name></member>
     <member refid="bath_8cpp_1a0f22c6aa6634564441b38120dbe7d1d1" kind="function"><name>BathArray_getProp_nspecies</name></member>
-    <member refid="bath_8cpp_1a77b5f1b50d73c86272d8dfca76b602ba" kind="function"><name>BathArray_getProp_names</name></member>
-    <member refid="bath_8cpp_1a904324f03aa4fc83ed7b66c7d11ca5e9" kind="function"><name>BathArray_getProp_gyros</name></member>
-    <member refid="bath_8cpp_1a3567c9fbf5ecf1edc60c6da299a5784d" kind="function"><name>BathArray_getProp_spins</name></member>
-    <member refid="bath_8cpp_1a52cb736aa4f55111561afef60814bd2a" kind="function"><name>BathArray_getBath_i</name></member>
-    <member refid="bath_8cpp_1a1cbe81e69032a42d7fb0ba525567b2a7" kind="function"><name>BathArray_getBath_i_name</name></member>
+    <member refid="bath_8cpp_1ad35652a42b2d307b2e1a37751b28b885" kind="function"><name>BathArray_getProp_names</name></member>
+    <member refid="bath_8cpp_1a3a8955982a3d0bbfc702b58e88803aa8" kind="function"><name>BathArray_getProp_gyros</name></member>
+    <member refid="bath_8cpp_1a3f7dc29643599f6c19681883ba1bda22" kind="function"><name>BathArray_getProp_spins</name></member>
+    <member refid="bath_8cpp_1a8fe8e1dfe811fcab239ac5a60f91546b" kind="function"><name>BathArray_getBath_i</name></member>
+    <member refid="bath_8cpp_1a9d790e3309b052f37358d39d4e1bee88" kind="function"><name>BathArray_getBath_i_name</name></member>
     <member refid="bath_8cpp_1aef1b755648dd480d242c9d74c5567133" kind="function"><name>BathArray_getBath_i_spin</name></member>
     <member refid="bath_8cpp_1a9ffc1ce6293e0d06fb84d46dd2366ed0" kind="function"><name>BathArray_getBath_i_gyro</name></member>
-    <member refid="bath_8cpp_1ab06988abed01e1efb1e61bbad7787c42" kind="function"><name>BathArray_getBath_i_xyz</name></member>
+    <member refid="bath_8cpp_1a76cc7b78e60b0085b46ed46c558728a2" kind="function"><name>BathArray_getBath_i_xyz</name></member>
     <member refid="bath_8cpp_1aad47df482af1d1fade54b3325b31b139" kind="function"><name>BathArray_getBath_i_state</name></member>
     <member refid="bath_8cpp_1a798fb92c19dcf0498ebe0b85e2fa9ad6" kind="function"><name>BathArray_getBath_i_detuning</name></member>
     <member refid="bath_8cpp_1a0cb71295a4e71afbff3bc3935b435017" kind="function"><name>BathArray_getBath_i_disorder</name></member>
@@ -1013,10 +1090,10 @@
     <member refid="bath_8cpp_1aa29f90af0f1bcd6bede3197310bb73cb" kind="function"><name>BathSpin_setQuad_fromEFG</name></member>
     <member refid="bath_8cpp_1a7933c22cb29f34bb719d4db38259342a" kind="function"><name>BathSpin_setHypfSub</name></member>
     <member refid="bath_8cpp_1a18099f1b8f2c87110840322ba7667faf" kind="function"><name>BathSpin_setMainspidx</name></member>
-    <member refid="bath_8cpp_1ab514bb5d414aa090c7693373943470ce" kind="function"><name>BathSpin_getName</name></member>
+    <member refid="bath_8cpp_1a2169b61846f26df2add391c9719b3956" kind="function"><name>BathSpin_getName</name></member>
     <member refid="bath_8cpp_1a2cb17e985a46f93221bd7edc256d6f67" kind="function"><name>BathSpin_getSpin</name></member>
     <member refid="bath_8cpp_1a51f78c4bffdc0e37ecd92a4408ab28b8" kind="function"><name>BathSpin_getGyro</name></member>
-    <member refid="bath_8cpp_1ad03adfb1af4997899bc7f8b4707e8283" kind="function"><name>BathSpin_getXyz</name></member>
+    <member refid="bath_8cpp_1abbb1f701af1739550c768748133fbdfa" kind="function"><name>BathSpin_getXyz</name></member>
     <member refid="bath_8cpp_1a4da97f94bb37ea4be9360e89886a0623" kind="function"><name>BathSpin_getState</name></member>
     <member refid="bath_8cpp_1af1718e18c6c3a1c4fa2f2e307bfc8f05" kind="function"><name>BathSpin_getDetuning</name></member>
     <member refid="bath_8cpp_1a72bc4a7c7ef327b08196b1822fc5f6d3" kind="function"><name>BathSpin_getDisorder</name></member>
@@ -1026,7 +1103,7 @@
     <member refid="bath_8cpp_1a7cf2da09b53b10dda60600718edb3733" kind="function"><name>BathSpin_getMainspidx</name></member>
   </compound>
   <compound refid="cluster_8cpp" kind="file"><name>cluster.cpp</name>
-    <member refid="cluster_8cpp_1a682c076be5339c3b7c39bc75129ac002" kind="function"><name>Cluster_init</name></member>
+    <member refid="cluster_8cpp_1aea5c25e6a6b3d3190ab9c55984e50c00" kind="function"><name>Cluster_init</name></member>
     <member refid="cluster_8cpp_1acfd4c6ef5622dbfa59942c1a7617c1c8" kind="function"><name>Cluster_clusterize</name></member>
     <member refid="cluster_8cpp_1a1e9067d49b0b0c7cc731eabfd0aad2c3" kind="function"><name>Cluster_freeAll</name></member>
     <member refid="cluster_8cpp_1a4c26ec88127ff5ef995e46cb615968af" kind="function"><name>Cluster_report</name></member>
@@ -1035,23 +1112,35 @@
     <member refid="cluster_8cpp_1a3903fe87910d2270893d1e729a0ea446" kind="function"><name>reportClusinfo</name></member>
     <member refid="cluster_8cpp_1ac7679f34d7eeded23349753f0755b1a4" kind="function"><name>Cluster_allocNk</name></member>
     <member refid="cluster_8cpp_1ae45a1c18649e68c10d42cc910ffbb47c" kind="function"><name>Cluster_allocClusinfo</name></member>
+    <member refid="cluster_8cpp_1a92ed12a2bc90c486cb58354dc3b4c0f7" kind="function"><name>Cluster_setClusinfo_0th</name></member>
+    <member refid="cluster_8cpp_1a15c9b80455a04a8e782aa39c6525c8a3" kind="function"><name>Cluster_setClusinfo_1th</name></member>
     <member refid="cluster_8cpp_1af03141d021c7ab901adcbfde55a36b32" kind="function"><name>Cluster_setClusinfo_addcluster</name></member>
     <member refid="cluster_8cpp_1ad278615a0ca28bd1c208e3a08c73489e" kind="function"><name>Cluster_setClusinfo_chgcluster</name></member>
     <member refid="cluster_8cpp_1adc3dd4b0e09252cdbdc1d90002c8b719" kind="function"><name>Cluster_setClusinfo_chgiter</name></member>
     <member refid="cluster_8cpp_1a651e8291700f709f85b3f856ba539a42" kind="function"><name>Cluster_getClusinfo_ncluster</name></member>
-    <member refid="cluster_8cpp_1a6b9c8c9df234300131441941b4bcedca" kind="function"><name>Cluster_getClusinfo_itercluster</name></member>
+    <member refid="cluster_8cpp_1a99653c490ddb7df5372d4d7806404e47" kind="function"><name>Cluster_getClusinfo_itercluster</name></member>
     <member refid="cluster_8cpp_1a85421142bc01aff90072f601750630d6" kind="function"><name>Cluster_getClusinfo_iter</name></member>
-    <member refid="cluster_8cpp_1a7c7ce96f1b498cd96f9947d19b36533f" kind="function"><name>Cluster_getClusinfo_cluster_copy</name></member>
-    <member refid="cluster_8cpp_1a5583bd2d256b68c05ae64321bedd9ce5" kind="function"><name>Cluster_getClusinfo</name></member>
-    <member refid="cluster_8cpp_1a2873972ff65570fa0062778501cc1e82" kind="function"><name>Cluster_getMethod</name></member>
+    <member refid="cluster_8cpp_1a0ff585f289fb0b73a3fca93e05a8a38c" kind="function"><name>Cluster_getClusinfo_cluster_copy</name></member>
+    <member refid="cluster_8cpp_1a419767adcec89afdb085901ff3d6cae4" kind="function"><name>Cluster_getClusinfo</name></member>
+    <member refid="cluster_8cpp_1a808af65ced5973a5e08eb75977320496" kind="function"><name>Cluster_getMethod</name></member>
     <member refid="cluster_8cpp_1a47d752dbb15a2ffb42196cdd3954847b" kind="function"><name>Cluster_getOrder</name></member>
     <member refid="cluster_8cpp_1a3dda4466570a4fc20cae5575985f6bbc" kind="function"><name>Cluster_getAddsubclus</name></member>
-    <member refid="cluster_8cpp_1a4bd76920f0cef240c3a31124c14ca203" kind="function"><name>Cluster_getNk</name></member>
+    <member refid="cluster_8cpp_1a1d0ac68ba355cf7813cc12ca3f501374" kind="function"><name>Cluster_getNk</name></member>
     <member refid="cluster_8cpp_1a14d2e85d18ec2ea621e6953d77716e20" kind="function"><name>Cluster_getNk_order</name></member>
+    <member refid="cluster_8cpp_1aeb2d2a54e053652334d2047bb54abcab" kind="function"><name>Cluster_getSk</name></member>
+    <member refid="cluster_8cpp_1a310b502f788cf7e48e32182e5b1a8ffa" kind="function"><name>Cluster_getMax_iter</name></member>
+    <member refid="cluster_8cpp_1a0e7ead37398b057025a24a9946877de3" kind="function"><name>Cluster_getMax_trial</name></member>
+    <member refid="cluster_8cpp_1a46665bd0f72724ba562bcd0beba8968d" kind="function"><name>Cluster_getKmeans_pp</name></member>
+    <member refid="cluster_8cpp_1a0a8c95022c0c1dda0dec29513607306f" kind="function"><name>Cluster_getIter_detail</name></member>
     <member refid="cluster_8cpp_1aa90dc64438d37b32233d63477faf1f12" kind="function"><name>Cluster_setOrder</name></member>
     <member refid="cluster_8cpp_1ababf9e54916b278727d4b425b3cc8904" kind="function"><name>Cluster_setMethod</name></member>
     <member refid="cluster_8cpp_1acbb70ded1b186b5dc918b75fa4d5eb70" kind="function"><name>Cluster_setAddsubclus</name></member>
     <member refid="cluster_8cpp_1ac788d747aa9c4b77e643ba5f0419aae9" kind="function"><name>Cluster_setNk</name></member>
+    <member refid="cluster_8cpp_1a5c7d020a3a223b82cb694c8a6260ce4c" kind="function"><name>Cluster_setSk</name></member>
+    <member refid="cluster_8cpp_1a3a1a8b02f043a2110cfcf146869960c6" kind="function"><name>Cluster_setMax_trial</name></member>
+    <member refid="cluster_8cpp_1ac2ca9ec65fba544ab971eb6498c97ec9" kind="function"><name>Cluster_setMax_iter</name></member>
+    <member refid="cluster_8cpp_1a672c4146e1cedda3097bd6248bbfa6c6" kind="function"><name>Cluster_setKmeans_pp</name></member>
+    <member refid="cluster_8cpp_1ab060b69cdf5630427a5b5f07f1e19ff5" kind="function"><name>Cluster_setIter_detail</name></member>
     <member refid="cluster_8cpp_1a48f1747da85a8ff82fcc9aa5cf940122" kind="function"><name>Cluster_freeNk</name></member>
     <member refid="cluster_8cpp_1aa5731c0e0c23755bd3616c71eb79c5d6" kind="function"><name>Cluster_freeClusinfo</name></member>
   </compound>
@@ -1067,14 +1156,14 @@
     <member refid="cluster__hash_8cpp_1aff440b8597c83b6d13cc5a22f139b068" kind="function"><name>makeHashClusterOn</name></member>
     <member refid="cluster__hash_8cpp_1a2e7e844007824dff536a437e679a8f70" kind="function"><name>typeStr</name></member>
     <member refid="cluster__hash_8cpp_1a3c03f282af1a291fee41e3f0f21545d2" kind="function"><name>by_strength</name></member>
-    <member refid="cluster__hash_8cpp_1a1c8b9255f31a154e48e5c8975a5b556d" kind="function"><name>findCluster</name></member>
-    <member refid="cluster__hash_8cpp_1a815ce025f3320bb1840b2942b7a6204f" kind="function"><name>findProperty</name></member>
+    <member refid="cluster__hash_8cpp_1a958b5bb518fe9055ea3d1a3cc95743b5" kind="function"><name>findCluster</name></member>
+    <member refid="cluster__hash_8cpp_1ab63e7dfc3e548844f3cbdacd436124c4" kind="function"><name>findProperty</name></member>
     <member refid="cluster__hash_8cpp_1ab824186b80bbe281189462174e2c4698" kind="function"><name>binarySearch</name></member>
     <member refid="cluster__hash_8cpp_1a2c4c9395b42b8370c566cea0ec369942" kind="function"><name>addSpin</name></member>
     <member refid="cluster__hash_8cpp_1a92aab7efa50c927df5e6ff090968fdfd" kind="function"><name>minStrength</name></member>
     <member refid="cluster__hash_8cpp_1a3d25f0062cfd81b8dda08a8a772570b6" kind="function"><name>printProperties</name></member>
     <member refid="cluster__hash_8cpp_1a38bab6a7e70e8f207f00872ab30e1a0e" kind="function"><name>printClusters</name></member>
-    <member refid="cluster__hash_8cpp_1a3679f0299f227492571e44be455cdb4d" kind="function"><name>parseClusterIdToIntArray</name></member>
+    <member refid="cluster__hash_8cpp_1ad71f01df977c65d4d55567be1674a7e6" kind="function"><name>parseClusterIdToIntArray</name></member>
     <member refid="cluster__hash_8cpp_1a881bd0eb07e76afd42275803a1d0ca29" kind="function"><name>countDigits</name></member>
     <member refid="cluster__hash_8cpp_1a3c08100306289ee92372fad9d0142add" kind="function"><name>search2dArr</name></member>
     <member refid="cluster__hash_8cpp_1a7519d1ca541c84a4268f1ca765d6f517" kind="function"><name>updateNk</name></member>
@@ -1084,10 +1173,51 @@
     <member refid="cluster__hash_8cpp_1aa3b67c8c122faf40826b75bc6f0ef805" kind="function"><name>addSubClusters</name></member>
     <member refid="cluster__hash_8cpp_1a5b8dfb39c0c8b3592840e8a03797aaf4" kind="function"><name>solveTilde</name></member>
   </compound>
+  <compound refid="cluster__pcce_8cpp" kind="file"><name>cluster_pcce.cpp</name>
+    <member refid="cluster__pcce_8cpp_1adae31771c34b352e9e7347002af790fd" kind="function"><name>clusterizePcce</name></member>
+    <member refid="cluster__pcce_8cpp_1acf3a1a0dfd001487e4ae95a2937703fa" kind="function"><name>simulator_cluster_partition</name></member>
+    <member refid="cluster__pcce_8cpp_1a7a1445a095e496d0f8f57bfb8a8e6a66" kind="function"><name>shrink_restspins</name></member>
+    <member refid="cluster__pcce_8cpp_1a70bf38a7bebe453a21a295f8956b8a17" kind="function"><name>update_global_best</name></member>
+    <member refid="cluster__pcce_8cpp_1a76a1e0caeb30010e46a84fe756629ce5" kind="function"><name>calc_dist</name></member>
+    <member refid="cluster__pcce_8cpp_1a576d3197256d2b37939aa26bdd7de0cc" kind="function"><name>print_pcce_info</name></member>
+    <member refid="cluster__pcce_8cpp_1a40b6caf897e0081db52277ea50fd4d05" kind="function"><name>if_contain</name></member>
+    <member refid="cluster__pcce_8cpp_1a39f1ba7c2cfc5a8953854fbceb77d9d3" kind="function"><name>initializeCentroids</name></member>
+    <member refid="cluster__pcce_8cpp_1a83d1960bb1d5ff52024134e20e36e0df" kind="function"><name>choose_initial_method</name></member>
+    <member refid="cluster__pcce_8cpp_1a01b4f00976e0e234d92f5b7cc818b42c" kind="function"><name>kMeansPlusPlus</name></member>
+    <member refid="cluster__pcce_8cpp_1a7dde77302f976e84e08f8e539c140aff" kind="function"><name>shuffle_spins</name></member>
+    <member refid="cluster__pcce_8cpp_1aa872b13b6190f451e46a416f643d9a5c" kind="function"><name>changeIdx_inverse_shuffle_idx</name></member>
+    <member refid="cluster__pcce_8cpp_1a6df241c32cec4bda7e0803f62253fe27" kind="function"><name>assignCentroids</name></member>
+    <member refid="cluster__pcce_8cpp_1a85713ae9942c449e94912cd5ff3af8b4" kind="function"><name>calc_dist_to_centers</name></member>
+    <member refid="cluster__pcce_8cpp_1a6e0d752f8eb34a988cd8609a9b6a051c" kind="function"><name>updateCentroids</name></member>
+    <member refid="cluster__pcce_8cpp_1a55482fd967a823defee280d2f3597448" kind="function"><name>calculateInertia</name></member>
+    <member refid="cluster__pcce_8cpp_1ab8236bdb6b61f20a61579d9a86be854d" kind="function"><name>silhouetteCoefficient</name></member>
+    <member refid="cluster__pcce_8cpp_1a59ce6bcbe05a29b4798de2db4bdbb205" kind="function"><name>distance</name></member>
+    <member refid="cluster__pcce_8cpp_1a2cb0a2b9e2cc3d2102a706904198c12a" kind="function"><name>copy_best_centers</name></member>
+    <member refid="cluster__pcce_8cpp_1a5398450f2130b0e68a8689236da62a4d" kind="function"><name>copy_best_assigned</name></member>
+    <member refid="cluster__pcce_8cpp_1a1bdbe8088b22e756482673bb928b1f0e" kind="function"><name>copy_best_idxList</name></member>
+    <member refid="cluster__pcce_8cpp_1ab399075583dba866544c4d2b039f5161" kind="function"><name>copy_best_spins</name></member>
+    <member refid="cluster__pcce_8cpp_1aa1cd163515f3b9b75f7ce63392a5e105" kind="function"><name>copy_bath_to_point_type</name></member>
+    <member refid="cluster__pcce_8cpp_1adb850cb60a1ce19a58e8cc6299135007" kind="function"><name>print_BD</name></member>
+    <member refid="cluster__pcce_8cpp_1a36ee04deeee2569341f12b31f397844b" kind="function"><name>print_centers</name></member>
+    <member refid="cluster__pcce_8cpp_1a2ee1003651338526cbfac2441dde7593" kind="function"><name>print_kmeans_converge_info</name></member>
+    <member refid="cluster__pcce_8cpp_1aa07c9cdb3bafd3beb401c8f2d6ebb5ca" kind="function"><name>print_optimize_kmeans_info</name></member>
+    <member refid="cluster__pcce_8cpp_1a2c21780bb5a4230b669f81d85ccdfd65" kind="function"><name>print_assign_idx</name></member>
+    <member refid="cluster__pcce_8cpp_1a638626bf18221c6f40f5b0716ad6e567" kind="function"><name>print_spins</name></member>
+    <member refid="cluster__pcce_8cpp_1ab329b807f003edfad95c4d2538abefd8" kind="function"><name>print_time</name></member>
+    <member refid="cluster__pcce_8cpp_1aef76d83cf38d2178999b8a4da5a5b07c" kind="function"><name>write_centers</name></member>
+    <member refid="cluster__pcce_8cpp_1addc0ffa14a8cc9df7b8fd6c9c0051709" kind="function"><name>write_spins</name></member>
+    <member refid="cluster__pcce_8cpp_1a6702bdd461e4fd9edbc9c54c08755315" kind="function"><name>print_best_spins</name></member>
+    <member refid="cluster__pcce_8cpp_1a4e5c9cb81b7e743949b321dffee89acf" kind="function"><name>print_best_centers</name></member>
+    <member refid="cluster__pcce_8cpp_1afc845fbe84e0b1b3a5cdca1707a7b813" kind="function"><name>BathArray_connectivity_pcce</name></member>
+    <member refid="cluster__pcce_8cpp_1a53c541e68006be18f52f6e812a0a981b" kind="function"><name>Cluster_setCenterIdx_spinIdx_2dArr</name></member>
+    <member refid="cluster__pcce_8cpp_1ab4f28fdd3cf79f031367281815181883" kind="function"><name>print_clusinfo_sorder_i</name></member>
+    <member refid="cluster__pcce_8cpp_1a3ba2164b952020ad5a20c742bfa2e5ba" kind="function"><name>print_clusinfo_sorder_i_j</name></member>
+    <member refid="cluster__pcce_8cpp_1a8515a97fbccd6ee237c47c0fcc3b7969" kind="function"><name>convert_centerIdx_to_spinIdx</name></member>
+  </compound>
   <compound refid="defect_8cpp" kind="file"><name>defect.cpp</name>
     <member refid="defect_8cpp_1a19b3232ef7141b1d483fcd131731a6bc" kind="function"><name>DefectArray_setPaxesRandom</name></member>
     <member refid="defect_8cpp_1adbf80bb27c87982f8f79a99f114ef800" kind="function"><name>DefectArray_setSubbathStatesRandom</name></member>
-    <member refid="defect_8cpp_1a594f6496fbe2beffb66f7a9f6676f897" kind="function"><name>DefectArray_init</name></member>
+    <member refid="defect_8cpp_1a104be9c492351b82f29de56d55027c75" kind="function"><name>DefectArray_init</name></member>
     <member refid="defect_8cpp_1a92e592e423feb06322258098e2fcb036" kind="function"><name>DefectArray_setNdefect</name></member>
     <member refid="defect_8cpp_1ab4f111640c471a92439340e842b9e9d3" kind="function"><name>DefectArray_allocDefect</name></member>
     <member refid="defect_8cpp_1a0050ddceb6923987c25359df9fe9afa6" kind="function"><name>DefectArray_allocDefect_idf</name></member>
@@ -1108,15 +1238,15 @@
     <member refid="defect_8cpp_1a9054b7960f6ab8ecc76d69a9722b685a" kind="function"><name>DefectArray_findDefectIndex</name></member>
     <member refid="defect_8cpp_1a9d1ffd714f6d004e81b7783cd0f781d2" kind="function"><name>DefectArray_setPaxes_i</name></member>
     <member refid="defect_8cpp_1a99dcb7dc57b5706c7a5764c703c43ca5" kind="function"><name>DefectArray_getNdefect</name></member>
-    <member refid="defect_8cpp_1a73e2b6a037540876244b726e3fa9cc1b" kind="function"><name>DefectArray_getDefect_idf_dfname</name></member>
+    <member refid="defect_8cpp_1afa6a926a9c6a5679b7f769cf7600e11b" kind="function"><name>DefectArray_getDefect_idf_dfname</name></member>
     <member refid="defect_8cpp_1a0dd45f0baee4bdee08fb7415d990f186" kind="function"><name>DefectArray_getDefect_idf_apprx</name></member>
     <member refid="defect_8cpp_1a6b3addea84c2c80f4f7ba619c97f7014" kind="function"><name>DefectArray_getDefect_idf_naddspin</name></member>
-    <member refid="defect_8cpp_1ae3db7c03d4c1f7741f0e909c6db161ba" kind="function"><name>DefectArray_getDefect_idf_isp_types</name></member>
+    <member refid="defect_8cpp_1a59976b5cdefa9ec523d1b83c1d5b7c40" kind="function"><name>DefectArray_getDefect_idf_isp_types</name></member>
     <member refid="defect_8cpp_1a700a1bcf079ce7c809eedba6aee86e3b" kind="function"><name>DefectArray_getDefect_idf_isp_spins</name></member>
     <member refid="defect_8cpp_1a4367f6d21dd7e9aaa0c045e56372c37d" kind="function"><name>DefectArray_getDefect_idf_isp_gyros</name></member>
     <member refid="defect_8cpp_1a36134ae748439bd5393d05f8563170fb" kind="function"><name>DefectArray_getDefect_idf_isp_eqs</name></member>
     <member refid="defect_8cpp_1a5b59c3eda7bbe60bca788968e6acc1f7" kind="function"><name>DefectArray_getDefect_idf_navaax</name></member>
-    <member refid="defect_8cpp_1acc17e7cc692affa60d8f0657d7c10857" kind="function"><name>DefectArray_getDefect_idf_iax_isp_rxyz</name></member>
+    <member refid="defect_8cpp_1aa54322900cc328444095d5b9384ca889" kind="function"><name>DefectArray_getDefect_idf_iax_isp_rxyz</name></member>
     <member refid="defect_8cpp_1a8c6789ea6779f6a33936b2b44cb0e61b" kind="function"><name>DefectArray_getDefect_idf_iax_isp_hypf</name></member>
     <member refid="defect_8cpp_1af12fb02836624f669e30abc9fca511c0" kind="function"><name>DefectArray_getDefect_idf_iax_isp_efg</name></member>
     <member refid="defect_8cpp_1ad797f4747bdd9da9db55ffac2a47a4d5" kind="function"><name>DefectArray_getDefect_idf_iax_zfs</name></member>
@@ -1124,7 +1254,7 @@
     <member refid="defect_8cpp_1a30164208870664d2aa4ecf3407245ac6" kind="function"><name>DefectArray_getNbathspin</name></member>
     <member refid="defect_8cpp_1a543d31330dc4e4f9f22a318a54bac71d" kind="function"><name>DefectArray_getPaxes_i</name></member>
     <member refid="defect_8cpp_1a772a0fb2689253810d970dd40b08feab" kind="function"><name>DefectArray_getNaddspins_i</name></member>
-    <member refid="defect_8cpp_1a01df5d3c3fef2f9b173a49681a931299" kind="function"><name>DefectArray_getSubbath_i_isp</name></member>
+    <member refid="defect_8cpp_1a9849d69511ec8bbbf15aa0d5ad866640" kind="function"><name>DefectArray_getSubbath_i_isp</name></member>
     <member refid="defect_8cpp_1ad154028adc7e11112674b19eefd4ee99" kind="function"><name>DefectArray_freeAll</name></member>
     <member refid="defect_8cpp_1a5d406904c0c33a69c999c59eeb488342" kind="function"><name>DefectArray_freePaxes</name></member>
     <member refid="defect_8cpp_1a501bdca25ce75b807315c91ad7d08402" kind="function"><name>DefectArray_freeNaddspins</name></member>
@@ -1150,10 +1280,11 @@
     <member refid="defect_8cpp_1ab3b91ce949bd9c96def61b061a36816f" kind="function"><name>DefectArray_reportAll</name></member>
   </compound>
   <compound refid="general_8cpp" kind="file"><name>general.cpp</name>
-    <member refid="general_8cpp_1a4f952ed3569740aa89b6be7b5afd4321" kind="function"><name>Config_init</name></member>
+    <member refid="general_8cpp_1a70fd0c2cf20819ac5bcd6a489355ce5f" kind="function"><name>Config_init</name></member>
     <member refid="general_8cpp_1a3099481301694e3b583126dd01f6b41b" kind="function"><name>Config_allocBathfiles</name></member>
     <member refid="general_8cpp_1ac018cc81f797121a14b62b3ea9d9e510" kind="function"><name>Config_reallocBathfiles</name></member>
     <member refid="general_8cpp_1a730db6d0643d20643ebf2b5466248383" kind="function"><name>Config_allocBathadjust</name></member>
+    <member refid="general_8cpp_1af63d07dc411689038c2fb28218d64825" kind="function"><name>Config_reallocBathadjust</name></member>
     <member refid="general_8cpp_1a8b1d3800925035ace8ce968f60c3da91" kind="function"><name>Config_allocGyrofile</name></member>
     <member refid="general_8cpp_1a6692a2f5f43adeff2f75d9d94eaa5cbd" kind="function"><name>Config_allocQubitfile</name></member>
     <member refid="general_8cpp_1ad83d7a1e61ec487ea6d929788f340e93" kind="function"><name>Config_allocHf_tensorfile</name></member>
@@ -1176,10 +1307,10 @@
     <member refid="general_8cpp_1a58cc50b78b8c32284c435fecfa801f53" kind="function"><name>Config_freeHf_tensorfile</name></member>
     <member refid="general_8cpp_1a92f338595217914f0f1b0632f227c7c5" kind="function"><name>Config_freeQd_tensorfile</name></member>
     <member refid="general_8cpp_1a94cee11059dfe6e41e761a6e04cddc64" kind="function"><name>Config_freeQd_tensorfile_woqubit</name></member>
-    <member refid="general_8cpp_1a41d726c3a7b615ddae19f3b5a50d2d57" kind="function"><name>Config_getMethod</name></member>
-    <member refid="general_8cpp_1a6061f91ac9ac22e546a21e9f63f027b5" kind="function"><name>Config_getQuantity</name></member>
+    <member refid="general_8cpp_1af2582e1736114eafbb3f3186648f56ac" kind="function"><name>Config_getMethod</name></member>
+    <member refid="general_8cpp_1a3c6838bb64200b8e674db31171bd5c56" kind="function"><name>Config_getQuantity</name></member>
     <member refid="general_8cpp_1a51c0628befb8b712ab22b2c7cd6f80ec" kind="function"><name>Config_getOrder</name></member>
-    <member refid="general_8cpp_1afaa2e9ce248eb4cecdcb6f7faa6a8c75" kind="function"><name>Config_getBfield</name></member>
+    <member refid="general_8cpp_1a3cf4cfc0c4f682e9f286e2864a9c86bf" kind="function"><name>Config_getBfield</name></member>
     <member refid="general_8cpp_1ad5a5b1572fcb8a48981e93575aee72ca" kind="function"><name>Config_getRbath</name></member>
     <member refid="general_8cpp_1aaf5b7058b0c00f08c197741e8e9a7932" kind="function"><name>Config_getRdip</name></member>
     <member refid="general_8cpp_1a416f16fab6ef1ee6dd757e726086d448" kind="function"><name>Config_getDeltat</name></member>
@@ -1188,25 +1319,26 @@
     <member refid="general_8cpp_1abb247e7fb9aefc5be91056f34fd14a34" kind="function"><name>Config_getRdipcut</name></member>
     <member refid="general_8cpp_1a5bd04bfb722b1dcfb6368d4289b6f374" kind="function"><name>Config_getNstate</name></member>
     <member refid="general_8cpp_1a9caeed1bd213580af2abf87e40b64a0e" kind="function"><name>Config_getSeed</name></member>
-    <member refid="general_8cpp_1a3c5a005f00774bb23a01d9a1f87105a8" kind="function"><name>Config_getQubitfile</name></member>
-    <member refid="general_8cpp_1a2def855434b90a848cc3427d387edad1" kind="function"><name>Config_getGyrofile</name></member>
+    <member refid="general_8cpp_1a711ccc873b383693b3aad90999a82600" kind="function"><name>Config_getQubitfile</name></member>
+    <member refid="general_8cpp_1a62ad64b923e92819d84c7e9718dd6495" kind="function"><name>Config_getGyrofile</name></member>
     <member refid="general_8cpp_1ac8cd55e10be6e7cf2eefcbfb89bc3123" kind="function"><name>Config_getNbathfiles</name></member>
-    <member refid="general_8cpp_1ac95305095d92a7f6ff7c257f6987d2c7" kind="function"><name>Config_getBathfiles_i</name></member>
-    <member refid="general_8cpp_1a9fb5259ff948259eddf043e0178f5491" kind="function"><name>Config_getBathadjust_i</name></member>
-    <member refid="general_8cpp_1a84c31e4b70d8a9434347ba124715270f" kind="function"><name>Config_getAvaaxfile</name></member>
-    <member refid="general_8cpp_1a2a371b2693462f52fd83e98f62140535" kind="function"><name>Config_getStatefile</name></member>
-    <member refid="general_8cpp_1ac6972377edd51d0bbe9a8b94eb162559" kind="function"><name>Config_getExstatefile</name></member>
+    <member refid="general_8cpp_1a37506c5317bd2bb12e3876abff8d09f7" kind="function"><name>Config_getBathfiles_i</name></member>
+    <member refid="general_8cpp_1a22665eee79753694687fc4e2f74176ad" kind="function"><name>Config_getBathadjust_i</name></member>
+    <member refid="general_8cpp_1a468e3599de2512d839539b19c50acecb" kind="function"><name>Config_getAvaaxfile</name></member>
+    <member refid="general_8cpp_1a6b9f7ceb7099db3c96eecee1fb56fa3a" kind="function"><name>Config_getStatefile</name></member>
+    <member refid="general_8cpp_1ad5983f9e2152c58ec43eca79ff158fed" kind="function"><name>Config_getExstatefile</name></member>
     <member refid="general_8cpp_1a2b92eae6ce48ff5272dc38e004b3fbee" kind="function"><name>Config_get_nflines</name></member>
-    <member refid="general_8cpp_1aa405f61d334cf85df28ebf9087d82441" kind="function"><name>Config_get_flines</name></member>
+    <member refid="general_8cpp_1ac3c7a4914644e9d104effd22e49fb70a" kind="function"><name>Config_get_flines</name></member>
     <member refid="general_8cpp_1a7856240d6340f204691b339875292897" kind="function"><name>Config_get_flines_i</name></member>
     <member refid="general_8cpp_1a99c936f38b92c6ab9c71ef76ec00f250" kind="function"><name>Config_getDefectTotSpin</name></member>
     <member refid="general_8cpp_1a2154992e78c2a40fbff7b5b05c6011d2" kind="function"><name>Config_getCorrTotSpin</name></member>
-    <member refid="general_8cpp_1a9d87919e3542bb96f5d32c418283fe05" kind="function"><name>Config_getHf_tensorfile</name></member>
+    <member refid="general_8cpp_1a32bddbf5a2584c199446cdb7a6ab2c12" kind="function"><name>Config_getHf_tensorfile</name></member>
     <member refid="general_8cpp_1a8d09482af389a91264acf63d59d05dfb" kind="function"><name>Config_getHf_cutoff</name></member>
     <member refid="general_8cpp_1a49e3eaa6fe70087cf2e93d0559d4a4a3" kind="function"><name>Config_getHf_ignore_oor</name></member>
     <member refid="general_8cpp_1adc4a11d8d54b6e6ad4bb85a758f3af33" kind="function"><name>Config_getHf_readmode</name></member>
-    <member refid="general_8cpp_1a7281e51bda7812ee4c08448a20e5bf9e" kind="function"><name>Config_getQd_tensorfile</name></member>
-    <member refid="general_8cpp_1af285d467111ef48ed930c8c89658ee9a" kind="function"><name>Config_getQd_tensorfile_woqubit</name></member>
+    <member refid="general_8cpp_1ac6ba6871de2ee8bb9c97ed4681cbfd94" kind="function"><name>Config_getQd_tensorfile</name></member>
+    <member refid="general_8cpp_1ad24a756574403ec0e96dfc4bd962fd41" kind="function"><name>Config_getQd_tensorfile_woqubit</name></member>
+    <member refid="general_8cpp_1a8fc20bc7e520e082e7488bded57d3a79" kind="function"><name>Config_getQd_cellpara</name></member>
     <member refid="general_8cpp_1a947cc191b3c46ae83aee0b5df9d4c25d" kind="function"><name>Config_getQd_readmode</name></member>
     <member refid="general_8cpp_1ab9d6cd3b59f7e86eb5db0c0e1761afd6" kind="function"><name>Config_setMethod</name></member>
     <member refid="general_8cpp_1aca116ace81e102559a4078672b2f28de" kind="function"><name>Config_setQuantity</name></member>
@@ -1239,6 +1371,7 @@
     <member refid="general_8cpp_1af13158c1491e55bf04c54bf4ad09483b" kind="function"><name>Config_setHf_readmode</name></member>
     <member refid="general_8cpp_1a655da4d9da8afbc2b974d76375461631" kind="function"><name>Config_setQd_tensorfile</name></member>
     <member refid="general_8cpp_1aae28dfc886b8d2c1ad9e9446482e6a82" kind="function"><name>Config_setQd_tensorfile_woqubit</name></member>
+    <member refid="general_8cpp_1a65b06bf8a151cf5d0dc23954809dc10e" kind="function"><name>Config_setQd_cellpara</name></member>
     <member refid="general_8cpp_1a23394467ea3fce27338a44df9114202b" kind="function"><name>Config_setQd_readmode</name></member>
     <member refid="general_8cpp_1a7d73746c56f3baa112a558892d0a03e0" kind="function"><name>Config_report</name></member>
   </compound>
@@ -1257,11 +1390,11 @@
     <member refid="hamiltonian_8cpp_1ab89aaed2537a3a64c33bfd884a7cc151" kind="function"><name>Pauli_matrix_X</name></member>
     <member refid="hamiltonian_8cpp_1af46df9390cf168654ad3dbde8246a7a4" kind="function"><name>Pauli_matrix_Y</name></member>
     <member refid="hamiltonian_8cpp_1a4b924b2c4193ea814dfa9c3daaef6313" kind="function"><name>Pauli_matrix_Z</name></member>
-    <member refid="hamiltonian_8cpp_1a7f2e348b06c637f01ad8dd96df04f7f4" kind="function"><name>getPauliOperators</name></member>
-    <member refid="hamiltonian_8cpp_1aefa0a04f882701f9145227945bcc7e22" kind="function"><name>getGeneralPauliOperators</name></member>
+    <member refid="hamiltonian_8cpp_1a0badc3ee65bb3eaafc0a6dd0e91cb492" kind="function"><name>getPauliOperators</name></member>
+    <member refid="hamiltonian_8cpp_1ab9ca9aa49f6dbc6edd908713fd96031d" kind="function"><name>getGeneralPauliOperators</name></member>
     <member refid="hamiltonian_8cpp_1aef74b90578d55af688bb0f5623a0a18a" kind="function"><name>isInvolutory</name></member>
     <member refid="hamiltonian_8cpp_1ac9c76932926b82821bf0a3b8f854ef78" kind="function"><name>isSame</name></member>
-    <member refid="hamiltonian_8cpp_1a736673e374275abc5e2121d6d58a3365" kind="function"><name>getIndexInOrder</name></member>
+    <member refid="hamiltonian_8cpp_1a71128dcdc5ece9611b85ce79ec85eef1" kind="function"><name>getIndexInOrder</name></member>
     <member refid="hamiltonian_8cpp_1a6a5afd891b7cbf5044236d29d4c501b1" kind="function"><name>sortEigenValues</name></member>
     <member refid="hamiltonian_8cpp_1a6ca9fa8e295520b6f9feaf132d6e5aeb" kind="function"><name>sortEigenVectors</name></member>
   </compound>
@@ -1280,7 +1413,7 @@
     <member refid="json_8cpp_1a5c873a43d8a78ce9a6d9e8eb41d65d2d" kind="define"><name>cannot_access_at_index</name></member>
     <member refid="json_8cpp_1ac538057ef78677344d222b763251af5e" kind="define"><name>buffer_at_offset</name></member>
     <member refid="json_8cpp_1a13f540fa846f658531751b5ccb78f303" kind="define"><name>cjson_min</name></member>
-    <member refid="json_8cpp_1af27c741a35a02fe8937d3b4caca30c20" kind="typedef"><name>internal_hooks</name></member>
+    <member refid="json_8cpp_1a584019da8f9922a232f41f6f6ffa4ede" kind="typedef"><name>internal_hooks</name></member>
     <member refid="json_8cpp_1a6ff6e9678e47cf5347872008661d5846" kind="variable"><name>global_error</name></member>
     <member refid="json_8cpp_1a855c7241e836a5b2d87577df8c113faf" kind="variable"><name>global_hooks</name></member>
     <member refid="json_8cpp_1a0b3e94800c28aaf801bbbf0b9b69fee4" kind="variable"><name>number</name></member>
@@ -1332,17 +1465,17 @@
     <member refid="json_8cpp_1aa64b79aec6e4df008236f79b7f373641" kind="function"><name>CJSON_PUBLIC</name></member>
     <member refid="json_8cpp_1a228b429c345d298fa5b887420337a54c" kind="function"><name>CJSON_PUBLIC</name></member>
     <member refid="json_8cpp_1a9b295e9edc859c11ad8c1e3d2cef0467" kind="function"><name>case_insensitive_strcmp</name></member>
-    <member refid="json_8cpp_1a5da7bd9b4622e97e7e19c36017410252" kind="function"><name>cJSON_strdup</name></member>
+    <member refid="json_8cpp_1a15067642a12599c13a0e6c0da9009be7" kind="function"><name>cJSON_strdup</name></member>
     <member refid="json_8cpp_1a5712efac9864c56f805260c5e2a5c01b" kind="function"><name>CJSON_PUBLIC</name></member>
-    <member refid="json_8cpp_1a8f447c625af025c35d0ec59032ad6473" kind="function"><name>cJSON_New_Item</name></member>
+    <member refid="json_8cpp_1aa05c1f56de8779ae1584c525cc81aeb5" kind="function"><name>cJSON_New_Item</name></member>
     <member refid="json_8cpp_1ab25412ae56c8c594831918169bea100d" kind="function"><name>get_decimal_point</name></member>
     <member refid="json_8cpp_1a699e1cebda71c2846a9a10b29b4dc407" kind="function"><name>parse_number</name></member>
     <member refid="json_8cpp_1a855eb8f1cc3dd01d34eceaf6910c6cca" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a680f3713a8ee968861938cc87532d9ea" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1af00faa2be0e3b87cd54f46adf0f5b799" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1ae47a6320597174c09b4b032c600b3f16" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1a86abbc3f03de96e792126c62e4814311" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1a3faa1600bc8001eaed05f16060668ce6" kind="function"><name>ensure</name></member>
+    <member refid="json_8cpp_1a69f85127495f4f14fe9d9d3ed1153c0f" kind="function"><name>if</name></member>
+    <member refid="json_8cpp_1ad9f9a9b2ad3154fc8033756f23c023a6" kind="function"><name>ensure</name></member>
     <member refid="json_8cpp_1af5fb173126786c1e3f90b6df6e2500c5" kind="function"><name>update_offset</name></member>
     <member refid="json_8cpp_1aa7a85b63f1830e7e666e1f56872d5d3e" kind="function"><name>compare_double</name></member>
     <member refid="json_8cpp_1ad93d84de08872da0eaa6624be0e74a68" kind="function"><name>print_number</name></member>
@@ -1357,8 +1490,8 @@
     <member refid="json_8cpp_1ae84642817f3965a85c7c617663250c16" kind="function"><name>print_array</name></member>
     <member refid="json_8cpp_1a1472ac5d1becd7d9a5e558b4c053b06a" kind="function"><name>parse_object</name></member>
     <member refid="json_8cpp_1a3d742f5c68799bca291432a9cd72f8dd" kind="function"><name>print_object</name></member>
-    <member refid="json_8cpp_1a029a2c33fa2744a7cc5cf061f28d2cfc" kind="function"><name>buffer_skip_whitespace</name></member>
-    <member refid="json_8cpp_1a13b2d9f17c3b80a8878405f2782cd916" kind="function"><name>skip_utf8_bom</name></member>
+    <member refid="json_8cpp_1a0a9c3a7f6f01d4a8d9c552fa82274b4b" kind="function"><name>buffer_skip_whitespace</name></member>
+    <member refid="json_8cpp_1a3bb0de8275d39e5a31ea006a7dae65b7" kind="function"><name>skip_utf8_bom</name></member>
     <member refid="json_8cpp_1a265fb6f60d093cb333c087fdabc6efdb" kind="function"><name>CJSON_PUBLIC</name></member>
     <member refid="json_8cpp_1abfe73b8e0114278ce0cc7c20a6bacdb9" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1abeffdb0695e8c30e4612c8f917bfd9e1" kind="function"><name>cJSON_ParseWithLengthOpts</name></member>
@@ -1367,113 +1500,123 @@
     <member refid="json_8cpp_1a28f4a33af8f7fcee96d1559e403ff29b" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a4593ce107753e9b7b31ddac97a959994" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1ad322e1e2bce42db81bab5176fa296c29" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1a26f6a12984c20001bb4c19f4ce94cc64" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1ae71e2aec89bf140e6430cb7d5ca417c5" kind="function"><name>print</name></member>
+    <member refid="json_8cpp_1a843cfcfecd006b5d1bd0cf91dc070e89" kind="function"><name>if</name></member>
+    <member refid="json_8cpp_1a36b0c212c0d382a4714afa8b70c1a2ee" kind="function"><name>print</name></member>
     <member refid="json_8cpp_1a0aaaa25cc9cc181d709602c445fd2d1c" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a6f520bf3d4e33963411d1c292d704503" kind="function"><name>if</name></member>
+    <member refid="json_8cpp_1a5dbd74dff02e6d96a1f0a2a631936589" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a15f779a174654a93596726f6eb6b57fe" kind="function"><name>return</name></member>
     <member refid="json_8cpp_1aa7717765ab33f9dac70ff47e7e078b8b" kind="function"><name>CJSON_PUBLIC</name></member>
     <member refid="json_8cpp_1a71352311b7972f5e6eb5ff3c71e9252f" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1a4f74234053f51a2e0d7f06c4aa888f03" kind="function"><name>print_value</name></member>
-    <member refid="json_8cpp_1a82f460889bcb63ee840fc821feef5aa5" kind="function"><name>get_array_item</name></member>
-    <member refid="json_8cpp_1a768303890e9be802d51b0e0a110302f4" kind="function"><name>get_object_item</name></member>
+    <member refid="json_8cpp_1a0cbec0eca3676bc4510138c52e734813" kind="function"><name>print_value</name></member>
+    <member refid="json_8cpp_1a4ad2e6e24e8f10ade0c869a249777a9d" kind="function"><name>get_array_item</name></member>
+    <member refid="json_8cpp_1aa2509ddde1c1a0be7417e4f40520338f" kind="function"><name>get_object_item</name></member>
     <member refid="json_8cpp_1a5d61bcc0045ace88c2ae04f0928eeace" kind="function"><name>suffix_object</name></member>
-    <member refid="json_8cpp_1ac06bbc307a6f39fe58aafbcb82fbf4b3" kind="function"><name>create_reference</name></member>
+    <member refid="json_8cpp_1a34155b75b0e70b292b338f6f41d090d6" kind="function"><name>create_reference</name></member>
     <member refid="json_8cpp_1a816d10c908af6be844a1f8277363e2f1" kind="function"><name>add_item_to_array</name></member>
-    <member refid="json_8cpp_1a48223c36735c39cfc4711b0659f966c8" kind="function"><name>cast_away_const</name></member>
+    <member refid="json_8cpp_1afed51aa9c43b82e72456fd04730643ce" kind="function"><name>cast_away_const</name></member>
     <member refid="json_8cpp_1acc48bef0e1b495898d9489e577b91d5c" kind="function"><name>add_item_to_object</name></member>
+    <member refid="json_8cpp_1a190550315572ee2a1b6bbd2d181cca57" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1afde5c619f31577b3d821b56b23953c85" kind="function"><name>cJSON_Delete</name></member>
+    <member refid="json_8cpp_1a57383894ddbf6d141efc4be10cc9c3dc" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a82198c8ae9b9391ec58d1b4dd2a0d835" kind="function"><name>cJSON_Delete</name></member>
+    <member refid="json_8cpp_1a7c636ab338e0e044d3b117c4c17cd660" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a38f5e694b5c8025da97c64a1323624b6" kind="function"><name>cJSON_Delete</name></member>
+    <member refid="json_8cpp_1add3447abc993c24187f21b06f123ed3b" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1ad4379116322d8ea25bed7d926949928e" kind="function"><name>cJSON_Delete</name></member>
+    <member refid="json_8cpp_1a50b35cc4ddb9d2f7f7b5b3bba78189dc" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a863d15ca4bb3d25b45537a52e60d5f16" kind="function"><name>cJSON_Delete</name></member>
+    <member refid="json_8cpp_1a04012f31b42f0151ecdbeb031f5fccfc" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1ac343e582979460eb601a28c0f160f20d" kind="function"><name>cJSON_Delete</name></member>
+    <member refid="json_8cpp_1a6b32addfb87777063dd05a293063d338" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1acd085638be3dd8a2283605d0a63cd10f" kind="function"><name>cJSON_Delete</name></member>
+    <member refid="json_8cpp_1a0271dd70fe155382d60ed74b73e7a71e" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a4c1451255d141b30ba24e40a463a1a50" kind="function"><name>cJSON_Delete</name></member>
+    <member refid="json_8cpp_1abbf8c9146b5050d37f9b513e3e8ac588" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1aec5a5cee199637b43ff6bca41f6e4d17" kind="function"><name>cJSON_Delete</name></member>
     <member refid="json_8cpp_1a3ac2a63423914bb3e443d578dd07b998" kind="function"><name>cJSON_DetachItemViaPointer</name></member>
     <member refid="json_8cpp_1a8182cf148f1b59107b476a0512e66c65" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1a0a617ad9c08ae96b5a89579d57ec0118" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1addc2f2bb44b17694673b6de3abbdefe4" kind="function"><name>if</name></member>
+    <member refid="json_8cpp_1afc7fd8f179c7403ebd02c3b4398b6e46" kind="function"><name>if</name></member>
+    <member refid="json_8cpp_1a5b6124f94989a9cfe4d79ac40386779d" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a0f57e2720be39caf76124659d10fbb32" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1ae3da86d5128d65acfd4dd68fbcd4c09c" kind="function"><name>cJSON_Delete</name></member>
     <member refid="json_8cpp_1afdae75197cf2c440ef858a2e93b104f2" kind="function"><name>replace_item_in_object</name></member>
     <member refid="json_8cpp_1a4151c5c0d36dfe24841d4723ac65d6c6" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1af3d8f512cd6bd75a0b25fda417e4ef84" kind="function"><name>for</name></member>
+    <member refid="json_8cpp_1a8a10bf77b3753124dd7ae92c5c4184cc" kind="function"><name>for</name></member>
     <member refid="json_8cpp_1ae39a150ec9a630fd5d4b61d5968c0072" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a1f198ce8a758a05c9a99366c38a12f47" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1ad9bc5485a16a60b0824f65b68f3bf53e" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1ac710a9eb697fc89f52a407ce22224d06" kind="function"><name>if</name></member>
-    <member refid="json_8cpp_1a6345a7b478b554e9fc1262c86aaac613" kind="function"><name>while</name></member>
+    <member refid="json_8cpp_1a209b15238c5803bc547b2d77e02f29b4" kind="function"><name>while</name></member>
     <member refid="json_8cpp_1a0cde9b5cb05996d1f922f4f7b77a07b4" kind="function"><name>if</name></member>
     <member refid="json_8cpp_1a98eaeafefb811c738494a26265309a07" kind="function"><name>skip_oneline_comment</name></member>
     <member refid="json_8cpp_1a4b9e22afcb0d33932c691b5af9f2560a" kind="function"><name>skip_multiline_comment</name></member>
     <member refid="json_8cpp_1a569f331078de59d01dee9351fa106e3b" kind="function"><name>minify_string</name></member>
   </compound>
   <compound refid="memory_8cpp" kind="file"><name>memory.cpp</name>
-    <member refid="memory_8cpp_1a3cb8db1d55063ce809ca15698555d1fb" kind="function"><name>allocInt1d</name></member>
-    <member refid="memory_8cpp_1a10d56311c506ff61bd1e0ed9b19c293c" kind="function"><name>allocInt2d</name></member>
-    <member refid="memory_8cpp_1af5f58611b4753685463223935135b711" kind="function"><name>allocInt3d</name></member>
+    <member refid="memory_8cpp_1a4a77e962a421d5e821fbaab7d5b86956" kind="function"><name>allocInt1d</name></member>
+    <member refid="memory_8cpp_1a3e653c3d5c2e7897316a6eda369691f7" kind="function"><name>allocInt2d</name></member>
+    <member refid="memory_8cpp_1ab6e8d630a307e662c123d58af9947bcd" kind="function"><name>allocInt3d</name></member>
     <member refid="memory_8cpp_1a10eb6c8390d29cc8f33e0ea56b6ee9ae" kind="function"><name>reallocInt1d</name></member>
     <member refid="memory_8cpp_1a0404e6c1166ae1c0d933738b732c67f8" kind="function"><name>reallocInt2d</name></member>
     <member refid="memory_8cpp_1a75f338991cc82d1c6fca0b66f207ca67" kind="function"><name>reallocInt3d</name></member>
     <member refid="memory_8cpp_1a2d2931bbb7e0f10a2b1863f387c525a4" kind="function"><name>freeInt1d</name></member>
     <member refid="memory_8cpp_1a68bfeb1b2a0a0f15f9377384ca69c08f" kind="function"><name>freeInt2d</name></member>
     <member refid="memory_8cpp_1ac74f85e3ab97b01cd30c0d46526970af" kind="function"><name>freeInt3d</name></member>
-    <member refid="memory_8cpp_1a5b6cbba6ea5a6163d38e651bdf01184f" kind="function"><name>allocDouble1d</name></member>
-    <member refid="memory_8cpp_1a8b57b170601f16ea432d9d46e36d9de1" kind="function"><name>allocDouble2d</name></member>
-    <member refid="memory_8cpp_1a59b376e2bdbfb20b3e5a64b94e034c50" kind="function"><name>allocDouble3d</name></member>
+    <member refid="memory_8cpp_1a4aa37a6d4999d3c57dd6c2dfa87db3cc" kind="function"><name>allocDouble1d</name></member>
+    <member refid="memory_8cpp_1a5fae9bb248599c92e65e9cff381742f4" kind="function"><name>allocDouble2d</name></member>
+    <member refid="memory_8cpp_1a970b58c0b9074a40c2c14f313007807d" kind="function"><name>allocDouble3d</name></member>
     <member refid="memory_8cpp_1ae443161b6e9abc8ebdfcc78fc7f41cff" kind="function"><name>reallocDouble1d</name></member>
     <member refid="memory_8cpp_1a4064bc02973da353c0e15ccba52fa2da" kind="function"><name>reallocDouble2d</name></member>
     <member refid="memory_8cpp_1accd1ea1d834fa90eb69b4a1a60a6c8c7" kind="function"><name>reallocDouble3d</name></member>
     <member refid="memory_8cpp_1abc35d0114f94dc82fcd0e172d3328858" kind="function"><name>freeDouble1d</name></member>
     <member refid="memory_8cpp_1aa69535e3c103c2f26fdd32acc7bd6eaf" kind="function"><name>freeDouble2d</name></member>
     <member refid="memory_8cpp_1aec282ca23f89d1bfb485424fa4fccea3" kind="function"><name>freeDouble3d</name></member>
-    <member refid="memory_8cpp_1a532ae5e19c8fd778b4c964176a7b1418" kind="function"><name>allocFloat1d</name></member>
-    <member refid="memory_8cpp_1a45b0ad39e132be4e80d4cb36dd7a837f" kind="function"><name>allocFloat2d</name></member>
-    <member refid="memory_8cpp_1a448f8a97b5642a40a305be37783ddd3f" kind="function"><name>allocFloat3d</name></member>
+    <member refid="memory_8cpp_1a8454b3ee4ca25f30d8ff2882e9ad6b3e" kind="function"><name>allocFloat1d</name></member>
+    <member refid="memory_8cpp_1a7743184281c1cb77100dd9e8b06bc127" kind="function"><name>allocFloat2d</name></member>
+    <member refid="memory_8cpp_1a3290989322bbce33ac54530d879631bd" kind="function"><name>allocFloat3d</name></member>
     <member refid="memory_8cpp_1aee87abbe73442e0cbd97ebda24bd79d6" kind="function"><name>reallocFloat1d</name></member>
     <member refid="memory_8cpp_1ab48436f9e9de0d2c4cf1c8a498f623af" kind="function"><name>reallocFloat2d</name></member>
     <member refid="memory_8cpp_1a76ee96e1f60e3a253dc3ad7daa28527e" kind="function"><name>reallocFloat3d</name></member>
     <member refid="memory_8cpp_1abc1142ec4de2ca14707d793174fd0f46" kind="function"><name>freeFloat1d</name></member>
     <member refid="memory_8cpp_1a2e4119d480261486ac6f679e08e31ced" kind="function"><name>freeFloat2d</name></member>
     <member refid="memory_8cpp_1acfe219819fa297c10aa2c0f7b971d689" kind="function"><name>freeFloat3d</name></member>
-    <member refid="memory_8cpp_1a1e932cd487007fdbd1ecbf2735074e4c" kind="function"><name>allocChar1d</name></member>
-    <member refid="memory_8cpp_1a40e1314389e6d75466689cd0ad221576" kind="function"><name>allocChar2d</name></member>
-    <member refid="memory_8cpp_1a362685c323bcf9bb2c964ed3ce6efb3c" kind="function"><name>allocChar3d</name></member>
+    <member refid="memory_8cpp_1afb4624f7aa66d7e5ec10426cc8a3feea" kind="function"><name>allocChar1d</name></member>
+    <member refid="memory_8cpp_1a0a133a31db58e947605fdccc99b72d5c" kind="function"><name>allocChar2d</name></member>
+    <member refid="memory_8cpp_1a10d36a90a539957fee6ca7c09a8e1311" kind="function"><name>allocChar3d</name></member>
     <member refid="memory_8cpp_1a3f9aff48853931f2c180b7876938379c" kind="function"><name>reallocChar1d</name></member>
     <member refid="memory_8cpp_1a35d549313b1dce7ed8bfcf38580fb532" kind="function"><name>reallocChar2d</name></member>
     <member refid="memory_8cpp_1aa5dcaabef2cac3790016b34f88a5a6f8" kind="function"><name>reallocChar3d</name></member>
     <member refid="memory_8cpp_1a5177edfbc8cf0f07d0a1e4e24edc9118" kind="function"><name>freeChar1d</name></member>
     <member refid="memory_8cpp_1af666c88324ad27080d462ec6c1fa87d2" kind="function"><name>freeChar2d</name></member>
     <member refid="memory_8cpp_1a2c22e55cc0e94c3a77895bc12d00ea08" kind="function"><name>freeChar3d</name></member>
-    <member refid="memory_8cpp_1a0d95fc022c2c62fad196f20a66e8603a" kind="function"><name>allocMatrixXcd1d</name></member>
-    <member refid="memory_8cpp_1a7348d898d8effef9f72ad069373d0f3d" kind="function"><name>allocMatrixXcd2d</name></member>
-    <member refid="memory_8cpp_1aa3e85b06be5594f4fb46e32013c5d97c" kind="function"><name>allocMatrixXcd3d</name></member>
+    <member refid="memory_8cpp_1ada2c9a9e950139e59b398a2fec8edca4" kind="function"><name>allocMatrixXcd1d</name></member>
+    <member refid="memory_8cpp_1a5cbb93a551c35338ad4c852cd5a88f24" kind="function"><name>allocMatrixXcd2d</name></member>
+    <member refid="memory_8cpp_1ae043062bc80db23cee9dd8a175437c9f" kind="function"><name>allocMatrixXcd3d</name></member>
     <member refid="memory_8cpp_1a18ae919c8a78c8d6d6e66e10dbc6103c" kind="function"><name>freeMatrixXcd1d</name></member>
     <member refid="memory_8cpp_1a3c3534e208dd35b87947214940871c70" kind="function"><name>freeMatrixXcd2d</name></member>
     <member refid="memory_8cpp_1a76ad4248c8e0c37ba210082494e02ea9" kind="function"><name>freeMatrixXcd3d</name></member>
-    <member refid="memory_8cpp_1a123fb36d3877af7b86546215ba0a89e5" kind="function"><name>allocDoubleTensor1d</name></member>
-    <member refid="memory_8cpp_1a46b66a5e79d6d21560ccd332c880c511" kind="function"><name>allocDoubleTensor2d</name></member>
-    <member refid="memory_8cpp_1a7dc8d8e2faf060b6ff08059297abed6d" kind="function"><name>allocDoubleTensor3d</name></member>
+    <member refid="memory_8cpp_1af7ebeb311107475f06d209648d04ef4a" kind="function"><name>allocDoubleTensor1d</name></member>
+    <member refid="memory_8cpp_1a5e1703846f2ea3e1e9da02274969c313" kind="function"><name>allocDoubleTensor2d</name></member>
+    <member refid="memory_8cpp_1a2936d245f390e1cd33959f745913c2fb" kind="function"><name>allocDoubleTensor3d</name></member>
     <member refid="memory_8cpp_1ad5ce8e72390637d3079ce74b5b5276ae" kind="function"><name>reallocDoubleTensor1d</name></member>
     <member refid="memory_8cpp_1a08cf471a6b8caa128a17eae73d457fc5" kind="function"><name>reallocDoubleTensor2d</name></member>
     <member refid="memory_8cpp_1a0106be117f3b2350b4b2afa1364f89dc" kind="function"><name>reallocDoubleTensor3d</name></member>
     <member refid="memory_8cpp_1ae0e177577e93e434d1b241f5fd507f92" kind="function"><name>freeDoubleTensor1d</name></member>
     <member refid="memory_8cpp_1a6f912a61d9ea2bf679c97508969d6d40" kind="function"><name>freeDoubleTensor2d</name></member>
     <member refid="memory_8cpp_1aff71313f16bb4038f8ac37811a137f0d" kind="function"><name>freeDoubleTensor3d</name></member>
-    <member refid="memory_8cpp_1a90014f92012f81695395348c6346d412" kind="function"><name>allocDoubleComplex1d</name></member>
-    <member refid="memory_8cpp_1a60d78f631ba707ce3430506afce6f895" kind="function"><name>allocDoubleComplex2d</name></member>
-    <member refid="memory_8cpp_1a40670625363357f25b4f31e60ceec21c" kind="function"><name>allocDoubleComplex3d</name></member>
+    <member refid="memory_8cpp_1a704d07fcba55d1524861d177b6f9fe05" kind="function"><name>allocDoubleComplex1d</name></member>
+    <member refid="memory_8cpp_1a6d658cab6a184fa5ff078a74bd1bb590" kind="function"><name>allocDoubleComplex2d</name></member>
+    <member refid="memory_8cpp_1af3ebfba86935e886ec4cfc91b3cede43" kind="function"><name>allocDoubleComplex3d</name></member>
     <member refid="memory_8cpp_1ae5e9201a0d7eba9376116c0e7e516c7a" kind="function"><name>reallocDoubleComplex1d</name></member>
     <member refid="memory_8cpp_1a753aff622b31db47c4dde50c7d2fe523" kind="function"><name>reallocDoubleComplex2d</name></member>
     <member refid="memory_8cpp_1a97db2e3f49698994d16492331f046619" kind="function"><name>reallocDoubleComplex3d</name></member>
     <member refid="memory_8cpp_1ac482987cd156fd7f449f994ba04c4aea" kind="function"><name>freeDoubleComplex1d</name></member>
     <member refid="memory_8cpp_1a4d2ab08a9b82b6e01b55ca0def658d29" kind="function"><name>freeDoubleComplex2d</name></member>
     <member refid="memory_8cpp_1a67ebc006a328305f7b2b54d42619d41c" kind="function"><name>freeDoubleComplex3d</name></member>
-    <member refid="memory_8cpp_1aa265fda5937761764ca1b338547b205f" kind="function"><name>allocArray1d</name></member>
-    <member refid="memory_8cpp_1a235014f3aef0304a918cff31a174632d" kind="function"><name>allocArray2d</name></member>
-    <member refid="memory_8cpp_1a0a99c65092aea575f0d54b01c8b0f58d" kind="function"><name>allocArray3d</name></member>
+    <member refid="memory_8cpp_1af796015bd6d40f132417a433e0d57d1b" kind="function"><name>allocArray1d</name></member>
+    <member refid="memory_8cpp_1a12ec47e0c2b10d8d51b03e918c7ee25a" kind="function"><name>allocArray2d</name></member>
+    <member refid="memory_8cpp_1af40e6f3866b71caa4eaa96c4e0344bf3" kind="function"><name>allocArray3d</name></member>
     <member refid="memory_8cpp_1a7ecd70ee2110d66f4763fccc4743e0aa" kind="function"><name>reallocArray1d</name></member>
     <member refid="memory_8cpp_1ab0597e5b06582506367d5f8a98bd8561" kind="function"><name>reallocArray2d</name></member>
     <member refid="memory_8cpp_1ac883ccfb6471f54d9297c348ce98f8ec" kind="function"><name>reallocArray3d</name></member>
@@ -1503,18 +1646,18 @@
     <member refid="option_8cpp_1aabd14a766502f8cc34280e166ba52de9" kind="function"><name>cJSON_readOptionPulse</name></member>
     <member refid="option_8cpp_1ae9885c3a9d41e84d20f5bc76d12bc37d" kind="function"><name>cJSON_readOptionOutput</name></member>
     <member refid="option_8cpp_1ad15e4bc073ef18f308405afd980208a6" kind="function"><name>cJSON_readOptionDefectArray</name></member>
-    <member refid="option_8cpp_1a28e6763b1074d15682cfbba7e2ee3e5d" kind="function"><name>cJSON_ReadFccein</name></member>
-    <member refid="option_8cpp_1a3e0023ab5c647625e34f0eb0ebd8ef37" kind="function"><name>cJSON_ReadFilePath</name></member>
-    <member refid="option_8cpp_1aac3476163ccecc2fdd26b496a31c6d8d" kind="function"><name>cJSON_ReadFilePath1d</name></member>
-    <member refid="option_8cpp_1adcea69a79af1dbe16a7c480a9208b8d8" kind="function"><name>cJSON_ReadString</name></member>
-    <member refid="option_8cpp_1aacce64e49f5ed9305b60b244af4bfa8a" kind="function"><name>cJSON_ReadString1d</name></member>
+    <member refid="option_8cpp_1a97c3a05c2947e61634872a1de1263288" kind="function"><name>cJSON_ReadFccein</name></member>
+    <member refid="option_8cpp_1a2009735db395f4d651bf8bad59262083" kind="function"><name>cJSON_ReadFilePath</name></member>
+    <member refid="option_8cpp_1ae09f523ee9a0520fe33e8181ff864130" kind="function"><name>cJSON_ReadFilePath1d</name></member>
+    <member refid="option_8cpp_1a99ae54e0d171f47cbcd6fc4450e7de8a" kind="function"><name>cJSON_ReadString</name></member>
+    <member refid="option_8cpp_1a658dd5632354d9f351895415b7b30856" kind="function"><name>cJSON_ReadString1d</name></member>
     <member refid="option_8cpp_1a1eb81cd1ec189abe60e9d99dd944b251" kind="function"><name>cJSON_ReadInt</name></member>
-    <member refid="option_8cpp_1a9dc2c635602ac486718c21a685254043" kind="function"><name>cJSON_ReadInt1d</name></member>
+    <member refid="option_8cpp_1aa3feb7c8d2dc33e4d9b2f7ab7522ef16" kind="function"><name>cJSON_ReadInt1d</name></member>
     <member refid="option_8cpp_1ace4bc52a3d271b0bb2d21f3797517778" kind="function"><name>cJSON_ReadDouble</name></member>
-    <member refid="option_8cpp_1a8e02f4940c4984b35806d10df576b5ce" kind="function"><name>cJSON_ReadDouble1d</name></member>
-    <member refid="option_8cpp_1aafa3347b2d08043f31e55e371c83d1e1" kind="function"><name>cJSON_ReadDouble2d</name></member>
+    <member refid="option_8cpp_1a80451474d28bf53ee67bf8b182ee38d0" kind="function"><name>cJSON_ReadDouble1d</name></member>
+    <member refid="option_8cpp_1a2f68f51854669b01d4dddf510295340f" kind="function"><name>cJSON_ReadDouble2d</name></member>
     <member refid="option_8cpp_1a71e76f5268d5be8c5b1fdc892c516be2" kind="function"><name>cJSON_ReadFloat</name></member>
-    <member refid="option_8cpp_1ac5ebdf96468b6d25f388a43442cadd90" kind="function"><name>cJSON_ReadFloat1d</name></member>
+    <member refid="option_8cpp_1a8976241aee4d9aee5ed3b57abc57f6ca" kind="function"><name>cJSON_ReadFloat1d</name></member>
     <member refid="option_8cpp_1aba7906dcd35e88eefbc1e707b1e7e958" kind="function"><name>cJSON_ReadBool</name></member>
     <member refid="option_8cpp_1aad7367ed50287681b3f461adacb6e783" kind="function"><name>cJSON_ReadTensor</name></member>
     <member refid="option_8cpp_1ad86bc6d9142752cbbea62c6b65cf09f9" kind="function"><name>cJSON_ReadDefectInfo_IntCharDoubleArray</name></member>
@@ -1523,30 +1666,30 @@
     <member refid="option_8cpp_1a8a291fbe45c46e7385b5418b623c52a2" kind="function"><name>cJSON_ReadDefectInfo_IntCharDouble</name></member>
   </compound>
   <compound refid="output_8cpp" kind="file"><name>output.cpp</name>
-    <member refid="output_8cpp_1a246bbb4bdade1fec37a74f52288bd0fc" kind="function"><name>Output_init</name></member>
+    <member refid="output_8cpp_1ab161d788e792a9b6151d1f1a11845fd2" kind="function"><name>Output_init</name></member>
     <member refid="output_8cpp_1afd9a47af9edc67e492f1b5890b6c595b" kind="function"><name>Output_save</name></member>
     <member refid="output_8cpp_1a89057c68815c5f25f19e7f5b17fc2a8f" kind="function"><name>Output_save_all</name></member>
     <member refid="output_8cpp_1aa0cea37b91d5d895f1a06e19d551f011" kind="function"><name>Output_save_info</name></member>
     <member refid="output_8cpp_1a45c1e74132e535964cf887914fbbf092" kind="function"><name>Output_setSavemode</name></member>
-    <member refid="output_8cpp_1abaefd91d3e41c0ce7e57f9af5f0800a2" kind="function"><name>Output_getSavemode</name></member>
+    <member refid="output_8cpp_1a467fad78f6e8062d4639ecee3dc14fa9" kind="function"><name>Output_getSavemode</name></member>
     <member refid="output_8cpp_1a738ebf5a2d75f03d3baac8073c56b8cd" kind="function"><name>Output_allocOutfile</name></member>
     <member refid="output_8cpp_1acea267bd1b794ed21eb61b565a0bdefa" kind="function"><name>Output_freeOutfile</name></member>
     <member refid="output_8cpp_1abd65ea9be94348ea3e83cf15beeb1e7c" kind="function"><name>Output_setOutfile</name></member>
-    <member refid="output_8cpp_1a58a735c4720b4fcb58831a9209cc5509" kind="function"><name>Output_getOutfile</name></member>
+    <member refid="output_8cpp_1a3456010018b892fe435283f0d54ae262" kind="function"><name>Output_getOutfile</name></member>
     <member refid="output_8cpp_1a787e1d765898041179cf2cb9163ccd1a" kind="function"><name>Output_freeAll</name></member>
     <member refid="output_8cpp_1a45e362c64a844fde067befad21c5d3c0" kind="function"><name>Output_report</name></member>
   </compound>
   <compound refid="pulse_8cpp" kind="file"><name>pulse.cpp</name>
-    <member refid="pulse_8cpp_1a0c7619127c67d5d5aa5559d1dccf6552" kind="function"><name>Pulse_init</name></member>
+    <member refid="pulse_8cpp_1aa7009d836c8d5eb9334af5ebbba67d84" kind="function"><name>Pulse_init</name></member>
     <member refid="pulse_8cpp_1a74cfa2780f1d797822ba8676a791ece4" kind="function"><name>Pulse_setNpulse</name></member>
     <member refid="pulse_8cpp_1ab47f98146415eee502baccfc07b644e8" kind="function"><name>Pulse_setPulsename</name></member>
     <member refid="pulse_8cpp_1aad13a34668d7aa6baf2848bb076c3dff" kind="function"><name>Pulse_setPulseiter</name></member>
     <member refid="pulse_8cpp_1a0d87dba64cb7ffa5b029fd6d6d037922" kind="function"><name>Pulse_setSequence_fromName</name></member>
     <member refid="pulse_8cpp_1a613c7d6b5544c7cc63dd5b7cc80ba694" kind="function"><name>Pulse_setSequence_fromInput</name></member>
     <member refid="pulse_8cpp_1a6a09cffba4cc0f91199bef3c1cdf874a" kind="function"><name>Pulse_getNpulse</name></member>
-    <member refid="pulse_8cpp_1a27ac15f8163d1ce64bc5aab3c32d1faf" kind="function"><name>Pulse_getPulsename</name></member>
+    <member refid="pulse_8cpp_1a8994512669fa1459dc448eee185c3453" kind="function"><name>Pulse_getPulsename</name></member>
     <member refid="pulse_8cpp_1a4ad30025483afe5de1cde4ab00ef464b" kind="function"><name>Pulse_getPulseiter</name></member>
-    <member refid="pulse_8cpp_1a28893dfeabe0b3e18e3be3550e6e49f4" kind="function"><name>Pulse_getSequence</name></member>
+    <member refid="pulse_8cpp_1aa512540b0350986219df2f6d6b8a27b0" kind="function"><name>Pulse_getSequence</name></member>
     <member refid="pulse_8cpp_1a68c4200b8c8a7219dff809fc95835007" kind="function"><name>Pulse_report</name></member>
     <member refid="pulse_8cpp_1a7bba76df2b32cdb55943e1114e334bad" kind="function"><name>Pulse_allocSequence</name></member>
     <member refid="pulse_8cpp_1a441f4594a769b4009d7a59a4e0445c03" kind="function"><name>Pulse_freeSequence</name></member>
@@ -1557,7 +1700,7 @@
     <member refid="pulse_8cpp_1add7902f7c40a41d20f29b9a6005b107f" kind="function"><name>generateSequenceEqual</name></member>
   </compound>
   <compound refid="qubit_8cpp" kind="file"><name>qubit.cpp</name>
-    <member refid="qubit_8cpp_1aa167a0f05ddabdfd98cc9a617adae9d6" kind="function"><name>QubitArray_init</name></member>
+    <member refid="qubit_8cpp_1aa8da720f7badcaef81650225a556db3c" kind="function"><name>QubitArray_init</name></member>
     <member refid="qubit_8cpp_1a9f8741d042da0cdf68d09d0b64cb036b" kind="function"><name>QubitArray_freeAll</name></member>
     <member refid="qubit_8cpp_1a45741e296e28f50e77a289798d9f6282" kind="function"><name>QubitArray_dim</name></member>
     <member refid="qubit_8cpp_1a9e6e90d7a9584308757865ec6b19ddb2" kind="function"><name>QubitArray_dimQubit_i</name></member>
@@ -1566,8 +1709,8 @@
     <member refid="qubit_8cpp_1ac4b95a476edfc9104098f7e48ff2f2e3" kind="function"><name>QubitArray_setPsiaPsib_fromIdx</name></member>
     <member refid="qubit_8cpp_1aafad57f5c068bdca6420c8955c37dec8" kind="function"><name>QubitArray_setPsi0_fromPsiaPsib</name></member>
     <member refid="qubit_8cpp_1a122e8cc3fe04fda22236538ab1330e5f" kind="function"><name>QubitArray_getQubitIdx_fromName</name></member>
-    <member refid="qubit_8cpp_1a7e7823e37fdb6382040ae9a06b2a5e55" kind="function"><name>QubitArray_PauliOperators</name></member>
-    <member refid="qubit_8cpp_1a5b696572e7a81abe12ec84088a69b5a4" kind="function"><name>QubitArray_PauliOperator_fromPsiaPsib</name></member>
+    <member refid="qubit_8cpp_1a46a67de2f012aa002869a33473dc79bf" kind="function"><name>QubitArray_PauliOperators</name></member>
+    <member refid="qubit_8cpp_1a4f1e7c7df12e8e85cde3e2c112cffb14" kind="function"><name>QubitArray_PauliOperator_fromPsiaPsib</name></member>
     <member refid="qubit_8cpp_1a5b6edc8e889cd8f52085311a12cc3043" kind="function"><name>QubitArray_TotalHamil</name></member>
     <member refid="qubit_8cpp_1aaf6cbe6a72b0007d02fb43f47be4d5d6" kind="function"><name>QubitArray_SingleHamil</name></member>
     <member refid="qubit_8cpp_1a51e614ecf6dc8210b7917b0312191ccd" kind="function"><name>QubitArray_ZeemanHamil</name></member>
@@ -1590,9 +1733,9 @@
     <member refid="qubit_8cpp_1ac9319da853557a660b2d0cd1ab2f868f" kind="function"><name>QubitArray_setPsi0</name></member>
     <member refid="qubit_8cpp_1a92d53023231774329afb43515ae426af" kind="function"><name>QubitArray_getNqubit</name></member>
     <member refid="qubit_8cpp_1a43602ef791226ac908285556eea20b77" kind="function"><name>QubitArray_getOverhaus</name></member>
-    <member refid="qubit_8cpp_1a808ead69b0d40f547fffe9f17e050555" kind="function"><name>QubitArray_get_alphaidx</name></member>
-    <member refid="qubit_8cpp_1ae4c72d491b573e505ceffd71913952f2" kind="function"><name>QubitArray_get_betaidx</name></member>
-    <member refid="qubit_8cpp_1adc59782eac519b790b11f0454b09084b" kind="function"><name>QubitArray_getIntmap</name></member>
+    <member refid="qubit_8cpp_1a871a60183fc08c7afe14facece6a1f8a" kind="function"><name>QubitArray_get_alphaidx</name></member>
+    <member refid="qubit_8cpp_1a91703901a507a52d9e26bd7a16e8a21e" kind="function"><name>QubitArray_get_betaidx</name></member>
+    <member refid="qubit_8cpp_1a789505486835402072a8519b15d83974" kind="function"><name>QubitArray_getIntmap</name></member>
     <member refid="qubit_8cpp_1aa6e1e16173a894c62d3ba6e321899b84" kind="function"><name>QubitArray_getIntmap_i_j</name></member>
     <member refid="qubit_8cpp_1ace3511c49f18f11b931cc1dc2482993b" kind="function"><name>QubitArray_getPsia</name></member>
     <member refid="qubit_8cpp_1a49773f2cf68d5f6f6bd48548ed0b0af8" kind="function"><name>QubitArray_getPsib</name></member>
@@ -1610,11 +1753,11 @@
     <member refid="qubit_8cpp_1aa36d42342c0c3f9e92a649def188c8aa" kind="function"><name>QubitArray_setQubit_i_beta</name></member>
     <member refid="qubit_8cpp_1a9912adc80412ddcbf72283f477835337" kind="function"><name>QubitArray_setQubit_i_alpha_fromMs</name></member>
     <member refid="qubit_8cpp_1a9aba66f88595c3a6427a67e1ed434e82" kind="function"><name>QubitArray_setQubit_i_beta_fromMs</name></member>
-    <member refid="qubit_8cpp_1a8cfd8909d72d9ff2a869ba41021d34ab" kind="function"><name>QubitArray_getQubit_i</name></member>
-    <member refid="qubit_8cpp_1a1e11046357a6772005291e9fa7d8fbe2" kind="function"><name>QubitArray_getQubit_i_name</name></member>
+    <member refid="qubit_8cpp_1a9e56f310cbe322ad65e07d4f8c563593" kind="function"><name>QubitArray_getQubit_i</name></member>
+    <member refid="qubit_8cpp_1a287e038431f226d4c8cd87bb85a42820" kind="function"><name>QubitArray_getQubit_i_name</name></member>
     <member refid="qubit_8cpp_1a5185ffc14ec13d30ee5024a9b8045091" kind="function"><name>QubitArray_getQubit_i_spin</name></member>
     <member refid="qubit_8cpp_1a3e9f9e838128b9f9eb6a733d5e64ad42" kind="function"><name>QubitArray_getQubit_i_gyro</name></member>
-    <member refid="qubit_8cpp_1a795ccf110d3bca40d498849468cf5d92" kind="function"><name>QubitArray_getQubit_i_xyz</name></member>
+    <member refid="qubit_8cpp_1a02dfada0b662b2ce8eb9036fe1d4e915" kind="function"><name>QubitArray_getQubit_i_xyz</name></member>
     <member refid="qubit_8cpp_1aa2ac9548d4bcfa2ad0ef89a53680f45c" kind="function"><name>QubitArray_getQubit_i_alpha</name></member>
     <member refid="qubit_8cpp_1a7b851d6bad14846152c5b2bebd75ea71" kind="function"><name>QubitArray_getQubit_i_beta</name></member>
     <member refid="qubit_8cpp_1a8f6dc3eee81c414eaeca4a87378349fc" kind="function"><name>QubitArray_getQubit_i_detuning</name></member>
@@ -1630,6 +1773,7 @@
     <member refid="reader_8cpp_1a11aee6a56f2eaec828fabab3466213ab" kind="function"><name>readQubitfile</name></member>
     <member refid="reader_8cpp_1ad5baa9fa3d6dc1ac257407571015384e" kind="function"><name>readBathfiles</name></member>
     <member refid="reader_8cpp_1a0c4a3ecfc059a21baad9e8c08195e8b9" kind="function"><name>setBathStates</name></member>
+    <member refid="reader_8cpp_1ada5a331e68c4c1d3318c192dc3d96413" kind="function"><name>compare_dist</name></member>
     <member refid="reader_8cpp_1a3d61585a5a93956e940e0367d8e4e8ac" kind="function"><name>setDefectPaxes</name></member>
     <member refid="reader_8cpp_1a4e032662bc2cc8580c63b0b9ad1a7cf9" kind="function"><name>setSubbathStates</name></member>
     <member refid="reader_8cpp_1aa060f345db95720f4c3b4ee9cea2ee08" kind="function"><name>readGyrofile</name></member>
@@ -1660,30 +1804,30 @@
   </compound>
   <compound refid="simulator_8cpp" kind="file"><name>simulator.cpp</name>
     <member refid="simulator_8cpp_1a9ff47b7fc39c6edafe0340262c18dd5b" kind="function"><name>calculate</name></member>
-    <member refid="simulator_8cpp_1a532da164f34c45b48af84e78d5144946" kind="function"><name>createBathArray</name></member>
+    <member refid="simulator_8cpp_1ac51d9c9dce82efc03a2b441892396e99" kind="function"><name>createBathArray</name></member>
   </compound>
   <compound refid="simulator__cce_8cpp" kind="file"><name>simulator_cce.cpp</name>
-    <member refid="simulator__cce_8cpp_1a214c802c4266064d829665cc20a060b6" kind="function"><name>calCoherenceCce</name></member>
+    <member refid="simulator__cce_8cpp_1af33e1a04593c780ca81d43984e744d7e" kind="function"><name>calCoherenceCce</name></member>
   </compound>
   <compound refid="simulator__gcce_8cpp" kind="file"><name>simulator_gcce.cpp</name>
-    <member refid="simulator__gcce_8cpp_1af833443c0a88461503235260caa29c40" kind="function"><name>calCoherenceGcce</name></member>
+    <member refid="simulator__gcce_8cpp_1a1501f4664e2008e614a90187de05edc4" kind="function"><name>calCoherenceGcce</name></member>
     <member refid="simulator__gcce_8cpp_1a786766da1e60bea6ff70988a91c1e344" kind="function"><name>calPropagatorGcce</name></member>
   </compound>
   <compound refid="simulator__hamiltonian_8cpp" kind="file"><name>simulator_hamiltonian.cpp</name>
     <member refid="simulator__hamiltonian_8cpp_1a06350445b4a7a52d61e791052ea9da91" kind="function"><name>HamilQubit</name></member>
     <member refid="simulator__hamiltonian_8cpp_1a875ebff295b343d5541a6825ed8695dd" kind="function"><name>HamilBath</name></member>
     <member refid="simulator__hamiltonian_8cpp_1aa6dda483876a7c31131690da87cfb780" kind="function"><name>HamilQubitBath</name></member>
-    <member refid="simulator__hamiltonian_8cpp_1a6260d81873b3fdf9fdea80b144f1b3a2" kind="function"><name>HamilQubitBathSecularApp</name></member>
+    <member refid="simulator__hamiltonian_8cpp_1a7981db3eed9183d026cf5fb1cc418627" kind="function"><name>HamilQubitBathSecularApp</name></member>
   </compound>
   <compound refid="utilities_8cpp" kind="file"><name>utilities.cpp</name>
     <member refid="utilities_8cpp_1a9c7f009c4cdeea19fb03a6062b19ba4a" kind="function"><name>Double1dToMatrixXcd</name></member>
-    <member refid="utilities_8cpp_1a4b255578067c0937e13f2ef0078241ce" kind="function"><name>MatrixXcdToDouble1d</name></member>
+    <member refid="utilities_8cpp_1a828e0299e17fa409e86d4cb5d9353ba6" kind="function"><name>MatrixXcdToDouble1d</name></member>
     <member refid="utilities_8cpp_1a2aefe88dad8d53dec31e792d2e9b9fa6" kind="function"><name>dist</name></member>
     <member refid="utilities_8cpp_1a4d139712825bcde2ae1aed0d3ec5ad5b" kind="function"><name>cosTheta</name></member>
     <member refid="utilities_8cpp_1a5b934a224579933ac378e74bab0b68cc" kind="function"><name>sinTheta</name></member>
     <member refid="utilities_8cpp_1a10b6615e47dfd70c43029c037751f9e4" kind="function"><name>cosPhi</name></member>
     <member refid="utilities_8cpp_1a15fe4cc12d3ce405f46b3012de0440b0" kind="function"><name>sinPhi</name></member>
-    <member refid="utilities_8cpp_1acf1c2b8c239acc495284035dd3e2f755" kind="function"><name>substates</name></member>
+    <member refid="utilities_8cpp_1ab89078e8492554a27cf0c82a53dd3fdb" kind="function"><name>substates</name></member>
     <member refid="utilities_8cpp_1a9426ec76eb56e1975c68e8670e96ae88" kind="function"><name>isSubLevel</name></member>
     <member refid="utilities_8cpp_1a0af91089d5fcaa976b033ce4e6264c81" kind="function"><name>getSpinor</name></member>
     <member refid="utilities_8cpp_1ad2e62dabe77182c3a080de3c2bf8633a" kind="function"><name>kron</name></member>
@@ -1719,11 +1863,9 @@
     <member refid="utilities_8cpp_1accb541fe6da91628724b5bffd79da87c" kind="function"><name>isStringDouble</name></member>
     <member refid="utilities_8cpp_1a652d438c6c223d76ea7226c2adbb715b" kind="function"><name>para_range</name></member>
     <member refid="utilities_8cpp_1aebfa23dbf6ec30f35f2986a654bd47c1" kind="function"><name>min</name></member>
-    <member refid="utilities_8cpp_1a1613a6675e0ab3d37ec64934b9d8d5d4" kind="function"><name>MPI_getLocalClusters</name></member>
+    <member refid="utilities_8cpp_1a8ebb9dc3df6963f77db001d564c9f77c" kind="function"><name>MPI_getLocalClusters</name></member>
     <member refid="utilities_8cpp_1aeb93e25e95d089d3e1c79baf4a71b594" kind="function"><name>printBanner</name></member>
     <member refid="utilities_8cpp_1a0d20b69b0ad703df78459e1033d5c1d4" kind="function"><name>printHelp</name></member>
-  </compound>
-  <compound refid="md__home_huijin_git_CCEX_README" kind="page"><name>md__home_huijin_git_CCEX_README</name>
   </compound>
   <compound refid="Examples" kind="page"><name>Examples</name>
   </compound>
@@ -1735,9 +1877,9 @@
   </compound>
   <compound refid="todo" kind="page"><name>todo</name>
   </compound>
-  <compound refid="dir_d44c64559bbebec7f509842c48db8b23" kind="dir"><name>/home/huijin/git/CCEX/include</name>
+  <compound refid="dir_d44c64559bbebec7f509842c48db8b23" kind="dir"><name>/Users/huijin/Documents/GitHub/CCEX/include</name>
   </compound>
-  <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>/home/huijin/git/CCEX/src</name>
+  <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>/Users/huijin/Documents/GitHub/CCEX/src</name>
   </compound>
   <compound refid="indexpage" kind="page"><name>index</name>
   </compound>

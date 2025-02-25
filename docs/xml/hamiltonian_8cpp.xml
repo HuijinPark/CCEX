@@ -1,59 +1,59 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
-  <compounddef id="hamiltonian_8cpp" kind="file">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="hamiltonian_8cpp" kind="file" language="C++">
     <compoundname>hamiltonian.cpp</compoundname>
     <includes refid="hamiltonian_8h" local="yes">../include/hamiltonian.h</includes>
     <includes refid="memory_8h" local="yes">../include/memory.h</includes>
     <includes local="no">iostream</includes>
     <incdepgraph>
-      <node id="295">
+      <node id="2">
         <label>../include/hamiltonian.h</label>
         <link refid="hamiltonian_8h_source"/>
-        <childnode refid="296" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
       </node>
-      <node id="297">
-        <label>Eigen/Dense</label>
-      </node>
-      <node id="300">
-        <label>unistd.h</label>
-      </node>
-      <node id="298">
-        <label>iostream</label>
-      </node>
-      <node id="301">
+      <node id="8">
         <label>../include/memory.h</label>
         <link refid="memory_8h_source"/>
-        <childnode refid="296" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
       </node>
-      <node id="299">
-        <label>mpi.h</label>
-      </node>
-      <node id="296">
+      <node id="3">
         <label>utilities.h</label>
         <link refid="utilities_8h_source"/>
-        <childnode refid="297" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="298" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="299" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="300" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
-      <node id="294">
-        <label>/home/huijin/git/CCEX/src/hamiltonian.cpp</label>
-        <link refid="hamiltonian.cpp"/>
-        <childnode refid="295" relation="include">
+      <node id="1">
+        <label>/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp</label>
+        <link refid="hamiltonian_8cpp"/>
+        <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="301" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="298" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
+      </node>
+      <node id="4">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="5">
+        <label>iostream</label>
+      </node>
+      <node id="6">
+        <label>mpi.h</label>
+      </node>
+      <node id="7">
+        <label>unistd.h</label>
       </node>
     </incdepgraph>
-      <sectiondef kind="func">
+    <sectiondef kind="func">
       <memberdef kind="function" id="hamiltonian_8cpp_1af2966d56e841b9769305aa1b9194aca2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
         <definition>MatrixXcd ZeemanInt</definition>
@@ -76,42 +76,49 @@
           <declname>m</declname>
         </param>
         <briefdescription>
-<para>point-dipole interaction tensor </para>        </briefdescription>
+<para>point-dipole interaction tensor </para>
+        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">xyz1</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>position of spin 1 </para></parameterdescription>
+<para>position of spin 1 </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">xyz2</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>position of spin 2 </para></parameterdescription>
+<para>position of spin 2 </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">gamma1</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>gyromagnetic ratio of spin 1 </para></parameterdescription>
+<para>gyromagnetic ratio of spin 1 </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">gamma2</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>gyromagnetic ratio of spin 2 </para></parameterdescription>
+<para>gyromagnetic ratio of spin 2 </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>point-dipole interaction tensor</para></simplesect>
-The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi * hbar) ) * (gamma1 * gamma2 * mu_B^2) * (S1 dot S2 - 3(S1 dot r)(S2 dot r)/r^2 unit : (1/r^3) * (mu_0 / (4 * pi * hbar) ) * (gamma1 * gamma2 * mu_B^2) 1/r^3 : A^-3 mu_0 : N/A^2 hbar : J*s gamma1 : radkHz/G -&gt; radkHz/T gamma2 : radkHz/G -&gt; radkHz/T mu_B : J/T </para>        </detaileddescription>
+<simplesect kind="return"><para>point-dipole interaction tensor</para>
+</simplesect>
+The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi * hbar) ) * (gamma1 * gamma2 * mu_B^2) * (S1 dot S2 - 3(S1 dot r)(S2 dot r)/r^2 unit : (1/r^3) * (mu_0 / (4 * pi * hbar) ) * (gamma1 * gamma2 * mu_B^2) 1/r^3 : A^-3 mu_0 : N/A^2 hbar : J*s gamma1 : radkHz/G -&gt; radkHz/T gamma2 : radkHz/G -&gt; radkHz/T mu_B : J/T </para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="25" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="25" bodyend="33"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="25" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="25" bodyend="33"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a5f80be9c97fa5d0acbbf8e46ecbc9c48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -136,7 +143,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="36" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="36" bodyend="38"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="36" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="36" bodyend="38"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a1aa964d39c8dd3a402e4d9b125fa18da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -152,28 +159,33 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
           <declname>B0</declname>
         </param>
         <briefdescription>
-<para>Zeeman Interaction vector[rad kHz]. </para>        </briefdescription>
+<para>Zeeman Interaction vector[rad kHz]. </para>
+        </briefdescription>
         <detaileddescription>
 <para>The Zeeman Interaction vector is given by mu_B (B * g) g&apos; = eye(3) * -gamma Zeeman vector = [ Bxgx , Bygy , Bzgz ] <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">gamma</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>gyromagnetic ratio [radkHz/G] </para></parameterdescription>
+<para>gyromagnetic ratio [radkHz/G] </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">B0</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>magnetic field vector [G] </para></parameterdescription>
+<para>magnetic field vector [G] </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>Zeeman Interaction vector [rad kHz] </para></simplesect>
-</para>        </detaileddescription>
+<simplesect kind="return"><para>Zeeman Interaction vector [rad kHz] </para>
+</simplesect>
+</para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="50" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="50" bodyend="56"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="50" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="50" bodyend="56"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a5b8d451b38f7bc46d46162938051ea1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -185,21 +197,25 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
           <declname>detun</declname>
         </param>
         <briefdescription>
-<para>Detuning Interaction vector[rad kHz]. </para>        </briefdescription>
+<para>Detuning Interaction vector[rad kHz]. </para>
+        </briefdescription>
         <detaileddescription>
 <para>The Detuning Interaction vector is given by [0,0,detun] <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">detun</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>detuning [rad kHz] </para></parameterdescription>
+<para>detuning [rad kHz] </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>Detuning Interaction vector [rad kHz] </para></simplesect>
-</para>        </detaileddescription>
+<simplesect kind="return"><para>Detuning Interaction vector [rad kHz] </para>
+</simplesect>
+</para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="65" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="65" bodyend="69"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="65" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="65" bodyend="69"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1ac61f445f70273e155b293146b14f3ef4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -211,21 +227,25 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
           <declname>overhaus</declname>
         </param>
         <briefdescription>
-<para>Overhausler Interaction vector[rad kHz]. </para>        </briefdescription>
+<para>Overhausler Interaction vector[rad kHz]. </para>
+        </briefdescription>
         <detaileddescription>
 <para>The Overhausler Interaction vector is given by [0,0,overhaus] <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">overhaus</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>overhausler effect [rad kHz] </para></parameterdescription>
+<para>overhausler effect [rad kHz] </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>Overhausler Interaction vector [rad kHz] </para></simplesect>
-</para>        </detaileddescription>
+<simplesect kind="return"><para>Overhausler Interaction vector [rad kHz] </para>
+</simplesect>
+</para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="78" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="78" bodyend="82"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="78" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="78" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a593082ae4bd73c95fcc0cc8fe363c286" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -256,7 +276,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="85" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="85" bodyend="131"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="85" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="85" bodyend="131"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a8baa0a43066e9b9fab882da88b2d5112" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -284,36 +304,45 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
           <declname>jSpin</declname>
         </param>
         <briefdescription>
-<para>Hamiltonian for interacting two spins. </para>        </briefdescription>
+<para>Hamiltonian for interacting two spins. </para>
+        </briefdescription>
         <detaileddescription>
 <para>The Hamiltonian is given by (S1 * Tensor * S2) <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">Pmat1</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Spin operator vector for first spin </para></parameterdescription>
+<para>Spin operator vector for first spin </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">Tensor</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>3x3 interaction tensor </para></parameterdescription>
+<para>3x3 interaction tensor </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">Pmat2</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Spin operator vector for second spin </para></parameterdescription>
+<para>Spin operator vector for second spin </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>Hamiltonian interacting two spins (Pmat1[0,1,2] * Tensor * Pmat2[0,1,2]) </para></simplesect>
-<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix X Pmat[1] = Pauli matrix Y Pmat[2] = Pauli matrix Z </para><simplesectsep/><para>The dimension of Returned Hamiltonian is expanded based on two spins </para></simplesect>
-</para>        </detaileddescription>
+<simplesect kind="return"><para>Hamiltonian interacting two spins (Pmat1[0,1,2] * Tensor * Pmat2[0,1,2]) </para>
+</simplesect>
+<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix X Pmat[1] = Pauli matrix Y Pmat[2] = Pauli matrix Z </para>
+</simplesect>
+<simplesect kind="note"><para>The dimension of Returned Hamiltonian is expanded based on two spins </para>
+</simplesect>
+</para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="151" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="151" bodyend="215"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="151" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="151" bodyend="215"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1abab6619363786d624f0af5926220452c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -337,42 +366,49 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
           <declname>iSpin</declname>
         </param>
         <briefdescription>
-<para>Matrix expand to the whole Hilbert space. </para>        </briefdescription>
+<para>Matrix expand to the whole Hilbert space. </para>
+        </briefdescription>
         <detaileddescription>
 <para>The matrix is expanded to the whole Hilbert space <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">Pmats</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Spin operator vector for single spin </para></parameterdescription>
+<para>Spin operator vector for single spin </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">Hi</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Hamiltonian for single spin </para></parameterdescription>
+<para>Hamiltonian for single spin </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">nSpin</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The number of spins </para></parameterdescription>
+<para>The number of spins </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">iSpin</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The index of spin </para></parameterdescription>
+<para>The index of spin </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>Expanded Hamiltonian </para></simplesect>
-</para>        </detaileddescription>
+<simplesect kind="return"><para>Expanded Hamiltonian </para>
+</simplesect>
+</para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="226" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="226" bodyend="262"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="226" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="226" bodyend="262"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1ace01f359a59ec2f0b51cb651f294f42f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -388,30 +424,37 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
           <declname>Pmat1</declname>
         </param>
         <briefdescription>
-<para>Hamiltonian for single spin. </para>        </briefdescription>
+<para>Hamiltonian for single spin. </para>
+        </briefdescription>
         <detaileddescription>
 <para>The Hamiltonian is given by (Vector * Pmat) <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">Vector</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>1x3 matrix </para></parameterdescription>
+<para>1x3 matrix </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">Pmat</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Pauli matrix for single spin </para></parameterdescription>
+<para>Pauli matrix for single spin </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix I Pmat[1] = Pauli matrix X Pmat[2] = Pauli matrix Y Pmat[3] = Pauli matrix Z </para></simplesect>
-<simplesect kind="return"><para>Hamiltonian for single spin (Vector * Pmat) </para></simplesect>
-<simplesect kind="note"><para>The dimension of Returned Hamiltonian is the same dimension as the single spin </para></simplesect>
-</para>        </detaileddescription>
+<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix I Pmat[1] = Pauli matrix X Pmat[2] = Pauli matrix Y Pmat[3] = Pauli matrix Z </para>
+</simplesect>
+<simplesect kind="return"><para>Hamiltonian for single spin (Vector * Pmat) </para>
+</simplesect>
+<simplesect kind="note"><para>The dimension of Returned Hamiltonian is the same dimension as the single spin </para>
+</simplesect>
+</para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="278" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="278" bodyend="299"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="278" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="278" bodyend="299"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a392abac36087441c4997bab087572a15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -427,30 +470,37 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
           <declname>Tensor</declname>
         </param>
         <briefdescription>
-<para>Hamiltonian for self interaction. </para>        </briefdescription>
+<para>Hamiltonian for self interaction. </para>
+        </briefdescription>
         <detaileddescription>
 <para>The Hamiltonian is given by (Pmat * Tensor * Pmat) <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername direction="in">Pmat</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Spin operator vector for single spin </para></parameterdescription>
+<para>Spin operator vector for single spin </para>
+</parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
 <parametername direction="in">Tensor</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>3x3 interaction tensor </para></parameterdescription>
+<para>3x3 interaction tensor </para>
+</parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix I Pmat[1] = Pauli matrix X Pmat[2] = Pauli matrix Y Pmat[3] = Pauli matrix Z </para></simplesect>
-<simplesect kind="return"><para>Hamiltonian for self interaction (Pmat * Tensor * Pmat) </para></simplesect>
-<simplesect kind="note"><para>The dimension of Returned Hamiltonian is the same dimension as the single spin </para></simplesect>
-</para>        </detaileddescription>
+<simplesect kind="note"><para>Pmat format is the following : Pmat[0] = Pauli matrix I Pmat[1] = Pauli matrix X Pmat[2] = Pauli matrix Y Pmat[3] = Pauli matrix Z </para>
+</simplesect>
+<simplesect kind="return"><para>Hamiltonian for self interaction (Pmat * Tensor * Pmat) </para>
+</simplesect>
+<simplesect kind="note"><para>The dimension of Returned Hamiltonian is the same dimension as the single spin </para>
+</simplesect>
+</para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="315" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="315" bodyend="329"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="315" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="315" bodyend="329"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a6add2cc3544adcebe7f6c6215e6edb2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -467,7 +517,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="331" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="331" bodyend="343"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="331" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="331" bodyend="343"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1ab89aaed2537a3a64c33bfd884a7cc151" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -484,7 +534,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="345" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="345" bodyend="357"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="345" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="345" bodyend="357"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1af46df9390cf168654ad3dbde8246a7a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -501,7 +551,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="359" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="359" bodyend="373"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="359" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="359" bodyend="373"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a4b924b2c4193ea814dfa9c3daaef6313" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -518,11 +568,11 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="375" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="375" bodyend="387"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="375" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="375" bodyend="387"/>
       </memberdef>
-      <memberdef kind="function" id="hamiltonian_8cpp_1a7f2e348b06c637f01ad8dd96df04f7f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="hamiltonian_8cpp_1a0badc3ee65bb3eaafc0a6dd0e91cb492" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd *</type>
-        <definition>MatrixXcd* getPauliOperators</definition>
+        <definition>MatrixXcd * getPauliOperators</definition>
         <argsstring>(int mSize)</argsstring>
         <name>getPauliOperators</name>
         <param>
@@ -535,11 +585,11 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="389" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="389" bodyend="396"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="389" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="389" bodyend="396"/>
       </memberdef>
-      <memberdef kind="function" id="hamiltonian_8cpp_1aefa0a04f882701f9145227945bcc7e22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="hamiltonian_8cpp_1ab9ca9aa49f6dbc6edd908713fd96031d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd *</type>
-        <definition>MatrixXcd* getGeneralPauliOperators</definition>
+        <definition>MatrixXcd * getGeneralPauliOperators</definition>
         <argsstring>(MatrixXcd alpha, MatrixXcd beta)</argsstring>
         <name>getGeneralPauliOperators</name>
         <param>
@@ -556,7 +606,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="399" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="399" bodyend="436"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="399" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="399" bodyend="436"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1aef74b90578d55af688bb0f5623a0a18a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -573,7 +623,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="440" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="440" bodyend="459"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="440" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="440" bodyend="459"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1ac9c76932926b82821bf0a3b8f854ef78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -594,11 +644,11 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="461" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="461" bodyend="475"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="461" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="461" bodyend="475"/>
       </memberdef>
-      <memberdef kind="function" id="hamiltonian_8cpp_1a736673e374275abc5e2121d6d58a3365" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="hamiltonian_8cpp_1a71128dcdc5ece9611b85ce79ec85eef1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int *</type>
-        <definition>int* getIndexInOrder</definition>
+        <definition>int * getIndexInOrder</definition>
         <argsstring>(VectorXcd eigenValues)</argsstring>
         <name>getIndexInOrder</name>
         <param>
@@ -611,7 +661,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="478" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="478" bodyend="498"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="478" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="478" bodyend="498"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a6a5afd891b7cbf5044236d29d4c501b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>VectorXcd</type>
@@ -632,7 +682,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="500" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="500" bodyend="511"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="500" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="500" bodyend="511"/>
       </memberdef>
       <memberdef kind="function" id="hamiltonian_8cpp_1a6ca9fa8e295520b6f9feaf132d6e5aeb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -653,9 +703,9 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp" line="513" column="1" bodyfile="/home/huijin/git/CCEX/src/hamiltonian.cpp" bodystart="513" bodyend="527"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" line="513" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp" bodystart="513" bodyend="527"/>
       </memberdef>
-      </sectiondef>
+    </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -665,7 +715,9 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;../include/memory.h&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="comment">//<sp/>Zeeman<sp/>Interaction<sp/>[rad<sp/>kHz]</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Zeeman<sp/>Interaction<sp/>[rad<sp/>kHz]</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="25"><highlight class="normal">MatrixXcd<sp/>ZeemanInt(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>gamma,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>B0,<sp/>MatrixXcd*<sp/>Pmat,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>m){</highlight></codeline>
 <codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>H(m,m);</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>H<sp/>=<sp/>MatrixXcd::Zero(m,m);</highlight></codeline>
@@ -945,7 +997,7 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
 <codeline lineno="377"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>a=0;<sp/>a&lt;mSize;<sp/>a++){</highlight></codeline>
 <codeline lineno="378"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>b=0;<sp/>b&lt;mSize;<sp/>b++){</highlight></codeline>
 <codeline lineno="379"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(a==b){</highlight></codeline>
-<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Iz_h(a,b)=(1-(a+1)+((</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)mSize-1)/2);</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Iz_h(a,b)=(1-(a+1)+((double)mSize-1)/2);</highlight></codeline>
 <codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Iz_h(a,b)=0;</highlight></codeline>
 <codeline lineno="383"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
@@ -1095,6 +1147,6 @@ The point-dipole interaction tensor is given by Hdd = (1/r^3) * (mu_0 / (4 * pi 
 <codeline lineno="527"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="528"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/huijin/git/CCEX/src/hamiltonian.cpp"/>
+    <location file="/Users/huijin/Documents/GitHub/CCEX/src/hamiltonian.cpp"/>
   </compounddef>
 </doxygen>

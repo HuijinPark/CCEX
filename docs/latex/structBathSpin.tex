@@ -1,183 +1,214 @@
-\hypertarget{structBathSpin}{\section{Bath\-Spin Struct Reference}
-\label{structBathSpin}\index{Bath\-Spin@{Bath\-Spin}}
-}
+\doxysection{Bath\+Spin Struct Reference}
+\hypertarget{structBathSpin}{}\label{structBathSpin}\index{BathSpin@{BathSpin}}
 
 
-\subsection{Detailed Description}
-\hyperlink{structBathSpin}{Bath\-Spin} structure contains each \hyperlink{structBathSpin}{Bath\-Spin}'s information. 
+\doxysubsection{Detailed Description}
+\doxylink{structBathSpin}{Bath\+Spin} structure contains each \doxylink{structBathSpin}{Bath\+Spin}\textquotesingle{}s information. 
 
 \begin{DoxyNote}{Note}
-When you make this structure, the following action would be done automatically. (1) state value would be allocated (2) The dimension of alpha, beta would be checked if it is 2$\ast$spin+1 (3) The state would be normalized 
+When you make this structure, the following action would be done automatically. (1) state value would be allocated (2) The dimension of alpha, beta would be checked if it is 2\texorpdfstring{$\ast$}{*}spin+1 (3) The state would be normalized 
 \end{DoxyNote}
-\subsection*{Public Attributes}
+\doxysubsubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-char \hyperlink{structBathSpin_a2158c37aefcd8093520106945f5f7463}{name} \mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}
+char \mbox{\hyperlink{structBathSpin_a2158c37aefcd8093520106945f5f7463}{name}} \mbox{[}MAX\+\_\+\+CHARARRAY\+\_\+\+LENGTH\mbox{]}
 \begin{DoxyCompactList}\small\item\em the name of spin \end{DoxyCompactList}\item 
-float \hyperlink{structBathSpin_a0738a356e1f78530032d8bc8de02fbd8}{spin}
+float \mbox{\hyperlink{structBathSpin_a0738a356e1f78530032d8bc8de02fbd8}{spin}}
 \begin{DoxyCompactList}\small\item\em Spin quantum number. \end{DoxyCompactList}\item 
-double \hyperlink{structBathSpin_a8c6487e73c2ef39b7a12d293ff5a1e4d}{gyro}
-\begin{DoxyCompactList}\small\item\em Gyromagnetic ratio (Unit \-: radk\-Hz/\-Gauss) \end{DoxyCompactList}\item 
-double \hyperlink{structBathSpin_ae88f65d01b379916181269efa6c33e8a}{xyz} \mbox{[}3\mbox{]}
-\begin{DoxyCompactList}\small\item\em Quadrupole moment (Unit \-: 10$^\wedge$-\/30 \mbox{[}m$^\wedge$2\mbox{]}) \end{DoxyCompactList}\item 
-float \hyperlink{structBathSpin_a6348f965fe820b03094f4c620ab7ffe0}{state}
-\begin{DoxyCompactList}\small\item\em Spin sub-\/level in z-\/basis (if \&General -\/$>$ nstate != 0, i.\-e. single-\/sample approach) \end{DoxyCompactList}\item 
-double \hyperlink{structBathSpin_a045005fcc1f5517a81e47e4a8b30e2f4}{detuning}
-\begin{DoxyCompactList}\small\item\em The detuning value of a bath spin (Unit \-: radk\-Hz) \end{DoxyCompactList}\item 
-double \hyperlink{structBathSpin_aad59ec954d15643047790f148dcca39b}{disorder}
-\begin{DoxyCompactList}\small\item\em The mean-\/field effect from zz-\/coupling with other bath spins (Unit \-: radk\-Hz) \end{DoxyCompactList}\item 
-Matrix\-Xcd $\ast$ \hyperlink{structBathSpin_aad4ead2e39f4ae27fab5701662e7ee27}{hypf}
-\begin{DoxyCompactList}\small\item\em The hyperfine interaction between qubits and a bath spin (Unit \-: radk\-Hz) \end{DoxyCompactList}\item 
-Matrix\-Xcd \hyperlink{structBathSpin_a304f556a5ba51a1275171e40d212d0d2}{quad}
-\begin{DoxyCompactList}\small\item\em The quadrupole interaction a bath spin (Unit \-: radk\-Hz) \end{DoxyCompactList}\item 
-\hypertarget{structBathSpin_afb32f13329ea501039ad7d62d0e6e2a5}{Matrix\-Xcd {\bfseries hypf\-\_\-sub}}\label{structBathSpin_afb32f13329ea501039ad7d62d0e6e2a5}
-
+double \mbox{\hyperlink{structBathSpin_a8c6487e73c2ef39b7a12d293ff5a1e4d}{gyro}}
+\begin{DoxyCompactList}\small\item\em Gyromagnetic ratio (Unit \+: radk\+Hz/\+Gauss) \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{structBathSpin_ae88f65d01b379916181269efa6c33e8a}{xyz}} \mbox{[}3\mbox{]}
+\begin{DoxyCompactList}\small\item\em Quadrupole moment (Unit \+: 10\texorpdfstring{$^\wedge$}{\string^}-\/30 \mbox{[}m\texorpdfstring{$^\wedge$}{\string^}2\mbox{]}) \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{structBathSpin_a6348f965fe820b03094f4c620ab7ffe0}{state}}
+\begin{DoxyCompactList}\small\item\em Spin sub-\/level in z-\/basis (if \&General -\/\texorpdfstring{$>$}{>} nstate != 0, i.\+e. single-\/sample approach) \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{structBathSpin_a045005fcc1f5517a81e47e4a8b30e2f4}{detuning}}
+\begin{DoxyCompactList}\small\item\em The detuning value of a bath spin (Unit \+: radk\+Hz) \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{structBathSpin_aad59ec954d15643047790f148dcca39b}{disorder}}
+\begin{DoxyCompactList}\small\item\em The mean-\/field effect from zz-\/coupling with other bath spins (Unit \+: radk\+Hz) \end{DoxyCompactList}\item 
+Matrix\+Xcd \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structBathSpin_aad4ead2e39f4ae27fab5701662e7ee27}{hypf}}
+\begin{DoxyCompactList}\small\item\em The hyperfine interaction between qubits and a bath spin (Unit \+: radk\+Hz) \end{DoxyCompactList}\item 
+Matrix\+Xcd \mbox{\hyperlink{structBathSpin_a304f556a5ba51a1275171e40d212d0d2}{quad}}
+\begin{DoxyCompactList}\small\item\em The quadrupole interaction a bath spin (Unit \+: radk\+Hz) \end{DoxyCompactList}\item 
+\Hypertarget{structBathSpin_afb32f13329ea501039ad7d62d0e6e2a5}\label{structBathSpin_afb32f13329ea501039ad7d62d0e6e2a5} 
+Matrix\+Xcd {\bfseries hypf\+\_\+sub}
 \item 
-\hypertarget{structBathSpin_a26db008dfcd1cbdff57b63dfdbfbaf78}{int {\bfseries mainspidx}}\label{structBathSpin_a26db008dfcd1cbdff57b63dfdbfbaf78}
-
+\Hypertarget{structBathSpin_a26db008dfcd1cbdff57b63dfdbfbaf78}\label{structBathSpin_a26db008dfcd1cbdff57b63dfdbfbaf78} 
+int {\bfseries mainspidx}
+\item 
+\Hypertarget{structBathSpin_aa0d89c49b0496d8817361825ced0f2bd}\label{structBathSpin_aa0d89c49b0496d8817361825ced0f2bd} 
+double {\bfseries mindist}
 \end{DoxyCompactItemize}
 
 
-\subsection{Member Data Documentation}
-\hypertarget{structBathSpin_a045005fcc1f5517a81e47e4a8b30e2f4}{\index{Bath\-Spin@{Bath\-Spin}!detuning@{detuning}}
-\index{detuning@{detuning}!BathSpin@{Bath\-Spin}}
-\subsubsection[{detuning}]{\setlength{\rightskip}{0pt plus 5cm}double Bath\-Spin\-::detuning}}\label{structBathSpin_a045005fcc1f5517a81e47e4a8b30e2f4}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structBathSpin_a045005fcc1f5517a81e47e4a8b30e2f4}\index{BathSpin@{BathSpin}!detuning@{detuning}}
+\index{detuning@{detuning}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{detuning}{detuning}}
+{\footnotesize\ttfamily \label{structBathSpin_a045005fcc1f5517a81e47e4a8b30e2f4} 
+double Bath\+Spin\+::detuning}
 
 
-The detuning value of a bath spin (Unit \-: radk\-Hz) 
 
-The artifitial effect to shift energy level of a qubit. Value can be obtained from \&Bath -\/$>$ \char`\"{}bdetuning\char`\"{} (default \-: 0.\-0) \begin{DoxyNote}{Note}
-Unit in input file (cce.\-in) \-: M\-Hz 
+The detuning value of a bath spin (Unit \+: radk\+Hz) 
+
+The artifitial effect to shift energy level of a qubit. Value can be obtained from \&Bath -\/\texorpdfstring{$>$}{>} "{}bdetuning"{} (default \+: 0.\+0) \begin{DoxyNote}{Note}
+Unit in input file (cce.\+in) \+: MHz 
 \end{DoxyNote}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000006}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ \char`\"{}bdetuning\char`\"{} tag \end{DoxyRefDesc}
-\hypertarget{structBathSpin_aad59ec954d15643047790f148dcca39b}{\index{Bath\-Spin@{Bath\-Spin}!disorder@{disorder}}
-\index{disorder@{disorder}!BathSpin@{Bath\-Spin}}
-\subsubsection[{disorder}]{\setlength{\rightskip}{0pt plus 5cm}double Bath\-Spin\-::disorder}}\label{structBathSpin_aad59ec954d15643047790f148dcca39b}
+\item[\mbox{\hyperlink{todo__todo000006}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} "{}bdetuning"{} tag \end{DoxyRefDesc}
+\Hypertarget{structBathSpin_aad59ec954d15643047790f148dcca39b}\index{BathSpin@{BathSpin}!disorder@{disorder}}
+\index{disorder@{disorder}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{disorder}{disorder}}
+{\footnotesize\ttfamily \label{structBathSpin_aad59ec954d15643047790f148dcca39b} 
+double Bath\+Spin\+::disorder}
 
 
-The mean-\/field effect from zz-\/coupling with other bath spins (Unit \-: radk\-Hz) 
 
-Automatically set if \&General -\/$>$ \char`\"{}nstate\char`\"{} tag is non-\/zero (default \-: 0.\-0) \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000007}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ \char`\"{}disorder\char`\"{} tag \end{DoxyRefDesc}
-\hypertarget{structBathSpin_a8c6487e73c2ef39b7a12d293ff5a1e4d}{\index{Bath\-Spin@{Bath\-Spin}!gyro@{gyro}}
-\index{gyro@{gyro}!BathSpin@{Bath\-Spin}}
-\subsubsection[{gyro}]{\setlength{\rightskip}{0pt plus 5cm}double Bath\-Spin\-::gyro}}\label{structBathSpin_a8c6487e73c2ef39b7a12d293ff5a1e4d}
+The mean-\/field effect from zz-\/coupling with other bath spins (Unit \+: radk\+Hz) 
 
-
-Gyromagnetic ratio (Unit \-: radk\-Hz/\-Gauss) 
-
-Value can be obtained from \&Bath -\/$>$ gyrofile (no default value) \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000002}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ gyrofile \end{DoxyRefDesc}
-\hypertarget{structBathSpin_aad4ead2e39f4ae27fab5701662e7ee27}{\index{Bath\-Spin@{Bath\-Spin}!hypf@{hypf}}
-\index{hypf@{hypf}!BathSpin@{Bath\-Spin}}
-\subsubsection[{hypf}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xcd$\ast$ Bath\-Spin\-::hypf}}\label{structBathSpin_aad4ead2e39f4ae27fab5701662e7ee27}
+Automatically set if \&General -\/\texorpdfstring{$>$}{>} "{}nstate"{} tag is non-\/zero (default \+: 0.\+0) \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000007}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} "{}disorder"{} tag \end{DoxyRefDesc}
+\Hypertarget{structBathSpin_a8c6487e73c2ef39b7a12d293ff5a1e4d}\index{BathSpin@{BathSpin}!gyro@{gyro}}
+\index{gyro@{gyro}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{gyro}{gyro}}
+{\footnotesize\ttfamily \label{structBathSpin_a8c6487e73c2ef39b7a12d293ff5a1e4d} 
+double Bath\+Spin\+::gyro}
 
 
-The hyperfine interaction between qubits and a bath spin (Unit \-: radk\-Hz) 
 
-Value is obtained from \&Bath -\/$>$ \char`\"{}\-Atensorfile\char`\"{} (default \-: 0.\-0)
+Gyromagnetic ratio (Unit \+: radk\+Hz/\+Gauss) 
+
+Value can be obtained from \&Bath -\/\texorpdfstring{$>$}{>} gyrofile (no default value) \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000002}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} gyrofile \end{DoxyRefDesc}
+\Hypertarget{structBathSpin_aad4ead2e39f4ae27fab5701662e7ee27}\index{BathSpin@{BathSpin}!hypf@{hypf}}
+\index{hypf@{hypf}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{hypf}{hypf}}
+{\footnotesize\ttfamily \label{structBathSpin_aad4ead2e39f4ae27fab5701662e7ee27} 
+Matrix\+Xcd\texorpdfstring{$\ast$}{*} Bath\+Spin\+::hypf}
+
+
+
+The hyperfine interaction between qubits and a bath spin (Unit \+: radk\+Hz) 
+
+Value is obtained from \&Bath -\/\texorpdfstring{$>$}{>} "{}\+Atensorfile"{} (default \+: 0.\+0)
 \begin{DoxyItemize}
-\item hypf\mbox{[}i\mbox{]} \-: the hyperfine interaction with i-\/th qubit \begin{DoxyNote}{Note}
-Unit in input file (cce.\-in) \-: M\-Hz 
+\item hypf\mbox{[}i\mbox{]} \+: the hyperfine interaction with i-\/th qubit \begin{DoxyNote}{Note}
+Unit in input file (cce.\+in) \+: MHz 
 \end{DoxyNote}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000008}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ \char`\"{}\-Atensorfile\char`\"{} tag 
+\item[\mbox{\hyperlink{todo__todo000008}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} "{}\+Atensorfile"{} tag 
 
-I\-M\-P\-O\-R\-T\-A\-N\-T \-: The hyperfine interaction to be deleted if \hyperlink{structQubitArray}{Qubit\-Array} include the one of the bath spin in A tensor file \end{DoxyRefDesc}
+IMPORTANT \+: The hyperfine interaction to be deleted if \doxylink{structQubitArray}{Qubit\+Array} include the one of the bath spin in A tensor file \end{DoxyRefDesc}
 
-\end{DoxyItemize}\hypertarget{structBathSpin_a2158c37aefcd8093520106945f5f7463}{\index{Bath\-Spin@{Bath\-Spin}!name@{name}}
-\index{name@{name}!BathSpin@{Bath\-Spin}}
-\subsubsection[{name}]{\setlength{\rightskip}{0pt plus 5cm}char Bath\-Spin\-::name\mbox{[}M\-A\-X\-\_\-\-C\-H\-A\-R\-A\-R\-R\-A\-Y\-\_\-\-L\-E\-N\-G\-T\-H\mbox{]}}}\label{structBathSpin_a2158c37aefcd8093520106945f5f7463}
+\end{DoxyItemize}\Hypertarget{structBathSpin_a2158c37aefcd8093520106945f5f7463}\index{BathSpin@{BathSpin}!name@{name}}
+\index{name@{name}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily \label{structBathSpin_a2158c37aefcd8093520106945f5f7463} 
+char Bath\+Spin\+::name\mbox{[}MAX\+\_\+\+CHARARRAY\+\_\+\+LENGTH\mbox{]}}
+
 
 
 the name of spin 
 
-Value can be obtained from \&Bath -\/$>$ bathfile (no default value) \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000001}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ bathfile \end{DoxyRefDesc}
-\hypertarget{structBathSpin_a304f556a5ba51a1275171e40d212d0d2}{\index{Bath\-Spin@{Bath\-Spin}!quad@{quad}}
-\index{quad@{quad}!BathSpin@{Bath\-Spin}}
-\subsubsection[{quad}]{\setlength{\rightskip}{0pt plus 5cm}Matrix\-Xcd Bath\-Spin\-::quad}}\label{structBathSpin_a304f556a5ba51a1275171e40d212d0d2}
+Value can be obtained from \&Bath -\/\texorpdfstring{$>$}{>} bathfile (no default value) \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000001}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} bathfile \end{DoxyRefDesc}
+\Hypertarget{structBathSpin_a304f556a5ba51a1275171e40d212d0d2}\index{BathSpin@{BathSpin}!quad@{quad}}
+\index{quad@{quad}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{quad}{quad}}
+{\footnotesize\ttfamily \label{structBathSpin_a304f556a5ba51a1275171e40d212d0d2} 
+Matrix\+Xcd Bath\+Spin\+::quad}
 
 
-The quadrupole interaction a bath spin (Unit \-: radk\-Hz) 
 
-Value is obtained from \&Bath -\/$>$ \char`\"{}qtensorfile\char`\"{} (default \-: 0.\-0) \begin{DoxyNote}{Note}
--\/ Unit in input file (cce.\-in) \&\hyperlink{structDefect}{Defect} -\/$>$ \char`\"{}dquad\char`\"{} \-: M\-Hz
+The quadrupole interaction a bath spin (Unit \+: radk\+Hz) 
+
+Value is obtained from \&Bath -\/\texorpdfstring{$>$}{>} "{}qtensorfile"{} (default \+: 0.\+0) \begin{DoxyNote}{Note}
+-\/ Unit in input file (cce.\+in) \&\doxylink{structDefect}{Defect} -\/\texorpdfstring{$>$}{>} "{}dquad"{} \+: MHz
 \begin{DoxyItemize}
-\item Unit in input file (cce.\-in) \&Bath -\/$>$ \char`\"{}qtensorfile\char`\"{} \-: Hatree/\-Bohr\-\_\-radius$^\wedge$2 
+\item Unit in input file (cce.\+in) \&Bath -\/\texorpdfstring{$>$}{>} "{}qtensorfile"{} \+: Hatree/\+Bohr\+\_\+radius\texorpdfstring{$^\wedge$}{\string^}2 
 \end{DoxyItemize}
 \end{DoxyNote}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000009}{Todo}]Above 
-
-I\-M\-P\-O\-R\-T\-A\-N\-T \-: The quadrupole interaction to be deleted if \hyperlink{structQubitArray}{Qubit\-Array} include the one of the bath spin in Q tensor file \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000009}{Todo}}]Above\end{DoxyRefDesc}
 \begin{DoxyNote}{Note}
-have to be unified with one unit (M\-Hz seems better.. but the problem is how to get Qtensorfile..) 
+have to be unified with one unit (MHz seems better.. but the problem is how to get Qtensorfile..) 
 \end{DoxyNote}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000010}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ \char`\"{}qtensorfile\char`\"{} tag \end{DoxyRefDesc}
-\hypertarget{structBathSpin_a0738a356e1f78530032d8bc8de02fbd8}{\index{Bath\-Spin@{Bath\-Spin}!spin@{spin}}
-\index{spin@{spin}!BathSpin@{Bath\-Spin}}
-\subsubsection[{spin}]{\setlength{\rightskip}{0pt plus 5cm}float Bath\-Spin\-::spin}}\label{structBathSpin_a0738a356e1f78530032d8bc8de02fbd8}
+\item[\mbox{\hyperlink{todo__todo000010}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} "{}qtensorfile"{} tag 
+
+IMPORTANT \+: The quadrupole interaction to be deleted if \doxylink{structQubitArray}{Qubit\+Array} include the one of the bath spin in Q tensor file \end{DoxyRefDesc}
+\Hypertarget{structBathSpin_a0738a356e1f78530032d8bc8de02fbd8}\index{BathSpin@{BathSpin}!spin@{spin}}
+\index{spin@{spin}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{spin}{spin}}
+{\footnotesize\ttfamily \label{structBathSpin_a0738a356e1f78530032d8bc8de02fbd8} 
+float Bath\+Spin\+::spin}
+
 
 
 Spin quantum number. 
 
-Value can be obtained from \&Bath -\/$>$ gyrofile (no default value) \hypertarget{structBathSpin_a6348f965fe820b03094f4c620ab7ffe0}{\index{Bath\-Spin@{Bath\-Spin}!state@{state}}
-\index{state@{state}!BathSpin@{Bath\-Spin}}
-\subsubsection[{state}]{\setlength{\rightskip}{0pt plus 5cm}float Bath\-Spin\-::state}}\label{structBathSpin_a6348f965fe820b03094f4c620ab7ffe0}
+Value can be obtained from \&Bath -\/\texorpdfstring{$>$}{>} gyrofile (no default value) \Hypertarget{structBathSpin_a6348f965fe820b03094f4c620ab7ffe0}\index{BathSpin@{BathSpin}!state@{state}}
+\index{state@{state}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \label{structBathSpin_a6348f965fe820b03094f4c620ab7ffe0} 
+float Bath\+Spin\+::state}
 
 
-Spin sub-\/level in z-\/basis (if \&General -\/$>$ nstate != 0, i.\-e. single-\/sample approach) 
 
-Value can be obtained from the following \-: (no default value)
+Spin sub-\/level in z-\/basis (if \&General -\/\texorpdfstring{$>$}{>} nstate != 0, i.\+e. single-\/sample approach) 
+
+Value can be obtained from the following \+: (no default value)
 \begin{DoxyItemize}
-\item \&Bath -\/$>$ statefile (fixed) // old version
-\item \&General -\/$>$ nstate (randomly generated)
-\item \&General -\/$>$ seed (fixed) // new version to fix \begin{DoxyNote}{Note}
-The state would be normalized and The length of state = 2$\ast$spin+1 
+\item \&Bath -\/\texorpdfstring{$>$}{>} statefile (fixed) // old version
+\item \&General -\/\texorpdfstring{$>$}{>} nstate (randomly generated)
+\item \&General -\/\texorpdfstring{$>$}{>} seed (fixed) // new version to fix \begin{DoxyNote}{Note}
+The state would be normalized and The length of state = 2\texorpdfstring{$\ast$}{*}spin+1 
 \end{DoxyNote}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000005}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ \char`\"{}statefile\char`\"{} -\/$>$ \char`\"{}substatefile\char`\"{} tag 
+\item[\mbox{\hyperlink{todo__todo000005}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} "{}statefile"{} -\/\texorpdfstring{$>$}{>} "{}substatefile"{} tag 
 
-Add documentation for cce.\-in \-: \&General -\/$>$ \char`\"{}nstate\char`\"{} and \&General -\/$>$ \char`\"{}seed\char`\"{} tag 
+Add documentation for cce.\+in \+: \&General -\/\texorpdfstring{$>$}{>} "{}nstate"{} and \&General -\/\texorpdfstring{$>$}{>} "{}seed"{} tag 
 
-Replace the way to get fixed state from reading \char`\"{}file\char`\"{} to using \char`\"{}seed\char`\"{} \end{DoxyRefDesc}
+Replace the way to get fixed state from reading "{}file"{} to using "{}seed"{} \end{DoxyRefDesc}
 
-\end{DoxyItemize}\hypertarget{structBathSpin_ae88f65d01b379916181269efa6c33e8a}{\index{Bath\-Spin@{Bath\-Spin}!xyz@{xyz}}
-\index{xyz@{xyz}!BathSpin@{Bath\-Spin}}
-\subsubsection[{xyz}]{\setlength{\rightskip}{0pt plus 5cm}double Bath\-Spin\-::xyz\mbox{[}3\mbox{]}}}\label{structBathSpin_ae88f65d01b379916181269efa6c33e8a}
+\end{DoxyItemize}\Hypertarget{structBathSpin_ae88f65d01b379916181269efa6c33e8a}\index{BathSpin@{BathSpin}!xyz@{xyz}}
+\index{xyz@{xyz}!BathSpin@{BathSpin}}
+\doxysubsubsection{\texorpdfstring{xyz}{xyz}}
+{\footnotesize\ttfamily \label{structBathSpin_ae88f65d01b379916181269efa6c33e8a} 
+double Bath\+Spin\+::xyz\mbox{[}3\mbox{]}}
 
 
-Quadrupole moment (Unit \-: 10$^\wedge$-\/30 \mbox{[}m$^\wedge$2\mbox{]}) 
 
-Value can be obtained from \&Bath -\/$>$ qtensorfile (default \-: 0.\-0)
+Quadrupole moment (Unit \+: 10\texorpdfstring{$^\wedge$}{\string^}-\/30 \mbox{[}m\texorpdfstring{$^\wedge$}{\string^}2\mbox{]}) 
+
+Value can be obtained from \&Bath -\/\texorpdfstring{$>$}{>} qtensorfile (default \+: 0.\+0)
 \begin{DoxyItemize}
-\item cf. e\-Q = 20.\-44\mbox{[}Q/millibarn = Q $\ast$ 10$^\wedge$-\/31 m$^\wedge$2\mbox{]} , in D\-F\-T e\-Q = 2.\-044 $\ast$ 10$^\wedge$-\/30 \mbox{[}m$^\wedge$2\mbox{]} \begin{DoxyNote}{Note}
-Unit in input file (cce.\-in) \-: (Unit \-: 10$^\wedge$-\/30 \mbox{[}m$^\wedge$2\mbox{]}) 
+\item cf. eQ = 20.\+44\mbox{[}Q/millibarn = Q \texorpdfstring{$\ast$}{*} 10\texorpdfstring{$^\wedge$}{\string^}-\/31 m\texorpdfstring{$^\wedge$}{\string^}2\mbox{]} , in DFT eQ = 2.\+044 \texorpdfstring{$\ast$}{*} 10\texorpdfstring{$^\wedge$}{\string^}-\/30 \mbox{[}m\texorpdfstring{$^\wedge$}{\string^}2\mbox{]} \begin{DoxyNote}{Note}
+Unit in input file (cce.\+in) \+: (Unit \+: 10\texorpdfstring{$^\wedge$}{\string^}-\/30 \mbox{[}m\texorpdfstring{$^\wedge$}{\string^}2\mbox{]}) 
 \end{DoxyNote}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000003}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ qtensorfile 
+\item[\mbox{\hyperlink{todo__todo000003}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} qtensorfile 
 
 When you read quadrupole tensor,
 \begin{DoxyItemize}
-\item you have to get them with unit Hatree/\-Bohr\-\_\-radius$^\wedge$2 (Q\-E) -\/$>$ Think about How to do this
-\item you have to get them with unit M\-Hz (V\-A\-S\-P) -\/$>$ Think about How to do this
-\item which one is better? -\/$>$ Think about How to do this 
+\item you have to get them with unit Hatree/\+Bohr\+\_\+radius\texorpdfstring{$^\wedge$}{\string^}2 (QE) -\/\texorpdfstring{$>$}{>} Think about How to do this
+\item you have to get them with unit MHz (VASP) -\/\texorpdfstring{$>$}{>} Think about How to do this
+\item which one is better? -\/\texorpdfstring{$>$}{>} Think about How to do this 
 \end{DoxyItemize}
 
-Now, there is no default value for eq. In future, add the information of each spin' e\-Q in code internally. \end{DoxyRefDesc}
-Spin position (Unit \-: Angstrom)
+Now, there is no default value for eq. In future, add the information of each spin\textquotesingle{} eQ in code internally. \end{DoxyRefDesc}
+
 \end{DoxyItemize}
 
-Value can be obtained from \&Bath -\/$>$ bathfile (no default value) \begin{DoxyNote}{Note}
-The x,y,z position can be adjusted by \&Bath -\/$>$ bathadjust for each bath file 
+Spin position (Unit \+: Angstrom)
+
+Value can be obtained from \&Bath -\/\texorpdfstring{$>$}{>} bathfile (no default value) \begin{DoxyNote}{Note}
+The x,y,z position can be adjusted by \&Bath -\/\texorpdfstring{$>$}{>} bathadjust for each bath file 
 \end{DoxyNote}
 \begin{DoxyRefDesc}{Todo}
-\item[\hyperlink{todo__todo000004}{Todo}]Add documentation for cce.\-in \-: \&Bath -\/$>$ bathfile \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000004}{Todo}}]Add documentation for cce.\+in \+: \&Bath -\/\texorpdfstring{$>$}{>} bathfile \end{DoxyRefDesc}
 
 
-The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/home/huijin/git/\-C\-C\-E\-X/include/bath.\-h\end{DoxyCompactItemize}
+/\+Users/huijin/\+Documents/\+Git\+Hub/\+CCEX/include/bath.\+h\end{DoxyCompactItemize}

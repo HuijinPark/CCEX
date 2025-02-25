@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
-  <compounddef id="cluster__hash_8cpp" kind="file">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="cluster__hash_8cpp" kind="file" language="C++">
     <compoundname>cluster_hash.cpp</compoundname>
     <includes local="no">string.h</includes>
     <includes local="no">stdlib.h</includes>
@@ -10,127 +10,117 @@
     <includes local="yes">../zlib/uthash/src/uthash.h</includes>
     <includes refid="cluster__hash_8h" local="yes">../include/cluster_hash.h</includes>
     <incdepgraph>
-      <node id="250">
-        <label>/home/huijin/git/CCEX/src/cluster_hash.cpp</label>
-        <link refid="cluster_hash.cpp"/>
-        <childnode refid="251" relation="include">
-        </childnode>
-        <childnode refid="252" relation="include">
-        </childnode>
-        <childnode refid="253" relation="include">
-        </childnode>
-        <childnode refid="254" relation="include">
-        </childnode>
-        <childnode refid="255" relation="include">
-        </childnode>
-        <childnode refid="256" relation="include">
-        </childnode>
-        <childnode refid="257" relation="include">
-        </childnode>
-      </node>
-      <node id="259">
-        <label>stdint.h</label>
-      </node>
-      <node id="252">
-        <label>stdlib.h</label>
-      </node>
-      <node id="257">
-        <label>../include/cluster_hash.h</label>
-        <link refid="cluster__hash_8h_source"/>
-        <childnode refid="251" relation="include">
-        </childnode>
-        <childnode refid="252" relation="include">
-        </childnode>
-        <childnode refid="253" relation="include">
-        </childnode>
-        <childnode refid="254" relation="include">
-        </childnode>
-        <childnode refid="256" relation="include">
-        </childnode>
-        <childnode refid="258" relation="include">
-        </childnode>
-        <childnode refid="259" relation="include">
-        </childnode>
-        <childnode refid="260" relation="include">
-        </childnode>
-      </node>
-      <node id="258">
-        <label>stddef.h</label>
-      </node>
-      <node id="267">
-        <label>bath.h</label>
-        <link refid="bath_8h_source"/>
-        <childnode refid="262" relation="include">
-        </childnode>
-        <childnode refid="268" relation="include">
-        </childnode>
-        <childnode refid="261" relation="include">
-        </childnode>
-      </node>
-      <node id="268">
-        <label>qubit.h</label>
-        <link refid="qubit_8h_source"/>
-        <childnode refid="262" relation="include">
-        </childnode>
-      </node>
-      <node id="263">
-        <label>Eigen/Dense</label>
-      </node>
-      <node id="256">
+      <node id="7">
         <label>../zlib/uthash/src/uthash.h</label>
       </node>
-      <node id="251">
-        <label>string.h</label>
-      </node>
-      <node id="266">
-        <label>unistd.h</label>
-      </node>
-      <node id="261">
-        <label>general.h</label>
-        <link refid="general_8h_source"/>
-        <childnode refid="262" relation="include">
+      <node id="16">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
         </childnode>
       </node>
-      <node id="254">
-        <label>time.h</label>
-      </node>
-      <node id="255">
-        <label>math.h</label>
-      </node>
-      <node id="264">
-        <label>iostream</label>
-      </node>
-      <node id="260">
+      <node id="9">
         <label>cluster.h</label>
         <link refid="cluster_8h_source"/>
-        <childnode refid="261" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="267" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="262" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
       </node>
-      <node id="265">
-        <label>mpi.h</label>
+      <node id="8">
+        <label>../include/cluster_hash.h</label>
+        <link refid="cluster__hash_8h_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
       </node>
-      <node id="262">
+      <node id="10">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
         <label>utilities.h</label>
         <link refid="utilities_8h_source"/>
-        <childnode refid="263" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="264" relation="include">
+        <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="265" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="266" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
       </node>
-      <node id="253">
+      <node id="1">
+        <label>/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp</label>
+        <link refid="cluster__hash_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="13">
+        <label>iostream</label>
+      </node>
+      <node id="6">
+        <label>math.h</label>
+      </node>
+      <node id="14">
+        <label>mpi.h</label>
+      </node>
+      <node id="4">
         <label>stdio.h</label>
       </node>
+      <node id="3">
+        <label>stdlib.h</label>
+      </node>
+      <node id="2">
+        <label>string.h</label>
+      </node>
+      <node id="5">
+        <label>time.h</label>
+      </node>
+      <node id="15">
+        <label>unistd.h</label>
+      </node>
     </incdepgraph>
-      <sectiondef kind="var">
-      <memberdef kind="variable" id="cluster__hash_8cpp_1a6cfd95afd0afebd625b889fb6e58371c" prot="public" static="no" mutable="no">
+    <sectiondef kind="var">
+      <memberdef kind="variable" id="cluster__hash_8cpp_1a6cfd95afd0afebd625b889fb6e58371c" prot="public" static="no" extern="yes" mutable="no">
         <type>int</type>
         <definition>int rank</definition>
         <argsstring></argsstring>
@@ -138,13 +128,14 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Rank of the process (MPI) </para>        </detaileddescription>
+<para>Rank of the process (MPI) </para>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="10" column="1" bodyfile="/home/huijin/git/CCEX/main.cpp" bodystart="26" bodyend="-1"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="10" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/main.cpp" bodystart="26" bodyend="-1" declfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" declline="10" declcolumn="12"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="func">
+    </sectiondef>
+    <sectiondef kind="func">
       <memberdef kind="function" id="cluster__hash_8cpp_1a13654ad43b75218709e205850a41f85f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void clusterizeHash</definition>
@@ -172,7 +163,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="12" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="12" bodyend="55"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="12" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="12" bodyend="55"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1ab2d03ad431ee0115b07f538a5844c162" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -193,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="57" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="57" bodyend="74"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="57" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="57" bodyend="74"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a237a61085a593a921c989c9ad778f47d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -214,7 +205,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="76" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="76" bodyend="109"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="76" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="76" bodyend="109"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1abebc71c366d2ca94c9f085a1316f0338" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -251,9 +242,11 @@
         </detaileddescription>
         <inbodydescription>
 <para><itemizedlist>
-<listitem><para>Value assignment 2nd */ </para></listitem></itemizedlist>
-</para>        </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="112" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="112" bodyend="154"/>
+<listitem><para>Value assignment 2nd *<zwj/>/</para>
+</listitem></itemizedlist>
+</para>
+        </inbodydescription>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="112" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="112" bodyend="154"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1ad1b54a9108e1b42f15f32d970e34f5fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -274,7 +267,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="155" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="155" bodyend="159"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="155" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="155" bodyend="159"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1aee631b4fe6a87df7efd1ade71a010a82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -295,7 +288,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="161" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="161" bodyend="185"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="161" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="161" bodyend="185"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a6266836cf9a3bc5ad53fd367e09506e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -324,7 +317,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="188" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="188" bodyend="221"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="188" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="188" bodyend="221"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1aff440b8597c83b6d13cc5a22f139b068" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -361,7 +354,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="224" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="224" bodyend="357"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="224" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="224" bodyend="357"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a2e7e844007824dff536a437e679a8f70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -390,7 +383,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="359" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="359" bodyend="369"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="359" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="359" bodyend="369"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a3c03f282af1a291fee41e3f0f21545d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -411,11 +404,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="371" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="371" bodyend="376"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="371" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="371" bodyend="376"/>
       </memberdef>
-      <memberdef kind="function" id="cluster__hash_8cpp_1a1c8b9255f31a154e48e5c8975a5b556d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="cluster__hash_8cpp_1a958b5bb518fe9055ea3d1a3cc95743b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> *</type>
-        <definition>HashCluster* findCluster</definition>
+        <definition>HashCluster * findCluster</definition>
         <argsstring>(HashCluster *hashClusters, int order)</argsstring>
         <name>findCluster</name>
         <param>
@@ -432,11 +425,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="378" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="378" bodyend="388"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="378" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="378" bodyend="388"/>
       </memberdef>
-      <memberdef kind="function" id="cluster__hash_8cpp_1a815ce025f3320bb1840b2942b7a6204f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="cluster__hash_8cpp_1ab63e7dfc3e548844f3cbdacd436124c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structProperty" kindref="compound">Property</ref> *</type>
-        <definition>Property* findProperty</definition>
+        <definition>Property * findProperty</definition>
         <argsstring>(HashCluster *hashClusters, int order, const char *id)</argsstring>
         <name>findProperty</name>
         <param>
@@ -457,7 +450,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="390" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="390" bodyend="400"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="390" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="390" bodyend="400"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1ab824186b80bbe281189462174e2c4698" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -486,7 +479,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="402" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="402" bodyend="417"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="402" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="402" bodyend="417"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a2c4c9395b42b8370c566cea0ec369942" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -515,7 +508,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="419" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="419" bodyend="425"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="419" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="419" bodyend="425"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a92aab7efa50c927df5e6ff090968fdfd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -548,7 +541,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="427" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="427" bodyend="439"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="427" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="427" bodyend="439"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a3d25f0062cfd81b8dda08a8a772570b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -565,7 +558,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="441" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="441" bodyend="462"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="441" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="441" bodyend="462"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a38bab6a7e70e8f207f00872ab30e1a0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -582,11 +575,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="464" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="464" bodyend="487"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="464" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="464" bodyend="487"/>
       </memberdef>
-      <memberdef kind="function" id="cluster__hash_8cpp_1a3679f0299f227492571e44be455cdb4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="cluster__hash_8cpp_1ad71f01df977c65d4d55567be1674a7e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int *</type>
-        <definition>int* parseClusterIdToIntArray</definition>
+        <definition>int * parseClusterIdToIntArray</definition>
         <argsstring>(const char *id, int *count)</argsstring>
         <name>parseClusterIdToIntArray</name>
         <param>
@@ -603,7 +596,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="490" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="490" bodyend="521"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="490" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="490" bodyend="521"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a881bd0eb07e76afd42275803a1d0ca29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -620,7 +613,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="524" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="524" bodyend="546"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="524" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="524" bodyend="546"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a3c08100306289ee92372fad9d0142add" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -657,7 +650,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="548" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="548" bodyend="560"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="548" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="548" bodyend="560"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a7519d1ca541c84a4268f1ca765d6f517" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -682,7 +675,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="562" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="562" bodyend="581"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="562" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="562" bodyend="581"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1ade82d5910aec868945bbfbaa657b3ed6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -715,7 +708,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="583" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="583" bodyend="591"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="583" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="583" bodyend="591"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1aa9f95887c42a0e4f46ddeb04e68c914f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -740,7 +733,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="593" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="593" bodyend="603"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="593" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="593" bodyend="603"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1ac0beb7777256cc3c7eb608b497503553" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -785,7 +778,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="606" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="606" bodyend="630"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="606" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="606" bodyend="630"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1aa3b67c8c122faf40826b75bc6f0ef805" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -814,7 +807,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="632" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="632" bodyend="690"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="632" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="632" bodyend="690"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8cpp_1a5b8dfb39c0c8b3592840e8a03797aaf4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -839,9 +832,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp" line="692" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="692" bodyend="799"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" line="692" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="692" bodyend="799"/>
       </memberdef>
-      </sectiondef>
+    </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -864,8 +857,8 @@
 <codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>nks<sp/>=<sp/>Cluster_getNk(CCE);</highlight></codeline>
 <codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>addsubclus<sp/>=<sp/>Cluster_getAddsubclus(CCE);</highlight></codeline>
 <codeline lineno="17"><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Clusterize</highlight></codeline>
-<codeline lineno="21"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rank==0){printf(</highlight><highlight class="stringliteral">&quot;\n\t<sp/>CCE1<sp/>...<sp/>\n&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Clusterize</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rank==0){printf(</highlight><highlight class="stringliteral">&quot;\n\t<sp/>CCE1<sp/>...<sp/>\n&quot;</highlight><highlight class="normal">);}</highlight></codeline>
 <codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structHashCluster" kindref="compound">HashCluster</ref><sp/>*hashClusters<sp/>=<sp/>NULL;</highlight></codeline>
 <codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>makeHashClusterO1(&amp;hashClusters,nspin);</highlight></codeline>
 <codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>updateNk(&amp;(nks),order,hashClusters);</highlight></codeline>
@@ -880,8 +873,8 @@
 <codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rank==0<sp/>&amp;&amp;<sp/>verbosity){</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>printClusters(hashClusters);</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>all<sp/>sub<sp/>clusters</highlight></codeline>
-<codeline lineno="39"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(addsubclus)<sp/>{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>all<sp/>sub<sp/>clusters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(addsubclus)<sp/>{</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n=order;<sp/>n&gt;2;<sp/>n--){</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rank==0){printf(</highlight><highlight class="stringliteral">&quot;\n\t<sp/>Add<sp/>subclusters<sp/>...<sp/>\n&quot;</highlight><highlight class="normal">);}</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>addSubClusters(&amp;hashClusters,nspin,stmap,n);</highlight></codeline>
@@ -954,7 +947,7 @@
 <codeline lineno="111"><highlight class="normal"></highlight></codeline>
 <codeline lineno="112"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>addCluster(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>**<sp/>hashClusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal">,</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>spins,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>strength,</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count)</highlight></codeline>
 <codeline lineno="113"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>orderStr<sp/>=<sp/>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*)calloc(countDigits(order)+1,</highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(char));</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>orderStr<sp/>=<sp/>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*)calloc(countDigits(order)+1,</highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">));</highlight></codeline>
 <codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>sprintf(orderStr,</highlight><highlight class="stringliteral">&quot;%d&quot;</highlight><highlight class="normal">,order);</highlight></codeline>
 <codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Check<sp/>overlapping<sp/>of<sp/>key<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structHashCluster" kindref="compound">HashCluster</ref><sp/>*c;</highlight></codeline>
@@ -1146,11 +1139,11 @@
 <codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>HASH_SORT(findCluster(*hashclusters,n)-&gt;prop,by_strength);</highlight></codeline>
 <codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//HASH_DELETE(hh2,potentialClusters,strongCluster);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printProperties(findCluster(*hashclusters,n)-&gt;prop);<sp/></highlight></codeline>
-<codeline lineno="319"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printProperties(findCluster(*hashclusters,n)-&gt;prop);<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>Cut<sp/>the<sp/>number<sp/>of<sp/>clusters<sp/>up<sp/>to<sp/>Nk</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//</highlight></codeline>
-<codeline lineno="323"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structProperty" kindref="compound">Property</ref><sp/>*madeClusters,<sp/>*madeCluster,<sp/>*tmp;</highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="structProperty" kindref="compound">Property</ref><sp/>*madeClusters,<sp/>*madeCluster,<sp/>*tmp;</highlight></codeline>
 <codeline lineno="324"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>madeClusters<sp/>=<sp/>findCluster(*hashclusters,n)-&gt;prop;</highlight></codeline>
 <codeline lineno="326"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nk<sp/>=<sp/>nks[n];</highlight></codeline>
 <codeline lineno="327"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nCluster<sp/>=<sp/>0;</highlight></codeline>
@@ -1204,7 +1197,7 @@
 <codeline lineno="377"><highlight class="normal"></highlight></codeline>
 <codeline lineno="378"><highlight class="normal"><ref refid="structHashCluster" kindref="compound">HashCluster</ref>*<sp/>findCluster(<ref refid="structHashCluster" kindref="compound">HashCluster</ref>*<sp/>hashClusters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order){</highlight></codeline>
 <codeline lineno="379"><highlight class="normal"></highlight></codeline>
-<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>orderStr<sp/>=<sp/>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*)calloc(countDigits(order)+1,</highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(char));</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>orderStr<sp/>=<sp/>(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*)calloc(countDigits(order)+1,</highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">));</highlight></codeline>
 <codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/>sprintf(orderStr,</highlight><highlight class="stringliteral">&quot;%d&quot;</highlight><highlight class="normal">,order);</highlight></codeline>
 <codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>Check<sp/>overlapping<sp/>of<sp/>key<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="383"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structHashCluster" kindref="compound">HashCluster</ref><sp/>*c;</highlight></codeline>
@@ -1468,8 +1461,8 @@
 <codeline lineno="641"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster<sp/>=<sp/>existingCluster-&gt;spins;</highlight></codeline>
 <codeline lineno="642"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printf(&quot;cluster<sp/>:<sp/><sp/>%s\n&quot;,existingCluster-&gt;id);</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="643"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>n-1;<sp/>r<sp/>&gt;=2;<sp/>r--){</highlight></codeline>
-<codeline lineno="645"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Find<sp/>subclusters</highlight></codeline>
-<codeline lineno="647"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>the<sp/>number<sp/>of<sp/>combinations<sp/>(n<sp/>choose<sp/>r)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="645"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Find<sp/>subclusters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="647"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>the<sp/>number<sp/>of<sp/>combinations<sp/>(n<sp/>choose<sp/>r)</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="648"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numCombinations<sp/>=<sp/>1;</highlight></codeline>
 <codeline lineno="649"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>r;<sp/>i++)<sp/>{</highlight></codeline>
 <codeline lineno="650"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>numCombinations<sp/>*=<sp/>(n<sp/>-<sp/>i);</highlight></codeline>
@@ -1485,8 +1478,8 @@
 <codeline lineno="660"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>generateCombinations(cluster,<sp/>&amp;subclusters,<sp/>tempCombination,<sp/>0,<sp/>n,<sp/>0,<sp/>r,<sp/>&amp;nCombination);</highlight></codeline>
 <codeline lineno="661"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Free<sp/>memory<sp/>for<sp/>tempCombination</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="662"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>free(tempCombination);<sp/></highlight></codeline>
-<codeline lineno="664"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>subclusters</highlight></codeline>
-<codeline lineno="666"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(nCombination=0;<sp/>nCombination&lt;numCombinations;<sp/>nCombination++){</highlight></codeline>
+<codeline lineno="664"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>subclusters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="666"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(nCombination=0;<sp/>nCombination&lt;numCombinations;<sp/>nCombination++){</highlight></codeline>
 <codeline lineno="667"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QuickSort(&amp;(subclusters[nCombination]),0,r-1);</highlight></codeline>
 <codeline lineno="668"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printf(&quot;subcluster[%2d]<sp/>:<sp/>&quot;,nCombination);</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="669"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//for<sp/>(<sp/>int<sp/>k<sp/>=0;<sp/>k&lt;r;<sp/>k++){</highlight><highlight class="normal"></highlight></codeline>
@@ -1559,8 +1552,8 @@
 <codeline lineno="738"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>nClusInfo++;</highlight></codeline>
 <codeline lineno="739"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="741"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>n-1;<sp/>r<sp/>&gt;=1;<sp/>r--){</highlight></codeline>
-<codeline lineno="743"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Find<sp/>subclusters</highlight></codeline>
-<codeline lineno="745"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>the<sp/>number<sp/>of<sp/>combinations<sp/>(n<sp/>choose<sp/>r)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="743"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Find<sp/>subclusters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="745"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>the<sp/>number<sp/>of<sp/>combinations<sp/>(n<sp/>choose<sp/>r)</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="746"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>numCombinations<sp/>=<sp/>1;</highlight></codeline>
 <codeline lineno="747"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>r;<sp/>i++)<sp/>{</highlight></codeline>
 <codeline lineno="748"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>numCombinations<sp/>*=<sp/>(n<sp/>-<sp/>i);</highlight></codeline>
@@ -1577,8 +1570,8 @@
 <codeline lineno="759"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>print<sp/>subclusters</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="760"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Free<sp/>memory<sp/>for<sp/>tempCombination</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="761"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>free(tempCombination);<sp/></highlight></codeline>
-<codeline lineno="763"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>subclusters</highlight></codeline>
-<codeline lineno="765"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(nCombination=0;<sp/>nCombination&lt;numCombinations;<sp/>nCombination++){</highlight></codeline>
+<codeline lineno="763"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>subclusters</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="765"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(nCombination=0;<sp/>nCombination&lt;numCombinations;<sp/>nCombination++){</highlight></codeline>
 <codeline lineno="766"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>sort</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="767"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>QuickSort(&amp;(subclusters[nCombination]),0,r-1);</highlight></codeline>
 <codeline lineno="768"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>id<sp/></highlight><highlight class="normal"></highlight></codeline>
@@ -1614,6 +1607,6 @@
 <codeline lineno="798"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="799"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/home/huijin/git/CCEX/src/cluster_hash.cpp"/>
+    <location file="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp"/>
   </compounddef>
 </doxygen>

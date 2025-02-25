@@ -1,0 +1,38 @@
+\doxysection{hamiltonian.\+h}
+\hypertarget{hamiltonian_8h_source}{}\label{hamiltonian_8h_source}\index{/Users/huijin/Documents/GitHub/CCEX/include/hamiltonian.h@{/Users/huijin/Documents/GitHub/CCEX/include/hamiltonian.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_HAMILTONIAN\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_HAMILTONIAN\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}utilities.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ MatrixXcd\ Pauli\_matrix\_I(\textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00007\ MatrixXcd\ Pauli\_matrix\_X(\textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00008\ MatrixXcd\ Pauli\_matrix\_Y(\textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00009\ MatrixXcd\ Pauli\_matrix\_Z(\textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00010\ MatrixXcd*\ getGeneralPauliOperators(MatrixXcd\ alpha,\ MatrixXcd\ beta);}
+\DoxyCodeLine{00011\ MatrixXcd*\ getPauliOperators(\textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ MatrixXcd\ calZeemanVector(\textcolor{keywordtype}{double}\ gamma,\ \textcolor{keywordtype}{float}*\ bfield);}
+\DoxyCodeLine{00014\ MatrixXcd\ calDetuningVector(\textcolor{keywordtype}{double}\ detuning);}
+\DoxyCodeLine{00015\ MatrixXcd\ calOverhauserVector(\textcolor{keywordtype}{double}\ overhauser);}
+\DoxyCodeLine{00016\ MatrixXcd\ calPointDipoleTensor(\textcolor{keywordtype}{double}\ xyz1[3],\ \textcolor{keywordtype}{double}\ xyz2[3],\ \textcolor{keywordtype}{double}\ gamma1,\ \textcolor{keywordtype}{double}\ gamma2);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ MatrixXcd\ calHamiltonianHeteroInt(MatrixXcd**\ pmats,\ MatrixXcd\ tensor,\ \textcolor{keywordtype}{int}\ nspin,\ \textcolor{keywordtype}{int}\ ispin,\ \textcolor{keywordtype}{int}\ jspin);}
+\DoxyCodeLine{00019\ MatrixXcd\ calHamiltonianSelfInt(MatrixXcd*\ pmat,\ MatrixXcd\ tensor);}
+\DoxyCodeLine{00020\ MatrixXcd\ calHamiltonianSingleInt(MatrixXcd\ Vector,\ MatrixXcd*\ pmat1);}
+\DoxyCodeLine{00021\ MatrixXcd\ expandHamiltonian(MatrixXcd**\ pmats,\ MatrixXcd\ Hi,\ \textcolor{keywordtype}{int}\ nspin,\ \textcolor{keywordtype}{int}\ ispin);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ MatrixXcd\ ZeemanInt(\textcolor{keywordtype}{double}\ gamma,\ \textcolor{keywordtype}{float}*\ B0,\ MatrixXcd*\ pmat,\ \textcolor{keywordtype}{int}\ m);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{int}*\ getIndexInOrder(VectorXcd\ eigenValues);}
+\DoxyCodeLine{00026\ VectorXcd\ sortEigenValues(VectorXcd\ eigenValues,\ \textcolor{keywordtype}{int}*\ idx);}
+\DoxyCodeLine{00027\ MatrixXcd\ sortEigenVectors(MatrixXcd\ eigenVectors,\ \textcolor{keywordtype}{int}*\ idx);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{bool}\ isInvolutory(MatrixXcd\ a);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{bool}\ isSame(MatrixXcd\ a,\ MatrixXcd\ b);}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_HAMILTONIAN\_H\_}}
+
+\end{DoxyCode}

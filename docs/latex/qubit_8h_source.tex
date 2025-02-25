@@ -1,0 +1,149 @@
+\doxysection{qubit.\+h}
+\hypertarget{qubit_8h_source}{}\label{qubit_8h_source}\index{/Users/huijin/Documents/GitHub/CCEX/include/qubit.h@{/Users/huijin/Documents/GitHub/CCEX/include/qubit.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_QUBIT\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_QUBIT\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}utilities.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00016\ \ \ \ \ }
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{/*\ Basic\ spin\ information\ (Essential)\ */}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structQubit_ab65a0dfa0efbd8a7862403f4704c1587}{name}}[MAX\_CHARARRAY\_LENGTH];}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structQubit_a858930b7d9d9cafc70f26ab7993dadad}{spin}};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structQubit_a668a62d3ddf72e6b9acbc6338c97090f}{gyro}};\ }
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structQubit_a799cb32b473160eb8e9e4aa6c9c39b18}{xyz}}[3];}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{/*\ Interaction\ information\ (Optional)\ */}\ }
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structQubit_a6e0e926587994ef24d67431d0dbef9e7}{detuning}};\ }
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structQubit_aecb3943042094c4be043f375626dbd24}{overhaus}};\ }
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{comment}{/*\ Qubit\ projected\ state\ (Optional)\ */}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00078\ \ \ \ \ MatrixXcd\ \mbox{\hyperlink{structQubit_accc3b309d802ab6f269b7d8a7536a4a0}{alpha}};\ }
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00088\ \ \ \ \ MatrixXcd\ \mbox{\hyperlink{structQubit_a6c73eb8c49fdb6db06179b21b5a2923d}{beta}};}
+\DoxyCodeLine{00089\ \ \ \ \ }
+\DoxyCodeLine{00090\ \}\ \mbox{\hyperlink{structQubit}{Qubit}};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00115\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{comment}{/*\ Use\ only\ during\ reading\ input\ file\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \textcolor{comment}{//\ QubitArray}}
+\DoxyCodeLine{00120\ \ \ \ \ \textcolor{keywordtype}{int}*\ \mbox{\hyperlink{structQubitArray_a0a5c3875737d2a3bc14399109e89c82d}{\_alphaidx}};\ \ \ \ \ \ }
+\DoxyCodeLine{00121\ \ \ \ \ \textcolor{keywordtype}{int}*\ \mbox{\hyperlink{structQubitArray_a93fa20887ef373b3710d0734e9f1b7a4}{\_betaidx}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00122\ \ \ \ \ \textcolor{comment}{/*-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{comment}{/*\ Use\ during\ simulation\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00124\ \ \ \ \ \textcolor{comment}{/*-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00125\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structQubitArray_ac87a8cdf149336447fe601f59c7ff371}{nqubit}};\ }
+\DoxyCodeLine{00126\ \ \ \ \ \mbox{\hyperlink{structQubit}{Qubit}}**\ \mbox{\hyperlink{structQubitArray_ae87046f60e524d2aed1f6605c746d86e}{qubit}};\ }
+\DoxyCodeLine{00127\ \ \ \ \ MatrixXcd**\ \mbox{\hyperlink{structQubitArray_a1d74d3f22fe851f267c72b8cda416dd0}{intmap}};\ }
+\DoxyCodeLine{00128\ \ \ \ \ MatrixXcd\ \mbox{\hyperlink{structQubitArray_a168f33429921f2605e8c3ab850d3e6d9}{psia}};\ }
+\DoxyCodeLine{00129\ \ \ \ \ MatrixXcd\ \mbox{\hyperlink{structQubitArray_ad88cb397f3656eb7ac316e966d5e9172}{psib}};\ }
+\DoxyCodeLine{00130\ \ \ \ \ MatrixXcd\ \mbox{\hyperlink{structQubitArray_a17543dd30e2e5ef672ff5f751119beea}{psi0}};\ }
+\DoxyCodeLine{00131\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structQubitArray_ab1cb38fcd5640338fad8c2abc868b53e}{overhaus}};\ \ }
+\DoxyCodeLine{00132\ \ \ \ \ \textcolor{comment}{/*-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00143\ \}\ \mbox{\hyperlink{structQubitArray}{QubitArray}};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{comment}{/*\ High\ Level\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{//\ physical\ properties}}
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ QubitArray\_dim(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ QubitArray\_dimQubit\_i(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00150\ \textcolor{keywordtype}{double}\ \ \ \ \ \ QubitArray\_mindist(\textcolor{keywordtype}{double}*\ xyz,\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00151\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setPsiaPsib\_fromQubit(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);\ \textcolor{comment}{//\ psia\ =\ kron(qubit\_i\_alpha,qubit\_j\_alpha,\ ...)}}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setPsiaPsib\_fromIdx(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{float}*\ bfield);\ \textcolor{comment}{//\ psia,\ psib\ :\ eigenstate\ of\ Hq\ (idx)}}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setPsi0\_fromPsiaPsib(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);\ \textcolor{comment}{//\ psi0\ =\ Normalize(psia\ +\ psib)}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \textcolor{comment}{//\ Hamiltonian}}
+\DoxyCodeLine{00156\ MatrixXcd\ \ \ QubitArray\_TotalHamil(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ MatrixXcd**\ sigmas,\ \textcolor{keywordtype}{float}*\ bfield);}
+\DoxyCodeLine{00157\ MatrixXcd\ \ \ QubitArray\_SingleHamil(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ MatrixXcd**\ sigmas,\ \textcolor{keywordtype}{int}\ iq,\ \textcolor{keywordtype}{float}*\ bfield);}
+\DoxyCodeLine{00158\ MatrixXcd\ \ \ QubitArray\_ZeemanHamil(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ MatrixXcd**\ sigmas,\ \textcolor{keywordtype}{int}\ iq,\ \textcolor{keywordtype}{float}*\ bfield);}
+\DoxyCodeLine{00159\ MatrixXcd\ \ \ QubitArray\_DetuningHamil(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ MatrixXcd**\ sigmas,\ \textcolor{keywordtype}{int}\ iq);}
+\DoxyCodeLine{00160\ MatrixXcd\ \ \ QubitArray\_OverhausHamil(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ MatrixXcd**\ sigmas,\ \textcolor{keywordtype}{int}\ iq);}
+\DoxyCodeLine{00161\ MatrixXcd\ \ \ QubitArray\_ZFSHamil(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ MatrixXcd**\ sigmas,\ \textcolor{keywordtype}{int}\ iq);}
+\DoxyCodeLine{00162\ MatrixXcd\ \ \ QubitArray\_InteractionHamil(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ MatrixXcd**\ sigmas,\ \textcolor{keywordtype}{int}\ iq,\ \textcolor{keywordtype}{int}\ jq);}
+\DoxyCodeLine{00163\ MatrixXcd**\ QubitArray\_PauliOperators(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00164\ MatrixXcd*\ \ QubitArray\_PauliOperator\_fromPsiaPsib(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00165\ }
+\DoxyCodeLine{00166\ \textcolor{comment}{//\ density\ matrix}}
+\DoxyCodeLine{00167\ MatrixXcd\ \ \ QubitArray\_Rho0(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{comment}{//\ utils}}
+\DoxyCodeLine{00170\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ QubitArray\_getQubitIdx\_fromName(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00172\ \textcolor{comment}{/*\ Low\ Level\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00174\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ QubitArray\_init();\ }
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \textcolor{comment}{//\ report}}
+\DoxyCodeLine{00177\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_report(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_reportQubit\_i(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_reportIntmap(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00180\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_reportPsiaPsib(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_reportPsi0(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00182\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_reportQubit\_overhaus(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{comment}{//\ alloc}}
+\DoxyCodeLine{00185\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_allocQubit(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);\ \ \ \ \ \ \textcolor{comment}{//\ length\ =\ nqubit}}
+\DoxyCodeLine{00186\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_allocIntmap(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);\ \ \ \ \ \textcolor{comment}{//\ length\ =\ (nqubit,nqubit)}}
+\DoxyCodeLine{00187\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_alloc\_alphaidx\_betaidx(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);\ \textcolor{comment}{//\ length\ =\ 1}}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{comment}{//\ set}}
+\DoxyCodeLine{00190\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setNqubit(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ nspin);}
+\DoxyCodeLine{00191\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setOverhaus(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ overhaus);}
+\DoxyCodeLine{00192\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \mbox{\hyperlink{structQubit}{Qubit}}**\ qubit);}
+\DoxyCodeLine{00193\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_set\_alphaidx(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*\ alphaidx);}
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_set\_betaidx(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}*\ betaidx);}
+\DoxyCodeLine{00195\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setIntmap\_i\_j(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ MatrixXcd\ tensor,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j);}
+\DoxyCodeLine{00196\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setPsia(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ MatrixXcd\ psia);}
+\DoxyCodeLine{00197\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setPsib(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ MatrixXcd\ psib);}
+\DoxyCodeLine{00198\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setPsi0(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ MatrixXcd\ psi0);}
+\DoxyCodeLine{00199\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_name(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00200\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_spin(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ spin,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00201\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_gyro(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ gyro,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00202\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_xyz(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}*\ xyz,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00203\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_detuning(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ detuning,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00204\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_overhaus(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ overhaus,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00205\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_alpha(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ MatrixXcd\ alpha,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00206\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_beta(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ MatrixXcd\ beta,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00207\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_alpha\_fromMs(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ ms,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00208\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_setQubit\_i\_beta\_fromMs(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ ms,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00210\ \textcolor{comment}{//\ get\ (This\ is\ not\ a\ copy.\ Watch\ out\ when\ you\ change\ the\ value\ with\ this\ function!)}}
+\DoxyCodeLine{00211\ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ QubitArray\_getNqubit(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00212\ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ QubitArray\_getOverhaus(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00213\ \textcolor{keywordtype}{int}*\ \ \ \ \ \ \ \ QubitArray\_get\_alphaidx(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00214\ \textcolor{keywordtype}{int}*\ \ \ \ \ \ \ \ QubitArray\_get\_betaidx(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00215\ MatrixXcd**\ QubitArray\_getIntmap(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00216\ MatrixXcd\ \ \ QubitArray\_getIntmap\_i\_j(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i,\ \textcolor{keywordtype}{int}\ j);}
+\DoxyCodeLine{00217\ MatrixXcd\ \ \ QubitArray\_getPsia(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00218\ MatrixXcd\ \ \ QubitArray\_getPsib(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00219\ MatrixXcd\ \ \ QubitArray\_getPsi0(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00220\ \textcolor{keywordtype}{char}*\ \ \ \ \ \ \ QubitArray\_getQubit\_i\_name(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00221\ \textcolor{keywordtype}{float}\ \ \ \ \ \ \ QubitArray\_getQubit\_i\_spin(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00222\ \textcolor{keywordtype}{double}\ \ \ \ \ \ QubitArray\_getQubit\_i\_gyro(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00223\ \textcolor{keywordtype}{double}*\ \ \ \ \ QubitArray\_getQubit\_i\_xyz(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00224\ \textcolor{keywordtype}{double}\ \ \ \ \ \ QubitArray\_getQubit\_i\_detuning(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00225\ \textcolor{keywordtype}{double}\ \ \ \ \ \ QubitArray\_getQubit\_i\_overhaus(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00226\ MatrixXcd\ \ \ QubitArray\_getQubit\_i\_alpha(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00227\ MatrixXcd\ \ \ QubitArray\_getQubit\_i\_beta(\textcolor{keyword}{const}\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00228\ }
+\DoxyCodeLine{00229\ \textcolor{comment}{//\ free}}
+\DoxyCodeLine{00230\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_freeAll(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00231\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_freeQubit(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00232\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_freeIntmap(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00233\ \textcolor{keywordtype}{void}\ \ \ \ \ \ \ \ QubitArray\_free\_alphaidx\_betaidx(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_QUBIT\_H\_}}
+
+\end{DoxyCode}

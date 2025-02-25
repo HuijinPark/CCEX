@@ -1,119 +1,108 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
-  <compounddef id="cluster__hash_8h" kind="file">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="cluster__hash_8h" kind="file" language="C++">
     <compoundname>cluster_hash.h</compoundname>
     <includes local="no">string.h</includes>
     <includes local="no">stdlib.h</includes>
     <includes local="no">stdio.h</includes>
     <includes local="no">time.h</includes>
     <includes local="yes">../zlib/uthash/src/uthash.h</includes>
-    <includes local="no">stddef.h</includes>
-    <includes local="no">stdint.h</includes>
     <includes refid="cluster_8h" local="yes">cluster.h</includes>
-    <includedby refid="cluster_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster.cpp</includedby>
-    <includedby refid="cluster__hash_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster_hash.cpp</includedby>
+    <includedby refid="cluster_8cpp" local="yes">/Users/huijin/Documents/GitHub/CCEX/src/cluster.cpp</includedby>
+    <includedby refid="cluster__hash_8cpp" local="yes">/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp</includedby>
+    <includedby refid="cluster__pcce_8cpp" local="yes">/Users/huijin/Documents/GitHub/CCEX/src/cluster_pcce.cpp</includedby>
     <incdepgraph>
-      <node id="46">
-        <label>stdint.h</label>
-      </node>
-      <node id="41">
-        <label>stdlib.h</label>
-      </node>
-      <node id="39">
-        <label>/home/huijin/git/CCEX/include/cluster_hash.h</label>
-        <link refid="cluster_hash.h"/>
-        <childnode refid="40" relation="include">
-        </childnode>
-        <childnode refid="41" relation="include">
-        </childnode>
-        <childnode refid="42" relation="include">
-        </childnode>
-        <childnode refid="43" relation="include">
-        </childnode>
-        <childnode refid="44" relation="include">
-        </childnode>
-        <childnode refid="45" relation="include">
-        </childnode>
-        <childnode refid="46" relation="include">
-        </childnode>
-        <childnode refid="47" relation="include">
-        </childnode>
-      </node>
-      <node id="45">
-        <label>stddef.h</label>
-      </node>
-      <node id="54">
-        <label>bath.h</label>
-        <link refid="bath_8h_source"/>
-        <childnode refid="49" relation="include">
-        </childnode>
-        <childnode refid="55" relation="include">
-        </childnode>
-        <childnode refid="48" relation="include">
-        </childnode>
-      </node>
-      <node id="55">
-        <label>qubit.h</label>
-        <link refid="qubit_8h_source"/>
-        <childnode refid="49" relation="include">
-        </childnode>
-      </node>
-      <node id="50">
-        <label>Eigen/Dense</label>
-      </node>
-      <node id="44">
+      <node id="6">
         <label>../zlib/uthash/src/uthash.h</label>
       </node>
-      <node id="40">
-        <label>string.h</label>
-      </node>
-      <node id="53">
-        <label>unistd.h</label>
-      </node>
-      <node id="48">
-        <label>general.h</label>
-        <link refid="general_8h_source"/>
-        <childnode refid="49" relation="include">
+      <node id="14">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
         </childnode>
       </node>
-      <node id="43">
-        <label>time.h</label>
-      </node>
-      <node id="51">
-        <label>iostream</label>
-      </node>
-      <node id="47">
+      <node id="7">
         <label>cluster.h</label>
         <link refid="cluster_8h_source"/>
-        <childnode refid="48" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="54" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="49" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="52">
-        <label>mpi.h</label>
+      <node id="1">
+        <label>/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h</label>
+        <link refid="cluster__hash_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
       </node>
-      <node id="49">
+      <node id="8">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
         <label>utilities.h</label>
         <link refid="utilities_8h_source"/>
-        <childnode refid="50" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="51" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="52" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="53" relation="include">
+        <childnode refid="13" relation="include">
         </childnode>
       </node>
-      <node id="42">
+      <node id="10">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="11">
+        <label>iostream</label>
+      </node>
+      <node id="12">
+        <label>mpi.h</label>
+      </node>
+      <node id="4">
         <label>stdio.h</label>
+      </node>
+      <node id="3">
+        <label>stdlib.h</label>
+      </node>
+      <node id="2">
+        <label>string.h</label>
+      </node>
+      <node id="5">
+        <label>time.h</label>
+      </node>
+      <node id="13">
+        <label>unistd.h</label>
       </node>
     </incdepgraph>
     <innerclass refid="structProperty" prot="public">Property</innerclass>
     <innerclass refid="structHashCluster" prot="public">HashCluster</innerclass>
-      <sectiondef kind="func">
+    <sectiondef kind="func">
       <memberdef kind="function" id="cluster__hash_8h_1a13654ad43b75218709e205850a41f85f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void clusterizeHash</definition>
@@ -141,7 +130,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="41" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="12" bodyend="55"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="41" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="12" bodyend="55" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="41" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a237a61085a593a921c989c9ad778f47d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -162,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="42" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="76" bodyend="109"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="42" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="76" bodyend="109" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="42" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a45a3eaaac9d3364767563484f85ae5a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -187,7 +176,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="43" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="692" bodyend="799"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="43" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="692" bodyend="799" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="43" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1aee631b4fe6a87df7efd1ade71a010a82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -208,7 +197,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="45" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="161" bodyend="185"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="45" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="161" bodyend="185" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="45" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a6266836cf9a3bc5ad53fd367e09506e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -237,7 +226,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="46" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="188" bodyend="221"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="46" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="188" bodyend="221" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="46" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1aff440b8597c83b6d13cc5a22f139b068" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -274,7 +263,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="47" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="224" bodyend="357"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="47" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="224" bodyend="357" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="47" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1ab2d03ad431ee0115b07f538a5844c162" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -295,7 +284,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="49" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="57" bodyend="74"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="49" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="57" bodyend="74" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="49" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1abebc71c366d2ca94c9f085a1316f0338" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -332,9 +321,11 @@
         </detaileddescription>
         <inbodydescription>
 <para><itemizedlist>
-<listitem><para>Value assignment 2nd */ </para></listitem></itemizedlist>
-</para>        </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="51" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="112" bodyend="154"/>
+<listitem><para>Value assignment 2nd *<zwj/>/</para>
+</listitem></itemizedlist>
+</para>
+        </inbodydescription>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="51" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="112" bodyend="154" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="51" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a3c03f282af1a291fee41e3f0f21545d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -355,11 +346,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="52" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="371" bodyend="376"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="52" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="371" bodyend="376" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="52" declcolumn="5"/>
       </memberdef>
-      <memberdef kind="function" id="cluster__hash_8h_1a1c8b9255f31a154e48e5c8975a5b556d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="cluster__hash_8h_1a958b5bb518fe9055ea3d1a3cc95743b5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structHashCluster" kindref="compound">HashCluster</ref> *</type>
-        <definition>HashCluster* findCluster</definition>
+        <definition>HashCluster * findCluster</definition>
         <argsstring>(HashCluster *hashClusters, int order)</argsstring>
         <name>findCluster</name>
         <param>
@@ -376,7 +367,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="53" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="378" bodyend="388"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="53" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="378" bodyend="388" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="53" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1ad1b54a9108e1b42f15f32d970e34f5fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -397,7 +388,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="55" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="155" bodyend="159"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="55" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="155" bodyend="159" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="55" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a2c4c9395b42b8370c566cea0ec369942" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -426,7 +417,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="57" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="419" bodyend="425"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="57" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="419" bodyend="425" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="57" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a2e7e844007824dff536a437e679a8f70" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -455,7 +446,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="58" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="359" bodyend="369"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="58" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="359" bodyend="369" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="58" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1ab824186b80bbe281189462174e2c4698" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -484,7 +475,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="60" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="402" bodyend="417"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="60" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="402" bodyend="417" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="60" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a92aab7efa50c927df5e6ff090968fdfd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -517,7 +508,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="62" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="427" bodyend="439"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="62" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="427" bodyend="439" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="62" declcolumn="7"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1ade82d5910aec868945bbfbaa657b3ed6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -550,7 +541,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="63" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="583" bodyend="591"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="63" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="583" bodyend="591" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="63" declcolumn="7"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a38bab6a7e70e8f207f00872ab30e1a0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -567,7 +558,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="65" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="464" bodyend="487"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="65" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="464" bodyend="487" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="65" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a3d25f0062cfd81b8dda08a8a772570b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -584,11 +575,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="66" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="441" bodyend="462"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="66" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="441" bodyend="462" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="66" declcolumn="6"/>
       </memberdef>
-      <memberdef kind="function" id="cluster__hash_8h_1a3679f0299f227492571e44be455cdb4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="cluster__hash_8h_1ad71f01df977c65d4d55567be1674a7e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int *</type>
-        <definition>int* parseClusterIdToIntArray</definition>
+        <definition>int * parseClusterIdToIntArray</definition>
         <argsstring>(const char *id, int *count)</argsstring>
         <name>parseClusterIdToIntArray</name>
         <param>
@@ -605,7 +596,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="68" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="490" bodyend="521"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="68" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="490" bodyend="521" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="68" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a881bd0eb07e76afd42275803a1d0ca29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -622,7 +613,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="69" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="524" bodyend="546"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="69" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="524" bodyend="546" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="69" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a3c08100306289ee92372fad9d0142add" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -659,7 +650,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="70" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="548" bodyend="560"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="70" column="5" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="548" bodyend="560" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="70" declcolumn="5"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1a7519d1ca541c84a4268f1ca765d6f517" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -684,7 +675,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="72" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="562" bodyend="581"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="72" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="562" bodyend="581" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="72" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1aa3b67c8c122faf40826b75bc6f0ef805" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -713,7 +704,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="73" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="632" bodyend="690"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="73" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="632" bodyend="690" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="73" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1ac0beb7777256cc3c7eb608b497503553" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -758,7 +749,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="74" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="606" bodyend="630"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="74" column="6" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="606" bodyend="630" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="74" declcolumn="6"/>
       </memberdef>
       <memberdef kind="function" id="cluster__hash_8h_1aa9f95887c42a0e4f46ddeb04e68c914f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -783,17 +774,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/include/cluster_hash.h" line="75" column="1" bodyfile="/home/huijin/git/CCEX/src/cluster_hash.cpp" bodystart="593" bodyend="603"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" line="75" column="7" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/cluster_hash.cpp" bodystart="593" bodyend="603" declfile="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h" declline="75" declcolumn="7"/>
       </memberdef>
-      </sectiondef>
+    </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
     <programlisting>
-<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_CLUSTER_HASH_H_</highlight></codeline>
-<codeline lineno="2"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_CLUSTER_HASH_H_</highlight></codeline>
-<codeline lineno="3"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_CLUSTER_HASH_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_CLUSTER_HASH_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string.h&gt;</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>strcpy<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>malloc<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdio.h&gt;</highlight><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="comment">/*<sp/>printf<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
@@ -867,8 +858,8 @@
 <codeline lineno="74"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>generateCombinations(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>arr,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>data,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>tempCombination,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>start,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>end,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>index,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>r,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>nCombination);</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>addAllStrengthForAllSpins(</highlight><highlight class="keywordtype">float</highlight><highlight class="normal">**<sp/>strengthMap,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>order);</highlight></codeline>
 <codeline lineno="76"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//<sp/>__CCEX_CLUSTER_HASH_H_</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>__CCEX_CLUSTER_HASH_H_</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/huijin/git/CCEX/include/cluster_hash.h"/>
+    <location file="/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h"/>
   </compounddef>
 </doxygen>

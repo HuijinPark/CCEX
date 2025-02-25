@@ -1,137 +1,137 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.5">
-  <compounddef id="simulator__cce_8cpp" kind="file">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="simulator__cce_8cpp" kind="file" language="C++">
     <compoundname>simulator_cce.cpp</compoundname>
     <includes refid="simulator_8h" local="yes">../include/simulator.h</includes>
     <includes refid="hamiltonian_8h" local="yes">../include/hamiltonian.h</includes>
     <includes local="no">iostream</includes>
     <incdepgraph>
-      <node id="422">
-        <label>../include/hamiltonian.h</label>
-        <link refid="hamiltonian_8h_source"/>
-        <childnode refid="410" relation="include">
-        </childnode>
-      </node>
-      <node id="419">
-        <label>output.h</label>
-        <link refid="output_8h_source"/>
-        <childnode refid="417" relation="include">
-        </childnode>
-        <childnode refid="416" relation="include">
-        </childnode>
-        <childnode refid="410" relation="include">
-        </childnode>
-      </node>
-      <node id="408">
-        <label>../include/simulator.h</label>
-        <link refid="simulator_8h_source"/>
-        <childnode refid="409" relation="include">
-        </childnode>
-        <childnode refid="410" relation="include">
-        </childnode>
-        <childnode refid="415" relation="include">
-        </childnode>
-        <childnode refid="416" relation="include">
-        </childnode>
-        <childnode refid="418" relation="include">
-        </childnode>
-        <childnode refid="419" relation="include">
-        </childnode>
-        <childnode refid="420" relation="include">
-        </childnode>
-        <childnode refid="421" relation="include">
-        </childnode>
-        <childnode refid="417" relation="include">
-        </childnode>
-      </node>
-      <node id="409">
-        <label>unsupported/Eigen/MatrixFunctions</label>
-      </node>
-      <node id="416">
+      <node id="10">
         <label>bath.h</label>
         <link refid="bath_8h_source"/>
-        <childnode refid="410" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="415" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="417" relation="include">
-        </childnode>
-      </node>
-      <node id="415">
-        <label>qubit.h</label>
-        <link refid="qubit_8h_source"/>
-        <childnode refid="410" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
       </node>
-      <node id="411">
-        <label>Eigen/Dense</label>
-      </node>
-      <node id="418">
-        <label>defect.h</label>
-        <link refid="defect_8h_source"/>
-        <childnode refid="410" relation="include">
-        </childnode>
-        <childnode refid="416" relation="include">
-        </childnode>
-      </node>
-      <node id="414">
-        <label>unistd.h</label>
-      </node>
-      <node id="417">
-        <label>general.h</label>
-        <link refid="general_8h_source"/>
-        <childnode refid="410" relation="include">
-        </childnode>
-      </node>
-      <node id="407">
-        <label>/home/huijin/git/CCEX/src/simulator_cce.cpp</label>
-        <link refid="simulator_cce.cpp"/>
-        <childnode refid="408" relation="include">
-        </childnode>
-        <childnode refid="422" relation="include">
-        </childnode>
-        <childnode refid="412" relation="include">
-        </childnode>
-      </node>
-      <node id="412">
-        <label>iostream</label>
-      </node>
-      <node id="421">
+      <node id="15">
         <label>cluster.h</label>
         <link refid="cluster_8h_source"/>
-        <childnode refid="417" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="416" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="410" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
       </node>
-      <node id="420">
+      <node id="12">
+        <label>defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>../include/hamiltonian.h</label>
+        <link refid="hamiltonian_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>output.h</label>
+        <link refid="output_8h_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
         <label>pulse.h</label>
         <link refid="pulse_8h_source"/>
-        <childnode refid="410" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
       </node>
-      <node id="413">
-        <label>mpi.h</label>
+      <node id="9">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
       </node>
-      <node id="410">
+      <node id="2">
+        <label>../include/simulator.h</label>
+        <link refid="simulator_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
         <label>utilities.h</label>
         <link refid="utilities_8h_source"/>
-        <childnode refid="411" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="412" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="413" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="414" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
       </node>
+      <node id="1">
+        <label>/Users/huijin/Documents/GitHub/CCEX/src/simulator_cce.cpp</label>
+        <link refid="simulator__cce_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="6">
+        <label>iostream</label>
+      </node>
+      <node id="7">
+        <label>mpi.h</label>
+      </node>
+      <node id="8">
+        <label>unistd.h</label>
+      </node>
+      <node id="3">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
     </incdepgraph>
-      <sectiondef kind="func">
-      <memberdef kind="function" id="simulator__cce_8cpp_1a214c802c4266064d829665cc20a060b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+    <sectiondef kind="func">
+      <memberdef kind="function" id="simulator__cce_8cpp_1af33e1a04593c780ca81d43984e744d7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd *</type>
-        <definition>MatrixXcd* calCoherenceCce</definition>
+        <definition>MatrixXcd * calCoherenceCce</definition>
         <argsstring>(QubitArray *qa, BathArray *ba, Config *cnf, Pulse *pls)</argsstring>
         <name>calCoherenceCce</name>
         <param>
@@ -156,9 +156,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/huijin/git/CCEX/src/simulator_cce.cpp" line="4" column="1" bodyfile="/home/huijin/git/CCEX/src/simulator_cce.cpp" bodystart="4" bodyend="377"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/src/simulator_cce.cpp" line="4" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/simulator_cce.cpp" bodystart="4" bodyend="377"/>
       </memberdef>
-      </sectiondef>
+    </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -181,8 +181,8 @@
 <codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(1);</highlight></codeline>
 <codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="17"><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Hamiltonian</highlight></codeline>
-<codeline lineno="21"><highlight class="comment"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
 <codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Declare<sp/>the<sp/>total<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Halpha<sp/>=<sp/>MatrixXcd::Zero(bdim,bdim);</highlight></codeline>
 <codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>Hbeta<sp/>=<sp/>MatrixXcd::Zero(bdim,bdim);</highlight></codeline>
@@ -210,8 +210,8 @@
 <codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//etime<sp/>=<sp/>MPI_Wtime();</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printf(&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Wall<sp/>time<sp/>step1<sp/>=<sp/>%.5f<sp/>s\n&quot;,<sp/>stime<sp/>-<sp/>etime);</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Diagonalize<sp/>the<sp/>Hamiltonian</highlight></codeline>
-<codeline lineno="52"><highlight class="comment"></highlight><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>M_up<sp/>(bdim,bdim);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Diagonalize<sp/>the<sp/>Hamiltonian</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>M_up<sp/>(bdim,bdim);</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>M_down(bdim,bdim);</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>MatrixXcd<sp/>M(bdim,bdim);</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::SelfAdjointEigenSolver&lt;MatrixXcd&gt;<sp/>es_up(bdim),<sp/>es_down(bdim);</highlight></codeline>
@@ -229,8 +229,8 @@
 <codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//printf(&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Wall<sp/>time<sp/>step2<sp/>=<sp/>%.5f<sp/>s\n&quot;,<sp/>stime<sp/>-<sp/>etime);</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="68"><highlight class="normal"></highlight></codeline>
 <codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Initial<sp/>state<sp/>of<sp/>bath</highlight></codeline>
-<codeline lineno="73"><highlight class="comment"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Initial<sp/>state<sp/>of<sp/>bath</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
 <codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>this<sp/>is<sp/>the<sp/>ensemble<sp/>calculation</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nstate<sp/>=<sp/>Config_getNstate(cnf);</highlight></codeline>
 <codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>isEnsemble<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
@@ -241,8 +241,8 @@
 <codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>psi0<sp/>=<sp/>BathArray_Psi0(ba);</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Propagation</highlight></codeline>
-<codeline lineno="87"><highlight class="comment"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Propagation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
 <codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Quantity</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>quantity<sp/>=<sp/>Config_getQuantity(cnf);</highlight></codeline>
 <codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(strcasecmp(quantity,</highlight><highlight class="stringliteral">&quot;coherence&quot;</highlight><highlight class="normal">)!=0){</highlight></codeline>
@@ -328,7 +328,7 @@
 <codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="171"><highlight class="normal"></highlight></codeline>
 <codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(npulse){</highlight></codeline>
-<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal"><sp/>:</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>default<sp/>:</highlight></codeline>
 <codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>3:</highlight></codeline>
 <codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L_a2_even<sp/>=<sp/>M.array().rowwise()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*<sp/>U_down2.transpose().eval().array();<sp/><sp/></highlight><highlight class="comment">//M<sp/>*<sp/>U_down2</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L_b2_even<sp/>=<sp/>M.adjoint().array().rowwise()<sp/>*<sp/>U_up2.adjoint().array();<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//M.adjoint<sp/>*<sp/>U_up2.adjoint</highlight><highlight class="normal"></highlight></codeline>
@@ -534,6 +534,6 @@
 <codeline lineno="377"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="378"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/huijin/git/CCEX/src/simulator_cce.cpp"/>
+    <location file="/Users/huijin/Documents/GitHub/CCEX/src/simulator_cce.cpp"/>
   </compounddef>
 </doxygen>

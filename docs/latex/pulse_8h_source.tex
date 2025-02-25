@@ -1,0 +1,48 @@
+\doxysection{pulse.\+h}
+\hypertarget{pulse_8h_source}{}\label{pulse_8h_source}\index{/Users/huijin/Documents/GitHub/CCEX/include/pulse.h@{/Users/huijin/Documents/GitHub/CCEX/include/pulse.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_PULSE\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_PULSE\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}./../include/utilities.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structPulse_ab083ce764799722049dac44ad7479bad}{npulse}};\ }
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structPulse_a4fcad551982a417a36f160cd0a6f0975}{pulseiter}};\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structPulse_a94ae332f008b81e37d8df344a3c7d9b7}{pulsename}}[100];\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{double}**\ \mbox{\hyperlink{structPulse_af1bd05f903769ac217b18fb0c2ebc31a}{sequence}};\ }
+\DoxyCodeLine{00061\ \}\ \mbox{\hyperlink{structPulse}{Pulse}};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \mbox{\hyperlink{structPulse}{Pulse}}*\ Pulse\_init();}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ Pulse\_report(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{void}\ Pulse\_setNpulse(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse,\ \textcolor{keywordtype}{int}\ npulse);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ Pulse\_setPulsename(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse,\ \textcolor{keywordtype}{char}*\ pulsename);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{void}\ Pulse\_setSequence\_fromName(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{void}\ Pulse\_setSequence\_fromInput(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse,\ \textcolor{keywordtype}{double}*\ sequenceinput);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ Pulse\_setPulseiter(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse,\ \textcolor{keywordtype}{bool}\ pulseiter);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{int}\ Pulse\_getNpulse(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{char}*\ Pulse\_getPulsename(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{double}**\ Pulse\_getSequence(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{bool}\ Pulse\_getPulseiter(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{//\ allocation}}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{void}\ Pulse\_allocSequence(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ Pulse\_freeSequence(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{void}\ Pulse\_freeAll(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \textcolor{comment}{//\ generate\ pulse\ sequence}}
+\DoxyCodeLine{00084\ \textcolor{keywordtype}{void}\ generateSequenceRamsey(\textcolor{keywordtype}{double}***\ sequence);}
+\DoxyCodeLine{00085\ \textcolor{keywordtype}{void}\ generateSequenceHE(\textcolor{keywordtype}{double}***\ sequence);}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{void}\ generateSequenceCPMG(\textcolor{keywordtype}{double}***\ sequence,\ \textcolor{keywordtype}{int}\ npulse);}
+\DoxyCodeLine{00087\ \textcolor{keywordtype}{void}\ generateSequenceEqual(\textcolor{keywordtype}{double}***\ sequence,\ \textcolor{keywordtype}{int}\ npulse);}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_PULSE\_H\_}}
+
+\end{DoxyCode}

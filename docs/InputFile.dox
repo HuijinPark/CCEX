@@ -18,136 +18,414 @@ Each parameter should be written in the following format:
 
 Lines beginning with `# or !` are considered comments and are ignored.
 
-| Tag                   | Variable                                                     |
-|-----------------------|--------------------------------------------------------------|
-| method      			| \ref Config::method                 "method"                 | 
-| quantity    			| \ref Config::quantity               "quantity"               | 
-| order       			| \ref Config::order                  "order"                  | 
-| bfield      			| \ref Config::bfield                 "bfield"                 | 
-| rbath       			| \ref Config::rbath                  "rbath"                  | 
-| rdip                  | \ref Config::rdip                   "rdip"                   | 
-| deltat      			| \ref Config::deltat                 "deltat"                 | 
-| nstep       			| \ref Config::nstep                  "nstep"                  | 
-| rbathcut    			| \ref Config::rbathcut               "rbathcut"               | 
-| rdipcut     			| \ref Config::rdipcut                "rdipcut"                | 
-| nstate      			| \ref Config::nstate                 "nstate"                 | 
-| seed        			| \ref Config::seed                   "seed"                   | 
-| qubitfile   			| \ref Config::qubitfile              "qubitfile"              | 
-| gyrofile 				| \ref Config::gyrofile               "gyrofile"               | 
-| bathfile 				| \ref Config::bathfiles              "bathfiles"              | 
-| bathadjust 			| \ref Config::bathadjust             "bathadjust"             | 
-| avaaxfile 			| \ref Config::avaaxfile              "avaaxfile"              | 
-| statefile 			| \ref Config::statefile              "statefile"              | 
-| exstatefile 			| \ref Config::exstatefile            "exstatefile"            | 
-| DefectTotSpin 		| \ref Config::DefectTotSpin          "DefectTotSpin"          | 
-| CorrTotSpin 			| \ref Config::CorrTotSpin            "CorrTotSpin"            | 
-| hf_readmode 			| \ref Config::hf_readmode            "hf_readmode"            | 
-| hf_tensorfile 		| \ref Config::hf_tensorfile          "hf_tensorfile"          | 
-| hf_cutoff 			| \ref Config::hf_cutoff              "hf_cutoff"              | 
-| hf_ignore_oor 		| \ref Config::hf_ignore_oor          "hf_ignore_oor"          | 
-| qd_readmode 			| \ref Config::qd_readmode            "qd_readmode"            | 
-| qd_tensorfile 		| \ref Config::qd_tensorfile          "qd_tensorfile"          | 
-| qd_tensorfile_woqubit | \ref Config::qd_tensorfile_woqubit  "qd_tensorfile_woqubit"  | 
+| Tag (General)                         |
+|---------------------------------------|
+| \ref tag_method        "method"       |
+| \ref tag_quantity      "quantity"     |
+| \ref tag_order         "order"        |
+| \ref tag_bfield        "bfield"       |
+| \ref tag_rbath         "rbath"        |
+| \ref tag_rdip          "rdip"         |
+| \ref tag_deltat        "deltat"       |
+| \ref tag_nstep         "nstep"        |
+| \ref tag_rbathcut      "rbathcut"     |
+| \ref tag_rdipcut       "rdipcut"      | 
+| \ref tag_nstate        "nstate"       | 
+| \ref tag_seed          "seed"         | 
+| \ref tag_gyrofile      "gyrofile"     | 
+| \ref tag_bathfile      "bathfile"     | 
+| \ref tag_bathadjust    "bathadjust"                   | 
+| \ref tag_avaaxfile     "avaaxfile"                    | 
+| \ref tag_statefile     "statefile"                    | 
+| \ref tag_exstatefile   "exstatefile"                  |
+| \ref tag_DefectTotSpin "DefectTotSpin"                |
+| \ref tag_CorrTotSpin   "CorrTotSpin"                  |
+| \ref tag_hf_readmode   "hf_readmode"                  |     
+| \ref tag_hf_tensorfile "hf_tensorfile"                |
+| \ref tag_hf_cutoff     "hf_cutoff"                    |
+| \ref tag_hf_ignore_oor "hf_ignore_oor"                |
+| \ref tag_qd_readmode   "qd_readmode"                  |
+| \ref tag_qd_tensorfile "qd_tensorfile"                |
+| \ref tag_cell_para    "cell_para"                     |
+| \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit"|
 
+
+
+| Tag (QubitArray)                     |
+|--------------------------------------|
+| \ref tag_nqubit       "nqubit"       |
+| \ref tag_name         "name"         |
+| \ref tag_spin         "spin"         |
+| \ref tag_qubitfile    "qubitfile"    |
+| \ref tag_qspin        "qspin"        |
+| \ref tag_alphams      "alphams"      |
+| \ref tag_betams       "betams"       |
+| \ref tag_qzfs         "qzfs"         |
+|--------------------------------------|
+| \ref tag_Qubit        "Qubit"        |
+| \ref tag_nqubit       "nqubit"       |
+| \ref tag_qubit        "qubit"        |
+| \ref tag_name         "name"         |
+| \ref tag_spin         "spin"         |
+| \ref tag_gyro         "gyro"         |
+| \ref tag_xyz          "xyz"          |
+| \ref tag_detuning     "detuning"     |
+| \ref tag_alphams      "alphams"      |
+| \ref tag_betams       "betams"       |
+| \ref tag_intmap       "intmap"       |
+| \ref tag_between      "between"      |
+| \ref tag_tensor       "tensor"       |
+| \ref tag_psia         "psia"         |
+| \ref tag_psib         "psib"         |
+| \ref tag_psi0         "psi0"         |
+| \ref tag_overhaus     "overhaus"     |
+| \ref tag_alphaidx     "alphaidx"     |
+| \ref tag_betaidx      "betaidx"      |
+
+
+| Tag (Cluster)                         |
+|---------------------------------------|
+| \ref tag_order         "order"        |
+| \ref tag_method        "method"       |
+| \ref tag_addsubclus    "addsubclus"   |
+| \ref tag_nk            "nk"           |
+| \ref tag_sK            "sK"           |
+| \ref tag_max_trial     "max_trial"    |
+| \ref tag_max_iter      "max_iter"     |
+| \ref tag_kmeans_pp     "kmeans_pp"    |
+| \ref tag_iter_detail   "iter_detail"  |
+
+| Tag (Pulse)                           |
+|---------------------------------------|
+| \ref tag_npulse        "npulse"       |
+| \ref tag_pulsename     "pulsename"    |
+| \ref tag_sequence      "sequence"     |
+
+
+| Tag (DefectArray)                     |
+|---------------------------------------|
+| \ref tag_Defect        "Defect"       |
+| \ref tag_dfname        "dfname"       |
+| \ref tag_apprx         "apprx"        |
+| \ref tag_naddspin      "naddspin"     |
+| \ref tag_navaax        "navaax"       |
+| \ref tag_types         "types"        |
+| \ref tag_spins         "spins"        |
+| \ref tag_gyros         "gyros"        |
+| \ref tag_eqs           "eqs"          |
+| \ref tag_rxyzs         "rxyzs"        |
+| \ref tag_hypf          "hypf"         |
+| \ref tag_efg           "efg"          |
+| \ref tag_zfs           "zfs"          |
+| \ref tag_detuning      "detuning"     |
+
+
+| Tag (Output)                          |
+|---------------------------------------|
+| \ref tag_savemode      "savemode"     |
+| \ref tag_outfile       "outfile"      |
 
 
 
 \section Config_CONFIG General condition
 Below are the descriptions of various configuration tags used in the input file.
 
-### method
-태그 이름 (### method)
-설명 (이 태그가 무엇을 하는지)
-자료형 (Integer, Float, String 등)
-단위(필요하면) (예: Tesla, Kelvin, Debye 등)
-가능한 값 목록 (필요하면)
-기본값 (Default 설정이 있는 경우)
-예제 (코드 블록 \code ... \endcode 사용)
+\anchor tag_method
+## method
+<p><b>Description:</b><br>
+CCE Methods to calculate the dynamics of the system.</p>
+<p><b>Data Type:</b> String</p>
+<p><b>Options:</b><br>
+| Option | Description |
+|--------|-------------------------------------|
+| `CCE`  | Conventional CCE method             |
+| `gCCE` | Generalized CCE method              |
+| `pCCE` | Partition CCE method                |
+
+<p><b>Default:</b> `CCE`</p>
+<p><b>Example:</b> \code method : CCE \endcode </p>
+<p><b>Related variable:</b> \ref Config::order </p>
+
+\anchor tag_quantity
+## quantity
+<p><b>Description:</b><br>
+Quantity to calculate the dynamics of the system.</p>
+<p><b>Data Type:</b> String</p>
+<p><b>Options:</b><br>
+| Option | Description |
+|--------|-------------------------------------|
+| `coherence` | Coherence function             |
+| `dm`        | Density matrix                 |
+<p><b>Unit:</b> arbitrary unit (a.u.)</p>
+<p><b>Default:</b> `coherence`</p>
+<p><b>Example:</b> \code quantity : coherence \endcode </p>
+<p><b>Related variable:</b> \ref Config::quantity </p>
+
+\anchor tag_order
+## order
+<p><b>Description:</b><br>
+Order of the CCE method.</p>
+<p><b>Data Type:</b> Integer</p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code order : 2 \endcode
+<p><b>Related variable:</b> \ref Config::order </p>
+
+\anchor tag_bfield
+## bfield
+<p><b>Description:</b><br>
+Magnetic field.</p>
+<p><b>Data Type:</b> Float or Float List</p>
+<p><b>Unit:</b> gauss (G)</p>
+<p><b>Default:</b> 0.0</p>
+<p><b>Example:</b></p>
+    \code bfield : 0.0 \endcode </p>
+    \code bfield : [0.0, 0.0, 0.0] \endcode </p>
+<p><b>Related variable:</b> \ref Config::bfield </p>
+
+\anchor tag_rbath
+## rbath
+<p><b>Description:</b><br>
+Bath radius </p>
+<p><b>Data Type:</b> Float</p>
+<p><b>Unit:</b> angstrom </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code rbath : 0.0 \endcode </p>
+<p><b>Related variable:</b> \ref Config::rbath </p>
+
+\anchor tag_rdip
+## rdip
+<p><b>Description:</b><br>
+Dipolar radius </p>
+<p><b>Data Type:</b> Float</p>
+<p><b>Unit:</b> angstrom </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code rdip : 0.0 \endcode </p>
+<p><b>Related variable:</b> \ref Config::rdip </p>
+
+\anchor tag_deltat
+## deltat
+<p><b>Description:</b><br>
+Time interval. </p>
+<p><b>Data Type:</b> Float</p>
+<p><b>Unit:</b> ms </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code deltat : 0.0 \endcode </p>
+<p><b>Related variable:</b> \ref Config::deltat </p>
+
+\anchor tag_nstep
+## nstep
+<p><b>Description:</b><br>
+Number of time steps. </p>
+<p><b>Data Type:</b> Integer</p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code nstep : 10 \endcode </p>
+<p><b>Related variable:</b> \ref Config::nstep </p>
+
+\anchor tag_rbathcut
+## rbathcut
+<p><b>Description:</b><br>
+Bath inner-cutoff radius. </p>
+<p><b>Data Type:</b> Float</p>
+<p><b>Unit:</b> angstrom </p>
+<p><b>Default:</b> 0.0 </p>
+<p><b>Example:</b> \code rbathcut : 0.0 \endcode </p>
+<p><b>Related variable:</b> \ref Config::rbathcut </p>
+
+\anchor tag_rdipcut
+## rdipcut
+<p><b>Description:</b><br>
+Dipolar inner-cutoff radius. </p>
+<p><b>Data Type:</b> Float</p>
+<p><b>Unit:</b> angstrom </p>
+<p><b>Default:</b> 0.0 </p>
+<p><b>Example:</b> \code rdipcut : 0.0 \endcode </p>
+<p><b>Related variable:</b> \ref Config::rdipcut </p>
+
+\anchor tag_nstate
+## nstate
+<p><b>Description:</b><br>
+Number of state templates to be generated. </p>
+<p><b>Data Type:</b> Integer</p>
+<p><b>Options:</b><br>
+| Option | Description |
+|--------|-------------------------------------|
+| `0`    | No state template will be generated (Ensemble approach) |
+| `>0`   | State template will be generated (Single-sample approach) <br> Mean-field effect will be automatically added |
+
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> \code nstate : 10 \endcode </p>
+<p><b>Related Tags:</b> \ref tag_seed "seed" </p>
+<p><b>Related variable:</b> \ref Config::nstate </p>
+
+\anchor tag_seed
+## seed
+<p><b>Description:</b><br>
+Seed for random number generator. <br>
+If you want to generate the same state templates, you should set the same seed value. </p>
+<p><b>Data Type:</b> Integer</p>
+<p><b>Default:</b> Time(NULL) </p>
+<p><b>Example:</b> \code seed : 1241798 \endcode </p>
+<p><b>Related Tags:</b> \ref tag_nstate "nstate" </p>
+<p><b>Related variable:</b> \ref Config::seed </p>
+
+\anchor tag_gyrofile
+## gyrofile
+<p><b>Description:</b><br>
+File name of the gyromagnetic ratio. <br>
+File format is the following : <br>
+[Name] [SpinNumber] [Gyromagnetic ratio (rad/ms/G)] <br>
+example) 
+ 13C 0.5 6.728284 <br>
+ P1  0.5  -17608.597050 <br>
+</p>
+<p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code gyrofile : "filepath" \endcode </p>
+<p><b>Related variable:</b> \ref Config::gyrofile </p>
+
+\anchor tag_bathfile
+## bathfile
+<p><b>Description:</b><br>
+File name of the bath spatial configuration. <br>
+File format is the following : <br>
+[x] [y] [z] [Name] <br>
+example) 
+ 1.0 0.0 0.0 0.0   -- Total line number <br> 
+ 1.0 2.0 3.0 13C   -- x,y,z in cartesian, angstrom <br>
+ 4.0 5.0 6.0 P1    -- Spin name should be the same to the name in \ref tag_gyrofile "gyrofile" <br></p>
+ 
+<p><b>Data Type:</b> String (File path) or String List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> 
+    \code bathfile : "filepath" \endcode </p>
+    \code bathfile : ["filepath1", "filepath2", ... ] \endcode </p>
+<p><b>Related variable:</b> \ref Config::bathfile </p>
+
+\anchor tag_bathadjust
+## bathadjust
+<p><b>Description:</b><br>
+Adjust the bath configuration. <br>
+If you want to adjust the bath configuration, you can set the bathadjust value. <br>
+Usually, this tag is required for multiple qubit calculation that wouldb have different bath configuration <br></p>
+
+<p><b>Data Type:</b> Double List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> 
+    \code bathadjust : [1.0, 2.0, 3.0] \endcode </p>
+    \code bathadjust : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], ... [7.0, 8.0, 9.0]] \endcode </p>
+<p><b>Related variable:</b> \ref Config::bathadjust </p>
+
+\anchor tag_avaaxfile
+## avaaxfile
+<p><b>Description:</b><br>
+File name of the bath pricipal axis configuration. <br>
+This tag might require when you want to calculate paramagnetic (PM) defect bath. <br>
+During PM defect calculation, if you don't give this file, the program will automatically generate the principal axis configuration. <br>
+File format is the following : <br>
+[Principal axis index] <br>
+example)  <br>
+ 5.0 - The number of total line <br>
+ 1.0 - principal axis index <br>
+ 2.0<br>
+ 3.0<br>
+ 3.0<br>
+</p>
+<p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code avaaxfile : "filepath" \endcode </p>
+<p><b>Related variable:</b> \ref Config::avaaxfile </p>
+
+\anchor tag_statefile
+## statefile
+<p><b>Description:</b><br>
+File name of the bath state template. <br>
+This tag might require when you want to calculate the state configuration. <br>
+File format is the following : <br>
+[SpinSubLevel] <br>
+example)  <br>
+ 5.0 - The number of total line <br>
+ -0.5  - Spin sublevel when S=1/2 <br>
+ 0.5 <br>
+ -0.5<br>
+ -0.5<br>
+</p>
+<p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code statefile : "filepath" \endcode </p>
+<p><b>Related variable:</b> \ref Config::statefile </p>
+
+\anchor tag_exstatefile
+## exstatefile
+<p><b>Description:</b><br>
+File name of the additional bath spin state template. <br>
+This tag might require when you want to calculate paramagnetic defect bath. <br>
+Each bath state represent the additional bath spin state. <br>
+File format is the following : <br>
+[SpinSubLevel] <br>
+example)  <br>
+ 5.0 - The number of total line <br>
+ -1.0  - Spin sublevel when I=1 <br>
+ 0.0 <br>
+ 1.0<br>
+ 1.0<br>
+</p>
+<p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code exstatefile : "filepath" \endcode </p>
+<p><b>Related variable:</b> \ref Config::exstatefile </p>
+
+\anchor tag_DefectTotSpin
+## DefectTotSpin
+<p><b>Description:</b><br>
+Total spin number of the qubit. <br>
+(Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <br></p>
+<p><b>Data Type:</b> Double </p>
+<p><b>Default:</b> 1.0 </p>
+<p><b>Example:</b> \code DefectTotSpin : 1.0 \endcode </p>
+<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" </p>
+<p><b>Related variable:</b> \ref Config::DefectTotSpin </p>
+
+\anchor tag_CorrTotSpin
+## CorrTotSpin
+<p><b>Description:</b><br>
+Spin nubmer correction <br>
+(Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <br></p>
+</p>
+<p><b>Data Type:</b> Double </p>
+<p><b>Default:</b> 0.0 </p>
+<p><b>Example:</b> \code CorrTotSpin : 0.0 \endcode </p>
+<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_DefectTotSpin "DefectTotSpin" </p>
+<p><b>Related variable:</b> \ref Config::CorrTotSpin </p>
+
+\anchor tag_hf_readmode
+## hf_readmode
+<p><b>Description:</b><br>
+Read mode of the hyperfine tensor file. <br>
+<p><b>Options:</b><br>
+| Option | Description |
+|--------|-------------------------------------|
+| `0`    | Read the hyperfine tensor file as a single tensor |
+| `1`    | Read the hyperfine tensor file as a list of tensors |
+| `2`    | Read the hyperfine tensor file as a list of tensors with the same spin number |
+| `3`    | Read the hyperfine tensor file as a list of tensors with the same spin number and the same principal axis |
+
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> \code hf_readmode : 0 \endcode </p>
+<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_hf_cutoff "hf_cutoff" </p> 
+<p><b>Related variable:</b> \ref Config::hf_readmode </p>
 
 
 
-- method      				 
-- quantity    				 
-- order       				 
-- bfield      				 
-- rbath       				 
-- rdip                       
-- deltat      				 
-- nstep       				 
-- rbathcut    				 
-- rdipcut     				 
-- nstate      				 
-- seed        				 
-- qubitfile   				 
-- gyrofile 				     
-- bathfile 				     
-- bathadjust 				 
-- avaaxfile 				 
-- statefile 				 
-- exstatefile 				 
-- DefectTotSpin 			 
-- CorrTotSpin 				 
-- hf_readmode 				 
-- hf_tensorfile 			 
-- hf_cutoff 				 
-- hf_ignore_oor 			 
-- qd_readmode 				 
-- qd_tensorfile 			 
-- qd_tensorfile_woqubit 	 
-
-\section Config_CLUSTER Clustering condition
-- order 				     order
-- method 				     method
-- addsubclus 				 addsubclus
-- nk 				         nk
-
-\section Config_OUTPUT Output options 
-- savemode 				     savemode
-- outfile 				     outfile
-
-\section Config_PULSE Pulse condition
-- npulse 				     npulse
-- pulsename 				 pulsename
-- sequence 				     sequenceinput
 
 
-\section Config_DEFECTARR Configuration of spins on bath defect 
-- dfname 				     dfname
-- naddspin 				     naddspin
-- navaax 				     navaax
-- apprx 				     apprx
-- types 				     types
-- spins 				     spins
-- gyros 				     gyros
-- eqs 				         eqs
-- rxyzs 				     rxyzs
-- hypf 				         hypf
-- efg 				         efg
-- zfs 				         zfs
-- detuning 				     detuning
 
-\section Config_QUBITARR Configuration of qubit spins
-- nqubit 			         nqubit
-- qubit                     (sub-key)
-- name 				         name
-- spin 				         spin
-- gyro 				         gyro
-- xyz 				         xyz
-- detuning 			         detuning
-- alpha 			         alphams
-- beta 				         betams
-- intmap                    (sub-key)
-- between 			         between
-- tensor 			         tensor
-- psia 				         psiamat
-- psib 				         psibmat
-- psi0 				         psi0mat
-- overhaus 			         overhaus
-- alphaidx 			         alphaidx
-- betaidx 			         betaidx
-- qspin 			         spin
-- alphams 			         alphams
-- betams 			         betams
 
-*/
+
+
+    
+
+
+
+
+
 

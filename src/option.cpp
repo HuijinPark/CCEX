@@ -96,11 +96,11 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     }
 
     // qubitfile
-    char* qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
-    if (qubitfile != NULL) {
-        Config_allocQubitfile(cnf);
-        Config_setQubitfile(cnf,qubitfile);
-    }
+    // char* qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
+    // if (qubitfile != NULL) {
+    //     Config_allocQubitfile(cnf);
+    //     Config_setQubitfile(cnf,qubitfile);
+    // }
     
 
     // gyrofile
@@ -313,7 +313,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_allocIntmap(qa);
 
         // read interaction map
-        MatrixXcd tensor = cJSON_ReadTensor(root,"zfs",true,intmapDefault);
+        MatrixXcd tensor = cJSON_ReadTensor(root,"qzfs",true,intmapDefault);
         tensor = KHZ_TO_RADKHZ(tensor);
 
         // mediatedTerm IO

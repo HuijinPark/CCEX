@@ -1,91 +1,489 @@
-This is navigator to find the input file tags\hypertarget{InputFile_HowToWrite}{}\section{How\-To\-Write}\label{InputFile_HowToWrite}
-\hypertarget{InputFile_Config_CONFIG}{}\section{General condition}\label{InputFile_Config_CONFIG}
+\chapter{Input File}
+\hypertarget{InputFile}{}\label{InputFile}\index{Input File@{Input File}}
+This is navigator to find the input file tags\hypertarget{InputFile_HowToWrite}{}\doxysection{\texorpdfstring{How to Write the Input File}{How to Write the Input File}}\label{InputFile_HowToWrite}
+The input file consists of key-\/value pairs where each key represents a specific setting. Each parameter should be written in the following format\+:
 
-\begin{DoxyItemize}
-\item method method
-\item quantity quantity
-\item order order
-\item bfield bfield
-\item rbath rbath
-\item rdip rdip
-\item deltat deltat
-\item nstep nstep
-\item rbathcut rbathcut
-\item rdipcut rdipcut
-\item nstate nstate
-\item seed seed
-\item qubitfile qubitfile
-\item gyrofile gyrofile
-\item bathfile bathfiles
-\item bathadjust bathadjust
-\item avaaxfile avaaxfile
-\item statefile statefile
-\item exstatefile exstatefile
-\item Defect\-Tot\-Spin Defect\-Tot\-Spin
-\item Corr\-Tot\-Spin Corr\-Tot\-Spin
-\item hf\-\_\-readmode hf\-\_\-readmode
-\item hf\-\_\-tensorfile hf\-\_\-tensorfile
-\item hf\-\_\-cutoff hf\-\_\-cutoff
-\item hf\-\_\-ignore\-\_\-oor hf\-\_\-ignore\-\_\-oor
-\item qd\-\_\-readmode qd\-\_\-readmode
-\item qd\-\_\-tensorfile qd\-\_\-tensorfile
-\item qd\-\_\-tensorfile\-\_\-woqubit qd\-\_\-tensorfile\-\_\-woqubit
-\end{DoxyItemize}\hypertarget{InputFile_Config_CLUSTER}{}\section{Clustering condition}\label{InputFile_Config_CLUSTER}
 
-\begin{DoxyItemize}
-\item order order
-\item method method
-\item addsubclus addsubclus
-\item nk nk
-\end{DoxyItemize}\hypertarget{InputFile_Config_OUTPUT}{}\section{Output options}\label{InputFile_Config_OUTPUT}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ parameter\_name\_1\ =\ value\_1,}
+\DoxyCodeLine{\ \ \ \ parameter\_name\_2\ =\ value\_2,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ parameter\_name\_N\ =\ value\_N}
+\DoxyCodeLine{\}}
 
-\begin{DoxyItemize}
-\item savemode savemode
-\item outfile outfile
-\end{DoxyItemize}\hypertarget{InputFile_Config_PULSE}{}\section{Pulse condition}\label{InputFile_Config_PULSE}
+\end{DoxyCode}
 
-\begin{DoxyItemize}
-\item npulse npulse
-\item pulsename pulsename
-\item sequence sequenceinput
-\end{DoxyItemize}\hypertarget{InputFile_Config_DEFECTARR}{}\section{Configuration of spins on bath defect}\label{InputFile_Config_DEFECTARR}
 
-\begin{DoxyItemize}
-\item dfname dfname
-\item naddspin naddspin
-\item navaax navaax
-\item apprx apprx
-\item types types
-\item spins spins
-\item gyros gyros
-\item eqs eqs
-\item rxyzs rxyzs
-\item hypf hypf
-\item efg efg
-\item zfs zfs
-\item detuning detuning
-\end{DoxyItemize}\hypertarget{InputFile_Config_QUBITARR}{}\section{Configuration of qubit spins}\label{InputFile_Config_QUBITARR}
+Lines beginning with {\ttfamily \# or !} are considered comments and are ignored.
 
-\begin{DoxyItemize}
-\item nqubit nqubit
-\item qubit (sub-\/key)
-\item name name
-\item spin spin
-\item gyro gyro
-\item xyz xyz
-\item detuning detuning
-\item alpha alphams
-\item beta betams
-\item intmap (sub-\/key)
-\item between between
-\item tensor tensor
-\item psia psiamat
-\item psib psibmat
-\item psi0 psi0mat
-\item overhaus overhaus
-\item alphaidx alphaidx
-\item betaidx betaidx
-\item qspin spin
-\item alphams alphams
-\item betams betams 
-\end{DoxyItemize}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{1}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (General)    }\\\cline{1-1}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (General)    }\\\cline{1-1}
+\endhead
+\doxylink{InputFile_tag_method}{method}    \\\cline{1-1}
+\doxylink{InputFile_tag_quantity}{quantity}    \\\cline{1-1}
+\doxylink{InputFile_tag_order}{order}    \\\cline{1-1}
+\doxylink{InputFile_tag_bfield}{bfield}    \\\cline{1-1}
+\doxylink{InputFile_tag_rbath}{rbath}    \\\cline{1-1}
+\doxylink{InputFile_tag_rdip}{rdip}    \\\cline{1-1}
+\doxylink{InputFile_tag_deltat}{deltat}    \\\cline{1-1}
+\doxylink{InputFile_tag_nstep}{nstep}    \\\cline{1-1}
+\doxylink{InputFile_tag_rbathcut}{rbathcut}    \\\cline{1-1}
+\doxylink{InputFile_tag_rdipcut}{rdipcut}    \\\cline{1-1}
+\doxylink{InputFile_tag_nstate}{nstate}    \\\cline{1-1}
+\doxylink{InputFile_tag_seed}{seed}    \\\cline{1-1}
+gyrofile    \\\cline{1-1}
+bathfile    \\\cline{1-1}
+bathadjust    \\\cline{1-1}
+avaaxfile    \\\cline{1-1}
+statefile    \\\cline{1-1}
+exstatefile    \\\cline{1-1}
+Defect\+Tot\+Spin    \\\cline{1-1}
+Corr\+Tot\+Spin    \\\cline{1-1}
+hf\+\_\+readmode    \\\cline{1-1}
+hf\+\_\+tensorfile    \\\cline{1-1}
+hf\+\_\+cutoff    \\\cline{1-1}
+hf\+\_\+ignore\+\_\+oor    \\\cline{1-1}
+qd\+\_\+readmode    \\\cline{1-1}
+qd\+\_\+tensorfile    \\\cline{1-1}
+cell\+\_\+para    \\\cline{1-1}
+qd\+\_\+tensorfile\+\_\+woqubit   \\\cline{1-1}
+\end{longtabu}
+
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{1}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structQubitArray}{Qubit\+Array})    }\\\cline{1-1}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structQubitArray}{Qubit\+Array})    }\\\cline{1-1}
+\endhead
+nqubit    \\\cline{1-1}
+name    \\\cline{1-1}
+spin    \\\cline{1-1}
+qubitfile    \\\cline{1-1}
+qspin    \\\cline{1-1}
+alphams    \\\cline{1-1}
+betams    \\\cline{1-1}
+qzfs    \\\cline{1-1}
+-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---    \\\cline{1-1}
+Qubit    \\\cline{1-1}
+nqubit    \\\cline{1-1}
+qubit    \\\cline{1-1}
+name    \\\cline{1-1}
+spin    \\\cline{1-1}
+gyro    \\\cline{1-1}
+xyz    \\\cline{1-1}
+detuning    \\\cline{1-1}
+alphams    \\\cline{1-1}
+betams    \\\cline{1-1}
+intmap    \\\cline{1-1}
+between    \\\cline{1-1}
+tensor    \\\cline{1-1}
+psia    \\\cline{1-1}
+psib    \\\cline{1-1}
+psi0    \\\cline{1-1}
+overhaus    \\\cline{1-1}
+alphaidx    \\\cline{1-1}
+betaidx   \\\cline{1-1}
+\end{longtabu}
+
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{1}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structCluster}{Cluster})    }\\\cline{1-1}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structCluster}{Cluster})    }\\\cline{1-1}
+\endhead
+\doxylink{InputFile_tag_order}{order}    \\\cline{1-1}
+\doxylink{InputFile_tag_method}{method}    \\\cline{1-1}
+addsubclus    \\\cline{1-1}
+nk    \\\cline{1-1}
+sK    \\\cline{1-1}
+max\+\_\+trial    \\\cline{1-1}
+max\+\_\+iter    \\\cline{1-1}
+kmeans\+\_\+pp    \\\cline{1-1}
+iter\+\_\+detail   \\\cline{1-1}
+\end{longtabu}
+
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{1}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structPulse}{Pulse})    }\\\cline{1-1}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structPulse}{Pulse})    }\\\cline{1-1}
+\endhead
+npulse    \\\cline{1-1}
+pulsename    \\\cline{1-1}
+sequence   \\\cline{1-1}
+\end{longtabu}
+
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{1}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structDefectArray}{Defect\+Array})    }\\\cline{1-1}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structDefectArray}{Defect\+Array})    }\\\cline{1-1}
+\endhead
+Defect    \\\cline{1-1}
+dfname    \\\cline{1-1}
+apprx    \\\cline{1-1}
+naddspin    \\\cline{1-1}
+navaax    \\\cline{1-1}
+types    \\\cline{1-1}
+spins    \\\cline{1-1}
+gyros    \\\cline{1-1}
+eqs    \\\cline{1-1}
+rxyzs    \\\cline{1-1}
+hypf    \\\cline{1-1}
+efg    \\\cline{1-1}
+zfs    \\\cline{1-1}
+detuning   \\\cline{1-1}
+\end{longtabu}
+
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{1}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structOutput}{Output})    }\\\cline{1-1}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Tag (\doxylink{structOutput}{Output})    }\\\cline{1-1}
+\endhead
+savemode    \\\cline{1-1}
+outfile   \\\cline{1-1}
+\end{longtabu}
+\hypertarget{InputFile_Config_CONFIG}{}\doxysection{\texorpdfstring{General condition}{General condition}}\label{InputFile_Config_CONFIG}
+Below are the descriptions of various configuration tags used in the input file.
+
+\label{InputFile_tag_method}%
+\Hypertarget{InputFile_tag_method}%
+\hypertarget{InputFile_autotoc_md7}{}\doxysubsection{\texorpdfstring{method}{method}}\label{InputFile_autotoc_md7}
+{\bfseries{Description\+:}}~\newline
+ CCE Methods to calculate the dynamics of the system.
+
+{\bfseries{Data Type\+:}} String
+
+{\bfseries{Options\+:}}~\newline
+ \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endhead
+{\ttfamily CCE}   &Conventional CCE method    \\\cline{1-2}
+{\ttfamily g\+CCE}   &Generalized CCE method    \\\cline{1-2}
+{\ttfamily p\+CCE}   &Partition CCE method   \\\cline{1-2}
+\end{longtabu}
+
+
+{\bfseries{Default\+:}} {\ttfamily CCE}
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{method\ :\ CCE\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a3a9071ea9a9409cefb8cbcea2184c879}{Config\+::order} 
+
+\label{InputFile_tag_quantity}%
+\Hypertarget{InputFile_tag_quantity}%
+\hypertarget{InputFile_autotoc_md8}{}\doxysubsection{\texorpdfstring{quantity}{quantity}}\label{InputFile_autotoc_md8}
+{\bfseries{Description\+:}}~\newline
+ Quantity to calculate the dynamics of the system.
+
+{\bfseries{Data Type\+:}} String
+
+{\bfseries{Options\+:}}~\newline
+ \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endhead
+{\ttfamily coherence}   &Coherence function    \\\cline{1-2}
+{\ttfamily dm}   &Density matrix   \\\cline{1-2}
+\end{longtabu}
+
+
+{\bfseries{Unit\+:}} arbitrary unit (a.\+u.)
+
+{\bfseries{Default\+:}} {\ttfamily coherence}
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{quantity\ :\ coherence\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a408cf9618ed41aefd0b0c323f57e0730}{Config\+::quantity} 
+
+\label{InputFile_tag_order}%
+\Hypertarget{InputFile_tag_order}%
+\hypertarget{InputFile_autotoc_md9}{}\doxysubsection{\texorpdfstring{order}{order}}\label{InputFile_autotoc_md9}
+{\bfseries{Description\+:}}~\newline
+ Order of the CCE method.
+
+{\bfseries{Data Type\+:}} Integer
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{order\ :\ 2\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a3a9071ea9a9409cefb8cbcea2184c879}{Config\+::order} 
+
+\label{InputFile_tag_bfield}%
+\Hypertarget{InputFile_tag_bfield}%
+\hypertarget{InputFile_autotoc_md10}{}\doxysubsection{\texorpdfstring{bfield}{bfield}}\label{InputFile_autotoc_md10}
+{\bfseries{Description\+:}}~\newline
+ Magnetic field.
+
+{\bfseries{Data Type\+:}} Float or Float List
+
+{\bfseries{Unit\+:}} gauss (G)
+
+{\bfseries{Default\+:}} 0.\+0
+
+{\bfseries{Example\+:}}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{bfield\ :\ 0.0\ }
+
+\end{DoxyCode}
+ 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{bfield\ :\ [0.0,\ 0.0,\ 0.0]\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_abf4c62b17ba762512fab9da0f1e193be}{Config\+::bfield} 
+
+\label{InputFile_tag_rbath}%
+\Hypertarget{InputFile_tag_rbath}%
+\hypertarget{InputFile_autotoc_md11}{}\doxysubsection{\texorpdfstring{rbath}{rbath}}\label{InputFile_autotoc_md11}
+{\bfseries{Description\+:}}~\newline
+ Bath radius 
+
+{\bfseries{Data Type\+:}} Float
+
+{\bfseries{Unit\+:}} angstrom 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{rbath\ :\ 0.0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a79389333cffeb4063cf1d39e89234c57}{Config\+::rbath} 
+
+\label{InputFile_tag_rdip}%
+\Hypertarget{InputFile_tag_rdip}%
+\hypertarget{InputFile_autotoc_md12}{}\doxysubsection{\texorpdfstring{rdip}{rdip}}\label{InputFile_autotoc_md12}
+{\bfseries{Description\+:}}~\newline
+ Dipolar radius 
+
+{\bfseries{Data Type\+:}} Float
+
+{\bfseries{Unit\+:}} angstrom 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{rdip\ :\ 0.0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_af9d5e3a3b185555cbe04ad12733612b1}{Config\+::rdip} 
+
+\label{InputFile_tag_deltat}%
+\Hypertarget{InputFile_tag_deltat}%
+\hypertarget{InputFile_autotoc_md13}{}\doxysubsection{\texorpdfstring{deltat}{deltat}}\label{InputFile_autotoc_md13}
+{\bfseries{Description\+:}}~\newline
+ Time interval. 
+
+{\bfseries{Data Type\+:}} Float
+
+{\bfseries{Unit\+:}} ms 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{deltat\ :\ 0.0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a6539de558079f55df76dce79c4079b33}{Config\+::deltat} 
+
+\label{InputFile_tag_nstep}%
+\Hypertarget{InputFile_tag_nstep}%
+\hypertarget{InputFile_autotoc_md14}{}\doxysubsection{\texorpdfstring{nstep}{nstep}}\label{InputFile_autotoc_md14}
+{\bfseries{Description\+:}}~\newline
+ Number of time steps. 
+
+{\bfseries{Data Type\+:}} Integer
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{nstep\ :\ 10\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_acd1675410784e93a9c9866de0c64807e}{Config\+::nstep} 
+
+\label{InputFile_tag_rbathcut}%
+\Hypertarget{InputFile_tag_rbathcut}%
+\hypertarget{InputFile_autotoc_md15}{}\doxysubsection{\texorpdfstring{rbathcut}{rbathcut}}\label{InputFile_autotoc_md15}
+{\bfseries{Description\+:}}~\newline
+ Bath inner-\/cutoff radius. 
+
+{\bfseries{Data Type\+:}} Float
+
+{\bfseries{Unit\+:}} angstrom 
+
+{\bfseries{Default\+:}} 0.\+0 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{rbathcut\ :\ 0.0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a2eeef76fa44792c24c3320ff6b4d19c8}{Config\+::rbathcut} 
+
+\label{InputFile_tag_rdipcut}%
+\Hypertarget{InputFile_tag_rdipcut}%
+\hypertarget{InputFile_autotoc_md16}{}\doxysubsection{\texorpdfstring{rdipcut}{rdipcut}}\label{InputFile_autotoc_md16}
+{\bfseries{Description\+:}}~\newline
+ Dipolar inner-\/cutoff radius. 
+
+{\bfseries{Data Type\+:}} Float
+
+{\bfseries{Unit\+:}} angstrom 
+
+{\bfseries{Default\+:}} 0.\+0 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{rdipcut\ :\ 0.0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a39b6cf20220772b2326ddf423bf3a3f7}{Config\+::rdipcut} 
+
+\label{InputFile_tag_nstate}%
+\Hypertarget{InputFile_tag_nstate}%
+\hypertarget{InputFile_autotoc_md17}{}\doxysubsection{\texorpdfstring{nstate}{nstate}}\label{InputFile_autotoc_md17}
+{\bfseries{Description\+:}}~\newline
+ Number of state templates to be generated. 
+
+{\bfseries{Data Type\+:}} Integer
+
+{\bfseries{Options\+:}}~\newline
+ \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endhead
+{\ttfamily 0}   &No state template will be generated (Ensemble approach)    \\\cline{1-2}
+{\ttfamily \texorpdfstring{$>$}{>}0}   &State template will be generated (Single-\/sample approach) ~\newline
+ Mean-\/field effect will be automatically added   \\\cline{1-2}
+\end{longtabu}
+
+
+{\bfseries{Default\+:}} 0 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{nstate\ :\ 10\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_seed}{seed} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a91b2aadf805896022127036ded259e79}{Config\+::nstate} 
+
+\label{InputFile_tag_seed}%
+\Hypertarget{InputFile_tag_seed}%
+\hypertarget{InputFile_autotoc_md18}{}\doxysubsection{\texorpdfstring{seed}{seed}}\label{InputFile_autotoc_md18}
+{\bfseries{Description\+:}}~\newline
+ Seed for random number generator. ~\newline
+ If you want to generate the same state templates, you should set the same seed value. 
+
+{\bfseries{Data Type\+:}} Integer
+
+{\bfseries{Default\+:}} Time(\+NULL) 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{seed\ :\ 1241798\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_nstate}{nstate} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a92ed038fd7676ed62640f59270a60545}{Config\+::seed} 
+
+\textbackslash{} 
