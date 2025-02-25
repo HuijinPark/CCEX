@@ -39,22 +39,22 @@ Lines beginning with {\ttfamily \# or !} are considered comments and are ignored
 \doxylink{InputFile_tag_rdipcut}{rdipcut}    \\\cline{1-1}
 \doxylink{InputFile_tag_nstate}{nstate}    \\\cline{1-1}
 \doxylink{InputFile_tag_seed}{seed}    \\\cline{1-1}
-gyrofile    \\\cline{1-1}
-bathfile    \\\cline{1-1}
-bathadjust    \\\cline{1-1}
-avaaxfile    \\\cline{1-1}
-statefile    \\\cline{1-1}
-exstatefile    \\\cline{1-1}
-Defect\+Tot\+Spin    \\\cline{1-1}
-Corr\+Tot\+Spin    \\\cline{1-1}
-hf\+\_\+readmode    \\\cline{1-1}
-hf\+\_\+tensorfile    \\\cline{1-1}
-hf\+\_\+cutoff    \\\cline{1-1}
-hf\+\_\+ignore\+\_\+oor    \\\cline{1-1}
-qd\+\_\+readmode    \\\cline{1-1}
-qd\+\_\+tensorfile    \\\cline{1-1}
-cell\+\_\+para    \\\cline{1-1}
-qd\+\_\+tensorfile\+\_\+woqubit   \\\cline{1-1}
+\doxylink{InputFile_tag_gyrofile}{gyrofile}    \\\cline{1-1}
+\doxylink{InputFile_tag_bathfile}{bathfile}    \\\cline{1-1}
+\doxylink{InputFile_tag_bathadjust}{bathadjust}    \\\cline{1-1}
+\doxylink{InputFile_tag_avaaxfile}{avaaxfile}    \\\cline{1-1}
+\doxylink{InputFile_tag_statefile}{statefile}    \\\cline{1-1}
+\doxylink{InputFile_tag_exstatefile}{exstatefile}    \\\cline{1-1}
+\doxylink{InputFile_tag_DefectTotSpin}{Defect\+Tot\+Spin}    \\\cline{1-1}
+\doxylink{InputFile_tag_CorrTotSpin}{Corr\+Tot\+Spin}    \\\cline{1-1}
+\doxylink{InputFile_tag_hf_readmode}{hf\+\_\+readmode}    \\\cline{1-1}
+\doxylink{InputFile_tag_hf_tensorfile}{hf\+\_\+tensorfile}    \\\cline{1-1}
+\doxylink{InputFile_tag_hf_cutoff}{hf\+\_\+cutoff}    \\\cline{1-1}
+\doxylink{InputFile_tag_hf_ignore_oor}{hf\+\_\+ignore\+\_\+oor}    \\\cline{1-1}
+\doxylink{InputFile_tag_qd_readmode}{qd\+\_\+readmode}    \\\cline{1-1}
+\doxylink{InputFile_tag_qd_tensorfile}{qd\+\_\+tensorfile}    \\\cline{1-1}
+\doxylink{InputFile_tag_cell_para}{cell\+\_\+para}    \\\cline{1-1}
+\doxylink{InputFile_tag_qd_tensorfile_woqubit}{qd\+\_\+tensorfile\+\_\+woqubit}   \\\cline{1-1}
 \end{longtabu}
 
 
@@ -486,4 +486,553 @@ Below are the descriptions of various configuration tags used in the input file.
 
 {\bfseries{Related variable\+:}} \doxylink{structConfig_a92ed038fd7676ed62640f59270a60545}{Config\+::seed} 
 
-\textbackslash{} 
+\label{InputFile_tag_gyrofile}%
+\Hypertarget{InputFile_tag_gyrofile}%
+\hypertarget{InputFile_autotoc_md19}{}\doxysubsection{\texorpdfstring{gyrofile}{gyrofile}}\label{InputFile_autotoc_md19}
+{\bfseries{Description\+:}}~\newline
+ File name of the gyromagnetic ratio. ~\newline
+ 
+
+
+\begin{DoxyPre}
+    File format is the following :
+    [Name] [SpinNumber] [Gyromagnetic ratio (rad/ms/G)]
+\end{DoxyPre}
+ 
+\begin{DoxyPre}
+    example)
+    13C 0.5 6.728284
+    P1  0.5 -\/17608.597050
+\end{DoxyPre}
+ 
+
+{\bfseries{Data Type\+:}} String (File path) 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{gyrofile\ :\ \textcolor{stringliteral}{"{}filepath"{}}\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a735f7f25b0847d08468616025a27ffe5}{Config\+::gyrofile} 
+
+\label{InputFile_tag_bathfile}%
+\Hypertarget{InputFile_tag_bathfile}%
+\hypertarget{InputFile_autotoc_md20}{}\doxysubsection{\texorpdfstring{bathfile}{bathfile}}\label{InputFile_autotoc_md20}
+{\bfseries{Description\+:}}~\newline
+ File name of the bath spatial configuration. ~\newline
+ 
+
+
+\begin{DoxyPre}
+    File format is the following :
+    [x] [y] [z] [Name]
+\end{DoxyPre}
+ 
+\begin{DoxyPre}
+    example)
+    1.0 0.0 0.0 0.0   -\/ Total line number 
+    1.0 2.0 3.0 13C   -\/ x,y,z in cartesian, angstrom
+    4.0 5.0 6.0  P1   -\/ Spin name should be the same to the name in \doxylink{InputFile_tag_gyrofile}{gyrofile}
+\end{DoxyPre}
+ 
+
+{\bfseries{Data Type\+:}} String (File path) or String List 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{bathfile\ :\ \textcolor{stringliteral}{"{}filepath"{}}\ }
+
+\end{DoxyCode}
+ 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{bathfile\ :\ [\textcolor{stringliteral}{"{}filepath1"{}},\ \textcolor{stringliteral}{"{}filepath2"{}},\ ...\ ]\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} Config\+::bathfile 
+
+\label{InputFile_tag_bathadjust}%
+\Hypertarget{InputFile_tag_bathadjust}%
+\hypertarget{InputFile_autotoc_md21}{}\doxysubsection{\texorpdfstring{bathadjust}{bathadjust}}\label{InputFile_autotoc_md21}
+{\bfseries{Description\+:}}~\newline
+ Adjust the bath configuration. ~\newline
+ If you want to adjust the bath configuration, you can set the bathadjust value. ~\newline
+ Usually, this tag is required for multiple qubit calculation that wouldb have different bath configuration ~\newline
+
+
+{\bfseries{Data Type\+:}} Double List 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{bathadjust\ :\ [1.0,\ 2.0,\ 3.0]\ }
+
+\end{DoxyCode}
+ 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{bathadjust\ :\ [[1.0,\ 2.0,\ 3.0],\ [4.0,\ 5.0,\ 6.0],\ ...\ [7.0,\ 8.0,\ 9.0]]\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a1ce641fcaac86656dde150e974ff5ff7}{Config\+::bathadjust} 
+
+\label{InputFile_tag_avaaxfile}%
+\Hypertarget{InputFile_tag_avaaxfile}%
+\hypertarget{InputFile_autotoc_md22}{}\doxysubsection{\texorpdfstring{avaaxfile}{avaaxfile}}\label{InputFile_autotoc_md22}
+{\bfseries{Description\+:}}~\newline
+ File name of the bath pricipal axis configuration. ~\newline
+ This tag might require when you want to calculate paramagnetic (PM) defect bath. ~\newline
+ During PM defect calculation, if you don\textquotesingle{}t give this file, the program will automatically generate the principal axis configuration. ~\newline
+ 
+
+
+\begin{DoxyPre}
+    File format is the following :
+    [Principal axis index]
+\end{DoxyPre}
+ 
+\begin{DoxyPre}
+    example)
+    5.0 -\/ The number of total line
+    1.0 -\/ principal axis index
+    2.0 -\/  :
+    3.0
+    3.0
+\end{DoxyPre}
+ 
+
+{\bfseries{Data Type\+:}} String (File path) 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{avaaxfile\ :\ \textcolor{stringliteral}{"{}filepath"{}}\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related tags\+:}} Defect 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_ae3244e507716ae5483bb32a2e4fef809}{Config\+::avaaxfile} 
+
+\label{InputFile_tag_statefile}%
+\Hypertarget{InputFile_tag_statefile}%
+\hypertarget{InputFile_autotoc_md23}{}\doxysubsection{\texorpdfstring{statefile}{statefile}}\label{InputFile_autotoc_md23}
+{\bfseries{Description\+:}}~\newline
+ File name of the bath state template. ~\newline
+ This tag might require when you want to obtain the result for a certain set of initial bath state. ~\newline
+ If the file path of the statefile doesn\textquotesingle{}t exist, the program will automatically generate the state template. ~\newline
+ 
+
+
+\begin{DoxyPre}
+    File format is the following :
+    [SpinSubLevel]
+\end{DoxyPre}
+ 
+\begin{DoxyPre}
+    example)
+     5.0   -\/ The number of total line
+    -\/0.5   -\/ Spin sublevel when S=1/2
+     0.5   -\/    :
+    -\/0.5
+    -\/0.5
+\end{DoxyPre}
+ 
+
+{\bfseries{Data Type\+:}} String (File path) 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{statefile\ :\ \textcolor{stringliteral}{"{}filepath"{}}\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related tags\+:}} \doxylink{InputFile_tag_nstate}{nstate} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a7ce40e0c9e172e7b2e213101b154760b}{Config\+::statefile} 
+
+\label{InputFile_tag_exstatefile}%
+\Hypertarget{InputFile_tag_exstatefile}%
+\hypertarget{InputFile_autotoc_md24}{}\doxysubsection{\texorpdfstring{exstatefile}{exstatefile}}\label{InputFile_autotoc_md24}
+{\bfseries{Description\+:}}~\newline
+ File name of the additional bath spin state template. ~\newline
+ This tag might require when you want to calculate paramagnetic defect bath. ~\newline
+ Each bath state represent the additional bath spin state. ~\newline
+ If the file path of the exstatefile doesn\textquotesingle{}t exist, the program will automatically generate the state template. ~\newline
+ 
+
+
+\begin{DoxyPre}
+    File format is the following :
+    [SpinSubLevel]
+\end{DoxyPre}
+ 
+\begin{DoxyPre}
+    example)
+     5.0   -\/ The number of total line
+    -\/1.0   -\/ Spin sublevel when S=1
+     0.0   -\/    :
+     1.0
+    -\/1.0
+\end{DoxyPre}
+ 
+
+{\bfseries{Data Type\+:}} String (File path) 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{exstatefile\ :\ \textcolor{stringliteral}{"{}filepath"{}}\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related tags\+:}} Defect 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a70ec8756f364dc3d40201f951476137e}{Config\+::exstatefile} 
+
+\label{InputFile_tag_DefectTotSpin}%
+\Hypertarget{InputFile_tag_DefectTotSpin}%
+\hypertarget{InputFile_autotoc_md25}{}\doxysubsection{\texorpdfstring{Defect\+Tot\+Spin}{Defect\+Tot\+Spin}}\label{InputFile_autotoc_md25}
+{\bfseries{Description\+:}}~\newline
+ Total spin number of the qubit. ~\newline
+ (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) ~\newline
+
+
+{\bfseries{Data Type\+:}} Double 
+
+{\bfseries{Default\+:}} 1.\+0 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{DefectTotSpin\ :\ 1.0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_hf_tensorfile}{hf\+\_\+tensorfile} \doxylink{InputFile_tag_CorrTotSpin}{Corr\+Tot\+Spin} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a716389cd405e9c041cd3ac7c7608ccdd}{Config\+::\+Defect\+Tot\+Spin} 
+
+\label{InputFile_tag_CorrTotSpin}%
+\Hypertarget{InputFile_tag_CorrTotSpin}%
+\hypertarget{InputFile_autotoc_md26}{}\doxysubsection{\texorpdfstring{Corr\+Tot\+Spin}{Corr\+Tot\+Spin}}\label{InputFile_autotoc_md26}
+{\bfseries{Description\+:}}~\newline
+ Spin nubmer correction ~\newline
+ (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) ~\newline
+
+
+{\bfseries{Data Type\+:}} Double 
+
+{\bfseries{Default\+:}} 0.\+0 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{CorrTotSpin\ :\ 0.0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_hf_tensorfile}{hf\+\_\+tensorfile} \doxylink{InputFile_tag_DefectTotSpin}{Defect\+Tot\+Spin} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_ac923676eaaf0a911eb890ee419c2b8e6}{Config\+::\+Corr\+Tot\+Spin} 
+
+\label{InputFile_tag_hf_readmode}%
+\Hypertarget{InputFile_tag_hf_readmode}%
+\hypertarget{InputFile_autotoc_md27}{}\doxysubsection{\texorpdfstring{hf\+\_\+readmode}{hf\+\_\+readmode}}\label{InputFile_autotoc_md27}
+{\bfseries{Description\+:}}~\newline
+ Interaction tensor between qubit and bath spins can be determined by this option. ~\newline
+ If you want to use the hyperfine tensor obtained from DFT calculation, you should set this option. ~\newline
+
+
+{\bfseries{Options\+:}}~\newline
+ \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endhead
+{\ttfamily 0}   &No DFT hyperfine tensor ~\newline
+ (Point-\/dipole approximation)    \\\cline{1-2}
+{\ttfamily 1}   &Fermi-\/contact term + point-\/dipole tensor    \\\cline{1-2}
+{\ttfamily 2}   &DFT dipolar tensor    \\\cline{1-2}
+{\ttfamily 3}   &Fermi-\/contact term + DFT dipole tensor   \\\cline{1-2}
+\end{longtabu}
+
+
+{\bfseries{Default\+:}} 0 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{hf\_readmode\ :\ 0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_hf_tensorfile}{hf\+\_\+tensorfile} \doxylink{InputFile_tag_hf_cutoff}{hf\+\_\+cutoff} \doxylink{InputFile_tag_hf_ignore_oor}{hf\+\_\+ignore\+\_\+oor} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a3d4d5a3943f20928bdce09e64fa4bb37}{Config\+::hf\+\_\+readmode} 
+
+\label{InputFile_tag_hf_tensorfile}%
+\Hypertarget{InputFile_tag_hf_tensorfile}%
+\hypertarget{InputFile_autotoc_md28}{}\doxysubsection{\texorpdfstring{hf\+\_\+tensorfile}{hf\+\_\+tensorfile}}\label{InputFile_autotoc_md28}
+{\bfseries{Description\+:}}~\newline
+ File name of the hyperfine tensor. ~\newline
+ This tag is required when you use the hyperfine tensor obtained from DFT calculation. ~\newline
+ 
+
+
+\begin{DoxyPre}
+    File format is the following :
+ \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000025}{Todo}}]\textbackslash{}Ref other page
+\end{DoxyRefDesc}
+\end{DoxyPre}
+
+
+{\bfseries{Data Type\+:}} String (File path) 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{hf\_tensorfile\ :\ \textcolor{stringliteral}{"{}filepath"{}}\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_hf_readmode}{hf\+\_\+readmode} \doxylink{InputFile_tag_hf_cutoff}{hf\+\_\+cutoff} \doxylink{InputFile_tag_hf_ignore_oor}{hf\+\_\+ignore\+\_\+oor} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a52710072ec30b071e08c1b62f7450c0f}{Config\+::hf\+\_\+tensorfile} 
+
+\label{InputFile_tag_hf_cutoff}%
+\Hypertarget{InputFile_tag_hf_cutoff}%
+\hypertarget{InputFile_autotoc_md29}{}\doxysubsection{\texorpdfstring{hf\+\_\+cutoff}{hf\+\_\+cutoff}}\label{InputFile_autotoc_md29}
+{\bfseries{Description\+:}}~\newline
+ Removed ~\newline
+ \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000026}{Todo}}]JW \end{DoxyRefDesc}
+
+
+{\bfseries{Data Type\+:}} Double 
+
+{\bfseries{Default\+:}} 0.\+0 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{hf\_cutoff\ :\ 0.0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_hf_tensorfile}{hf\+\_\+tensorfile} \doxylink{InputFile_tag_hf_readmode}{hf\+\_\+readmode} \doxylink{InputFile_tag_hf_ignore_oor}{hf\+\_\+ignore\+\_\+oor} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_af82a9ccd3b05247db3da179361faef85}{Config\+::hf\+\_\+cutoff} 
+
+\label{InputFile_tag_hf_ignore_oor}%
+\Hypertarget{InputFile_tag_hf_ignore_oor}%
+\hypertarget{InputFile_autotoc_md30}{}\doxysubsection{\texorpdfstring{hf\+\_\+ignore\+\_\+oor}{hf\+\_\+ignore\+\_\+oor}}\label{InputFile_autotoc_md30}
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000027}{Todo}}]JW 
+
+{\bfseries{Description\+:}}~\newline
+ Even if the bath spin is within the specified range set in the hyperfine tensor, ~\newline
+ if the code cannot find a matching spin relative position and spin tensor, ~\newline
+ it may or may not raise an error depending on this option. ~\newline
+
+
+{\bfseries{Data Type\+:}} Int 
+
+{\bfseries{Options\+:}}~\newline
+ \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endhead
+{\ttfamily 0}   &Strict enforcement (no ignoring out-\/of-\/range spins)    \\\cline{1-2}
+{\ttfamily 1}   &Not strict (allows ignoring out-\/of-\/range spins)   \\\cline{1-2}
+\end{longtabu}
+
+
+{\bfseries{Default\+:}} 0 
+
+{\bfseries{Example\+:}} \end{DoxyRefDesc}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{hf\_ignore\_oor\ :\ 0\ }
+
+\end{DoxyCode}
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{hf\_ignore\_oor\ :\ 1\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_hf_tensorfile}{hf\+\_\+tensorfile} \doxylink{InputFile_tag_hf_readmode}{hf\+\_\+readmode} \doxylink{InputFile_tag_hf_cutoff}{hf\+\_\+cutoff} 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a840b086fb6ef148cea4e370967da30e9}{Config\+::hf\+\_\+ignore\+\_\+oor} 
+
+\label{InputFile_tag_qd_readmode}%
+\Hypertarget{InputFile_tag_qd_readmode}%
+\hypertarget{InputFile_autotoc_md31}{}\doxysubsection{\texorpdfstring{qd\+\_\+readmode}{qd\+\_\+readmode}}\label{InputFile_autotoc_md31}
+{\bfseries{Description\+:}}~\newline
+ \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000028}{Todo}}]JW Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
+ If you want to use the Quadrupole tensor obtained from DFT calculation, you should set this option. ~\newline
+\end{DoxyRefDesc}
+
+
+{\bfseries{Options\+:}}~\newline
+ \tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
+\endhead
+{\ttfamily 0}   &No DFT quadrupole tensor    \\\cline{1-2}
+{\ttfamily 1}   &Removed option    \\\cline{1-2}
+{\ttfamily 2}   &Read quadrupole DFT file from \doxylink{InputFile_tag_qd_tensorfile}{qd\+\_\+tensorfile}    \\\cline{1-2}
+{\ttfamily 3}   &Read quadrupole DFT file from both \doxylink{InputFile_tag_qd_tensorfile}{qd\+\_\+tensorfile} and \doxylink{InputFile_tag_qd_tensorfile_woqubit}{qd\+\_\+tensorfile\+\_\+woqubit} ~\newline
+ cell\+\_\+para is required ~\newline
+ (Strained structure)    \\\cline{1-2}
+{\ttfamily 4}   &Read quadrupole DFT file from both \doxylink{InputFile_tag_qd_tensorfile}{qd\+\_\+tensorfile} and \doxylink{InputFile_tag_qd_tensorfile_woqubit}{qd\+\_\+tensorfile\+\_\+woqubit} ~\newline
+ cell\+\_\+para is required ~\newline
+ (Bubble type structure)   \\\cline{1-2}
+\end{longtabu}
+
+
+{\bfseries{Default\+:}} 0 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{qd\_readmode\ :\ 0\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_qd_tensorfile}{qd\+\_\+tensorfile} qd\+\_\+cutoff 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_adc1119b46a95084ddd4c7bfa2a8d50d9}{Config\+::qd\+\_\+readmode} 
+
+\label{InputFile_tag_qd_tensorfile}%
+\Hypertarget{InputFile_tag_qd_tensorfile}%
+\hypertarget{InputFile_autotoc_md32}{}\doxysubsection{\texorpdfstring{qd\+\_\+tensorfile}{qd\+\_\+tensorfile}}\label{InputFile_autotoc_md32}
+{\bfseries{Description\+:}}~\newline
+ File name of the quadrupole tensor. ~\newline
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. ~\newline
+ 
+
+
+\begin{DoxyPre}
+    File format is the following :
+ \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000029}{Todo}}]\textbackslash{}Ref other page
+\end{DoxyRefDesc}
+\end{DoxyPre}
+ 
+
+{\bfseries{Data Type\+:}} String (File path) 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{qd\_tensorfile\ :\ \textcolor{stringliteral}{"{}filepath"{}}\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_qd_readmode}{qd\+\_\+readmode} qd\+\_\+cutoff \doxylink{InputFile_tag_qd_tensorfile_woqubit}{qd\+\_\+tensorfile\+\_\+woqubit} cell\+\_\+para 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a91d5741035098807bc28000a003bd35d}{Config\+::qd\+\_\+tensorfile} 
+
+\label{InputFile_tag_qd_tensorfile_woqubit}%
+\Hypertarget{InputFile_tag_qd_tensorfile_woqubit}%
+\hypertarget{InputFile_autotoc_md33}{}\doxysubsection{\texorpdfstring{qd\+\_\+tensorfile\+\_\+woqubit}{qd\+\_\+tensorfile\+\_\+woqubit}}\label{InputFile_autotoc_md33}
+{\bfseries{Description\+:}}~\newline
+ File name of the quadrupole tensor without qubit. ~\newline
+ This would be useful for coherence simultion in the strained or bubble structure. ~\newline
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. ~\newline
+ 
+
+
+\begin{DoxyPre}
+    File format is the following :
+ \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000030}{Todo}}]\textbackslash{}Ref other page
+\end{DoxyRefDesc}
+\end{DoxyPre}
+ 
+
+{\bfseries{Data Type\+:}} String (File path) 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{qd\_tensorfile\_woqubit\ :\ \textcolor{stringliteral}{"{}filepath"{}}\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_qd_readmode}{qd\+\_\+readmode} qd\+\_\+cutoff \doxylink{InputFile_tag_qd_tensorfile}{qd\+\_\+tensorfile} cell\+\_\+para 
+
+{\bfseries{Related variable\+:}} \doxylink{structConfig_a93e5666a93192db9d1cd361381d64301}{Config\+::qd\+\_\+tensorfile\+\_\+woqubit} 
+
+\label{InputFile_tag_cell_para}%
+\Hypertarget{InputFile_tag_cell_para}%
+\hypertarget{InputFile_autotoc_md34}{}\doxysubsection{\texorpdfstring{cell\+\_\+para}{cell\+\_\+para}}\label{InputFile_autotoc_md34}
+{\bfseries{Description\+:}}~\newline
+ Lattice parameter of the strained or bubble structure. ~\newline
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. ~\newline
+
+
+{\bfseries{Data Type\+:}} Double List 
+
+{\bfseries{Default\+:}} -\/ 
+
+{\bfseries{Unit\+:}} angstrom 
+
+{\bfseries{Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cell\_para\ :\ [1.0,\ 2.0,\ 3.0]\ }
+
+\end{DoxyCode}
+ 
+
+{\bfseries{Related Tags\+:}} \doxylink{InputFile_tag_qd_readmode}{qd\+\_\+readmode} qd\+\_\+cutoff \doxylink{InputFile_tag_qd_tensorfile}{qd\+\_\+tensorfile} \doxylink{InputFile_tag_qd_tensorfile_woqubit}{qd\+\_\+tensorfile\+\_\+woqubit} 
+
+{\bfseries{Related variable\+:}} Config\+::cell\+\_\+para 

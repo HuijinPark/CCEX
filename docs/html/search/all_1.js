@@ -6,5 +6,5 @@ var searchData=
   ['alt_3',['CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;',['..//Users/huijin/Documents/GitHub/CCEX/README.md#autotoc_md0',1,'']]],
   ['alt_20img_20src_20https_3a_20img_20shields_20io_20github_20watchers_20username_20repo_20name_20svg_20alt_4',['CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;',['..//Users/huijin/Documents/GitHub/CCEX/README.md#autotoc_md0',1,'']]],
   ['and_20result_20plot_5',['Example of Including Input File and Result Plot',['../Examples.html#autotoc_md3',1,'']]],
-  ['avaaxfile_6',['avaaxfile',['../structConfig.html#ae3244e507716ae5483bb32a2e4fef809',1,'Config']]]
+  ['avaaxfile_6',['avaaxfile',['../structConfig.html#ae3244e507716ae5483bb32a2e4fef809',1,'Config::avaaxfile'],['../InputFile.html#autotoc_md22',1,'avaaxfile']]]
 ];

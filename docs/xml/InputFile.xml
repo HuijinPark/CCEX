@@ -57,52 +57,52 @@
 <entry thead="no"><para><ref refid="InputFile_1tag_seed" kindref="member">seed</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>gyrofile    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_gyrofile" kindref="member">gyrofile</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>bathfile    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_bathfile" kindref="member">bathfile</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>bathadjust    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_bathadjust" kindref="member">bathadjust</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>avaaxfile    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_avaaxfile" kindref="member">avaaxfile</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>statefile    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_statefile" kindref="member">statefile</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>exstatefile    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_exstatefile" kindref="member">exstatefile</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>DefectTotSpin    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_DefectTotSpin" kindref="member">DefectTotSpin</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>CorrTotSpin    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_CorrTotSpin" kindref="member">CorrTotSpin</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>hf_readmode    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_hf_readmode" kindref="member">hf_readmode</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>hf_tensorfile    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>hf_cutoff    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_hf_cutoff" kindref="member">hf_cutoff</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>hf_ignore_oor    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_hf_ignore_oor" kindref="member">hf_ignore_oor</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>qd_readmode    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_qd_readmode" kindref="member">qd_readmode</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>qd_tensorfile    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>cell_para    </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_cell_para" kindref="member">cell_para</ref>    </para>
 </entry></row>
 <row>
-<entry thead="no"><para>qd_tensorfile_woqubit   </para>
+<entry thead="no"><para><ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref>   </para>
 </entry></row>
 </table>
 </para>
@@ -484,7 +484,358 @@
 </programlisting> </para>
 <para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_nstate" kindref="member">nstate</ref> </para>
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a92ed038fd7676ed62640f59270a60545" kindref="member">Config::seed</ref> </para>
-<para>\ </para>
+<para><anchor id="InputFile_1tag_gyrofile"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md19">
+<title>gyrofile</title><para><bold>Description:</bold><linebreak/>
+ File name of the gyromagnetic ratio. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+    [Name] [SpinNumber] [Gyromagnetic ratio (rad/ms/G)]
+</preformatted> <preformatted>
+    example)
+    13C 0.5 6.728284
+    P1  0.5 -17608.597050
+</preformatted> </para>
+<para><bold>Data Type:</bold> String (File path) </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">gyrofile<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a735f7f25b0847d08468616025a27ffe5" kindref="member">Config::gyrofile</ref> </para>
+<para><anchor id="InputFile_1tag_bathfile"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md20">
+<title>bathfile</title><para><bold>Description:</bold><linebreak/>
+ File name of the bath spatial configuration. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+    [x] [y] [z] [Name]
+</preformatted> <preformatted>
+    example)
+    1.0 0.0 0.0 0.0   - Total line number 
+    1.0 2.0 3.0 13C   - x,y,z in cartesian, angstrom
+    4.0 5.0 6.0  P1   - Spin name should be the same to the name in <ref refid="InputFile_1tag_gyrofile" kindref="member">gyrofile</ref>
+</preformatted> </para>
+<para><bold>Data Type:</bold> String (File path) or String List </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">bathfile<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><programlisting><codeline><highlight class="normal">bathfile<sp/>:<sp/>[</highlight><highlight class="stringliteral">&quot;filepath1&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;filepath2&quot;</highlight><highlight class="normal">,<sp/>...<sp/>]<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> Config::bathfile </para>
+<para><anchor id="InputFile_1tag_bathadjust"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md21">
+<title>bathadjust</title><para><bold>Description:</bold><linebreak/>
+ Adjust the bath configuration. <linebreak/>
+ If you want to adjust the bath configuration, you can set the bathadjust value. <linebreak/>
+ Usually, this tag is required for multiple qubit calculation that wouldb have different bath configuration <linebreak/>
+</para>
+<para><bold>Data Type:</bold> Double List </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">bathadjust<sp/>:<sp/>[1.0,<sp/>2.0,<sp/>3.0]<sp/></highlight></codeline>
+</programlisting> </para>
+<para><programlisting><codeline><highlight class="normal">bathadjust<sp/>:<sp/>[[1.0,<sp/>2.0,<sp/>3.0],<sp/>[4.0,<sp/>5.0,<sp/>6.0],<sp/>...<sp/>[7.0,<sp/>8.0,<sp/>9.0]]<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a1ce641fcaac86656dde150e974ff5ff7" kindref="member">Config::bathadjust</ref> </para>
+<para><anchor id="InputFile_1tag_avaaxfile"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md22">
+<title>avaaxfile</title><para><bold>Description:</bold><linebreak/>
+ File name of the bath pricipal axis configuration. <linebreak/>
+ This tag might require when you want to calculate paramagnetic (PM) defect bath. <linebreak/>
+ During PM defect calculation, if you don&apos;t give this file, the program will automatically generate the principal axis configuration. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+    [Principal axis index]
+</preformatted> <preformatted>
+    example)
+    5.0 - The number of total line
+    1.0 - principal axis index
+    2.0 -  :
+    3.0
+    3.0
+</preformatted> </para>
+<para><bold>Data Type:</bold> String (File path) </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">avaaxfile<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related tags:</bold> Defect </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1ae3244e507716ae5483bb32a2e4fef809" kindref="member">Config::avaaxfile</ref> </para>
+<para><anchor id="InputFile_1tag_statefile"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md23">
+<title>statefile</title><para><bold>Description:</bold><linebreak/>
+ File name of the bath state template. <linebreak/>
+ This tag might require when you want to obtain the result for a certain set of initial bath state. <linebreak/>
+ If the file path of the statefile doesn&apos;t exist, the program will automatically generate the state template. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+    [SpinSubLevel]
+</preformatted> <preformatted>
+    example)
+     5.0   - The number of total line
+    -0.5   - Spin sublevel when S=1/2
+     0.5   -    :
+    -0.5
+    -0.5
+</preformatted> </para>
+<para><bold>Data Type:</bold> String (File path) </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">statefile<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related tags:</bold> <ref refid="InputFile_1tag_nstate" kindref="member">nstate</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a7ce40e0c9e172e7b2e213101b154760b" kindref="member">Config::statefile</ref> </para>
+<para><anchor id="InputFile_1tag_exstatefile"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md24">
+<title>exstatefile</title><para><bold>Description:</bold><linebreak/>
+ File name of the additional bath spin state template. <linebreak/>
+ This tag might require when you want to calculate paramagnetic defect bath. <linebreak/>
+ Each bath state represent the additional bath spin state. <linebreak/>
+ If the file path of the exstatefile doesn&apos;t exist, the program will automatically generate the state template. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+    [SpinSubLevel]
+</preformatted> <preformatted>
+    example)
+     5.0   - The number of total line
+    -1.0   - Spin sublevel when S=1
+     0.0   -    :
+     1.0
+    -1.0
+</preformatted> </para>
+<para><bold>Data Type:</bold> String (File path) </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">exstatefile<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related tags:</bold> Defect </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a70ec8756f364dc3d40201f951476137e" kindref="member">Config::exstatefile</ref> </para>
+<para><anchor id="InputFile_1tag_DefectTotSpin"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md25">
+<title>DefectTotSpin</title><para><bold>Description:</bold><linebreak/>
+ Total spin number of the qubit. <linebreak/>
+ (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <linebreak/>
+</para>
+<para><bold>Data Type:</bold> Double </para>
+<para><bold>Default:</bold> 1.0 </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">DefectTotSpin<sp/>:<sp/>1.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref> <ref refid="InputFile_1tag_CorrTotSpin" kindref="member">CorrTotSpin</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a716389cd405e9c041cd3ac7c7608ccdd" kindref="member">Config::DefectTotSpin</ref> </para>
+<para><anchor id="InputFile_1tag_CorrTotSpin"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md26">
+<title>CorrTotSpin</title><para><bold>Description:</bold><linebreak/>
+ Spin nubmer correction <linebreak/>
+ (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <linebreak/>
+</para>
+<para><bold>Data Type:</bold> Double </para>
+<para><bold>Default:</bold> 0.0 </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">CorrTotSpin<sp/>:<sp/>0.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref> <ref refid="InputFile_1tag_DefectTotSpin" kindref="member">DefectTotSpin</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1ac923676eaaf0a911eb890ee419c2b8e6" kindref="member">Config::CorrTotSpin</ref> </para>
+<para><anchor id="InputFile_1tag_hf_readmode"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md27">
+<title>hf_readmode</title><para><bold>Description:</bold><linebreak/>
+ Interaction tensor between qubit and bath spins can be determined by this option. <linebreak/>
+ If you want to use the hyperfine tensor obtained from DFT calculation, you should set this option. <linebreak/>
+</para>
+<para><bold>Options:</bold><linebreak/>
+ <table rows="5" cols="2"><row>
+<entry thead="yes"><para>Option   </para>
+</entry><entry thead="yes"><para>Description    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>0</computeroutput>   </para>
+</entry><entry thead="no"><para>No DFT hyperfine tensor <linebreak/>
+ (Point-dipole approximation)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>1</computeroutput>   </para>
+</entry><entry thead="no"><para>Fermi-contact term + point-dipole tensor    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>2</computeroutput>   </para>
+</entry><entry thead="no"><para>DFT dipolar tensor    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>3</computeroutput>   </para>
+</entry><entry thead="no"><para>Fermi-contact term + DFT dipole tensor   </para>
+</entry></row>
+</table>
+</para>
+<para><bold>Default:</bold> 0 </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">hf_readmode<sp/>:<sp/>0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref> <ref refid="InputFile_1tag_hf_cutoff" kindref="member">hf_cutoff</ref> <ref refid="InputFile_1tag_hf_ignore_oor" kindref="member">hf_ignore_oor</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a3d4d5a3943f20928bdce09e64fa4bb37" kindref="member">Config::hf_readmode</ref> </para>
+<para><anchor id="InputFile_1tag_hf_tensorfile"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md28">
+<title>hf_tensorfile</title><para><bold>Description:</bold><linebreak/>
+ File name of the hyperfine tensor. <linebreak/>
+ This tag is required when you use the hyperfine tensor obtained from DFT calculation. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+ <xrefsect id="todo_1_todo000025"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page
+</para>
+</xrefdescription></xrefsect></preformatted></para>
+<para><bold>Data Type:</bold> String (File path) </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">hf_tensorfile<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_hf_readmode" kindref="member">hf_readmode</ref> <ref refid="InputFile_1tag_hf_cutoff" kindref="member">hf_cutoff</ref> <ref refid="InputFile_1tag_hf_ignore_oor" kindref="member">hf_ignore_oor</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a52710072ec30b071e08c1b62f7450c0f" kindref="member">Config::hf_tensorfile</ref> </para>
+<para><anchor id="InputFile_1tag_hf_cutoff"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md29">
+<title>hf_cutoff</title><para><bold>Description:</bold><linebreak/>
+ Removed <linebreak/>
+ <xrefsect id="todo_1_todo000026"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
+</xrefdescription></xrefsect></para>
+<para><bold>Data Type:</bold> Double </para>
+<para><bold>Default:</bold> 0.0 </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">hf_cutoff<sp/>:<sp/>0.0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref> <ref refid="InputFile_1tag_hf_readmode" kindref="member">hf_readmode</ref> <ref refid="InputFile_1tag_hf_ignore_oor" kindref="member">hf_ignore_oor</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1af82a9ccd3b05247db3da179361faef85" kindref="member">Config::hf_cutoff</ref> </para>
+<para><anchor id="InputFile_1tag_hf_ignore_oor"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md30">
+<title>hf_ignore_oor</title><para><xrefsect id="todo_1_todo000027"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
+<para><bold>Description:</bold><linebreak/>
+ Even if the bath spin is within the specified range set in the hyperfine tensor, <linebreak/>
+ if the code cannot find a matching spin relative position and spin tensor, <linebreak/>
+ it may or may not raise an error depending on this option. <linebreak/>
+</para>
+<para><bold>Data Type:</bold> Int </para>
+<para><bold>Options:</bold><linebreak/>
+ <table rows="3" cols="2"><row>
+<entry thead="yes"><para>Option   </para>
+</entry><entry thead="yes"><para>Description    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>0</computeroutput>   </para>
+</entry><entry thead="no"><para>Strict enforcement (no ignoring out-of-range spins)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>1</computeroutput>   </para>
+</entry><entry thead="no"><para>Not strict (allows ignoring out-of-range spins)   </para>
+</entry></row>
+</table>
+</para>
+<para><bold>Default:</bold> 0 </para>
+<para><bold>Example:</bold> </para>
+</xrefdescription></xrefsect><programlisting><codeline><highlight class="normal">hf_ignore_oor<sp/>:<sp/>0<sp/></highlight></codeline>
+</programlisting> <programlisting><codeline><highlight class="normal">hf_ignore_oor<sp/>:<sp/>1<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref> <ref refid="InputFile_1tag_hf_readmode" kindref="member">hf_readmode</ref> <ref refid="InputFile_1tag_hf_cutoff" kindref="member">hf_cutoff</ref> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a840b086fb6ef148cea4e370967da30e9" kindref="member">Config::hf_ignore_oor</ref> </para>
+<para><anchor id="InputFile_1tag_qd_readmode"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md31">
+<title>qd_readmode</title><para><bold>Description:</bold><linebreak/>
+ <xrefsect id="todo_1_todo000028"><xreftitle>Todo</xreftitle><xrefdescription><para>JW Quadrupole interaction tensor of bath spins can be set by this option. <linebreak/>
+ If you want to use the Quadrupole tensor obtained from DFT calculation, you should set this option. <linebreak/>
+</para>
+</xrefdescription></xrefsect></para>
+<para><bold>Options:</bold><linebreak/>
+ <table rows="6" cols="2"><row>
+<entry thead="yes"><para>Option   </para>
+</entry><entry thead="yes"><para>Description    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>0</computeroutput>   </para>
+</entry><entry thead="no"><para>No DFT quadrupole tensor    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>1</computeroutput>   </para>
+</entry><entry thead="no"><para>Removed option    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>2</computeroutput>   </para>
+</entry><entry thead="no"><para>Read quadrupole DFT file from <ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref>    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>3</computeroutput>   </para>
+</entry><entry thead="no"><para>Read quadrupole DFT file from both <ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref> and <ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref> <linebreak/>
+ cell_para is required <linebreak/>
+ (Strained structure)    </para>
+</entry></row>
+<row>
+<entry thead="no"><para><computeroutput>4</computeroutput>   </para>
+</entry><entry thead="no"><para>Read quadrupole DFT file from both <ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref> and <ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref> <linebreak/>
+ cell_para is required <linebreak/>
+ (Bubble type structure)   </para>
+</entry></row>
+</table>
+</para>
+<para><bold>Default:</bold> 0 </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">qd_readmode<sp/>:<sp/>0<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref> qd_cutoff </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1adc1119b46a95084ddd4c7bfa2a8d50d9" kindref="member">Config::qd_readmode</ref> </para>
+<para><anchor id="InputFile_1tag_qd_tensorfile"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md32">
+<title>qd_tensorfile</title><para><bold>Description:</bold><linebreak/>
+ File name of the quadrupole tensor. <linebreak/>
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+ <xrefsect id="todo_1_todo000029"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page
+</para>
+</xrefdescription></xrefsect></preformatted> </para>
+<para><bold>Data Type:</bold> String (File path) </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">qd_tensorfile<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_qd_readmode" kindref="member">qd_readmode</ref> qd_cutoff <ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref> cell_para </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a91d5741035098807bc28000a003bd35d" kindref="member">Config::qd_tensorfile</ref> </para>
+<para><anchor id="InputFile_1tag_qd_tensorfile_woqubit"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md33">
+<title>qd_tensorfile_woqubit</title><para><bold>Description:</bold><linebreak/>
+ File name of the quadrupole tensor without qubit. <linebreak/>
+ This would be useful for coherence simultion in the strained or bubble structure. <linebreak/>
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+ <xrefsect id="todo_1_todo000030"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page
+</para>
+</xrefdescription></xrefsect></preformatted> </para>
+<para><bold>Data Type:</bold> String (File path) </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">qd_tensorfile_woqubit<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_qd_readmode" kindref="member">qd_readmode</ref> qd_cutoff <ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref> cell_para </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a93e5666a93192db9d1cd361381d64301" kindref="member">Config::qd_tensorfile_woqubit</ref> </para>
+<para><anchor id="InputFile_1tag_cell_para"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md34">
+<title>cell_para</title><para><bold>Description:</bold><linebreak/>
+ Lattice parameter of the strained or bubble structure. <linebreak/>
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. <linebreak/>
+</para>
+<para><bold>Data Type:</bold> Double List </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Unit:</bold> angstrom </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">cell_para<sp/>:<sp/>[1.0,<sp/>2.0,<sp/>3.0]<sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_qd_readmode" kindref="member">qd_readmode</ref> qd_cutoff <ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref> <ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref> </para>
+<para><bold>Related variable:</bold> Config::cell_para </para>
 </sect2>
 </sect1>
     </detaileddescription>

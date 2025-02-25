@@ -141,37 +141,37 @@ How to Write the Input File</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a class="el" href="#tag_seed">seed</a>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">gyrofile    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_gyrofile">gyrofile</a>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">bathfile    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_bathfile">bathfile</a>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">bathadjust    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_bathadjust">bathadjust</a>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">avaaxfile    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_avaaxfile">avaaxfile</a>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">statefile    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_statefile">statefile</a>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">exstatefile    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_exstatefile">exstatefile</a>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">DefectTotSpin    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_DefectTotSpin">DefectTotSpin</a>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">CorrTotSpin    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_CorrTotSpin">CorrTotSpin</a>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">hf_readmode    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_hf_readmode">hf_readmode</a>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">hf_tensorfile    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">hf_cutoff    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_hf_cutoff">hf_cutoff</a>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">hf_ignore_oor    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">qd_readmode    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_qd_readmode">qd_readmode</a>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">qd_tensorfile    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">cell_para    </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_cell_para">cell_para</a>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">qd_tensorfile_woqubit   </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a>   </td></tr>
 </table>
 <table class="markdownTable">
 <tr class="markdownTableHead">
@@ -458,7 +458,303 @@ seed</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">seed : 1241798 </div>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_nstate">nstate</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a92ed038fd7676ed62640f59270a60545">Config::seed</a> </p>
-<p>\ </p>
+<p><a class="anchor" id="tag_gyrofile"></a></p>
+<h2><a class="anchor" id="autotoc_md19"></a>
+gyrofile</h2>
+<p><b>Description:</b><br  />
+ File name of the gyromagnetic ratio. <br  />
+ </p>
+<pre>
+    File format is the following :
+    [Name] [SpinNumber] [Gyromagnetic ratio (rad/ms/G)]
+</pre> <pre>
+    example)
+    13C 0.5 6.728284
+    P1  0.5 -17608.597050
+</pre> <p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">gyrofile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a735f7f25b0847d08468616025a27ffe5">Config::gyrofile</a> </p>
+<p><a class="anchor" id="tag_bathfile"></a></p>
+<h2><a class="anchor" id="autotoc_md20"></a>
+bathfile</h2>
+<p><b>Description:</b><br  />
+ File name of the bath spatial configuration. <br  />
+ </p>
+<pre>
+    File format is the following :
+    [x] [y] [z] [Name]
+</pre> <pre>
+    example)
+    1.0 0.0 0.0 0.0   - Total line number 
+    1.0 2.0 3.0 13C   - x,y,z in cartesian, angstrom
+    4.0 5.0 6.0  P1   - Spin name should be the same to the name in <a class="el" href="#tag_gyrofile">gyrofile</a>
+</pre> <p><b>Data Type:</b> String (File path) or String List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">bathfile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <div class="fragment"><div class="line">bathfile : [<span class="stringliteral">&quot;filepath1&quot;</span>, <span class="stringliteral">&quot;filepath2&quot;</span>, ... ] </div>
+</div><!-- fragment --> <p><b>Related variable:</b> Config::bathfile </p>
+<p><a class="anchor" id="tag_bathadjust"></a></p>
+<h2><a class="anchor" id="autotoc_md21"></a>
+bathadjust</h2>
+<p><b>Description:</b><br  />
+ Adjust the bath configuration. <br  />
+ If you want to adjust the bath configuration, you can set the bathadjust value. <br  />
+ Usually, this tag is required for multiple qubit calculation that wouldb have different bath configuration <br  />
+</p>
+<p><b>Data Type:</b> Double List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">bathadjust : [1.0, 2.0, 3.0] </div>
+</div><!-- fragment --> <div class="fragment"><div class="line">bathadjust : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], ... [7.0, 8.0, 9.0]] </div>
+</div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a1ce641fcaac86656dde150e974ff5ff7">Config::bathadjust</a> </p>
+<p><a class="anchor" id="tag_avaaxfile"></a></p>
+<h2><a class="anchor" id="autotoc_md22"></a>
+avaaxfile</h2>
+<p><b>Description:</b><br  />
+ File name of the bath pricipal axis configuration. <br  />
+ This tag might require when you want to calculate paramagnetic (PM) defect bath. <br  />
+ During PM defect calculation, if you don't give this file, the program will automatically generate the principal axis configuration. <br  />
+ </p>
+<pre>
+    File format is the following :
+    [Principal axis index]
+</pre> <pre>
+    example)
+    5.0 - The number of total line
+    1.0 - principal axis index
+    2.0 -  :
+    3.0
+    3.0
+</pre> <p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">avaaxfile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <p><b>Related tags:</b> Defect </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#ae3244e507716ae5483bb32a2e4fef809">Config::avaaxfile</a> </p>
+<p><a class="anchor" id="tag_statefile"></a></p>
+<h2><a class="anchor" id="autotoc_md23"></a>
+statefile</h2>
+<p><b>Description:</b><br  />
+ File name of the bath state template. <br  />
+ This tag might require when you want to obtain the result for a certain set of initial bath state. <br  />
+ If the file path of the statefile doesn't exist, the program will automatically generate the state template. <br  />
+ </p>
+<pre>
+    File format is the following :
+    [SpinSubLevel]
+</pre> <pre>
+    example)
+     5.0   - The number of total line
+    -0.5   - Spin sublevel when S=1/2
+     0.5   -    :
+    -0.5
+    -0.5
+</pre> <p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">statefile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <p><b>Related tags:</b> <a class="el" href="#tag_nstate">nstate</a> </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#a7ce40e0c9e172e7b2e213101b154760b">Config::statefile</a> </p>
+<p><a class="anchor" id="tag_exstatefile"></a></p>
+<h2><a class="anchor" id="autotoc_md24"></a>
+exstatefile</h2>
+<p><b>Description:</b><br  />
+ File name of the additional bath spin state template. <br  />
+ This tag might require when you want to calculate paramagnetic defect bath. <br  />
+ Each bath state represent the additional bath spin state. <br  />
+ If the file path of the exstatefile doesn't exist, the program will automatically generate the state template. <br  />
+ </p>
+<pre>
+    File format is the following :
+    [SpinSubLevel]
+</pre> <pre>
+    example)
+     5.0   - The number of total line
+    -1.0   - Spin sublevel when S=1
+     0.0   -    :
+     1.0
+    -1.0
+</pre> <p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">exstatefile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <p><b>Related tags:</b> Defect </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#a70ec8756f364dc3d40201f951476137e">Config::exstatefile</a> </p>
+<p><a class="anchor" id="tag_DefectTotSpin"></a></p>
+<h2><a class="anchor" id="autotoc_md25"></a>
+DefectTotSpin</h2>
+<p><b>Description:</b><br  />
+ Total spin number of the qubit. <br  />
+ (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <br  />
+</p>
+<p><b>Data Type:</b> Double </p>
+<p><b>Default:</b> 1.0 </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">DefectTotSpin : 1.0 </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_CorrTotSpin">CorrTotSpin</a> </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#a716389cd405e9c041cd3ac7c7608ccdd">Config::DefectTotSpin</a> </p>
+<p><a class="anchor" id="tag_CorrTotSpin"></a></p>
+<h2><a class="anchor" id="autotoc_md26"></a>
+CorrTotSpin</h2>
+<p><b>Description:</b><br  />
+ Spin nubmer correction <br  />
+ (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <br  />
+</p>
+<p><b>Data Type:</b> Double </p>
+<p><b>Default:</b> 0.0 </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">CorrTotSpin : 0.0 </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_DefectTotSpin">DefectTotSpin</a> </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#ac923676eaaf0a911eb890ee419c2b8e6">Config::CorrTotSpin</a> </p>
+<p><a class="anchor" id="tag_hf_readmode"></a></p>
+<h2><a class="anchor" id="autotoc_md27"></a>
+hf_readmode</h2>
+<p><b>Description:</b><br  />
+ Interaction tensor between qubit and bath spins can be determined by this option. <br  />
+ If you want to use the hyperfine tensor obtained from DFT calculation, you should set this option. <br  />
+</p>
+<p><b>Options:</b><br  />
+ </p><table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Option   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>0</code>   </td><td class="markdownTableBodyNone">No DFT hyperfine tensor <br  />
+ (Point-dipole approximation)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">Fermi-contact term + point-dipole tensor    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>2</code>   </td><td class="markdownTableBodyNone">DFT dipolar tensor    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>3</code>   </td><td class="markdownTableBodyNone">Fermi-contact term + DFT dipole tensor   </td></tr>
+</table>
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">hf_readmode : 0 </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_hf_cutoff">hf_cutoff</a> <a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a> </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#a3d4d5a3943f20928bdce09e64fa4bb37">Config::hf_readmode</a> </p>
+<p><a class="anchor" id="tag_hf_tensorfile"></a></p>
+<h2><a class="anchor" id="autotoc_md28"></a>
+hf_tensorfile</h2>
+<p><b>Description:</b><br  />
+ File name of the hyperfine tensor. <br  />
+ This tag is required when you use the hyperfine tensor obtained from DFT calculation. <br  />
+ </p>
+<pre>
+    File format is the following :
+ <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000025">Todo</a></b></dt><dd>\Ref other page
+</dd></dl>
+</pre><p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">hf_tensorfile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_readmode">hf_readmode</a> <a class="el" href="#tag_hf_cutoff">hf_cutoff</a> <a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a> </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#a52710072ec30b071e08c1b62f7450c0f">Config::hf_tensorfile</a> </p>
+<p><a class="anchor" id="tag_hf_cutoff"></a></p>
+<h2><a class="anchor" id="autotoc_md29"></a>
+hf_cutoff</h2>
+<p><b>Description:</b><br  />
+ Removed <br  />
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000026">Todo</a></b></dt><dd>JW </dd></dl>
+<p><b>Data Type:</b> Double </p>
+<p><b>Default:</b> 0.0 </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">hf_cutoff : 0.0 </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_hf_readmode">hf_readmode</a> <a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a> </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#af82a9ccd3b05247db3da179361faef85">Config::hf_cutoff</a> </p>
+<p><a class="anchor" id="tag_hf_ignore_oor"></a></p>
+<h2><a class="anchor" id="autotoc_md30"></a>
+hf_ignore_oor</h2>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000027">Todo</a></b></dt><dd><p class="startdd">JW </p>
+<p class="interdd"><b>Description:</b><br  />
+ Even if the bath spin is within the specified range set in the hyperfine tensor, <br  />
+ if the code cannot find a matching spin relative position and spin tensor, <br  />
+ it may or may not raise an error depending on this option. <br  />
+</p>
+<p class="interdd"><b>Data Type:</b> Int </p>
+<p class="interdd"><b>Options:</b><br  />
+ </p><table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Option   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>0</code>   </td><td class="markdownTableBodyNone">Strict enforcement (no ignoring out-of-range spins)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">Not strict (allows ignoring out-of-range spins)   </td></tr>
+</table>
+<p class="interdd"><b>Default:</b> 0 </p>
+<p class="enddd"><b>Example:</b> </p>
+</dd></dl>
+<div class="fragment"><div class="line">hf_ignore_oor : 0 </div>
+</div><!-- fragment --> <div class="fragment"><div class="line">hf_ignore_oor : 1 </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_hf_readmode">hf_readmode</a> <a class="el" href="#tag_hf_cutoff">hf_cutoff</a> </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#a840b086fb6ef148cea4e370967da30e9">Config::hf_ignore_oor</a> </p>
+<p><a class="anchor" id="tag_qd_readmode"></a></p>
+<h2><a class="anchor" id="autotoc_md31"></a>
+qd_readmode</h2>
+<p><b>Description:</b><br  />
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000028">Todo</a></b></dt><dd>JW Quadrupole interaction tensor of bath spins can be set by this option. <br  />
+ If you want to use the Quadrupole tensor obtained from DFT calculation, you should set this option. <br  />
+</dd></dl>
+<p><b>Options:</b><br  />
+ </p><table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Option   </th><th class="markdownTableHeadNone">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>0</code>   </td><td class="markdownTableBodyNone">No DFT quadrupole tensor    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">Removed option    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>2</code>   </td><td class="markdownTableBodyNone">Read quadrupole DFT file from <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><code>3</code>   </td><td class="markdownTableBodyNone">Read quadrupole DFT file from both <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> and <a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a> <br  />
+ cell_para is required <br  />
+ (Strained structure)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><code>4</code>   </td><td class="markdownTableBodyNone">Read quadrupole DFT file from both <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> and <a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a> <br  />
+ cell_para is required <br  />
+ (Bubble type structure)   </td></tr>
+</table>
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">qd_readmode : 0 </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> qd_cutoff </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#adc1119b46a95084ddd4c7bfa2a8d50d9">Config::qd_readmode</a> </p>
+<p><a class="anchor" id="tag_qd_tensorfile"></a></p>
+<h2><a class="anchor" id="autotoc_md32"></a>
+qd_tensorfile</h2>
+<p><b>Description:</b><br  />
+ File name of the quadrupole tensor. <br  />
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. <br  />
+ </p>
+<pre>
+    File format is the following :
+ <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000029">Todo</a></b></dt><dd>\Ref other page
+</dd></dl>
+</pre> <p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">qd_tensorfile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_qd_readmode">qd_readmode</a> qd_cutoff <a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a> cell_para </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#a91d5741035098807bc28000a003bd35d">Config::qd_tensorfile</a> </p>
+<p><a class="anchor" id="tag_qd_tensorfile_woqubit"></a></p>
+<h2><a class="anchor" id="autotoc_md33"></a>
+qd_tensorfile_woqubit</h2>
+<p><b>Description:</b><br  />
+ File name of the quadrupole tensor without qubit. <br  />
+ This would be useful for coherence simultion in the strained or bubble structure. <br  />
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. <br  />
+ </p>
+<pre>
+    File format is the following :
+ <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000030">Todo</a></b></dt><dd>\Ref other page
+</dd></dl>
+</pre> <p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">qd_tensorfile_woqubit : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_qd_readmode">qd_readmode</a> qd_cutoff <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> cell_para </p>
+<p><b>Related variable:</b> <a class="el" href="structConfig.html#a93e5666a93192db9d1cd361381d64301">Config::qd_tensorfile_woqubit</a> </p>
+<p><a class="anchor" id="tag_cell_para"></a></p>
+<h2><a class="anchor" id="autotoc_md34"></a>
+cell_para</h2>
+<p><b>Description:</b><br  />
+ Lattice parameter of the strained or bubble structure. <br  />
+ This tag is required when you use the quadrupole tensor obtained from DFT calculation. <br  />
+</p>
+<p><b>Data Type:</b> Double List </p>
+<p><b>Default:</b> - </p>
+<p><b>Unit:</b> angstrom </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">cell_para : [1.0, 2.0, 3.0] </div>
+</div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_qd_readmode">qd_readmode</a> qd_cutoff <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> <a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a> </p>
+<p><b>Related variable:</b> Config::cell_para </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

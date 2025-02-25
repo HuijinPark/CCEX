@@ -1,4 +1,6 @@
-/** \page InputFile Input File
+/**
+
+\page InputFile Input File
 
 This is navigator to find the input file tags
 
@@ -124,7 +126,6 @@ Lines beginning with `# or !` are considered comments and are ignored.
 |---------------------------------------|
 | \ref tag_savemode      "savemode"     |
 | \ref tag_outfile       "outfile"      |
-
 
 
 \section Config_CONFIG General condition
@@ -272,11 +273,16 @@ If you want to generate the same state templates, you should set the same seed v
 ## gyrofile
 <p><b>Description:</b><br>
 File name of the gyromagnetic ratio. <br>
-File format is the following : <br>
-[Name] [SpinNumber] [Gyromagnetic ratio (rad/ms/G)] <br>
-example) 
- 13C 0.5 6.728284 <br>
- P1  0.5  -17608.597050 <br>
+</p>
+<pre>
+    File format is the following :
+    [Name] [SpinNumber] [Gyromagnetic ratio (rad/ms/G)]
+</pre>
+<pre>
+    example)
+    13C 0.5 6.728284
+    P1  0.5 -17608.597050
+</pre>
 </p>
 <p><b>Data Type:</b> String (File path) </p>
 <p><b>Default:</b> - </p>
@@ -287,13 +293,18 @@ example)
 ## bathfile
 <p><b>Description:</b><br>
 File name of the bath spatial configuration. <br>
-File format is the following : <br>
-[x] [y] [z] [Name] <br>
-example) 
- 1.0 0.0 0.0 0.0   -- Total line number <br> 
- 1.0 2.0 3.0 13C   -- x,y,z in cartesian, angstrom <br>
- 4.0 5.0 6.0 P1    -- Spin name should be the same to the name in \ref tag_gyrofile "gyrofile" <br></p>
- 
+</p>
+<pre>
+    File format is the following :
+    [x] [y] [z] [Name]
+</pre>
+<pre>
+    example)
+    1.0 0.0 0.0 0.0   - Total line number 
+    1.0 2.0 3.0 13C   - x,y,z in cartesian, angstrom
+    4.0 5.0 6.0  P1   - Spin name should be the same to the name in \ref tag_gyrofile "gyrofile"
+</pre> 
+</p>
 <p><b>Data Type:</b> String (File path) or String List </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> 
@@ -321,37 +332,50 @@ Usually, this tag is required for multiple qubit calculation that wouldb have di
 File name of the bath pricipal axis configuration. <br>
 This tag might require when you want to calculate paramagnetic (PM) defect bath. <br>
 During PM defect calculation, if you don't give this file, the program will automatically generate the principal axis configuration. <br>
-File format is the following : <br>
-[Principal axis index] <br>
-example)  <br>
- 5.0 - The number of total line <br>
- 1.0 - principal axis index <br>
- 2.0<br>
- 3.0<br>
- 3.0<br>
+</p>
+<pre>
+    File format is the following :
+    [Principal axis index]
+</pre>
+<pre>
+    example)
+    5.0 - The number of total line
+    1.0 - principal axis index
+    2.0 -  :
+    3.0
+    3.0
+</pre>
 </p>
 <p><b>Data Type:</b> String (File path) </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> \code avaaxfile : "filepath" \endcode </p>
+<p><b>Related tags:</b> \ref tag_Defect "Defect" </p>
 <p><b>Related variable:</b> \ref Config::avaaxfile </p>
 
 \anchor tag_statefile
 ## statefile
 <p><b>Description:</b><br>
 File name of the bath state template. <br>
-This tag might require when you want to calculate the state configuration. <br>
-File format is the following : <br>
-[SpinSubLevel] <br>
-example)  <br>
- 5.0 - The number of total line <br>
- -0.5  - Spin sublevel when S=1/2 <br>
- 0.5 <br>
- -0.5<br>
- -0.5<br>
+This tag might require when you want to obtain the result for a certain set of initial bath state. <br>
+If the file path of the statefile doesn't exist, the program will automatically generate the state template. <br>
+</p>
+<pre>
+    File format is the following :
+    [SpinSubLevel]
+</pre>
+<pre>
+    example)
+     5.0   - The number of total line
+    -0.5   - Spin sublevel when S=1/2
+     0.5   -    :
+    -0.5
+    -0.5
+</pre>
 </p>
 <p><b>Data Type:</b> String (File path) </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> \code statefile : "filepath" \endcode </p>
+<p><b>Related tags:</b> \ref tag_nstate "nstate" </p>
 <p><b>Related variable:</b> \ref Config::statefile </p>
 
 \anchor tag_exstatefile
@@ -360,18 +384,25 @@ example)  <br>
 File name of the additional bath spin state template. <br>
 This tag might require when you want to calculate paramagnetic defect bath. <br>
 Each bath state represent the additional bath spin state. <br>
-File format is the following : <br>
-[SpinSubLevel] <br>
-example)  <br>
- 5.0 - The number of total line <br>
- -1.0  - Spin sublevel when I=1 <br>
- 0.0 <br>
- 1.0<br>
- 1.0<br>
+If the file path of the exstatefile doesn't exist, the program will automatically generate the state template. <br>
+</p>
+<pre>
+    File format is the following :
+    [SpinSubLevel]
+</pre>
+<pre>
+    example)
+     5.0   - The number of total line
+    -1.0   - Spin sublevel when S=1
+     0.0   -    :
+     1.0
+    -1.0
+</pre>
 </p>
 <p><b>Data Type:</b> String (File path) </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> \code exstatefile : "filepath" \endcode </p>
+<p><b>Related tags:</b> \ref tag_Defect "Defect" </p>
 <p><b>Related variable:</b> \ref Config::exstatefile </p>
 
 \anchor tag_DefectTotSpin
@@ -382,13 +413,13 @@ Total spin number of the qubit. <br>
 <p><b>Data Type:</b> Double </p>
 <p><b>Default:</b> 1.0 </p>
 <p><b>Example:</b> \code DefectTotSpin : 1.0 \endcode </p>
-<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" </p>
+<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_CorrTotSpin "CorrTotSpin" </p>
 <p><b>Related variable:</b> \ref Config::DefectTotSpin </p>
 
 \anchor tag_CorrTotSpin
 ## CorrTotSpin
 <p><b>Description:</b><br>
-Spin nubmer correction <br>
+Spin number correction <br>
 (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <br></p>
 </p>
 <p><b>Data Type:</b> Double </p>
@@ -400,20 +431,141 @@ Spin nubmer correction <br>
 \anchor tag_hf_readmode
 ## hf_readmode
 <p><b>Description:</b><br>
-Read mode of the hyperfine tensor file. <br>
+Interaction tensor between qubit and bath spins can be determined by this option. <br>
+If you want to use the hyperfine tensor obtained from DFT calculation, you should set this option. <br></p>
 <p><b>Options:</b><br>
 | Option | Description |
 |--------|-------------------------------------|
-| `0`    | Read the hyperfine tensor file as a single tensor |
-| `1`    | Read the hyperfine tensor file as a list of tensors |
-| `2`    | Read the hyperfine tensor file as a list of tensors with the same spin number |
-| `3`    | Read the hyperfine tensor file as a list of tensors with the same spin number and the same principal axis |
-
+| `0`    | No DFT hyperfine tensor <br> (Point-dipole approximation) |
+| `1`    | Fermi-contact term + point-dipole tensor |
+| `2`    | DFT dipolar tensor                       |
+| `3`    | Fermi-contact term + DFT dipole tensor   |
 <p><b>Default:</b> 0 </p>
 <p><b>Example:</b> \code hf_readmode : 0 \endcode </p>
-<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_hf_cutoff "hf_cutoff" </p> 
+<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_hf_cutoff "hf_cutoff" \ref tag_hf_ignore_oor "hf_ignore_oor" </p>
 <p><b>Related variable:</b> \ref Config::hf_readmode </p>
 
+\anchor tag_hf_tensorfile
+## hf_tensorfile
+<p><b>Description:</b><br>
+File name of the hyperfine tensor. <br>
+This tag is required when you use the hyperfine tensor obtained from DFT calculation. <br>
+</p>
+<pre>
+    File format is the following :
+    \todo \\Ref other page
+</pre>
+
+<p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code hf_tensorfile : "filepath" \endcode </p>
+<p><b>Related Tags:</b> \ref tag_hf_readmode "hf_readmode" \ref tag_hf_cutoff "hf_cutoff" \ref tag_hf_ignore_oor "hf_ignore_oor" </p>
+<p><b>Related variable:</b> \ref Config::hf_tensorfile </p>
+
+\anchor tag_hf_cutoff
+## hf_cutoff
+<p><b>Description:</b><br>
+Removed <br>
+    \todo JW </p>
+
+<p><b>Data Type:</b> Double </p>
+<p><b>Default:</b> 0.0 </p>
+<p><b>Example:</b> \code hf_cutoff : 0.0 \endcode </p>
+<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_hf_readmode "hf_readmode" \ref tag_hf_ignore_oor "hf_ignore_oor" </p>
+<p><b>Related variable:</b> \ref Config::hf_cutoff </p>
+
+\anchor tag_hf_ignore_oor
+## hf_ignore_oor
+    \todo JW </p>
+<p><b>Description:</b><br>
+Even if the bath spin is within the specified range set in the hyperfine tensor, <br>
+if the code cannot find a matching spin relative position and spin tensor, <br>
+it may or may not raise an error depending on this option. <br></p>
+<p><b>Data Type:</b> Int </p>
+<p><b>Options:</b><br>
+| Option | Description |
+|--------|-------------------------------------|
+| `0`    | Strict enforcement (no ignoring out-of-range spins)  |
+| `1`    | Not strict (allows ignoring out-of-range spins)      |
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> 
+    \code hf_ignore_oor : 0 \endcode 
+    \code hf_ignore_oor : 1 \endcode
+</p>
+<p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_hf_readmode "hf_readmode" \ref tag_hf_cutoff "hf_cutoff" </p>
+<p><b>Related variable:</b> \ref Config::hf_ignore_oor </p>
+
+\anchor tag_qd_readmode
+## qd_readmode
+<p><b>Description:</b><br>
+    \todo JW </p>
+Quadrupole interaction tensor of bath spins can be set by this option. <br>
+If you want to use the Quadrupole tensor obtained from DFT calculation, you should set this option. <br></p>
+<p><b>Options:</b><br>
+| Option | Description |
+|--------|-------------------------------------|
+| `0`    | No DFT quadrupole tensor  |
+| `1`    | Removed option |
+| `2`    | Read quadrupole DFT file from \ref tag_qd_tensorfile "qd_tensorfile" |
+| `3`    | Read quadrupole DFT file from both \ref tag_qd_tensorfile "qd_tensorfile" and \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit" <br> \ref tag_qd_cell_para "cell_para" is required <br> (Strained structure) |
+| `4`    | Read quadrupole DFT file from both \ref tag_qd_tensorfile "qd_tensorfile" and \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit" <br> \ref tag_qd_cell_para "cell_para" is required <br> (Bubble type structure) |
+
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> \code qd_readmode : 0 \endcode </p>
+<p><b>Related Tags:</b> \ref tag_qd_tensorfile "qd_tensorfile" \ref tag_qd_cutoff "qd_cutoff" </p>
+<p><b>Related variable:</b> \ref Config::qd_readmode </p>
+
+\anchor tag_qd_tensorfile
+## qd_tensorfile
+<p><b>Description:</b><br>
+File name of the quadrupole tensor. <br>
+This tag is required when you use the quadrupole tensor obtained from DFT calculation. <br>
+</p>
+<pre>
+    File format is the following :
+    \todo \\Ref other page 
+</pre>
+<p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code qd_tensorfile : "filepath" \endcode </p>
+<p><b>Related Tags:</b> \ref tag_qd_readmode "qd_readmode" \ref tag_qd_cutoff "qd_cutoff" \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit" \ref tag_qd_cell_para "cell_para" </p>
+<p><b>Related variable:</b> \ref Config::qd_tensorfile </p>
+
+\anchor tag_qd_tensorfile_woqubit
+## qd_tensorfile_woqubit
+<p><b>Description:</b><br>
+File name of the quadrupole tensor without qubit. <br>
+This would be useful for coherence simultion in the strained or bubble structure. <br>
+This tag is required when you use the quadrupole tensor obtained from DFT calculation. <br>
+</p>
+<pre>
+    File format is the following :
+    \todo \\Ref other page
+</pre>
+<p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code qd_tensorfile_woqubit : "filepath" \endcode </p>
+<p><b>Related Tags:</b> \ref tag_qd_readmode "qd_readmode" \ref tag_qd_cutoff "qd_cutoff" \ref tag_qd_tensorfile "qd_tensorfile" \ref tag_qd_cell_para "cell_para" </p>
+<p><b>Related variable:</b> \ref Config::qd_tensorfile_woqubit </p>
+
+\anchor tag_cell_para
+## cell_para
+<p><b>Description:</b><br>
+Lattice parameter of the strained or bubble structure. <br>
+This tag is required when you use the quadrupole tensor obtained from DFT calculation. <br></p>
+<p><b>Data Type:</b> Double List </p>
+<p><b>Default:</b> - </p>
+<p><b>Unit:</b> angstrom </p>
+<p><b>Example:</b> \code cell_para : [1.0, 2.0, 3.0] \endcode </p>
+<p><b>Related Tags:</b> \ref tag_qd_readmode "qd_readmode" \ref tag_qd_cutoff "qd_cutoff" \ref tag_qd_tensorfile "qd_tensorfile" \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit" </p>
+<p><b>Related variable:</b> \ref Config::cell_para </p>
+
+
+\section QubitArray_QUBITARRAY Qubit related condition
+Below are the descriptions of various qubit-related tags used in the input file.
+
+
+\anchor tag_nqubit
 
 
 
@@ -422,7 +574,8 @@ Read mode of the hyperfine tensor file. <br>
 
 
 
-    
+
+*/
 
 
 
