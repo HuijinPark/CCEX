@@ -1,0 +1,39 @@
+{
+    "method" : "gcce", 
+    "QUAntity" : "coherence", 
+    "rdip": 2.0,
+    "deltat": 3.0,
+    "nstep": 4,
+    "rbathcut": 5.0,
+    "rdipcut": 6.0,
+    "nstate": 7,
+    "seed": 10, 
+    "order" : 3,
+    "kmeans_pp"     : true,
+    "iter_detail"   : false,
+    "sK"            : 4 ,
+    "max_trial"     : 100 ,
+    "max_iteration" : 100,
+
+    // "method" : "hash",
+    "nk" : [0,0,0,100],
+    "addsubclus" : false,
+
+    // files 
+    "qubitfile" : "./../config/qubitfile",
+    "zfs"       : [[1.123123, 2.123123, 3.123123],
+                   [4.123123, 5.123123, 6.123123],
+                   [7.123123, 8.123123, 9.123123]],
+    "gyrofile" : "./../config/gyrofile",
+    "bathfile" : ["./../config/bathfile1", "./../config/bathfile2"],
+    "bathadjust" : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
+
+    "hf_readmode" : 1,
+    "hf_tensorfile" : "./../config/hf_tensorfile",
+    "hf_cutoff" : 0.1,
+    "hf_ignore_oor" : 1,
+
+    "qd_readmode" : 2,
+    "qd_tensorfile" : "./../config/qd_tensorfile",
+    "qd_tensorfile_woqubit" : "./../config/qd_tensorfile_woqubit"
+}

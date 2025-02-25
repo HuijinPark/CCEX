@@ -876,7 +876,6 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
         double  Q_MaxDifwoDef[3]={0.0,}; //MaxDif[A]
         double** QtensorArrayWoDef = NULL; //x,y,z,Qxx,Qxy,Qxz,...,Qyz,Qzz in woDefect file
 
-
         char* vertex_condi[8] = {"v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8"};
 
         // Check if the BD is used with vertex or xyz version
@@ -887,9 +886,6 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
         // Read the tensor files
         ////////////////////////////////////////////////////////////
     
-        //int version = READ_Tensor_ver(qd_tensorfile,&SpinFactor ,DefectTotSpin, &CorrTotSpin);
-        //
-        
         //////////////////////////////////////////////////////
         // woDef
         //
