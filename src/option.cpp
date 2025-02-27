@@ -98,12 +98,11 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     }
 
     // qubitfile
-    // char* qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
-    // if (qubitfile != NULL) {
-    //     Config_allocQubitfile(cnf);
-    //     Config_setQubitfile(cnf,qubitfile);
-    // }
-    
+    char* _qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
+    if (qubitfile != NULL) {
+        Config_allocQubitfile(cnf);
+        Config_setQubitfile(cnf,qubitfile);
+    }
 
     // gyrofile
     char* gyrofile = cJSON_ReadFilePath(root,"gyrofile",true,NULL);
