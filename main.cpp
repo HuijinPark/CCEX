@@ -193,6 +193,7 @@ int main(int argc, char* argv[]){
         fprintf(stderr, "Error: input file is required\n");
         exit(EXIT_FAILURE);
     }
+    MPI_Barrier(MPI_COMM_WORLD);
 
     //if (nbathfiles_current != nbathfiles_fromfccein){
     //    fprintf(stderr, "Error: number of bath files is not consistent\n");
@@ -241,6 +242,7 @@ int main(int argc, char* argv[]){
 
         printLineSection();
     }
+    MPI_Barrier(MPI_COMM_WORLD);
 
     //=======================================================
     // Set simulators
@@ -261,24 +263,29 @@ int main(int argc, char* argv[]){
         printSubTitle("Qubit file");
     }
     readQubitfile(qa,cnf); // set qubit xyz position for nqubit=1
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // Bath : Gyromagnetic ratio
     if (rank == 0){
         printSubTitle("Gyromagnetic ratio file");
     }
     readGyrofile(ba,cnf); // set gyro, spin, name (properties)
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // Bath : Configuration files
     if (rank == 0){
         printSubTitle("Bath configuration files");
     }
     readBathfiles(ba,qa,cnf);  // set bath xyz position and properties
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // Hyperfine tensor
     readHftensorfile(ba,qa,cnf); // set hyperfine tensor only from file
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // Quadrupole tensor
     readQdtensorfile(ba,qa,cnf); // set quadrupole tensor only from file
+    MPI_Barrier(MPI_COMM_WORLD);
 
     // Defect
     if (DefectArray_getNdefect(dfa) > 0){
@@ -314,6 +321,7 @@ int main(int argc, char* argv[]){
         // Update main bathspins : mainspidx, zfs(pax), detuning(pax)
         updateMainSpins_fromDefectArray(dfa,ba);
     }
+    MPI_Barrier(MPI_COMM_WORLD);
 
     if (rank==0){
         //printf("    ----------------------------------------------------------------------\n");
@@ -335,6 +343,7 @@ int main(int argc, char* argv[]){
         printf("          Wall time = %.5f s\n", time_end - time_start);
         printLine();
     }
+    MPI_Barrier(MPI_COMM_WORLD);
     
     //=======================================================
     // Clusterize
@@ -358,6 +367,7 @@ int main(int argc, char* argv[]){
         printf("          Wall time = %.5f s\n", time_end - time_start_step);
         printLine();
     }
+    MPI_Barrier(MPI_COMM_WORLD);
 
     //=======================================================
     // Main calculation & save results
@@ -394,6 +404,8 @@ int main(int argc, char* argv[]){
     DefectArray_freeAll(dfa);
     Pulse_freeAll(pls);
     Output_freeAll(op);
+
+    MPI_Barrier(MPI_COMM_WORLD);
     
     /////////////////////////////////////////////////////////
     
