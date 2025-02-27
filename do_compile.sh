@@ -2,7 +2,7 @@
 
 if [ $# -ne 1 ]; then
     echo "Error, no input value"
-    echo "[1] Server : idm4 / mac / idm3"
+    echo "[1] Server : idm4 / mac / idm3 / nurion"
     exit 1
 fi
 
@@ -121,6 +121,61 @@ clean:
 
 EOF
 
+elif [ ${1} == "nurion" ]; then
+
+module purge
+module load craype-network-opa craype-mic-knl intel/19.0.5 impi/19.0.5
+
+
+cat << EOF > ./Makefile
+
+CXX = mpiicpc
+
+CXXFLAGS = -std=c++11 -O3 -g #-Wall Higher level warning
+#CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
+CXXFLAGS += -Wno-deprecated-declarations
+CXXFLAGS += -diag-disable=2196
+CXXFLAGS += -diag-disable=10441
+#CXXFLAGS += -Wno-writable-strings
+
+SRC_DIR=./src
+OBJ_DIR=./obj
+BIN_DIR=./bin
+
+TARGET = \$(BIN_DIR)/main.out
+
+SRCS=\$(wildcard \$(SRC_DIR)/*.cpp)
+SRCS += main.cpp
+OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
+
+INCLUDE_EIGEN = -I./zlib/eigen
+INCLUDE_UTHASH = -I./zlib/uthash/include/
+INCLUDE_MAIN = -I./include/
+
+LIBRARY_MKL = -L /apps/compiler/intel/19.0.5/mkl/lib/intel64
+LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lpthread -liomp5 -m64 #-lgsl -lgslcblas 
+
+INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
+LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
+
+all: \$(TARGET)
+
+\$(TARGET): \$(OBJS) | \$(BIN_DIR)
+        \$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+
+\$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
+        \$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+
+\$(OBJ_DIR):
+        mkdir -p \$(OBJ_DIR)
+
+\$(BIN_DIR):
+        mkdir -p \$(BIN_DIR)
+
+clean:
+        rm -rf \$(OBJ_DIR) \$(BIN_DIR)
+
+EOF
 
 elif [ ${1} == "mac" ]; then
 
