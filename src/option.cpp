@@ -93,6 +93,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     // Qubit and BathFiles
     ////////////////////////////////////////////////////////////////////////
     if (rank==0){
+        printf("\n");
         printMessage("  - File-related keys :");
         printMessage("    [ qubitfile, gyrofile, bathfile, bathadjust, avaaxfile, statefile, exstatefile ] \n");    
     }
@@ -157,6 +158,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     // Tensor file central spin option
     ////////////////////////////////////////////////////////////////////////
     if (rank==0){
+        printf("\n");
         printMessage("  - Tensorfile-related keys :");
         printMessage("    [ DefectTotSpin, CorrTotSpin, ");
         printMessage("      hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, ");
@@ -240,6 +242,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 
     if (rank==0){
+        printf("\n");
         printMessage("Read Qubit Options ...\n");
         printMessage("  - Read values of main-key 'Qubit'");
         printMessage("    sub-key of 'Qubit' : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] \n");
@@ -473,6 +476,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 void cJSON_readOptionCluster(Cluster* clus, char* fccein){
 
     if (rank==0){
+        printf("\n");
         printMessage("Read Cluster Options ...");
         printMessage("  [ order, method, addsubclus, nk ] \n");
     }
@@ -536,6 +540,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
 void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
     
     if (rank==0){
+        printf("\n");
         printMessage("Read Pulse Options ...");
         printMessage("  [ npulse, pulsename, sequence ] \n");
     }
@@ -606,6 +611,7 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
 void cJSON_readOptionOutput(Output* op, char* fccein){
 
     if (rank==0){
+        printf("\n");
         printMessage("Read Output Options ...");
         printMessage("  [ savemode, outfile ] ");
     }
@@ -651,6 +657,7 @@ void cJSON_readOptionOutput(Output* op, char* fccein){
 void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
 
     if (rank==0){
+        printf("\n");
         printMessage("Read Defect Options ...\n");
         printMessage("  - Read values of main-key 'Defect' (Array format)");
         printMessage("    sub-key : [ dfname, naddspin, navaax, apprx,   ( type : single value) ");
@@ -710,25 +717,35 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         ////////////////////////////////////////////////////////////////////////
         // Spin information
         ////////////////////////////////////////////////////////////////////////
-        bool doForce = false;
-        if (naddspin >= 0){doForce=true;}
+        bool HaveDefault = true;
+        if (naddspin >= 0){HaveDefault=false;}
 
-        char** types = cJSON_ReadString1d(defect,"types",doForce,NULL, naddspin);
+        // If there is nuclear spin on defect site, 
+        // then the following values should be included in your cce.json:
+        // types, spins, gyros (So the "HaveDefault" value would become false)
+        char** types = cJSON_ReadString1d(defect,"types",HaveDefault,NULL, naddspin);
         DefectArray_setDefect_idf_types(dfa,idf,types);
         freeChar2d(&types,naddspin);
         
-        float* spins = cJSON_ReadFloat1d(defect,"spins",doForce,NULL,naddspin);    
+        float* spins = cJSON_ReadFloat1d(defect,"spins",HaveDefault,NULL,naddspin);    
         DefectArray_setDefect_idf_spins(dfa,idf,spins);
         freeFloat1d(&spins);
 
 
-        double* gyros = cJSON_ReadDouble1d(defect,"gyros",doForce,NULL,naddspin);        
+        double* gyros = cJSON_ReadDouble1d(defect,"gyros",HaveDefault,NULL,naddspin);        
         DefectArray_setDefect_idf_gyros(dfa,idf,gyros);
         freeDouble1d(&gyros);
 
-        double* eqs = cJSON_ReadDouble1d(defect,"eqs",doForce,NULL,naddspin);
-        DefectArray_setDefect_idf_eqs(dfa,idf,eqs);
-        freeDouble1d(&eqs);
+        double* eqs = cJSON_ReadDouble1d(defect,"eqs",true,NULL,naddspin);
+        if (eqs != NULL){
+            DefectArray_setDefect_idf_eqs(dfa,idf,eqs);
+            freeDouble1d(&eqs);
+        }else{
+            // set default value
+            double* eqsDefault = allocDouble1d(naddspin);
+            DefectArray_setDefect_idf_eqs(dfa,idf,eqsDefault);
+            freeDouble1d(&eqsDefault);
+        }
 
         ////////////////////////////////////////////////////////////////////////
         // Relative position && tensor information for each axis/additional spins
@@ -800,6 +817,7 @@ char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_va
         }
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;
         }else{
             fprintf(stderr, "Error: %s is not found in the input file\n",key);
@@ -836,6 +854,7 @@ char** cJSON_ReadFilePath1d(int* length, cJSON* root, char* key, bool _default, 
         return array;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;
             
         }else{
@@ -851,6 +870,7 @@ char* cJSON_ReadString(cJSON* root, char* key, bool _default, char* default_valu
         return item->valuestring;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;
         }else{
             fprintf(stderr, "Error: %s is not found in the input file\n",key);
@@ -879,6 +899,7 @@ char** cJSON_ReadString1d(cJSON* root, char* key, bool _default, char** default_
         return array;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;
             
         }else{
@@ -895,6 +916,7 @@ int cJSON_ReadInt(cJSON* root, char* key, bool _default, int default_value){
         return item->valueint;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;
         }else{
             fprintf(stderr, "Error: %s is not found in the input file\n",key);
@@ -926,6 +948,7 @@ int* cJSON_ReadInt1d(cJSON* root, char* key, bool _default, int* default_value, 
         return array;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;
             
         }else{
@@ -941,6 +964,7 @@ double cJSON_ReadDouble(cJSON* root, char* key, bool _default, double default_va
         return item->valuedouble;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;    
         }else{
             fprintf(stderr, "Error: %s is not found in the input file\n",key);
@@ -972,6 +996,7 @@ double* cJSON_ReadDouble1d(cJSON* root, char* key, bool _default, double* defaul
         return array;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;
             
         }else{
@@ -1012,6 +1037,7 @@ double** cJSON_ReadDouble2d(cJSON* root, char* key, bool _default, double** defa
         return array;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             copyDouble2d(array,(const double**)default_value,row,col);
             return array;
             
@@ -1028,6 +1054,7 @@ float cJSON_ReadFloat(cJSON* root, char* key, bool _default, float default_value
         return item->valuedouble;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;    
         }else{
             fprintf(stderr, "Error: %s is not found in the input file\n",key);
@@ -1055,6 +1082,7 @@ float* cJSON_ReadFloat1d(cJSON* root, char* key, bool _default, float* default_v
         return array;
     }else{
         if(_default){
+            if (rank==0 && strcasecmp(key,"bfield")!=0){printf("           %s : use default value .. \n",key);}
             return default_value;
             
         }else{
@@ -1070,6 +1098,7 @@ bool cJSON_ReadBool(cJSON* root, char* key, bool _default, bool default_value){
         return item->valueint;
     }else{
         if(_default){
+            if (rank==0){printf("           %s : use default value .. \n",key);}
             return default_value;    
         }else{
             fprintf(stderr, "Error: %s is not found in the input file\n",key);

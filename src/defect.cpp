@@ -553,12 +553,16 @@ void updateDisorder_main_sub(DefectArray* dfa, BathArray* ba){
                 if (ibs == ibs_sub){
                     // if main-sub, additional disorder = hypf_sub(2,2)*ms_sub
                     MatrixXcd main_sub_int  = BathSpin_getHypfSub(subspin); // radkHz
+                    //std::cout << "input" << main_sub_int << std::endl;
                     main_additional_disorder += main_sub_int(2,2).real()*sub_ms; // ...(m-ms)
                     sub_additional_disorder += main_sub_int(2,2).real()*main_ms; // ...(s-mm)
                 }
                 else{
                     // else, additional disorder = Point-dipole tensor * ms_sub
+                    //printf("m %lf, %lf, %lf \n", main_xyz[0], main_xyz[1], main_xyz[2]);
+                    //printf("s %lf, %lf, %lf \n", sub_xyz[0], sub_xyz[1], sub_xyz[2]);
                     MatrixXcd main_sub_int  = calPointDipoleTensor(main_xyz, sub_xyz, main_gyro, sub_gyro); // radkHz
+                    //std::cout << "pd" << main_sub_int << std::endl;
                     main_additional_disorder += main_sub_int(2,2).real()*sub_ms; // ...(m-os)
                     sub_additional_disorder += main_sub_int(2,2).real()*main_ms; // ...(s-om)
                 }

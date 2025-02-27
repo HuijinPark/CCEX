@@ -186,6 +186,8 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
         exit(EXIT_FAILURE);
     }
 
+    // qsort(ba->bath, ba->nspin, sizeof(BathSpin*), compare_dist);
+    //BathArray_report(ba);
 }
 
 void setBathStates(BathArray* ba, Config* cnf, int i){
@@ -277,9 +279,6 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
             exit(EXIT_FAILURE);
         }
     }
-
-    qsort(ba->bath, ba->nspin, sizeof(BathSpin*), compare_dist);
-
     return;
 }
 

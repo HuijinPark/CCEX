@@ -68,6 +68,7 @@ void BathArray_setBathDisorders(BathArray* ba){
             }
         }
         BathArray_setBath_i_disorder(ba,disorder,i);
+        //BathArray_reportBath_disorders(ba);
     }
 }
 
@@ -205,34 +206,58 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
     int ib_mainspidx = BathArray_getBath_i_mainspidx(ba,i);
     int jb_mainspidx = BathArray_getBath_i_mainspidx(ba,j);
 
+    // 1. the spins are the spins on a same defect, then the mainspidx would be the same
+    // 2. but the bath is not PM defeect bath then mainspidx = -1 ==> just point dipole cal
+    //      not calc. inside this "if{-}"
     if (ib_mainspidx==jb_mainspidx && (ib_mainspidx != -1 && jb_mainspidx != -1)){
+
+        // This loop would be occured when the two spins has the same mainspidx
+        // cases would be (let's sat the defect is NVH)
+        //  main spin : NVH (actually its electron spin) and mainspidx = 10, name = NVH
+        //  sub spin : N,H and mainspidx = 10, name = NVH_N, NVH_H
+        //  (1) both spins are N, H
+        //  (2) both spins are NVH, N
+        //  (3) both spins are NVH, H
+
         // Check mainspin or subspin
-        bool ib_is_subspin = false;
-        bool jb_is_subspin = false;
+        bool ib_is_subspin_of_jb = false;
+        bool jb_is_subspin_of_ib = false;
         char* ib_name = BathArray_getBath_i_name(ba,i);
         char* jb_name = BathArray_getBath_i_name(ba,j);
 
 
         // if subspin, then the name would be "main_type"
+        // See, BathSpin_setName_withType and DefectArray
+        // For each cases the results would be the followings:
+        //  (1) NVH_N_,  NVH_H_  -> pd 
+        //  (2) NVH_  ,  NVH_N_  -> input
+        //  (3) NVH_  ,  NVH_H_  -> input
         char ib_name_[MAX_CHARARRAY_LENGTH] = "";
         char jb_name_[MAX_CHARARRAY_LENGTH] = "";
-        sprintf(ib_name_,"%s_",ib_name);
+        sprintf(ib_name_,"%s_",ib_name);  
         sprintf(jb_name_,"%s_",jb_name);
 
-
-        // Check if ib is subspin
+        // Compare (Check is ib is Subspin):
+        //  (1) strstr(NVH_N, NVH_H_) X    strstr(NVH_H, NVH_N_) X
+        //  (2) strstr(NVH  , NVH_N_) X    strstr(NVH_N, NVH_, ) O  -> ib is subspin
+        //  (3) strstr(NVH  , NVH_H_) X    strstr(NVH_H, NVH_, ) O  -> ib is subspin
         if (strstr(ib_name,jb_name_) != NULL){
-            ib_is_subspin = true;
+            ib_is_subspin_of_jb = true;
         }
 
-        // Check if jb is subspin
+        // Compare (Check is jb is Subspin):
+        //  (1) strstr(NVH_H, NVH_N_ ) X                    strstr(NVH_N, NVH_H_ ) X
+        //  (2) strstr(NVH_N, NVH_   ) O  -> jb is subspin  strstr(NVH  , NVH_N_ ) X
+        //  (3) strstr(NVH_H, NVH_   ) O  -> jb is subspin  strstr(NVH  , NVH_H_ ) X
         if (strstr(jb_name,ib_name_) != NULL){
-            jb_is_subspin = true;
+            jb_is_subspin_of_ib = true;
         }
-        
-        if (ib_is_subspin && jb_is_subspin){
-            ; // sub - sub > point-dipole
-        }else if (ib_is_subspin && !jb_is_subspin){
+
+        //printf("ib = %s , jb = %s \n", ib_name, jb_name);
+        //printf("ib_is_subspin_of_jb = %d \n", ib_is_subspin_of_jb);
+        //printf("jb_is_subspin_of_ib = %d \n", jb_is_subspin_of_ib);
+
+        if (ib_is_subspin_of_jb && !jb_is_subspin_of_ib){
 
             // sub - main
 
@@ -245,7 +270,7 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
             }
 
             
-        }else if (!ib_is_subspin && jb_is_subspin){
+        }else if (!ib_is_subspin_of_jb && jb_is_subspin_of_ib){
 
             // main - sub
 
@@ -258,10 +283,9 @@ MatrixXcd BathArray_int_i_j(BathArray* ba, int i, int j){
             }
 
         }else{
-            // main - main
-            fprintf(stderr,"Error(BathArray_int_i_j): i=%d and j=%d are both main spins\n",i,j);
-            fprintf(stderr,"Error(BathArray_int_i_j): They should have different mainspidx\n");
-            exit(EXIT_FAILURE);
+            // if the spins are not a subspin of each other
+            // Then it would be obiously subspin of the same mainspin
+            ;// sub - sub > point-dipole
         }
     }
     ///////////////////////////////////////////////////////////
