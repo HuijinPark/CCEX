@@ -16,7 +16,9 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     cJSON* root = cJSON_Parse(data);
 
     if (root == NULL){
-        printf("Error before: %s\n", cJSON_GetErrorPtr());
+        if (rank==0){
+            printf("Error before: %s\n", cJSON_GetErrorPtr());
+        }
         exit(EXIT_FAILURE);
         freeChar1d(&data);
     }else{
@@ -253,7 +255,9 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
     cJSON* root = cJSON_Parse(data);
 
     if (root == NULL){
-        printf("Error before: %s\n", cJSON_GetErrorPtr());
+        if (rank==0){
+            printf("Error before: %s\n", cJSON_GetErrorPtr());
+        }
         exit(EXIT_FAILURE);
         freeChar1d(&data);
     }
@@ -477,7 +481,9 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     cJSON* root = cJSON_Parse(data);
 
     if (root == NULL){
-        printf("Error before: %s\n", cJSON_GetErrorPtr());
+        if (rank==0){
+            printf("Error before: %s\n", cJSON_GetErrorPtr());
+        }
         exit(EXIT_FAILURE);
         freeChar1d(&data);
     }
@@ -538,7 +544,9 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
     cJSON* root = cJSON_Parse(data);
 
     if (root == NULL){
-        printf("Error before: %s\n", cJSON_GetErrorPtr());
+        if (rank==0){
+            printf("Error before: %s\n", cJSON_GetErrorPtr());
+        }
         exit(EXIT_FAILURE);
         freeChar1d(&data);
     }
@@ -606,7 +614,9 @@ void cJSON_readOptionOutput(Output* op, char* fccein){
     cJSON* root = cJSON_Parse(data);
 
     if (root == NULL){
-        printf("Error before: %s\n", cJSON_GetErrorPtr());
+        if (rank==0){
+            printf("Error before: %s\n", cJSON_GetErrorPtr());
+        }
         exit(EXIT_FAILURE);
         freeChar1d(&data);
     }
@@ -653,7 +663,9 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
     cJSON* root = cJSON_Parse(data);
 
     if (root == NULL){
-        printf("Error before: %s\n", cJSON_GetErrorPtr());
+        if (rank==0){
+            printf("Error before: %s\n", cJSON_GetErrorPtr());
+        }
         exit(EXIT_FAILURE);
         freeChar1d(&data);
     }
