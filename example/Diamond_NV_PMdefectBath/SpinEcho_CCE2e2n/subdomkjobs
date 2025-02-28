@@ -1,0 +1,27 @@
+#!/bin/sh
+
+
+PMdefectlist=( P1 NV0 N2p NVHn VH0 VHn Vn Vp )
+ConcList=( 10 12 50 )
+ConcList=( 10  )
+
+for (( i=0; i<${#PMdefectlist[@]}; i++)) 
+do
+
+
+for (( j=0; j<${#ConcList[@]}; j++)) 
+do
+
+    SourceFileName="${ConcList[j]}ppm_${PMdefectlist[i]}"
+    SourceFileDir="./opt/test/"
+    export SourceFileDir;
+    export SourceFileName;
+
+    ./domkjobs RM
+    ./domkjobs MKE 
+#    ./domkjobs RunS 
+#    ./domkjobs DS 
+#    ./domkjobs DSA 
+
+done 
+done 

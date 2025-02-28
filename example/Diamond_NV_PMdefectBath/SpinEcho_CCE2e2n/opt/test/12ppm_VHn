@@ -1,0 +1,50 @@
+#!/bin/sh
+Method="CCE"
+
+Directory="/home/huijin/cal/bath/5.DiaExspins/VHn"
+
+DefectFile="${Directory}/VHnbath_12ppm/bath_DiaVHn_12ppm_Defect"
+BathFile="${Directory}/VHnbath_12ppm/bath_DiaVHn_12ppm_"
+GyroFile="${Directory}/VHnbath_gyro"
+AvaaxFile="Random"
+StateFile="Random"
+ExStateFile="Random"
+CCEinFile="${Directory}/cce_1H.json"
+
+## Variables ##
+rBathOpt="370"
+rDipOpt="330"
+B0Opt="322.7"
+OrderOpt="2"
+NkOpt=""
+
+## Fixed parameters ## 
+OrderFix="2"
+PulseFix="1"
+deltaTFix="0.0005" # 0.15ms = 150us
+nStepFix="300"
+
+B0Fix="322.7"
+rBathFix="250"
+rDipFix="200"
+rDsrdrFix=""
+alphaFix="-1"
+betaFix="0"
+
+# clustering algo
+ClusAlgo="0"
+addClus="0"
+NkFix="[0,0,0]"
+
+# Hamiltonian
+HFOpt=0
+HFFile=0 
+HFCutoff=0
+QuadOpt=0
+
+# JOB
+JOBNAME="CCE2e2n_DiaVHn_12ppm_"
+OutFileDir="./rawdata/"
+OutFileHead="CCE2e2n_DiaVHn_12ppm_"
+OutFileTail=""
+

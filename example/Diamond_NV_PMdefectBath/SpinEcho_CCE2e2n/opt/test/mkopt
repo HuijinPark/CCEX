@@ -1,0 +1,37 @@
+#!/bin/sh
+
+
+
+conc=10
+spin="15N"
+B0Largest=292
+
+#conc=12
+#spin="14N"
+#B0Largest=322.7
+
+#conc=50
+#spin="14N"
+#B0Largest=325.7
+
+PMdefectlist=( P1 NV0 N2p NVHn VH0 VHn Vn Vp )
+ccejsonlist=( "DiaFullP1_${spin}_exp.json" \
+              "cce_${spin}.json" \
+              "cce_${spin}.json" \
+              "cce_${spin}_ortho1_avg.json" \
+              "cce_1H.json" \
+              "cce_1H.json" \
+              "None" \
+              "None")
+
+
+for (( i=0; i<${#PMdefectlist[@]}; i++))
+do
+
+    PMdefect=${PMdefectlist[i]}
+    ccejson=${ccejsonlist[i]}
+    export PMdefect; export ccejson; export B0Largest;
+    envsubst '${PMdefect} ${ccejson} ${B0Largest}' < "./${conc}ppm" > "./${conc}ppm_${PMdefect}"
+
+
+done
