@@ -279,6 +279,10 @@ int main(int argc, char* argv[]){
     readBathfiles(ba,qa,cnf);  // set bath xyz position and properties
     MPI_Barrier(MPI_COMM_WORLD);
 
+    //
+    // 
+    //
+
     // Hyperfine tensor
     readHftensorfile(ba,qa,cnf); // set hyperfine tensor only from file
     MPI_Barrier(MPI_COMM_WORLD);
@@ -303,7 +307,7 @@ int main(int argc, char* argv[]){
         }
 
         DefectArray_allocNaddspins(dfa, nspin);
-        DefectArray_setNaddspins(dfa,ba);
+        DefectArray_setNaddspins(dfa,ba); // Naddspins
         if (rank==0){
             DefectArray_reportNaddspins(dfa);
         }
