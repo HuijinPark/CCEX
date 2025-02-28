@@ -1,4 +1,4 @@
-
+###
 CXX = mpiicpc
 
 CXXFLAGS = -std=c++11 #-O2 -g #-Wall Higher level warning
