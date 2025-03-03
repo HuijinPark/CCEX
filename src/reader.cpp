@@ -821,8 +821,8 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
     if (qd_readmode == 0){
         if (rank==0){
             printf("      %-18s:   %4d ( No Quadrupole interaction )\n\n", "Qd Readmode ", qd_readmode);
+            printf("\n");
         }
-        printf("\n");
     }
     else if (qd_readmode == 1){
         if (rank==0){

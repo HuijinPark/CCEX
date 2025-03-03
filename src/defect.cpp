@@ -404,6 +404,8 @@ void DefectArray_setSubbath(DefectArray* dfa, BathArray* ba, QubitArray* qa){
             ////////////////////////////////////
             BathSpin_setDetuning(subspin,0.0);
 
+            // Min.dist is not set here (doesn't affect final result)
+
             ////////////////////////////////////
             // BathSpin : Hyperfine (as much as qubit #)
             ////////////////////////////////////

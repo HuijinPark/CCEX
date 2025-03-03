@@ -507,7 +507,8 @@ void BathArray_reportBath_i_props(BathArray* ba, int i){
     double gyro = BathArray_getBath_i_gyro(ba,i);
     double* xyz = BathArray_getBath_i_xyz(ba,i);
     int mainspidx = BathArray_getBath_i_mainspidx(ba,i);
-    printf("      [%3d] %5s %7.3lf %7.3lf %7.3lf   ( S = %2.1f, gyro = %10.3lf, mainspidx = %d )\n",i,name,xyz[0],xyz[1],xyz[2],spin,gyro, mainspidx);   
+    double mindist = ba->bath[i]->mindist;
+    printf("      [%3d] %5s %7.3lf %7.3lf %7.3lf ( S = %2.1f, gyro = %10.3lf, mainspidx = %d, r_qb = %7.3lf )\n",i,name,xyz[0],xyz[1],xyz[2],spin,gyro, mainspidx, mindist ); 
 }
 
 void BathArray_reportBath_states(BathArray* ba){
@@ -591,8 +592,10 @@ void BathArray_reportBath_hypf(BathArray* ba, int nqubit){
 
 void BathArray_reportBath_quad(BathArray* ba){
 
-    printSubTitle("Bath Quadrupole tensors (radkHz) \
-            \n       *Note : Q = eQV/(2I(2I-1)h), V = EFG tensor (Hartree/Bohr^2)");
+    printSubTitle("Bath Quadrupole (or Zero-field splitting) tensors (radkHz) \
+            \n       *Note (For quadrupole) : Q = eQV/(2I(2I-1)h), V = EFG tensor (Hartree/Bohr^2)\
+            \n       *Note (For ZFS) : Q = ZFS tensor (MHz) can be obtained using \"Defect tag\"\
+            \n                         , and this will be converted to radkHz");
     printf("      quad[ib][iq] (ib : bath spin index, iq : qubit index)\n");
 
     int nspin = BathArray_getNspin(ba);
@@ -713,11 +716,11 @@ void BathArray_setBath_i(BathArray* ba, const BathSpin* bath, int i, int nqubit)
     BathArray_setBath_i_state(ba,bath->state,i);
     BathArray_setBath_i_detuning(ba,bath->detuning,i);
     BathArray_setBath_i_disorder(ba,bath->disorder,i);
+    BathArray_setBath_i_mindist(ba,bath->mindist,i);
 
     BathArray_setBath_i_hypf_sub(ba,bath->hypf_sub,i);
     BathArray_setBath_i_mainspidx(ba,bath->mainspidx,i);
-    ba->bath[i]->quad = bath->quad;
-    //BathArray_setBath_i_quad(ba,bath->quad,i);
+    BathArray_setBath_i_quad(ba,bath->quad,i);
     for (int j=0; j<nqubit; j++){
         BathArray_setBath_i_hypf_j(ba,bath->hypf[j],i,j);
     }
@@ -770,13 +773,14 @@ void BathArray_setBath_i_hypf_j(BathArray* ba, const MatrixXcd hypf, int i, int 
 void BathArray_setBath_i_quad(BathArray* ba, const MatrixXcd quad, int i){
 
     float S = BathArray_getBath_i_spin(ba,i);
-    if (S<1.0){
+    if (S<1.0 && !quad.isZero(FLT_EPSILON)){
         if (rank==0){
             printf("Warning(BathArray_setBath_i_quad): BathSpin[%d] S = %2.1f\n",i,S);
             printf("Warning(BathArray_setBath_i_quad): You set the quadrupole but the spin number is larger than 0.5\n");
             printf("Warning(BathArray_setBath_i_quad): I hope you know what you do\n");
         }
     }
+
     ba->bath[i]->quad = quad;
 }
 

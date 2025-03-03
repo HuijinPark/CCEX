@@ -474,9 +474,9 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
         // Set BathSpin in cluster batharray
         BathArray_setBath_i(ba_cluster, bs, nspin_cluster-1, nqubit);
 
-        if (rank==0 && verbosity){
-            BathArray_reportBath(ba_cluster);
-        }
+        //if (rank==0 && verbosity){
+        //    BathArray_reportBath(ba_cluster);
+        //}
 
         // Add sub-spins in cluster
         char* name = BathArray_getBath_i_name(ba,ibs);
@@ -520,8 +520,17 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
 
 
     if (rank==0 && addedspin>0 && verbosity){
+        printLineSection();
         BathArray_reportBath(ba_cluster);
         printStructElementInt(" * Added spin",addedspin);
+        printf("\n");
+
+        BathArray_reportBath_states(ba_cluster);
+        BathArray_reportBath_detunings(ba_cluster);
+        BathArray_reportBath_disorders(ba_cluster);
+        BathArray_reportBath_hypf(ba_cluster,nqubit);
+        BathArray_reportBath_quad(ba_cluster);
+        BathArray_reportBath_hypf_sub(ba_cluster);
     }
 
     return ba_cluster;
