@@ -183,7 +183,8 @@ if var.Q : do.mkQdata(*args["Q"])
 #if var.D : do.mkDdata(*args["D"])
 if not (var.A or var.Q or var.D) : cal_form._end(meg_error=f"Error, key A,Q,D are not given")
 
-print(do.__repr__([var.A,var.Q,var.D]))
+if var.tool != "QE":
+    print(do.__repr__([var.A,var.Q,var.D]))
 
 ########################################################################
 # Postprocess : Obatin cce.in file data 
