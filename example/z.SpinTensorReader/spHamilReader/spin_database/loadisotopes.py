@@ -39,7 +39,7 @@ def isotopeData(atmsymbol,help=None):
 
 	__location__ = os.path.realpath(
 		os.path.join(os.getcwd(), os.path.dirname(__file__)))
-	filepath = os.path.join(__location__, 'isotopedata.txt')
+	filepath = os.path.join(__location__, 'isotopedata_utf-8.txt')
 
 	all_spins = pd.read_csv(filepath, sep='\s+', header=None, comment='%',
 							names=['protons', 'nucleons', 'radioactive', 'symbol', 'name', 'spin', 'g', 'conc', 'q'], encoding='utf-8')
