@@ -41,8 +41,8 @@ def isotopeData(atmsymbol,help=None):
 		os.path.join(os.getcwd(), os.path.dirname(__file__)))
 	filepath = os.path.join(__location__, 'isotopedata.txt')
 
-	all_spins = pd.read_csv(filepath, delim_whitespace=True, header=None, comment='%',
-							names=['protons', 'nucleons', 'radioactive', 'symbol', 'name', 'spin', 'g', 'conc', 'q'])
+	all_spins = pd.read_csv(filepath, sep='\s+', header=None, comment='%',
+							names=['protons', 'nucleons', 'radioactive', 'symbol', 'name', 'spin', 'g', 'conc', 'q'], encoding='utf-8')
 	
 	stable_spins = all_spins[(all_spins['spin'] > 0) & (all_spins['conc'] > 0)]
 	

@@ -718,7 +718,7 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         // Spin information
         ////////////////////////////////////////////////////////////////////////
         bool HaveDefault = true;
-        if (naddspin >= 0){HaveDefault=false;}
+        if (naddspin >= 1){HaveDefault=false;}
 
         // If there is nuclear spin on defect site, 
         // then the following values should be included in your cce.json:
