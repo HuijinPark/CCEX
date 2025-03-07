@@ -209,7 +209,7 @@ if __name__ == "__main__":
                     if (args.xlog):
                         Fig.Fig.ax.set_xscale('log')
 
-                    fname=f"{args.outfile[0]}".replace(varname,varval)
+                    fname=f"{args.outfile[0]}.png".replace(varname,varval)
                     Fig.Fig.save(fname)
                     if args.verbosity:
                         print(f"\n\t\tSave the plot in {fname}")
@@ -228,7 +228,7 @@ if __name__ == "__main__":
             if (args.xlog):
                 Fig.Fig.ax.set_xscale('log')
 
-            fname=f"{args.outfile[0]}_conv{count}"
+            fname=f"{args.outfile[0]}_conv{count}.png"
             Fig.Fig.save(fname)
             print(f"\n\t\tSave the plot in {fname}")
 
@@ -258,7 +258,7 @@ if __name__ == "__main__":
                 Fig.Fig.ax.set_xscale('log')
             
             Fig.Fig.legend(0.9,0.9,frameon=False)
-            Fig.Fig.save(f"{args.outfile[0]}")
+            Fig.Fig.save(f"{args.outfile[0]}.png")
         else: sys.exit("Error args.variable_names is larger than 1")
         print("\n\tDone Multi plot")
         print("\t","_"*50)
@@ -283,7 +283,7 @@ if __name__ == "__main__":
                     Iplot.ax.set_ylim(args.ylim[0],args.ylim[1])
 
 
-                Iplot.save(f"{args.outfile[0]}")
+                Iplot.save(f"{args.outfile[0]}.png")
         else: sys.exit("Error args.variable_names is larger than 1")
         print("\n\tDone intensity plot")
         print("\t","_"*50)
@@ -335,7 +335,7 @@ if __name__ == "__main__":
                     fig.ax.set_xlim(args.xlim[0],args.xlim[1])
                 if (args.ylim != None):
                     fig.ax.set_ylim(args.ylim[0],args.ylim[1])
-                fig.save(f"{args.outfile[0]}_T2")
+                fig.save(f"{args.outfile[0]}_T2.png")
 
             fig = EasyPlot()
             if args.do_plot_p:
@@ -346,7 +346,7 @@ if __name__ == "__main__":
                     fig.ax.set_xlim(args.xlim[0],args.xlim[1])
                 if (args.ylim != None):
                     fig.ax.set_ylim(args.ylim[0],args.ylim[1])
-                fig.save(f"{args.outfile[0]}_Power")
+                fig.save(f"{args.outfile[0]}_Power.png")
 
         else: sys.exit("Error args.variable_names is larger than 1")
         print("\n\tDone to fit")
