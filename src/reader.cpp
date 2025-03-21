@@ -202,6 +202,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
     //}
 }
 
+
 void setBathStates(BathArray* ba, Config* cnf, int i){
 
     /**
@@ -296,7 +297,6 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
     }
     return;
 }
-
 
 int compare_dist(const void *a, const void *b){
     BathSpin* s1 = *(BathSpin**)a;

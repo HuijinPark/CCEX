@@ -102,6 +102,13 @@ int main(int argc, char* argv[]){
                 cJSON_readOptionPulse       (pls, fccein); // pulse.h
                 cJSON_readOptionOutput      (op,  fccein); // output.h
 
+                if ( (strcasecmp(cls->method, "gCCE") == 0) && (strcasecmp(pls->pulsename, "Manual") == 0) ){
+                    if (rank==0){
+                        printf("If you want to |Muanual| sequence, then you have to choose the |gCCE| method! \n\n");
+                        exit(EXIT_FAILURE);
+                    }
+                }
+
 				if (rank==0){
 					printf("\n	>> Read %s file successfully ..\n",optarg);
 				}
@@ -415,7 +422,6 @@ int main(int argc, char* argv[]){
     MPI_Barrier(MPI_COMM_WORLD);
     
     /////////////////////////////////////////////////////////
-    
 
     //wall time check
     if (rank==0){ 

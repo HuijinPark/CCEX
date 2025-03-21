@@ -1,0 +1,16 @@
+#!/bin/sh
+
+cd ../../../
+
+    make
+
+cd "/home/ist1102/CCE/CODE/work/CCEX/test/code_verification/wahuha"
+
+code="../../../bin/main.out"
+ccein="./ccein.js"
+
+process=1
+
+mpirun -np ${process} ${code} -f ${ccein} -v | tee proc 
+
+

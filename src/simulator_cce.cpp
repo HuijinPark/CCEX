@@ -1,7 +1,8 @@
 #include "../include/simulator.h"
 #include "../include/hamiltonian.h"
 #include <iostream>
-MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls){
+
+MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pulse){
     
     double stime = MPI_Wtime();
     double etime = 0.0;
@@ -93,8 +94,12 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
     }
 
     // Npulse
-    int npulse = Pulse_getNpulse(pls);
-    double** sequence = Pulse_getSequence(pls);
+    int npulse = Pulse_getNpulse(pulse);
+    //double* tau_fractions    = Pulse_getTauFractions(pulse);
+    double** sequence        = Pulse_getSequence(pulse);
+    double* pulse_angles     = Pulse_getPulseAngles(pulse);
+    char*   pulse_axes       = Pulse_getPulseAxes(pulse);
+    int*    sequence_indices = Pulse_getSequenceIndices(pulse);
 
     // Alloc the result variable
     int nstep = Config_getNstep(cnf);
@@ -243,6 +248,9 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
             result[i](0,0) = L_mat.trace() / doublec(bdim*1.0,0.0);
             tfree += deltat;
         }
+    //////////////////////////////////////////////////////////////
+    //  Single Sample approch -> Huijin's code
+    //////////////////////////////////////////////////////////////
     }else{
 
          //#pragma omp parallel for
@@ -269,8 +277,9 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
             // and calculate total U operators
             for (int ipulse=0; ipulse<npulse+1; ipulse++){
 
-                double tau = tfree * sequence[ipulse][2];
-                int SameTauIndex = (int)sequence[ipulse][3];
+                //double       tau = tfree * tau_fractions[ipulse];
+                double tau       = tfree * sequence[ipulse][2];
+                int SameTauIndex = sequence_indices[ipulse];
 
                 //printf("[%d] tau = %.10lf\n",ipulse,tau);
 

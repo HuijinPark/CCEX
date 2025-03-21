@@ -1,0 +1,592 @@
+
+
+    ======================================================================
+
+                   ______   ______  _______ ___   ___ 
+                  /      | /      ||   ____|\  \ /  / 
+                 |  ,----'|  ,----'|  |__    \  V  /  
+                 |  |     |  |     |   __|    >   <   
+                 |  `----.|  `----.|  |____  /  .  \  
+                  \______| \______||_______|/__/ \__\ 
+                __   _   _   _  _       _   _     _   _   _ _   
+               / _| / \ | \_/ || |     //  / \   | | / \ | | |  
+              ( (_ ( o )| \_/ || |_   //  | o |n_| |( o )| U |  
+               \__| \_,7|_| |_||___| //   |_n_|\__/  \_/ |___|  
+
+
+            Program CCEX starts on Thu Mar 20 10:36:55 2025
+                The CCEX code has compiled at 'Mar 18 2025' 
+    ======================================================================
+
+        Option filename : './ccein.js' 
+
+        Read Config Options ...
+
+          - General option-related keys : 
+            [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] 
+
+           rbathcut : use default value .. 
+           rdipcut : use default value .. 
+           nstate : use default value .. 
+
+          - File-related keys :
+            [ qubitfile, gyrofile, bathfile, bathadjust, avaaxfile, statefile, exstatefile ] 
+
+           bathadjust : use default value .. 
+           avaaxfile : use default value .. 
+           statefile : use default value .. 
+           exstatefile : use default value .. 
+
+          - Tensorfile-related keys :
+            [ DefectTotSpin, CorrTotSpin, 
+              hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, 
+              qd_readmode, qd_tensorfile, qd_tensorfile_woqubit, qd_cellpara ] 
+
+           DefectTotSpin : use default value .. 
+           CorrTotSpin : use default value .. 
+           qd_readmode : use default value .. 
+
+        Read Qubit Options ...
+
+          - Read values of main-key 'Qubit'
+            sub-key of 'Qubit' : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] 
+
+          - Read values of sub-key 'qubit'
+            sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] 
+
+          - Read values of sub-key 'intmap'
+            sub-sub-key : [ between, tensor ] 
+
+          - Read values of main-key 'qubitfile', 'zfs', 'qspin', 'alphams', betams'
+           qspin : use default value .. 
+
+        Read Defect Options ...
+
+          - Read values of main-key 'Defect' (Array format)
+            sub-key : [ dfname, naddspin, navaax, apprx,   ( type : single value) 
+                        types, spins, gyros, eqs,          ( type : array ) 
+                        rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) 
+
+           types : use default value .. 
+           spins : use default value .. 
+           gyros : use default value .. 
+           eqs : use default value .. 
+
+        Read Cluster Options ...
+          [ order, method, addsubclus, nk ] 
+
+           addsubclus : use default value .. 
+
+[Info] Read Pulse Options ...
+  [ npulse, pulsename, sequence ]
+
+        Read Output Options ...
+          [ savemode, outfile ] 
+           outfile : use default value .. 
+
+	>> Read ./ccein.js file successfully ..
+
+
+    ======================================================================
+        Report all structures 
+    ======================================================================
+
+    ----------------------------------------------------------------------
+    < Structure Config > 
+
+      method            :   gCCE                 
+      quantity          :   coherence            
+      order             :   2                    
+      bfield            :   [ 0.00      , 0.00      , 500.00     ]
+      rbath             :   850                  
+      rdip              :   620                  
+      deltat            :   0.002                
+      nstep             :   300                  
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   1                    
+      seed              :   9407                 
+      qubitfile         :   /home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_Defect
+      gyrofile          :   /home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath/DiaP1_gyro
+      nbathfiles        :   1                    
+      bathfiles         :   /home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_1
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      avaaxfile         :   Random1              
+      statefile         :   /home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath/14N_1ppm/state_DiaP1_1ppm_
+      exstatefile       :   Random               
+      DefectTotSpin     :   1                    
+      CorrTotSpin       :   0                    
+      hf_readmode       :   0                    
+      qd_readmode       :   0                    
+
+
+    ----------------------------------------------------------------------
+    < Structure QubitArray > 
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+    -----------------------------------------------------------------
+
+      qubit name        :   q0                   
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   (+1+0j) |-1 >  
+      beta              :   (+1+0j) | 0 >  
+
+    -----------------------------------------------------------------
+
+    >> Interactions (radkHz)
+
+      intmap[0][0]      :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ----------------------------------------------------------------------
+    < DefectArray > 
+
+    >> DefectArray->defect[0]
+
+      dfname            :   P1                   
+      apprx             :   true                 
+      naddspin          :   0                    
+      navaax            :   13 - 1 # ( possible axis : 1 ~ 12 )
+      types             :   [ ]
+      spins             :   [ ]
+      gyros (radkHz/G)  :   [ ]
+      eqs (10e-30 m^2)  :   [ ]
+      ________________________________________________________________
+
+      Relative distance (A) : rxyz[iax][isp] 
+       - iax : principal axis index 
+       - isp : additional spin index 
+      ________________________________________________________________
+
+      Hyperfine tensor (MHz) : hypf[iax][isp] 
+      ________________________________________________________________
+
+      Electric field gradient (Hartree/Bohr_radius^2) : efg[iax][isp] 
+      ________________________________________________________________
+
+      Zero-field splitting tensor (MHz) : zfs[iax] 
+      zfs[1]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[2]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[3]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[4]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[5]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[6]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[7]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[8]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[9]            :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[10]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[11]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      zfs[12]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      ________________________________________________________________
+
+      Detuning (MHz) : detuning[iax] 
+      detuning[1]       :   84.9                 
+      detuning[2]       :   84.9                 
+      detuning[3]       :   84.9                 
+      detuning[4]       :   0                    
+      detuning[5]       :   0                    
+      detuning[6]       :   0                    
+      detuning[7]       :   -84.9                
+      detuning[8]       :   -84.9                
+      detuning[9]       :   -84.9                
+      detuning[10]      :   114                  
+      detuning[11]      :   0                    
+      detuning[12]      :   -114                 
+      ________________________________________________________________
+
+
+    ----------------------------------------------------------------------
+    < Structure Cluster > 
+
+    >> General properties
+
+      order             :   2                    
+      method            :   gCCE                 
+      addsubclus        :   true                 
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0    ,   2 : 0     ]
+
+
+
+    ----------------------------------------------------------------------
+    < Structure Pulse > 
+
+      pulsename         :   Manual               
+      npulse            :   4                    
+      pulseiter         :   false                
+                            * true  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+    >> Sequence
+
+    -----------------------------------------------------------------
+    Start         End        Diff        Axis       Angle       Index
+    0.000       0.167       0.167           X       90.00           0
+    0.167       0.333       0.167           Y      270.00           0
+    0.333       0.667       0.333           Y       90.00           2
+    0.667       0.833       0.167           X      270.00           0
+    0.833       1.000       0.167           I        0.00           0
+    -----------------------------------------------------------------
+
+
+    ----------------------------------------------------------------------
+    < Structure Output > 
+
+      savemode          :   normal               
+      outfile           :   ./res/CCE2_DiaP1_1ppm_Order_2_1
+
+
+    ===============================================================
+
+
+
+    ======================================================================
+        Read files 
+    ======================================================================
+
+    >> Qubit file
+
+        Read QubitFile : /home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_Defect ... 
+        Qubit[0].xyz    :   [ 1123.60   , 1124.86   , 1124.38    ]
+
+    >> Gyromagnetic ratio file
+
+        Read GyroFile : /home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath/DiaP1_gyro
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+
+    >> Bath configuration files
+
+    -----------------------------------------------------------------
+        Read BathFile[0] : /home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_1
+
+        - Number of bath spins : 469 (nspin = 469)
+      [  0]    P1 1634.321 942.118 1529.545 ( S = 0.5, gyro = -17608.597, mainspidx = -1, r_qb = 677.049 )
+      [  1]    P1 583.866 1420.458 615.216 ( S = 0.5, gyro = -17608.597, mainspidx = -1, r_qb = 798.706 )
+      [  2]    P1 1209.347 1819.439 1539.842 ( S = 0.5, gyro = -17608.597, mainspidx = -1, r_qb = 813.879 )
+           : 
+
+      [467]    P1 1063.065 1494.721 571.971 ( S = 0.5, gyro = -17608.597, mainspidx = -1, r_qb = 667.542 )
+      [468]    P1 411.102 1105.205 1335.971 ( S = 0.5, gyro = -17608.597, mainspidx = -1, r_qb = 743.509 )
+    -----------------------------------------------------------------
+
+    >> Read the Hyperfine interaction from DFT inputfile...
+
+      HF Readmode       :      0 ( Point-dipole tensor )
+
+    >> Bath Hyperfine tensors (radkHz) 
+
+      hypf[ib][iq] (ib : bath spin index, iq : qubit index)
+      hypf[0][0]        :   [ -0.74+0.00j, 0.64+0.00j, -1.43+0.00j, 0.64+0.00j, 0.82+0.00j, 0.51+0.00j, -1.43+0.00j, 0.51+0.00j, -0.08+0.00j ]
+      hypf[1][0]        :   [ -0.24+0.00j, 0.48+0.00j, -0.83+0.00j, 0.48+0.00j, 0.38+0.00j, 0.45+0.00j, -0.83+0.00j, 0.45+0.00j, -0.14+0.00j ]
+      hypf[2][0]        :   [ 0.59+0.00j, -0.16+0.00j, -0.10+0.00j, -0.16+0.00j, -0.72+0.00j, -0.79+0.00j, -0.10+0.00j, -0.79+0.00j, 0.13+0.00j ]
+         :
+
+      hypf[467][0]      :   [ 1.07+0.00j, 0.17+0.00j, -0.25+0.00j, 0.17+0.00j, 0.09+0.00j, 1.51+0.00j, -0.25+0.00j, 1.51+0.00j, -1.16+0.00j ]
+      hypf[468][0]      :   [ -1.40+0.00j, -0.06+0.00j, 0.65+0.00j, -0.06+0.00j, 0.79+0.00j, 0.02+0.00j, 0.65+0.00j, 0.02+0.00j, 0.60+0.00j ]
+
+    >> Read the Quadrupole interaction from DFT inputfile...
+
+      Qd Readmode       :      0 ( No Quadrupole interaction )
+
+
+    >> Bath Quadrupole (or Zero-field splitting) tensors (radkHz)             
+       *Note (For quadrupole) : Q = eQV/(2I(2I-1)h), V = EFG tensor (Hartree/Bohr^2)            
+       *Note (For ZFS) : Q = ZFS tensor (MHz) can be obtained using "Defect tag"            
+                         , and this will be converted to radkHz
+
+      quad[ib][iq] (ib : bath spin index, iq : qubit index)
+      quad[0]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      quad[1]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      quad[2]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+         :
+      quad[467]         :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      quad[468]         :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+
+    >> Defect Paxes File
+
+        Warning(setPaxes): Cannot open the avaax file (Random1)
+        The paxes is randomly generated
+
+    >> DefectArray->paxes
+
+      nbathspin (#)     :   469                  
+    -----------------------------------------------------------------
+      paxes[0]          :   8                    
+      paxes[1]          :   11                   
+      paxes[2]          :   10                   
+         :
+      paxes[467]        :   3                    
+      paxes[468]        :   8                    
+    -----------------------------------------------------------------
+
+    >> DefectArray->naddspins
+
+      nbathspin (#)     :   469                  
+    -----------------------------------------------------------------
+      naddspins[0]      :   0                    
+      naddspins[1]      :   0                    
+      naddspins[2]      :   0                    
+         :
+      naddspins[467]    :   0                    
+      naddspins[468]    :   0                    
+    -----------------------------------------------------------------
+
+    >> DefectArray->subbath
+
+      nbathspin (#)     :   469                  
+    -----------------------------------------------------------------
+         :
+       No sub-bath  
+    -----------------------------------------------------------------
+
+    >> SubBath Hyperfine tensors (Qubit-SubBath)
+
+        SubBath[ibs][isp].hypf[iq] (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+         * iq  : Qubit index
+
+         :
+
+    >> SubBath Quadrupole tensors (Depending on principal axis)
+
+        SubBath[ibs][isp].quad (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+         :
+
+    >> SubBath Hyperfine tensors (MainDefect-SubBath)
+
+        SubBath[ibs][isp].hypf_sub (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+         :
+
+    ----------------------------------------------------------------------
+    < BathArray > 
+
+      nspecies          :   1                    
+      names             :   [ P1         ]
+      gyros             :   [ -17608.60  ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   469                  
+    -----------------------------------------------------------------
+      [  0]    P1 1634.321 942.118 1529.545 ( S = 0.5, gyro = -17608.597, mainspidx = 0, r_qb = 677.049 )
+      [  1]    P1 583.866 1420.458 615.216 ( S = 0.5, gyro = -17608.597, mainspidx = 1, r_qb = 798.706 )
+      [  2]    P1 1209.347 1819.439 1539.842 ( S = 0.5, gyro = -17608.597, mainspidx = 2, r_qb = 813.879 )
+         :
+      [467]    P1 1063.065 1494.721 571.971 ( S = 0.5, gyro = -17608.597, mainspidx = 467, r_qb = 667.542 )
+      [468]    P1 411.102 1105.205 1335.971 ( S = 0.5, gyro = -17608.597, mainspidx = 468, r_qb = 743.509 )
+
+    -----------------------------------------------------------------
+
+    -----------------------------------------------------------------
+          Wall time = 0.06425 s
+    -----------------------------------------------------------------
+
+
+   ======================================================================
+       Clusterize 
+   ======================================================================
+
+
+	 CCE1 ... 
+		 update "Nk"
+		 0:0  1:469  2:0  
+
+
+	 CCE2 ... 
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+		 update "Nk"
+		 0:0  1:469  2:25929  
+
+      clusinfo          :   
+
+           0-th order ... 
+           Cluster[0][    0] :   1 (Iter)
+
+           Total 0-Cluster # :  1 # 
+
+
+
+           1-th order ... 
+           Cluster[1][    1] : -101 [0   ]
+           Cluster[1][    2] : -73 [1   ]
+           Cluster[1][    3] : -80 [2   ]
+           Cluster[1][    4] : -138 [3   ]
+                : 
+           Cluster[1][  466] : -165 [465 ]
+           Cluster[1][  467] : -83 [466 ]
+           Cluster[1][  468] : -108 [467 ]
+           Cluster[1][  469] : -87 [468 ]
+
+           Total 1-Cluster # :  469 # 
+
+
+
+           2-th order ... 
+           Cluster[2][    1] :   1 [137, 362 ]
+           Cluster[2][    2] :   1 [163, 390 ]
+           Cluster[2][    3] :   1 [268, 431 ]
+           Cluster[2][    4] :   1 [192, 465 ]
+                : 
+           Cluster[2][25926] :   1 [334, 343 ]
+           Cluster[2][25927] :   1 [143, 257 ]
+           Cluster[2][25928] :   1 [269, 317 ]
+           Cluster[2][25929] :   1 [12 , 415 ]
+
+           Total 2-Cluster # :  25929 # 
+
+
+    -----------------------------------------------------------------
+          Wall time = 0.26340 s
+    -----------------------------------------------------------------
+
+
+   ======================================================================
+       Main calculation 
+   ======================================================================
+
+    < gCCE calculation (Single-sample approach) : Iteration # 1 > 
+
+    >> Randomize main-bath states...
+
+        Read StateFile : /home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath/14N_1ppm/state_DiaP1_1ppm_1
+
+      nbathspin (#)     :   469                  
+    -----------------------------------------------------------------
+      bath[0].state     :   0.5                  
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[467].state   :   -0.5                 
+      bath[468].state   :   -0.5                 
+    -----------------------------------------------------------------
+
+    >> Randomize sub-bath states...
+
+        Warning(setSubbathStates): Cannot open the exstate file (Random1)
+        The subbath states are randomly generated
+
+      nbathspin (#)     :   469                  
+    -----------------------------------------------------------------
+      subbath[0].state  :   [ ]
+      subbath[1].state  :   [ ]
+      subbath[2].state  :   [ ]
+         :
+      subbath[467].state :   [ ]
+      subbath[468].state :   [ ]
+    -----------------------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   18.8                 
+      Bath[1].disorder  :   -228                 
+      Bath[2].disorder  :   32.6                 
+         :
+      Bath[467].disorder:   -276                 
+      Bath[468].disorder:   101                  
+
+    >> SubBath Disorders
+
+        SubBath[ibs][isp].disorder (radkHz)
+
+         * ibs : BathSpin index (main spin)
+         * isp : SubSpin index (sub spin)
+
+         :
+
+    >> Set psia, psib from qubit alpha, beta...
+
+      psia              :   [ 0.00+0.00j, 0.00+0.00j, 1.00+0.00j ]
+      psib              :   [ 0.00+0.00j, 1.00+0.00j, 0.00+0.00j ]
+    >> Set psi0 from psia, psib...
+
+      psi0              :   [ 0.00+0.00j, 0.71+0.00j, 0.71+0.00j ]
+
+    >> Calculate 0-th cluster...
+
+        # Wall time : 0.01[s]
+    -----------------------------------------------------------------
+
+
+    >> Calculate 1-th cluster...
+
+        At rank 0, 4-th cluster (100%) is computed at 0.10 s
+
+        # Wall time : 0.10[s]
+    -----------------------------------------------------------------
+
+
+    >> Calculate 2-th cluster...
+
+        At rank 0, 39-th cluster (19%) is computed at 3.26 s
+        At rank 0, 78-th cluster (38%) is computed at 6.41 s
+        At rank 0, 117-th cluster (57%) is computed at 9.57 s
+        At rank 0, 156-th cluster (76%) is computed at 12.73 s
+        At rank 0, 195-th cluster (96%) is computed at 15.89 s
+        At rank 0, 203-th cluster (100%) is computed at 16.54 s
+
+        # Wall time : 16.54[s]
+    -----------------------------------------------------------------
+
+    >> Product local results...
+
+    >> Gather the results (MPI)...
+
+    >> Save the results...
+
+    -----------------------------------------------------------------
+          Wall time = 16.75894 s
+    -----------------------------------------------------------------
+
+
+
+    ===============================================================
+
+        JOB DONE : Wall time = 17.16327 s
+
+    ===============================================================
+
+

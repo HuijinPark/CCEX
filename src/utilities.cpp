@@ -20,6 +20,15 @@ double* MatrixXcdToDouble1d(MatrixXcd mat){
     return val;
 }
 
+int Double_is_same_row(double* row1, double* row2) {
+    for (int i = 0; i < 3; ++i) {
+        if (fabs(row1[i] - row2[i]) > 1e-9) {
+            return 0; // different
+        }
+    }
+    return 1;  // same
+}
+
 /* math functions -----------------------------------------------*/
 
 /////Calculate the parameter///////////////////////////////////
@@ -382,7 +391,7 @@ void printStructElementBool(char* key, bool val){
 }
 
 void printLine(){
-    printf("      -------------------------------------------------\n");
+    printf("    -----------------------------------------------------------------\n");
 }
 
 void printLineSection(){

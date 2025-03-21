@@ -50,7 +50,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     ////////////////////////////////
     // Main calculation loop
     ////////////////////////////////
-
     for (int istate=0; istate<=nstate; istate++){
 
         // wall time

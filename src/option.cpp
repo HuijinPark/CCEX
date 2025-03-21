@@ -2,6 +2,7 @@
 #include "../include/json.h"
 #include "../include/memory.h"
 
+#include <fstream>
 #include <unistd.h>
 
 /**
@@ -537,23 +538,64 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     freeChar1d(&data);
 }
 
-void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
-    
-    if (rank==0){
-        printf("\n");
-        printMessage("Read Pulse Options ...");
-        printMessage("  [ npulse, pulsename, sequence ] \n");
+////////////////////////// 
+// Pulse HS version  //
+////////////////////////// 
+double parse_fraction(const std::string& frac_str) {
+    int num = 0, denom = 1;
+    if (sscanf(frac_str.c_str(), "%d/%d", &num, &denom) == 2) {
+        return static_cast<double>(num) / denom;
     }
-    char* data = cJSON_ReadFccein(fccein);
-    cJSON* root = cJSON_Parse(data);
+    return std::stod(frac_str);
+}
 
-    if (root == NULL){
-        if (rank==0){
-            printf("Error before: %s\n", cJSON_GetErrorPtr());
-        }
+char parse_axis(cJSON* axis_json, int row_index) {
+//char parse_axis(cJSON* axis_json) {
+    if (!cJSON_IsString(axis_json)) {
+        fprintf(stderr, "[Error] Axis at row %d is not a string.\n", row_index);
         exit(EXIT_FAILURE);
-        freeChar1d(&data);
     }
+
+    const char* axis_str = axis_json->valuestring;
+    if (!axis_str || strlen(axis_str) == 0) {
+        fprintf(stderr, "[Error] Axis at row %d is empty.\n", row_index);
+        exit(EXIT_FAILURE);
+    }
+
+    char c = toupper(axis_str[0]);
+
+    if (c == 'X' || c == 'Y' || c == 'Z' || c == 'I') {
+        return c;
+    }
+
+    fprintf(stderr, "[Error] Invalid axis '%s'. Only 'X', 'Y', 'Z', 'I' are allowed.\n", axis_str);
+    exit(EXIT_FAILURE);
+}
+
+std::string read_json_file(const std::string& fccein) {
+    std::ifstream file(fccein, std::ios::binary);
+    if (!file) throw std::runtime_error("Cannot open ccein file: " + fccein);
+    file.seekg(0, std::ios::end);
+    std::string contents(file.tellg(), '\0');
+    file.seekg(0, std::ios::beg);
+    file.read(&contents[0], contents.size());
+    return contents;
+}
+
+void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
+    if (rank == 0) {
+        std::cout << "\n[Info] Read Pulse Options ...\n";
+        std::cout << "  [ npulse, pulsename, sequence ]\n";
+    }
+
+    char*  data = cJSON_ReadFccein(fccein);
+    cJSON* root = cJSON_Parse(data);
+    if (!root) {
+        if (rank == 0)
+            std::cerr << "[Error] JSON parse failed: " << cJSON_GetErrorPtr() << "\n";
+        throw std::runtime_error("JSON parsing failed");
+    }
+    bool made = false;
 
     int npulse = cJSON_ReadInt(root,"npulse",false, -1);
     Pulse_setNpulse(pulse,npulse);
@@ -561,52 +603,145 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
     char* pulsename = cJSON_ReadString(root,"pulsename",true,"None");
     Pulse_setPulsename(pulse,pulsename);
 
-    double* sequenceinput = cJSON_ReadDouble1d(root,"sequence",true,NULL,npulse);
-
-    // set sequence
-    bool made = false;
     Pulse_allocSequence(pulse);
-    if (sequenceinput == NULL){
-        if (npulse == 0){
-            Pulse_setPulsename(pulse,"Ramsey");
-            Pulse_setSequence_fromName(pulse);
-            made = true;
-        }
-
-        if (npulse == 1){
-            Pulse_setPulsename(pulse,"HahnEcho");
-            Pulse_setSequence_fromName(pulse);
-            made = true;
-        }
-
-        if (npulse > 1 && strcasecmp(pulsename,"Equal") != 0){
-            Pulse_setPulsename(pulse,"CPMG");
-            Pulse_setSequence_fromName(pulse);
-            made = true;
-        }
-
-        if (npulse > 1 && strcasecmp(pulsename,"Equal") == 0){
-            Pulse_setPulsename(pulse,"Equal");
-            Pulse_setSequence_fromName(pulse);
-            made = true;
-        }
-        
-    }else{
-        Pulse_setSequence_fromInput(pulse,sequenceinput);
+    //Pulse_allocTauFractions(pulse);
+    Pulse_allocAxes(pulse);
+    Pulse_allocAngles(pulse);
+    Pulse_allocSequenceIndices(pulse);
+    cJSON* sequence_array = cJSON_GetObjectItem(root, "sequence");
+    if (!sequence_array) {
+        allocateDefaultSequence(pulse);
         made = true;
     }
 
-    if (!made){
-        fprintf(stderr, "Error: cJson_readOptionPulse, pulse->pulsename is not matched! or you have to use sequence tag\n");
-        exit(EXIT_FAILURE);
+    if (strcasecmp(pulse->pulsename, "Manual") == 0) {
+        if (!(sequence_array && cJSON_IsArray(sequence_array))) {
+            fprintf(stderr, "[Error] sequence_array is missing or not a valid JSON array. [case pulse name = manual]\n");
+            exit(EXIT_FAILURE);
+        }
+
+        int count = cJSON_GetArraySize(sequence_array);
+        if (count != (pulse->npulse) + 1) {
+            throw std::runtime_error("Mismatch between sequence length and npulse");
+        }
+
+        double total_frac = 0.0;
+        for (int i = 0; i < (pulse->npulse)+1; ++i) {
+            cJSON* item = cJSON_GetArrayItem(sequence_array, i);
+            if (!cJSON_IsArray(item)) continue;
+
+            cJSON* frac  = cJSON_GetArrayItem(item, 0);
+            cJSON* axis  = cJSON_GetArrayItem(item, 1);
+            cJSON* angle = cJSON_GetArrayItem(item, 2);
+
+            if (!frac || !axis || !angle) continue;
+
+            pulse->sequence[i][0] = total_frac;               
+            double fraction       = parse_fraction(frac->valuestring);
+            total_frac            = total_frac + fraction;
+            pulse->sequence[i][1] = total_frac ;               
+            pulse->sequence[i][2] = fraction;               // fraction
+
+            pulse->pulse_axes[i]    = parse_axis(axis, i); // axis
+            pulse->pulse_angles[i]  = static_cast<double>(angle->valueint);            // angle
+        }
+        assign_sequence_indices(pulse);
+        if (total_frac - 1.0 > 1e-9){
+            throw std::runtime_error("Total Fraction is not 1: ");
+        }
     }
 
-    freeDouble1d(&sequenceinput);
-
+    //////////////////////////
+    //if (pulse->npulse != 0){
+    //    printf("Array: pulse -> sequence:\n");
+    //    printf("%8s   %8s   %8s   %8s   %8s   %8s \n", "start", "End", "diff.", "Axis", "Angle", "Index");
+    //    for (int i=0; i<(pulse->npulse)+1; i++){
+    //        printf(" %8.2f  ", pulse->sequence[i][0]);
+    //        printf(" %8.2f  ", pulse->sequence[i][1]);
+    //        printf(" %8.2f  ", pulse->sequence[i][2]);
+    //        printf(" %8.2f  ", pulse->pulse_axes[i]);
+    //        printf(" %8.2f  ", pulse->pulse_angles[i]);
+    //        printf("  %d\n", pulse->sequence_indices[i]);
+    //        
+    //    }
+    //}
+    //printf("Pulse Name: %s\n", pulse->pulsename);
     cJSON_Delete(root);
     freeChar1d(&data);
-    
+    //exit(1);
 }
+
+
+//void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
+//    
+//    if (rank==0){
+//        printf("\n");
+//        printMessage("Read Pulse Options ...");
+//        printMessage("  [ npulse, pulsename, sequence ] \n");
+//    }
+//    char* data = cJSON_ReadFccein(fccein);
+//    cJSON* root = cJSON_Parse(data);
+//
+//    if (root == NULL){
+//        if (rank==0){
+//            printf("Error before: %s\n", cJSON_GetErrorPtr());
+//        }
+//        exit(EXIT_FAILURE);
+//        freeChar1d(&data);
+//    }
+//
+//    int npulse = cJSON_ReadInt(root,"npulse",false, -1);
+//    Pulse_setNpulse(pulse,npulse);
+//
+//    char* pulsename = cJSON_ReadString(root,"pulsename",true,"None");
+//    Pulse_setPulsename(pulse,pulsename);
+//
+//    double* sequenceinput = cJSON_ReadDouble1d(root,"sequence",true,NULL,npulse);
+//
+//    // set sequence
+//    bool made = false;
+//    Pulse_allocSequence(pulse);
+//    if (sequenceinput == NULL){
+//        if (npulse == 0){
+//            Pulse_setPulsename(pulse,"Ramsey");
+//            Pulse_setSequence_fromName(pulse);
+//            made = true;
+//        }
+//
+//        if (npulse == 1){
+//            Pulse_setPulsename(pulse,"HahnEcho");
+//            Pulse_setSequence_fromName(pulse);
+//            made = true;
+//        }
+//
+//        if (npulse > 1 && strcasecmp(pulsename,"Equal") != 0){
+//            Pulse_setPulsename(pulse,"CPMG");
+//            Pulse_setSequence_fromName(pulse);
+//            made = true;
+//        }
+//
+//        if (npulse > 1 && strcasecmp(pulsename,"Equal") == 0){
+//            Pulse_setPulsename(pulse,"Equal");
+//            Pulse_setSequence_fromName(pulse);
+//            made = true;
+//        }
+//        
+//    }else{
+//        Pulse_setSequence_fromInput(pulse,sequenceinput);
+//        made = true;
+//    }
+//
+//    if (!made){
+//        fprintf(stderr, "Error: cJson_readOptionPulse, pulse->pulsename is not matched! or you have to use sequence tag\n");
+//        exit(EXIT_FAILURE);
+//    }
+//
+//    freeDouble1d(&sequenceinput);
+//
+//    cJSON_Delete(root);
+//    freeChar1d(&data);
+//    
+//}
 
 void cJSON_readOptionOutput(Output* op, char* fccein){
 
