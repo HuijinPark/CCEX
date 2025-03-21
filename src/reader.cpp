@@ -379,8 +379,6 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
             }
         }
         //Check if the number of bath spins is consistent
-        std::cout << Config_get_nflines(cnf)<<std::endl;
-        std::cout << "idx: " << idx <<std::endl;
         if (Config_get_nflines(cnf) == idx){
             if (rank==0){
                 sprintf(message,"Read AvaaxFile : %s\n",fname); printMessage(message);
@@ -398,9 +396,7 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
             fprintf(stderr,"The number of bath spins from the file line : %d\n",Config_get_nflines(cnf));
             exit(EXIT_FAILURE);
         }
-    }else{
     }
-
     return;
 }
 
