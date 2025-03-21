@@ -76,7 +76,10 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     int nstep = Config_getNstep(cnf);
     double deltat = (double)Config_getDeltat(cnf);
     MatrixXcd* result = new MatrixXcd[nstep];
-    MatrixXcd* result_tot = new MatrixXcd[nstep]; //!
+    MatrixXcd* result_tot;
+    if (strcasecmp(op->savemode,"allfull")==0){
+        MatrixXcd* result_tot = new MatrixXcd[nstep]; //!
+    }
 
     double tfree = 0.0;
 
@@ -87,7 +90,9 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
 
         // Density matrix for time
         MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
-        result_tot[i] = rhot; //!
+        if (strcasecmp(op->savemode,"allfull")==0){
+            result_tot[i] = rhot;
+        }
 
         // Trace for tha bath state
         MatrixXcd reducedRhot = rhot;

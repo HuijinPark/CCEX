@@ -140,16 +140,19 @@ int main(int argc, char* argv[]){
                 Config_freeStatefile(cnf);
                 Config_allocStatefile(cnf);
                 Config_setStatefile(cnf,optarg);
+                break;
 
             case 'a':
                 Config_freeAvaaxfile(cnf);
                 Config_allocAvaaxfile(cnf);
                 Config_setAvaaxfile(cnf,optarg);
+                break;
 
             case 'S':
                 Config_freeExstatefile(cnf);
                 Config_allocExstatefile(cnf);
                 Config_setExstatefile(cnf,optarg);
+                break;
 
             case 'N':
                 Config_setNstate(cnf,atoi(optarg));

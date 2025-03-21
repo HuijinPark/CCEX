@@ -98,14 +98,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
         // Read first line (the number of spins)
         int fline = 1; // the first line is the number of spins
         fscanf(data, "%*lf %*lf %*lf %*s\n");
-        //
-        //double nline_d;
-        //fscanf(data, "%lf %*lf %*lf %*s\n", &nline_d);
-        //int nspins_inBathFile = ( (int)nline_d ) - 1;
-        //int lineIdx = 0;
-        //Config_alloc_flines(cnf, nspins_inBathFile); // alloc nline
-        //printf("nline = %d\n", nspins_inBathFile);
-        //
+
         while(!feof(data)){
         
             int count = fscanf(data, "%lf %lf %lf %s\n", &xyz[0], &xyz[1], &xyz[2], name);
@@ -123,7 +116,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
                     nspin++;
                     BathArray_setNspin(ba, nspin);                
                     // allocate the BathArray->Bath
-                    if (nspin == 1){
+                    if (nspin == 0){
                         BathArray_allocBath(ba, nqubit); // alloc bath spins
                         Config_alloc_flines(cnf, nspin); // alloc fline
                     }else{
@@ -151,15 +144,15 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
                         BathArray_setBath_i_spin(ba, spins[ispeceis], nspin-1);
                         BathArray_setBath_i_gyro(ba, gyros[ispeceis], nspin-1);
                     }
+
+
                     // overlap..?
-                } //else{
-                  //  Config_set_flines_i(cnf, 0, lineIdx);
-                //}
-            } else{
+                }
+            }
+            else{
                 perror("Error(readBathFile): BathFile format is NOT x y z name");
                 exit(EXIT_FAILURE);
             }
-            //lineIdx++;
         }
         fclose(data);
 
@@ -195,11 +188,6 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
 
     // qsort(ba->bath, ba->nspin, sizeof(BathSpin*), compare_dist);
     //BathArray_report(ba);
-    //for (int i=0; i < 1858; i++){
-    //    printf("%d - ", i);
-    //    printf("Config_set_flines_i(cnf, %d): ", i);
-    //    std::cout << Config_get_flines_i(cnf, i) << std::endl;
-    //}
 }
 
 void setBathStates(BathArray* ba, Config* cnf, int i){
@@ -236,6 +224,7 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
     data = fopen(fname,"r");
 
     // Check the nbathfiles is larger than 1
+    int nspin = BathArray_getNspin(ba);
     int nbathfiles = Config_getNbathfiles(cnf);
     if(data==NULL || nbathfiles > 1){
         
@@ -257,7 +246,6 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
         int idx = 0;
         int count = fscanf(data, "%*s\n");
         int fline = 1; // the first line is the length of the file
-        int nspin = BathArray_getNspin(ba);
 
         while(!feof(data)){
 
@@ -281,18 +269,15 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
                 if (rank==0){
                     sprintf(message,"Read StateFile : %s\n",fname); printMessage(message);
                 }
-                break;
-            }
-        }
-        fclose(data);
-        if (idx != nspin){
-            if (rank==0){
+            }else{
                 fprintf(stderr,"Error(readStateFile): The number of bath spins is not consistent\n");
                 fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
                 fprintf(stderr,"The number of bath spins from the file line : %d\n",nspin);
                 exit(EXIT_FAILURE);
             }
         }
+        fclose(data);
+
     }
     return;
 }
@@ -335,7 +320,6 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
     }
 
     // Read the number of lines
-    int nspin = Config_get_nflines(cnf);
     int idx = 0;
     int count = fscanf(data, "%*s\n");
     int fline = 1; // the first line is the length of the file
@@ -351,6 +335,7 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
         count = fscanf(data, "%f\n", &paxestmp);
         paxes = int(paxestmp);
         if (fline == Config_get_flines_i(cnf,idx)){
+            
             if (count == 1){
                 //////////////////////////////////////////////
                 char* dfname = BathArray_getBath_i_name(ba,idx);
@@ -378,27 +363,20 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
                 exit(EXIT_FAILURE);
             }
         }
-        //Check if the number of bath spins is consistent
-        std::cout << Config_get_nflines(cnf)<<std::endl;
-        std::cout << "idx: " << idx <<std::endl;
-        if (Config_get_nflines(cnf) == idx){
-            if (rank==0){
-                sprintf(message,"Read AvaaxFile : %s\n",fname); printMessage(message);
-            }
-            break;
-        }
+
     }
     fclose(data);
 
     // Check if the number of bath spins is consistent
-    if (Config_get_nflines(cnf) != idx){
+    if (Config_get_nflines(cnf) == idx){
         if (rank==0){
-            fprintf(stderr,"Error(setPaxes): The number of bath spins is not consistent\n");
-            fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
-            fprintf(stderr,"The number of bath spins from the file line : %d\n",Config_get_nflines(cnf));
-            exit(EXIT_FAILURE);
+            sprintf(message,"Read AvaaxFile : %s\n",fname); printMessage(message);
         }
     }else{
+        fprintf(stderr,"Error(setPaxes): The number of bath spins is not consistent\n");
+        fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
+        fprintf(stderr,"The number of bath spins from the file line : %d\n",Config_get_nflines(cnf));
+        exit(EXIT_FAILURE);
     }
 
     return;
@@ -457,7 +435,6 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
     }else{
             
         // Read the number of lines
-        int nspin = BathArray_getNspin(ba);
         int idx = 0;
         int count = fscanf(data, "%*s\n");
         int fline = 1; // the first line is the length of the file
@@ -499,23 +476,23 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
                 }
                 idx++;
             }
-            if (idx == nspin){
-                if (rank==0){
-                    sprintf(message,"Read ExstateFile : %s\n",fname); printMessage(message);
-                }
-                break;
-            }
         }
         fclose(data);
-        if (idx != nspin){
+
+        int nspin = BathArray_getNspin(ba);
+        if (idx == nspin){
             if (rank==0){
-                fprintf(stderr,"Error(setSubbathStates): The number of bath spins is not consistent\n");
-                fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
-                fprintf(stderr,"The number of bath spins from the file line : %d\n",nspin);
-                exit(EXIT_FAILURE);
+                sprintf(message,"Read ExstateFile : %s\n",fname); printMessage(message);
             }
+        }else{
+            fprintf(stderr,"Error(setSubbathStates): The number of bath spins is not consistent\n");
+            fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
+            fprintf(stderr,"The number of bath spins from the file line : %d\n",nspin);
+            exit(EXIT_FAILURE);
         }
     }
+
+
     return;
 }
 
