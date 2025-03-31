@@ -3,6 +3,7 @@
 #include "../include/memory.h"
 #include "../include/cluster_hash.h"
 #include "../include/cluster_pcce.h"
+#include "../include/cluster_dsjitb.h"
 
 /* High Level --------------------------------------------------------*/
 
@@ -97,26 +98,16 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
         // Args Returns : cls->clusinfo (new address)
         clusterizePcce(cls, ba, config); 
     }
-    else if (strcmp(method, "dsj")==0){
-        Cluster_setClusinfo_0th(cls);    // if order == 0
-        Cluster_setClusinfo_1th(cls,ba); // if order == 1
-        // clusterizeDsj(cls, cmap, stmap, spmap, ba, config);
-        printf("Error: clusterize: method is not defined\n");
-        exit(1);
-    }
-    else if (strcmp(method, "itb")==0){
-        Cluster_setClusinfo_0th(cls);    // if order == 0
-        Cluster_setClusinfo_1th(cls,ba); // if order == 1
-        // clusterizeItb(cls, cmap, stmap, spmap, ba, config);
-        printf("Error: clusterize: method is not defined\n");
-        exit(1);
-    }
-    else if (strcmp(method, "dsjitb")==0){
-        Cluster_setClusinfo_0th(cls);    // if order == 0
-        Cluster_setClusinfo_1th(cls,ba); // if order == 1
-        // clusterizeDsjitb(cls, cmap, stmap, spmap, ba, config);
-        printf("Error: clusterize: method is not defined\n");
-        exit(1);
+    else if (  strcmp(method, "dsj")==0 
+             || strcmp(method, "itb")==0
+             || strcmp(method, "dsjitb")==0 ){
+        // In disjoint clustering method, 
+        // we will obtain clustered disjointly clustered spins
+        // or interbath or both.
+        BathArray_connectivity(&cmap, &stmap, ba, rdip, rdipcut);
+        clusterizeDsjItb(cls, &cmap, &stmap, ba);
+        freeInt2d(&cmap,nspin);
+        freeInt2d(&spmap,nspin);
     }
     else{
         printf("Error: clusterize: method is not defined\n");

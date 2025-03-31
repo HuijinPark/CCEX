@@ -89,9 +89,9 @@ void convertClusinfoToHash(HashCluster** hashClusters, Cluster* CCE){
             int* cluster = Cluster_getClusinfo_cluster_copy(CCE,n,i);
             float strength = 0.0; // Not used (because we don't do sort)
             
-            if (iter != 1){
-                printf("Error,convertClusinfoToHash, iter is not 1 (It already has been processed the solveTilde part)\n");
-            }
+            //if (iter != 1){
+            //    printf("Error,convertClusinfoToHash, iter is not 1 (It already has been processed the solveTilde part)\n");
+            //}
 
             // make id
             int maxlenId = setMaxLengthStr(nspin,n);
@@ -797,3 +797,4 @@ void solveTilde(HashCluster** hashclusters,Cluster* CCE, int nspin){
         } 
     }
 }
+
