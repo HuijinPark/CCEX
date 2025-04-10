@@ -1,17 +1,8 @@
 #!/bin/sh
 
-module purge 
-module load icc18 icc18.impi fftw
-
-#export LD_LIBRARY_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD_LIBRARY_PATH
-#export INCLUDE=/home/CQML/lib/gsl-2.7.1/include:$INCLUDE
-
-# $1 = idm
-# $1 = mac
-
 if [ $# -ne 2 ]; then
     echo "Error, no input value"
-    echo "[1] Server : idm / mac"
+    echo "[1] Server : idm4 / mac"
     echo "[2] Filename (except test_ tag)"
     exit 1
 
@@ -19,34 +10,37 @@ fi
 
 Name="$2"
 
-if [ ${1} == "idm" ]; then
+if [ ${1} == "idm4" ]; then
 
 cat << EOF > ./Makefile
 
 CXX = mpiicpc
 
-CXXFLAGS = -std=c++11 #-O2 -g #-Wall Higher level warning
+CXXFLAGS = -std=c++11 -O3 -g #-Wall Higher level warning
 #CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
 CXXFLAGS += -Wno-deprecated-declarations
+CXXFLAGS += -diag-disable=2196
+CXXFLAGS += -diag-disable=10441
 #CXXFLAGS += -Wno-writable-strings
 
 SRC_DIR=../src
 OBJ_DIR=../obj
+BIN_DIR=.
 
-TARGET = ./test_${Name}
+TARGET = \$(BIN_DIR)/${Name}.out
 
-SRCS=\$(wildcard \$(SRC_DIR)/*.cpp) 
-SRCS += \$(TARGET).cpp
+SRCS=\$(wildcard \$(SRC_DIR)/*.cpp)
+SRCS += ../main.cpp
 OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
 
-#INCLUDE_MPICH = -I/opt/homebrew/Cellar/mpich/4.2.1/include/
-INCLUDE_EIGEN = -I../zlib/eigen-3.3.9/
+#INCLUDE_MPICH = -I../opt/homebrew/Cellar/mpich/4.2.1/include/
+INCLUDE_EIGEN = -I../zlib/eigen
 INCLUDE_UTHASH = -I../zlib/uthash/include/
 INCLUDE_MAIN = -I../include/
 
-INCLUDE_MKL = -I /opt/intel/mkl/include
-LIBRARY_MKL = -L /opt/intel/mkl/lib/intel64
-LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lpthread -m64 #-lgsl -lgslcblas 
+#INCLUDE_MKL = -I /opt/intel/mkl/include
+#LIBRARY_MKL = -L /opt/intel/mkl/lib/intel64
+LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lpthread -liomp5 -m64 -xCORE-AVX512  #-lgsl -lgslcblas 
 
 INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
 LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
@@ -86,7 +80,7 @@ CXXFLAGS += -Wno-writable-strings
 SRC_DIR=../src
 OBJ_DIR=../obj
 
-TARGET = ./test_${Name}
+TARGET = ./${Name}
 
 SRCS=\$(wildcard \$(SRC_DIR)/*.cpp) 
 SRCS += \$(TARGET).cpp

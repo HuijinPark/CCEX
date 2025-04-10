@@ -18,6 +18,7 @@ typedef struct {
      * 
      *  - cce    : Conventional CCE method *using hash algorithm
      *  - gcce   : Generalized CCE method *using hash algorithm
+     *  - pcce   : Parition CCE method *using hash algorithm
      *  - dsj    : Disjoint clustering algorithm
      *             , meaning that it consider the disjointed cluster
      *  - itb    : Inter-bathcluster clustering algorithm

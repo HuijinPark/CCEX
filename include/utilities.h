@@ -89,6 +89,7 @@ using namespace Eigen;
 /* utils -------------------------------------------------------*/
 double* MatrixXcdToDouble1d(MatrixXcd mat);
 MatrixXcd Double1dToMatrixXcd(double* val, int n);
+int Double_is_same_row(double* row1, double* row2);
 
 /* math functions -----------------------------------------------*/
 

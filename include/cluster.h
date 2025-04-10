@@ -24,12 +24,12 @@ typedef struct {
        @brief parameters of pCCE
        @todo Hyeonsu should be write this part in detail.
     */
-    int  sK;
-    int  max_trial;
-    int  max_iter;
+    int  sK; /**< Partition CCE variable pCCE(order N, sK) */
+    int  max_trial;  /**< It's maximum value for kmeans algorithm opitimization. */
+    int  max_iter;   /**< It's maximum value for kmeans algorithm opitimization. */
 
-    bool kmeans_pp;
-    bool iter_detail;
+    bool kmeans_pp;   /**< If you want to use kmeans++ method, True. (Default: True) */
+    bool iter_detail; /**< If you want to print detail for parition information, True. */
 
     /**
      * @brief Clustering algorithm : See details in @ref Config::method 
