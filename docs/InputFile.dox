@@ -4,7 +4,7 @@
 
 This is navigator to find the input file tags
 
-\section HowToWrite How to Write the Input File
+\section HowToWrite How to write the input file
 
 The input file consists of key-value pairs where each key represents a specific setting.
 Each parameter should be written in the following format:
@@ -18,38 +18,40 @@ Each parameter should be written in the following format:
 }
 \endcode
 
-Lines beginning with `# or !` are considered comments and are ignored.
+Lines beginning with `# or !` are considered as comments and they would be ignored.
 
-| Tag (General)                         |
-|---------------------------------------|
-| \ref tag_method        "method"       |
-| \ref tag_quantity      "quantity"     |
-| \ref tag_order         "order"        |
-| \ref tag_bfield        "bfield"       |
-| \ref tag_rbath         "rbath"        |
-| \ref tag_rdip          "rdip"         |
-| \ref tag_deltat        "deltat"       |
-| \ref tag_nstep         "nstep"        |
-| \ref tag_rbathcut      "rbathcut"     |
-| \ref tag_rdipcut       "rdipcut"      | 
-| \ref tag_nstate        "nstate"       | 
-| \ref tag_seed          "seed"         | 
-| \ref tag_gyrofile      "gyrofile"     | 
-| \ref tag_bathfile      "bathfile"     | 
-| \ref tag_bathadjust    "bathadjust"                   | 
-| \ref tag_avaaxfile     "avaaxfile"                    | 
-| \ref tag_statefile     "statefile"                    | 
-| \ref tag_exstatefile   "exstatefile"                  |
-| \ref tag_DefectTotSpin "DefectTotSpin"                |
-| \ref tag_CorrTotSpin   "CorrTotSpin"                  |
-| \ref tag_hf_readmode   "hf_readmode"                  |     
-| \ref tag_hf_tensorfile "hf_tensorfile"                |
-| \ref tag_hf_cutoff     "hf_cutoff"                    |
-| \ref tag_hf_ignore_oor "hf_ignore_oor"                |
-| \ref tag_qd_readmode   "qd_readmode"                  |
-| \ref tag_qd_tensorfile "qd_tensorfile"                |
-| \ref tag_cell_para    "cell_para"                     |
-| \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit"|
+\section GeneralTag \ref CalConfig "General tags"
+
+Tags in this section is about simulatation parameters such as file path, numerical parameters.
+
+- \ref tag_method        "method"       
+- \ref tag_quantity      "quantity"     
+- \ref tag_order         "order"        
+- \ref tag_bfield        "bfield"       
+- \ref tag_rbath         "rbath"        
+- \ref tag_rdip          "rdip"         
+- \ref tag_deltat        "deltat"       
+- \ref tag_nstep         "nstep"        
+- \ref tag_rbathcut      "rbathcut"     
+- \ref tag_rdipcut       "rdipcut"       
+- \ref tag_nstate        "nstate"        
+- \ref tag_seed          "seed"          
+- \ref tag_gyrofile      "gyrofile"      
+- \ref tag_bathfile      "bathfile"      
+- \ref tag_bathadjust    "bathadjust"                    
+- \ref tag_avaaxfile     "avaaxfile"                     
+- \ref tag_statefile     "statefile"                     
+- \ref tag_exstatefile   "exstatefile"                  
+- \ref tag_DefectTotSpin "DefectTotSpin"                
+- \ref tag_CorrTotSpin   "CorrTotSpin"                  
+- \ref tag_hf_readmode   "hf_readmode"                       
+- \ref tag_hf_tensorfile "hf_tensorfile"                
+- \ref tag_hf_cutoff     "hf_cutoff"                    
+- \ref tag_hf_ignore_oor "hf_ignore_oor"                
+- \ref tag_qd_readmode   "qd_readmode"                  
+- \ref tag_qd_tensorfile "qd_tensorfile"                
+- \ref tag_cell_para    "cell_para"                     
+- \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit"
 
 
 
