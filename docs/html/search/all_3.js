@@ -12,7 +12,6 @@ var searchData=
   ['cluster_20related_20tags_9',['\ref Cluster &quot;Cluster-related tags&quot;',['../InputFile.html#ClusterTags',1,'']]],
   ['clusterconfig_10',['ClusterConfig',['../structClusterConfig.html',1,'']]],
   ['com_20ghpvc_20username_20your_20github_20username_20style_20flat_20square_20alt_20img_20src_20https_3a_20img_20shields_20io_20github_20watchers_20username_20repo_20name_20svg_20alt_11',['com ghpvc username your github username style flat square alt img src https: img shields io github watchers username repo name svg alt',['..//Users/huijin/Documents/GitHub/CCEX/README.md#autotoc_md2',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;'],['../md__2Users_2huijin_2Documents_2GitHub_2CCEX_2README__ori.html#autotoc_md3',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;']]],
-  ['condition_12',['General condition',['../InputFile.html#Config_CONFIG',1,'']]],
-  ['config_13',['Config',['../structConfig.html',1,'']]],
-  ['corrtotspin_14',['CorrTotSpin',['../structConfig.html#ac923676eaaf0a911eb890ee419c2b8e6',1,'Config::CorrTotSpin'],['../InputFile.html#autotoc_md30',1,'CorrTotSpin']]]
+  ['config_12',['Config',['../structConfig.html',1,'']]],
+  ['corrtotspin_13',['CorrTotSpin',['../structConfig.html#ac923676eaaf0a911eb890ee419c2b8e6',1,'Config::CorrTotSpin'],['../InputFile.html#autotoc_md30',1,'CorrTotSpin']]]
 ];

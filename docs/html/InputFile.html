@@ -18,6 +18,13 @@
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX","output/HTML-CSS"],
+});
+</script>
+<script type="text/javascript" async="async" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="ccexdoxy.css" rel="stylesheet" type="text/css"/>
 <link href="ccexdoxy_tabs.css" rel="stylesheet" type="text/css"/>
@@ -373,9 +380,6 @@ How to write the input file</h1>
 <li><a class="el" href="#tag_outfile">outfile</a> <br  />
 </li>
 </ul>
-<h1><a class="anchor" id="Config_CONFIG"></a>
-General condition</h1>
-<p>Below are the descriptions of various configuration tags used in the input file.</p>
 <p><a class="anchor" id="tag_method"></a></p>
 <h2><a class="anchor" id="autotoc_md10"></a>
 method</h2>
@@ -1060,7 +1064,7 @@ tensor</h2>
 psia</h2>
 <p><b>Description:</b><br  />
  Alpha state of the qubit in matrix representation.<br  />
- One of the effective spin states of the qubit in matrix representation, simbol : <picture><source srcset="form_0_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ |\alpha\rangle $" src="form_0.png"/></picture> . <br  />
+ One of the effective spin states of the qubit in matrix representation, simbol : \( |\alpha\rangle \) . <br  />
  Priority: <a class="el" href="#tag_psia">psia</a> &gt; <a class="el" href="#tag_alphaidx">alphaidx</a> &gt; <a class="el" href="#tag_alphams">alphams</a>. <br  />
  </p>
 <p><b>Data Type:</b> Double List </p>
@@ -1074,7 +1078,7 @@ psia</h2>
 psib</h2>
 <p><b>Description:</b><br  />
  Beta state of the qubit in matrix representation. <br  />
- One of the effective spin states of the qubit in matrix representation, simbol : <picture><source srcset="form_1_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ |\beta\rangle $" src="form_1.png"/></picture> . <br  />
+ One of the effective spin states of the qubit in matrix representation, simbol : \( |\beta\rangle \) . <br  />
  Priority: <a class="el" href="#tag_psib">psib</a> &gt; <a class="el" href="#tag_betaidx">betaidx</a> &gt; <a class="el" href="#tag_betams">betams</a>. <br  />
  </p>
 <p><b>Data Type:</b> Double List </p>
@@ -1087,9 +1091,9 @@ psib</h2>
 <h2><a class="anchor" id="autotoc_md54"></a>
 psi0</h2>
 <p><b>Description:</b><br  />
- Initial state of the qubit in matrix representation, symbol: <picture><source srcset="form_2_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ |\psi_0\rangle $" src="form_2.png"/></picture> This tag is used to define a specific initial state of the qubit. If this tag is not provided, the initial state defaults to <picture><source srcset="form_3_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ |\psi_0\rangle = |\alpha\rangle + |\beta\rangle $" src="form_3.png"/></picture>. </p>
+ Initial state of the qubit in matrix representation, symbol: \( |\psi_0\rangle \) This tag is used to define a specific initial state of the qubit. If this tag is not provided, the initial state defaults to \( |\psi_0\rangle = |\alpha\rangle + |\beta\rangle \). </p>
 <p><b>Data Type:</b> Double List </p>
-<p><b>Default:</b> <picture><source srcset="form_4_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ |\alpha\rangle + |\beta\rangle $" src="form_4.png"/></picture> </p>
+<p><b>Default:</b> \( |\alpha\rangle + |\beta\rangle \) </p>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">psi0 : [1.0, 0.0, 0.0] </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structQubitArray.html#a17543dd30e2e5ef672ff5f751119beea">QubitArray::psi0</a> </p>
 <p><b>Parent-tags:</b> <a class="el" href="#tag_Qubit">Qubit</a> </p>
@@ -1327,7 +1331,7 @@ eqs</h2>
  The number of eQ values should be the same as naddspin. <br  />
  </p>
 <p><b>Data Type:</b> Double List </p>
-<p><b>Unit:</b> <picture><source srcset="form_5_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \text{millibarn} \times 10^{1}~\mathrm{m}^2 = 10^{-30}~\mathrm{m}^2 $" src="form_5.png"/></picture> </p>
+<p><b>Unit:</b> \( \text{millibarn} \times 10^{1}~\mathrm{m}^2 = 10^{-30}~\mathrm{m}^2 \) </p>
 <p><b>Default:</b> [0.0 , ..] </p>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">eqs : [0.0, 0.0] </div>
 </div><!-- fragment --> <p><b>Related variable:</b> Defect::eqs </p>
@@ -1368,7 +1372,7 @@ efg</h2>
  The number of <code>efg</code> should be the same as " naddspin x navaax " <br  />
  </p>
 <p><b>Data Type:</b> 2D List </p>
-<p><b>Unit:</b> <picture><source srcset="form_6_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \mathrm{Hartree}/\mathrm{Bohr}^2 $" src="form_6.png"/></picture> </p>
+<p><b>Unit:</b> \( \mathrm{Hartree}/\mathrm{Bohr}^2 \) </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">efg : [[1, <span class="stringliteral">&quot;14N&quot;</span>, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],</div>
 <div class="line">                              [2, <span class="stringliteral">&quot;1H&quot;</span>, [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] </div>
@@ -1395,7 +1399,7 @@ detuning</h2>
  Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. <br  />
  The number of <code>detuning</code> should be the same as " navaax " <br  />
  This tag is used to approximate the spin interaction tensors related to the paramagnetic defect, <br  />
- e.g., <picture><source srcset="form_7_dark.png" media="(prefers-color-scheme: dark)"/><img class="formulaInl" alt="$ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z $" src="form_7.png"/></picture>. <br  />
+ e.g., \( \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z \). <br  />
  </p>
 <p><b>Data Type:</b> 2D List </p>
 <p><b>Unit:</b> MHz </p>

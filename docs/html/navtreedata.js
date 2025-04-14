@@ -29,14 +29,13 @@ var NAVTREE =
     [ "Getting started", "GettingStarted.html", null ],
     [ "Input File", "InputFile.html#InputFile", null ],
     [ "Examples", "Examples.html", null ],
-    [ "Tag variable", "@ref TagVariable", null ],
     [ "Class List", "annotated.html", "annotated" ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"@ref TagVariable"
+"Examples.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';
