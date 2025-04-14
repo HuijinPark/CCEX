@@ -495,7 +495,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     int order = cJSON_ReadInt(root,"order",false, -1); // read twice
     Cluster_setOrder(clus,order);
 
-    char* method = cJSON_ReadString(root,"method",true,"cce");
+    char* method = cJSON_ReadString(root,"method",true,"cce"); // read twice
     Cluster_setMethod(clus,method);
 
     bool addsubclus = cJSON_ReadBool(root,"addsubclus",true,true);

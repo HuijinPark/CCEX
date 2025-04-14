@@ -9,7 +9,7 @@
  */
 typedef struct {
 
-    int npulse; /**< The number of pulse (default : 0)*/
+    int npulse; /**< The number of pulse (default : -)*/
     bool pulseiter; /**< The pulse iteration (default : false)*/
     /**<
      * About npulse (Details)

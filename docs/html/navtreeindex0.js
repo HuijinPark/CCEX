@@ -1,9 +1,9 @@
 var NAVTREEINDEX0 =
 {
+"@ref TagVariable":[4],
 "Examples.html":[3],
 "GettingStarted.html":[1],
 "InputFile.html#InputFile":[2],
-"TagVariable.html":[4],
 "annotated.html":[5],
 "index.html":[],
 "index.html":[0],

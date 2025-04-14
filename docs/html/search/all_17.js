@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['watchers_20username_20repo_20name_20svg_20alt_0',['watchers username repo name svg alt',['..//Users/huijin/Documents/GitHub/CCEX/README.md#autotoc_md2',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;'],['../md__2Users_2huijin_2Documents_2GitHub_2CCEX_2README__ori.html#autotoc_md3',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;']]],
-  ['workflow_1',['Workflow',['../GettingStarted.html#Workflow',1,'']]],
-  ['write_20the_20input_20file_2',['How to write the input file',['../InputFile.html#HowToWrite',1,'']]]
+  ['xyz_0',['xyz',['../structBathSpin.html#ae88f65d01b379916181269efa6c33e8a',1,'BathSpin::xyz'],['../structQubit.html#a799cb32b473160eb8e9e4aa6c9c39b18',1,'Qubit::xyz'],['../InputFile.html#autotoc_md45',1,'xyz']]],
+  ['xz_1',['xz',['../structDoubleTensor.html#a78677cd002a23db74c7438a9e51aa264',1,'DoubleTensor']]]
 ];

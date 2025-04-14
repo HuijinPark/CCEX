@@ -16,5 +16,5 @@ var searchData=
   ['introduction_13',['Introduction',['../index.html#Introduction',1,'']]],
   ['io_20github_20watchers_20username_20repo_20name_20svg_20alt_14',['io github watchers username repo name svg alt',['..//Users/huijin/Documents/GitHub/CCEX/README.md#autotoc_md2',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;'],['../md__2Users_2huijin_2Documents_2GitHub_2CCEX_2README__ori.html#autotoc_md3',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;']]],
   ['it_20s_20okay_20for_20tau1_20tau2_15',['it&apos;s okay for tau1 != tau2.',['..//Users/huijin/Documents/GitHub/CCEX/include/pulse.h#autotoc_md1',1,'']]],
-  ['iter_5fdetail_16',['iter_detail',['../structCluster.html#a85e14a7d5ed03ab4036531cb482e077e',1,'Cluster']]]
+  ['iter_5fdetail_16',['iter_detail',['../structCluster.html#a85e14a7d5ed03ab4036531cb482e077e',1,'Cluster::iter_detail'],['../InputFile.html#autotoc_md64',1,'iter_detail'],['../todo.html#_todo000035',1,'iter_detail']]]
 ];

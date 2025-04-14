@@ -8,8 +8,7 @@ var searchData=
   ['qubit_5',['Qubit',['../structQubit.html',1,'Qubit'],['../InputFile.html#autotoc_md39',1,'Qubit']]],
   ['qubit_6',['qubit',['../structQubitArray.html#ae87046f60e524d2aed1f6605c746d86e',1,'QubitArray::qubit'],['../InputFile.html#autotoc_md41',1,'qubit']]],
   ['qubit_20related_20tags_7',['\ref QubitArray &quot;Qubit-related tags&quot;',['../InputFile.html#QubitArrayTags',1,'']]],
-  ['qubit_20spins_8',['Configuration of qubit spins',['../TagVariable.html#IN_QUBITARR',1,'']]],
-  ['qubitarray_9',['QubitArray',['../structQubitArray.html',1,'']]],
-  ['qubitarray_20qubit_20related_20tags_10',['\ref QubitArray &quot;Qubit-related tags&quot;',['../InputFile.html#QubitArrayTags',1,'']]],
-  ['qubitfile_11',['qubitfile',['../structConfig.html#a9f5ed3dfb6ae52627a94099cb837cfbf',1,'Config::qubitfile'],['../InputFile.html#autotoc_md22',1,'qubitfile']]]
+  ['qubitarray_8',['QubitArray',['../structQubitArray.html',1,'']]],
+  ['qubitarray_20qubit_20related_20tags_9',['\ref QubitArray &quot;Qubit-related tags&quot;',['../InputFile.html#QubitArrayTags',1,'']]],
+  ['qubitfile_10',['qubitfile',['../structConfig.html#a9f5ed3dfb6ae52627a94099cb837cfbf',1,'Config::qubitfile'],['../InputFile.html#autotoc_md22',1,'qubitfile']]]
 ];

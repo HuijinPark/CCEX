@@ -61,55 +61,56 @@ Tags in this section is about simulatation parameters such as file path, numeric
 This tags are used for adjusting Qubit Hamiltonian and qubit inital state.
 The format is the following:
 
-<b>Case1.<\b> \ref tag_qubitfile "qubitfile" tag : 
-  : Only single-qubit systems are supported. 
+<b>Case1.</b> \ref tag_qubitfile "qubitfile" tag <br>
+  : Only single-qubit systems are supported. <br>
     Note that this tag takes priority over the \ref tag_Qubit "Qubit" tag. <br>
 
 <p><b>Example:</b> \code "qubitfile"  : "file-path" \endcode </p>
 
-<b>Case2.<\b> \ref tag_Qubit "Qubit" tag
-  : Both multiple qubit and single system are supported.
+<b>Case2.</b> \ref tag_Qubit "Qubit" tag <br>
+  : Both multiple qubit and single system are supported. <br>
 
 <details>
 <summary><b>Example:</b> Click here to show example code</summary>
 <pre>
 \code
+{
     "Qubit" : {
                 "nqubit" : 2,
                 "qubit" : [
-                    {
-                        "name" : "Q1",
-                        "spin" : 0.5,
-                        "gyro" : -17608.597050,
-                        "xyz"  : [1.0, 2.0, 3.0],
-                        "detuning" : 0.0,
-                        "alphams" : 0,
-                        "betams"  : 1,
-                    },
-                    {
-                        "name" : "Q2",
-                        "spin" : 1.0,
-                        "gyro" : -17608.597050,
-                        "xyz"  : [4.0, 5.0, 6.0],
-                        "detuning" : 0.0,
-                        "alphams" : 0,
-                        "betams"  : 1,
-                    }
+                            {
+                                "name" : "Q1",
+                                "spin" : 0.5,
+                                "gyro" : -17608.597050,
+                                "xyz"  : [1.0, 2.0, 3.0],
+                                "detuning" : 0.0,
+                                "alphams" : 0,
+                                "betams"  : 1,
+                            },
+                            {
+                                "name" : "Q2",
+                                "spin" : 1.0,
+                                "gyro" : -17608.597050,
+                                "xyz"  : [4.0, 5.0, 6.0],
+                                "detuning" : 0.0,
+                                "alphams" : 0,
+                                "betams"  : 1,
+                            }
                 ],
                 "intmap" : [
-                    {
-                        # Zero field splitting
-                        "between" : ["Q1", "Q1"], 
-                        "tensor"  : [[1.0, 2.0, 3.0],
-                                    [4.0, 5.0, 6.0], 
-                                    [7.0, 8.0, 9.0]],
-                    },
-                    {
-                        "between" : ["Q1", "Q2"],
-                        "tensor"  : [[1.0, 2.0, 3.0],
-                                    [4.0, 5.0, 6.0], 
-                                    [7.0, 8.0, 9.0]],
-                    }
+                            {
+                                # Zero field splitting
+                                "between" : ["Q1", "Q1"], 
+                                "tensor"  : [[1.0, 2.0, 3.0],
+                                            [4.0, 5.0, 6.0], 
+                                            [7.0, 8.0, 9.0]],
+                            },
+                            {
+                                "between" : ["Q1", "Q2"],
+                                "tensor"  : [[1.0, 2.0, 3.0],
+                                            [4.0, 5.0, 6.0], 
+                                            [7.0, 8.0, 9.0]],
+                            }
                 ]
               },
     "psia" : [1.0, 2.0, 3.0],
@@ -118,74 +119,101 @@ The format is the following:
     "overhaus" : true,
     "alphaidx" : 0,
     "betaidx"  : 1,
+}
 \endcode
 </pre>
 </details>
 
 - \ref tag_qubitfile    "qubitfile"
 - \ref tag_Qubit        "Qubit" 
-    - \ref tag_nqubit       "nqubit"
-    - \ref tag_qubit        "qubit"
-        - \ref tag_name         "name"         
-        - \ref tag_spin         "spin"
-        - \ref tag_gyro         "gyro"         
-        - \ref tag_xyz          "xyz"          
-        - \ref tag_detuning     "detuning"     
-        - \ref tag_alphams      "alphams" 
-        - \ref tag_betams       "betams"
-    - \ref tag_intmap       "intmap"
-        - \ref tag_between      "between"      
-        - \ref tag_tensor       "tensor"       
-    - \ref tag_psia         "psia"  
-    - \ref tag_psib         "psib"  
-    - \ref tag_psi0         "psi0"
-    - \ref tag_overhaus     "overhaus"     
-    - \ref tag_alphaidx     "alphaidx" 
-    - \ref tag_betaidx      "betaidx"  
+- \ref tag_nqubit       "nqubit"
+- \ref tag_qubit        "qubit"
+- \ref tag_name         "name"         
+- \ref tag_spin         "spin"
+- \ref tag_gyro         "gyro"         
+- \ref tag_xyz          "xyz"          
+- \ref tag_detuning     "detuning"     
+- \ref tag_alphams      "alphams" 
+- \ref tag_betams       "betams"
+- \ref tag_intmap       "intmap"
+- \ref tag_between      "between"      
+- \ref tag_tensor       "tensor"       
+- \ref tag_psia         "psia"  
+- \ref tag_psib         "psib"  
+- \ref tag_psi0         "psi0"
+- \ref tag_overhaus     "overhaus"     
+- \ref tag_alphaidx     "alphaidx" 
+- \ref tag_betaidx      "betaidx"  
         
+\section ClusterTags \ref Cluster "Cluster-related tags"
+- \ref tag_order         "order"        
+- \ref tag_method        "method"       
+- \ref tag_addsubclus    "addsubclus"   
+- \ref tag_nk            "nk"           
+- \ref tag_sK            "sK"           
+- \ref tag_max_trial     "max_trial"    
+- \ref tag_max_iter      "max_iter"     
+- \ref tag_kmeans_pp     "kmeans_pp"    
+- \ref tag_iter_detail   "iter_detail"
 
+\section PulseTags \ref Pulse "Pulse-related tags"
+- \ref tag_npulse        "npulse"       
+- \ref tag_pulsename     "pulsename"    
+- \ref tag_sequence      "sequence"     
 
-| Tag (Cluster)                         |
-|---------------------------------------|
-| \ref tag_order         "order"        |
-| \ref tag_method        "method"       |
-| \ref tag_addsubclus    "addsubclus"   |
-| \ref tag_nk            "nk"           |
-| \ref tag_sK            "sK"           |
-| \ref tag_max_trial     "max_trial"    |
-| \ref tag_max_iter      "max_iter"     |
-| \ref tag_kmeans_pp     "kmeans_pp"    |
-| \ref tag_iter_detail   "iter_detail"  |
+\section DefectArrayTags \ref DefectArray "DefectArray-related tags"
 
-| Tag (Pulse)                           |
-|---------------------------------------|
-| \ref tag_npulse        "npulse"       |
-| \ref tag_pulsename     "pulsename"    |
-| \ref tag_sequence      "sequence"     |
+This tags are used for adjusting paramagnetic defect bath information.
+The format is the following:
 
+<details><summary><b>Example:</b> Click here to show example code</summary>
+<pre>
+\code
+{
+"Defect"         : [
+		{
+			"dfname"	: "NV0",
+			"naddspin" 	: 1,
+			"types" 	: ["15N"],
+			"spins" 	: [0.5],   
+			"gyros" 	: [-2.71261804],
+			"navaax" 	: 4,
+			"rxyzs"      : [ [1, "15N", [  1.36404 ,   -0.78843 ,   -0.56598 ]],
+		                     [2, "15N", [ -1.36801 ,   -0.79025 ,   -0.56701 ]],
+		                     [3, "15N", [  0.00000 ,    1.57603 ,   -0.56511 ]],
+		                     [4, "15N", [  0.00000 ,   -0.00733 ,    1.67433 ]]],
+			"hypf" 		: [  [1, "15N", [ -10.33219 ,    1.01563 ,    1.50162 ,    1.01563 ,   -5.18317 ,   -0.16410 ,    1.50162 ,   -0.16410 ,   -6.50270]],  
+			  				 [2, "15N", [  -7.34999 ,   -2.73741 ,   -0.89293 ,   -2.73741 ,   -8.16537 ,   -1.21839 ,   -0.89293 ,   -1.21839 ,   -6.50270]], 
+			  				 [3, "15N", [  -5.59086 ,    1.72177 ,   -0.60870 ,    1.72177 ,   -9.92450 ,    1.38249 ,   -0.60870 ,    1.38249 ,   -6.50270]],
+			  				 [4, "15N", [  -6.01395 ,    0.00000 ,    0.00000 ,    0.00000 ,   -5.59086 ,   -1.82620 ,    0.00000 ,   -1.82620 ,  -10.41325]]]
+		},
+        {
+            ...
+        }
+                       ]
+}
+\endcode
+</pre>
+</details>
 
-| Tag (DefectArray)                     |
-|---------------------------------------|
-| \ref tag_Defect        "Defect"       |
-| \ref tag_dfname        "dfname"       |
-| \ref tag_apprx         "apprx"        |
-| \ref tag_naddspin      "naddspin"     |
-| \ref tag_navaax        "navaax"       |
-| \ref tag_types         "types"        |
-| \ref tag_spins         "spins"        |
-| \ref tag_gyros         "gyros"        |
-| \ref tag_eqs           "eqs"          |
-| \ref tag_rxyzs         "rxyzs"        |
-| \ref tag_hypf          "hypf"         |
-| \ref tag_efg           "efg"          |
-| \ref tag_zfs           "zfs"          |
-| \ref tag_detuning      "detuning"     |
+- \ref tag_Defect           "Defect"       
+- \ref tag_df_dfname        "dfname"       
+- \ref tag_df_apprx         "apprx"        
+- \ref tag_df_naddspin      "naddspin"     
+- \ref tag_df_navaax        "navaax"       
+- \ref tag_df_types         "types"        
+- \ref tag_df_spins         "spins"        
+- \ref tag_df_gyros         "gyros"        
+- \ref tag_df_eqs           "eqs"          
+- \ref tag_df_rxyzs         "rxyzs"        
+- \ref tag_df_hypf          "hypf"         
+- \ref tag_df_efg           "efg"          
+- \ref tag_df_zfs           "zfs"          
+- \ref tag_df_detuning      "detuning"     
 
-
-| Tag (Output)                          |
-|---------------------------------------|
-| \ref tag_savemode      "savemode"     |
-| \ref tag_outfile       "outfile"      |
+\section OutputTags \ref Output "Output tags"
+- \ref tag_savemode        "savemode"
+- \ref tag_outfile       "outfile"     
 
 
 \section Config_CONFIG General condition
@@ -195,9 +223,10 @@ Below are the descriptions of various configuration tags used in the input file.
 ## method
 <p><b>Description:</b><br>
 CCE Methods to calculate the dynamics of the system.</p>
+You can specify this value via the "-m" command-line option. <br>
 <p><b>Data Type:</b> String</p>
 <p><b>Options:</b><br>
-| Option  | Description | Reference |
+| Option  | Description |
 |---------|-------------------------------------|
 | `CCE`   | Conventional CCE method             |
 | `gCCE`  | Generalized CCE method              |
@@ -214,6 +243,7 @@ CCE Methods to calculate the dynamics of the system.</p>
 ## quantity
 <p><b>Description:</b><br>
 Quantity to calculate the dynamics of the system.</p>
+You can specify this value via the "-q" command-line option. <br>
 <p><b>Data Type:</b> String</p>
 <p><b>Options:</b><br>
 | Option | Description |
@@ -238,6 +268,7 @@ Order of the CCE method.</p>
 ## bfield
 <p><b>Description:</b><br>
 Magnetic field.</p>
+You can specify a magnetic field along the z-axis via the "-B" command-line option. <br>
 <p><b>Data Type:</b> Float or Float List</p>
 <p><b>Unit:</b> gauss (G)</p>
 <p><b>Default:</b> 0.0</p>
@@ -309,6 +340,7 @@ Dipolar inner-cutoff radius. </p>
 ## nstate
 <p><b>Description:</b><br>
 Number of state templates to be generated. </p>
+You can specify this value via the "-N" command-line option. <br>
 <p><b>Data Type:</b> Integer</p>
 <p><b>Options:</b><br>
 | Option | Description |
@@ -378,6 +410,7 @@ File name including bath spin information, e.g. gyromagnetic ratio, spin number 
 ## bathfile
 <p><b>Description:</b><br>
 File name of the bath spatial configuration. <br>
+You can specify this value via the "-I" command-line option. <br>
 </p>
 <pre>
     File format is the following :
@@ -417,7 +450,7 @@ Usually, this tag is required for multiple qubit calculation that wouldb have di
 File path of the principal axis of the bath spin. <br>
 This tag might require during paramagnetic defect bath simulation. <br>
 During PM defect bath simulation, if you don\'t give this file, the principal axes are automatically assigned. <br></p>
-
+You can specify this value via the "-a" command-line option. <br>
 <pre>
     File format is the following :
     [Principal axis index]
@@ -443,6 +476,7 @@ During PM defect bath simulation, if you don\'t give this file, the principal ax
 File name of the bath state template. <br>
 This tag might require when you want to obtain the result for a certain set of initial bath state. <br>
 If the file path of the statefile doesn\'t exist, the program will automatically generate the state template. <br>
+You can specify this value via the "-s" command-line option. <br>
 </p>
 <pre>
     File format is the following :
@@ -471,6 +505,7 @@ File name of the additional bath spin state template. <br>
 This tag might require when you want to calculate paramagnetic defect bath. <br>
 Each bath state represent the additional bath spin state. <br>
 If the file path of the exstatefile doesn\'t exist, the program will automatically generate the state template. <br>
+You can specify this value via the "-S" command-line option. <br>
 </p>
 <pre>
     File format is the following :
@@ -910,6 +945,324 @@ This tag is ultimately applied to set \ref QubitArray::psib \(i.e. \ref tag_psib
 <p><b>Related tags:</b> \ref tag_alphams "alphams" \ref tag_psib "psib" \ref tag_betams "betams" </p>
 <p><b>Related variable:</b> \ref QubitArray::_betaidx \ref QubitArray::psib </p>
 <p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_addsubclus
+## addsubclus
+<p><b>Description:</b><br>
+For CCE simulations with order ≥ 3, enabling this option allows all sub-clusters of the highest order to be included. <br>
+This leads to more stable and robust results, and may also reduce computation time. <br>
+<p><b>Data Type:</b> Bool </p>
+<p><b>Default:</b> true </p>
+<p><b>Example:</b> \code addsubclus : true \endcode </p>
+<p><b>Related variable:</b> \ref Cluster::addsubclus </p>
+
+\anchor tag_nk
+## nk
+<p><b>Description:</b><br>
+Number of clusters for each CCE order. <br>
+This is useful for CCE simulations with order ≥ 3, leading tons of clusters <br>
+If the value is [0,0,0], it means that all clusters are included. <br>
+<p><b>Data Type:</b> Int List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code nk : [10000, 20000, 30000] \endcode </p>
+<p><b>Related variable:</b> \ref Cluster::nk </p>
+
+\anchor tag_sK
+## sK
+<p><b>Description:</b><br>
+Removed <br>
+    \todo Hyeonsu </p>
+
+\anchor tag_max_trial
+## max_trial
+<p><b>Description:</b><br>
+Removed <br>
+    \todo Hyeonsu </p>
+
+\anchor tag_max_iter
+## max_iter
+<p><b>Description:</b><br>
+Removed <br>
+    \todo Hyeonsu </p>
+
+\anchor tag_kmeans_pp
+## kmeans_pp
+<p><b>Description:</b><br>
+Removed <br>
+    \todo Hyeonsu </p>
+
+\anchor tag_iter_detail
+## iter_detail
+<p><b>Description:</b><br>
+Removed <br>
+    \todo Hyeonsu </p>
+
+\anchor tag_npulse
+## npulse
+<p><b>Description:</b><br>
+Number of pulses in the pulse sequence. <br>
+This tag is required to define the number of pulses in the pulse sequence. <br>
+Removed <br>
+    \todo Hyeonsu </p>
+    HahnEcho ? CPMG? Ramsey? when?
+
+<p><b>Data Type:</b> Int </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code npulse : 1 \endcode </p>
+<p><b>Related variable:</b> \ref Pulse::npulse </p>
+
+\anchor tag_pulsename
+## pulsename
+<p><b>Description:</b><br>
+Name of the pulse sequence. <br>
+Removed <br>
+    \todo Hyeonsu </p>
+
+\anchor tag_Defect
+## Defect
+<p><b>Description:</b><br>
+Detailed information of paramagnetic \(PM\) defect bath can be provided by this tag.
+<p><b>Data Type:</b> Dictionary List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> 
+    \code Defect : [ { "dfname" : "D1", "naddspin" : 0, "navaax" : 4, "detuning" : [[1,0.0],[2,1.0],[3,2.0],[4,3.0]]}, 
+                     { "sdname" : "D2", ... } \endcode </p>
+<p><b>Related variable:</b> \ref DefectArray "DefectArray struct" \ref Defect "Defect struct" </p>
+<p><b>Sub-tags:</b></p>
+<p>
+    - \ref tag_df_dfname "dfname" : Defect name
+    - \ref tag_df_apprx "apprx"   : Approximation type
+    - \ref tag_df_naddspin "naddspin" : Number of on-site nuclear spins of the PM defect
+    - \ref tag_df_navaax "navaax" : Number of possible principal axes of the defect
+    - \ref tag_df_types "types" : On-site nuclear spin types
+    - \ref tag_df_spins "spins" : Spin numbers of the on-site nuclear spins
+    - \ref tag_df_gyros "gyros" : Gyromagnetic ratio of the on-site nuclear spins
+    - \ref tag_df_eqs "eqs" : eQ values of the on-site nuclear spins
+    - \ref tag_df_rxyzs "rxyzs" : Relative x,y,z position of on-site nuclear spins
+    - \ref tag_df_hypf "hypf" : Hyperfine interaction tensor
+    - \ref tag_df_efg "efg" : Electric field gradient tensor
+    - \ref tag_df_zfs "zfs" : Zero-field splitting tensor
+    - \ref tag_df_detuning "detuning" : Detuning frequency
+</p>
+
+\anchor tag_df_dfname
+## dfname
+<p><b>Description:</b><br>
+Name of the paramagnetic defect. <br>
+<p><b>Data Type:</b> String </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code dfname : "P1" \endcode </p>
+<p><b>Related variable:</b> \ref Defect::dfname </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_apprx
+## apprx
+<p><b>Description:</b><br>
+If \c apprx is set to \c false, the electron and nuclear spins of the paramagnetic defect are clusterized separately. <br>
+This corresponds to a conventional CCE simulation for all spins. <br>
+If \c apprx is set to \c true, the electron and nuclear spins are treated as one set, <br>
+resulting in a simulation based on the CCE-NeNn method. <br>
+<p><b>Data Type:</b> Bool </p>
+<p><b>Default:</b> true </p>
+<p><b>Example:</b> \code apprx : true \endcode </p>
+<p><b>Related variable:</b> \ref Defect::apprx </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_naddspin
+## naddspin
+<p><b>Description:</b><br>
+Number of on-site nuclear spins of the paramagnetic defect. <br>
+<p><b>Data Type:</b> Int </p>
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> \code naddspin : 0 \endcode </p>
+<p><b>Related variable:</b> \ref DefectArray::naddspins \ref Defect::naddspin </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_navaax
+## navaax
+<p><b>Description:</b><br>
+Number of possible principal axes of the paramagnetic defect. <br>
+<p><b>Data Type:</b> Int </p>
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> \code navaax : 4 \endcode </p>
+<p><b>Related variable:</b> \ref Defect::navaax \ref DefectArray::paxes </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_types
+## types
+<p><b>Description:</b><br>
+Name of on-site nuclear spins of the paramagnetic defect. <br>
+The number of types should be the same as \ref tag_naddspin "naddspin". <br>
+<p><b>Data Type:</b> String List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code types : ["1H", "13C"] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::types </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_spins
+## spins
+<p><b>Description:</b><br>
+Spin numbers of the on-site nuclear spins of the paramagnetic defect. <br>
+The number of spins should be the same as \ref tag_naddspin "naddspin". <br>
+<p><b>Data Type:</b> Float List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code spins : [0.5, 1.0] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::spins </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_gyros
+## gyros
+<p><b>Description:</b><br>
+Gyromagnetic ratio of the on-site nuclear spins of the paramagnetic defect. <br>
+The number of gyros should be the same as \ref tag_naddspin "naddspin". <br>
+<p><b>Data Type:</b> Double List </p>
+<p><b>Unit:</b> rad/ms/G </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code gyros : [-17608.597050, -17608.597050] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::gyros </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_eqs
+## eqs
+<p><b>Description:</b><br>
+Quadrupole moment \(eQ\) values of the on-site nuclear spins of the paramagnetic defect. <br>
+The number of eQ values should be the same as \ref tag_naddspin "naddspin". <br>
+<p><b>Data Type:</b> Double List </p>
+<p><b>Unit:</b> \f$ \text{millibarn} \times 10^{1}~\mathrm{m}^2 = 10^{-30}~\mathrm{m}^2 \f$ </p>
+<p><b>Default:</b> [0.0 , ..] </p>
+<p><b>Example:</b> \code eqs : [0.0, 0.0] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::eqs </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_rxyzs
+## rxyzs
+<p><b>Description:</b><br>
+Relative x,y,z position of on-site nuclear spins of the paramagnetic defect over the electron spin position. <br>
+The number of \c rxyzs should be the same as \" \ref tag_naddspin "naddspin" x \ref tag_navaax "navaax" \" <br>
+<p><b>Data Type:</b> 2D List </p>
+<p><b>Unit:</b> angstrom </p>
+<p><b>Default:</b> [0.0, 0.0, 0.0] </p>
+<p><b>Example:</b> \code rxyzs : [[1, "15N", [0.0, 0.0, 0.0]],
+                                  [2, "1H", [0.0, 0.0, 0.0]]] \endcode </p>
+
+<p><b>Related variable:</b> \ref Defect::rxyzs </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_hypf
+## hypf
+<p><b>Description:</b><br>
+The hyperfine interaction between on-site nuclear spins and the electron spin associated with a paramagnetic defect. <br>
+The number of \c hypf should be the same as \" \ref tag_naddspin "naddspin" x \ref tag_navaax "navaax" \" <br>
+<p><b>Data Type:</b> 2D List </p>
+<p><b>Unit:</b> MHz </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code hypf : [[1, "15N", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
+                                 [2, "1H", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::hypf </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_efg
+## efg
+<p><b>Description:</b><br>
+The electric field gradient tensors of the paramagnetic defect. <br>
+The number of \c efg should be the same as \" \ref tag_naddspin "naddspin" x \ref tag_navaax "navaax" \" <br>
+<p><b>Data Type:</b> 2D List </p>
+<p><b>Unit:</b> \f$ \mathrm{Hartree}/\mathrm{Bohr}^2 \f$ </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code efg : [[1, "14N", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
+                               [2, "1H", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::efg </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_zfs
+## zfs
+<p><b>Description:</b><br>
+The zero-field splitting tensors of the electron spin associated with a paramagnetic defect. <br>
+The number of \c zfs should be the same as \" \ref tag_navaax "navaax" \" <br>
+<p><b>Data Type:</b> 2D List </p>
+<p><b>Unit:</b> MHz </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code zfs : [[1, "e", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
+                               [2, "e", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::zfs </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_detuning
+## detuning
+<p><b>Description:</b><br>
+Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. <br>
+The number of \c detuning should be the same as \" \ref tag_navaax "navaax" \" <br>
+This tag is used to approximate the spin interaction tensors related to the paramagnetic defect, <br>
+e.g., \f$ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z \f$. <br>
+<p><b>Data Type:</b> 2D List </p>
+<p><b>Unit:</b> MHz </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code detuning : [[1, "e",  1.0],
+                                     [2, "e",  2.0],
+                                     [3, "e",  3.0],
+                                     [4, "e",  4.0]] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::detuning </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_savemode
+## savemode
+<p><b>Description:</b><br>
+The output file can be saved in different ways. <br>
+<p><b>Options:</b></p>
+<p>
+   - \c "all" : Saves all coherence functions for each cluster and each state.
+   The file name will be in the format: "output_{cluster}_state{state}_wiDiv/noDiv"
+   - \c "normal" : Saves coherence functions for each state only.
+   The file name will be in the format: "output_state{state}_wiDiv/noDiv"
+</p>
+<p><b>Data Type:</b> String </p>
+<p><b>Default:</b> "normal" </p>
+<p><b>Example:</b> \code savemode : "all" \endcode </p>
+<p><b>Related variable:</b> \ref Output::savemode </p>
+
+\anchor tag_outfile
+## outfile
+<p><b>Description:</b><br>
+Output file name prefix. <br>
+"outfile_..._wiDiv" is the final result of the coherence function. <br>
+"outfile_..._noDiv" is the result without dividing the final coherence function into those obtained from its sub-clusters. <br>
+You can specify this value via the "-o" command-line option.
+<p><b>Data Type:</b> String </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code outfile : "filepath" \endcode </p>
+<p><b>Related variable:</b> \ref Output::outfile </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
