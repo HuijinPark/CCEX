@@ -869,7 +869,7 @@ This tensor is used to calculate the interaction between qubits. <br>
 ## psia
 <p><b>Description:</b><br>
 Alpha state of the qubit in matrix representation.<br>
-One of the effective spin states of the qubit in matrix representation, simbol : \f$ |\alpha\rangle \f$ . <br>
+One of the effective spin states of the qubit in matrix representation, simbol : |alpha⟩ . <br>
 Priority: \ref tag_psia "psia" > \ref tag_alphaidx "alphaidx" > \ref tag_alphams "alphams". <br>
 <p><b>Data Type:</b> Double List </p>
 <p><b>Default:</b> - \(If not entered, alphams state would be the \) </p>
@@ -882,7 +882,7 @@ Priority: \ref tag_psia "psia" > \ref tag_alphaidx "alphaidx" > \ref tag_alphams
 ## psib
 <p><b>Description:</b><br>
 Beta state of the qubit in matrix representation. <br>
-One of the effective spin states of the qubit in matrix representation, simbol : \f$ |\beta\rangle \f$ . <br>
+One of the effective spin states of the qubit in matrix representation, simbol : |beta⟩ . <br>
 Priority: \ref tag_psib "psib" > \ref tag_betaidx "betaidx" > \ref tag_betams "betams". <br>
 <p><b>Data Type:</b> Double List </p>
 <p><b>Default:</b> - </p>
@@ -894,11 +894,11 @@ Priority: \ref tag_psib "psib" > \ref tag_betaidx "betaidx" > \ref tag_betams "b
 \anchor tag_psi0
 ## psi0
 <p><b>Description:</b><br>
-Initial state of the qubit in matrix representation, symbol: \f$ |\psi_0\rangle \f$
-This tag is used to define a specific initial state of the qubit.
-If this tag is not provided, the initial state defaults to \f$ |\psi_0\rangle = |\alpha\rangle + |\beta\rangle \f$.
+Initial state of the qubit in matrix representation, symbol:  |psi0⟩ <br>
+This tag is used to define a specific initial state of the qubit. <br>
+If this tag is not provided, the initial state defaults to  |psi0⟩ =  |alpha⟩ +  |beta⟩ . <br>
 <p><b>Data Type:</b> Double List </p>
-<p><b>Default:</b> \f$ |\alpha\rangle + |\beta\rangle \f$ </p>
+<p><b>Default:</b> - </p>
 <p><b>Example:</b> \code psi0 : [1.0, 0.0, 0.0] \endcode </p>
 <p><b>Related variable:</b> \ref QubitArray::psi0 </p>
 <p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
@@ -1124,7 +1124,7 @@ The number of gyros should be the same as \ref tag_naddspin "naddspin". <br>
 Quadrupole moment \(eQ\) values of the on-site nuclear spins of the paramagnetic defect. <br>
 The number of eQ values should be the same as \ref tag_naddspin "naddspin". <br>
 <p><b>Data Type:</b> Double List </p>
-<p><b>Unit:</b> \f$ \text{millibarn} \times 10^{1}~\mathrm{m}^2 = 10^{-30}~\mathrm{m}^2 \f$ </p>
+<p><b>Unit:</b> millibarn × 10^1 m^2 = 10^-30 m^2 </p>
 <p><b>Default:</b> [0.0 , ..] </p>
 <p><b>Example:</b> \code eqs : [0.0, 0.0] \endcode </p>
 <p><b>Related variable:</b> \ref Defect::eqs </p>
@@ -1163,7 +1163,7 @@ The number of \c hypf should be the same as \" \ref tag_naddspin "naddspin" x \r
 The electric field gradient tensors of the paramagnetic defect. <br>
 The number of \c efg should be the same as \" \ref tag_naddspin "naddspin" x \ref tag_navaax "navaax" \" <br>
 <p><b>Data Type:</b> 2D List </p>
-<p><b>Unit:</b> \f$ \mathrm{Hartree}/\mathrm{Bohr}^2 \f$ </p>
+<p><b>Unit:</b> Hartree/Bohr^2 </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> \code efg : [[1, "14N", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
                                [2, "1H", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] \endcode </p>
@@ -1189,7 +1189,7 @@ The number of \c zfs should be the same as \" \ref tag_navaax "navaax" \" <br>
 Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. <br>
 The number of \c detuning should be the same as \" \ref tag_navaax "navaax" \" <br>
 This tag is used to approximate the spin interaction tensors related to the paramagnetic defect, <br>
-e.g., \f$ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z \f$. <br>
+e.g., \f[ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z \f]. <br>
 <p><b>Data Type:</b> 2D List </p>
 <p><b>Unit:</b> MHz </p>
 <p><b>Default:</b> - </p>

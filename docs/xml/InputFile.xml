@@ -1076,7 +1076,7 @@
 <sect2 id="InputFile_1autotoc_md52">
 <title>psia</title><para><bold>Description:</bold><linebreak/>
  Alpha state of the qubit in matrix representation.<linebreak/>
- One of the effective spin states of the qubit in matrix representation, simbol : <formula id="0">$ |\alpha\rangle $</formula> . <linebreak/>
+ One of the effective spin states of the qubit in matrix representation, simbol : |alpha⟩ . <linebreak/>
  Priority: <ref refid="InputFile_1tag_psia" kindref="member">psia</ref> &gt; <ref refid="InputFile_1tag_alphaidx" kindref="member">alphaidx</ref> &gt; <ref refid="InputFile_1tag_alphams" kindref="member">alphams</ref>. <linebreak/>
  </para>
 <para><bold>Data Type:</bold> Double List </para>
@@ -1091,7 +1091,7 @@
 <sect2 id="InputFile_1autotoc_md53">
 <title>psib</title><para><bold>Description:</bold><linebreak/>
  Beta state of the qubit in matrix representation. <linebreak/>
- One of the effective spin states of the qubit in matrix representation, simbol : <formula id="1">$ |\beta\rangle $</formula> . <linebreak/>
+ One of the effective spin states of the qubit in matrix representation, simbol : |beta⟩ . <linebreak/>
  Priority: <ref refid="InputFile_1tag_psib" kindref="member">psib</ref> &gt; <ref refid="InputFile_1tag_betaidx" kindref="member">betaidx</ref> &gt; <ref refid="InputFile_1tag_betams" kindref="member">betams</ref>. <linebreak/>
  </para>
 <para><bold>Data Type:</bold> Double List </para>
@@ -1105,9 +1105,12 @@
 </sect2>
 <sect2 id="InputFile_1autotoc_md54">
 <title>psi0</title><para><bold>Description:</bold><linebreak/>
- Initial state of the qubit in matrix representation, symbol: <formula id="2">$ |\psi_0\rangle $</formula> This tag is used to define a specific initial state of the qubit. If this tag is not provided, the initial state defaults to <formula id="3">$ |\psi_0\rangle = |\alpha\rangle + |\beta\rangle $</formula>. </para>
+ Initial state of the qubit in matrix representation, symbol: |psi0⟩ <linebreak/>
+ This tag is used to define a specific initial state of the qubit. <linebreak/>
+ If this tag is not provided, the initial state defaults to |psi0⟩ = |alpha⟩ + |beta⟩ . <linebreak/>
+ </para>
 <para><bold>Data Type:</bold> Double List </para>
-<para><bold>Default:</bold> <formula id="4">$ |\alpha\rangle + |\beta\rangle $</formula> </para>
+<para><bold>Default:</bold> - </para>
 <para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">psi0<sp/>:<sp/>[1.0,<sp/>0.0,<sp/>0.0]<sp/></highlight></codeline>
 </programlisting> </para>
 <para><bold>Related variable:</bold> <ref refid="structQubitArray_1a17543dd30e2e5ef672ff5f751119beea" kindref="member">QubitArray::psi0</ref> </para>
@@ -1367,7 +1370,7 @@
  The number of eQ values should be the same as naddspin. <linebreak/>
  </para>
 <para><bold>Data Type:</bold> Double List </para>
-<para><bold>Unit:</bold> <formula id="5">$ \text{millibarn} \times 10^{1}~\mathrm{m}^2 = 10^{-30}~\mathrm{m}^2 $</formula> </para>
+<para><bold>Unit:</bold> millibarn × 10^1 m^2 = 10^-30 m^2 </para>
 <para><bold>Default:</bold> [0.0 , ..] </para>
 <para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">eqs<sp/>:<sp/>[0.0,<sp/>0.0]<sp/></highlight></codeline>
 </programlisting> </para>
@@ -1411,7 +1414,7 @@
  The number of <computeroutput>efg</computeroutput> should be the same as " naddspin x navaax " <linebreak/>
  </para>
 <para><bold>Data Type:</bold> 2D List </para>
-<para><bold>Unit:</bold> <formula id="6">$ \mathrm{Hartree}/\mathrm{Bohr}^2 $</formula> </para>
+<para><bold>Unit:</bold> Hartree/Bohr^2 </para>
 <para><bold>Default:</bold> - </para>
 <para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">efg<sp/>:<sp/>[[1,<sp/></highlight><highlight class="stringliteral">&quot;14N&quot;</highlight><highlight class="normal">,<sp/>[1.0,<sp/>2.0,<sp/>3.0,<sp/>4.0,<sp/>5.0,<sp/>6.0,<sp/>7.0,<sp/>8.0,<sp/>9.0]],</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[2,<sp/></highlight><highlight class="stringliteral">&quot;1H&quot;</highlight><highlight class="normal">,<sp/>[1.0,<sp/>2.0,<sp/>3.0,<sp/>4.0,<sp/>5.0,<sp/>6.0,<sp/>7.0,<sp/>8.0,<sp/>9.0]]]<sp/></highlight></codeline>
@@ -1440,7 +1443,7 @@
  Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. <linebreak/>
  The number of <computeroutput>detuning</computeroutput> should be the same as " navaax " <linebreak/>
  This tag is used to approximate the spin interaction tensors related to the paramagnetic defect, <linebreak/>
- e.g., <formula id="7">$ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z $</formula>. <linebreak/>
+ e.g., <formula id="0">\[ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z \]</formula>. <linebreak/>
  </para>
 <para><bold>Data Type:</bold> 2D List </para>
 <para><bold>Unit:</bold> MHz </para>

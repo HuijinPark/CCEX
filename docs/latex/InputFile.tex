@@ -1566,7 +1566,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 \hypertarget{InputFile_autotoc_md52}{}\doxysubsection{\texorpdfstring{psia}{psia}}\label{InputFile_autotoc_md52}
 {\bfseries{Description\+:}}~\newline
  Alpha state of the qubit in matrix representation.~\newline
- One of the effective spin states of the qubit in matrix representation, simbol \+: $ |\alpha\rangle $ . ~\newline
+ One of the effective spin states of the qubit in matrix representation, simbol \+: \texorpdfstring{$\vert$}{|}alpha⟩ . ~\newline
  Priority\+: \doxylink{InputFile_tag_psia}{psia} \texorpdfstring{$>$}{>} \doxylink{InputFile_tag_alphaidx}{alphaidx} \texorpdfstring{$>$}{>} \doxylink{InputFile_tag_alphams}{alphams}. ~\newline
  
 
@@ -1592,7 +1592,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 \hypertarget{InputFile_autotoc_md53}{}\doxysubsection{\texorpdfstring{psib}{psib}}\label{InputFile_autotoc_md53}
 {\bfseries{Description\+:}}~\newline
  Beta state of the qubit in matrix representation. ~\newline
- One of the effective spin states of the qubit in matrix representation, simbol \+: $ |\beta\rangle $ . ~\newline
+ One of the effective spin states of the qubit in matrix representation, simbol \+: \texorpdfstring{$\vert$}{|}beta⟩ . ~\newline
  Priority\+: \doxylink{InputFile_tag_psib}{psib} \texorpdfstring{$>$}{>} \doxylink{InputFile_tag_betaidx}{betaidx} \texorpdfstring{$>$}{>} \doxylink{InputFile_tag_betams}{betams}. ~\newline
  
 
@@ -1617,11 +1617,14 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 \Hypertarget{InputFile_tag_psi0}%
 \hypertarget{InputFile_autotoc_md54}{}\doxysubsection{\texorpdfstring{psi0}{psi0}}\label{InputFile_autotoc_md54}
 {\bfseries{Description\+:}}~\newline
- Initial state of the qubit in matrix representation, symbol\+: $ |\psi_0\rangle $ This tag is used to define a specific initial state of the qubit. If this tag is not provided, the initial state defaults to $ |\psi_0\rangle = |\alpha\rangle + |\beta\rangle $. 
+ Initial state of the qubit in matrix representation, symbol\+: \texorpdfstring{$\vert$}{|}psi0⟩ ~\newline
+ This tag is used to define a specific initial state of the qubit. ~\newline
+ If this tag is not provided, the initial state defaults to \texorpdfstring{$\vert$}{|}psi0⟩ = \texorpdfstring{$\vert$}{|}alpha⟩ + \texorpdfstring{$\vert$}{|}beta⟩ . ~\newline
+ 
 
 {\bfseries{Data Type\+:}} Double List 
 
-{\bfseries{Default\+:}} $ |\alpha\rangle + |\beta\rangle $ 
+{\bfseries{Default\+:}} -\/ 
 
 {\bfseries{Example\+:}} 
 \begin{DoxyCode}{0}
@@ -2046,7 +2049,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 {\bfseries{Data Type\+:}} Double List 
 
-{\bfseries{Unit\+:}} $ \text{millibarn} \times 10^{1}~\mathrm{m}^2 = 10^{-30}~\mathrm{m}^2 $ 
+{\bfseries{Unit\+:}} millibarn × 10\texorpdfstring{$^\wedge$}{\string^}1 m\texorpdfstring{$^\wedge$}{\string^}2 = 10\texorpdfstring{$^\wedge$}{\string^}-\/30 m\texorpdfstring{$^\wedge$}{\string^}2 
 
 {\bfseries{Default\+:}} \mbox{[}0.\+0 , ..\mbox{]} 
 
@@ -2123,7 +2126,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 {\bfseries{Data Type\+:}} 2D List 
 
-{\bfseries{Unit\+:}} $ \mathrm{Hartree}/\mathrm{Bohr}^2 $ 
+{\bfseries{Unit\+:}} Hartree/\+Bohr\texorpdfstring{$^\wedge$}{\string^}2 
 
 {\bfseries{Default\+:}} -\/ 
 
@@ -2172,7 +2175,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
  Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. ~\newline
  The number of {\ttfamily detuning} should be the same as "{} navaax "{} ~\newline
  This tag is used to approximate the spin interaction tensors related to the paramagnetic defect, ~\newline
- e.\+g., $ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z $. ~\newline
+ e.\+g., \[ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z \]. ~\newline
  
 
 {\bfseries{Data Type\+:}} 2D List 
