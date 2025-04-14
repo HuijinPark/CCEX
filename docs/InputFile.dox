@@ -1,4 +1,6 @@
-/**
+/** \mainpage InputFile Input File
+
+Generated on 2025.04.14
 
 \page InputFile Input File
 
@@ -19,6 +21,8 @@ Each parameter should be written in the following format:
 \endcode
 
 Lines beginning with `# or !` are considered as comments and they would be ignored.
+
+<hr>
 
 \section GeneralTag \ref CalConfig "General tags"
 
@@ -54,18 +58,20 @@ Tags in this section is about simulatation parameters such as file path, numeric
 - \ref tag_cell_para    "cell_para"                     
 - \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit"
 
+<hr>
 \section QubitArrayTags \ref QubitArray "Qubit-related tags"
 
 This tags are used for adjusting Qubit Hamiltonian and qubit inital state.
-The writing format is the following:
+The format is the following:
 
-Case1. \ref tag_qubitfile "qubitfile" tag
-> Only single qubit system is supported.
+<b>Case1.<\b> \ref tag_qubitfile "qubitfile" tag : 
+  : Only single-qubit systems are supported. 
+    Note that this tag takes priority over the \ref tag_Qubit "Qubit" tag. <br>
 
 <p><b>Example:</b> \code "qubitfile"  : "file-path" \endcode </p>
 
-Case2. \ref tag_Qubit "Qubit" tag
-> Both multiple qubit and single system are supported.
+<b>Case2.<\b> \ref tag_Qubit "Qubit" tag
+  : Both multiple qubit and single system are supported.
 
 <details>
 <summary><b>Example:</b> Click here to show example code </p></summary>
@@ -107,37 +113,37 @@ Case2. \ref tag_Qubit "Qubit" tag
                                     [7.0, 8.0, 9.0]],
                     }
                 ]
-              }
+              },
+    "psia" : [1.0, 2.0, 3.0],
+    "psib" : [4.0, 5.0, 6.0],
+    "psi0" : [7.0, 8.0, 9.0],
+    "overhaus" : true,
+    "alphaidx" : 0,
+    "betaidx"  : 1,
 \endcode
 </details>
 
-- \ref tag_nqubit       "nqubit"       
-- \ref tag_name         "name"         
-- \ref tag_spin         "spin"         
-- \ref tag_qubitfile    "qubitfile"    
-- \ref tag_qspin        "qspin"        
-- \ref tag_alphams      "alphams"      
-- \ref tag_betams       "betams"       
-- \ref tag_qzfs         "qzfs" 
-- \ref tag_Qubit        "Qubit"        
-- \ref tag_nqubit       "nqubit"       
-- \ref tag_qubit        "qubit"        
-- \ref tag_name         "name"         
-- \ref tag_spin         "spin"         
-- \ref tag_gyro         "gyro"         
-- \ref tag_xyz          "xyz"          
-- \ref tag_detuning     "detuning"     
-- \ref tag_alphams      "alphams"      
-- \ref tag_betams       "betams"       
-- \ref tag_intmap       "intmap"       
-- \ref tag_between      "between"      
-- \ref tag_tensor       "tensor"       
-- \ref tag_psia         "psia"         
-- \ref tag_psib         "psib"         
-- \ref tag_psi0         "psi0"         
-- \ref tag_overhaus     "overhaus"     
-- \ref tag_alphaidx     "alphaidx"     
-- \ref tag_betaidx      "betaidx"      
+- \ref tag_qubitfile    "qubitfile"
+- \ref tag_Qubit        "Qubit" 
+    - \ref tag_nqubit       "nqubit"
+    - \ref tag_qubit        "qubit"
+        - \ref tag_name         "name"         
+        - \ref tag_spin         "spin"
+        - \ref tag_gyro         "gyro"         
+        - \ref tag_xyz          "xyz"          
+        - \ref tag_detuning     "detuning"     
+        - \ref tag_alphams      "alphams" 
+        - \ref tag_betams       "betams"
+    - \ref tag_intmap       "intmap"
+        - \ref tag_between      "between"      
+        - \ref tag_tensor       "tensor"       
+    - \ref tag_psia         "psia"  
+    - \ref tag_psib         "psib"  
+    - \ref tag_psi0         "psi0"
+    - \ref tag_overhaus     "overhaus"     
+    - \ref tag_alphaidx     "alphaidx" 
+    - \ref tag_betaidx      "betaidx"  
+        
 
 
 | Tag (Cluster)                         |
@@ -406,10 +412,10 @@ Usually, this tag is required for multiple qubit calculation that wouldb have di
 \anchor tag_avaaxfile
 ## avaaxfile
 <p><b>Description:</b><br>
-File name of the bath pricipal axis configuration. <br>
-This tag might require when you want to calculate paramagnetic (PM) defect bath. <br>
-During PM defect calculation, if you don't give this file, the program will automatically generate the principal axis configuration. <br>
-</p>
+File path of the principal axis of the bath spin. <br>
+This tag might require during paramagnetic defect bath simulation. <br>
+During PM defect bath simulation, if you don\'t give this file, the principal axes are automatically assigned. <br></p>
+
 <pre>
     File format is the following :
     [Principal axis index]
@@ -434,7 +440,7 @@ During PM defect calculation, if you don't give this file, the program will auto
 <p><b>Description:</b><br>
 File name of the bath state template. <br>
 This tag might require when you want to obtain the result for a certain set of initial bath state. <br>
-If the file path of the statefile doesn't exist, the program will automatically generate the state template. <br>
+If the file path of the statefile doesn\'t exist, the program will automatically generate the state template. <br>
 </p>
 <pre>
     File format is the following :
@@ -455,13 +461,14 @@ If the file path of the statefile doesn't exist, the program will automatically 
 <p><b>Related tags:</b> \ref tag_nstate "nstate" </p>
 <p><b>Related variable:</b> \ref Config::statefile </p>
 
+
 \anchor tag_exstatefile
 ## exstatefile
 <p><b>Description:</b><br>
 File name of the additional bath spin state template. <br>
 This tag might require when you want to calculate paramagnetic defect bath. <br>
 Each bath state represent the additional bath spin state. <br>
-If the file path of the exstatefile doesn't exist, the program will automatically generate the state template. <br>
+If the file path of the exstatefile doesn\'t exist, the program will automatically generate the state template. <br>
 </p>
 <pre>
     File format is the following :
@@ -637,12 +644,288 @@ This tag is required when you use the quadrupole tensor obtained from DFT calcul
 <p><b>Related Tags:</b> \ref tag_qd_readmode "qd_readmode" \ref tag_qd_cutoff "qd_cutoff" \ref tag_qd_tensorfile "qd_tensorfile" \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit" </p>
 <p><b>Related variable:</b> \ref Config::cell_para </p>
 
-
-\section QubitArray_QUBITARRAY Qubit related condition
-Below are the descriptions of various qubit-related tags used in the input file.
-
+\anchor tag_Qubit
+## Qubit
+<p><b>Description:</b><br>
+Qubit information. <br>
+This tag is required to give the details of qubit information. <br></p>
+<p><b>Data Type:</b> Dictionary </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> 
+    \code Qubit : { "nqubit" : 2, 
+                    "qubit" : [ { "name" : "Q1", "spin" : 0.5, "gyro" : -17608.597050, "xyz" : [1.0, 2.0, 3.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 }, 
+                                 { "name" : "Q2", "spin" : 1.0, "gyro" : -17608.597050, "xyz" : [4.0, 5.0, 6.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 } ] } \endcode </p>
+<p><Related variable:</b> \ref QubitArray "QubitArray struct", \ref Qubit "Qubit struct" </p> 
+<p><b>Sub-tags:</b></p>
+<p>
+    - \ref tag_nqubit "nqubit" 
+    - \ref tag_qubit "qubit" 
+    - \ref tag_intmap "intmap" 
+    - \ref tag_psia "psia"
+    - \ref tag_psib "psib"
+    - \ref tag_psi0 "psi0"
+    - \ref tag_overhaus "overhaus"
+    - \ref tag_alphaidx "alphaidx"
+    - \ref tag_betaidx "betaidx"
+</p>
 
 \anchor tag_nqubit
+## nqubit
+<p><b>Description:</b><br>
+Number of qubits in the system. <br>
+The number of qubit information in tag \ref tag_Qubit "Qubit" should be the same as this value. <br>
+<p><b>Data Type:</b> Integer </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code nqubit : 2 \endcode </p>
+<p><b>Related variable:</b> \ref QubitArray::nqubit </p>
+
+\anchor tag_qubit
+## qubit
+<p><b>Description:</b><br>
+Qubit information details, e.g. qubit name, spin number, gyro magnetic ratio, etc.. <br>
+This tag is required to give the details of qubit information. <br></p>
+<p><b>Data Type:</b> Dictionary List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> 
+    \code qubit : [ { "name" : "Q1", "spin" : 0.5, "gyro" : -17608.597050, "xyz" : [1.0, 2.0, 3.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 }, 
+                    { "name" : "Q2", "spin" : 1.0, "gyro" : -17608.597050, "xyz" : [4.0, 5.0, 6.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 } ] \endcode </p>
+<p><b>Related variable:</b> \ref Qubit "Qubit struct"  </p>
+<p><b>Sub-tags:</b></p>
+<p>
+    - \ref tag_name "name" : Bath spin name
+    - \ref tag_spin "spin" : Spin number
+    - \ref tag_gyro "gyro" : Gyromagnetic ratio \(rad/ms/G\)
+    - \ref tag_xyz "xyz"   : x,y,z position of qubit in cartesian, angstrom
+    - \ref tag_detuning "detuning" : Detuning frequency \(kHz\)
+    - \ref tag_alphams "alphams"   : qubit sublevel state
+    - \ref tag_betams "betams"     : qubit sublevel state
+</p>
+
+\anchor tag_name
+## name
+<p><b>Description:</b><br>
+Name of the qubit. <br>
+<p><b>Data Type:</b> String </p>
+<p><b>Default:</b> "q%d" e.g. "q1", "q2", "q3", ... </p>
+<p><b>Example:</b> \code name : "Q1" \endcode </p>
+<p><b>Related variable:</b> \ref Qubit::name </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_spin
+## spin
+<p><b>Description:</b><br>
+Spin number of the qubit. <br>
+<p><b>Data Type:</b> Float </p>
+<p><b>Default:</b> 1.0 </p>
+<p><b>Example:</b> \code spin : 0.5 \endcode </p>
+<p><b>Related variable:</b> \ref Qubit::spin </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_gyro
+## gyro
+<p><b>Description:</b><br>
+Gyromagnetic ratio of the qubit. <br>
+<p><b>Data Type:</b> Double </p>
+<p><b>Unit:</b> rad/ms/G </p>
+<p><b>Default:</b> -17608.597050 </p>
+<p><b>Example:</b> \code gyro : -17608.597050 \endcode </p>
+<p><b>Related variable:</b> \ref Qubit::gyro </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_xyz
+## xyz
+<p><b>Description:</b><br>
+x,y,z position of the qubit in cartesian coordinates. <br>
+<p><b>Data Type:</b> Double List </p>
+<p><b>Unit:</b> angstrom </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code xyz : [1.0, 2.0, 3.0] \endcode </p>
+<p><b>Related variable:</b> \ref Qubit::xyz </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_detuning
+## detuning
+<p><b>Description:</b><br>
+Detuning frequency of the qubit. <br>
+<p><b>Data Type:</b> Double </p>
+<p><b>Unit:</b> kHz </p>
+<p><b>Default:</b> 0.0 </p>
+<p><b>Example:</b> \code detuning : 0.0 \endcode </p>
+<p><b>Related variable:</b> \ref Qubit::detuning </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_alphams
+## alphams
+<p><b>Description:</b><br>
+Alpha state of the qubit. <br>
+Represents one of the effective spin states of the qubit. <br>
+Priority: \ref tag_psia "psia" > \ref tag_alphaidx "alphaidx" > \ref tag_alphams "alphams". <br>
+This tag is ultimately applied to set \ref QubitArray::psia \(i.e. \ref tag_psia "psia"\), unless it is overridden by a higher-priority tag <br>
+<p><b>Data Type:</b> Float </p>
+<p><b>Default:</b> 1.0 </p>
+<p><b>Example:</b> \code alphams : 1.0 \endcode </p>
+<p><b>Related-tags:</b> \ref tag_betams "betams" \ref tag_psia "psia" \ref tag_alphaidx "alphaidx" </p>
+<p><b>Related variable:</b> \ref Qubit::alphams \ref QubitArray::psia </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_betams
+## betams
+<p><b>Description:</b><br>
+Beta state of the qubit. <br>
+One of the effective spin states of the qubit. <br>
+Priority: \ref tag_psib "psib" > \ref tag_betaidx "betaidx" > \ref tag_betams "betams". <br>
+This tag is ultimately applied to set \ref QubitArray::psib \(i.e. \ref tag_psib "psib"\), unless it is overridden by a higher-priority tag <br>
+<p><b>Data Type:</b> Float </p>
+<p><b>Default:</b> 0.0 </p>
+<p><b>Example:</b> \code betams : 0.0 \endcode </p>
+<p><b>Related-tags:</b> \ref tag_alphams "alphams" \ref tag_psib "psib" \ref tag_betaidx "betaidx" </p>
+<p><b>Related variable:</b> \ref Qubit::betams \ref QubitArray::psib </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_intmap
+## intmap
+<p><b>Description:</b><br>
+Interaction map between qubits. <br>
+This tag is required to define the interaction map between qubits, including its self interaction \(e.g. Zero-field splitting\). <br>
+<p><b>Data Type:</b> Dictionary List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> 
+    \code intmap : [ { "between" : ["q1","q1"],
+                       "tensor"  : [[0.0, 0.0, 0.0],
+                                    [0.0, 0.0, 0.0], 
+                                    [0.0, 0.0, 0.0]] }, 
+                     { ... } ] 
+    \endcode 
+</p>
+<p><b>Related variable:</b> \ref QubitArray::intmap </p>
+<p><b>Sub-tags:</b></p>
+<p>
+    - \ref tag_between "between" : Interaction qubit pair
+    - \ref tag_tensor "tensor"   : Interaction tensor
+</p>
+
+\anchor tag_between
+## between
+<p><b>Description:</b><br>
+Names of an interacting qubit pair. <br>
+This tag is required to define the interaction map for a specific qubit pair. <br>
+For zero-field splitting interactions, the qubit names must be identical. \(e.g. \c ["q1","q1"] \) <br>
+<p><b>Data Type:</b> String List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code between : ["q1","q2"] \endcode </p>
+<p><b>Related tags:</b> \ref tag_tensor "tensor" </p>
+<p><b>Related variable:</b> \ref QubitArray::intmap </p>
+<p><b>Parent-tags:</b> \ref tag_intmap "intmap" </p>
+
+\anchor tag_tensor
+## tensor
+<p><b>Description:</b><br>
+Interaction tensor. <br>
+This tag is required to define the interaction tensor for a specific qubit pair. <br>
+This tensor is used to calculate the interaction between qubits. <br>
+<p><b>Data Type:</b> Double 2D List \(3x3\) </p>
+<p><b>Unit:</b> kHz </p>
+<p><b>Default:</b> \c [[0.0,0.0,0.0],[0.0,0.0,0.0],[0.0,0.0,0.0]] </p>
+<p><b>Example:</b> \code tensor : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]] \endcode </p>
+<p><b>Related tags:</b> \ref tag_between "between" </p>
+<p><b>Related variable:</b> \ref QubitArray::intmap </p>
+<p><b>Parent-tags:</b> \ref tag_intmap "intmap" </p>
+
+
+\anchor tag_psia
+## psia
+<p><b>Description:</b><br>
+Alpha state of the qubit in matrix representation.<br>
+One of the effective spin states of the qubit in matrix representation, simbol : \f$ |\alpha\rangle \f$ . <br>
+Priority: \ref tag_psia "psia" > \ref tag_alphaidx "alphaidx" > \ref tag_alphams "alphams". <br>
+<p><b>Data Type:</b> Double List </p>
+<p><b>Default:</b> - \(If not entered, alphams state would be the \) </p>
+<p><b>Example:</b> \code psia : [1.0, 0.0, 0.0] \endcode </p>
+<p><b>Related tags:</b> \ref tag_psib "psib" \ref tag_alphams "alphams" \ref tag_alphaidx "alphaidx" </p>
+<p><b>Related variable:</b> \ref QubitArray::psia </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_psib
+## psib
+<p><b>Description:</b><br>
+Beta state of the qubit in matrix representation. <br>
+One of the effective spin states of the qubit in matrix representation, simbol : \f$ |\beta\rangle \f$ . <br>
+Priority: \ref tag_psib "psib" > \ref tag_betaidx "betaidx" > \ref tag_betams "betams". <br>
+<p><b>Data Type:</b> Double List </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code psib : [0.0, 1.0, 0.0] \endcode </p>
+<p><b>Related tags:</b> \ref tag_psia "psia" \ref tag_betams "betams" \ref tag_betaidx "betaidx" </p>
+<p><b>Related variable:</b> \ref QubitArray::psib </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_psi0
+## psi0
+<p><b>Description:</b><br>
+Initial state of the qubit in matrix representation, symbol: \f$ |\psi_0\rangle \f$
+This tag is used to define a specific initial state of the qubit.
+If this tag is not provided, the initial state defaults to \f$ |\psi_0\rangle = |\alpha\rangle + |\beta\rangle \f$.
+<p><b>Data Type:</b> Double List </p>
+<p><b>Default:</b> \f$ |\alpha\rangle + |\beta\rangle \f$ </p>
+<p><b>Example:</b> \code psi0 : [1.0, 0.0, 0.0] \endcode </p>
+<p><b>Related variable:</b> \ref QubitArray::psi0 </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_overhaus
+## overhaus
+<p><b>Description:</b><br>
+Overhauser field of the qubit. <br>
+This tag is required to compute spin dynamics including the Overhauser field of the qubit. <br>
+<p><b>Data Type:</b> Bool </p>
+<p><b>Default:</b> false </p>
+<p><b>Example:</b> \code overhaus : true \endcode </p>
+<p><b>Related variable:</b> \ref QubitArray::overhaus </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_alphaidx
+## alphaidx
+<p><b>Description:</b><br>
+Alpha state of the qubit. (Adiabatic state of the qubit system) <br>
+Use this tag to assign the eigenvector of the diagonalized qubit Hamiltonian as the initial qubit state. <br>
+Priority: \ref tag_psia "psia" > \ref tag_alphaidx "alphaidx" > \ref tag_alphams "alphams". <br>
+This tag is ultimately applied to set \ref QubitArray::psia \(i.e. \ref tag_psia "psia"\), unless it is overridden by a higher-priority tag <br>
+<p><b>Data Type:</b> Int </p>
+<p><b>Default:</b> -1 \(= None\) </p>
+<p><b>Example:</b> \code alphaidx : 0 \endcode </p>
+<p><b>Related tags:</b> \ref tag_betaidx "betaidx" \ref tag_psia "psia" \ref tag_alphams "alphams" </p>
+<p><b>Related variable:</b> \ref QubitArray::_alphaidx \ref QubitArray::psia </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+\anchor tag_betaidx
+## betaidx
+<p><b>Description:</b><br>
+Beta state of the qubit. (Adiabatic state of the qubit system) <br>
+Use this tag to assign the eigenvector of the diagonalized qubit Hamiltonian as the initial qubit state. <br>
+Priority: \ref tag_psib "psib" > \ref tag_betaidx "betaidx" > \ref tag_betams "betams". <br>
+This tag is ultimately applied to set \ref QubitArray::psib \(i.e. \ref tag_psib "psib"\), unless it is overridden by a higher-priority tag <br>
+<p><b>Data Type:</b> Int </p>
+<p><b>Default:</b> -1 \(= None\) </p>
+<p><b>Example:</b> \code betaidx : 0 \endcode </p>
+<p><b>Related tags:</b> \ref tag_alphams "alphams" \ref tag_psib "psib" \ref tag_betams "betams" </p>
+<p><b>Related variable:</b> \ref QubitArray::_betaidx \ref QubitArray::psib </p>
+<p><b>Parent-tags:</b> \ref tag_Qubit "Qubit" </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

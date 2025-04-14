@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['file_0',['File',['../InputFile.html',1,'Input File'],['../Examples.html#autotoc_md7',1,'Input File'],['../Examples.html#autotoc_md8',1,'Job File']]],
+  ['file_0',['File',['../InputFile.html',1,'Input File'],['../Examples.html#autotoc_md7',1,'Input File'],['../index.html',1,'InputFile Input File'],['../Examples.html#autotoc_md8',1,'Job File']]],
   ['file_1',['How to write the input file',['../InputFile.html#HowToWrite',1,'']]],
   ['file_20and_20result_20plot_2',['Example of Including Input File and Result Plot',['../Examples.html#autotoc_md6',1,'']]],
   ['flat_20square_20alt_20img_20src_20https_3a_20img_20shields_20io_20github_20watchers_20username_20repo_20name_20svg_20alt_3',['flat square alt img src https: img shields io github watchers username repo name svg alt',['..//Users/huijin/Documents/GitHub/CCEX/README.md#autotoc_md2',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;'],['../md__2Users_2huijin_2Documents_2GitHub_2CCEX_2README__ori.html#autotoc_md3',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;']]],

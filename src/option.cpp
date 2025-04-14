@@ -320,8 +320,8 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_allocIntmap(qa);
 
         // read interaction map
-        MatrixXcd tensor = cJSON_ReadTensor(root,"qzfs",true,intmapDefault);
-        tensor = KHZ_TO_RADKHZ(tensor);
+        // MatrixXcd tensor = cJSON_ReadTensor(root,"qzfs",true,intmapDefault);
+        // tensor = KHZ_TO_RADKHZ(tensor);
 
         // mediatedTerm IO
         cJSON_Delete(root);

@@ -9,5 +9,8 @@ var searchData=
   ['bathspin_6',['BathSpin',['../structBathSpin.html',1,'']]],
   ['bathspinarray_7',['BathSpinArray',['../structBathSpinArray.html',1,'']]],
   ['beta_8',['beta',['../structQubit.html#a6c73eb8c49fdb6db06179b21b5a2923d',1,'Qubit']]],
-  ['bfield_9',['bfield',['../structConfig.html#abf4c62b17ba762512fab9da0f1e193be',1,'Config::bfield'],['../InputFile.html#autotoc_md13',1,'bfield']]]
+  ['betaidx_9',['betaidx',['../InputFile.html#autotoc_md57',1,'']]],
+  ['betams_10',['betams',['../InputFile.html#autotoc_md48',1,'']]],
+  ['between_11',['between',['../InputFile.html#autotoc_md50',1,'']]],
+  ['bfield_12',['bfield',['../structConfig.html#abf4c62b17ba762512fab9da0f1e193be',1,'Config::bfield'],['../InputFile.html#autotoc_md13',1,'bfield']]]
 ];

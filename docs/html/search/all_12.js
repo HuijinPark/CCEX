@@ -8,9 +8,8 @@ var searchData=
   ['real_5',['real',['../structDoubleComplex.html#a59acbb424a325b3510f85b75642bc5e4',1,'DoubleComplex']]],
   ['ref_20calconfig_20general_20tags_6',['\ref CalConfig &quot;General tags&quot;',['../InputFile.html#GeneralTag',1,'']]],
   ['ref_20qubitarray_20qubit_20related_20tags_7',['\ref QubitArray &quot;Qubit-related tags&quot;',['../InputFile.html#QubitArrayTags',1,'']]],
-  ['related_20condition_8',['Qubit related condition',['../InputFile.html#QubitArray_QUBITARRAY',1,'']]],
-  ['related_20tags_9',['\ref QubitArray &quot;Qubit-related tags&quot;',['../InputFile.html#QubitArrayTags',1,'']]],
-  ['repo_20name_20svg_20alt_10',['repo name svg alt',['..//Users/huijin/Documents/GitHub/CCEX/README.md#autotoc_md2',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;'],['../md__2Users_2huijin_2Documents_2GitHub_2CCEX_2README__ori.html#autotoc_md3',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;']]],
-  ['result_20plot_11',['Result Plot',['../Examples.html#autotoc_md6',1,'Example of Including Input File and Result Plot'],['../Examples.html#autotoc_md9',1,'Result Plot']]],
-  ['run_12',['How to run',['../GettingStarted.html#HowToRun',1,'']]]
+  ['related_20tags_8',['\ref QubitArray &quot;Qubit-related tags&quot;',['../InputFile.html#QubitArrayTags',1,'']]],
+  ['repo_20name_20svg_20alt_9',['repo name svg alt',['..//Users/huijin/Documents/GitHub/CCEX/README.md#autotoc_md2',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;'],['../md__2Users_2huijin_2Documents_2GitHub_2CCEX_2README__ori.html#autotoc_md3',1,'CCEX &lt;img src=&quot;https://komarev.com/ghpvc/?username=your-github-username&amp;style=flat-square&quot; alt=&quot;&quot;/&gt; &lt;img src=&quot;https://img.shields.io/github/watchers/{username}/{repo-name}.svg&quot; alt=&quot;&quot;/&gt;']]],
+  ['result_20plot_10',['Result Plot',['../Examples.html#autotoc_md6',1,'Example of Including Input File and Result Plot'],['../Examples.html#autotoc_md9',1,'Result Plot']]],
+  ['run_11',['How to run',['../GettingStarted.html#HowToRun',1,'']]]
 ];
