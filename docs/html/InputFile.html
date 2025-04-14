@@ -102,7 +102,10 @@ $(function(){initNavTree('InputFile.html',''); initResizable(true); });
   <div class="headertitle"><div class="title">Input File</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>This is navigator to find the input file tags</p>
+<div class="textblock"><p>Generated on 2025.04.14</p>
+<h1><a class="anchor" id="InputFile"></a>
+Input File</h1>
+<p>This is navigator to find the input file tags</p>
 <h1><a class="anchor" id="HowToWrite"></a>
 How to write the input file</h1>
 <p>The input file consists of key-value pairs where each key represents a specific setting. Each parameter should be written in the following format:</p>
@@ -113,7 +116,6 @@ How to write the input file</h1>
 <div class="line">    parameter_name_N : value_N</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Lines beginning with <code># or !</code> are considered as comments and they would be ignored.</p>
-<hr  />
 <h1><a class="anchor" id="GeneralTag"></a>
 <a class="el" href="structCalConfig.html">General tags</a></h1>
 <p>Tags in this section is about simulatation parameters such as file path, numerical parameters.</p>
@@ -176,8 +178,7 @@ How to write the input file</h1>
 </li>
 <li><a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a></li>
 </ul>
-<hr  />
- <h1><a class="anchor" id="QubitArrayTags"></a>
+<h1><a class="anchor" id="QubitArrayTags"></a>
 <a class="el" href="structQubitArray.html">Qubit-related tags</a></h1>
 <p>This tags are used for adjusting <a class="el" href="structQubit.html" title="Qubit structure contains each qubit&#39;s information.">Qubit</a> Hamiltonian and qubit inital state. The format is the following:</p>
 <p><b>Case1.&lt;<b></b> &gt; <a class="el" href="#tag_qubitfile">qubitfile</a> tag : : Only single-qubit systems are supported. Note that this tag takes priority over the <a class="el" href="#tag_Qubit">Qubit</a> tag. <br  />
@@ -189,7 +190,8 @@ How to write the input file</h1>
 <p><b><b>Case2.&lt;<b></b> &gt; <a class="el" href="#tag_Qubit">Qubit</a> tag : Both multiple qubit and single system are supported.</b></b></p>
 <p><b><b></p><details >
 <summary >
-<b>Example:</b> Click here to show example code </summary>
+<b>Example:</b> Click here to show example code</summary>
+<pre>
 <div class="fragment"><div class="line"><span class="stringliteral">&quot;Qubit&quot;</span> : {</div>
 <div class="line">            <span class="stringliteral">&quot;nqubit&quot;</span> : 2,</div>
 <div class="line">            <span class="stringliteral">&quot;qubit&quot;</span> : [</div>
@@ -234,7 +236,8 @@ How to write the input file</h1>
 <div class="line"><span class="stringliteral">&quot;overhaus&quot;</span> : <span class="keyword">true</span>,</div>
 <div class="line"><span class="stringliteral">&quot;alphaidx&quot;</span> : 0,</div>
 <div class="line"><span class="stringliteral">&quot;betaidx&quot;</span>  : 1,</div>
-</div><!-- fragment --> </details>
+</div><!-- fragment -->
+</pre> </details>
 <p></b></b></p>
 <p><b><b></p><ul>
 <li><a class="el" href="#tag_qubitfile">qubitfile</a></li>
@@ -365,17 +368,7 @@ How to write the input file</h1>
 <p><b><b><b>Data Type:</b> String</b></b></p>
 <p><b><b> </b></b></p>
 <p><b><b><b>Options:</b><br  />
- </p><table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Option   </th><th class="markdownTableHeadNone">Description    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>CCE</code>   </td><td class="markdownTableBodyNone">Conventional CCE method    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><code>gCCE</code>   </td><td class="markdownTableBodyNone">Generalized CCE method    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><code>pCCE</code>   </td><td class="markdownTableBodyNone">Partition CCE method   </td></tr>
-</table>
-<p></b></b></p>
+ | Option | Description | Reference | |------&mdash;|----------------------------------&mdash;| | <code>CCE</code> | Conventional CCE method | | <code>gCCE</code> | Generalized CCE method | | <code>pCCE</code> | Partition CCE method | | <code>Dsj</code> | Disjoint method | | <code>Itb</code> | Inter bath method | | <code>Dsjitb</code>| Disjoint + Inter bath method |</b></b></p>
 <p><b><b></b></b></p>
 <p><b><b><b>Default:</b> <code>CCE</code></b></b></p>
 <p><b><b> </b></b></p>

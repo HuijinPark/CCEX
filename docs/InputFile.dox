@@ -1,8 +1,8 @@
-/** \mainpage InputFile Input File
+/** \page InputFile Input File
 
 Generated on 2025.04.14
 
-\page InputFile Input File
+\section InputFile Input File
 
 This is navigator to find the input file tags
 
@@ -21,8 +21,6 @@ Each parameter should be written in the following format:
 \endcode
 
 Lines beginning with `# or !` are considered as comments and they would be ignored.
-
-<hr>
 
 \section GeneralTag \ref CalConfig "General tags"
 
@@ -58,7 +56,6 @@ Tags in this section is about simulatation parameters such as file path, numeric
 - \ref tag_cell_para    "cell_para"                     
 - \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit"
 
-<hr>
 \section QubitArrayTags \ref QubitArray "Qubit-related tags"
 
 This tags are used for adjusting Qubit Hamiltonian and qubit inital state.
@@ -74,7 +71,8 @@ The format is the following:
   : Both multiple qubit and single system are supported.
 
 <details>
-<summary><b>Example:</b> Click here to show example code </p></summary>
+<summary><b>Example:</b> Click here to show example code</summary>
+<pre>
 \code
     "Qubit" : {
                 "nqubit" : 2,
@@ -121,6 +119,7 @@ The format is the following:
     "alphaidx" : 0,
     "betaidx"  : 1,
 \endcode
+</pre>
 </details>
 
 - \ref tag_qubitfile    "qubitfile"
@@ -198,11 +197,14 @@ Below are the descriptions of various configuration tags used in the input file.
 CCE Methods to calculate the dynamics of the system.</p>
 <p><b>Data Type:</b> String</p>
 <p><b>Options:</b><br>
-| Option | Description |
-|--------|-------------------------------------|
-| `CCE`  | Conventional CCE method             |
-| `gCCE` | Generalized CCE method              |
-| `pCCE` | Partition CCE method                |
+| Option  | Description | Reference |
+|---------|-------------------------------------|
+| `CCE`   | Conventional CCE method             |
+| `gCCE`  | Generalized CCE method              |
+| `pCCE`  | Partition CCE method                |
+| `Dsj`   | Disjoint method                     |
+| `Itb`   | Inter bath method                   |
+| `Dsjitb`| Disjoint + Inter bath method        |
 
 <p><b>Default:</b> `CCE`</p>
 <p><b>Example:</b> \code method : CCE \endcode </p>

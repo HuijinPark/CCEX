@@ -6,7 +6,10 @@
     <briefdescription>
     </briefdescription>
     <detaileddescription>
-<para>This is navigator to find the input file tags</para>
+<para>Generated on 2025.04.14</para>
+<sect1 id="InputFile_1InputFile">
+<title>Input File</title><para>This is navigator to find the input file tags</para>
+</sect1>
 <sect1 id="InputFile_1HowToWrite">
 <title>How to write the input file</title><para>The input file consists of key-value pairs where each key represents a specific setting. Each parameter should be written in the following format:</para>
 <para><programlisting><codeline><highlight class="normal">{</highlight></codeline>
@@ -17,8 +20,6 @@
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 <para>Lines beginning with <computeroutput># or !</computeroutput> are considered as comments and they would be ignored.</para>
-<para><hruler/>
-</para>
 </sect1>
 <sect1 id="InputFile_1GeneralTag">
 <title><ref refid="structCalConfig" kindref="compound">General tags</ref></title><para>Tags in this section is about simulatation parameters such as file path, numerical parameters.</para>
@@ -82,8 +83,6 @@
 </listitem><listitem><para><ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref></para>
 </listitem></itemizedlist>
 </para>
-<para><hruler/>
- </para>
 </sect1>
 <sect1 id="InputFile_1QubitArrayTags">
 <title><ref refid="structQubitArray" kindref="compound">Qubit-related tags</ref></title><para>This tags are used for adjusting <ref refid="structQubit" kindref="compound">Qubit</ref> Hamiltonian and qubit inital state. The format is the following:</para>
@@ -94,7 +93,8 @@
 </programlisting> </bold></para>
 <para><bold></bold></para>
 <para><bold><bold>Case2.&lt;<bold></bold> &gt; <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> tag : Both multiple qubit and single system are supported.</bold></bold></para>
-<para><bold><bold><details><summary><bold>Example:</bold> Click here to show example code </summary><para><programlisting><codeline><highlight class="stringliteral">&quot;Qubit&quot;</highlight><highlight class="normal"><sp/>:<sp/>{</highlight></codeline>
+<para><bold><bold><details><summary><bold>Example:</bold> Click here to show example code</summary><para><preformatted>
+<programlisting><codeline><highlight class="stringliteral">&quot;Qubit&quot;</highlight><highlight class="normal"><sp/>:<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;nqubit&quot;</highlight><highlight class="normal"><sp/>:<sp/>2,</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;qubit&quot;</highlight><highlight class="normal"><sp/>:<sp/>[</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
@@ -138,7 +138,8 @@
 <codeline><highlight class="normal"></highlight><highlight class="stringliteral">&quot;overhaus&quot;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,</highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="stringliteral">&quot;alphaidx&quot;</highlight><highlight class="normal"><sp/>:<sp/>0,</highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="stringliteral">&quot;betaidx&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>1,</highlight></codeline>
-</programlisting> </para>
+</programlisting>
+</preformatted> </para>
 </details></bold></bold></para>
 <para><bold><bold><itemizedlist>
 <listitem><para><ref refid="InputFile_1tag_qubitfile" kindref="member">qubitfile</ref></para>
@@ -296,24 +297,7 @@
 <para><bold><bold><bold>Data Type:</bold> String</bold></bold></para>
 <para><bold><bold> </bold></bold></para>
 <para><bold><bold><bold>Options:</bold><linebreak/>
- <table rows="4" cols="2"><row>
-<entry thead="yes"><para>Option   </para>
-</entry><entry thead="yes"><para>Description    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><computeroutput>CCE</computeroutput>   </para>
-</entry><entry thead="no"><para>Conventional CCE method    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><computeroutput>gCCE</computeroutput>   </para>
-</entry><entry thead="no"><para>Generalized CCE method    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><computeroutput>pCCE</computeroutput>   </para>
-</entry><entry thead="no"><para>Partition CCE method   </para>
-</entry></row>
-</table>
-</bold></bold></para>
+ | Option | Description | Reference | |------<mdash/>|----------------------------------<mdash/>| | <computeroutput>CCE</computeroutput> | Conventional CCE method | | <computeroutput>gCCE</computeroutput> | Generalized CCE method | | <computeroutput>pCCE</computeroutput> | Partition CCE method | | <computeroutput>Dsj</computeroutput> | Disjoint method | | <computeroutput>Itb</computeroutput> | Inter bath method | | <computeroutput>Dsjitb</computeroutput>| Disjoint + Inter bath method |</bold></bold></para>
 <para><bold><bold></bold></bold></para>
 <para><bold><bold><bold>Default:</bold> <computeroutput>CCE</computeroutput></bold></bold></para>
 <para><bold><bold> </bold></bold></para>

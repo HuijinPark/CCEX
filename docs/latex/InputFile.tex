@@ -1,5 +1,6 @@
 \chapter{Input File}
 \hypertarget{InputFile}{}\label{InputFile}\index{Input File@{Input File}}
+Generated on 2025.\+04.\+14\hypertarget{InputFile_InputFile}{}\doxysection{\texorpdfstring{Input File}{Input File}}\label{InputFile_InputFile}
 This is navigator to find the input file tags\hypertarget{InputFile_HowToWrite}{}\doxysection{\texorpdfstring{How to write the input file}{How to write the input file}}\label{InputFile_HowToWrite}
 The input file consists of key-\/value pairs where each key represents a specific setting. Each parameter should be written in the following format\+:
 
@@ -15,10 +16,7 @@ The input file consists of key-\/value pairs where each key represents a specifi
 \end{DoxyCode}
 
 
-Lines beginning with {\ttfamily \# or !} are considered as comments and they would be ignored.
-
-\DoxyHorRuler{0}
-\hypertarget{InputFile_GeneralTag}{}\doxysection{\texorpdfstring{\protect\doxylink{structCalConfig}{General tags}}{{General tags}}}\label{InputFile_GeneralTag}
+Lines beginning with {\ttfamily \# or !} are considered as comments and they would be ignored.\hypertarget{InputFile_GeneralTag}{}\doxysection{\texorpdfstring{\protect\doxylink{structCalConfig}{General tags}}{{General tags}}}\label{InputFile_GeneralTag}
 Tags in this section is about simulatation parameters such as file path, numerical parameters.
 
 
@@ -80,10 +78,7 @@ Tags in this section is about simulatation parameters such as file path, numeric
 \item \doxylink{InputFile_tag_cell_para}{cell\+\_\+para} ~\newline
 
 \item \doxylink{InputFile_tag_qd_tensorfile_woqubit}{qd\+\_\+tensorfile\+\_\+woqubit}
-\end{DoxyItemize}
-
-\DoxyHorRuler{0}
- \hypertarget{InputFile_QubitArrayTags}{}\doxysection{\texorpdfstring{\protect\doxylink{structQubitArray}{Qubit-\/related tags}}{{Qubit-\/related tags}}}\label{InputFile_QubitArrayTags}
+\end{DoxyItemize}\hypertarget{InputFile_QubitArrayTags}{}\doxysection{\texorpdfstring{\protect\doxylink{structQubitArray}{Qubit-\/related tags}}{{Qubit-\/related tags}}}\label{InputFile_QubitArrayTags}
 This tags are used for adjusting \doxylink{structQubit}{Qubit} Hamiltonian and qubit inital state. The format is the following\+:
 
 {\bfseries{Case1.\texorpdfstring{$<$}{<}{\bfseries{}} \texorpdfstring{$>$}{>} \doxylink{InputFile_tag_qubitfile}{qubitfile} tag \+: \+: Only single-\/qubit systems are supported. Note that this tag takes priority over the \doxylink{InputFile_tag_Qubit}{Qubit} tag. ~\newline
@@ -104,7 +99,9 @@ This tags are used for adjusting \doxylink{structQubit}{Qubit} Hamiltonian and q
 
 {\bfseries{{\bfseries{
 
-{\bfseries{{\bfseries{Example\+:}} Click here to show example code }}\begin{adjustwidth}{1em}{0em}
+{\bfseries{{\bfseries{Example\+:}} Click here to show example code}}\begin{adjustwidth}{1em}{0em}
+
+\begin{DoxyPre}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\textcolor{stringliteral}{"{}Qubit"{}}\ :\ \{}
@@ -153,6 +150,8 @@ This tags are used for adjusting \doxylink{structQubit}{Qubit} Hamiltonian and q
 \DoxyCodeLine{\textcolor{stringliteral}{"{}betaidx"{}}\ \ :\ 1,}
 
 \end{DoxyCode}
+
+\end{DoxyPre}
  \end{adjustwidth}
 }}}}
 
@@ -294,21 +293,7 @@ outfile   \\\cline{1-1}
 {\bfseries{{\bfseries{ }}}}
 
 {\bfseries{{\bfseries{{\bfseries{Options\+:}}~\newline
- \tabulinesep=1mm
-\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
-\hline
-\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
-\endfirsthead
-\hline
-\endfoot
-\hline
-\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Option   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Description    }\\\cline{1-2}
-\endhead
-{\ttfamily CCE}   &Conventional CCE method    \\\cline{1-2}
-{\ttfamily g\+CCE}   &Generalized CCE method    \\\cline{1-2}
-{\ttfamily p\+CCE}   &Partition CCE method   \\\cline{1-2}
-\end{longtabu}
-}}}}
+ \texorpdfstring{$\vert$}{|} Option \texorpdfstring{$\vert$}{|} Description \texorpdfstring{$\vert$}{|} Reference \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|}-\/-\/-\/-\/-\/-\/---\texorpdfstring{$\vert$}{|}-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/---\texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily CCE} \texorpdfstring{$\vert$}{|} Conventional CCE method \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily g\+CCE} \texorpdfstring{$\vert$}{|} Generalized CCE method \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily p\+CCE} \texorpdfstring{$\vert$}{|} Partition CCE method \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily Dsj} \texorpdfstring{$\vert$}{|} Disjoint method \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily Itb} \texorpdfstring{$\vert$}{|} Inter bath method \texorpdfstring{$\vert$}{|} \texorpdfstring{$\vert$}{|} {\ttfamily Dsjitb}\texorpdfstring{$\vert$}{|} Disjoint + Inter bath method \texorpdfstring{$\vert$}{|}}}}}
 
 {\bfseries{{\bfseries{}}}}
 

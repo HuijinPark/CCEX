@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['about_20the_20simulation_0',['About the simulation',['..//Users/huijin/Documents/GitHub/CCEX/docs/Overview.dox#AboutTheSimulation',1,'']]],
+  ['about_20the_20simulation_0',['About the simulation',['../index.html#AboutTheSimulation',1,'']]],
   ['addsubclus_1',['addsubclus',['../structCluster.html#a33621fac416bdd2eea40805e74730748',1,'Cluster']]],
   ['alpha_2',['alpha',['../structQubit.html#accc3b309d802ab6f269b7d8a7536a4a0',1,'Qubit']]],
   ['alphaidx_3',['alphaidx',['../InputFile.html#autotoc_md56',1,'']]],

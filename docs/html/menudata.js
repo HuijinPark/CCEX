@@ -25,7 +25,7 @@
 var menudata={children:[
 {text:"Overview",url:"index.html"},
 {text:"Getting started",url:"GettingStarted.html"},
-{text:"Input File",url:"InputFile.html"},
+{text:"Input File",url:"InputFile.html#InputFile"},
 {text:"Examples",url:"Examples.html"},
 {text:"Tag variable",url:"TagVariable.html"},
 {text:"Class List",url:"annotated.html"}]}
