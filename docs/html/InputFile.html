@@ -104,135 +104,184 @@ $(function(){initNavTree('InputFile.html',''); initResizable(true); });
 <div class="contents">
 <div class="textblock"><p>This is navigator to find the input file tags</p>
 <h1><a class="anchor" id="HowToWrite"></a>
-How to Write the Input File</h1>
+How to write the input file</h1>
 <p>The input file consists of key-value pairs where each key represents a specific setting. Each parameter should be written in the following format:</p>
 <div class="fragment"><div class="line">{</div>
-<div class="line">    parameter_name_1 = value_1,</div>
-<div class="line">    parameter_name_2 = value_2,</div>
+<div class="line">    parameter_name_1 : value_1,</div>
+<div class="line">    parameter_name_2 : value_2,</div>
 <div class="line">                :           </div>
-<div class="line">    parameter_name_N = value_N</div>
+<div class="line">    parameter_name_N : value_N</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>Lines beginning with <code># or !</code> are considered comments and are ignored.</p>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Tag (General)    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_method">method</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_quantity">quantity</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_order">order</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_bfield">bfield</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_rbath">rbath</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_rdip">rdip</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_deltat">deltat</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_nstep">nstep</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_rbathcut">rbathcut</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_rdipcut">rdipcut</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_nstate">nstate</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_seed">seed</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_gyrofile">gyrofile</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_bathfile">bathfile</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_bathadjust">bathadjust</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_avaaxfile">avaaxfile</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_statefile">statefile</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_exstatefile">exstatefile</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_DefectTotSpin">DefectTotSpin</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_CorrTotSpin">CorrTotSpin</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_hf_readmode">hf_readmode</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_hf_cutoff">hf_cutoff</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_qd_readmode">qd_readmode</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a>    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_cell_para">cell_para</a>    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone"><a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a>   </td></tr>
-</table>
-<table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone">Tag (<a class="el" href="structQubitArray.html" title="QubitArray include information of all qubits.">QubitArray</a>)    </th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">nqubit    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">name    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">spin    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">qubitfile    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">qspin    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">alphams    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">betams    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">qzfs    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">-----------------------------------&mdash;    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Qubit    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">nqubit    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">qubit    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">name    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">spin    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">gyro    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">xyz    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">detuning    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">alphams    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">betams    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">intmap    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">between    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">tensor    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">psia    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">psib    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">psi0    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">overhaus    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">alphaidx    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">betaidx   </td></tr>
-</table>
+</div><!-- fragment --><p>Lines beginning with <code># or !</code> are considered as comments and they would be ignored.</p>
+<h1><a class="anchor" id="GeneralTag"></a>
+<a class="el" href="structCalConfig.html">General tags</a></h1>
+<p>Tags in this section is about simulatation parameters such as file path, numerical parameters.</p>
+<ul>
+<li><a class="el" href="#tag_method">method</a> <br  />
+</li>
+<li><a class="el" href="#tag_quantity">quantity</a> <br  />
+</li>
+<li><a class="el" href="#tag_order">order</a> <br  />
+</li>
+<li><a class="el" href="#tag_bfield">bfield</a> <br  />
+</li>
+<li><a class="el" href="#tag_rbath">rbath</a> <br  />
+</li>
+<li><a class="el" href="#tag_rdip">rdip</a> <br  />
+</li>
+<li><a class="el" href="#tag_deltat">deltat</a> <br  />
+</li>
+<li><a class="el" href="#tag_nstep">nstep</a> <br  />
+</li>
+<li><a class="el" href="#tag_rbathcut">rbathcut</a> <br  />
+</li>
+<li><a class="el" href="#tag_rdipcut">rdipcut</a> <br  />
+</li>
+<li><a class="el" href="#tag_nstate">nstate</a> <br  />
+</li>
+<li><a class="el" href="#tag_seed">seed</a> <br  />
+</li>
+<li><a class="el" href="#tag_qubitfile">qubitfile</a> <br  />
+</li>
+<li><a class="el" href="#tag_gyrofile">gyrofile</a> <br  />
+</li>
+<li><a class="el" href="#tag_bathfile">bathfile</a> <br  />
+</li>
+<li><a class="el" href="#tag_bathadjust">bathadjust</a> <br  />
+</li>
+<li><a class="el" href="#tag_avaaxfile">avaaxfile</a> <br  />
+</li>
+<li><a class="el" href="#tag_statefile">statefile</a> <br  />
+</li>
+<li><a class="el" href="#tag_exstatefile">exstatefile</a> <br  />
+</li>
+<li><a class="el" href="#tag_DefectTotSpin">DefectTotSpin</a> <br  />
+</li>
+<li><a class="el" href="#tag_CorrTotSpin">CorrTotSpin</a> <br  />
+</li>
+<li><a class="el" href="#tag_hf_readmode">hf_readmode</a> <br  />
+</li>
+<li><a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <br  />
+</li>
+<li><a class="el" href="#tag_hf_cutoff">hf_cutoff</a> <br  />
+</li>
+<li><a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a> <br  />
+</li>
+<li><a class="el" href="#tag_qd_readmode">qd_readmode</a> <br  />
+</li>
+<li><a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> <br  />
+</li>
+<li><a class="el" href="#tag_cell_para">cell_para</a> <br  />
+</li>
+<li><a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a></li>
+</ul>
+<h1><a class="anchor" id="QubitArrayTags"></a>
+<a class="el" href="structQubitArray.html">Qubit-related tags</a></h1>
+<p>This tags are used for adjusting <a class="el" href="structQubit.html" title="Qubit structure contains each qubit&#39;s information.">Qubit</a> Hamiltonian and qubit inital state. The writing format is the following:</p>
+<p>Case1. <a class="el" href="#tag_qubitfile">qubitfile</a> tag </p><blockquote class="doxtable">
+<p>Only single qubit system is supported. </p>
+</blockquote>
+<p><b>Example:</b> </p><div class="fragment"><div class="line"><span class="stringliteral">&quot;qubitfile&quot;</span>  : <span class="stringliteral">&quot;file-path&quot;</span> </div>
+</div><!-- fragment --> <p>Case2. Qubit tag </p><blockquote class="doxtable">
+<p>Both multiple qubit and single system are supported. </p>
+</blockquote>
+<details >
+<summary >
+<b>Example:</b> Click here to show example code </summary>
+<div class="fragment"><div class="line"><span class="stringliteral">&quot;Qubit&quot;</span> : {</div>
+<div class="line">            <span class="stringliteral">&quot;nqubit&quot;</span> : 2,</div>
+<div class="line">            <span class="stringliteral">&quot;qubit&quot;</span> : [</div>
+<div class="line">                {</div>
+<div class="line">                    <span class="stringliteral">&quot;name&quot;</span> : <span class="stringliteral">&quot;Q1&quot;</span>,</div>
+<div class="line">                    <span class="stringliteral">&quot;spin&quot;</span> : 0.5,</div>
+<div class="line">                    <span class="stringliteral">&quot;gyro&quot;</span> : -17608.597050,</div>
+<div class="line">                    <span class="stringliteral">&quot;xyz&quot;</span>  : [1.0, 2.0, 3.0],</div>
+<div class="line">                    <span class="stringliteral">&quot;detuning&quot;</span> : 0.0,</div>
+<div class="line">                    <span class="stringliteral">&quot;alphams&quot;</span> : 0,</div>
+<div class="line">                    <span class="stringliteral">&quot;betams&quot;</span>  : 1,</div>
+<div class="line">                },</div>
+<div class="line">                {</div>
+<div class="line">                    <span class="stringliteral">&quot;name&quot;</span> : <span class="stringliteral">&quot;Q2&quot;</span>,</div>
+<div class="line">                    <span class="stringliteral">&quot;spin&quot;</span> : 1.0,</div>
+<div class="line">                    <span class="stringliteral">&quot;gyro&quot;</span> : -17608.597050,</div>
+<div class="line">                    <span class="stringliteral">&quot;xyz&quot;</span>  : [4.0, 5.0, 6.0],</div>
+<div class="line">                    <span class="stringliteral">&quot;detuning&quot;</span> : 0.0,</div>
+<div class="line">                    <span class="stringliteral">&quot;alphams&quot;</span> : 0,</div>
+<div class="line">                    <span class="stringliteral">&quot;betams&quot;</span>  : 1,</div>
+<div class="line">                }</div>
+<div class="line">            ],</div>
+<div class="line">            <span class="stringliteral">&quot;intmap&quot;</span> : [</div>
+<div class="line">                {</div>
+<div class="line"><span class="preprocessor">                    # Zero field splitting</span></div>
+<div class="line">                    <span class="stringliteral">&quot;between&quot;</span> : [<span class="stringliteral">&quot;Q1&quot;</span>, <span class="stringliteral">&quot;Q1&quot;</span>], </div>
+<div class="line">                    <span class="stringliteral">&quot;tensor&quot;</span>  : [[1.0, 2.0, 3.0],</div>
+<div class="line">                                [4.0, 5.0, 6.0], </div>
+<div class="line">                                [7.0, 8.0, 9.0]],</div>
+<div class="line">                },</div>
+<div class="line">                {</div>
+<div class="line">                    <span class="stringliteral">&quot;between&quot;</span> : [<span class="stringliteral">&quot;Q1&quot;</span>, <span class="stringliteral">&quot;Q2&quot;</span>],</div>
+<div class="line">                    <span class="stringliteral">&quot;tensor&quot;</span>  : [[1.0, 2.0, 3.0],</div>
+<div class="line">                                [4.0, 5.0, 6.0], </div>
+<div class="line">                                [7.0, 8.0, 9.0]],</div>
+<div class="line">                }</div>
+<div class="line">            ]</div>
+<div class="line">          }</div>
+</div><!-- fragment --> </details>
+<ul>
+<li><a class="el" href="#tag_nqubit">nqubit</a> <br  />
+</li>
+<li>name <br  />
+</li>
+<li>spin <br  />
+</li>
+<li><a class="el" href="#tag_qubitfile">qubitfile</a> <br  />
+</li>
+<li>qspin <br  />
+</li>
+<li>alphams <br  />
+</li>
+<li>betams <br  />
+</li>
+<li>qzfs</li>
+<li>Qubit <br  />
+</li>
+<li><a class="el" href="#tag_nqubit">nqubit</a> <br  />
+</li>
+<li>qubit <br  />
+</li>
+<li>name <br  />
+</li>
+<li>spin <br  />
+</li>
+<li>gyro <br  />
+</li>
+<li>xyz <br  />
+</li>
+<li>detuning <br  />
+</li>
+<li>alphams <br  />
+</li>
+<li>betams <br  />
+</li>
+<li>intmap <br  />
+</li>
+<li>between <br  />
+</li>
+<li>tensor <br  />
+</li>
+<li>psia <br  />
+</li>
+<li>psib <br  />
+</li>
+<li>psi0 <br  />
+</li>
+<li>overhaus <br  />
+</li>
+<li>alphaidx <br  />
+</li>
+<li>betaidx <br  />
+</li>
+</ul>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Tag (<a class="el" href="structCluster.html">Cluster</a>)    </th></tr>
@@ -309,7 +358,7 @@ How to Write the Input File</h1>
 General condition</h1>
 <p>Below are the descriptions of various configuration tags used in the input file.</p>
 <p><a class="anchor" id="tag_method"></a></p>
-<h2><a class="anchor" id="autotoc_md7"></a>
+<h2><a class="anchor" id="autotoc_md10"></a>
 method</h2>
 <p><b>Description:</b><br  />
  CCE Methods to calculate the dynamics of the system.</p>
@@ -329,7 +378,7 @@ method</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">method : CCE </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a3a9071ea9a9409cefb8cbcea2184c879">Config::order</a> </p>
 <p><a class="anchor" id="tag_quantity"></a></p>
-<h2><a class="anchor" id="autotoc_md8"></a>
+<h2><a class="anchor" id="autotoc_md11"></a>
 quantity</h2>
 <p><b>Description:</b><br  />
  Quantity to calculate the dynamics of the system.</p>
@@ -348,7 +397,7 @@ quantity</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">quantity : coherence </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a408cf9618ed41aefd0b0c323f57e0730">Config::quantity</a> </p>
 <p><a class="anchor" id="tag_order"></a></p>
-<h2><a class="anchor" id="autotoc_md9"></a>
+<h2><a class="anchor" id="autotoc_md12"></a>
 order</h2>
 <p><b>Description:</b><br  />
  Order of the CCE method.</p>
@@ -357,7 +406,7 @@ order</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">order : 2 </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a3a9071ea9a9409cefb8cbcea2184c879">Config::order</a> </p>
 <p><a class="anchor" id="tag_bfield"></a></p>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md13"></a>
 bfield</h2>
 <p><b>Description:</b><br  />
  Magnetic field.</p>
@@ -369,7 +418,7 @@ bfield</h2>
 </div><!-- fragment --> <div class="fragment"><div class="line">bfield : [0.0, 0.0, 0.0] </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#abf4c62b17ba762512fab9da0f1e193be">Config::bfield</a> </p>
 <p><a class="anchor" id="tag_rbath"></a></p>
-<h2><a class="anchor" id="autotoc_md11"></a>
+<h2><a class="anchor" id="autotoc_md14"></a>
 rbath</h2>
 <p><b>Description:</b><br  />
  Bath radius </p>
@@ -379,7 +428,7 @@ rbath</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">rbath : 0.0 </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a79389333cffeb4063cf1d39e89234c57">Config::rbath</a> </p>
 <p><a class="anchor" id="tag_rdip"></a></p>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md15"></a>
 rdip</h2>
 <p><b>Description:</b><br  />
  Dipolar radius </p>
@@ -389,7 +438,7 @@ rdip</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">rdip : 0.0 </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#af9d5e3a3b185555cbe04ad12733612b1">Config::rdip</a> </p>
 <p><a class="anchor" id="tag_deltat"></a></p>
-<h2><a class="anchor" id="autotoc_md13"></a>
+<h2><a class="anchor" id="autotoc_md16"></a>
 deltat</h2>
 <p><b>Description:</b><br  />
  Time interval. </p>
@@ -399,7 +448,7 @@ deltat</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">deltat : 0.0 </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a6539de558079f55df76dce79c4079b33">Config::deltat</a> </p>
 <p><a class="anchor" id="tag_nstep"></a></p>
-<h2><a class="anchor" id="autotoc_md14"></a>
+<h2><a class="anchor" id="autotoc_md17"></a>
 nstep</h2>
 <p><b>Description:</b><br  />
  Number of time steps. </p>
@@ -408,7 +457,7 @@ nstep</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">nstep : 10 </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#acd1675410784e93a9c9866de0c64807e">Config::nstep</a> </p>
 <p><a class="anchor" id="tag_rbathcut"></a></p>
-<h2><a class="anchor" id="autotoc_md15"></a>
+<h2><a class="anchor" id="autotoc_md18"></a>
 rbathcut</h2>
 <p><b>Description:</b><br  />
  Bath inner-cutoff radius. </p>
@@ -418,7 +467,7 @@ rbathcut</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">rbathcut : 0.0 </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a2eeef76fa44792c24c3320ff6b4d19c8">Config::rbathcut</a> </p>
 <p><a class="anchor" id="tag_rdipcut"></a></p>
-<h2><a class="anchor" id="autotoc_md16"></a>
+<h2><a class="anchor" id="autotoc_md19"></a>
 rdipcut</h2>
 <p><b>Description:</b><br  />
  Dipolar inner-cutoff radius. </p>
@@ -428,7 +477,7 @@ rdipcut</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">rdipcut : 0.0 </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a39b6cf20220772b2326ddf423bf3a3f7">Config::rdipcut</a> </p>
 <p><a class="anchor" id="tag_nstate"></a></p>
-<h2><a class="anchor" id="autotoc_md17"></a>
+<h2><a class="anchor" id="autotoc_md20"></a>
 nstate</h2>
 <p><b>Description:</b><br  />
  Number of state templates to be generated. </p>
@@ -448,7 +497,7 @@ nstate</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_seed">seed</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a91b2aadf805896022127036ded259e79">Config::nstate</a> </p>
 <p><a class="anchor" id="tag_seed"></a></p>
-<h2><a class="anchor" id="autotoc_md18"></a>
+<h2><a class="anchor" id="autotoc_md21"></a>
 seed</h2>
 <p><b>Description:</b><br  />
  Seed for random number generator. <br  />
@@ -458,11 +507,30 @@ seed</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">seed : 1241798 </div>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_nstate">nstate</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a92ed038fd7676ed62640f59270a60545">Config::seed</a> </p>
+<p><a class="anchor" id="tag_qubitfile"></a></p>
+<h2><a class="anchor" id="autotoc_md22"></a>
+qubitfile</h2>
+<p><b>Description:</b><br  />
+ File path of the qubit spatial configuration. <br  />
+ This tag is required when you use the qubit configuration file. <br  />
+ Also, this only supports for a single qubit system. <br  />
+ </p>
+<pre>
+    File format is the following :
+    [x] [y] [z]
+</pre> <pre>
+    example)
+    10.0 12.0 13.0    - x,y,z position of qubit in cartesian, angstrom
+</pre> <p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">qubitfile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
+</div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a9f5ed3dfb6ae52627a94099cb837cfbf">Config::qubitfile</a> </p>
+<p><b>Related Tags:</b> <a class="el" href="#QubitArrayTags"><a class="el" href="structQubitArray.html">Qubit-related tags</a></a> </p>
 <p><a class="anchor" id="tag_gyrofile"></a></p>
-<h2><a class="anchor" id="autotoc_md19"></a>
+<h2><a class="anchor" id="autotoc_md23"></a>
 gyrofile</h2>
 <p><b>Description:</b><br  />
- File name of the gyromagnetic ratio. <br  />
+ File name including bath spin information, e.g. gyromagnetic ratio, spin number <br  />
  </p>
 <pre>
     File format is the following :
@@ -476,7 +544,7 @@ gyrofile</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">gyrofile : <span class="stringliteral">&quot;filepath&quot;</span> </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a735f7f25b0847d08468616025a27ffe5">Config::gyrofile</a> </p>
 <p><a class="anchor" id="tag_bathfile"></a></p>
-<h2><a class="anchor" id="autotoc_md20"></a>
+<h2><a class="anchor" id="autotoc_md24"></a>
 bathfile</h2>
 <p><b>Description:</b><br  />
  File name of the bath spatial configuration. <br  />
@@ -495,7 +563,7 @@ bathfile</h2>
 </div><!-- fragment --> <div class="fragment"><div class="line">bathfile : [<span class="stringliteral">&quot;filepath1&quot;</span>, <span class="stringliteral">&quot;filepath2&quot;</span>, ... ] </div>
 </div><!-- fragment --> <p><b>Related variable:</b> Config::bathfile </p>
 <p><a class="anchor" id="tag_bathadjust"></a></p>
-<h2><a class="anchor" id="autotoc_md21"></a>
+<h2><a class="anchor" id="autotoc_md25"></a>
 bathadjust</h2>
 <p><b>Description:</b><br  />
  Adjust the bath configuration. <br  />
@@ -508,7 +576,7 @@ bathadjust</h2>
 </div><!-- fragment --> <div class="fragment"><div class="line">bathadjust : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], ... [7.0, 8.0, 9.0]] </div>
 </div><!-- fragment --> <p><b>Related variable:</b> <a class="el" href="structConfig.html#a1ce641fcaac86656dde150e974ff5ff7">Config::bathadjust</a> </p>
 <p><a class="anchor" id="tag_avaaxfile"></a></p>
-<h2><a class="anchor" id="autotoc_md22"></a>
+<h2><a class="anchor" id="autotoc_md26"></a>
 avaaxfile</h2>
 <p><b>Description:</b><br  />
  File name of the bath pricipal axis configuration. <br  />
@@ -531,7 +599,7 @@ avaaxfile</h2>
 </div><!-- fragment --> <p><b>Related tags:</b> Defect </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#ae3244e507716ae5483bb32a2e4fef809">Config::avaaxfile</a> </p>
 <p><a class="anchor" id="tag_statefile"></a></p>
-<h2><a class="anchor" id="autotoc_md23"></a>
+<h2><a class="anchor" id="autotoc_md27"></a>
 statefile</h2>
 <p><b>Description:</b><br  />
  File name of the bath state template. <br  />
@@ -554,7 +622,7 @@ statefile</h2>
 </div><!-- fragment --> <p><b>Related tags:</b> <a class="el" href="#tag_nstate">nstate</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a7ce40e0c9e172e7b2e213101b154760b">Config::statefile</a> </p>
 <p><a class="anchor" id="tag_exstatefile"></a></p>
-<h2><a class="anchor" id="autotoc_md24"></a>
+<h2><a class="anchor" id="autotoc_md28"></a>
 exstatefile</h2>
 <p><b>Description:</b><br  />
  File name of the additional bath spin state template. <br  />
@@ -578,7 +646,7 @@ exstatefile</h2>
 </div><!-- fragment --> <p><b>Related tags:</b> Defect </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a70ec8756f364dc3d40201f951476137e">Config::exstatefile</a> </p>
 <p><a class="anchor" id="tag_DefectTotSpin"></a></p>
-<h2><a class="anchor" id="autotoc_md25"></a>
+<h2><a class="anchor" id="autotoc_md29"></a>
 DefectTotSpin</h2>
 <p><b>Description:</b><br  />
  Total spin number of the qubit. <br  />
@@ -590,10 +658,10 @@ DefectTotSpin</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_CorrTotSpin">CorrTotSpin</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a716389cd405e9c041cd3ac7c7608ccdd">Config::DefectTotSpin</a> </p>
 <p><a class="anchor" id="tag_CorrTotSpin"></a></p>
-<h2><a class="anchor" id="autotoc_md26"></a>
+<h2><a class="anchor" id="autotoc_md30"></a>
 CorrTotSpin</h2>
 <p><b>Description:</b><br  />
- Spin nubmer correction <br  />
+ Spin number correction <br  />
  (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <br  />
 </p>
 <p><b>Data Type:</b> Double </p>
@@ -602,7 +670,7 @@ CorrTotSpin</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_DefectTotSpin">DefectTotSpin</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#ac923676eaaf0a911eb890ee419c2b8e6">Config::CorrTotSpin</a> </p>
 <p><a class="anchor" id="tag_hf_readmode"></a></p>
-<h2><a class="anchor" id="autotoc_md27"></a>
+<h2><a class="anchor" id="autotoc_md31"></a>
 hf_readmode</h2>
 <p><b>Description:</b><br  />
  Interaction tensor between qubit and bath spins can be determined by this option. <br  />
@@ -627,7 +695,7 @@ hf_readmode</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_hf_cutoff">hf_cutoff</a> <a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a3d4d5a3943f20928bdce09e64fa4bb37">Config::hf_readmode</a> </p>
 <p><a class="anchor" id="tag_hf_tensorfile"></a></p>
-<h2><a class="anchor" id="autotoc_md28"></a>
+<h2><a class="anchor" id="autotoc_md32"></a>
 hf_tensorfile</h2>
 <p><b>Description:</b><br  />
  File name of the hyperfine tensor. <br  />
@@ -643,7 +711,7 @@ hf_tensorfile</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_readmode">hf_readmode</a> <a class="el" href="#tag_hf_cutoff">hf_cutoff</a> <a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a52710072ec30b071e08c1b62f7450c0f">Config::hf_tensorfile</a> </p>
 <p><a class="anchor" id="tag_hf_cutoff"></a></p>
-<h2><a class="anchor" id="autotoc_md29"></a>
+<h2><a class="anchor" id="autotoc_md33"></a>
 hf_cutoff</h2>
 <p><b>Description:</b><br  />
  Removed <br  />
@@ -654,16 +722,16 @@ hf_cutoff</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_hf_readmode">hf_readmode</a> <a class="el" href="#tag_hf_ignore_oor">hf_ignore_oor</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#af82a9ccd3b05247db3da179361faef85">Config::hf_cutoff</a> </p>
 <p><a class="anchor" id="tag_hf_ignore_oor"></a></p>
-<h2><a class="anchor" id="autotoc_md30"></a>
+<h2><a class="anchor" id="autotoc_md34"></a>
 hf_ignore_oor</h2>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000027">Todo</a></b></dt><dd><p class="startdd">JW </p>
-<p class="interdd"><b>Description:</b><br  />
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000027">Todo</a></b></dt><dd>JW </dd></dl>
+<p><b>Description:</b><br  />
  Even if the bath spin is within the specified range set in the hyperfine tensor, <br  />
  if the code cannot find a matching spin relative position and spin tensor, <br  />
  it may or may not raise an error depending on this option. <br  />
 </p>
-<p class="interdd"><b>Data Type:</b> Int </p>
-<p class="interdd"><b>Options:</b><br  />
+<p><b>Data Type:</b> Int </p>
+<p><b>Options:</b><br  />
  </p><table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Option   </th><th class="markdownTableHeadNone">Description    </th></tr>
@@ -672,20 +740,19 @@ hf_ignore_oor</h2>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><code>1</code>   </td><td class="markdownTableBodyNone">Not strict (allows ignoring out-of-range spins)   </td></tr>
 </table>
-<p class="interdd"><b>Default:</b> 0 </p>
-<p class="enddd"><b>Example:</b> </p>
-</dd></dl>
-<div class="fragment"><div class="line">hf_ignore_oor : 0 </div>
+<p><b>Default:</b> 0 </p>
+<p><b>Example:</b> </p><div class="fragment"><div class="line">hf_ignore_oor : 0 </div>
 </div><!-- fragment --> <div class="fragment"><div class="line">hf_ignore_oor : 1 </div>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_hf_tensorfile">hf_tensorfile</a> <a class="el" href="#tag_hf_readmode">hf_readmode</a> <a class="el" href="#tag_hf_cutoff">hf_cutoff</a> </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a840b086fb6ef148cea4e370967da30e9">Config::hf_ignore_oor</a> </p>
 <p><a class="anchor" id="tag_qd_readmode"></a></p>
-<h2><a class="anchor" id="autotoc_md31"></a>
+<h2><a class="anchor" id="autotoc_md35"></a>
 qd_readmode</h2>
 <p><b>Description:</b><br  />
- </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000028">Todo</a></b></dt><dd>JW Quadrupole interaction tensor of bath spins can be set by this option. <br  />
+ </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000028">Todo</a></b></dt><dd>JW </dd></dl>
+<p>Quadrupole interaction tensor of bath spins can be set by this option. <br  />
  If you want to use the Quadrupole tensor obtained from DFT calculation, you should set this option. <br  />
-</dd></dl>
+</p>
 <p><b>Options:</b><br  />
  </p><table class="markdownTable">
 <tr class="markdownTableHead">
@@ -710,7 +777,7 @@ qd_readmode</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> qd_cutoff </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#adc1119b46a95084ddd4c7bfa2a8d50d9">Config::qd_readmode</a> </p>
 <p><a class="anchor" id="tag_qd_tensorfile"></a></p>
-<h2><a class="anchor" id="autotoc_md32"></a>
+<h2><a class="anchor" id="autotoc_md36"></a>
 qd_tensorfile</h2>
 <p><b>Description:</b><br  />
  File name of the quadrupole tensor. <br  />
@@ -718,7 +785,7 @@ qd_tensorfile</h2>
  </p>
 <pre>
     File format is the following :
- <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000029">Todo</a></b></dt><dd>\Ref other page
+ <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000029">Todo</a></b></dt><dd>\Ref other page 
 </dd></dl>
 </pre> <p><b>Data Type:</b> String (File path) </p>
 <p><b>Default:</b> - </p>
@@ -726,7 +793,7 @@ qd_tensorfile</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_qd_readmode">qd_readmode</a> qd_cutoff <a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a> cell_para </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a91d5741035098807bc28000a003bd35d">Config::qd_tensorfile</a> </p>
 <p><a class="anchor" id="tag_qd_tensorfile_woqubit"></a></p>
-<h2><a class="anchor" id="autotoc_md33"></a>
+<h2><a class="anchor" id="autotoc_md37"></a>
 qd_tensorfile_woqubit</h2>
 <p><b>Description:</b><br  />
  File name of the quadrupole tensor without qubit. <br  />
@@ -743,7 +810,7 @@ qd_tensorfile_woqubit</h2>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_qd_readmode">qd_readmode</a> qd_cutoff <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> cell_para </p>
 <p><b>Related variable:</b> <a class="el" href="structConfig.html#a93e5666a93192db9d1cd361381d64301">Config::qd_tensorfile_woqubit</a> </p>
 <p><a class="anchor" id="tag_cell_para"></a></p>
-<h2><a class="anchor" id="autotoc_md34"></a>
+<h2><a class="anchor" id="autotoc_md38"></a>
 cell_para</h2>
 <p><b>Description:</b><br  />
  Lattice parameter of the strained or bubble structure. <br  />
@@ -755,6 +822,10 @@ cell_para</h2>
 <p><b>Example:</b> </p><div class="fragment"><div class="line">cell_para : [1.0, 2.0, 3.0] </div>
 </div><!-- fragment --> <p><b>Related Tags:</b> <a class="el" href="#tag_qd_readmode">qd_readmode</a> qd_cutoff <a class="el" href="#tag_qd_tensorfile">qd_tensorfile</a> <a class="el" href="#tag_qd_tensorfile_woqubit">qd_tensorfile_woqubit</a> </p>
 <p><b>Related variable:</b> Config::cell_para </p>
+<h1><a class="anchor" id="QubitArray_QUBITARRAY"></a>
+Qubit related condition</h1>
+<p>Below are the descriptions of various qubit-related tags used in the input file.</p>
+<p><a class="anchor" id="tag_nqubit"></a></p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->

@@ -8,192 +8,182 @@
     <detaileddescription>
 <para>This is navigator to find the input file tags</para>
 <sect1 id="InputFile_1HowToWrite">
-<title>How to Write the Input File</title><para>The input file consists of key-value pairs where each key represents a specific setting. Each parameter should be written in the following format:</para>
+<title>How to write the input file</title><para>The input file consists of key-value pairs where each key represents a specific setting. Each parameter should be written in the following format:</para>
 <para><programlisting><codeline><highlight class="normal">{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_1<sp/>=<sp/>value_1,</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_2<sp/>=<sp/>value_2,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_1<sp/>:<sp/>value_1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_2<sp/>:<sp/>value_2,</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_N<sp/>=<sp/>value_N</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>parameter_name_N<sp/>:<sp/>value_N</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
-<para>Lines beginning with <computeroutput># or !</computeroutput> are considered comments and are ignored.</para>
-<para><table rows="29" cols="1"><row>
-<entry thead="yes"><para>Tag (General)    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_method" kindref="member">method</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_quantity" kindref="member">quantity</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_order" kindref="member">order</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_bfield" kindref="member">bfield</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_rbath" kindref="member">rbath</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_rdip" kindref="member">rdip</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_deltat" kindref="member">deltat</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_nstep" kindref="member">nstep</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_rbathcut" kindref="member">rbathcut</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_rdipcut" kindref="member">rdipcut</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_nstate" kindref="member">nstate</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_seed" kindref="member">seed</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_gyrofile" kindref="member">gyrofile</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_bathfile" kindref="member">bathfile</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_bathadjust" kindref="member">bathadjust</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_avaaxfile" kindref="member">avaaxfile</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_statefile" kindref="member">statefile</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_exstatefile" kindref="member">exstatefile</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_DefectTotSpin" kindref="member">DefectTotSpin</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_CorrTotSpin" kindref="member">CorrTotSpin</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_hf_readmode" kindref="member">hf_readmode</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_hf_cutoff" kindref="member">hf_cutoff</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_hf_ignore_oor" kindref="member">hf_ignore_oor</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_qd_readmode" kindref="member">qd_readmode</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_cell_para" kindref="member">cell_para</ref>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para><ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref>   </para>
-</entry></row>
-</table>
+<para>Lines beginning with <computeroutput># or !</computeroutput> are considered as comments and they would be ignored.</para>
+</sect1>
+<sect1 id="InputFile_1GeneralTag">
+<title><ref refid="structCalConfig" kindref="compound">General tags</ref></title><para>Tags in this section is about simulatation parameters such as file path, numerical parameters.</para>
+<para><itemizedlist>
+<listitem><para><ref refid="InputFile_1tag_method" kindref="member">method</ref> <linebreak/>
 </para>
-<para><table rows="29" cols="1"><row>
-<entry thead="yes"><para>Tag (<ref refid="structQubitArray" kindref="compound">QubitArray</ref>)    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>nqubit    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>name    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>spin    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>qubitfile    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>qspin    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>alphams    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>betams    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>qzfs    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>-----------------------------------<mdash/>    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>Qubit    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>nqubit    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>qubit    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>name    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>spin    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>gyro    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>xyz    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>detuning    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>alphams    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>betams    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>intmap    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>between    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>tensor    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>psia    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>psib    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>psi0    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>overhaus    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>alphaidx    </para>
-</entry></row>
-<row>
-<entry thead="no"><para>betaidx   </para>
-</entry></row>
-</table>
+</listitem><listitem><para><ref refid="InputFile_1tag_quantity" kindref="member">quantity</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_order" kindref="member">order</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_bfield" kindref="member">bfield</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_rbath" kindref="member">rbath</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_rdip" kindref="member">rdip</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_deltat" kindref="member">deltat</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_nstep" kindref="member">nstep</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_rbathcut" kindref="member">rbathcut</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_rdipcut" kindref="member">rdipcut</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_nstate" kindref="member">nstate</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_seed" kindref="member">seed</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qubitfile" kindref="member">qubitfile</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_gyrofile" kindref="member">gyrofile</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_bathfile" kindref="member">bathfile</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_bathadjust" kindref="member">bathadjust</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_avaaxfile" kindref="member">avaaxfile</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_statefile" kindref="member">statefile</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_exstatefile" kindref="member">exstatefile</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_DefectTotSpin" kindref="member">DefectTotSpin</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_CorrTotSpin" kindref="member">CorrTotSpin</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_hf_readmode" kindref="member">hf_readmode</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_hf_cutoff" kindref="member">hf_cutoff</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_hf_ignore_oor" kindref="member">hf_ignore_oor</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qd_readmode" kindref="member">qd_readmode</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_cell_para" kindref="member">cell_para</ref> <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref></para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+<sect1 id="InputFile_1QubitArrayTags">
+<title><ref refid="structQubitArray" kindref="compound">Qubit-related tags</ref></title><para>This tags are used for adjusting <ref refid="structQubit" kindref="compound">Qubit</ref> Hamiltonian and qubit inital state. The writing format is the following:</para>
+<para>Case1. <ref refid="InputFile_1tag_qubitfile" kindref="member">qubitfile</ref> tag <blockquote><para>Only single qubit system is supported. </para>
+</blockquote></para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="stringliteral">&quot;qubitfile&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;file-path&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para>Case2. Qubit tag <blockquote><para>Both multiple qubit and single system are supported. </para>
+</blockquote></para>
+<para><details><summary><bold>Example:</bold> Click here to show example code </summary><para><programlisting><codeline><highlight class="stringliteral">&quot;Qubit&quot;</highlight><highlight class="normal"><sp/>:<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;nqubit&quot;</highlight><highlight class="normal"><sp/>:<sp/>2,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;qubit&quot;</highlight><highlight class="normal"><sp/>:<sp/>[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;name&quot;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;Q1&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;spin&quot;</highlight><highlight class="normal"><sp/>:<sp/>0.5,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;gyro&quot;</highlight><highlight class="normal"><sp/>:<sp/>-17608.597050,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;xyz&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>[1.0,<sp/>2.0,<sp/>3.0],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;detuning&quot;</highlight><highlight class="normal"><sp/>:<sp/>0.0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;alphams&quot;</highlight><highlight class="normal"><sp/>:<sp/>0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;betams&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;name&quot;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="stringliteral">&quot;Q2&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;spin&quot;</highlight><highlight class="normal"><sp/>:<sp/>1.0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;gyro&quot;</highlight><highlight class="normal"><sp/>:<sp/>-17608.597050,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;xyz&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>[4.0,<sp/>5.0,<sp/>6.0],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;detuning&quot;</highlight><highlight class="normal"><sp/>:<sp/>0.0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;alphams&quot;</highlight><highlight class="normal"><sp/>:<sp/>0,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;betams&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>1,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;intmap&quot;</highlight><highlight class="normal"><sp/>:<sp/>[</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>#<sp/>Zero<sp/>field<sp/>splitting</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;between&quot;</highlight><highlight class="normal"><sp/>:<sp/>[</highlight><highlight class="stringliteral">&quot;Q1&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Q1&quot;</highlight><highlight class="normal">],<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;tensor&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>[[1.0,<sp/>2.0,<sp/>3.0],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[4.0,<sp/>5.0,<sp/>6.0],<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[7.0,<sp/>8.0,<sp/>9.0]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;between&quot;</highlight><highlight class="normal"><sp/>:<sp/>[</highlight><highlight class="stringliteral">&quot;Q1&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Q2&quot;</highlight><highlight class="normal">],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;tensor&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>[[1.0,<sp/>2.0,<sp/>3.0],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[4.0,<sp/>5.0,<sp/>6.0],<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[7.0,<sp/>8.0,<sp/>9.0]],</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+</programlisting> </para>
+</details></para>
+<para><itemizedlist>
+<listitem><para><ref refid="InputFile_1tag_nqubit" kindref="member">nqubit</ref> <linebreak/>
+</para>
+</listitem><listitem><para>name <linebreak/>
+</para>
+</listitem><listitem><para>spin <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qubitfile" kindref="member">qubitfile</ref> <linebreak/>
+</para>
+</listitem><listitem><para>qspin <linebreak/>
+</para>
+</listitem><listitem><para>alphams <linebreak/>
+</para>
+</listitem><listitem><para>betams <linebreak/>
+</para>
+</listitem><listitem><para>qzfs</para>
+</listitem><listitem><para>Qubit <linebreak/>
+</para>
+</listitem><listitem><para><ref refid="InputFile_1tag_nqubit" kindref="member">nqubit</ref> <linebreak/>
+</para>
+</listitem><listitem><para>qubit <linebreak/>
+</para>
+</listitem><listitem><para>name <linebreak/>
+</para>
+</listitem><listitem><para>spin <linebreak/>
+</para>
+</listitem><listitem><para>gyro <linebreak/>
+</para>
+</listitem><listitem><para>xyz <linebreak/>
+</para>
+</listitem><listitem><para>detuning <linebreak/>
+</para>
+</listitem><listitem><para>alphams <linebreak/>
+</para>
+</listitem><listitem><para>betams <linebreak/>
+</para>
+</listitem><listitem><para>intmap <linebreak/>
+</para>
+</listitem><listitem><para>between <linebreak/>
+</para>
+</listitem><listitem><para>tensor <linebreak/>
+</para>
+</listitem><listitem><para>psia <linebreak/>
+</para>
+</listitem><listitem><para>psib <linebreak/>
+</para>
+</listitem><listitem><para>psi0 <linebreak/>
+</para>
+</listitem><listitem><para>overhaus <linebreak/>
+</para>
+</listitem><listitem><para>alphaidx <linebreak/>
+</para>
+</listitem><listitem><para>betaidx <linebreak/>
+</para>
+</listitem></itemizedlist>
 </para>
 <para><table rows="10" cols="1"><row>
 <entry thead="yes"><para>Tag (<ref refid="structCluster" kindref="compound">Cluster</ref>)    </para>
@@ -303,7 +293,7 @@
 <sect1 id="InputFile_1Config_CONFIG">
 <title>General condition</title><para>Below are the descriptions of various configuration tags used in the input file.</para>
 <para><anchor id="InputFile_1tag_method"/></para>
-<sect2 id="InputFile_1autotoc_md7">
+<sect2 id="InputFile_1autotoc_md10">
 <title>method</title><para><bold>Description:</bold><linebreak/>
  CCE Methods to calculate the dynamics of the system.</para>
 <para><bold>Data Type:</bold> String</para>
@@ -332,7 +322,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" kindref="member">Config::order</ref> </para>
 <para><anchor id="InputFile_1tag_quantity"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md8">
+<sect2 id="InputFile_1autotoc_md11">
 <title>quantity</title><para><bold>Description:</bold><linebreak/>
  Quantity to calculate the dynamics of the system.</para>
 <para><bold>Data Type:</bold> String</para>
@@ -358,7 +348,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a408cf9618ed41aefd0b0c323f57e0730" kindref="member">Config::quantity</ref> </para>
 <para><anchor id="InputFile_1tag_order"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md9">
+<sect2 id="InputFile_1autotoc_md12">
 <title>order</title><para><bold>Description:</bold><linebreak/>
  Order of the CCE method.</para>
 <para><bold>Data Type:</bold> Integer</para>
@@ -368,7 +358,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" kindref="member">Config::order</ref> </para>
 <para><anchor id="InputFile_1tag_bfield"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md10">
+<sect2 id="InputFile_1autotoc_md13">
 <title>bfield</title><para><bold>Description:</bold><linebreak/>
  Magnetic field.</para>
 <para><bold>Data Type:</bold> Float or Float List</para>
@@ -382,7 +372,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1abf4c62b17ba762512fab9da0f1e193be" kindref="member">Config::bfield</ref> </para>
 <para><anchor id="InputFile_1tag_rbath"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md11">
+<sect2 id="InputFile_1autotoc_md14">
 <title>rbath</title><para><bold>Description:</bold><linebreak/>
  Bath radius </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -393,7 +383,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a79389333cffeb4063cf1d39e89234c57" kindref="member">Config::rbath</ref> </para>
 <para><anchor id="InputFile_1tag_rdip"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md12">
+<sect2 id="InputFile_1autotoc_md15">
 <title>rdip</title><para><bold>Description:</bold><linebreak/>
  Dipolar radius </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -404,7 +394,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1af9d5e3a3b185555cbe04ad12733612b1" kindref="member">Config::rdip</ref> </para>
 <para><anchor id="InputFile_1tag_deltat"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md13">
+<sect2 id="InputFile_1autotoc_md16">
 <title>deltat</title><para><bold>Description:</bold><linebreak/>
  Time interval. </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -415,7 +405,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a6539de558079f55df76dce79c4079b33" kindref="member">Config::deltat</ref> </para>
 <para><anchor id="InputFile_1tag_nstep"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md14">
+<sect2 id="InputFile_1autotoc_md17">
 <title>nstep</title><para><bold>Description:</bold><linebreak/>
  Number of time steps. </para>
 <para><bold>Data Type:</bold> Integer</para>
@@ -425,7 +415,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1acd1675410784e93a9c9866de0c64807e" kindref="member">Config::nstep</ref> </para>
 <para><anchor id="InputFile_1tag_rbathcut"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md15">
+<sect2 id="InputFile_1autotoc_md18">
 <title>rbathcut</title><para><bold>Description:</bold><linebreak/>
  Bath inner-cutoff radius. </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -436,7 +426,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a2eeef76fa44792c24c3320ff6b4d19c8" kindref="member">Config::rbathcut</ref> </para>
 <para><anchor id="InputFile_1tag_rdipcut"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md16">
+<sect2 id="InputFile_1autotoc_md19">
 <title>rdipcut</title><para><bold>Description:</bold><linebreak/>
  Dipolar inner-cutoff radius. </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -447,7 +437,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a39b6cf20220772b2326ddf423bf3a3f7" kindref="member">Config::rdipcut</ref> </para>
 <para><anchor id="InputFile_1tag_nstate"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md17">
+<sect2 id="InputFile_1autotoc_md20">
 <title>nstate</title><para><bold>Description:</bold><linebreak/>
  Number of state templates to be generated. </para>
 <para><bold>Data Type:</bold> Integer</para>
@@ -474,7 +464,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a91b2aadf805896022127036ded259e79" kindref="member">Config::nstate</ref> </para>
 <para><anchor id="InputFile_1tag_seed"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md18">
+<sect2 id="InputFile_1autotoc_md21">
 <title>seed</title><para><bold>Description:</bold><linebreak/>
  Seed for random number generator. <linebreak/>
  If you want to generate the same state templates, you should set the same seed value. </para>
@@ -484,11 +474,32 @@
 </programlisting> </para>
 <para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_nstate" kindref="member">nstate</ref> </para>
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a92ed038fd7676ed62640f59270a60545" kindref="member">Config::seed</ref> </para>
+<para><anchor id="InputFile_1tag_qubitfile"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md22">
+<title>qubitfile</title><para><bold>Description:</bold><linebreak/>
+ File path of the qubit spatial configuration. <linebreak/>
+ This tag is required when you use the qubit configuration file. <linebreak/>
+ Also, this only supports for a single qubit system. <linebreak/>
+ </para>
+<para><preformatted>
+    File format is the following :
+    [x] [y] [z]
+</preformatted> <preformatted>
+    example)
+    10.0 12.0 13.0    - x,y,z position of qubit in cartesian, angstrom
+</preformatted> </para>
+<para><bold>Data Type:</bold> String (File path) </para>
+<para><bold>Default:</bold> - </para>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">qubitfile<sp/>:<sp/></highlight><highlight class="stringliteral">&quot;filepath&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+</programlisting> </para>
+<para><bold>Related variable:</bold> <ref refid="structConfig_1a9f5ed3dfb6ae52627a94099cb837cfbf" kindref="member">Config::qubitfile</ref> </para>
+<para><bold>Related Tags:</bold> <ref refid="InputFile_1QubitArrayTags" kindref="member"><ref refid="structQubitArray" kindref="compound">Qubit-related tags</ref></ref> </para>
 <para><anchor id="InputFile_1tag_gyrofile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md19">
+<sect2 id="InputFile_1autotoc_md23">
 <title>gyrofile</title><para><bold>Description:</bold><linebreak/>
- File name of the gyromagnetic ratio. <linebreak/>
+ File name including bath spin information, e.g. gyromagnetic ratio, spin number <linebreak/>
  </para>
 <para><preformatted>
     File format is the following :
@@ -505,7 +516,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a735f7f25b0847d08468616025a27ffe5" kindref="member">Config::gyrofile</ref> </para>
 <para><anchor id="InputFile_1tag_bathfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md20">
+<sect2 id="InputFile_1autotoc_md24">
 <title>bathfile</title><para><bold>Description:</bold><linebreak/>
  File name of the bath spatial configuration. <linebreak/>
  </para>
@@ -527,7 +538,7 @@
 <para><bold>Related variable:</bold> Config::bathfile </para>
 <para><anchor id="InputFile_1tag_bathadjust"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md21">
+<sect2 id="InputFile_1autotoc_md25">
 <title>bathadjust</title><para><bold>Description:</bold><linebreak/>
  Adjust the bath configuration. <linebreak/>
  If you want to adjust the bath configuration, you can set the bathadjust value. <linebreak/>
@@ -542,7 +553,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a1ce641fcaac86656dde150e974ff5ff7" kindref="member">Config::bathadjust</ref> </para>
 <para><anchor id="InputFile_1tag_avaaxfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md22">
+<sect2 id="InputFile_1autotoc_md26">
 <title>avaaxfile</title><para><bold>Description:</bold><linebreak/>
  File name of the bath pricipal axis configuration. <linebreak/>
  This tag might require when you want to calculate paramagnetic (PM) defect bath. <linebreak/>
@@ -567,7 +578,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1ae3244e507716ae5483bb32a2e4fef809" kindref="member">Config::avaaxfile</ref> </para>
 <para><anchor id="InputFile_1tag_statefile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md23">
+<sect2 id="InputFile_1autotoc_md27">
 <title>statefile</title><para><bold>Description:</bold><linebreak/>
  File name of the bath state template. <linebreak/>
  This tag might require when you want to obtain the result for a certain set of initial bath state. <linebreak/>
@@ -592,7 +603,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a7ce40e0c9e172e7b2e213101b154760b" kindref="member">Config::statefile</ref> </para>
 <para><anchor id="InputFile_1tag_exstatefile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md24">
+<sect2 id="InputFile_1autotoc_md28">
 <title>exstatefile</title><para><bold>Description:</bold><linebreak/>
  File name of the additional bath spin state template. <linebreak/>
  This tag might require when you want to calculate paramagnetic defect bath. <linebreak/>
@@ -618,7 +629,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a70ec8756f364dc3d40201f951476137e" kindref="member">Config::exstatefile</ref> </para>
 <para><anchor id="InputFile_1tag_DefectTotSpin"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md25">
+<sect2 id="InputFile_1autotoc_md29">
 <title>DefectTotSpin</title><para><bold>Description:</bold><linebreak/>
  Total spin number of the qubit. <linebreak/>
  (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <linebreak/>
@@ -631,9 +642,9 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a716389cd405e9c041cd3ac7c7608ccdd" kindref="member">Config::DefectTotSpin</ref> </para>
 <para><anchor id="InputFile_1tag_CorrTotSpin"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md26">
+<sect2 id="InputFile_1autotoc_md30">
 <title>CorrTotSpin</title><para><bold>Description:</bold><linebreak/>
- Spin nubmer correction <linebreak/>
+ Spin number correction <linebreak/>
  (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <linebreak/>
 </para>
 <para><bold>Data Type:</bold> Double </para>
@@ -644,7 +655,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1ac923676eaaf0a911eb890ee419c2b8e6" kindref="member">Config::CorrTotSpin</ref> </para>
 <para><anchor id="InputFile_1tag_hf_readmode"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md27">
+<sect2 id="InputFile_1autotoc_md31">
 <title>hf_readmode</title><para><bold>Description:</bold><linebreak/>
  Interaction tensor between qubit and bath spins can be determined by this option. <linebreak/>
  If you want to use the hyperfine tensor obtained from DFT calculation, you should set this option. <linebreak/>
@@ -680,7 +691,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a3d4d5a3943f20928bdce09e64fa4bb37" kindref="member">Config::hf_readmode</ref> </para>
 <para><anchor id="InputFile_1tag_hf_tensorfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md28">
+<sect2 id="InputFile_1autotoc_md32">
 <title>hf_tensorfile</title><para><bold>Description:</bold><linebreak/>
  File name of the hyperfine tensor. <linebreak/>
  This tag is required when you use the hyperfine tensor obtained from DFT calculation. <linebreak/>
@@ -698,7 +709,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a52710072ec30b071e08c1b62f7450c0f" kindref="member">Config::hf_tensorfile</ref> </para>
 <para><anchor id="InputFile_1tag_hf_cutoff"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md29">
+<sect2 id="InputFile_1autotoc_md33">
 <title>hf_cutoff</title><para><bold>Description:</bold><linebreak/>
  Removed <linebreak/>
  <xrefsect id="todo_1_todo000026"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
@@ -711,8 +722,9 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1af82a9ccd3b05247db3da179361faef85" kindref="member">Config::hf_cutoff</ref> </para>
 <para><anchor id="InputFile_1tag_hf_ignore_oor"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md30">
+<sect2 id="InputFile_1autotoc_md34">
 <title>hf_ignore_oor</title><para><xrefsect id="todo_1_todo000027"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
+</xrefdescription></xrefsect></para>
 <para><bold>Description:</bold><linebreak/>
  Even if the bath spin is within the specified range set in the hyperfine tensor, <linebreak/>
  if the code cannot find a matching spin relative position and spin tensor, <linebreak/>
@@ -735,20 +747,20 @@
 </table>
 </para>
 <para><bold>Default:</bold> 0 </para>
-<para><bold>Example:</bold> </para>
-</xrefdescription></xrefsect><programlisting><codeline><highlight class="normal">hf_ignore_oor<sp/>:<sp/>0<sp/></highlight></codeline>
+<para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">hf_ignore_oor<sp/>:<sp/>0<sp/></highlight></codeline>
 </programlisting> <programlisting><codeline><highlight class="normal">hf_ignore_oor<sp/>:<sp/>1<sp/></highlight></codeline>
 </programlisting> </para>
 <para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_hf_tensorfile" kindref="member">hf_tensorfile</ref> <ref refid="InputFile_1tag_hf_readmode" kindref="member">hf_readmode</ref> <ref refid="InputFile_1tag_hf_cutoff" kindref="member">hf_cutoff</ref> </para>
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a840b086fb6ef148cea4e370967da30e9" kindref="member">Config::hf_ignore_oor</ref> </para>
 <para><anchor id="InputFile_1tag_qd_readmode"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md31">
+<sect2 id="InputFile_1autotoc_md35">
 <title>qd_readmode</title><para><bold>Description:</bold><linebreak/>
- <xrefsect id="todo_1_todo000028"><xreftitle>Todo</xreftitle><xrefdescription><para>JW Quadrupole interaction tensor of bath spins can be set by this option. <linebreak/>
+ <xrefsect id="todo_1_todo000028"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
+</xrefdescription></xrefsect></para>
+<para>Quadrupole interaction tensor of bath spins can be set by this option. <linebreak/>
  If you want to use the Quadrupole tensor obtained from DFT calculation, you should set this option. <linebreak/>
 </para>
-</xrefdescription></xrefsect></para>
 <para><bold>Options:</bold><linebreak/>
  <table rows="6" cols="2"><row>
 <entry thead="yes"><para>Option   </para>
@@ -787,14 +799,14 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1adc1119b46a95084ddd4c7bfa2a8d50d9" kindref="member">Config::qd_readmode</ref> </para>
 <para><anchor id="InputFile_1tag_qd_tensorfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md32">
+<sect2 id="InputFile_1autotoc_md36">
 <title>qd_tensorfile</title><para><bold>Description:</bold><linebreak/>
  File name of the quadrupole tensor. <linebreak/>
  This tag is required when you use the quadrupole tensor obtained from DFT calculation. <linebreak/>
  </para>
 <para><preformatted>
     File format is the following :
- <xrefsect id="todo_1_todo000029"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page
+ <xrefsect id="todo_1_todo000029"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page 
 </para>
 </xrefdescription></xrefsect></preformatted> </para>
 <para><bold>Data Type:</bold> String (File path) </para>
@@ -805,7 +817,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a91d5741035098807bc28000a003bd35d" kindref="member">Config::qd_tensorfile</ref> </para>
 <para><anchor id="InputFile_1tag_qd_tensorfile_woqubit"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md33">
+<sect2 id="InputFile_1autotoc_md37">
 <title>qd_tensorfile_woqubit</title><para><bold>Description:</bold><linebreak/>
  File name of the quadrupole tensor without qubit. <linebreak/>
  This would be useful for coherence simultion in the strained or bubble structure. <linebreak/>
@@ -824,7 +836,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a93e5666a93192db9d1cd361381d64301" kindref="member">Config::qd_tensorfile_woqubit</ref> </para>
 <para><anchor id="InputFile_1tag_cell_para"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md34">
+<sect2 id="InputFile_1autotoc_md38">
 <title>cell_para</title><para><bold>Description:</bold><linebreak/>
  Lattice parameter of the strained or bubble structure. <linebreak/>
  This tag is required when you use the quadrupole tensor obtained from DFT calculation. <linebreak/>
@@ -837,6 +849,10 @@
 <para><bold>Related Tags:</bold> <ref refid="InputFile_1tag_qd_readmode" kindref="member">qd_readmode</ref> qd_cutoff <ref refid="InputFile_1tag_qd_tensorfile" kindref="member">qd_tensorfile</ref> <ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref> </para>
 <para><bold>Related variable:</bold> Config::cell_para </para>
 </sect2>
+</sect1>
+<sect1 id="InputFile_1QubitArray_QUBITARRAY">
+<title>Qubit related condition</title><para>Below are the descriptions of various qubit-related tags used in the input file.</para>
+<para><anchor id="InputFile_1tag_nqubit"/></para>
 </sect1>
     </detaileddescription>
     <location file="InputFile.dox"/>

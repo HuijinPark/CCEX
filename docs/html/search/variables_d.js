@@ -1,10 +1,14 @@
 var searchData=
 [
-  ['qd_5freadmode_0',['qd_readmode',['../structConfig.html#adc1119b46a95084ddd4c7bfa2a8d50d9',1,'Config']]],
-  ['qd_5ftensorfile_1',['qd_tensorfile',['../structConfig.html#a91d5741035098807bc28000a003bd35d',1,'Config']]],
-  ['qd_5ftensorfile_5fwoqubit_2',['qd_tensorfile_woqubit',['../structConfig.html#a93e5666a93192db9d1cd361381d64301',1,'Config']]],
-  ['quad_3',['quad',['../structBathSpin.html#a304f556a5ba51a1275171e40d212d0d2',1,'BathSpin']]],
-  ['quantity_4',['quantity',['../structConfig.html#a408cf9618ed41aefd0b0c323f57e0730',1,'Config']]],
-  ['qubit_5',['qubit',['../structQubitArray.html#ae87046f60e524d2aed1f6605c746d86e',1,'QubitArray']]],
-  ['qubitfile_6',['qubitfile',['../structConfig.html#a9f5ed3dfb6ae52627a94099cb837cfbf',1,'Config']]]
+  ['prop_5fgyros_0',['prop_gyros',['../structBathArray.html#a79ff244bc7666f22c2bbb8072d3e3fa2',1,'BathArray']]],
+  ['prop_5fnames_1',['prop_names',['../structBathArray.html#a8349ee706336e916dd546a613fbb51e2',1,'BathArray']]],
+  ['prop_5fnspecies_2',['prop_nspecies',['../structBathArray.html#a23c43fd398472286b1f80c5159896daf',1,'BathArray']]],
+  ['prop_5fspins_3',['prop_spins',['../structBathArray.html#aca533199f1899634d7c1827864c89478',1,'BathArray']]],
+  ['psi0_4',['psi0',['../structQubitArray.html#a17543dd30e2e5ef672ff5f751119beea',1,'QubitArray']]],
+  ['psia_5',['psia',['../structQubitArray.html#a168f33429921f2605e8c3ab850d3e6d9',1,'QubitArray']]],
+  ['psib_6',['psib',['../structQubitArray.html#ad88cb397f3656eb7ac316e966d5e9172',1,'QubitArray']]],
+  ['pulse_5fangles_7',['pulse_angles',['../structPulse.html#aae5ebfae6aac76ba8cf2dbb18ee128a8',1,'Pulse']]],
+  ['pulse_5faxes_8',['pulse_axes',['../structPulse.html#a8d1b542b8538b339943f80f4ec8b1cd1',1,'Pulse']]],
+  ['pulseiter_9',['pulseiter',['../structPulse.html#a4fcad551982a417a36f160cd0a6f0975',1,'Pulse']]],
+  ['pulsename_10',['pulsename',['../structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7',1,'Pulse']]]
 ];

@@ -2,7 +2,7 @@ var searchData=
 [
   ['parse_5fbuffer_0',['parse_buffer',['../structparse__buffer.html',1,'']]],
   ['partition_5finfo_1',['Partition_info',['../structPartition__info.html',1,'']]],
-  ['plot_2',['Plot',['../Examples.html#autotoc_md3',1,'Example of Including Input File and Result Plot'],['../Examples.html#autotoc_md6',1,'Result Plot']]],
+  ['plot_2',['Plot',['../Examples.html#autotoc_md6',1,'Example of Including Input File and Result Plot'],['../Examples.html#autotoc_md9',1,'Result Plot']]],
   ['point_3',['Point',['../structPoint.html',1,'']]],
   ['printbuffer_4',['printbuffer',['../structprintbuffer.html',1,'']]],
   ['prop_5fgyros_5',['prop_gyros',['../structBathArray.html#a79ff244bc7666f22c2bbb8072d3e3fa2',1,'BathArray']]],
@@ -15,6 +15,8 @@ var searchData=
   ['psib_12',['psib',['../structQubitArray.html#ad88cb397f3656eb7ac316e966d5e9172',1,'QubitArray']]],
   ['pulse_13',['Pulse',['../structPulse.html',1,'']]],
   ['pulse_20condition_14',['Pulse condition',['../TagVariable.html#IN_PULSE',1,'']]],
-  ['pulseiter_15',['pulseiter',['../structPulse.html#a4fcad551982a417a36f160cd0a6f0975',1,'Pulse']]],
-  ['pulsename_16',['pulsename',['../structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7',1,'Pulse']]]
+  ['pulse_5fangles_15',['pulse_angles',['../structPulse.html#aae5ebfae6aac76ba8cf2dbb18ee128a8',1,'Pulse']]],
+  ['pulse_5faxes_16',['pulse_axes',['../structPulse.html#a8d1b542b8538b339943f80f4ec8b1cd1',1,'Pulse']]],
+  ['pulseiter_17',['pulseiter',['../structPulse.html#a4fcad551982a417a36f160cd0a6f0975',1,'Pulse']]],
+  ['pulsename_18',['pulsename',['../structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7',1,'Pulse']]]
 ];

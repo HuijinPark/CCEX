@@ -1,0 +1,40 @@
+\doxysection{cluster\+\_\+dsjitb.\+h}
+\hypertarget{cluster__dsjitb_8h_source}{}\label{cluster__dsjitb_8h_source}\index{/Users/huijin/Documents/GitHub/CCEX/include/cluster\_dsjitb.h@{/Users/huijin/Documents/GitHub/CCEX/include/cluster\_dsjitb.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_CLUSTER\_DSJ\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_CLUSTER\_DSJ\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdlib.h>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}general.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}bath.h"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}utilities.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}cluster.h"{}}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{void}\ clusterizeDsjItb(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}***\ cmap,\ \textcolor{keywordtype}{float}***\ stmap,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba);}
+\DoxyCodeLine{00015\ \textcolor{comment}{//double\ calCouplingStrength(double*\ spin1,\ double*\ spin2);}}
+\DoxyCodeLine{00016\ \textcolor{keywordtype}{void}\ makeDuo13CwithCS(\textcolor{keywordtype}{double}***\ Duo13CwithCS,\ \textcolor{keywordtype}{int}\ nspin,\ \textcolor{keywordtype}{int}***\ cmap,\ \textcolor{keywordtype}{float}***\ stmap);}
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{void}\ jointSpinSpin(\textcolor{keywordtype}{int}**\ group,\ \textcolor{keywordtype}{int}\ len,\ \textcolor{keywordtype}{int}\ spin1,\ \textcolor{keywordtype}{int}\ spin2);}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{void}\ jointGroupSpin(\textcolor{keywordtype}{int}**\ group,\ \textcolor{keywordtype}{int}\ spin);}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{void}\ jointGroupGroup(\textcolor{keywordtype}{int}**\ group1,\ \textcolor{keywordtype}{int}**\ group2);}
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{void}\ updateGroupChecker(\textcolor{keywordtype}{int}***\ GroupChecker,\ \textcolor{keywordtype}{int}*\ newGroup,\ \textcolor{keywordtype}{int}\ newGroupNumber);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{int}\ Delete\_Int\_2dArr(\textcolor{keywordtype}{int}***\ arr,\ \textcolor{keywordtype}{int}\ row,\ \textcolor{keywordtype}{int}\ col,\ \textcolor{keywordtype}{int}\ delrow);}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{int}\ addNewGroup(\textcolor{keywordtype}{int}***\ Groups,\ \textcolor{keywordtype}{int}*\ group,\ \textcolor{keywordtype}{int}\ order);}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{void}\ addInterBathPair(\textcolor{keywordtype}{int}***\ Pairs,\ \textcolor{keywordtype}{int}\ spin1,\ \textcolor{keywordtype}{int}\ spin2);}
+\DoxyCodeLine{00024\ \textcolor{comment}{//void\ writeClusters(int**\ arr\ ,\ int\ order,const\ char*\ fname);}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//void\ writeBathSpins(InputData*\ ID,\ Gyro*\ Gy);}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//void\ createDisjointClusters(CCE\_group*\ CCE,\ InputData*\ ID,\ int\ order,int\ clusalgo,\ int\ nprocess,\ int\ rank);}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{void}\ sort2DArray(\textcolor{keywordtype}{int}***\ arr,\textcolor{keywordtype}{int}\ ROWS,\ \textcolor{keywordtype}{int}\ COLS,\ \textcolor{keywordtype}{int}\ col);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{void}\ QuickSort\_Double\_2d(\textcolor{keywordtype}{double}\ ***arr,\ \textcolor{keywordtype}{int}\ col,\ \textcolor{keywordtype}{int}\ left,\ \textcolor{keywordtype}{int}\ right);}
+\DoxyCodeLine{00030\ \textcolor{comment}{//void\ writeCoherenceEachCluster(double\ \_Complex*\ arr,\ int\ len,\ const\ char*\ fname);}}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{void}\ shrinkClusterO1(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_CLUSTER\_H\_}}
+
+\end{DoxyCode}

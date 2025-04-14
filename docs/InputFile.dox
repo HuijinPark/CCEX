@@ -11,10 +11,10 @@ Each parameter should be written in the following format:
 
 \code
 {
-    parameter_name_1 = value_1,
-    parameter_name_2 = value_2,
+    parameter_name_1 : value_1,
+    parameter_name_2 : value_2,
                 :           
-    parameter_name_N = value_N
+    parameter_name_N : value_N
 }
 \endcode
 
@@ -35,7 +35,8 @@ Tags in this section is about simulatation parameters such as file path, numeric
 - \ref tag_rbathcut      "rbathcut"     
 - \ref tag_rdipcut       "rdipcut"       
 - \ref tag_nstate        "nstate"        
-- \ref tag_seed          "seed"          
+- \ref tag_seed          "seed"       
+- \ref tag_qubitfile     "qubitfile"   
 - \ref tag_gyrofile      "gyrofile"      
 - \ref tag_bathfile      "bathfile"      
 - \ref tag_bathadjust    "bathadjust"                    
@@ -53,38 +54,90 @@ Tags in this section is about simulatation parameters such as file path, numeric
 - \ref tag_cell_para    "cell_para"                     
 - \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit"
 
+\section QubitArrayTags \ref QubitArray "Qubit-related tags"
 
+This tags are used for adjusting Qubit Hamiltonian and qubit inital state.
+The writing format is the following:
 
-| Tag (QubitArray)                     |
-|--------------------------------------|
-| \ref tag_nqubit       "nqubit"       |
-| \ref tag_name         "name"         |
-| \ref tag_spin         "spin"         |
-| \ref tag_qubitfile    "qubitfile"    |
-| \ref tag_qspin        "qspin"        |
-| \ref tag_alphams      "alphams"      |
-| \ref tag_betams       "betams"       |
-| \ref tag_qzfs         "qzfs"         |
-|--------------------------------------|
-| \ref tag_Qubit        "Qubit"        |
-| \ref tag_nqubit       "nqubit"       |
-| \ref tag_qubit        "qubit"        |
-| \ref tag_name         "name"         |
-| \ref tag_spin         "spin"         |
-| \ref tag_gyro         "gyro"         |
-| \ref tag_xyz          "xyz"          |
-| \ref tag_detuning     "detuning"     |
-| \ref tag_alphams      "alphams"      |
-| \ref tag_betams       "betams"       |
-| \ref tag_intmap       "intmap"       |
-| \ref tag_between      "between"      |
-| \ref tag_tensor       "tensor"       |
-| \ref tag_psia         "psia"         |
-| \ref tag_psib         "psib"         |
-| \ref tag_psi0         "psi0"         |
-| \ref tag_overhaus     "overhaus"     |
-| \ref tag_alphaidx     "alphaidx"     |
-| \ref tag_betaidx      "betaidx"      |
+Case1. \ref tag_qubitfile "qubitfile" tag
+> Only single qubit system is supported.
+
+<p><b>Example:</b> \code "qubitfile"  : "file-path" \endcode </p>
+
+Case2. \ref tag_Qubit "Qubit" tag
+> Both multiple qubit and single system are supported.
+
+<details>
+<summary><b>Example:</b> Click here to show example code </p></summary>
+\code
+    "Qubit" : {
+                "nqubit" : 2,
+                "qubit" : [
+                    {
+                        "name" : "Q1",
+                        "spin" : 0.5,
+                        "gyro" : -17608.597050,
+                        "xyz"  : [1.0, 2.0, 3.0],
+                        "detuning" : 0.0,
+                        "alphams" : 0,
+                        "betams"  : 1,
+                    },
+                    {
+                        "name" : "Q2",
+                        "spin" : 1.0,
+                        "gyro" : -17608.597050,
+                        "xyz"  : [4.0, 5.0, 6.0],
+                        "detuning" : 0.0,
+                        "alphams" : 0,
+                        "betams"  : 1,
+                    }
+                ],
+                "intmap" : [
+                    {
+                        # Zero field splitting
+                        "between" : ["Q1", "Q1"], 
+                        "tensor"  : [[1.0, 2.0, 3.0],
+                                    [4.0, 5.0, 6.0], 
+                                    [7.0, 8.0, 9.0]],
+                    },
+                    {
+                        "between" : ["Q1", "Q2"],
+                        "tensor"  : [[1.0, 2.0, 3.0],
+                                    [4.0, 5.0, 6.0], 
+                                    [7.0, 8.0, 9.0]],
+                    }
+                ]
+              }
+\endcode
+</details>
+
+- \ref tag_nqubit       "nqubit"       
+- \ref tag_name         "name"         
+- \ref tag_spin         "spin"         
+- \ref tag_qubitfile    "qubitfile"    
+- \ref tag_qspin        "qspin"        
+- \ref tag_alphams      "alphams"      
+- \ref tag_betams       "betams"       
+- \ref tag_qzfs         "qzfs" 
+- \ref tag_Qubit        "Qubit"        
+- \ref tag_nqubit       "nqubit"       
+- \ref tag_qubit        "qubit"        
+- \ref tag_name         "name"         
+- \ref tag_spin         "spin"         
+- \ref tag_gyro         "gyro"         
+- \ref tag_xyz          "xyz"          
+- \ref tag_detuning     "detuning"     
+- \ref tag_alphams      "alphams"      
+- \ref tag_betams       "betams"       
+- \ref tag_intmap       "intmap"       
+- \ref tag_between      "between"      
+- \ref tag_tensor       "tensor"       
+- \ref tag_psia         "psia"         
+- \ref tag_psib         "psib"         
+- \ref tag_psi0         "psi0"         
+- \ref tag_overhaus     "overhaus"     
+- \ref tag_alphaidx     "alphaidx"     
+- \ref tag_betaidx      "betaidx"      
 
 
 | Tag (Cluster)                         |
@@ -271,10 +324,32 @@ If you want to generate the same state templates, you should set the same seed v
 <p><b>Related Tags:</b> \ref tag_nstate "nstate" </p>
 <p><b>Related variable:</b> \ref Config::seed </p>
 
+\anchor tag_qubitfile
+## qubitfile
+<p><b>Description:</b><br>
+File path of the qubit spatial configuration. <br>
+This tag is required when you use the qubit configuration file. <br>
+Also, this only supports for a single qubit system. <br>
+</p>
+<pre>
+    File format is the following :
+    [x] [y] [z]
+</pre>
+<pre>
+    example)
+    10.0 12.0 13.0    - x,y,z position of qubit in cartesian, angstrom
+</pre>
+</p>
+<p><b>Data Type:</b> String (File path) </p>
+<p><b>Default:</b> - </p>
+<p><b>Example:</b> \code qubitfile : "filepath" \endcode </p>
+<p><b>Related variable:</b> \ref Config::qubitfile </p>
+<p><b>Related Tags:</b> \ref QubitArrayTags </p>
+
 \anchor tag_gyrofile
 ## gyrofile
 <p><b>Description:</b><br>
-File name of the gyromagnetic ratio. <br>
+File name including bath spin information, e.g. gyromagnetic ratio, spin number <br>
 </p>
 <pre>
     File format is the following :

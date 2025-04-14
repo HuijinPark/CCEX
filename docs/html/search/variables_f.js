@@ -1,10 +1,8 @@
 var searchData=
 [
-  ['savemode_0',['savemode',['../structOutput.html#a7f85059a943e07bad7f1b76d4e5a99d8',1,'Output']]],
-  ['seed_1',['seed',['../structConfig.html#a92ed038fd7676ed62640f59270a60545',1,'Config']]],
-  ['sequence_2',['sequence',['../structPulse.html#af1bd05f903769ac217b18fb0c2ebc31a',1,'Pulse']]],
-  ['sk_3',['sK',['../structCluster.html#a7c4d583750b7f37eb2ca537e23ad334f',1,'Cluster']]],
-  ['spin_4',['spin',['../structBathSpin.html#a0738a356e1f78530032d8bc8de02fbd8',1,'BathSpin::spin'],['../structQubit.html#a858930b7d9d9cafc70f26ab7993dadad',1,'Qubit::spin']]],
-  ['state_5',['state',['../structBathSpin.html#a6348f965fe820b03094f4c620ab7ffe0',1,'BathSpin']]],
-  ['statefile_6',['statefile',['../structConfig.html#a7ce40e0c9e172e7b2e213101b154760b',1,'Config']]]
+  ['rbath_0',['rbath',['../structConfig.html#a79389333cffeb4063cf1d39e89234c57',1,'Config']]],
+  ['rbathcut_1',['rbathcut',['../structConfig.html#a2eeef76fa44792c24c3320ff6b4d19c8',1,'Config']]],
+  ['rdip_2',['rdip',['../structConfig.html#af9d5e3a3b185555cbe04ad12733612b1',1,'Config']]],
+  ['rdipcut_3',['rdipcut',['../structConfig.html#a39b6cf20220772b2326ddf423bf3a3f7',1,'Config']]],
+  ['real_4',['real',['../structDoubleComplex.html#a59acbb424a325b3510f85b75642bc5e4',1,'DoubleComplex']]]
 ];

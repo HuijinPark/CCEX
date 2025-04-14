@@ -6,6 +6,7 @@
     <includes refid="qubit_8h" local="yes">qubit.h</includes>
     <includes refid="general_8h" local="yes">general.h</includes>
     <includedby refid="cluster_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/cluster.h</includedby>
+    <includedby refid="cluster__dsjitb_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/cluster_dsjitb.h</includedby>
     <includedby refid="cluster__pcce_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/cluster_pcce.h</includedby>
     <includedby refid="defect_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/defect.h</includedby>
     <includedby refid="output_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/output.h</includedby>
@@ -67,15 +68,17 @@
         <link refid="bath_8h"/>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="7" relation="include">
-        </childnode>
-        <childnode refid="9" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
         <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="6" relation="include">
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
       <node id="2">
@@ -89,42 +92,48 @@
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
       </node>
       <node id="3">
+        <label>/Users/huijin/Documents/GitHub/CCEX/include/cluster_dsjitb.h</label>
+        <link refid="cluster__dsjitb_8h_source"/>
+      </node>
+      <node id="4">
         <label>/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h</label>
         <link refid="cluster__hash_8h_source"/>
       </node>
-      <node id="4">
+      <node id="5">
         <label>/Users/huijin/Documents/GitHub/CCEX/include/cluster_pcce.h</label>
         <link refid="cluster__pcce_8h_source"/>
       </node>
-      <node id="7">
+      <node id="8">
         <label>/Users/huijin/Documents/GitHub/CCEX/include/defect.h</label>
         <link refid="defect_8h_source"/>
-        <childnode refid="5" relation="include">
-        </childnode>
-        <childnode refid="8" relation="include">
-        </childnode>
         <childnode refid="6" relation="include">
         </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
       </node>
-      <node id="5">
+      <node id="6">
         <label>/Users/huijin/Documents/GitHub/CCEX/include/option.h</label>
         <link refid="option_8h_source"/>
       </node>
-      <node id="9">
+      <node id="10">
         <label>/Users/huijin/Documents/GitHub/CCEX/include/output.h</label>
         <link refid="output_8h_source"/>
-        <childnode refid="5" relation="include">
-        </childnode>
         <childnode refid="6" relation="include">
         </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
       </node>
-      <node id="8">
+      <node id="9">
         <label>/Users/huijin/Documents/GitHub/CCEX/include/reader.h</label>
         <link refid="reader_8h_source"/>
       </node>
-      <node id="6">
+      <node id="7">
         <label>/Users/huijin/Documents/GitHub/CCEX/include/simulator.h</label>
         <link refid="simulator_8h_source"/>
       </node>
@@ -163,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="155" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="99" bodyend="131" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="155" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="155" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="100" bodyend="132" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="155" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1aed62874976dd2c174274f295b6030d23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -188,7 +197,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="156" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="133" bodyend="157" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="156" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="156" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="134" bodyend="158" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="156" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a50aca27e900b42cb19b89c0eddc866a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -213,7 +222,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="159" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="195" bodyend="277" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="159" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="159" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="196" bodyend="301" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="159" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a652958988b338231529a98b1e2aff9b3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -238,7 +247,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="160" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="279" bodyend="284" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="160" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="160" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="303" bodyend="308" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="160" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a81c020b081e36f936880d8faa4290237" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -276,7 +285,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="164" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="61" bodyend="72" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="164" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="164" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="61" bodyend="73" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="164" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1aff34caea98b5c6ed32272cbac780db4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -301,7 +310,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="167" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="74" bodyend="96" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="167" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="167" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="75" bodyend="97" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="167" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a4e9f1673e36f161f1853f4ba085b59b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -381,7 +390,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="178" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="180" bodyend="192" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="178" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="178" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="181" bodyend="193" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="178" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a9f50bfa65d8d5839e8c70e1bb1c532cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -402,7 +411,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="179" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="159" bodyend="168" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="179" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="179" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="160" bodyend="169" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="179" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a47df79b6685933f06624a558befceba1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -419,7 +428,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="180" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="170" bodyend="178" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="180" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="180" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="171" bodyend="179" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="180" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a5f536d30ff372e51e030bac0bb03ee32" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -448,7 +457,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="183" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="286" bodyend="299" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="183" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="183" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="310" bodyend="323" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="183" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a1990df26fee1f51da5b026f94920157d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -473,7 +482,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="184" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="301" bodyend="313" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="184" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="184" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="325" bodyend="337" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="184" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a97afda17a4c78436b7ca8d90a374eff9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -502,7 +511,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="185" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="315" bodyend="342" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="185" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="185" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="339" bodyend="366" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="185" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a2d839859884bd8c333d038dcbe3caa26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -527,7 +536,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="186" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="344" bodyend="356" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="186" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="186" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="368" bodyend="380" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="186" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a7aebe0d1c4d9e2f002355308393f2985" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -556,7 +565,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="187" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="358" bodyend="380" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="187" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="187" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="382" bodyend="404" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="187" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a2fb127c43d650aef433b74c596bcbd74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd **</type>
@@ -573,7 +582,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="188" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="382" bodyend="396" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="188" declcolumn="11"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="188" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="406" bodyend="420" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="188" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a748372df2699f4aa1b9c48ed856d1544" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -594,7 +603,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="191" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="399" bodyend="410" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="191" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="191" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="423" bodyend="434" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="191" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1aad7a61a9794ce21248ddecc65fc68a35" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -611,7 +620,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="192" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="412" bodyend="430" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="192" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="192" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="436" bodyend="454" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="192" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a540d3e73df2df1e3489f705d17b70cd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
@@ -624,7 +633,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="196" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="435" bodyend="445" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="196" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="196" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="459" bodyend="469" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="196" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a14e20ca8a70b18dabae4789cbb4147f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -641,7 +650,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="199" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="447" bodyend="450" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="199" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="199" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="471" bodyend="474" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="199" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a37e620fa24a875511a5a78e2df2ae74b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -658,7 +667,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="200" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="459" bodyend="477" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="200" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="200" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="483" bodyend="501" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="200" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a438f139c9112579ccc54c053f910c3ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -679,7 +688,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="201" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="480" bodyend="487" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="201" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="201" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="504" bodyend="512" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="201" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a64a3915ad301e490b49f1a1b594ce3fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -696,7 +705,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="202" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="489" bodyend="509" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="202" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="202" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="514" bodyend="534" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="202" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a58e4092f9590d027d73d1ad51d3d4755" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -713,7 +722,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="203" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="511" bodyend="525" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="203" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="203" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="536" bodyend="550" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="203" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a8c0e49529570d6676fd6ece297a7641c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -730,7 +739,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="204" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="527" bodyend="542" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="204" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="204" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="552" bodyend="567" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="204" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a6c400315638c2aadffde3d344108b6e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -751,7 +760,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="205" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="544" bodyend="566" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="205" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="205" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="569" bodyend="591" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="205" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a730f3c2dedfef16b5821a37b2e04f2e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -768,7 +777,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="206" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="568" bodyend="587" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="206" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="206" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="593" bodyend="614" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="206" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ab97e04089a2b9c944201ca934c635ee6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -785,7 +794,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="207" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="589" bodyend="605" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="207" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="207" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="616" bodyend="632" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="207" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a944278376a9bd66f28b2aab1dd8fd3bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -802,7 +811,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="208" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="452" bodyend="457" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="208" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="208" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="476" bodyend="481" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="208" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1af4dab15aab62b1227f4794d5421effbd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -823,7 +832,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="211" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="609" bodyend="626" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="211" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="211" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="636" bodyend="653" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="211" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a4ad61974ad41347aa597a2f1c3e3fe0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -852,7 +861,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="212" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="628" bodyend="650" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="212" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="212" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="655" bodyend="677" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="212" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a3969246637ea0200b4a38644b431223d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -869,7 +878,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="213" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="652" bodyend="657" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="213" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="213" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="679" bodyend="684" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="213" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ad094cd86f1978df9a25b5aa96a7b0a74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -894,7 +903,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="214" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="659" bodyend="667" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="214" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="214" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="686" bodyend="694" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="214" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ad9b9ed532f0bff53ddf3f2406a674819" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -919,7 +928,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="215" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="669" bodyend="671" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="215" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="215" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="696" bodyend="698" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="215" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1adba87aaf8bae0958da78715474ef935c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -940,7 +949,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="218" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="674" bodyend="676" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="218" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="218" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="701" bodyend="703" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="218" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a09d95004e5ea7a8cd37e2e1b41234629" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -969,7 +978,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="219" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="678" bodyend="700" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="219" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="219" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="705" bodyend="727" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="219" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1af07a71b01cf698bb2dbeeead1b30d854" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -994,7 +1003,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="220" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="702" bodyend="704" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="220" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="220" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="729" bodyend="731" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="220" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1aceb87976791c2bca86bc8075df4a24e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1019,7 +1028,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="221" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="706" bodyend="708" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="221" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="221" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="733" bodyend="735" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="221" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ae2dc94602f35c05bfbb84488ce7f11ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1044,7 +1053,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="222" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="710" bodyend="712" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="222" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="222" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="737" bodyend="739" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="222" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a4b770d35bc90be99331e39933cd9c1f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1069,7 +1078,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="223" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="714" bodyend="718" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="223" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="223" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="741" bodyend="745" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="223" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a87c6db78cecb6c93041773cd00d6084f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1094,7 +1103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="224" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="720" bodyend="732" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="224" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="224" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="747" bodyend="759" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="224" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a50fb3f2c6d63ddc983990a94c57e639d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1119,7 +1128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="225" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="734" bodyend="736" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="225" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="225" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="761" bodyend="763" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="225" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a657433e87570063c7c144cfccb137104" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1144,7 +1153,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="226" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="738" bodyend="740" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="226" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="226" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="765" bodyend="767" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="226" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1afbfbe9015a392def5373f06b4541e2d8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1173,7 +1182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="227" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="742" bodyend="744" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="227" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="227" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="769" bodyend="771" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="227" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ae368af7e204c16e2175e0c46a8916896" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1198,7 +1207,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="228" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="746" bodyend="757" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="228" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="228" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="773" bodyend="785" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="228" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a6414438c8a08b0c19f8c00abf3ca9f7a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1223,7 +1232,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="229" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="759" bodyend="761" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="229" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="229" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="787" bodyend="789" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="229" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a90539ae67669123e69fde14e1e740749" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1248,7 +1257,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="230" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="763" bodyend="765" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="230" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="230" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="791" bodyend="793" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="230" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a998df8a27a219de72e8c5e649fabfba0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1269,7 +1278,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="231" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="771" bodyend="773" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="231" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="231" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="799" bodyend="801" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="231" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ab522fd89a2f7735fce49717657fc2ad6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1294,7 +1303,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="232" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="775" bodyend="777" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="232" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="232" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="803" bodyend="805" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="232" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ad1fcfbf71aa5f651a927fabf55139bc6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1319,7 +1328,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="233" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="779" bodyend="781" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="233" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="233" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="807" bodyend="809" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="233" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ab8add2946cbccdd4b285c7967693887a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1344,7 +1353,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="234" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="783" bodyend="785" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="234" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="234" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="811" bodyend="813" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="234" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a9b5ad21d5eb46aac364eb4f0044bbf65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1369,7 +1378,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="235" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="767" bodyend="769" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="235" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="235" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="795" bodyend="797" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="235" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ab3d9e90371702f02d3079d92d350c9b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1386,7 +1395,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="238" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="788" bodyend="793" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="238" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="238" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="816" bodyend="821" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="238" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a0f22c6aa6634564441b38120dbe7d1d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1403,7 +1412,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="239" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="795" bodyend="797" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="239" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="239" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="823" bodyend="825" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="239" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ad35652a42b2d307b2e1a37751b28b885" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>char **</type>
@@ -1420,7 +1429,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="240" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="799" bodyend="801" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="240" declcolumn="11"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="240" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="827" bodyend="829" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="240" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a3a8955982a3d0bbfc702b58e88803aa8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double *</type>
@@ -1437,7 +1446,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="241" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="803" bodyend="805" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="241" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="241" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="831" bodyend="833" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="241" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a3f7dc29643599f6c19681883ba1bda22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float *</type>
@@ -1454,7 +1463,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="242" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="807" bodyend="809" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="242" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="242" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="835" bodyend="837" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="242" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a8fe8e1dfe811fcab239ac5a60f91546b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> *</type>
@@ -1475,7 +1484,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="243" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="811" bodyend="813" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="243" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="243" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="839" bodyend="841" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="243" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a9d790e3309b052f37358d39d4e1bee88" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>char *</type>
@@ -1496,7 +1505,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="244" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="815" bodyend="817" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="244" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="244" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="843" bodyend="845" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="244" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1aef1b755648dd480d242c9d74c5567133" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -1517,7 +1526,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="245" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="819" bodyend="821" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="245" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="245" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="847" bodyend="849" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="245" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a9ffc1ce6293e0d06fb84d46dd2366ed0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1538,7 +1547,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="246" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="823" bodyend="825" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="246" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="246" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="851" bodyend="853" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="246" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a76cc7b78e60b0085b46ed46c558728a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double *</type>
@@ -1559,7 +1568,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="247" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="827" bodyend="829" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="247" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="247" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="855" bodyend="857" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="247" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1aad47df482af1d1fade54b3325b31b139" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -1580,7 +1589,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="248" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="831" bodyend="833" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="248" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="248" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="859" bodyend="861" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="248" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a798fb92c19dcf0498ebe0b85e2fa9ad6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1601,7 +1610,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="249" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="835" bodyend="837" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="249" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="249" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="863" bodyend="865" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="249" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a0cb71295a4e71afbff3bc3935b435017" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1622,7 +1631,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="250" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="839" bodyend="841" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="250" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="250" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="867" bodyend="869" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="250" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a26d6d16ab0175646daf567de762b1485" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1647,7 +1656,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="251" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="843" bodyend="845" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="251" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="251" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="871" bodyend="873" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="251" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a99917466fbbe6d0806953918202043ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1668,7 +1677,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="252" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="847" bodyend="849" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="252" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="252" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="875" bodyend="877" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="252" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ac19c5f1c1d4257a664bd95089429f0c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1689,7 +1698,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="253" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="851" bodyend="853" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="253" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="253" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="879" bodyend="881" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="253" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a407bd7d22d5fc648965272720d5be624" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1710,7 +1719,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="254" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="855" bodyend="857" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="254" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="254" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="883" bodyend="885" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="254" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a2d114ccf24d82d900f1bfafa82c1da0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1727,7 +1736,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="257" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="862" bodyend="868" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="257" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="257" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="890" bodyend="896" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="257" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1acda53d63906c3eca93de86bed5e47408" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1744,7 +1753,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="258" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="870" bodyend="872" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="258" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="258" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="898" bodyend="900" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="258" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a2236be7dbf2a5a8aebf7e62e2949b6b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1761,7 +1770,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="259" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="874" bodyend="876" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="259" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="259" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="902" bodyend="904" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="259" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a86777f6285d332d90f6e5278677e019d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1778,7 +1787,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="260" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="878" bodyend="880" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="260" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="260" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="906" bodyend="908" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="260" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a378b3a6a9054b5e0c8ec95497de8283c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1795,7 +1804,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="261" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="882" bodyend="887" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="261" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="261" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="910" bodyend="915" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="261" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a00a0d3daa4ec6bcf52b18b76730ee5ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1816,7 +1825,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="262" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="889" bodyend="891" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="262" declcolumn="13"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="262" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="917" bodyend="919" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="262" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ade7c821862291d5b92b87da7e495f408" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1837,7 +1846,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="265" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="897" bodyend="899" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="265" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="265" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="925" bodyend="927" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="265" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1adaf5f7854dd74f058217319885f4691c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1862,7 +1871,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="266" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="902" bodyend="906" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="266" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="266" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="930" bodyend="934" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="266" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a25c89b5891205421bc4bc1ec59b89c3b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1883,7 +1892,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="267" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="909" bodyend="911" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="267" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="267" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="937" bodyend="939" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="267" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a83883e57549af52a3ce49be77924f840" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1904,7 +1913,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="268" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="914" bodyend="916" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="268" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="268" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="942" bodyend="944" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="268" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a7c12af66dc9d385d39f57ea7fb0e9af2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1925,7 +1934,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="269" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="919" bodyend="923" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="269" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="269" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="947" bodyend="951" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="269" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a70ae83571d0bc05152207a8e40189552" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1950,7 +1959,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="270" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="926" bodyend="930" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="270" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="270" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="954" bodyend="958" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="270" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a7c1684fd5fb3c7628df240a7932c618c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1971,7 +1980,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="271" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="933" bodyend="941" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="271" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="271" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="961" bodyend="969" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="271" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a6ca36740d4ed9cb98e3237adbd149d13" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1992,7 +2001,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="272" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="944" bodyend="946" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="272" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="272" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="972" bodyend="974" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="272" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a656711de9d7b20032486ef2e7231fc13" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2013,7 +2022,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="273" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="949" bodyend="951" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="273" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="273" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="977" bodyend="979" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="273" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a53280b39f443866429a7e9617d23912e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2038,7 +2047,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="274" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="954" bodyend="956" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="274" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="274" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="982" bodyend="984" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="274" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1ad6d9410082a5cb435c3807ff06183c33" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2059,7 +2068,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="275" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="959" bodyend="961" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="275" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="275" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="987" bodyend="989" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="275" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1aa29f90af0f1bcd6bede3197310bb73cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2088,7 +2097,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="276" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="964" bodyend="988" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="276" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="276" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="992" bodyend="1016" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="276" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a7933c22cb29f34bb719d4db38259342a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2109,7 +2118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="277" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="992" bodyend="994" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="277" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="277" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1020" bodyend="1022" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="277" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a18099f1b8f2c87110840322ba7667faf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -2130,7 +2139,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="278" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="997" bodyend="999" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="278" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="278" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1025" bodyend="1027" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="278" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a2169b61846f26df2add391c9719b3956" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>char *</type>
@@ -2147,7 +2156,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="280" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1003" bodyend="1005" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="280" declcolumn="11"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="280" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1031" bodyend="1033" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="280" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a2cb17e985a46f93221bd7edc256d6f67" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -2164,7 +2173,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="281" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1008" bodyend="1010" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="281" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="281" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1036" bodyend="1038" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="281" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a51f78c4bffdc0e37ecd92a4408ab28b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -2181,7 +2190,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="282" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1013" bodyend="1015" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="282" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="282" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1041" bodyend="1043" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="282" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1abbb1f701af1739550c768748133fbdfa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double *</type>
@@ -2198,7 +2207,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="283" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1018" bodyend="1020" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="283" declcolumn="11"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="283" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1046" bodyend="1048" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="283" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a4da97f94bb37ea4be9360e89886a0623" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -2215,7 +2224,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="284" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1023" bodyend="1025" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="284" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="284" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1051" bodyend="1053" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="284" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1af1718e18c6c3a1c4fa2f2e307bfc8f05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -2232,7 +2241,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="285" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1028" bodyend="1030" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="285" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="285" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1056" bodyend="1058" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="285" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a72bc4a7c7ef327b08196b1822fc5f6d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -2249,7 +2258,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="286" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1033" bodyend="1035" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="286" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="286" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1061" bodyend="1063" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="286" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a05f599220b6ac032bbdfa85e1ccae571" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -2270,7 +2279,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="287" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1038" bodyend="1040" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="287" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="287" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1066" bodyend="1068" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="287" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a0002a756c54b9f00fbb19f298bdb4a5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -2287,7 +2296,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="288" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1043" bodyend="1045" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="288" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="288" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1071" bodyend="1073" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="288" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a99c04b6dfda4cc999acbc62beec252c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -2304,7 +2313,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="289" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1048" bodyend="1050" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="289" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="289" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1076" bodyend="1078" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="289" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="bath_8h_1a7cf2da09b53b10dda60600718edb3733" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -2321,7 +2330,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="290" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1053" bodyend="1055" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="290" declcolumn="12"/>
+        <location file="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" line="290" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/bath.cpp" bodystart="1081" bodyend="1083" declfile="/Users/huijin/Documents/GitHub/CCEX/include/bath.h" declline="290" declcolumn="12"/>
       </memberdef>
     </sectiondef>
     <briefdescription>

@@ -69,75 +69,76 @@
 \DoxyCodeLine{00089\ \textcolor{comment}{/*\ utils\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
 \DoxyCodeLine{00090\ \textcolor{keywordtype}{double}*\ MatrixXcdToDouble1d(MatrixXcd\ mat);}
 \DoxyCodeLine{00091\ MatrixXcd\ Double1dToMatrixXcd(\textcolor{keywordtype}{double}*\ val,\ \textcolor{keywordtype}{int}\ n);}
-\DoxyCodeLine{00092\ }
-\DoxyCodeLine{00093\ \textcolor{comment}{/*\ math\ functions\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
-\DoxyCodeLine{00094\ }
-\DoxyCodeLine{00095\ \textcolor{comment}{//\ geometry}}
-\DoxyCodeLine{00096\ \textcolor{keywordtype}{double}\ dist(\textcolor{keywordtype}{double}\ spin1[],\textcolor{keywordtype}{double}\ spin2[]);}
-\DoxyCodeLine{00097\ \textcolor{keywordtype}{double}\ cosTheta(\textcolor{keywordtype}{double}\ spin1[],\ \textcolor{keywordtype}{double}\ spin2[],\textcolor{keywordtype}{double}\ dist);}
-\DoxyCodeLine{00098\ \textcolor{keywordtype}{double}\ sinTheta(\textcolor{keywordtype}{double}\ spin1[],\ \textcolor{keywordtype}{double}\ spin2[],\ \textcolor{keywordtype}{double}\ dist);}
-\DoxyCodeLine{00099\ \textcolor{keywordtype}{double}\ cosPhi(\textcolor{keywordtype}{double}\ spin1[],\ \textcolor{keywordtype}{double}\ spin2[]);}
-\DoxyCodeLine{00100\ \textcolor{keywordtype}{double}\ sinPhi(\textcolor{keywordtype}{double}\ spin1[],\ \textcolor{keywordtype}{double}\ spin2[]);}
-\DoxyCodeLine{00101\ }
-\DoxyCodeLine{00102\ \textcolor{comment}{/*\ Physics\ functions\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
-\DoxyCodeLine{00103\ }
-\DoxyCodeLine{00104\ \textcolor{comment}{//\ spin\ state\ control}}
-\DoxyCodeLine{00105\ \textcolor{keywordtype}{float}*\ substates(\textcolor{keywordtype}{float}\ S);}
-\DoxyCodeLine{00106\ \textcolor{keywordtype}{bool}\ isSubLevel(\textcolor{keywordtype}{float}\ S,\ \textcolor{keywordtype}{float}\ ms);}
-\DoxyCodeLine{00107\ MatrixXcd\ getSpinor(\textcolor{keywordtype}{float}\ S,\ \textcolor{keywordtype}{float}\ ms);}
-\DoxyCodeLine{00108\ MatrixXcd\ kron(MatrixXcd\ a,\ MatrixXcd\ b);}
-\DoxyCodeLine{00109\ MatrixXcd\ partialtrace(MatrixXcd\ Mij,\ \textcolor{keywordtype}{int}\ dimrow,\ \textcolor{keywordtype}{int}\ dimcol);}
-\DoxyCodeLine{00110\ \textcolor{keywordtype}{double}\ calNorm(MatrixXcd\ m);}
-\DoxyCodeLine{00111\ \textcolor{keywordtype}{int}\ normalize(MatrixXcd*\ m);}
-\DoxyCodeLine{00112\ \textcolor{keywordtype}{float}\ findZbasisSubLevel(MatrixXcd\ spinor);}
-\DoxyCodeLine{00113\ }
-\DoxyCodeLine{00114\ MatrixXcd\ powMatrixXcdElementWise(MatrixXcd\ a,\ \textcolor{keywordtype}{int}\ n);}
-\DoxyCodeLine{00115\ MatrixXcd\ mulMatrixXcdElementWise(MatrixXcd\ a,\ MatrixXcd\ b);}
-\DoxyCodeLine{00116\ }
-\DoxyCodeLine{00117\ \textcolor{comment}{/*\ Easy\ print\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
-\DoxyCodeLine{00118\ \textcolor{keywordtype}{void}\ printInlineMatrixXcd(\textcolor{keywordtype}{char}*\ key,\ MatrixXcd\ mat);}
-\DoxyCodeLine{00119\ \textcolor{keywordtype}{void}\ printStateInDiracNot(\textcolor{keywordtype}{char}*\ key,\ MatrixXcd\ mat);}
-\DoxyCodeLine{00120\ \textcolor{keywordtype}{void}\ printStructElementChar(\textcolor{keywordtype}{char}*\ key,\textcolor{keywordtype}{char}*\ val);}
-\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ printStructElementChar2d(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{char}**\ val,\ \textcolor{keywordtype}{int}\ n);}
-\DoxyCodeLine{00122\ \textcolor{keywordtype}{void}\ printStructElementInt(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{int}\ val);}
-\DoxyCodeLine{00123\ \textcolor{keywordtype}{void}\ printStructElementInt1dIdx(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{int}*\ val,\ \textcolor{keywordtype}{int}\ n);}
-\DoxyCodeLine{00124\ \textcolor{keywordtype}{void}\ printStructElementFloat(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{float}\ val);}
-\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ printStructElementFloat1d(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{float}*\ val,\ \textcolor{keywordtype}{int}\ n);}
-\DoxyCodeLine{00126\ \textcolor{keywordtype}{void}\ printStructElementDouble(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{double}\ val);}
-\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}\ printStructElementDouble1d(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{double}*\ val,\ \textcolor{keywordtype}{int}\ n);}
-\DoxyCodeLine{00128\ \textcolor{keywordtype}{void}\ printStructElementBool(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{bool}\ val);}
-\DoxyCodeLine{00129\ \textcolor{keywordtype}{void}\ printLine();}
-\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}\ printLineSection();}
-\DoxyCodeLine{00131\ \textcolor{keywordtype}{void}\ printTitle(\textcolor{keywordtype}{char}*\ title);}
-\DoxyCodeLine{00132\ \textcolor{keywordtype}{void}\ printSubTitle(\textcolor{keywordtype}{char}*\ title);}
-\DoxyCodeLine{00133\ \textcolor{keywordtype}{void}\ printMessage(\textcolor{keywordtype}{char}*\ message);}
-\DoxyCodeLine{00134\ }
-\DoxyCodeLine{00135\ \textcolor{comment}{/*\ Find\ index\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
-\DoxyCodeLine{00136\ \textcolor{keywordtype}{int}\ findIndexInt(\textcolor{keywordtype}{int}*\ array,\ \textcolor{keywordtype}{int}\ ista,\ \textcolor{keywordtype}{int}\ iend,\ \textcolor{keywordtype}{int}\ val);\ \textcolor{comment}{//\ find\ in\ the\ range\ of\ ista\ <=\ i\ <=\ iend}}
-\DoxyCodeLine{00137\ \textcolor{keywordtype}{int}\ findIndexCharFix(\textcolor{keywordtype}{char}\ array[][MAX\_CHARARRAY\_LENGTH],\ \textcolor{keywordtype}{int}\ ista,\ \textcolor{keywordtype}{int}\ iend,\ \textcolor{keywordtype}{char}*\ val);\ \textcolor{comment}{//\ find\ in\ the\ range\ of\ ista\ <=\ i\ <=\ iend,\ strcasecmp}}
-\DoxyCodeLine{00138\ \textcolor{keywordtype}{int}\ findIndexChar(\textcolor{keywordtype}{char}**\ array,\ \textcolor{keywordtype}{int}\ ista,\ \textcolor{keywordtype}{int}\ iend,\ \textcolor{keywordtype}{char}*\ val);\ \textcolor{comment}{//\ find\ in\ the\ range\ of\ ista\ <=\ i\ <=\ iend,\ strcasecmp}}
-\DoxyCodeLine{00139\ \textcolor{keywordtype}{int}\ findIndexFloat(\textcolor{keywordtype}{float}*\ array,\ \textcolor{keywordtype}{int}\ ista,\ \textcolor{keywordtype}{int}\ iend,\ \textcolor{keywordtype}{float}\ val);\ \textcolor{comment}{//\ find\ in\ the\ range\ of\ ista\ <=\ i\ <=\ iend}}
-\DoxyCodeLine{00140\ }
-\DoxyCodeLine{00141\ \textcolor{comment}{/*\ Type\ checker\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
-\DoxyCodeLine{00142\ \textcolor{keywordtype}{int}\ isStringDouble(\textcolor{keywordtype}{char}\ *s);}
-\DoxyCodeLine{00143\ }
-\DoxyCodeLine{00144\ \textcolor{comment}{/*\ Quick\ Sort\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
-\DoxyCodeLine{00145\ \textcolor{keywordtype}{void}\ QuickSort(\textcolor{keywordtype}{int}**\ d\_Array,\ \textcolor{keywordtype}{int}\ left,\ \textcolor{keywordtype}{int}\ right);}
-\DoxyCodeLine{00146\ \textcolor{keywordtype}{int}\ Partition(\textcolor{keywordtype}{int}**\ d\_Array,\ \textcolor{keywordtype}{int}\ left,\ \textcolor{keywordtype}{int}\ right);}
-\DoxyCodeLine{00147\ \textcolor{keywordtype}{void}\ Swap(\textcolor{keywordtype}{int}**\ d\_Array,\ \textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b);}
-\DoxyCodeLine{00148\ }
-\DoxyCodeLine{00149\ \textcolor{comment}{/*\ MPI\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
-\DoxyCodeLine{00150\ \textcolor{keywordtype}{void}\ para\_range(\textcolor{keywordtype}{int}\ n1,\textcolor{keywordtype}{int}\ n2,\ \textcolor{keywordtype}{int}\ nprocs,\ \textcolor{keywordtype}{int}\ myrank,\ \textcolor{keywordtype}{int}*ista,\ \textcolor{keywordtype}{int}\ *iend);}
-\DoxyCodeLine{00151\ \textcolor{keywordtype}{int}\ min(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{int}\ y);}
-\DoxyCodeLine{00152\ \textcolor{keywordtype}{int}***\ MPI\_getLocalClusters(\textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}***\ clusters);}
-\DoxyCodeLine{00153\ \textcolor{comment}{//\ MatrixXcd*\ MPI\_reduceLocalResult(int\ nstep,\ MatrixXcd*\ local);}}
-\DoxyCodeLine{00154\ }
-\DoxyCodeLine{00155\ \textcolor{comment}{/*\ Print\ help\ and\ banner\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
-\DoxyCodeLine{00156\ \textcolor{keywordtype}{void}\ printBanner();}
-\DoxyCodeLine{00157\ \textcolor{keywordtype}{void}\ printHelp();}
-\DoxyCodeLine{00158\ }
-\DoxyCodeLine{00159\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_UTILITIES\_UTILITIES\_H\_}}
-\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ Double\_is\_same\_row(\textcolor{keywordtype}{double}*\ row1,\ \textcolor{keywordtype}{double}*\ row2);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \textcolor{comment}{/*\ math\ functions\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \textcolor{comment}{//\ geometry}}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{double}\ dist(\textcolor{keywordtype}{double}\ spin1[],\textcolor{keywordtype}{double}\ spin2[]);}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{double}\ cosTheta(\textcolor{keywordtype}{double}\ spin1[],\ \textcolor{keywordtype}{double}\ spin2[],\textcolor{keywordtype}{double}\ dist);}
+\DoxyCodeLine{00099\ \textcolor{keywordtype}{double}\ sinTheta(\textcolor{keywordtype}{double}\ spin1[],\ \textcolor{keywordtype}{double}\ spin2[],\ \textcolor{keywordtype}{double}\ dist);}
+\DoxyCodeLine{00100\ \textcolor{keywordtype}{double}\ cosPhi(\textcolor{keywordtype}{double}\ spin1[],\ \textcolor{keywordtype}{double}\ spin2[]);}
+\DoxyCodeLine{00101\ \textcolor{keywordtype}{double}\ sinPhi(\textcolor{keywordtype}{double}\ spin1[],\ \textcolor{keywordtype}{double}\ spin2[]);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{comment}{/*\ Physics\ functions\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \textcolor{comment}{//\ spin\ state\ control}}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{float}*\ substates(\textcolor{keywordtype}{float}\ S);}
+\DoxyCodeLine{00107\ \textcolor{keywordtype}{bool}\ isSubLevel(\textcolor{keywordtype}{float}\ S,\ \textcolor{keywordtype}{float}\ ms);}
+\DoxyCodeLine{00108\ MatrixXcd\ getSpinor(\textcolor{keywordtype}{float}\ S,\ \textcolor{keywordtype}{float}\ ms);}
+\DoxyCodeLine{00109\ MatrixXcd\ kron(MatrixXcd\ a,\ MatrixXcd\ b);}
+\DoxyCodeLine{00110\ MatrixXcd\ partialtrace(MatrixXcd\ Mij,\ \textcolor{keywordtype}{int}\ dimrow,\ \textcolor{keywordtype}{int}\ dimcol);}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{double}\ calNorm(MatrixXcd\ m);}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{int}\ normalize(MatrixXcd*\ m);}
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{float}\ findZbasisSubLevel(MatrixXcd\ spinor);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ MatrixXcd\ powMatrixXcdElementWise(MatrixXcd\ a,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00116\ MatrixXcd\ mulMatrixXcdElementWise(MatrixXcd\ a,\ MatrixXcd\ b);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \textcolor{comment}{/*\ Easy\ print\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00119\ \textcolor{keywordtype}{void}\ printInlineMatrixXcd(\textcolor{keywordtype}{char}*\ key,\ MatrixXcd\ mat);}
+\DoxyCodeLine{00120\ \textcolor{keywordtype}{void}\ printStateInDiracNot(\textcolor{keywordtype}{char}*\ key,\ MatrixXcd\ mat);}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{void}\ printStructElementChar(\textcolor{keywordtype}{char}*\ key,\textcolor{keywordtype}{char}*\ val);}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{void}\ printStructElementChar2d(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{char}**\ val,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{void}\ printStructElementInt(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{int}\ val);}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{void}\ printStructElementInt1dIdx(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{int}*\ val,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ printStructElementFloat(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{float}\ val);}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{void}\ printStructElementFloat1d(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{float}*\ val,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}\ printStructElementDouble(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{double}\ val);}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{void}\ printStructElementDouble1d(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{double}*\ val,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{void}\ printStructElementBool(\textcolor{keywordtype}{char}*\ key,\ \textcolor{keywordtype}{bool}\ val);}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}\ printLine();}
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{void}\ printLineSection();}
+\DoxyCodeLine{00132\ \textcolor{keywordtype}{void}\ printTitle(\textcolor{keywordtype}{char}*\ title);}
+\DoxyCodeLine{00133\ \textcolor{keywordtype}{void}\ printSubTitle(\textcolor{keywordtype}{char}*\ title);}
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{void}\ printMessage(\textcolor{keywordtype}{char}*\ message);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{comment}{/*\ Find\ index\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{int}\ findIndexInt(\textcolor{keywordtype}{int}*\ array,\ \textcolor{keywordtype}{int}\ ista,\ \textcolor{keywordtype}{int}\ iend,\ \textcolor{keywordtype}{int}\ val);\ \textcolor{comment}{//\ find\ in\ the\ range\ of\ ista\ <=\ i\ <=\ iend}}
+\DoxyCodeLine{00138\ \textcolor{keywordtype}{int}\ findIndexCharFix(\textcolor{keywordtype}{char}\ array[][MAX\_CHARARRAY\_LENGTH],\ \textcolor{keywordtype}{int}\ ista,\ \textcolor{keywordtype}{int}\ iend,\ \textcolor{keywordtype}{char}*\ val);\ \textcolor{comment}{//\ find\ in\ the\ range\ of\ ista\ <=\ i\ <=\ iend,\ strcasecmp}}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{int}\ findIndexChar(\textcolor{keywordtype}{char}**\ array,\ \textcolor{keywordtype}{int}\ ista,\ \textcolor{keywordtype}{int}\ iend,\ \textcolor{keywordtype}{char}*\ val);\ \textcolor{comment}{//\ find\ in\ the\ range\ of\ ista\ <=\ i\ <=\ iend,\ strcasecmp}}
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{int}\ findIndexFloat(\textcolor{keywordtype}{float}*\ array,\ \textcolor{keywordtype}{int}\ ista,\ \textcolor{keywordtype}{int}\ iend,\ \textcolor{keywordtype}{float}\ val);\ \textcolor{comment}{//\ find\ in\ the\ range\ of\ ista\ <=\ i\ <=\ iend}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{comment}{/*\ Type\ checker\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{int}\ isStringDouble(\textcolor{keywordtype}{char}\ *s);}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{comment}{/*\ Quick\ Sort\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00146\ \textcolor{keywordtype}{void}\ QuickSort(\textcolor{keywordtype}{int}**\ d\_Array,\ \textcolor{keywordtype}{int}\ left,\ \textcolor{keywordtype}{int}\ right);}
+\DoxyCodeLine{00147\ \textcolor{keywordtype}{int}\ Partition(\textcolor{keywordtype}{int}**\ d\_Array,\ \textcolor{keywordtype}{int}\ left,\ \textcolor{keywordtype}{int}\ right);}
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{void}\ Swap(\textcolor{keywordtype}{int}**\ d\_Array,\ \textcolor{keywordtype}{int}\ a,\ \textcolor{keywordtype}{int}\ b);}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{comment}{/*\ MPI\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00151\ \textcolor{keywordtype}{void}\ para\_range(\textcolor{keywordtype}{int}\ n1,\textcolor{keywordtype}{int}\ n2,\ \textcolor{keywordtype}{int}\ nprocs,\ \textcolor{keywordtype}{int}\ myrank,\ \textcolor{keywordtype}{int}*ista,\ \textcolor{keywordtype}{int}\ *iend);}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{int}\ min(\textcolor{keywordtype}{int}\ x,\ \textcolor{keywordtype}{int}\ y);}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{int}***\ MPI\_getLocalClusters(\textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}***\ clusters);}
+\DoxyCodeLine{00154\ \textcolor{comment}{//\ MatrixXcd*\ MPI\_reduceLocalResult(int\ nstep,\ MatrixXcd*\ local);}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \textcolor{comment}{/*\ Print\ help\ and\ banner\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00157\ \textcolor{keywordtype}{void}\ printBanner();}
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}\ printHelp();}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_UTILITIES\_UTILITIES\_H\_}}
 \DoxyCodeLine{00161\ }
+\DoxyCodeLine{00162\ }
 
 \end{DoxyCode}
