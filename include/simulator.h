@@ -25,4 +25,9 @@ MatrixXcd HamilBath(BathArray* ba, MatrixXcd** sigmas, Config* cnf);
 MatrixXcd HamilQubitBath(QubitArray* qa, BathArray* ba, MatrixXcd** qsigmas, MatrixXcd** bsigmas, Config* cnf);
 MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** bsigmas, Config* cnf);
 
+
+MatrixXcd** gatherSigmas(MatrixXcd** qsigmas, MatrixXcd** bsigmas, int nqubit, int nspin);
+MatrixXcd** gatherSigmas_singlequbit(MatrixXcd* qsigma, MatrixXcd** bsigmas, int nqubit, int nspin);
+int close_state_index(MatrixXcd state, MatrixXcd eigenVectors);
+
 #endif // __CCEX_SIMULATOR_H_

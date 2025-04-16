@@ -55,6 +55,11 @@ Tags in this section is about simulatation parameters such as file path, numeric
 - \ref tag_qd_tensorfile "qd_tensorfile"                
 - \ref tag_cell_para    "cell_para"                     
 - \ref tag_qd_tensorfile_woqubit "qd_tensorfile_woqubit"
+- \ref tag_hfmedi       "hfmedi"
+- \ref tag_knight       "knight"
+
+\todo HJ hfmed and knight input tag information
+               
 
 \section QubitArrayTags \ref QubitArray "Qubit-related tags"
 
@@ -125,6 +130,10 @@ The format is the following:
 </details>
 
 - \ref tag_qubitfile    "qubitfile"
+- \ref tag_qzfs         "qzfs"
+- \ref tag_qspin        "qspin"
+- \ref tag_qalphams     "qalphams" 
+- \ref tag_qbetams      "qbetams"
 - \ref tag_Qubit        "Qubit" 
 - \ref tag_nqubit       "nqubit"
 - \ref tag_qubit        "qubit"
@@ -702,6 +711,24 @@ This tag is required to give the details of qubit information. <br></p>
     - \ref tag_betaidx "betaidx"
 </p>
 
+\anchor tag_qzfs
+## qzfs
+    \todo HJ (Avail only when reading "qubitfile" tag) </p>
+
+\anchor tag_qspin
+## qspin
+    \todo HJ (Avail only when reading "qubitfile" tag) </p>
+
+\anchor tag_qalphams
+## qalphams
+    \todo HJ (Avail only when reading "qubitfile" tag) </p>
+
+\anchor tag_qbetams
+## qbetams
+    \todo HJ (Avail only when reading "qubitfile" tag) </p>
+
+
+
 \anchor tag_nqubit
 ## nqubit
 <p><b>Description:</b><br>
@@ -821,6 +848,7 @@ This tag is ultimately applied to set \ref QubitArray::psib \(i.e. \ref tag_psib
 Interaction map between qubits. <br>
 This tag is required to define the interaction map between qubits, including its self interaction \(e.g. Zero-field splitting\). <br>
 <p><b>Data Type:</b> Dictionary List </p>
+<p><b>Unit:</b> kHz </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> 
     \code intmap : [ { "between" : ["q1","q1"],

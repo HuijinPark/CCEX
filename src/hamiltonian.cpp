@@ -215,6 +215,116 @@ MatrixXcd calHamiltonianHeteroInt(MatrixXcd** Pmats, MatrixXcd Tensor, int nSpin
 }
 
 /**
+ * @brief Projected Hamiltonian for interacting two spins
+ * @details This related to the hyperfine mediated interaction term
+ *          This is exactly the same to calHamiltonianHeteroInt but the tensor is the following:
+ *          (Sab*Ai)^T * (Sba*Aj) 
+*/
+MatrixXcd* calHamiltonianHeteroInt_o2(MatrixXcd Sab, MatrixXcd Sba, MatrixXcd** Pmats, MatrixXcd tensor_ib, MatrixXcd tensor_jb, int nSpin, int iSpin, int jSpin){
+
+    // Calculate the dimension of Hamiltonian
+    int dimrow = 1;
+    int dimcol = 1;
+    for (int i=0; i<nSpin; i++){
+        // printf("Pmats[%d][0] : (%d, %d)\n",i,Pmats[i][0].rows(),Pmats[i][0].cols());
+        dimrow *= Pmats[i][0].rows();
+        dimcol *= Pmats[i][0].cols();
+    }
+    // printf("dimrow : %d\n",dimrow);
+    // printf("dimcol : %d\n",dimcol);
+    
+    MatrixXcd SabAi_alpha(1,3); 	MatrixXcd SabAj_beta(1,3);	
+    MatrixXcd SbaAj_alpha(1,3);		MatrixXcd SbaAi_beta(1,3);		
+    MatrixXcd Aij_alpha(3,3);		MatrixXcd Aij_beta(3,3);
+    MatrixXcd Ai(3,3);
+    MatrixXcd Aj(3,3);
+    Ai = tensor_ib; 
+    Aj = tensor_jb; 
+    
+    //Aij_alpha
+    // = (Sab * Ai)^T * (Sba * Aj)
+    SabAi_alpha = Sab.transpose() * Ai;
+    SbaAj_alpha = Sba.transpose() * Aj;
+    Aij_alpha   = (SabAi_alpha.transpose()) * SbaAj_alpha;
+    
+    //printf("Aij_alpha = SabAi_alpha.T * SbaAj_alpha\n");
+    //std::cout << Aij_alpha << std::endl;
+    
+    //Aij_beta
+    // = (Sba * Ai)^T * (Sab * Aj)
+    SbaAi_beta  = Sba.transpose() * Ai;
+    SabAj_beta  = Sab.transpose() * Aj;
+    Aij_beta    = (SbaAi_beta.transpose()) * SabAj_beta;
+    
+    //printf("Aij_beta = SbaAi_beta.T * SabAj_beta\n");
+    //std::cout << Aij_beta << std::endl;
+    
+    // Calculate expanded Pauli Operators
+    MatrixXcd SixSjx, SixSjy, SixSjz;
+    MatrixXcd SiySjx, SiySjy, SiySjz;
+    MatrixXcd SizSjx, SizSjy, SizSjz;
+
+    for (int i=0; i<nSpin; i++){
+        
+        MatrixXcd SixSjxTmp, SixSjyTmp, SixSjzTmp;
+        MatrixXcd SiySjxTmp, SiySjyTmp, SiySjzTmp;
+        MatrixXcd SizSjxTmp, SizSjyTmp, SizSjzTmp;
+
+        if (i == iSpin){
+            SixSjxTmp = Pmats[iSpin][1] ; SixSjyTmp = Pmats[iSpin][1] ; SixSjzTmp = Pmats[iSpin][1] ;
+            SiySjxTmp = Pmats[iSpin][2] ; SiySjyTmp = Pmats[iSpin][2] ; SiySjzTmp = Pmats[iSpin][2] ;
+            SizSjxTmp = Pmats[iSpin][3] ; SizSjyTmp = Pmats[iSpin][3] ; SizSjzTmp = Pmats[iSpin][3] ;
+        }
+        else if (i == jSpin){
+            SixSjxTmp = Pmats[jSpin][1] ; SixSjyTmp = Pmats[jSpin][2] ; SixSjzTmp = Pmats[jSpin][3] ;
+            SiySjxTmp = Pmats[jSpin][1] ; SiySjyTmp = Pmats[jSpin][2] ; SiySjzTmp = Pmats[jSpin][3] ;
+            SizSjxTmp = Pmats[jSpin][1] ; SizSjyTmp = Pmats[jSpin][2] ; SizSjzTmp = Pmats[jSpin][3] ;            
+        }
+        else{
+            SixSjxTmp = Pmats[i][0]     ; SixSjyTmp = Pmats[i][0]     ; SixSjzTmp = Pmats[i][0]     ;
+            SiySjxTmp = Pmats[i][0]     ; SiySjyTmp = Pmats[i][0]     ; SiySjzTmp = Pmats[i][0]     ;
+            SizSjxTmp = Pmats[i][0]     ; SizSjyTmp = Pmats[i][0]     ; SizSjzTmp = Pmats[i][0]     ;
+        }
+        
+        if (i==0){
+            SixSjx = SixSjxTmp; SixSjy = SixSjyTmp; SixSjz = SixSjzTmp;
+            SiySjx = SiySjxTmp; SiySjy = SiySjyTmp; SiySjz = SiySjzTmp;
+            SizSjx = SizSjxTmp; SizSjy = SizSjyTmp; SizSjz = SizSjzTmp;
+        }
+        else{
+            SixSjx = kron(SixSjx,SixSjxTmp); SixSjy = kron(SixSjy,SixSjyTmp); SixSjz = kron(SixSjz,SixSjzTmp);
+            SiySjx = kron(SiySjx,SiySjxTmp); SiySjy = kron(SiySjy,SiySjyTmp); SiySjz = kron(SiySjz,SiySjzTmp);
+            SizSjx = kron(SizSjx,SizSjxTmp); SizSjy = kron(SizSjy,SizSjyTmp); SizSjz = kron(SizSjz,SizSjzTmp);
+        }
+    }
+
+    if (SixSjx.rows() != dimrow || SixSjx.cols() != dimcol){
+        perror("Error(calHamiltonianHeteroInt): Dimension of SixSjx is not matched");
+        exit(EXIT_FAILURE);
+    }
+
+    // Calculate Hamiltonian
+    MatrixXcd* Hij_medi = new MatrixXcd[2];
+    MatrixXcd Sab_Ai_Ii_Sba_Aj_Ij = MatrixXcd::Zero(dimrow,dimcol);
+    MatrixXcd Sba_Ai_Ii_Sab_Aj_Ij = MatrixXcd::Zero(dimrow,dimcol);
+
+    Sab_Ai_Ii_Sba_Aj_Ij = Aij_alpha(0,0) * SixSjx + Aij_alpha(0,1) * SixSjy + Aij_alpha(0,2) * SixSjz +
+                          Aij_alpha(1,0) * SiySjx + Aij_alpha(1,1) * SiySjy + Aij_alpha(1,2) * SiySjz +
+                          Aij_alpha(2,0) * SizSjx + Aij_alpha(2,1) * SizSjy + Aij_alpha(2,2) * SizSjz;
+
+    Sba_Ai_Ii_Sab_Aj_Ij = Aij_beta(0,0) * SixSjx + Aij_beta(0,1) * SixSjy + Aij_beta(0,2) * SixSjz +
+                          Aij_beta(1,0) * SiySjx + Aij_beta(1,1) * SiySjy + Aij_beta(1,2) * SiySjz +
+                          Aij_beta(2,0) * SizSjx + Aij_beta(2,1) * SizSjy + Aij_beta(2,2) * SizSjz;
+
+    Hij_medi[0] = Sab_Ai_Ii_Sba_Aj_Ij;
+    Hij_medi[1] = Sba_Ai_Ii_Sab_Aj_Ij;
+
+    return Hij_medi;
+}
+
+
+
+/**
  * @brief Matrix expand to the whole Hilbert space
  * @details The matrix is expanded to the whole Hilbert space
  * @param[in] Pmats Spin operator vector for single spin
@@ -395,6 +505,16 @@ MatrixXcd* getPauliOperators(int mSize){
     return spinVector;
 }
 
+// Operator projection
+MatrixXcd projOperators(MatrixXcd* sigma, MatrixXcd psia, MatrixXcd psib){
+
+    MatrixXcd proj_sigma = MatrixXcd::Zero(3,1);
+    proj_sigma(0,0) = ((psia.transpose()) * sigma[1] * psib)(0,0); //Sab_x
+    proj_sigma(1,0) = ((psia.transpose()) * sigma[2] * psib)(0,0); //Sab_y
+    proj_sigma(2,0) = ((psia.transpose()) * sigma[3] * psib)(0,0); //Sab_z
+
+    return proj_sigma;
+}
 
 MatrixXcd* getGeneralPauliOperators(MatrixXcd alpha, MatrixXcd beta){
 

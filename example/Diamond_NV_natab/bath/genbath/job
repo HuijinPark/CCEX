@@ -30,7 +30,8 @@ insert=./POSCAR_NV
 
 SpatialConfig=${Destination}bath_${HostMat}_${SpinQubit}_${SpinBath}
 
-for i in $(seq 1 1 20)
+Config=1
+for i in $(seq 1 1 ${Config})
 do
 
 SpinQubitPos="0.5 0.5 0.5" 
@@ -42,7 +43,7 @@ wait
 
 ############################################################
 # Change file name
-for i in $(seq 1 1 20)
+for i in $(seq 1 1 ${Config})
 do
 
 mv ${SpatialConfig}_${i}_defect  ${SpatialConfig}_defect

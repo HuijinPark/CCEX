@@ -230,7 +230,22 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             break;
 
     }
+
+    
     ////////////////////////////////////////////////////////////////////////
+    if (rank==0){
+        printf("\n");
+        printMessage("  - Additional Hamiltonian-related keys :");
+        printMessage("    [ hfmedi, knight ] \n");
+    }
+
+    bool hfmediDefault = false;
+    bool hfmedi = cJSON_ReadBool(root,"hfmedi",true,hfmediDefault);
+    Config_setHfmedi(cnf, hfmedi);
+
+    bool knightDefault = false;
+    bool knight = cJSON_ReadBool(root,"knight",true,knightDefault);
+    Config_setKnight(cnf, knight);
 
     cJSON_Delete(root);    
     freeChar1d(&data);
@@ -248,10 +263,10 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         printMessage("  - Read values of main-key 'Qubit'");
         printMessage("    sub-key of 'Qubit' : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] \n");
         printMessage("  - Read values of sub-key 'qubit'");
-        printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] \n");
+        printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ] \n");
         printMessage("  - Read values of sub-key 'intmap'");
         printMessage("    sub-sub-key : [ between, tensor ] \n");
-        printMessage("  - Read values of main-key 'qubitfile', 'zfs', 'qspin', 'alphams', betams'");
+        printMessage("  - Read values of main-key 'qubitfile', 'qzfs', 'qspin', 'qalphams', qbetams'");
     }
 
     char* data = cJSON_ReadFccein(fccein);
@@ -306,8 +321,8 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_setQubit_i_spin(qa,spin,0);
 
         // set the qubit state (alpha, beta)
-        float alphams = cJSON_ReadFloat(root,"alphams",true,alphaMsDefault);
-        float betams = cJSON_ReadFloat(root,"betams",true,betaMsDefault);
+        float alphams = cJSON_ReadFloat(root,"qalphams",true,alphaMsDefault);
+        float betams = cJSON_ReadFloat(root,"qbetams",true,betaMsDefault);
         QubitArray_setQubit_i_alpha_fromMs(qa,alphams,0);
         QubitArray_setQubit_i_beta_fromMs(qa,betams,0);
 
@@ -320,8 +335,11 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_allocIntmap(qa);
 
         // read interaction map
-        // MatrixXcd tensor = cJSON_ReadTensor(root,"qzfs",true,intmapDefault);
-        // tensor = KHZ_TO_RADKHZ(tensor);
+        MatrixXcd tensor = cJSON_ReadTensor(root,"qzfs",true,intmapDefault);
+        tensor = KHZ_TO_RADKHZ(tensor);
+
+        // Set ZFS in qubit intmap 
+        QubitArray_setIntmap_i_j(qa,tensor,0,0); // qubit index:0,0
 
         // mediatedTerm IO
         cJSON_Delete(root);
