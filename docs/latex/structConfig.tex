@@ -67,6 +67,10 @@ char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structConfig_a93e5666a93192db9d
 \item 
 \Hypertarget{structConfig_a6a556f62f5419389fe87348bb7754746}\label{structConfig_a6a556f62f5419389fe87348bb7754746} 
 double {\bfseries qd\+\_\+cellpara} \mbox{[}3\mbox{]}
+\item 
+bool \mbox{\hyperlink{structConfig_aff67e82b8327ef5e798493c5c242400a}{hfmedi}}
+\item 
+bool \mbox{\hyperlink{structConfig_ae2f2e716dbfb2d45a02fee1a6b678db8}{knight}}
 \end{DoxyCompactItemize}
 
 
@@ -161,7 +165,19 @@ Read mode for hyperfine tensor file \+: 0 \+: off , 1\texorpdfstring{$\sim$}{\st
 {\footnotesize\ttfamily \label{structConfig_a52710072ec30b071e08c1b62f7450c0f} 
 char\texorpdfstring{$\ast$}{*} Config\+::hf\+\_\+tensorfile}
 
-Hyperfine tensor file name \Hypertarget{structConfig_a73d927bf5bdb0f39d024b23dc66f0c1c}\index{Config@{Config}!method@{method}}
+Hyperfine tensor file name \Hypertarget{structConfig_aff67e82b8327ef5e798493c5c242400a}\index{Config@{Config}!hfmedi@{hfmedi}}
+\index{hfmedi@{hfmedi}!Config@{Config}}
+\doxysubsubsection{\texorpdfstring{hfmedi}{hfmedi}}
+{\footnotesize\ttfamily \label{structConfig_aff67e82b8327ef5e798493c5c242400a} 
+bool Config\+::hfmedi}
+
+If true, we will add Hyperfine mediated term (Available only when you use CCE method), ref. N. Zhao, Nature Nanotechnology, 6, 242-\/246 (2011) (Supplementary) \Hypertarget{structConfig_ae2f2e716dbfb2d45a02fee1a6b678db8}\index{Config@{Config}!knight@{knight}}
+\index{knight@{knight}!Config@{Config}}
+\doxysubsubsection{\texorpdfstring{knight}{knight}}
+{\footnotesize\ttfamily \label{structConfig_ae2f2e716dbfb2d45a02fee1a6b678db8} 
+bool Config\+::knight}
+
+If true, we will add the knight-\/field effect induced by transverse magnetic field (Available only when you use CCE method), ref. N. Zhao, Nature Nanotechnology, 6, 242-\/246 (2011) (Supplementary) \Hypertarget{structConfig_a73d927bf5bdb0f39d024b23dc66f0c1c}\index{Config@{Config}!method@{method}}
 \index{method@{method}!Config@{Config}}
 \doxysubsubsection{\texorpdfstring{method}{method}}
 {\footnotesize\ttfamily \label{structConfig_a73d927bf5bdb0f39d024b23dc66f0c1c} 
@@ -277,4 +293,4 @@ State file
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/\+Users/huijin/\+Documents/\+Git\+Hub/\+CCEX/include/general.\+h\end{DoxyCompactItemize}
+/home/huijin/git/\+CCEX/include/general.\+h\end{DoxyCompactItemize}

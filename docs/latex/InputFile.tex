@@ -78,6 +78,12 @@ Tags in this section is about simulatation parameters such as file path, numeric
 \item \doxylink{InputFile_tag_cell_para}{cell\+\_\+para} ~\newline
 
 \item \doxylink{InputFile_tag_qd_tensorfile_woqubit}{qd\+\_\+tensorfile\+\_\+woqubit}
+\item hfmedi
+\item knight
+
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000025}{Todo}}]HJ hfmed and knight input tag information\end{DoxyRefDesc}
+
 \end{DoxyItemize}\hypertarget{InputFile_QubitArrayTags}{}\doxysection{\texorpdfstring{\protect\doxylink{structQubitArray}{Qubit-\/related tags}}{{Qubit-\/related tags}}}\label{InputFile_QubitArrayTags}
 This tags are used for adjusting \doxylink{structQubit}{Qubit} Hamiltonian and qubit inital state. The format is the following\+:
 
@@ -160,6 +166,10 @@ This tags are used for adjusting \doxylink{structQubit}{Qubit} Hamiltonian and q
 
 \begin{DoxyItemize}
 \item \doxylink{InputFile_tag_qubitfile}{qubitfile}
+\item \doxylink{InputFile_tag_qzfs}{qzfs}
+\item \doxylink{InputFile_tag_qspin}{qspin}
+\item \doxylink{InputFile_tag_qalphams}{qalphams}
+\item \doxylink{InputFile_tag_qbetams}{qbetams}
 \item \doxylink{InputFile_tag_Qubit}{Qubit}
 \item \doxylink{InputFile_tag_nqubit}{nqubit}
 \item \doxylink{InputFile_tag_qubit}{qubit}
@@ -298,7 +308,7 @@ This tags are used for adjusting paramagnetic defect bath information. The forma
 
 \label{InputFile_tag_method}%
 \Hypertarget{InputFile_tag_method}%
-\hypertarget{InputFile_autotoc_md10}{}\doxysubsection{\texorpdfstring{method}{method}}\label{InputFile_autotoc_md10}
+\hypertarget{InputFile_autotoc_md9}{}\doxysubsection{\texorpdfstring{method}{method}}\label{InputFile_autotoc_md9}
 {\bfseries{Description\+:}}~\newline
  CCE Methods to calculate the dynamics of the system.
 
@@ -340,7 +350,7 @@ You can specify this value via the "{}-\/m"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_quantity}%
 \Hypertarget{InputFile_tag_quantity}%
-\hypertarget{InputFile_autotoc_md11}{}\doxysubsection{\texorpdfstring{quantity}{quantity}}\label{InputFile_autotoc_md11}
+\hypertarget{InputFile_autotoc_md10}{}\doxysubsection{\texorpdfstring{quantity}{quantity}}\label{InputFile_autotoc_md10}
 {\bfseries{Description\+:}}~\newline
  Quantity to calculate the dynamics of the system.
 
@@ -380,7 +390,7 @@ You can specify this value via the "{}-\/q"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_order}%
 \Hypertarget{InputFile_tag_order}%
-\hypertarget{InputFile_autotoc_md12}{}\doxysubsection{\texorpdfstring{order}{order}}\label{InputFile_autotoc_md12}
+\hypertarget{InputFile_autotoc_md11}{}\doxysubsection{\texorpdfstring{order}{order}}\label{InputFile_autotoc_md11}
 {\bfseries{Description\+:}}~\newline
  Order of the CCE method.
 
@@ -399,7 +409,7 @@ You can specify this value via the "{}-\/q"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_bfield}%
 \Hypertarget{InputFile_tag_bfield}%
-\hypertarget{InputFile_autotoc_md13}{}\doxysubsection{\texorpdfstring{bfield}{bfield}}\label{InputFile_autotoc_md13}
+\hypertarget{InputFile_autotoc_md12}{}\doxysubsection{\texorpdfstring{bfield}{bfield}}\label{InputFile_autotoc_md12}
 {\bfseries{Description\+:}}~\newline
  Magnetic field.
 
@@ -432,7 +442,7 @@ You can specify a magnetic field along the z-\/axis via the "{}-\/\+B"{} command
 
 \label{InputFile_tag_rbath}%
 \Hypertarget{InputFile_tag_rbath}%
-\hypertarget{InputFile_autotoc_md14}{}\doxysubsection{\texorpdfstring{rbath}{rbath}}\label{InputFile_autotoc_md14}
+\hypertarget{InputFile_autotoc_md13}{}\doxysubsection{\texorpdfstring{rbath}{rbath}}\label{InputFile_autotoc_md13}
 {\bfseries{Description\+:}}~\newline
  Bath radius 
 
@@ -453,7 +463,7 @@ You can specify a magnetic field along the z-\/axis via the "{}-\/\+B"{} command
 
 \label{InputFile_tag_rdip}%
 \Hypertarget{InputFile_tag_rdip}%
-\hypertarget{InputFile_autotoc_md15}{}\doxysubsection{\texorpdfstring{rdip}{rdip}}\label{InputFile_autotoc_md15}
+\hypertarget{InputFile_autotoc_md14}{}\doxysubsection{\texorpdfstring{rdip}{rdip}}\label{InputFile_autotoc_md14}
 {\bfseries{Description\+:}}~\newline
  Dipolar radius 
 
@@ -474,7 +484,7 @@ You can specify a magnetic field along the z-\/axis via the "{}-\/\+B"{} command
 
 \label{InputFile_tag_deltat}%
 \Hypertarget{InputFile_tag_deltat}%
-\hypertarget{InputFile_autotoc_md16}{}\doxysubsection{\texorpdfstring{deltat}{deltat}}\label{InputFile_autotoc_md16}
+\hypertarget{InputFile_autotoc_md15}{}\doxysubsection{\texorpdfstring{deltat}{deltat}}\label{InputFile_autotoc_md15}
 {\bfseries{Description\+:}}~\newline
  Time interval. 
 
@@ -495,7 +505,7 @@ You can specify a magnetic field along the z-\/axis via the "{}-\/\+B"{} command
 
 \label{InputFile_tag_nstep}%
 \Hypertarget{InputFile_tag_nstep}%
-\hypertarget{InputFile_autotoc_md17}{}\doxysubsection{\texorpdfstring{nstep}{nstep}}\label{InputFile_autotoc_md17}
+\hypertarget{InputFile_autotoc_md16}{}\doxysubsection{\texorpdfstring{nstep}{nstep}}\label{InputFile_autotoc_md16}
 {\bfseries{Description\+:}}~\newline
  Number of time steps. 
 
@@ -514,7 +524,7 @@ You can specify a magnetic field along the z-\/axis via the "{}-\/\+B"{} command
 
 \label{InputFile_tag_rbathcut}%
 \Hypertarget{InputFile_tag_rbathcut}%
-\hypertarget{InputFile_autotoc_md18}{}\doxysubsection{\texorpdfstring{rbathcut}{rbathcut}}\label{InputFile_autotoc_md18}
+\hypertarget{InputFile_autotoc_md17}{}\doxysubsection{\texorpdfstring{rbathcut}{rbathcut}}\label{InputFile_autotoc_md17}
 {\bfseries{Description\+:}}~\newline
  Bath inner-\/cutoff radius. 
 
@@ -535,7 +545,7 @@ You can specify a magnetic field along the z-\/axis via the "{}-\/\+B"{} command
 
 \label{InputFile_tag_rdipcut}%
 \Hypertarget{InputFile_tag_rdipcut}%
-\hypertarget{InputFile_autotoc_md19}{}\doxysubsection{\texorpdfstring{rdipcut}{rdipcut}}\label{InputFile_autotoc_md19}
+\hypertarget{InputFile_autotoc_md18}{}\doxysubsection{\texorpdfstring{rdipcut}{rdipcut}}\label{InputFile_autotoc_md18}
 {\bfseries{Description\+:}}~\newline
  Dipolar inner-\/cutoff radius. 
 
@@ -556,7 +566,7 @@ You can specify a magnetic field along the z-\/axis via the "{}-\/\+B"{} command
 
 \label{InputFile_tag_nstate}%
 \Hypertarget{InputFile_tag_nstate}%
-\hypertarget{InputFile_autotoc_md20}{}\doxysubsection{\texorpdfstring{nstate}{nstate}}\label{InputFile_autotoc_md20}
+\hypertarget{InputFile_autotoc_md19}{}\doxysubsection{\texorpdfstring{nstate}{nstate}}\label{InputFile_autotoc_md19}
 {\bfseries{Description\+:}}~\newline
  Number of state templates to be generated. 
 
@@ -597,7 +607,7 @@ You can specify this value via the "{}-\/\+N"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_seed}%
 \Hypertarget{InputFile_tag_seed}%
-\hypertarget{InputFile_autotoc_md21}{}\doxysubsection{\texorpdfstring{seed}{seed}}\label{InputFile_autotoc_md21}
+\hypertarget{InputFile_autotoc_md20}{}\doxysubsection{\texorpdfstring{seed}{seed}}\label{InputFile_autotoc_md20}
 {\bfseries{Description\+:}}~\newline
  Seed for random number generator. ~\newline
  If you want to generate the same state templates, you should set the same seed value. 
@@ -619,7 +629,7 @@ You can specify this value via the "{}-\/\+N"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_qubitfile}%
 \Hypertarget{InputFile_tag_qubitfile}%
-\hypertarget{InputFile_autotoc_md22}{}\doxysubsection{\texorpdfstring{qubitfile}{qubitfile}}\label{InputFile_autotoc_md22}
+\hypertarget{InputFile_autotoc_md21}{}\doxysubsection{\texorpdfstring{qubitfile}{qubitfile}}\label{InputFile_autotoc_md21}
 {\bfseries{Description\+:}}~\newline
  File path of the qubit spatial configuration. ~\newline
  This tag is required when you use the qubit configuration file. ~\newline
@@ -655,7 +665,7 @@ You can specify this value via the "{}-\/\+N"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_gyrofile}%
 \Hypertarget{InputFile_tag_gyrofile}%
-\hypertarget{InputFile_autotoc_md23}{}\doxysubsection{\texorpdfstring{gyrofile}{gyrofile}}\label{InputFile_autotoc_md23}
+\hypertarget{InputFile_autotoc_md22}{}\doxysubsection{\texorpdfstring{gyrofile}{gyrofile}}\label{InputFile_autotoc_md22}
 {\bfseries{Description\+:}}~\newline
  File name including bath spin information, e.\+g. gyromagnetic ratio, spin number ~\newline
  
@@ -688,7 +698,7 @@ You can specify this value via the "{}-\/\+N"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_bathfile}%
 \Hypertarget{InputFile_tag_bathfile}%
-\hypertarget{InputFile_autotoc_md24}{}\doxysubsection{\texorpdfstring{bathfile}{bathfile}}\label{InputFile_autotoc_md24}
+\hypertarget{InputFile_autotoc_md23}{}\doxysubsection{\texorpdfstring{bathfile}{bathfile}}\label{InputFile_autotoc_md23}
 {\bfseries{Description\+:}}~\newline
  File name of the bath spatial configuration. ~\newline
  You can specify this value via the "{}-\/\+I"{} command-\/line option. ~\newline
@@ -730,7 +740,7 @@ You can specify this value via the "{}-\/\+N"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_bathadjust}%
 \Hypertarget{InputFile_tag_bathadjust}%
-\hypertarget{InputFile_autotoc_md25}{}\doxysubsection{\texorpdfstring{bathadjust}{bathadjust}}\label{InputFile_autotoc_md25}
+\hypertarget{InputFile_autotoc_md24}{}\doxysubsection{\texorpdfstring{bathadjust}{bathadjust}}\label{InputFile_autotoc_md24}
 {\bfseries{Description\+:}}~\newline
  Adjust the bath configuration. ~\newline
  If you want to adjust the bath configuration, you can set the bathadjust value. ~\newline
@@ -759,7 +769,7 @@ You can specify this value via the "{}-\/\+N"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_avaaxfile}%
 \Hypertarget{InputFile_tag_avaaxfile}%
-\hypertarget{InputFile_autotoc_md26}{}\doxysubsection{\texorpdfstring{avaaxfile}{avaaxfile}}\label{InputFile_autotoc_md26}
+\hypertarget{InputFile_autotoc_md25}{}\doxysubsection{\texorpdfstring{avaaxfile}{avaaxfile}}\label{InputFile_autotoc_md25}
 {\bfseries{Description\+:}}~\newline
  File path of the principal axis of the bath spin. ~\newline
  This tag might require during paramagnetic defect bath simulation. ~\newline
@@ -800,7 +810,7 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_statefile}%
 \Hypertarget{InputFile_tag_statefile}%
-\hypertarget{InputFile_autotoc_md27}{}\doxysubsection{\texorpdfstring{statefile}{statefile}}\label{InputFile_autotoc_md27}
+\hypertarget{InputFile_autotoc_md26}{}\doxysubsection{\texorpdfstring{statefile}{statefile}}\label{InputFile_autotoc_md26}
 {\bfseries{Description\+:}}~\newline
  File name of the bath state template. ~\newline
  This tag might require when you want to obtain the result for a certain set of initial bath state. ~\newline
@@ -841,7 +851,7 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_exstatefile}%
 \Hypertarget{InputFile_tag_exstatefile}%
-\hypertarget{InputFile_autotoc_md28}{}\doxysubsection{\texorpdfstring{exstatefile}{exstatefile}}\label{InputFile_autotoc_md28}
+\hypertarget{InputFile_autotoc_md27}{}\doxysubsection{\texorpdfstring{exstatefile}{exstatefile}}\label{InputFile_autotoc_md27}
 {\bfseries{Description\+:}}~\newline
  File name of the additional bath spin state template. ~\newline
  This tag might require when you want to calculate paramagnetic defect bath. ~\newline
@@ -883,7 +893,7 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_DefectTotSpin}%
 \Hypertarget{InputFile_tag_DefectTotSpin}%
-\hypertarget{InputFile_autotoc_md29}{}\doxysubsection{\texorpdfstring{Defect\+Tot\+Spin}{Defect\+Tot\+Spin}}\label{InputFile_autotoc_md29}
+\hypertarget{InputFile_autotoc_md28}{}\doxysubsection{\texorpdfstring{Defect\+Tot\+Spin}{Defect\+Tot\+Spin}}\label{InputFile_autotoc_md28}
 {\bfseries{Description\+:}}~\newline
  Total spin number of the qubit. ~\newline
  (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) ~\newline
@@ -906,7 +916,7 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_CorrTotSpin}%
 \Hypertarget{InputFile_tag_CorrTotSpin}%
-\hypertarget{InputFile_autotoc_md30}{}\doxysubsection{\texorpdfstring{Corr\+Tot\+Spin}{Corr\+Tot\+Spin}}\label{InputFile_autotoc_md30}
+\hypertarget{InputFile_autotoc_md29}{}\doxysubsection{\texorpdfstring{Corr\+Tot\+Spin}{Corr\+Tot\+Spin}}\label{InputFile_autotoc_md29}
 {\bfseries{Description\+:}}~\newline
  Spin number correction ~\newline
  (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) ~\newline
@@ -929,7 +939,7 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_hf_readmode}%
 \Hypertarget{InputFile_tag_hf_readmode}%
-\hypertarget{InputFile_autotoc_md31}{}\doxysubsection{\texorpdfstring{hf\+\_\+readmode}{hf\+\_\+readmode}}\label{InputFile_autotoc_md31}
+\hypertarget{InputFile_autotoc_md30}{}\doxysubsection{\texorpdfstring{hf\+\_\+readmode}{hf\+\_\+readmode}}\label{InputFile_autotoc_md30}
 {\bfseries{Description\+:}}~\newline
  Interaction tensor between qubit and bath spins can be determined by this option. ~\newline
  If you want to use the hyperfine tensor obtained from DFT calculation, you should set this option. ~\newline
@@ -969,7 +979,7 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_hf_tensorfile}%
 \Hypertarget{InputFile_tag_hf_tensorfile}%
-\hypertarget{InputFile_autotoc_md32}{}\doxysubsection{\texorpdfstring{hf\+\_\+tensorfile}{hf\+\_\+tensorfile}}\label{InputFile_autotoc_md32}
+\hypertarget{InputFile_autotoc_md31}{}\doxysubsection{\texorpdfstring{hf\+\_\+tensorfile}{hf\+\_\+tensorfile}}\label{InputFile_autotoc_md31}
 {\bfseries{Description\+:}}~\newline
  File name of the hyperfine tensor. ~\newline
  This tag is required when you use the hyperfine tensor obtained from DFT calculation. ~\newline
@@ -979,7 +989,7 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 \begin{DoxyPre}
     File format is the following :
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000025}{Todo}}]\textbackslash{}Ref other page
+\item[\mbox{\hyperlink{todo__todo000026}{Todo}}]\textbackslash{}Ref other page
 \end{DoxyRefDesc}
 \end{DoxyPre}
 
@@ -1001,11 +1011,11 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_hf_cutoff}%
 \Hypertarget{InputFile_tag_hf_cutoff}%
-\hypertarget{InputFile_autotoc_md33}{}\doxysubsection{\texorpdfstring{hf\+\_\+cutoff}{hf\+\_\+cutoff}}\label{InputFile_autotoc_md33}
+\hypertarget{InputFile_autotoc_md32}{}\doxysubsection{\texorpdfstring{hf\+\_\+cutoff}{hf\+\_\+cutoff}}\label{InputFile_autotoc_md32}
 {\bfseries{Description\+:}}~\newline
  Removed ~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000026}{Todo}}]JW \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000027}{Todo}}]JW \end{DoxyRefDesc}
 
 
 {\bfseries{Data Type\+:}} Double 
@@ -1025,9 +1035,9 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_hf_ignore_oor}%
 \Hypertarget{InputFile_tag_hf_ignore_oor}%
-\hypertarget{InputFile_autotoc_md34}{}\doxysubsection{\texorpdfstring{hf\+\_\+ignore\+\_\+oor}{hf\+\_\+ignore\+\_\+oor}}\label{InputFile_autotoc_md34}
+\hypertarget{InputFile_autotoc_md33}{}\doxysubsection{\texorpdfstring{hf\+\_\+ignore\+\_\+oor}{hf\+\_\+ignore\+\_\+oor}}\label{InputFile_autotoc_md33}
 \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000027}{Todo}}]JW \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000028}{Todo}}]JW \end{DoxyRefDesc}
 
 
 {\bfseries{Description\+:}}~\newline
@@ -1074,10 +1084,10 @@ You can specify this value via the "{}-\/a"{} command-\/line option. ~\newline
 
 \label{InputFile_tag_qd_readmode}%
 \Hypertarget{InputFile_tag_qd_readmode}%
-\hypertarget{InputFile_autotoc_md35}{}\doxysubsection{\texorpdfstring{qd\+\_\+readmode}{qd\+\_\+readmode}}\label{InputFile_autotoc_md35}
+\hypertarget{InputFile_autotoc_md34}{}\doxysubsection{\texorpdfstring{qd\+\_\+readmode}{qd\+\_\+readmode}}\label{InputFile_autotoc_md34}
 {\bfseries{Description\+:}}~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000028}{Todo}}]JW \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000029}{Todo}}]JW \end{DoxyRefDesc}
 
 
 Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
@@ -1122,7 +1132,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_qd_tensorfile}%
 \Hypertarget{InputFile_tag_qd_tensorfile}%
-\hypertarget{InputFile_autotoc_md36}{}\doxysubsection{\texorpdfstring{qd\+\_\+tensorfile}{qd\+\_\+tensorfile}}\label{InputFile_autotoc_md36}
+\hypertarget{InputFile_autotoc_md35}{}\doxysubsection{\texorpdfstring{qd\+\_\+tensorfile}{qd\+\_\+tensorfile}}\label{InputFile_autotoc_md35}
 {\bfseries{Description\+:}}~\newline
  File name of the quadrupole tensor. ~\newline
  This tag is required when you use the quadrupole tensor obtained from DFT calculation. ~\newline
@@ -1132,7 +1142,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 \begin{DoxyPre}
     File format is the following :
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000029}{Todo}}]\textbackslash{}Ref other page 
+\item[\mbox{\hyperlink{todo__todo000030}{Todo}}]\textbackslash{}Ref other page 
 \end{DoxyRefDesc}
 \end{DoxyPre}
  
@@ -1154,7 +1164,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_qd_tensorfile_woqubit}%
 \Hypertarget{InputFile_tag_qd_tensorfile_woqubit}%
-\hypertarget{InputFile_autotoc_md37}{}\doxysubsection{\texorpdfstring{qd\+\_\+tensorfile\+\_\+woqubit}{qd\+\_\+tensorfile\+\_\+woqubit}}\label{InputFile_autotoc_md37}
+\hypertarget{InputFile_autotoc_md36}{}\doxysubsection{\texorpdfstring{qd\+\_\+tensorfile\+\_\+woqubit}{qd\+\_\+tensorfile\+\_\+woqubit}}\label{InputFile_autotoc_md36}
 {\bfseries{Description\+:}}~\newline
  File name of the quadrupole tensor without qubit. ~\newline
  This would be useful for coherence simultion in the strained or bubble structure. ~\newline
@@ -1165,7 +1175,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 \begin{DoxyPre}
     File format is the following :
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000030}{Todo}}]\textbackslash{}Ref other page
+\item[\mbox{\hyperlink{todo__todo000031}{Todo}}]\textbackslash{}Ref other page
 \end{DoxyRefDesc}
 \end{DoxyPre}
  
@@ -1187,7 +1197,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_cell_para}%
 \Hypertarget{InputFile_tag_cell_para}%
-\hypertarget{InputFile_autotoc_md38}{}\doxysubsection{\texorpdfstring{cell\+\_\+para}{cell\+\_\+para}}\label{InputFile_autotoc_md38}
+\hypertarget{InputFile_autotoc_md37}{}\doxysubsection{\texorpdfstring{cell\+\_\+para}{cell\+\_\+para}}\label{InputFile_autotoc_md37}
 {\bfseries{Description\+:}}~\newline
  Lattice parameter of the strained or bubble structure. ~\newline
  This tag is required when you use the quadrupole tensor obtained from DFT calculation. ~\newline
@@ -1212,7 +1222,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_Qubit}%
 \Hypertarget{InputFile_tag_Qubit}%
-\hypertarget{InputFile_autotoc_md39}{}\doxysubsection{\texorpdfstring{Qubit}{Qubit}}\label{InputFile_autotoc_md39}
+\hypertarget{InputFile_autotoc_md38}{}\doxysubsection{\texorpdfstring{Qubit}{Qubit}}\label{InputFile_autotoc_md38}
 {\bfseries{Description\+:}}~\newline
  \doxylink{structQubit}{Qubit} information. ~\newline
  This tag is required to give the details of qubit information. ~\newline
@@ -1248,9 +1258,37 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 \item \doxylink{InputFile_tag_betaidx}{betaidx} 
 \end{DoxyItemize}
 
+\label{InputFile_tag_qzfs}%
+\Hypertarget{InputFile_tag_qzfs}%
+\hypertarget{InputFile_autotoc_md39}{}\doxysubsection{\texorpdfstring{qzfs}{qzfs}}\label{InputFile_autotoc_md39}
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000032}{Todo}}]HJ (Avail only when reading "{}qubitfile"{} tag) \end{DoxyRefDesc}
+
+
+\label{InputFile_tag_qspin}%
+\Hypertarget{InputFile_tag_qspin}%
+\hypertarget{InputFile_autotoc_md40}{}\doxysubsection{\texorpdfstring{qspin}{qspin}}\label{InputFile_autotoc_md40}
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000033}{Todo}}]HJ (Avail only when reading "{}qubitfile"{} tag) \end{DoxyRefDesc}
+
+
+\label{InputFile_tag_qalphams}%
+\Hypertarget{InputFile_tag_qalphams}%
+\hypertarget{InputFile_autotoc_md41}{}\doxysubsection{\texorpdfstring{qalphams}{qalphams}}\label{InputFile_autotoc_md41}
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000034}{Todo}}]HJ (Avail only when reading "{}qubitfile"{} tag) \end{DoxyRefDesc}
+
+
+\label{InputFile_tag_qbetams}%
+\Hypertarget{InputFile_tag_qbetams}%
+\hypertarget{InputFile_autotoc_md42}{}\doxysubsection{\texorpdfstring{qbetams}{qbetams}}\label{InputFile_autotoc_md42}
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000035}{Todo}}]HJ (Avail only when reading "{}qubitfile"{} tag) \end{DoxyRefDesc}
+
+
 \label{InputFile_tag_nqubit}%
 \Hypertarget{InputFile_tag_nqubit}%
-\hypertarget{InputFile_autotoc_md40}{}\doxysubsection{\texorpdfstring{nqubit}{nqubit}}\label{InputFile_autotoc_md40}
+\hypertarget{InputFile_autotoc_md43}{}\doxysubsection{\texorpdfstring{nqubit}{nqubit}}\label{InputFile_autotoc_md43}
 {\bfseries{Description\+:}}~\newline
  Number of qubits in the system. ~\newline
  The number of qubit information in tag \doxylink{InputFile_tag_Qubit}{Qubit} should be the same as this value. ~\newline
@@ -1271,7 +1309,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_qubit}%
 \Hypertarget{InputFile_tag_qubit}%
-\hypertarget{InputFile_autotoc_md41}{}\doxysubsection{\texorpdfstring{qubit}{qubit}}\label{InputFile_autotoc_md41}
+\hypertarget{InputFile_autotoc_md44}{}\doxysubsection{\texorpdfstring{qubit}{qubit}}\label{InputFile_autotoc_md44}
 {\bfseries{Description\+:}}~\newline
  \doxylink{structQubit}{Qubit} information details, e.\+g. qubit name, spin number, gyro magnetic ratio, etc.. ~\newline
  This tag is required to give the details of qubit information. ~\newline
@@ -1306,7 +1344,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_name}%
 \Hypertarget{InputFile_tag_name}%
-\hypertarget{InputFile_autotoc_md42}{}\doxysubsection{\texorpdfstring{name}{name}}\label{InputFile_autotoc_md42}
+\hypertarget{InputFile_autotoc_md45}{}\doxysubsection{\texorpdfstring{name}{name}}\label{InputFile_autotoc_md45}
 {\bfseries{Description\+:}}~\newline
  Name of the qubit. ~\newline
  
@@ -1328,7 +1366,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_spin}%
 \Hypertarget{InputFile_tag_spin}%
-\hypertarget{InputFile_autotoc_md43}{}\doxysubsection{\texorpdfstring{spin}{spin}}\label{InputFile_autotoc_md43}
+\hypertarget{InputFile_autotoc_md46}{}\doxysubsection{\texorpdfstring{spin}{spin}}\label{InputFile_autotoc_md46}
 {\bfseries{Description\+:}}~\newline
  Spin number of the qubit. ~\newline
  
@@ -1350,7 +1388,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_gyro}%
 \Hypertarget{InputFile_tag_gyro}%
-\hypertarget{InputFile_autotoc_md44}{}\doxysubsection{\texorpdfstring{gyro}{gyro}}\label{InputFile_autotoc_md44}
+\hypertarget{InputFile_autotoc_md47}{}\doxysubsection{\texorpdfstring{gyro}{gyro}}\label{InputFile_autotoc_md47}
 {\bfseries{Description\+:}}~\newline
  Gyromagnetic ratio of the qubit. ~\newline
  
@@ -1374,7 +1412,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_xyz}%
 \Hypertarget{InputFile_tag_xyz}%
-\hypertarget{InputFile_autotoc_md45}{}\doxysubsection{\texorpdfstring{xyz}{xyz}}\label{InputFile_autotoc_md45}
+\hypertarget{InputFile_autotoc_md48}{}\doxysubsection{\texorpdfstring{xyz}{xyz}}\label{InputFile_autotoc_md48}
 {\bfseries{Description\+:}}~\newline
  x,y,z position of the qubit in cartesian coordinates. ~\newline
  
@@ -1398,7 +1436,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_detuning}%
 \Hypertarget{InputFile_tag_detuning}%
-\hypertarget{InputFile_autotoc_md46}{}\doxysubsection{\texorpdfstring{detuning}{detuning}}\label{InputFile_autotoc_md46}
+\hypertarget{InputFile_autotoc_md49}{}\doxysubsection{\texorpdfstring{detuning}{detuning}}\label{InputFile_autotoc_md49}
 {\bfseries{Description\+:}}~\newline
  Detuning frequency of the qubit. ~\newline
  
@@ -1422,7 +1460,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_alphams}%
 \Hypertarget{InputFile_tag_alphams}%
-\hypertarget{InputFile_autotoc_md47}{}\doxysubsection{\texorpdfstring{alphams}{alphams}}\label{InputFile_autotoc_md47}
+\hypertarget{InputFile_autotoc_md50}{}\doxysubsection{\texorpdfstring{alphams}{alphams}}\label{InputFile_autotoc_md50}
 {\bfseries{Description\+:}}~\newline
  Alpha state of the qubit. ~\newline
  Represents one of the effective spin states of the qubit. ~\newline
@@ -1449,7 +1487,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_betams}%
 \Hypertarget{InputFile_tag_betams}%
-\hypertarget{InputFile_autotoc_md48}{}\doxysubsection{\texorpdfstring{betams}{betams}}\label{InputFile_autotoc_md48}
+\hypertarget{InputFile_autotoc_md51}{}\doxysubsection{\texorpdfstring{betams}{betams}}\label{InputFile_autotoc_md51}
 {\bfseries{Description\+:}}~\newline
  Beta state of the qubit. ~\newline
  One of the effective spin states of the qubit. ~\newline
@@ -1476,13 +1514,15 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_intmap}%
 \Hypertarget{InputFile_tag_intmap}%
-\hypertarget{InputFile_autotoc_md49}{}\doxysubsection{\texorpdfstring{intmap}{intmap}}\label{InputFile_autotoc_md49}
+\hypertarget{InputFile_autotoc_md52}{}\doxysubsection{\texorpdfstring{intmap}{intmap}}\label{InputFile_autotoc_md52}
 {\bfseries{Description\+:}}~\newline
  Interaction map between qubits. ~\newline
  This tag is required to define the interaction map between qubits, including its self interaction (e.\+g. Zero-\/field splitting). ~\newline
  
 
 {\bfseries{Data Type\+:}} Dictionary List 
+
+{\bfseries{Unit\+:}} k\+Hz 
 
 {\bfseries{Default\+:}} -\/ 
 
@@ -1509,7 +1549,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_between}%
 \Hypertarget{InputFile_tag_between}%
-\hypertarget{InputFile_autotoc_md50}{}\doxysubsection{\texorpdfstring{between}{between}}\label{InputFile_autotoc_md50}
+\hypertarget{InputFile_autotoc_md53}{}\doxysubsection{\texorpdfstring{between}{between}}\label{InputFile_autotoc_md53}
 {\bfseries{Description\+:}}~\newline
  Names of an interacting qubit pair. ~\newline
  This tag is required to define the interaction map for a specific qubit pair. ~\newline
@@ -1535,7 +1575,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_tensor}%
 \Hypertarget{InputFile_tag_tensor}%
-\hypertarget{InputFile_autotoc_md51}{}\doxysubsection{\texorpdfstring{tensor}{tensor}}\label{InputFile_autotoc_md51}
+\hypertarget{InputFile_autotoc_md54}{}\doxysubsection{\texorpdfstring{tensor}{tensor}}\label{InputFile_autotoc_md54}
 {\bfseries{Description\+:}}~\newline
  Interaction tensor. ~\newline
  This tag is required to define the interaction tensor for a specific qubit pair. ~\newline
@@ -1563,7 +1603,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_psia}%
 \Hypertarget{InputFile_tag_psia}%
-\hypertarget{InputFile_autotoc_md52}{}\doxysubsection{\texorpdfstring{psia}{psia}}\label{InputFile_autotoc_md52}
+\hypertarget{InputFile_autotoc_md55}{}\doxysubsection{\texorpdfstring{psia}{psia}}\label{InputFile_autotoc_md55}
 {\bfseries{Description\+:}}~\newline
  Alpha state of the qubit in matrix representation.~\newline
  One of the effective spin states of the qubit in matrix representation, simbol \+: \texorpdfstring{$\vert$}{|}alpha⟩ . ~\newline
@@ -1589,7 +1629,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_psib}%
 \Hypertarget{InputFile_tag_psib}%
-\hypertarget{InputFile_autotoc_md53}{}\doxysubsection{\texorpdfstring{psib}{psib}}\label{InputFile_autotoc_md53}
+\hypertarget{InputFile_autotoc_md56}{}\doxysubsection{\texorpdfstring{psib}{psib}}\label{InputFile_autotoc_md56}
 {\bfseries{Description\+:}}~\newline
  Beta state of the qubit in matrix representation. ~\newline
  One of the effective spin states of the qubit in matrix representation, simbol \+: \texorpdfstring{$\vert$}{|}beta⟩ . ~\newline
@@ -1615,7 +1655,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_psi0}%
 \Hypertarget{InputFile_tag_psi0}%
-\hypertarget{InputFile_autotoc_md54}{}\doxysubsection{\texorpdfstring{psi0}{psi0}}\label{InputFile_autotoc_md54}
+\hypertarget{InputFile_autotoc_md57}{}\doxysubsection{\texorpdfstring{psi0}{psi0}}\label{InputFile_autotoc_md57}
 {\bfseries{Description\+:}}~\newline
  Initial state of the qubit in matrix representation, symbol\+: \texorpdfstring{$\vert$}{|}psi0⟩ ~\newline
  This tag is used to define a specific initial state of the qubit. ~\newline
@@ -1639,7 +1679,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_overhaus}%
 \Hypertarget{InputFile_tag_overhaus}%
-\hypertarget{InputFile_autotoc_md55}{}\doxysubsection{\texorpdfstring{overhaus}{overhaus}}\label{InputFile_autotoc_md55}
+\hypertarget{InputFile_autotoc_md58}{}\doxysubsection{\texorpdfstring{overhaus}{overhaus}}\label{InputFile_autotoc_md58}
 {\bfseries{Description\+:}}~\newline
  Overhauser field of the qubit. ~\newline
  This tag is required to compute spin dynamics including the Overhauser field of the qubit. ~\newline
@@ -1662,7 +1702,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_alphaidx}%
 \Hypertarget{InputFile_tag_alphaidx}%
-\hypertarget{InputFile_autotoc_md56}{}\doxysubsection{\texorpdfstring{alphaidx}{alphaidx}}\label{InputFile_autotoc_md56}
+\hypertarget{InputFile_autotoc_md59}{}\doxysubsection{\texorpdfstring{alphaidx}{alphaidx}}\label{InputFile_autotoc_md59}
 {\bfseries{Description\+:}}~\newline
  Alpha state of the qubit. (Adiabatic state of the qubit system) ~\newline
  Use this tag to assign the eigenvector of the diagonalized qubit Hamiltonian as the initial qubit state. ~\newline
@@ -1689,7 +1729,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_betaidx}%
 \Hypertarget{InputFile_tag_betaidx}%
-\hypertarget{InputFile_autotoc_md57}{}\doxysubsection{\texorpdfstring{betaidx}{betaidx}}\label{InputFile_autotoc_md57}
+\hypertarget{InputFile_autotoc_md60}{}\doxysubsection{\texorpdfstring{betaidx}{betaidx}}\label{InputFile_autotoc_md60}
 {\bfseries{Description\+:}}~\newline
  Beta state of the qubit. (Adiabatic state of the qubit system) ~\newline
  Use this tag to assign the eigenvector of the diagonalized qubit Hamiltonian as the initial qubit state. ~\newline
@@ -1716,7 +1756,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_addsubclus}%
 \Hypertarget{InputFile_tag_addsubclus}%
-\hypertarget{InputFile_autotoc_md58}{}\doxysubsection{\texorpdfstring{addsubclus}{addsubclus}}\label{InputFile_autotoc_md58}
+\hypertarget{InputFile_autotoc_md61}{}\doxysubsection{\texorpdfstring{addsubclus}{addsubclus}}\label{InputFile_autotoc_md61}
 {\bfseries{Description\+:}}~\newline
  For CCE simulations with order ≥ 3, enabling this option allows all sub-\/clusters of the highest order to be included. ~\newline
  This leads to more stable and robust results, and may also reduce computation time. ~\newline
@@ -1737,7 +1777,7 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_nk}%
 \Hypertarget{InputFile_tag_nk}%
-\hypertarget{InputFile_autotoc_md59}{}\doxysubsection{\texorpdfstring{nk}{nk}}\label{InputFile_autotoc_md59}
+\hypertarget{InputFile_autotoc_md62}{}\doxysubsection{\texorpdfstring{nk}{nk}}\label{InputFile_autotoc_md62}
 {\bfseries{Description\+:}}~\newline
  Number of clusters for each CCE order. ~\newline
  This is useful for CCE simulations with order ≥ 3, leading tons of clusters ~\newline
@@ -1759,58 +1799,58 @@ Quadrupole interaction tensor of bath spins can be set by this option. ~\newline
 
 \label{InputFile_tag_sK}%
 \Hypertarget{InputFile_tag_sK}%
-\hypertarget{InputFile_autotoc_md60}{}\doxysubsection{\texorpdfstring{sK}{sK}}\label{InputFile_autotoc_md60}
+\hypertarget{InputFile_autotoc_md63}{}\doxysubsection{\texorpdfstring{sK}{sK}}\label{InputFile_autotoc_md63}
 {\bfseries{Description\+:}}~\newline
  Removed ~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000031}{Todo}}]Hyeonsu \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000036}{Todo}}]Hyeonsu \end{DoxyRefDesc}
 
 
 \label{InputFile_tag_max_trial}%
 \Hypertarget{InputFile_tag_max_trial}%
-\hypertarget{InputFile_autotoc_md61}{}\doxysubsection{\texorpdfstring{max\+\_\+trial}{max\+\_\+trial}}\label{InputFile_autotoc_md61}
+\hypertarget{InputFile_autotoc_md64}{}\doxysubsection{\texorpdfstring{max\+\_\+trial}{max\+\_\+trial}}\label{InputFile_autotoc_md64}
 {\bfseries{Description\+:}}~\newline
  Removed ~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000032}{Todo}}]Hyeonsu \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000037}{Todo}}]Hyeonsu \end{DoxyRefDesc}
 
 
 \label{InputFile_tag_max_iter}%
 \Hypertarget{InputFile_tag_max_iter}%
-\hypertarget{InputFile_autotoc_md62}{}\doxysubsection{\texorpdfstring{max\+\_\+iter}{max\+\_\+iter}}\label{InputFile_autotoc_md62}
+\hypertarget{InputFile_autotoc_md65}{}\doxysubsection{\texorpdfstring{max\+\_\+iter}{max\+\_\+iter}}\label{InputFile_autotoc_md65}
 {\bfseries{Description\+:}}~\newline
  Removed ~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000033}{Todo}}]Hyeonsu \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000038}{Todo}}]Hyeonsu \end{DoxyRefDesc}
 
 
 \label{InputFile_tag_kmeans_pp}%
 \Hypertarget{InputFile_tag_kmeans_pp}%
-\hypertarget{InputFile_autotoc_md63}{}\doxysubsection{\texorpdfstring{kmeans\+\_\+pp}{kmeans\+\_\+pp}}\label{InputFile_autotoc_md63}
+\hypertarget{InputFile_autotoc_md66}{}\doxysubsection{\texorpdfstring{kmeans\+\_\+pp}{kmeans\+\_\+pp}}\label{InputFile_autotoc_md66}
 {\bfseries{Description\+:}}~\newline
  Removed ~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000034}{Todo}}]Hyeonsu \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000039}{Todo}}]Hyeonsu \end{DoxyRefDesc}
 
 
 \label{InputFile_tag_iter_detail}%
 \Hypertarget{InputFile_tag_iter_detail}%
-\hypertarget{InputFile_autotoc_md64}{}\doxysubsection{\texorpdfstring{iter\+\_\+detail}{iter\+\_\+detail}}\label{InputFile_autotoc_md64}
+\hypertarget{InputFile_autotoc_md67}{}\doxysubsection{\texorpdfstring{iter\+\_\+detail}{iter\+\_\+detail}}\label{InputFile_autotoc_md67}
 {\bfseries{Description\+:}}~\newline
  Removed ~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000035}{Todo}}]Hyeonsu \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000040}{Todo}}]Hyeonsu \end{DoxyRefDesc}
 
 
 \label{InputFile_tag_npulse}%
 \Hypertarget{InputFile_tag_npulse}%
-\hypertarget{InputFile_autotoc_md65}{}\doxysubsection{\texorpdfstring{npulse}{npulse}}\label{InputFile_autotoc_md65}
+\hypertarget{InputFile_autotoc_md68}{}\doxysubsection{\texorpdfstring{npulse}{npulse}}\label{InputFile_autotoc_md68}
 {\bfseries{Description\+:}}~\newline
  Number of pulses in the pulse sequence. ~\newline
  This tag is required to define the number of pulses in the pulse sequence. ~\newline
  Removed ~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000036}{Todo}}]Hyeonsu \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000041}{Todo}}]Hyeonsu \end{DoxyRefDesc}
 
 
 Hahn\+Echo ? CPMG? Ramsey? when?
@@ -1830,17 +1870,17 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_pulsename}%
 \Hypertarget{InputFile_tag_pulsename}%
-\hypertarget{InputFile_autotoc_md66}{}\doxysubsection{\texorpdfstring{pulsename}{pulsename}}\label{InputFile_autotoc_md66}
+\hypertarget{InputFile_autotoc_md69}{}\doxysubsection{\texorpdfstring{pulsename}{pulsename}}\label{InputFile_autotoc_md69}
 {\bfseries{Description\+:}}~\newline
  Name of the pulse sequence. ~\newline
  Removed ~\newline
  \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000037}{Todo}}]Hyeonsu \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000042}{Todo}}]Hyeonsu \end{DoxyRefDesc}
 
 
 \label{InputFile_tag_Defect}%
 \Hypertarget{InputFile_tag_Defect}%
-\hypertarget{InputFile_autotoc_md67}{}\doxysubsection{\texorpdfstring{Defect}{Defect}}\label{InputFile_autotoc_md67}
+\hypertarget{InputFile_autotoc_md70}{}\doxysubsection{\texorpdfstring{Defect}{Defect}}\label{InputFile_autotoc_md70}
 {\bfseries{Description\+:}}~\newline
  Detailed information of paramagnetic (PM) defect bath can be provided by this tag. 
 
@@ -1879,7 +1919,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_dfname}%
 \Hypertarget{InputFile_tag_df_dfname}%
-\hypertarget{InputFile_autotoc_md68}{}\doxysubsection{\texorpdfstring{dfname}{dfname}}\label{InputFile_autotoc_md68}
+\hypertarget{InputFile_autotoc_md71}{}\doxysubsection{\texorpdfstring{dfname}{dfname}}\label{InputFile_autotoc_md71}
 {\bfseries{Description\+:}}~\newline
  Name of the paramagnetic defect. ~\newline
  
@@ -1901,7 +1941,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_apprx}%
 \Hypertarget{InputFile_tag_df_apprx}%
-\hypertarget{InputFile_autotoc_md69}{}\doxysubsection{\texorpdfstring{apprx}{apprx}}\label{InputFile_autotoc_md69}
+\hypertarget{InputFile_autotoc_md72}{}\doxysubsection{\texorpdfstring{apprx}{apprx}}\label{InputFile_autotoc_md72}
 {\bfseries{Description\+:}}~\newline
  If {\ttfamily apprx} is set to {\ttfamily false}, the electron and nuclear spins of the paramagnetic defect are clusterized separately. ~\newline
  This corresponds to a conventional CCE simulation for all spins. ~\newline
@@ -1926,7 +1966,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_naddspin}%
 \Hypertarget{InputFile_tag_df_naddspin}%
-\hypertarget{InputFile_autotoc_md70}{}\doxysubsection{\texorpdfstring{naddspin}{naddspin}}\label{InputFile_autotoc_md70}
+\hypertarget{InputFile_autotoc_md73}{}\doxysubsection{\texorpdfstring{naddspin}{naddspin}}\label{InputFile_autotoc_md73}
 {\bfseries{Description\+:}}~\newline
  Number of on-\/site nuclear spins of the paramagnetic defect. ~\newline
  
@@ -1948,7 +1988,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_navaax}%
 \Hypertarget{InputFile_tag_df_navaax}%
-\hypertarget{InputFile_autotoc_md71}{}\doxysubsection{\texorpdfstring{navaax}{navaax}}\label{InputFile_autotoc_md71}
+\hypertarget{InputFile_autotoc_md74}{}\doxysubsection{\texorpdfstring{navaax}{navaax}}\label{InputFile_autotoc_md74}
 {\bfseries{Description\+:}}~\newline
  Number of possible principal axes of the paramagnetic defect. ~\newline
  
@@ -1970,7 +2010,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_types}%
 \Hypertarget{InputFile_tag_df_types}%
-\hypertarget{InputFile_autotoc_md72}{}\doxysubsection{\texorpdfstring{types}{types}}\label{InputFile_autotoc_md72}
+\hypertarget{InputFile_autotoc_md75}{}\doxysubsection{\texorpdfstring{types}{types}}\label{InputFile_autotoc_md75}
 {\bfseries{Description\+:}}~\newline
  Name of on-\/site nuclear spins of the paramagnetic defect. ~\newline
  The number of types should be the same as naddspin. ~\newline
@@ -1993,7 +2033,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_spins}%
 \Hypertarget{InputFile_tag_df_spins}%
-\hypertarget{InputFile_autotoc_md73}{}\doxysubsection{\texorpdfstring{spins}{spins}}\label{InputFile_autotoc_md73}
+\hypertarget{InputFile_autotoc_md76}{}\doxysubsection{\texorpdfstring{spins}{spins}}\label{InputFile_autotoc_md76}
 {\bfseries{Description\+:}}~\newline
  Spin numbers of the on-\/site nuclear spins of the paramagnetic defect. ~\newline
  The number of spins should be the same as naddspin. ~\newline
@@ -2016,7 +2056,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_gyros}%
 \Hypertarget{InputFile_tag_df_gyros}%
-\hypertarget{InputFile_autotoc_md74}{}\doxysubsection{\texorpdfstring{gyros}{gyros}}\label{InputFile_autotoc_md74}
+\hypertarget{InputFile_autotoc_md77}{}\doxysubsection{\texorpdfstring{gyros}{gyros}}\label{InputFile_autotoc_md77}
 {\bfseries{Description\+:}}~\newline
  Gyromagnetic ratio of the on-\/site nuclear spins of the paramagnetic defect. ~\newline
  The number of gyros should be the same as naddspin. ~\newline
@@ -2041,7 +2081,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_eqs}%
 \Hypertarget{InputFile_tag_df_eqs}%
-\hypertarget{InputFile_autotoc_md75}{}\doxysubsection{\texorpdfstring{eqs}{eqs}}\label{InputFile_autotoc_md75}
+\hypertarget{InputFile_autotoc_md78}{}\doxysubsection{\texorpdfstring{eqs}{eqs}}\label{InputFile_autotoc_md78}
 {\bfseries{Description\+:}}~\newline
  Quadrupole moment (eQ) values of the on-\/site nuclear spins of the paramagnetic defect. ~\newline
  The number of eQ values should be the same as naddspin. ~\newline
@@ -2066,7 +2106,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_rxyzs}%
 \Hypertarget{InputFile_tag_df_rxyzs}%
-\hypertarget{InputFile_autotoc_md76}{}\doxysubsection{\texorpdfstring{rxyzs}{rxyzs}}\label{InputFile_autotoc_md76}
+\hypertarget{InputFile_autotoc_md79}{}\doxysubsection{\texorpdfstring{rxyzs}{rxyzs}}\label{InputFile_autotoc_md79}
 {\bfseries{Description\+:}}~\newline
  Relative x,y,z position of on-\/site nuclear spins of the paramagnetic defect over the electron spin position. ~\newline
  The number of {\ttfamily rxyzs} should be the same as "{} naddspin x navaax "{} ~\newline
@@ -2092,7 +2132,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_hypf}%
 \Hypertarget{InputFile_tag_df_hypf}%
-\hypertarget{InputFile_autotoc_md77}{}\doxysubsection{\texorpdfstring{hypf}{hypf}}\label{InputFile_autotoc_md77}
+\hypertarget{InputFile_autotoc_md80}{}\doxysubsection{\texorpdfstring{hypf}{hypf}}\label{InputFile_autotoc_md80}
 {\bfseries{Description\+:}}~\newline
  The hyperfine interaction between on-\/site nuclear spins and the electron spin associated with a paramagnetic defect. ~\newline
  The number of {\ttfamily hypf} should be the same as "{} naddspin x navaax "{} ~\newline
@@ -2118,7 +2158,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_efg}%
 \Hypertarget{InputFile_tag_df_efg}%
-\hypertarget{InputFile_autotoc_md78}{}\doxysubsection{\texorpdfstring{efg}{efg}}\label{InputFile_autotoc_md78}
+\hypertarget{InputFile_autotoc_md81}{}\doxysubsection{\texorpdfstring{efg}{efg}}\label{InputFile_autotoc_md81}
 {\bfseries{Description\+:}}~\newline
  The electric field gradient tensors of the paramagnetic defect. ~\newline
  The number of {\ttfamily efg} should be the same as "{} naddspin x navaax "{} ~\newline
@@ -2144,7 +2184,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_zfs}%
 \Hypertarget{InputFile_tag_df_zfs}%
-\hypertarget{InputFile_autotoc_md79}{}\doxysubsection{\texorpdfstring{zfs}{zfs}}\label{InputFile_autotoc_md79}
+\hypertarget{InputFile_autotoc_md82}{}\doxysubsection{\texorpdfstring{zfs}{zfs}}\label{InputFile_autotoc_md82}
 {\bfseries{Description\+:}}~\newline
  The zero-\/field splitting tensors of the electron spin associated with a paramagnetic defect. ~\newline
  The number of {\ttfamily zfs} should be the same as "{} navaax "{} ~\newline
@@ -2170,7 +2210,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_df_detuning}%
 \Hypertarget{InputFile_tag_df_detuning}%
-\hypertarget{InputFile_autotoc_md80}{}\doxysubsection{\texorpdfstring{detuning}{detuning}}\label{InputFile_autotoc_md80}
+\hypertarget{InputFile_autotoc_md83}{}\doxysubsection{\texorpdfstring{detuning}{detuning}}\label{InputFile_autotoc_md83}
 {\bfseries{Description\+:}}~\newline
  Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. ~\newline
  The number of {\ttfamily detuning} should be the same as "{} navaax "{} ~\newline
@@ -2200,7 +2240,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_savemode}%
 \Hypertarget{InputFile_tag_savemode}%
-\hypertarget{InputFile_autotoc_md81}{}\doxysubsection{\texorpdfstring{savemode}{savemode}}\label{InputFile_autotoc_md81}
+\hypertarget{InputFile_autotoc_md84}{}\doxysubsection{\texorpdfstring{savemode}{savemode}}\label{InputFile_autotoc_md84}
 {\bfseries{Description\+:}}~\newline
  The output file can be saved in different ways. ~\newline
  
@@ -2232,7 +2272,7 @@ Hahn\+Echo ? CPMG? Ramsey? when?
 
 \label{InputFile_tag_outfile}%
 \Hypertarget{InputFile_tag_outfile}%
-\hypertarget{InputFile_autotoc_md82}{}\doxysubsection{\texorpdfstring{outfile}{outfile}}\label{InputFile_autotoc_md82}
+\hypertarget{InputFile_autotoc_md85}{}\doxysubsection{\texorpdfstring{outfile}{outfile}}\label{InputFile_autotoc_md85}
 {\bfseries{Description\+:}}~\newline
  \doxylink{structOutput}{Output} file name prefix. ~\newline
  "{}outfile\+\_\+...\+\_\+wi\+Div"{} is the final result of the coherence function. ~\newline

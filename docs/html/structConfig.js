@@ -15,6 +15,8 @@ var structConfig =
     [ "hf_ignore_oor", "structConfig.html#a840b086fb6ef148cea4e370967da30e9", null ],
     [ "hf_readmode", "structConfig.html#a3d4d5a3943f20928bdce09e64fa4bb37", null ],
     [ "hf_tensorfile", "structConfig.html#a52710072ec30b071e08c1b62f7450c0f", null ],
+    [ "hfmedi", "structConfig.html#aff67e82b8327ef5e798493c5c242400a", null ],
+    [ "knight", "structConfig.html#ae2f2e716dbfb2d45a02fee1a6b678db8", null ],
     [ "method", "structConfig.html#a73d927bf5bdb0f39d024b23dc66f0c1c", null ],
     [ "nbathfiles", "structConfig.html#a26827d7c075042372d21965a827328c3", null ],
     [ "nstate", "structConfig.html#a91b2aadf805896022127036ded259e79", null ],

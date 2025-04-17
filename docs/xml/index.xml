@@ -87,6 +87,8 @@
     <member refid="structConfig_1a91d5741035098807bc28000a003bd35d" kind="variable"><name>qd_tensorfile</name></member>
     <member refid="structConfig_1a93e5666a93192db9d1cd361381d64301" kind="variable"><name>qd_tensorfile_woqubit</name></member>
     <member refid="structConfig_1a6a556f62f5419389fe87348bb7754746" kind="variable"><name>qd_cellpara</name></member>
+    <member refid="structConfig_1aff67e82b8327ef5e798493c5c242400a" kind="variable"><name>hfmedi</name></member>
+    <member refid="structConfig_1ae2f2e716dbfb2d45a02fee1a6b678db8" kind="variable"><name>knight</name></member>
   </compound>
   <compound refid="structDefect" kind="struct"><name>Defect</name>
     <member refid="structDefect_1a146e7e006db29d11dc4ebfffe07f7ba2" kind="variable"><name>dfname</name></member>
@@ -548,6 +550,8 @@
     <member refid="general_8h_1ad24a756574403ec0e96dfc4bd962fd41" kind="function"><name>Config_getQd_tensorfile_woqubit</name></member>
     <member refid="general_8h_1a8fc20bc7e520e082e7488bded57d3a79" kind="function"><name>Config_getQd_cellpara</name></member>
     <member refid="general_8h_1a947cc191b3c46ae83aee0b5df9d4c25d" kind="function"><name>Config_getQd_readmode</name></member>
+    <member refid="general_8h_1a38f85c235a2a3ba6122c7ffc79c5c5ee" kind="function"><name>Config_getHfmedi</name></member>
+    <member refid="general_8h_1a4c9da385d4351cd74c7059d88cd66ada" kind="function"><name>Config_getKnight</name></member>
     <member refid="general_8h_1ab9d6cd3b59f7e86eb5db0c0e1761afd6" kind="function"><name>Config_setMethod</name></member>
     <member refid="general_8h_1aca116ace81e102559a4078672b2f28de" kind="function"><name>Config_setQuantity</name></member>
     <member refid="general_8h_1a3a81366c127f7ca59ac042d30f0db2b7" kind="function"><name>Config_setOrder</name></member>
@@ -581,6 +585,8 @@
     <member refid="general_8h_1aae28dfc886b8d2c1ad9e9446482e6a82" kind="function"><name>Config_setQd_tensorfile_woqubit</name></member>
     <member refid="general_8h_1a23394467ea3fce27338a44df9114202b" kind="function"><name>Config_setQd_readmode</name></member>
     <member refid="general_8h_1a65b06bf8a151cf5d0dc23954809dc10e" kind="function"><name>Config_setQd_cellpara</name></member>
+    <member refid="general_8h_1a833d20dd8e84add98f663ca20ee12371" kind="function"><name>Config_setHfmedi</name></member>
+    <member refid="general_8h_1af5f13c61663c64a9dc0dae5533c52a27" kind="function"><name>Config_setKnight</name></member>
     <member refid="general_8h_1a3099481301694e3b583126dd01f6b41b" kind="function"><name>Config_allocBathfiles</name></member>
     <member refid="general_8h_1a90cdf1474df25d6ff81db496cd9f391c" kind="function"><name>Config_reallocBathfiles</name></member>
     <member refid="general_8h_1a730db6d0643d20643ebf2b5466248383" kind="function"><name>Config_allocBathadjust</name></member>
@@ -614,11 +620,13 @@
     <member refid="hamiltonian_8h_1adac30a826d9f0385f1a0929c89a2669d" kind="function"><name>Pauli_matrix_Z</name></member>
     <member refid="hamiltonian_8h_1ab9ca9aa49f6dbc6edd908713fd96031d" kind="function"><name>getGeneralPauliOperators</name></member>
     <member refid="hamiltonian_8h_1a863b5a4361112b8d205b852810e022b7" kind="function"><name>getPauliOperators</name></member>
+    <member refid="hamiltonian_8h_1a556426c71c1effcb25fbe707b07383ff" kind="function"><name>projOperators</name></member>
     <member refid="hamiltonian_8h_1acff04356cf31a922d9bdfe2ec68bba41" kind="function"><name>calZeemanVector</name></member>
     <member refid="hamiltonian_8h_1ab515e2dc05fdd7f2524c9aee6e4d15ec" kind="function"><name>calDetuningVector</name></member>
     <member refid="hamiltonian_8h_1a282204e16abcfff12f7edac731610754" kind="function"><name>calOverhauserVector</name></member>
     <member refid="hamiltonian_8h_1a593082ae4bd73c95fcc0cc8fe363c286" kind="function"><name>calPointDipoleTensor</name></member>
     <member refid="hamiltonian_8h_1a1a44d89897af7cc84d1d5ef126e3198d" kind="function"><name>calHamiltonianHeteroInt</name></member>
+    <member refid="hamiltonian_8h_1a83144f26fc60444903a820ad638e130c" kind="function"><name>calHamiltonianHeteroInt_o2</name></member>
     <member refid="hamiltonian_8h_1abe11bc189bce1ee541497230b5b5ae91" kind="function"><name>calHamiltonianSelfInt</name></member>
     <member refid="hamiltonian_8h_1a9e4b5942cc2603bf186ba957859173d8" kind="function"><name>calHamiltonianSingleInt</name></member>
     <member refid="hamiltonian_8h_1adfea46d311e2e68e70ca00cda8cda30a" kind="function"><name>expandHamiltonian</name></member>
@@ -944,6 +952,9 @@
     <member refid="simulator_8h_1a875ebff295b343d5541a6825ed8695dd" kind="function"><name>HamilBath</name></member>
     <member refid="simulator_8h_1aa6dda483876a7c31131690da87cfb780" kind="function"><name>HamilQubitBath</name></member>
     <member refid="simulator_8h_1a7981db3eed9183d026cf5fb1cc418627" kind="function"><name>HamilQubitBathSecularApp</name></member>
+    <member refid="simulator_8h_1a216497f3063cb347f0c3f015e1575d2c" kind="function"><name>gatherSigmas</name></member>
+    <member refid="simulator_8h_1a2a023c7e82d0cebae361a42da74807ab" kind="function"><name>gatherSigmas_singlequbit</name></member>
+    <member refid="simulator_8h_1a199fe96f01a4b0f030664e3ac9f9a3d6" kind="function"><name>close_state_index</name></member>
   </compound>
   <compound refid="utilities_8h" kind="file"><name>utilities.h</name>
     <member refid="utilities_8h_1a5bd13fea2d52009d82048504cb75e7c1" kind="define"><name>EIGEN_USE_MKL_ALL</name></member>
@@ -1021,8 +1032,6 @@
     <member refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" kind="function"><name>main</name></member>
   </compound>
   <compound refid="README_8md" kind="file"><name>README.md</name>
-  </compound>
-  <compound refid="README__ori_8md" kind="file"><name>README_ori.md</name>
   </compound>
   <compound refid="bath_8cpp" kind="file"><name>bath.cpp</name>
     <member refid="bath_8cpp_1a81c020b081e36f936880d8faa4290237" kind="function"><name>BathArray_setBathHypfs</name></member>
@@ -1350,6 +1359,8 @@
     <member refid="general_8cpp_1a92f338595217914f0f1b0632f227c7c5" kind="function"><name>Config_freeQd_tensorfile</name></member>
     <member refid="general_8cpp_1a94cee11059dfe6e41e761a6e04cddc64" kind="function"><name>Config_freeQd_tensorfile_woqubit</name></member>
     <member refid="general_8cpp_1af2582e1736114eafbb3f3186648f56ac" kind="function"><name>Config_getMethod</name></member>
+    <member refid="general_8cpp_1a38f85c235a2a3ba6122c7ffc79c5c5ee" kind="function"><name>Config_getHfmedi</name></member>
+    <member refid="general_8cpp_1a4c9da385d4351cd74c7059d88cd66ada" kind="function"><name>Config_getKnight</name></member>
     <member refid="general_8cpp_1a3c6838bb64200b8e674db31171bd5c56" kind="function"><name>Config_getQuantity</name></member>
     <member refid="general_8cpp_1a51c0628befb8b712ab22b2c7cd6f80ec" kind="function"><name>Config_getOrder</name></member>
     <member refid="general_8cpp_1a3cf4cfc0c4f682e9f286e2864a9c86bf" kind="function"><name>Config_getBfield</name></member>
@@ -1415,6 +1426,8 @@
     <member refid="general_8cpp_1aae28dfc886b8d2c1ad9e9446482e6a82" kind="function"><name>Config_setQd_tensorfile_woqubit</name></member>
     <member refid="general_8cpp_1a65b06bf8a151cf5d0dc23954809dc10e" kind="function"><name>Config_setQd_cellpara</name></member>
     <member refid="general_8cpp_1a23394467ea3fce27338a44df9114202b" kind="function"><name>Config_setQd_readmode</name></member>
+    <member refid="general_8cpp_1a833d20dd8e84add98f663ca20ee12371" kind="function"><name>Config_setHfmedi</name></member>
+    <member refid="general_8cpp_1af5f13c61663c64a9dc0dae5533c52a27" kind="function"><name>Config_setKnight</name></member>
     <member refid="general_8cpp_1a7d73746c56f3baa112a558892d0a03e0" kind="function"><name>Config_report</name></member>
   </compound>
   <compound refid="hamiltonian_8cpp" kind="file"><name>hamiltonian.cpp</name>
@@ -1425,6 +1438,7 @@
     <member refid="hamiltonian_8cpp_1ac61f445f70273e155b293146b14f3ef4" kind="function"><name>calOverhauserVector</name></member>
     <member refid="hamiltonian_8cpp_1a593082ae4bd73c95fcc0cc8fe363c286" kind="function"><name>calPointDipoleTensor</name></member>
     <member refid="hamiltonian_8cpp_1a8baa0a43066e9b9fab882da88b2d5112" kind="function"><name>calHamiltonianHeteroInt</name></member>
+    <member refid="hamiltonian_8cpp_1a83144f26fc60444903a820ad638e130c" kind="function"><name>calHamiltonianHeteroInt_o2</name></member>
     <member refid="hamiltonian_8cpp_1abab6619363786d624f0af5926220452c" kind="function"><name>expandHamiltonian</name></member>
     <member refid="hamiltonian_8cpp_1ace01f359a59ec2f0b51cb651f294f42f" kind="function"><name>calHamiltonianSingleInt</name></member>
     <member refid="hamiltonian_8cpp_1a392abac36087441c4997bab087572a15" kind="function"><name>calHamiltonianSelfInt</name></member>
@@ -1433,6 +1447,7 @@
     <member refid="hamiltonian_8cpp_1af46df9390cf168654ad3dbde8246a7a4" kind="function"><name>Pauli_matrix_Y</name></member>
     <member refid="hamiltonian_8cpp_1a4b924b2c4193ea814dfa9c3daaef6313" kind="function"><name>Pauli_matrix_Z</name></member>
     <member refid="hamiltonian_8cpp_1a0badc3ee65bb3eaafc0a6dd0e91cb492" kind="function"><name>getPauliOperators</name></member>
+    <member refid="hamiltonian_8cpp_1a556426c71c1effcb25fbe707b07383ff" kind="function"><name>projOperators</name></member>
     <member refid="hamiltonian_8cpp_1ab9ca9aa49f6dbc6edd908713fd96031d" kind="function"><name>getGeneralPauliOperators</name></member>
     <member refid="hamiltonian_8cpp_1aef74b90578d55af688bb0f5623a0a18a" kind="function"><name>isInvolutory</name></member>
     <member refid="hamiltonian_8cpp_1ac9c76932926b82821bf0a3b8f854ef78" kind="function"><name>isSame</name></member>
@@ -1912,6 +1927,9 @@
     <member refid="simulator__hamiltonian_8cpp_1a875ebff295b343d5541a6825ed8695dd" kind="function"><name>HamilBath</name></member>
     <member refid="simulator__hamiltonian_8cpp_1aa6dda483876a7c31131690da87cfb780" kind="function"><name>HamilQubitBath</name></member>
     <member refid="simulator__hamiltonian_8cpp_1a7981db3eed9183d026cf5fb1cc418627" kind="function"><name>HamilQubitBathSecularApp</name></member>
+    <member refid="simulator__hamiltonian_8cpp_1a216497f3063cb347f0c3f015e1575d2c" kind="function"><name>gatherSigmas</name></member>
+    <member refid="simulator__hamiltonian_8cpp_1a2a023c7e82d0cebae361a42da74807ab" kind="function"><name>gatherSigmas_singlequbit</name></member>
+    <member refid="simulator__hamiltonian_8cpp_1a199fe96f01a4b0f030664e3ac9f9a3d6" kind="function"><name>close_state_index</name></member>
   </compound>
   <compound refid="utilities_8cpp" kind="file"><name>utilities.cpp</name>
     <member refid="utilities_8cpp_1a9c7f009c4cdeea19fb03a6062b19ba4a" kind="function"><name>Double1dToMatrixXcd</name></member>
@@ -1962,8 +1980,6 @@
     <member refid="utilities_8cpp_1aeb93e25e95d089d3e1c79baf4a71b594" kind="function"><name>printBanner</name></member>
     <member refid="utilities_8cpp_1a0d20b69b0ad703df78459e1033d5c1d4" kind="function"><name>printHelp</name></member>
   </compound>
-  <compound refid="md__2Users_2huijin_2Documents_2GitHub_2CCEX_2README__ori" kind="page"><name>md__2Users_2huijin_2Documents_2GitHub_2CCEX_2README__ori</name>
-  </compound>
   <compound refid="Examples" kind="page"><name>Examples</name>
   </compound>
   <compound refid="GettingStarted" kind="page"><name>GettingStarted</name>
@@ -1972,9 +1988,9 @@
   </compound>
   <compound refid="todo" kind="page"><name>todo</name>
   </compound>
-  <compound refid="dir_d44c64559bbebec7f509842c48db8b23" kind="dir"><name>/Users/huijin/Documents/GitHub/CCEX/include</name>
+  <compound refid="dir_d44c64559bbebec7f509842c48db8b23" kind="dir"><name>/home/huijin/git/CCEX/include</name>
   </compound>
-  <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>/Users/huijin/Documents/GitHub/CCEX/src</name>
+  <compound refid="dir_68267d1309a1af8e8297ef4c3efbcdba" kind="dir"><name>/home/huijin/git/CCEX/src</name>
   </compound>
   <compound refid="indexpage" kind="page"><name>index</name>
   </compound>

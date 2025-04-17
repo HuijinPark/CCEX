@@ -81,6 +81,10 @@
 </listitem><listitem><para><ref refid="InputFile_1tag_cell_para" kindref="member">cell_para</ref> <linebreak/>
 </para>
 </listitem><listitem><para><ref refid="InputFile_1tag_qd_tensorfile_woqubit" kindref="member">qd_tensorfile_woqubit</ref></para>
+</listitem><listitem><para>hfmedi</para>
+</listitem><listitem><para>knight</para>
+<para><xrefsect id="todo_1_todo000025"><xreftitle>Todo</xreftitle><xrefdescription><para>HJ hfmed and knight input tag information</para>
+</xrefdescription></xrefsect></para>
 </listitem></itemizedlist>
 </para>
 </sect1>
@@ -147,6 +151,10 @@
 </details></para>
 <para><itemizedlist>
 <listitem><para><ref refid="InputFile_1tag_qubitfile" kindref="member">qubitfile</ref></para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qzfs" kindref="member">qzfs</ref></para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qspin" kindref="member">qspin</ref></para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qalphams" kindref="member">qalphams</ref></para>
+</listitem><listitem><para><ref refid="InputFile_1tag_qbetams" kindref="member">qbetams</ref></para>
 </listitem><listitem><para><ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref></para>
 </listitem><listitem><para><ref refid="InputFile_1tag_nqubit" kindref="member">nqubit</ref></para>
 </listitem><listitem><para><ref refid="InputFile_1tag_qubit" kindref="member">qubit</ref></para>
@@ -281,7 +289,7 @@
 </listitem></itemizedlist>
 </para>
 <para><anchor id="InputFile_1tag_method"/></para>
-<sect2 id="InputFile_1autotoc_md10">
+<sect2 id="InputFile_1autotoc_md9">
 <title>method</title><para><bold>Description:</bold><linebreak/>
  CCE Methods to calculate the dynamics of the system.</para>
 <para>You can specify this value via the &quot;-m&quot; command-line option. <linebreak/>
@@ -324,7 +332,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" kindref="member">Config::order</ref> </para>
 <para><anchor id="InputFile_1tag_quantity"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md11">
+<sect2 id="InputFile_1autotoc_md10">
 <title>quantity</title><para><bold>Description:</bold><linebreak/>
  Quantity to calculate the dynamics of the system.</para>
 <para>You can specify this value via the &quot;-q&quot; command-line option. <linebreak/>
@@ -352,7 +360,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a408cf9618ed41aefd0b0c323f57e0730" kindref="member">Config::quantity</ref> </para>
 <para><anchor id="InputFile_1tag_order"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md12">
+<sect2 id="InputFile_1autotoc_md11">
 <title>order</title><para><bold>Description:</bold><linebreak/>
  Order of the CCE method.</para>
 <para><bold>Data Type:</bold> Integer</para>
@@ -362,7 +370,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" kindref="member">Config::order</ref> </para>
 <para><anchor id="InputFile_1tag_bfield"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md13">
+<sect2 id="InputFile_1autotoc_md12">
 <title>bfield</title><para><bold>Description:</bold><linebreak/>
  Magnetic field.</para>
 <para>You can specify a magnetic field along the z-axis via the &quot;-B&quot; command-line option. <linebreak/>
@@ -378,7 +386,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1abf4c62b17ba762512fab9da0f1e193be" kindref="member">Config::bfield</ref> </para>
 <para><anchor id="InputFile_1tag_rbath"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md14">
+<sect2 id="InputFile_1autotoc_md13">
 <title>rbath</title><para><bold>Description:</bold><linebreak/>
  Bath radius </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -389,7 +397,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a79389333cffeb4063cf1d39e89234c57" kindref="member">Config::rbath</ref> </para>
 <para><anchor id="InputFile_1tag_rdip"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md15">
+<sect2 id="InputFile_1autotoc_md14">
 <title>rdip</title><para><bold>Description:</bold><linebreak/>
  Dipolar radius </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -400,7 +408,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1af9d5e3a3b185555cbe04ad12733612b1" kindref="member">Config::rdip</ref> </para>
 <para><anchor id="InputFile_1tag_deltat"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md16">
+<sect2 id="InputFile_1autotoc_md15">
 <title>deltat</title><para><bold>Description:</bold><linebreak/>
  Time interval. </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -411,7 +419,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a6539de558079f55df76dce79c4079b33" kindref="member">Config::deltat</ref> </para>
 <para><anchor id="InputFile_1tag_nstep"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md17">
+<sect2 id="InputFile_1autotoc_md16">
 <title>nstep</title><para><bold>Description:</bold><linebreak/>
  Number of time steps. </para>
 <para><bold>Data Type:</bold> Integer</para>
@@ -421,7 +429,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1acd1675410784e93a9c9866de0c64807e" kindref="member">Config::nstep</ref> </para>
 <para><anchor id="InputFile_1tag_rbathcut"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md18">
+<sect2 id="InputFile_1autotoc_md17">
 <title>rbathcut</title><para><bold>Description:</bold><linebreak/>
  Bath inner-cutoff radius. </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -432,7 +440,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a2eeef76fa44792c24c3320ff6b4d19c8" kindref="member">Config::rbathcut</ref> </para>
 <para><anchor id="InputFile_1tag_rdipcut"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md19">
+<sect2 id="InputFile_1autotoc_md18">
 <title>rdipcut</title><para><bold>Description:</bold><linebreak/>
  Dipolar inner-cutoff radius. </para>
 <para><bold>Data Type:</bold> Float</para>
@@ -443,7 +451,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a39b6cf20220772b2326ddf423bf3a3f7" kindref="member">Config::rdipcut</ref> </para>
 <para><anchor id="InputFile_1tag_nstate"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md20">
+<sect2 id="InputFile_1autotoc_md19">
 <title>nstate</title><para><bold>Description:</bold><linebreak/>
  Number of state templates to be generated. </para>
 <para>You can specify this value via the &quot;-N&quot; command-line option. <linebreak/>
@@ -472,7 +480,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a91b2aadf805896022127036ded259e79" kindref="member">Config::nstate</ref> </para>
 <para><anchor id="InputFile_1tag_seed"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md21">
+<sect2 id="InputFile_1autotoc_md20">
 <title>seed</title><para><bold>Description:</bold><linebreak/>
  Seed for random number generator. <linebreak/>
  If you want to generate the same state templates, you should set the same seed value. </para>
@@ -484,7 +492,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a92ed038fd7676ed62640f59270a60545" kindref="member">Config::seed</ref> </para>
 <para><anchor id="InputFile_1tag_qubitfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md22">
+<sect2 id="InputFile_1autotoc_md21">
 <title>qubitfile</title><para><bold>Description:</bold><linebreak/>
  File path of the qubit spatial configuration. <linebreak/>
  This tag is required when you use the qubit configuration file. <linebreak/>
@@ -505,7 +513,7 @@
 <para><bold>Related Tags:</bold> <ref refid="InputFile_1QubitArrayTags" kindref="member"><ref refid="structQubitArray" kindref="compound">Qubit-related tags</ref></ref> </para>
 <para><anchor id="InputFile_1tag_gyrofile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md23">
+<sect2 id="InputFile_1autotoc_md22">
 <title>gyrofile</title><para><bold>Description:</bold><linebreak/>
  File name including bath spin information, e.g. gyromagnetic ratio, spin number <linebreak/>
  </para>
@@ -524,7 +532,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a735f7f25b0847d08468616025a27ffe5" kindref="member">Config::gyrofile</ref> </para>
 <para><anchor id="InputFile_1tag_bathfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md24">
+<sect2 id="InputFile_1autotoc_md23">
 <title>bathfile</title><para><bold>Description:</bold><linebreak/>
  File name of the bath spatial configuration. <linebreak/>
  You can specify this value via the &quot;-I&quot; command-line option. <linebreak/>
@@ -547,7 +555,7 @@
 <para><bold>Related variable:</bold> Config::bathfile </para>
 <para><anchor id="InputFile_1tag_bathadjust"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md25">
+<sect2 id="InputFile_1autotoc_md24">
 <title>bathadjust</title><para><bold>Description:</bold><linebreak/>
  Adjust the bath configuration. <linebreak/>
  If you want to adjust the bath configuration, you can set the bathadjust value. <linebreak/>
@@ -562,7 +570,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a1ce641fcaac86656dde150e974ff5ff7" kindref="member">Config::bathadjust</ref> </para>
 <para><anchor id="InputFile_1tag_avaaxfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md26">
+<sect2 id="InputFile_1autotoc_md25">
 <title>avaaxfile</title><para><bold>Description:</bold><linebreak/>
  File path of the principal axis of the bath spin. <linebreak/>
  This tag might require during paramagnetic defect bath simulation. <linebreak/>
@@ -588,7 +596,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1ae3244e507716ae5483bb32a2e4fef809" kindref="member">Config::avaaxfile</ref> </para>
 <para><anchor id="InputFile_1tag_statefile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md27">
+<sect2 id="InputFile_1autotoc_md26">
 <title>statefile</title><para><bold>Description:</bold><linebreak/>
  File name of the bath state template. <linebreak/>
  This tag might require when you want to obtain the result for a certain set of initial bath state. <linebreak/>
@@ -614,7 +622,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a7ce40e0c9e172e7b2e213101b154760b" kindref="member">Config::statefile</ref> </para>
 <para><anchor id="InputFile_1tag_exstatefile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md28">
+<sect2 id="InputFile_1autotoc_md27">
 <title>exstatefile</title><para><bold>Description:</bold><linebreak/>
  File name of the additional bath spin state template. <linebreak/>
  This tag might require when you want to calculate paramagnetic defect bath. <linebreak/>
@@ -641,7 +649,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a70ec8756f364dc3d40201f951476137e" kindref="member">Config::exstatefile</ref> </para>
 <para><anchor id="InputFile_1tag_DefectTotSpin"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md29">
+<sect2 id="InputFile_1autotoc_md28">
 <title>DefectTotSpin</title><para><bold>Description:</bold><linebreak/>
  Total spin number of the qubit. <linebreak/>
  (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <linebreak/>
@@ -654,7 +662,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a716389cd405e9c041cd3ac7c7608ccdd" kindref="member">Config::DefectTotSpin</ref> </para>
 <para><anchor id="InputFile_1tag_CorrTotSpin"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md30">
+<sect2 id="InputFile_1autotoc_md29">
 <title>CorrTotSpin</title><para><bold>Description:</bold><linebreak/>
  Spin number correction <linebreak/>
  (Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <linebreak/>
@@ -667,7 +675,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1ac923676eaaf0a911eb890ee419c2b8e6" kindref="member">Config::CorrTotSpin</ref> </para>
 <para><anchor id="InputFile_1tag_hf_readmode"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md31">
+<sect2 id="InputFile_1autotoc_md30">
 <title>hf_readmode</title><para><bold>Description:</bold><linebreak/>
  Interaction tensor between qubit and bath spins can be determined by this option. <linebreak/>
  If you want to use the hyperfine tensor obtained from DFT calculation, you should set this option. <linebreak/>
@@ -703,14 +711,14 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a3d4d5a3943f20928bdce09e64fa4bb37" kindref="member">Config::hf_readmode</ref> </para>
 <para><anchor id="InputFile_1tag_hf_tensorfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md32">
+<sect2 id="InputFile_1autotoc_md31">
 <title>hf_tensorfile</title><para><bold>Description:</bold><linebreak/>
  File name of the hyperfine tensor. <linebreak/>
  This tag is required when you use the hyperfine tensor obtained from DFT calculation. <linebreak/>
  </para>
 <para><preformatted>
     File format is the following :
- <xrefsect id="todo_1_todo000025"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page
+ <xrefsect id="todo_1_todo000026"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page
 </para>
 </xrefdescription></xrefsect></preformatted></para>
 <para><bold>Data Type:</bold> String (File path) </para>
@@ -721,10 +729,10 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a52710072ec30b071e08c1b62f7450c0f" kindref="member">Config::hf_tensorfile</ref> </para>
 <para><anchor id="InputFile_1tag_hf_cutoff"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md33">
+<sect2 id="InputFile_1autotoc_md32">
 <title>hf_cutoff</title><para><bold>Description:</bold><linebreak/>
  Removed <linebreak/>
- <xrefsect id="todo_1_todo000026"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
+ <xrefsect id="todo_1_todo000027"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
 </xrefdescription></xrefsect></para>
 <para><bold>Data Type:</bold> Double </para>
 <para><bold>Default:</bold> 0.0 </para>
@@ -734,8 +742,8 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1af82a9ccd3b05247db3da179361faef85" kindref="member">Config::hf_cutoff</ref> </para>
 <para><anchor id="InputFile_1tag_hf_ignore_oor"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md34">
-<title>hf_ignore_oor</title><para><xrefsect id="todo_1_todo000027"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
+<sect2 id="InputFile_1autotoc_md33">
+<title>hf_ignore_oor</title><para><xrefsect id="todo_1_todo000028"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
 </xrefdescription></xrefsect></para>
 <para><bold>Description:</bold><linebreak/>
  Even if the bath spin is within the specified range set in the hyperfine tensor, <linebreak/>
@@ -766,9 +774,9 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a840b086fb6ef148cea4e370967da30e9" kindref="member">Config::hf_ignore_oor</ref> </para>
 <para><anchor id="InputFile_1tag_qd_readmode"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md35">
+<sect2 id="InputFile_1autotoc_md34">
 <title>qd_readmode</title><para><bold>Description:</bold><linebreak/>
- <xrefsect id="todo_1_todo000028"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
+ <xrefsect id="todo_1_todo000029"><xreftitle>Todo</xreftitle><xrefdescription><para>JW </para>
 </xrefdescription></xrefsect></para>
 <para>Quadrupole interaction tensor of bath spins can be set by this option. <linebreak/>
  If you want to use the Quadrupole tensor obtained from DFT calculation, you should set this option. <linebreak/>
@@ -811,14 +819,14 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1adc1119b46a95084ddd4c7bfa2a8d50d9" kindref="member">Config::qd_readmode</ref> </para>
 <para><anchor id="InputFile_1tag_qd_tensorfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md36">
+<sect2 id="InputFile_1autotoc_md35">
 <title>qd_tensorfile</title><para><bold>Description:</bold><linebreak/>
  File name of the quadrupole tensor. <linebreak/>
  This tag is required when you use the quadrupole tensor obtained from DFT calculation. <linebreak/>
  </para>
 <para><preformatted>
     File format is the following :
- <xrefsect id="todo_1_todo000029"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page 
+ <xrefsect id="todo_1_todo000030"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page 
 </para>
 </xrefdescription></xrefsect></preformatted> </para>
 <para><bold>Data Type:</bold> String (File path) </para>
@@ -829,7 +837,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a91d5741035098807bc28000a003bd35d" kindref="member">Config::qd_tensorfile</ref> </para>
 <para><anchor id="InputFile_1tag_qd_tensorfile_woqubit"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md37">
+<sect2 id="InputFile_1autotoc_md36">
 <title>qd_tensorfile_woqubit</title><para><bold>Description:</bold><linebreak/>
  File name of the quadrupole tensor without qubit. <linebreak/>
  This would be useful for coherence simultion in the strained or bubble structure. <linebreak/>
@@ -837,7 +845,7 @@
  </para>
 <para><preformatted>
     File format is the following :
- <xrefsect id="todo_1_todo000030"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page
+ <xrefsect id="todo_1_todo000031"><xreftitle>Todo</xreftitle><xrefdescription><para>\Ref other page
 </para>
 </xrefdescription></xrefsect></preformatted> </para>
 <para><bold>Data Type:</bold> String (File path) </para>
@@ -848,7 +856,7 @@
 <para><bold>Related variable:</bold> <ref refid="structConfig_1a93e5666a93192db9d1cd361381d64301" kindref="member">Config::qd_tensorfile_woqubit</ref> </para>
 <para><anchor id="InputFile_1tag_cell_para"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md38">
+<sect2 id="InputFile_1autotoc_md37">
 <title>cell_para</title><para><bold>Description:</bold><linebreak/>
  Lattice parameter of the strained or bubble structure. <linebreak/>
  This tag is required when you use the quadrupole tensor obtained from DFT calculation. <linebreak/>
@@ -862,7 +870,7 @@
 <para><bold>Related variable:</bold> Config::cell_para </para>
 <para><anchor id="InputFile_1tag_Qubit"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md39">
+<sect2 id="InputFile_1autotoc_md38">
 <title>Qubit</title><para><bold>Description:</bold><linebreak/>
  <ref refid="structQubit" kindref="compound">Qubit</ref> information. <linebreak/>
  This tag is required to give the details of qubit information. <linebreak/>
@@ -887,9 +895,29 @@
 </listitem><listitem><para><ref refid="InputFile_1tag_betaidx" kindref="member">betaidx</ref> </para>
 </listitem></itemizedlist>
 </para>
-<para><anchor id="InputFile_1tag_nqubit"/></para>
+<para><anchor id="InputFile_1tag_qzfs"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md39">
+<title>qzfs</title><para><xrefsect id="todo_1_todo000032"><xreftitle>Todo</xreftitle><xrefdescription><para>HJ (Avail only when reading &quot;qubitfile&quot; tag) </para>
+</xrefdescription></xrefsect></para>
+<para><anchor id="InputFile_1tag_qspin"/></para>
 </sect2>
 <sect2 id="InputFile_1autotoc_md40">
+<title>qspin</title><para><xrefsect id="todo_1_todo000033"><xreftitle>Todo</xreftitle><xrefdescription><para>HJ (Avail only when reading &quot;qubitfile&quot; tag) </para>
+</xrefdescription></xrefsect></para>
+<para><anchor id="InputFile_1tag_qalphams"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md41">
+<title>qalphams</title><para><xrefsect id="todo_1_todo000034"><xreftitle>Todo</xreftitle><xrefdescription><para>HJ (Avail only when reading &quot;qubitfile&quot; tag) </para>
+</xrefdescription></xrefsect></para>
+<para><anchor id="InputFile_1tag_qbetams"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md42">
+<title>qbetams</title><para><xrefsect id="todo_1_todo000035"><xreftitle>Todo</xreftitle><xrefdescription><para>HJ (Avail only when reading &quot;qubitfile&quot; tag) </para>
+</xrefdescription></xrefsect></para>
+<para><anchor id="InputFile_1tag_nqubit"/></para>
+</sect2>
+<sect2 id="InputFile_1autotoc_md43">
 <title>nqubit</title><para><bold>Description:</bold><linebreak/>
  Number of qubits in the system. <linebreak/>
  The number of qubit information in tag <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> should be the same as this value. <linebreak/>
@@ -901,7 +929,7 @@
 <para><bold>Related variable:</bold> <ref refid="structQubitArray_1ac87a8cdf149336447fe601f59c7ff371" kindref="member">QubitArray::nqubit</ref> </para>
 <para><anchor id="InputFile_1tag_qubit"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md41">
+<sect2 id="InputFile_1autotoc_md44">
 <title>qubit</title><para><bold>Description:</bold><linebreak/>
  <ref refid="structQubit" kindref="compound">Qubit</ref> information details, e.g. qubit name, spin number, gyro magnetic ratio, etc.. <linebreak/>
  This tag is required to give the details of qubit information. <linebreak/>
@@ -925,7 +953,7 @@
 </para>
 <para><anchor id="InputFile_1tag_name"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md42">
+<sect2 id="InputFile_1autotoc_md45">
 <title>name</title><para><bold>Description:</bold><linebreak/>
  Name of the qubit. <linebreak/>
  </para>
@@ -937,7 +965,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_spin"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md43">
+<sect2 id="InputFile_1autotoc_md46">
 <title>spin</title><para><bold>Description:</bold><linebreak/>
  Spin number of the qubit. <linebreak/>
  </para>
@@ -949,7 +977,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_gyro"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md44">
+<sect2 id="InputFile_1autotoc_md47">
 <title>gyro</title><para><bold>Description:</bold><linebreak/>
  Gyromagnetic ratio of the qubit. <linebreak/>
  </para>
@@ -962,7 +990,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_xyz"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md45">
+<sect2 id="InputFile_1autotoc_md48">
 <title>xyz</title><para><bold>Description:</bold><linebreak/>
  x,y,z position of the qubit in cartesian coordinates. <linebreak/>
  </para>
@@ -975,7 +1003,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_detuning"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md46">
+<sect2 id="InputFile_1autotoc_md49">
 <title>detuning</title><para><bold>Description:</bold><linebreak/>
  Detuning frequency of the qubit. <linebreak/>
  </para>
@@ -988,7 +1016,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_alphams"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md47">
+<sect2 id="InputFile_1autotoc_md50">
 <title>alphams</title><para><bold>Description:</bold><linebreak/>
  Alpha state of the qubit. <linebreak/>
  Represents one of the effective spin states of the qubit. <linebreak/>
@@ -1004,7 +1032,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_betams"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md48">
+<sect2 id="InputFile_1autotoc_md51">
 <title>betams</title><para><bold>Description:</bold><linebreak/>
  Beta state of the qubit. <linebreak/>
  One of the effective spin states of the qubit. <linebreak/>
@@ -1020,12 +1048,13 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_intmap"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md49">
+<sect2 id="InputFile_1autotoc_md52">
 <title>intmap</title><para><bold>Description:</bold><linebreak/>
  Interaction map between qubits. <linebreak/>
  This tag is required to define the interaction map between qubits, including its self interaction (e.g. Zero-field splitting). <linebreak/>
  </para>
 <para><bold>Data Type:</bold> Dictionary List </para>
+<para><bold>Unit:</bold> kHz </para>
 <para><bold>Default:</bold> - </para>
 <para><bold>Example:</bold> <programlisting><codeline><highlight class="normal">intmap<sp/>:<sp/>[<sp/>{<sp/></highlight><highlight class="stringliteral">&quot;between&quot;</highlight><highlight class="normal"><sp/>:<sp/>[</highlight><highlight class="stringliteral">&quot;q1&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;q1&quot;</highlight><highlight class="normal">],</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;tensor&quot;</highlight><highlight class="normal"><sp/><sp/>:<sp/>[[0.0,<sp/>0.0,<sp/>0.0],</highlight></codeline>
@@ -1042,7 +1071,7 @@
 </para>
 <para><anchor id="InputFile_1tag_between"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md50">
+<sect2 id="InputFile_1autotoc_md53">
 <title>between</title><para><bold>Description:</bold><linebreak/>
  Names of an interacting qubit pair. <linebreak/>
  This tag is required to define the interaction map for a specific qubit pair. <linebreak/>
@@ -1057,7 +1086,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_intmap" kindref="member">intmap</ref> </para>
 <para><anchor id="InputFile_1tag_tensor"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md51">
+<sect2 id="InputFile_1autotoc_md54">
 <title>tensor</title><para><bold>Description:</bold><linebreak/>
  Interaction tensor. <linebreak/>
  This tag is required to define the interaction tensor for a specific qubit pair. <linebreak/>
@@ -1073,7 +1102,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_intmap" kindref="member">intmap</ref> </para>
 <para><anchor id="InputFile_1tag_psia"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md52">
+<sect2 id="InputFile_1autotoc_md55">
 <title>psia</title><para><bold>Description:</bold><linebreak/>
  Alpha state of the qubit in matrix representation.<linebreak/>
  One of the effective spin states of the qubit in matrix representation, simbol : |alpha⟩ . <linebreak/>
@@ -1088,7 +1117,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_psib"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md53">
+<sect2 id="InputFile_1autotoc_md56">
 <title>psib</title><para><bold>Description:</bold><linebreak/>
  Beta state of the qubit in matrix representation. <linebreak/>
  One of the effective spin states of the qubit in matrix representation, simbol : |beta⟩ . <linebreak/>
@@ -1103,7 +1132,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_psi0"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md54">
+<sect2 id="InputFile_1autotoc_md57">
 <title>psi0</title><para><bold>Description:</bold><linebreak/>
  Initial state of the qubit in matrix representation, symbol: |psi0⟩ <linebreak/>
  This tag is used to define a specific initial state of the qubit. <linebreak/>
@@ -1117,7 +1146,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_overhaus"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md55">
+<sect2 id="InputFile_1autotoc_md58">
 <title>overhaus</title><para><bold>Description:</bold><linebreak/>
  Overhauser field of the qubit. <linebreak/>
  This tag is required to compute spin dynamics including the Overhauser field of the qubit. <linebreak/>
@@ -1130,7 +1159,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_alphaidx"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md56">
+<sect2 id="InputFile_1autotoc_md59">
 <title>alphaidx</title><para><bold>Description:</bold><linebreak/>
  Alpha state of the qubit. (Adiabatic state of the qubit system) <linebreak/>
  Use this tag to assign the eigenvector of the diagonalized qubit Hamiltonian as the initial qubit state. <linebreak/>
@@ -1146,7 +1175,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_betaidx"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md57">
+<sect2 id="InputFile_1autotoc_md60">
 <title>betaidx</title><para><bold>Description:</bold><linebreak/>
  Beta state of the qubit. (Adiabatic state of the qubit system) <linebreak/>
  Use this tag to assign the eigenvector of the diagonalized qubit Hamiltonian as the initial qubit state. <linebreak/>
@@ -1162,7 +1191,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Qubit" kindref="member">Qubit</ref> </para>
 <para><anchor id="InputFile_1tag_addsubclus"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md58">
+<sect2 id="InputFile_1autotoc_md61">
 <title>addsubclus</title><para><bold>Description:</bold><linebreak/>
  For CCE simulations with order ≥ 3, enabling this option allows all sub-clusters of the highest order to be included. <linebreak/>
  This leads to more stable and robust results, and may also reduce computation time. <linebreak/>
@@ -1174,7 +1203,7 @@
 <para><bold>Related variable:</bold> <ref refid="structCluster_1a33621fac416bdd2eea40805e74730748" kindref="member">Cluster::addsubclus</ref> </para>
 <para><anchor id="InputFile_1tag_nk"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md59">
+<sect2 id="InputFile_1autotoc_md62">
 <title>nk</title><para><bold>Description:</bold><linebreak/>
  Number of clusters for each CCE order. <linebreak/>
  This is useful for CCE simulations with order ≥ 3, leading tons of clusters <linebreak/>
@@ -1187,47 +1216,47 @@
 <para><bold>Related variable:</bold> <ref refid="structCluster_1a1385a76b03a7f2f862526ff2bf449755" kindref="member">Cluster::nk</ref> </para>
 <para><anchor id="InputFile_1tag_sK"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md60">
+<sect2 id="InputFile_1autotoc_md63">
 <title>sK</title><para><bold>Description:</bold><linebreak/>
  Removed <linebreak/>
- <xrefsect id="todo_1_todo000031"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
+ <xrefsect id="todo_1_todo000036"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
 </xrefdescription></xrefsect></para>
 <para><anchor id="InputFile_1tag_max_trial"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md61">
+<sect2 id="InputFile_1autotoc_md64">
 <title>max_trial</title><para><bold>Description:</bold><linebreak/>
  Removed <linebreak/>
- <xrefsect id="todo_1_todo000032"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
+ <xrefsect id="todo_1_todo000037"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
 </xrefdescription></xrefsect></para>
 <para><anchor id="InputFile_1tag_max_iter"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md62">
+<sect2 id="InputFile_1autotoc_md65">
 <title>max_iter</title><para><bold>Description:</bold><linebreak/>
  Removed <linebreak/>
- <xrefsect id="todo_1_todo000033"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
+ <xrefsect id="todo_1_todo000038"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
 </xrefdescription></xrefsect></para>
 <para><anchor id="InputFile_1tag_kmeans_pp"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md63">
+<sect2 id="InputFile_1autotoc_md66">
 <title>kmeans_pp</title><para><bold>Description:</bold><linebreak/>
  Removed <linebreak/>
- <xrefsect id="todo_1_todo000034"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
+ <xrefsect id="todo_1_todo000039"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
 </xrefdescription></xrefsect></para>
 <para><anchor id="InputFile_1tag_iter_detail"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md64">
+<sect2 id="InputFile_1autotoc_md67">
 <title>iter_detail</title><para><bold>Description:</bold><linebreak/>
  Removed <linebreak/>
- <xrefsect id="todo_1_todo000035"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
+ <xrefsect id="todo_1_todo000040"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
 </xrefdescription></xrefsect></para>
 <para><anchor id="InputFile_1tag_npulse"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md65">
+<sect2 id="InputFile_1autotoc_md68">
 <title>npulse</title><para><bold>Description:</bold><linebreak/>
  Number of pulses in the pulse sequence. <linebreak/>
  This tag is required to define the number of pulses in the pulse sequence. <linebreak/>
  Removed <linebreak/>
- <xrefsect id="todo_1_todo000036"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
+ <xrefsect id="todo_1_todo000041"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
 </xrefdescription></xrefsect></para>
 <para>HahnEcho ? CPMG? Ramsey? when?</para>
 <para><bold>Data Type:</bold> Int </para>
@@ -1237,15 +1266,15 @@
 <para><bold>Related variable:</bold> <ref refid="structPulse_1ab083ce764799722049dac44ad7479bad" kindref="member">Pulse::npulse</ref> </para>
 <para><anchor id="InputFile_1tag_pulsename"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md66">
+<sect2 id="InputFile_1autotoc_md69">
 <title>pulsename</title><para><bold>Description:</bold><linebreak/>
  Name of the pulse sequence. <linebreak/>
  Removed <linebreak/>
- <xrefsect id="todo_1_todo000037"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
+ <xrefsect id="todo_1_todo000042"><xreftitle>Todo</xreftitle><xrefdescription><para>Hyeonsu </para>
 </xrefdescription></xrefsect></para>
 <para><anchor id="InputFile_1tag_Defect"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md67">
+<sect2 id="InputFile_1autotoc_md70">
 <title>Defect</title><para><bold>Description:</bold><linebreak/>
  Detailed information of paramagnetic (PM) defect bath can be provided by this tag. </para>
 <para><bold>Data Type:</bold> Dictionary List </para>
@@ -1273,7 +1302,7 @@
 </para>
 <para><anchor id="InputFile_1tag_df_dfname"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md68">
+<sect2 id="InputFile_1autotoc_md71">
 <title>dfname</title><para><bold>Description:</bold><linebreak/>
  Name of the paramagnetic defect. <linebreak/>
  </para>
@@ -1285,7 +1314,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_apprx"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md69">
+<sect2 id="InputFile_1autotoc_md72">
 <title>apprx</title><para><bold>Description:</bold><linebreak/>
  If <computeroutput>apprx</computeroutput> is set to <computeroutput>false</computeroutput>, the electron and nuclear spins of the paramagnetic defect are clusterized separately. <linebreak/>
  This corresponds to a conventional CCE simulation for all spins. <linebreak/>
@@ -1300,7 +1329,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_naddspin"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md70">
+<sect2 id="InputFile_1autotoc_md73">
 <title>naddspin</title><para><bold>Description:</bold><linebreak/>
  Number of on-site nuclear spins of the paramagnetic defect. <linebreak/>
  </para>
@@ -1312,7 +1341,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_navaax"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md71">
+<sect2 id="InputFile_1autotoc_md74">
 <title>navaax</title><para><bold>Description:</bold><linebreak/>
  Number of possible principal axes of the paramagnetic defect. <linebreak/>
  </para>
@@ -1324,7 +1353,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_types"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md72">
+<sect2 id="InputFile_1autotoc_md75">
 <title>types</title><para><bold>Description:</bold><linebreak/>
  Name of on-site nuclear spins of the paramagnetic defect. <linebreak/>
  The number of types should be the same as naddspin. <linebreak/>
@@ -1337,7 +1366,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_spins"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md73">
+<sect2 id="InputFile_1autotoc_md76">
 <title>spins</title><para><bold>Description:</bold><linebreak/>
  Spin numbers of the on-site nuclear spins of the paramagnetic defect. <linebreak/>
  The number of spins should be the same as naddspin. <linebreak/>
@@ -1350,7 +1379,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_gyros"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md74">
+<sect2 id="InputFile_1autotoc_md77">
 <title>gyros</title><para><bold>Description:</bold><linebreak/>
  Gyromagnetic ratio of the on-site nuclear spins of the paramagnetic defect. <linebreak/>
  The number of gyros should be the same as naddspin. <linebreak/>
@@ -1364,7 +1393,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_eqs"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md75">
+<sect2 id="InputFile_1autotoc_md78">
 <title>eqs</title><para><bold>Description:</bold><linebreak/>
  Quadrupole moment (eQ) values of the on-site nuclear spins of the paramagnetic defect. <linebreak/>
  The number of eQ values should be the same as naddspin. <linebreak/>
@@ -1378,7 +1407,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_rxyzs"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md76">
+<sect2 id="InputFile_1autotoc_md79">
 <title>rxyzs</title><para><bold>Description:</bold><linebreak/>
  Relative x,y,z position of on-site nuclear spins of the paramagnetic defect over the electron spin position. <linebreak/>
  The number of <computeroutput>rxyzs</computeroutput> should be the same as " naddspin x navaax " <linebreak/>
@@ -1393,7 +1422,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_hypf"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md77">
+<sect2 id="InputFile_1autotoc_md80">
 <title>hypf</title><para><bold>Description:</bold><linebreak/>
  The hyperfine interaction between on-site nuclear spins and the electron spin associated with a paramagnetic defect. <linebreak/>
  The number of <computeroutput>hypf</computeroutput> should be the same as " naddspin x navaax " <linebreak/>
@@ -1408,7 +1437,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_efg"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md78">
+<sect2 id="InputFile_1autotoc_md81">
 <title>efg</title><para><bold>Description:</bold><linebreak/>
  The electric field gradient tensors of the paramagnetic defect. <linebreak/>
  The number of <computeroutput>efg</computeroutput> should be the same as " naddspin x navaax " <linebreak/>
@@ -1423,7 +1452,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_zfs"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md79">
+<sect2 id="InputFile_1autotoc_md82">
 <title>zfs</title><para><bold>Description:</bold><linebreak/>
  The zero-field splitting tensors of the electron spin associated with a paramagnetic defect. <linebreak/>
  The number of <computeroutput>zfs</computeroutput> should be the same as " navaax " <linebreak/>
@@ -1438,7 +1467,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_df_detuning"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md80">
+<sect2 id="InputFile_1autotoc_md83">
 <title>detuning</title><para><bold>Description:</bold><linebreak/>
  Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. <linebreak/>
  The number of <computeroutput>detuning</computeroutput> should be the same as " navaax " <linebreak/>
@@ -1457,7 +1486,7 @@
 <para><bold>Parent-tags:</bold> <ref refid="InputFile_1tag_Defect" kindref="member">Defect</ref> </para>
 <para><anchor id="InputFile_1tag_savemode"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md81">
+<sect2 id="InputFile_1autotoc_md84">
 <title>savemode</title><para><bold>Description:</bold><linebreak/>
  The output file can be saved in different ways. <linebreak/>
  </para>
@@ -1478,7 +1507,7 @@
 <para><bold>Related variable:</bold> <ref refid="structOutput_1a7f85059a943e07bad7f1b76d4e5a99d8" kindref="member">Output::savemode</ref> </para>
 <para><anchor id="InputFile_1tag_outfile"/></para>
 </sect2>
-<sect2 id="InputFile_1autotoc_md82">
+<sect2 id="InputFile_1autotoc_md85">
 <title>outfile</title><para><bold>Description:</bold><linebreak/>
  <ref refid="structOutput" kindref="compound">Output</ref> file name prefix. <linebreak/>
  &quot;outfile_..._wiDiv&quot; is the final result of the coherence function. <linebreak/>
