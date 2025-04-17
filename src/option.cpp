@@ -266,7 +266,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ] \n");
         printMessage("  - Read values of sub-key 'intmap'");
         printMessage("    sub-sub-key : [ between, tensor ] \n");
-        printMessage("  - Read values of main-key 'qubitfile', 'qzfs', 'qspin', 'qalphams', qbetams'");
+        printMessage("  - Read values of main-key 'qubitfile', 'qzfs', 'qspin', 'qalphams', 'qbetams'");
     }
 
     char* data = cJSON_ReadFccein(fccein);
@@ -377,7 +377,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             double* xyz = cJSON_ReadDouble1d(qubit,"xyz",false,NULL,3);
             double detuning = cJSON_ReadDouble(qubit,"detuning",true,detuningDefault); //kHz
             float alphams = cJSON_ReadFloat(qubit,"alphams",true,alphaMsDefault); 
-            float betams = cJSON_ReadFloat(qubit,"betams",true,betaMsDefault);
+            float betams = cJSON_ReadFloat(qubit,"betams",true,betaMsDefault); 
 
             // set qubit properties
             QubitArray_setQubit_i_name(qa,name,iqubit);
