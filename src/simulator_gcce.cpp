@@ -51,7 +51,6 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     ////////////////////////////////
     // Density matrix
     ////////////////////////////////
-
     // Check if this is the ensemble calculation
     int nstate = Config_getNstate(cnf);
     bool isEnsemble = false;
@@ -64,7 +63,6 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     ////////////////////////////////
     // Propagation
     ////////////////////////////////
-
     // Quantity
     char* quantity = Config_getQuantity(cnf);
 
@@ -82,11 +80,8 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     if (strcasecmp(op->savemode,"allfull")==0){
         MatrixXcd* result_tot = new MatrixXcd[nstep]; //!
     }
-
     for (int i=0; i<nstep; i++){
-
         MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree);
-
         // Density matrix for time
         MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
 
@@ -112,7 +107,6 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
             fprintf(stderr,"Error : Quantity is neither coherence or dm\n");
             exit(1);
         }
-
         // Update tFree
         tfree += deltat;
     }

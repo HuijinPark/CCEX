@@ -6,9 +6,6 @@
 
 #define MAX_SEQUENCE 100
 
-
-
-
 /* Low-level functions ------------------------------------------------------*/
 
 Pulse* Pulse_init(){
@@ -167,7 +164,6 @@ void Pulse_report(Pulse* pulse){
             printf("%9c   "  , pulse->pulse_axes[i]);
             printf("%9.2f   ", pulse->pulse_angles[i]);
             printf("%9d\n", pulse->sequence_indices[i]);
-            
         }
         printLine();
     }
@@ -177,8 +173,7 @@ void Pulse_report(Pulse* pulse){
 //      Allocation      //
 //////////////////////////
 void Pulse_allocSequence(Pulse* pulse){
-    int npulse = Pulse_getNpulse(pulse);
-    pulse->sequence = allocDouble2d(npulse+1, 2);
+    pulse->sequence = allocDouble2d((pulse->npulse)+1, 3);
 }
 
 void Pulse_allocAxes(Pulse* pulse){
@@ -245,7 +240,7 @@ void allocateDefaultSequence(Pulse* pulse) {
 }
 
 void generateSequenceRamsey(Pulse* pulse){
-
+    
     (pulse->sequence)[0][0]      = 0.0; 
     (pulse->sequence)[0][1]      = 1.0; 
     (pulse->sequence)[0][2]      = 1.0; 
@@ -256,21 +251,19 @@ void generateSequenceRamsey(Pulse* pulse){
 }
 
 void generateSequenceHE(Pulse* pulse){
-
     (pulse->sequence)[0][0]    =   0.0; 
     (pulse->sequence)[0][1]    =   0.5; 
     (pulse->sequence)[0][2]    =   0.5; 
-    (pulse->pulse_axes)[0]       =   'X';
+    (pulse->pulse_axes)[0]     = 'X';
     (pulse->pulse_angles)[0]     = 180.0; 
     (pulse->sequence_indices)[0] =     0;
 
     (pulse->sequence)[1][0]    =   0.5; 
     (pulse->sequence)[1][1]    =   1.0; 
     (pulse->sequence)[1][2]    =   0.5; 
-    (pulse->pulse_axes)[1]       = 'I';
+    (pulse->pulse_axes)[1]     = 'I';
     (pulse->pulse_angles)[1]     =   0; 
     (pulse->sequence_indices)[1] =   0;
-
 }
 
 void generateSequenceWAHUHA(Pulse* pulse){
@@ -278,35 +271,35 @@ void generateSequenceWAHUHA(Pulse* pulse){
     (pulse->sequence)[0][0]      =       0.0; 
     (pulse->sequence)[0][1]      =   1.0/6.0; 
     (pulse->sequence)[0][2]      =   1.0/6.0; 
-    (pulse->pulse_axes)[0]       =       'X';
+    (pulse->pulse_axes)[0]       = 'X';
     (pulse->pulse_angles)[0]     =      90.0; 
     (pulse->sequence_indices)[0] =         0;
 
     (pulse->sequence)[1][0]      =   1.0/6.0; 
     (pulse->sequence)[1][1]      =   2.0/6.0; 
     (pulse->sequence)[1][2]      =   1.0/6.0; 
-    (pulse->pulse_axes)[1]       =       'Y';
+    (pulse->pulse_axes)[1]       = 'Y';
     (pulse->pulse_angles)[1]     =     270.0; 
     (pulse->sequence_indices)[1] =         0;
 
     (pulse->sequence)[2][0]      =   2.0/6.0; 
     (pulse->sequence)[2][1]      =   4.0/6.0; 
     (pulse->sequence)[2][2]      =   2.0/6.0; 
-    (pulse->pulse_axes)[2]       =       'Y';
+    (pulse->pulse_axes)[2]       = 'Y';
     (pulse->pulse_angles)[2]     =      90.0; 
     (pulse->sequence_indices)[2] =         2;
 
     (pulse->sequence)[3][0]      =   4.0/6.0; 
     (pulse->sequence)[3][1]      =   5.0/6.0; 
     (pulse->sequence)[3][2]      =   1.0/6.0; 
-    (pulse->pulse_axes)[3]       =       'X';
+    (pulse->pulse_axes)[3]       = 'X';
     (pulse->pulse_angles)[3]     =     270.0; 
     (pulse->sequence_indices)[3] =         0;
 
     (pulse->sequence)[4][0]      =   5.0/6.0; 
     (pulse->sequence)[4][1]      =       1.0; 
     (pulse->sequence)[4][2]      =   1.0/6.0; 
-    (pulse->pulse_axes)[4]       =       'I';
+    (pulse->pulse_axes)[4]       = 'I';
     (pulse->pulse_angles)[4]     =       0.0; 
     (pulse->sequence_indices)[4] =         0;
 }
@@ -343,7 +336,7 @@ void generateSequenceCPMG(Pulse* pulse){
         (pulse->sequence)[i][0]   = start; 
         (pulse->sequence)[i][1]   = end;
         (pulse->sequence)[i][2]   = end - start; 
-        (pulse->pulse_axes)[i]    =         'X'; 
+        (pulse->pulse_axes)[i]    = 'X';
         (pulse->pulse_angles)[i]  =       180.0; 
 
         // Find 3-rd value

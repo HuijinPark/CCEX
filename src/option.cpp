@@ -580,6 +580,12 @@ char parse_axis(cJSON* axis_json, int row_index) {
         exit(EXIT_FAILURE);
     }
 
+    // Check if the string is one of the allowed axes: X, Y, Z, I
+    if (strlen(axis_str) > 1) {
+        fprintf(stderr, "[Error] Axis at row %d is too long. Only single characters are allowed.\n", row_index);
+        exit(EXIT_FAILURE);
+    }
+
     char c = toupper(axis_str[0]);
 
     if (c == 'X' || c == 'Y' || c == 'Z' || c == 'I') {
@@ -601,36 +607,48 @@ std::string read_json_file(const std::string& fccein) {
 }
 
 void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
+
     if (rank == 0) {
-        std::cout << "\n[Info] Read Pulse Options ...\n";
-        std::cout << "  [ npulse, pulsename, sequence ]\n";
+        printf("\n");
+        printMessage("Read Pulse Options ...");
+        printMessage("  [ npulse, pulsename, sequence ] \n");
     }
 
     char*  data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
-    if (!root) {
-        if (rank == 0)
-            std::cerr << "[Error] JSON parse failed: " << cJSON_GetErrorPtr() << "\n";
-        throw std::runtime_error("JSON parsing failed");
+
+    if (root == NULL){
+        if (rank == 0) {
+            printf("Error before: %s\n", cJSON_GetErrorPtr());
+        }
+        exit(EXIT_FAILURE);
+        freeChar1d(&data);
     }
+
     bool made = false;
 
+    // Read "pulse number" (Default: -1, i.e. not set)
     int npulse = cJSON_ReadInt(root,"npulse",false, -1);
     Pulse_setNpulse(pulse,npulse);
 
+    // Read "pulse name" (Default: "None")
+    // variable : pulsename[100]
     char* pulsename = cJSON_ReadString(root,"pulsename",true,"None");
     Pulse_setPulsename(pulse,pulsename);
 
-    Pulse_allocSequence(pulse);
-    //Pulse_allocTauFractions(pulse);
-    Pulse_allocAxes(pulse);
-    Pulse_allocAngles(pulse);
-    Pulse_allocSequenceIndices(pulse);
+    // Allocate memory in pulse-related variables
+    Pulse_allocSequence(pulse);         // sequence = double** (npulse+1,2)
+    Pulse_allocAxes(pulse);             // pulse_axes = char* (npulse+1)
+    Pulse_allocAngles(pulse);           // pulse_angles = double* (npulse+1)
+    Pulse_allocSequenceIndices(pulse);  // sequence_indices = int* (npulse+1)
+
+    // Read sequence from JSON
     cJSON* sequence_array = cJSON_GetObjectItem(root, "sequence");
-    if (!sequence_array) {
+    if (sequence_array == NULL){
         allocateDefaultSequence(pulse);
         made = true;
     }
+
 
     if (strcasecmp(pulse->pulsename, "Manual") == 0) {
         if (!(sequence_array && cJSON_IsArray(sequence_array))) {
@@ -1267,23 +1285,35 @@ MatrixXcd cJSON_ReadTensor(cJSON* root, char* key, bool _default, MatrixXcd defa
     MatrixXcd mat = MatrixXcd::Zero(row,col);
 
     cJSON* tensor = cJSON_GetObjectItem(root,key);
+
     if (cJSON_IsArray(tensor)) {
 
         for (int i = 0; i < cJSON_GetArraySize(tensor); ++i) {
 
+            if (i >= row){
+                fprintf(stderr, "Error: %s is too long in the input file (>3)\n",key);
+                exit(EXIT_FAILURE);
+            }
+
             cJSON* tensor_i = cJSON_GetArrayItem(tensor, i);
+            cJSON_Print(tensor_i);
             if (cJSON_IsArray(tensor_i)) {
                 for (int j = 0; j < cJSON_GetArraySize(tensor_i); ++j) {
 
+                    if (j >= col){
+                        fprintf(stderr, "Error: %s is too long in the input file (>3)\n",key);
+                        exit(EXIT_FAILURE);
+                    }
+
                     cJSON* tensor_i_j = cJSON_GetArrayItem(tensor_i, j);
                     
+                    cJSON_Print(tensor_i_j);
                     if (cJSON_IsNumber(tensor_i_j)) {
                         mat(i,j) = tensor_i_j->valuedouble;
                     }else{
                         fprintf(stderr, "Error: %s type error, it should be tensor\n",key);
                         exit(EXIT_FAILURE);
                     }   
-
                 }    
             }else{
                 fprintf(stderr, "Error: %s type error, it should be tensor\n",key);
