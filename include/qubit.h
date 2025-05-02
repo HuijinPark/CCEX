@@ -192,6 +192,7 @@ void        QubitArray_setOverhaus(QubitArray* qa, const bool overhaus);
 void        QubitArray_setQubit(QubitArray* qa, Qubit** qubit);
 void        QubitArray_set_alphaidx(QubitArray* qa, const int* alphaidx);
 void        QubitArray_set_betaidx(QubitArray* qa, const int* betaidx);
+void        QubitArray_setIntmap_dipAuto(QubitArray* qa);
 void        QubitArray_setIntmap_i_j(QubitArray* qa, const MatrixXcd tensor, int i, int j);
 void        QubitArray_setPsia(QubitArray* qa, const MatrixXcd psia);
 void        QubitArray_setPsib(QubitArray* qa, const MatrixXcd psib);

@@ -385,6 +385,26 @@ void QubitArray_set_betaidx(QubitArray* qa, const int* betaidx){
     }
 }
 
+void QubitArray_setIntmap_dipAuto(QubitArray* qa){
+    int nqubit = QubitArray_getNqubit(qa);
+    
+    if (qa->intmap == NULL){
+        fprintf(stderr,"Error: QubitArray_setIntmap_dipAuto: intmap is not allocated\n");
+        exit(EXIT_FAILURE);
+    }
+    MatrixXcd tensor = MatrixXcd::Zero(3,3);
+    for (int i=0; i<nqubit; i++){
+        for (int j=i+1; j<nqubit; j++){
+            double* xyz1 = QubitArray_getQubit_i_xyz(qa,i);
+            double* xyz2 = QubitArray_getQubit_i_xyz(qa,j);
+            double gyro1 = QubitArray_getQubit_i_gyro(qa,i);
+            double gyro2 = QubitArray_getQubit_i_gyro(qa,j);
+            tensor = calPointDipoleTensor(xyz1,xyz2,gyro1,gyro2);
+            qa->intmap[i][j] = tensor;
+        }
+    }
+}
+
 void QubitArray_setIntmap_i_j(QubitArray* qa, const MatrixXcd tensor, int i, int j){
     int nqubit = QubitArray_getNqubit(qa);
     if (i >= nqubit || j >= nqubit || i > j || i < 0 || j < 0){

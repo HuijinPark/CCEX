@@ -76,19 +76,24 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     double tfree  = 0.0;
     MatrixXcd* result = new MatrixXcd[nstep];
 
-    MatrixXcd* result_tot; // Density matrix before trace out (total density matrix)
+    // Obtain full density matrix of a cluster for a certain purpose
+    MatrixXcd* result_tot = nullptr; // Density matrix before trace out (total density matrix)
+    
     if (strcasecmp(op->savemode,"allfull")==0){
-        MatrixXcd* result_tot = new MatrixXcd[nstep]; //!
+        result_tot = new MatrixXcd[nstep]; //!
     }
+
     for (int i=0; i<nstep; i++){
+        
         MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree);
         // Density matrix for time
         MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
 
+        // Save the density matrix
         if (strcasecmp(op->savemode,"allfull")==0){
             result_tot[i] = rhot;
         }
-
+    
         // Trace for tha bath state
         MatrixXcd reducedRhot = rhot;
         for (int ib=nspin-1; ib>=0; ib--){
@@ -111,6 +116,7 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
         tfree += deltat;
     }
 
+    // Save the density matrix
     if (strcasecmp(op->savemode,"allfull")==0){
         int* cluster = allocInt1d(nspin);
         for (int i = 0; i<nspin; i++){
@@ -125,7 +131,10 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
         delete[] qsigmas[i];
     }
     delete[] qsigmas;
-    delete[] result_tot;
+
+    if (result_tot != nullptr){
+        delete[] result_tot;
+    }
 
     return result;
 }
@@ -318,6 +327,7 @@ MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double
             Utotal = Upulse * Ufree * Utotal;
         }
         Ufrees[ipulse] = Ufree;
+
     }
     
     // free Ufrees

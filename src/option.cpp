@@ -231,7 +231,6 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     }
 
-    
     ////////////////////////////////////////////////////////////////////////
     if (rank==0){
         printf("\n");
@@ -397,6 +396,10 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         // alloc Interaction map
         QubitArray_allocIntmap(qa);
 
+        // Set the initial interaction map
+        // as dipolar interaction tensor in radkHz
+        QubitArray_setIntmap_dipAuto(qa);
+
         // read interaction map
         cJSON* intmapArray = cJSON_GetObjectItem(QubitSection,"intmap");
         cJSON* intmap;
@@ -413,8 +416,15 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
                 qubit1_idx = QubitArray_getQubitIdx_fromName(qa,qubit1_name);
                 qubit2_idx = QubitArray_getQubitIdx_fromName(qa,qubit2_name);
                 // check if the qubit name exists
-                if (qubit1_idx == -1 || qubit2_idx == -1 || qubit1_idx > qubit2_idx) {
+                if (qubit1_idx == -1 || qubit2_idx == -1 ) {
                     fprintf(stderr, "Error: The qubit name is not found in the input file\n");
+                    exit(EXIT_FAILURE);
+                }
+                if (qubit1_idx > qubit2_idx){
+                    fprintf(stderr, "Error: First qubit index is greater than second qubit index\n");
+                    fprintf(stderr, "       qubit1_name = %s, qubit2_name = %s\n", qubit1_name, qubit2_name);
+                    fprintf(stderr, "       qubit1_idx = %d, qubit2_idx = %d\n", qubit1_idx, qubit2_idx);
+                    fprintf(stderr, "       qubit1_idx should be less than qubit2_idx\n");
                     exit(EXIT_FAILURE);
                 }
             }else{
