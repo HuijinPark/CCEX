@@ -305,8 +305,15 @@ MatrixXcd QubitArray_InteractionHamil(QubitArray* qa, MatrixXcd** sigmas, int iq
         MatrixXcd tensor = QubitArray_getIntmap_i_j(qa,iq,jq);
         bool isEmpty = tensor.isZero(FLT_EPSILON);
 
+        //printf("IsEmpty: \n");
+        //std::cout << isEmpty << std::endl;
+        //printf("Qubit Interaction tensor: \n");
+        //std::cout << tensor << std::endl;
+
         if (!isEmpty){
             Hqij = calHamiltonianHeteroInt(sigmas, tensor, nqubit, iq, jq);
+            //printf("Hqij: \n");
+            //std::cout << Hqij << std::endl;
         }
     }else{
         fprintf(stderr,"Error: QubitArray_InteractionHamil: iq,jq = %d,%d is out of range or iq>jq\n",iq,jq);

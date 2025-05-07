@@ -11,8 +11,10 @@
 Pulse* Pulse_init(){
     Pulse* pulse = (Pulse*)allocArray1d(1, sizeof(Pulse));
     pulse->npulse = 0;
+    //pulse->pulse_time     = 0.0;
     pulse->pulseiter = false;
     pulse->pulsename[0] = '\0';
+    pulse->detuning_factor = 0.0;
 
     pulse->pulse_axes       = NULL;
     pulse->pulse_angles     = NULL;
@@ -23,6 +25,14 @@ Pulse* Pulse_init(){
 
 void Pulse_setNpulse(Pulse* pulse, int npulse){
     pulse->npulse = npulse;
+}
+
+void Pulse_setPulseTime(Pulse* pulse, double pulse_time){
+    pulse->pulse_time = pulse_time;
+}
+
+void Pulse_setPulseDetuningFactor(Pulse* pulse, double detuning_factor){
+    pulse->detuning_factor = detuning_factor;
 }
 
 void Pulse_setPulsename(Pulse* pulse, char* pulsename){
@@ -49,64 +59,16 @@ void assign_sequence_indices(Pulse* pulse) {
     }
 }
 
-//void Pulse_setSequence_fromInput(Pulse* pulse, double* seqinput){
-//
-//    // e.g. Input file format :
-//    // if pulse->npulse = 4
-//    // input : seqinput : [0.2, 0.4, 0.6, 0.8] //gives pulse timing
-//
-//    if (pulse->sequence == NULL){
-//        printf("Error, pulse->sequence is not allocated! \n");
-//        exit(1);
-//    }
-//
-//    int npulse = Pulse_getNpulse(pulse);
-//
-//    for (int i=0; i<(npulse+1); i++){
-//
-//        double start = 0.0;
-//        double end = 1.0;
-//
-//        if (i==0 && i!=npulse){
-//            start = 0.0;
-//            end = seqinput[i];    
-//        }
-//        else if (i!=0 && i==npulse){
-//            start = seqinput[i];
-//            end = 1.0;
-//        }
-//        else if (i==0 && i==npulse){
-//            start = 0.0;
-//            end = 1.0;
-//        }
-//        else{
-//            start = seqinput[i-1];
-//            end = seqinput[i];
-//        }
-//
-//        (pulse->sequence)[i][0] = start; 
-//        (pulse->sequence)[i][1] = end;
-//        (pulse->sequence)[i][2] = end - start; 
-//
-//        // Find 3-rd value
-//        bool findSameDiffIdx = false;
-//        for (int j=0; j<i; j++){
-//            if ((pulse->sequence)[j][2] == (pulse->sequence)[i][2]){
-//                (pulse->sequence)[i][3] = (double)j;
-//                if ((int)(pulse->sequence)[j][3] != (int)(pulse->sequence)[i][3]){
-//                    printf("Error, the SameDifferenceIndex is different! \n");
-//                }
-//                findSameDiffIdx = true;
-//                break;
-//            }
-//        }
-//        if (findSameDiffIdx){;}
-//        else{ (pulse->sequence)[i][3] = (double)i; }
-//    }
-//}
-
 int Pulse_getNpulse(Pulse* pulse){
     return pulse->npulse;
+}
+
+double Pulse_getPulseTime(Pulse* pulse){
+    return pulse->pulse_time;
+}
+
+double Pulse_getPulseDetuningFactor(Pulse* pulse){
+    return pulse->detuning_factor;
 }
 
 char* Pulse_getPulsename(Pulse* pulse){
@@ -143,6 +105,8 @@ void Pulse_report(Pulse* pulse){
 
     printStructElementChar("pulsename", Pulse_getPulsename(pulse));
     printStructElementInt("npulse", Pulse_getNpulse(pulse));
+    printStructElementDouble("detuning_factor", Pulse_getPulseDetuningFactor(pulse));
+    printStructElementDouble("pulse_time", Pulse_getPulseTime(pulse));
     
     printStructElementBool("pulseiter", Pulse_getPulseiter(pulse));
     printf("%27s * true  - pulse is applied to each qubit\n"," ");

@@ -266,6 +266,10 @@ MatrixXcd mulMatrixXcdElementWise(MatrixXcd a, MatrixXcd b){
     return a.array() * b.array();
 }
 
+//MatrixXcd divMatrixXcd_doubleComplex(MatrixXcd a, double b){
+//    return a.array() / b;
+//}
+
 /* Easy print ---------------------------------------------------*/
 void printInlineMatrixXcd(char* key, MatrixXcd mat){
     printf("      %-18s:   [ ", key);
