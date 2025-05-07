@@ -114,6 +114,7 @@ float findZbasisSubLevel(MatrixXcd spinor);
 
 MatrixXcd powMatrixXcdElementWise(MatrixXcd a, int n);
 MatrixXcd mulMatrixXcdElementWise(MatrixXcd a, MatrixXcd b);
+//MatrixXcd divMatrixXcdElementWise(MatrixXcd a, MatrixXcd b);
 
 /* Easy print ---------------------------------------------------*/
 void printInlineMatrixXcd(char* key, MatrixXcd mat);
