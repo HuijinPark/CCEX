@@ -378,6 +378,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         ////////////////////////////////////////////////////////////////////////
         // alloc Interaction map
         QubitArray_allocIntmap(qa);
+        QubitArray_setIntmap_dipAuto(qa);
 
         // read interaction map
         cJSON* intmapArray = cJSON_GetObjectItem(QubitSection,"intmap");
@@ -600,11 +601,20 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     int npulse = cJSON_ReadInt(root,"npulse",false, -1);
     Pulse_setNpulse(pulse,npulse);
 
+    // ================= //
+    // New Parameters !! //
+    // Input pulse duration time (unit : ns)
+    double pulse_time     = cJSON_ReadDouble(root, "pulse_time", true, 0.0);
+    Pulse_setPulseTime(pulse,pulse_time);
+    // Input pulse detuning offset (default : 0)
+    double detuning_factor = cJSON_ReadDouble(root, "detuning_factor", true, 0.0);
+    Pulse_setPulseDetuningFactor(pulse,detuning_factor);
+    // ================= //
+
     char* pulsename = cJSON_ReadString(root,"pulsename",true,"None");
     Pulse_setPulsename(pulse,pulsename);
 
     Pulse_allocSequence(pulse);
-    //Pulse_allocTauFractions(pulse);
     Pulse_allocAxes(pulse);
     Pulse_allocAngles(pulse);
     Pulse_allocSequenceIndices(pulse);
@@ -613,7 +623,6 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
         allocateDefaultSequence(pulse);
         made = true;
     }
-
     if (strcasecmp(pulse->pulsename, "Manual") == 0) {
         if (!(sequence_array && cJSON_IsArray(sequence_array))) {
             fprintf(stderr, "[Error] sequence_array is missing or not a valid JSON array. [case pulse name = manual]\n");
@@ -640,10 +649,9 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
             double fraction       = parse_fraction(frac->valuestring);
             total_frac            = total_frac + fraction;
             pulse->sequence[i][1] = total_frac ;               
-            pulse->sequence[i][2] = fraction;               // fraction
-
-            pulse->pulse_axes[i]    = parse_axis(axis, i); // axis
-            pulse->pulse_angles[i]  = static_cast<double>(angle->valueint);            // angle
+            pulse->sequence[i][2] = fraction;                               // fraction
+            pulse->pulse_axes[i]    = parse_axis(axis, i);                  // axis
+            pulse->pulse_angles[i]  = static_cast<double>(angle->valueint); // angle
         }
         assign_sequence_indices(pulse);
         if (total_frac - 1.0 > 1e-9){
@@ -652,96 +660,9 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     }
 
     //////////////////////////
-    //if (pulse->npulse != 0){
-    //    printf("Array: pulse -> sequence:\n");
-    //    printf("%8s   %8s   %8s   %8s   %8s   %8s \n", "start", "End", "diff.", "Axis", "Angle", "Index");
-    //    for (int i=0; i<(pulse->npulse)+1; i++){
-    //        printf(" %8.2f  ", pulse->sequence[i][0]);
-    //        printf(" %8.2f  ", pulse->sequence[i][1]);
-    //        printf(" %8.2f  ", pulse->sequence[i][2]);
-    //        printf(" %8.2f  ", pulse->pulse_axes[i]);
-    //        printf(" %8.2f  ", pulse->pulse_angles[i]);
-    //        printf("  %d\n", pulse->sequence_indices[i]);
-    //        
-    //    }
-    //}
-    //printf("Pulse Name: %s\n", pulse->pulsename);
     cJSON_Delete(root);
     freeChar1d(&data);
-    //exit(1);
 }
-
-
-//void cJSON_readOptionPulse(Pulse* pulse, char* fccein){
-//    
-//    if (rank==0){
-//        printf("\n");
-//        printMessage("Read Pulse Options ...");
-//        printMessage("  [ npulse, pulsename, sequence ] \n");
-//    }
-//    char* data = cJSON_ReadFccein(fccein);
-//    cJSON* root = cJSON_Parse(data);
-//
-//    if (root == NULL){
-//        if (rank==0){
-//            printf("Error before: %s\n", cJSON_GetErrorPtr());
-//        }
-//        exit(EXIT_FAILURE);
-//        freeChar1d(&data);
-//    }
-//
-//    int npulse = cJSON_ReadInt(root,"npulse",false, -1);
-//    Pulse_setNpulse(pulse,npulse);
-//
-//    char* pulsename = cJSON_ReadString(root,"pulsename",true,"None");
-//    Pulse_setPulsename(pulse,pulsename);
-//
-//    double* sequenceinput = cJSON_ReadDouble1d(root,"sequence",true,NULL,npulse);
-//
-//    // set sequence
-//    bool made = false;
-//    Pulse_allocSequence(pulse);
-//    if (sequenceinput == NULL){
-//        if (npulse == 0){
-//            Pulse_setPulsename(pulse,"Ramsey");
-//            Pulse_setSequence_fromName(pulse);
-//            made = true;
-//        }
-//
-//        if (npulse == 1){
-//            Pulse_setPulsename(pulse,"HahnEcho");
-//            Pulse_setSequence_fromName(pulse);
-//            made = true;
-//        }
-//
-//        if (npulse > 1 && strcasecmp(pulsename,"Equal") != 0){
-//            Pulse_setPulsename(pulse,"CPMG");
-//            Pulse_setSequence_fromName(pulse);
-//            made = true;
-//        }
-//
-//        if (npulse > 1 && strcasecmp(pulsename,"Equal") == 0){
-//            Pulse_setPulsename(pulse,"Equal");
-//            Pulse_setSequence_fromName(pulse);
-//            made = true;
-//        }
-//        
-//    }else{
-//        Pulse_setSequence_fromInput(pulse,sequenceinput);
-//        made = true;
-//    }
-//
-//    if (!made){
-//        fprintf(stderr, "Error: cJson_readOptionPulse, pulse->pulsename is not matched! or you have to use sequence tag\n");
-//        exit(EXIT_FAILURE);
-//    }
-//
-//    freeDouble1d(&sequenceinput);
-//
-//    cJSON_Delete(root);
-//    freeChar1d(&data);
-//    
-//}
 
 void cJSON_readOptionOutput(Output* op, char* fccein){
 

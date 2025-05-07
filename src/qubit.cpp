@@ -305,8 +305,15 @@ MatrixXcd QubitArray_InteractionHamil(QubitArray* qa, MatrixXcd** sigmas, int iq
         MatrixXcd tensor = QubitArray_getIntmap_i_j(qa,iq,jq);
         bool isEmpty = tensor.isZero(FLT_EPSILON);
 
+        //printf("IsEmpty: \n");
+        //std::cout << isEmpty << std::endl;
+        //printf("Qubit Interaction tensor: \n");
+        //std::cout << tensor << std::endl;
+
         if (!isEmpty){
             Hqij = calHamiltonianHeteroInt(sigmas, tensor, nqubit, iq, jq);
+            //printf("Hqij: \n");
+            //std::cout << Hqij << std::endl;
         }
     }else{
         fprintf(stderr,"Error: QubitArray_InteractionHamil: iq,jq = %d,%d is out of range or iq>jq\n",iq,jq);
@@ -382,6 +389,26 @@ void QubitArray_set_betaidx(QubitArray* qa, const int* betaidx){
         qa->_betaidx = NULL;
     }else{
         *(qa->_betaidx) = *betaidx;
+    }
+}
+
+void QubitArray_setIntmap_dipAuto(QubitArray* qa){
+    int nqubit = QubitArray_getNqubit(qa);
+    
+    if (qa->intmap == NULL){
+        fprintf(stderr,"Error: QubitArray_setIntmap_dipAuto: intmap is not allocated\n");
+        exit(EXIT_FAILURE);
+    }
+    MatrixXcd tensor = MatrixXcd::Zero(3,3);
+    for (int i=0; i<nqubit; i++){
+        for (int j=i+1; j<nqubit; j++){
+            double* xyz1 = QubitArray_getQubit_i_xyz(qa,i);
+            double* xyz2 = QubitArray_getQubit_i_xyz(qa,j);
+            double gyro1 = QubitArray_getQubit_i_gyro(qa,i);
+            double gyro2 = QubitArray_getQubit_i_gyro(qa,j);
+            tensor = calPointDipoleTensor(xyz1,xyz2,gyro1,gyro2);
+            qa->intmap[i][j] = tensor;
+        }
     }
 }
 

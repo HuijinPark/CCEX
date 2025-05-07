@@ -381,26 +381,16 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             // Normalize the results
             ////////////////////////////////
             if (rank == 0){
-
-                // get normalization factor
-                MatrixXcd normalization;
-                MatrixXcd normalization_inv;
-                MatrixXcd rho0 = QubitArray_Rho0(qa);
-
+                std::complex<double> normalization;
                 if ( strcasecmp(quantity,"coherence")==0 && isGCCE){
-                    MatrixXcd psia = QubitArray_getPsia(qa);
-                    MatrixXcd psib = QubitArray_getPsib(qa);
-                    normalization = psia.adjoint() * rho0 * psib;
-                    normalization_inv = powMatrixXcdElementWise(normalization,-1); 
+                    normalization = result_wD_all[0].coeff(0);
                 }else{
-                    normalization = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));
-                    normalization_inv = MatrixXcd::Constant(dim, dim, doublec(1.0,0.0));
+                    normalization = std::complex<double>(1, 0);
                 }
-                
                 // do normalization : Ltot / normalization
                 for (int i=0; i<nstep; i++){
-                    result_wD_all[i] = mulMatrixXcdElementWise(result_wD_all[i], normalization_inv);
-                    result_nD_all[i] = mulMatrixXcdElementWise(result_nD_all[i], normalization_inv);
+                    result_wD_all[i] /= normalization;
+                    result_nD_all[i] /= normalization;
                 }
             }
             
