@@ -3,14 +3,14 @@
   <compounddef id="qubit_8h" kind="file" language="C++">
     <compoundname>qubit.h</compoundname>
     <includes refid="utilities_8h" local="yes">utilities.h</includes>
-    <includedby refid="bath_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/bath.h</includedby>
-    <includedby refid="option_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/option.h</includedby>
-    <includedby refid="reader_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/reader.h</includedby>
-    <includedby refid="simulator_8h" local="yes">/Users/huijin/Documents/GitHub/CCEX/include/simulator.h</includedby>
-    <includedby refid="qubit_8cpp" local="yes">/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp</includedby>
+    <includedby refid="bath_8h" local="yes">/home/huijin/git/CCEX/include/bath.h</includedby>
+    <includedby refid="option_8h" local="yes">/home/huijin/git/CCEX/include/option.h</includedby>
+    <includedby refid="reader_8h" local="yes">/home/huijin/git/CCEX/include/reader.h</includedby>
+    <includedby refid="simulator_8h" local="yes">/home/huijin/git/CCEX/include/simulator.h</includedby>
+    <includedby refid="qubit_8cpp" local="yes">/home/huijin/git/CCEX/src/qubit.cpp</includedby>
     <incdepgraph>
       <node id="1">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/qubit.h</label>
+        <label>/home/huijin/git/CCEX/include/qubit.h</label>
         <link refid="qubit_8h"/>
         <childnode refid="2" relation="include">
         </childnode>
@@ -42,23 +42,25 @@
     </incdepgraph>
     <invincdepgraph>
       <node id="2">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/bath.h</label>
+        <label>/home/huijin/git/CCEX/include/bath.h</label>
         <link refid="bath_8h_source"/>
         <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="5" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
-        </childnode>
-        <childnode refid="10" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
         <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="7" relation="include">
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
         </childnode>
       </node>
       <node id="3">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/cluster.h</label>
+        <label>/home/huijin/git/CCEX/include/cluster.h</label>
         <link refid="cluster_8h_source"/>
         <childnode refid="4" relation="include">
         </childnode>
@@ -68,55 +70,61 @@
         </childnode>
         <childnode refid="7" relation="include">
         </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
       </node>
       <node id="4">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/cluster_hash.h</label>
-        <link refid="cluster__hash_8h_source"/>
+        <label>/home/huijin/git/CCEX/include/cluster_dsjitb.h</label>
+        <link refid="cluster__dsjitb_8h_source"/>
       </node>
       <node id="5">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/cluster_pcce.h</label>
-        <link refid="cluster__pcce_8h_source"/>
-      </node>
-      <node id="8">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/defect.h</label>
-        <link refid="defect_8h_source"/>
-        <childnode refid="6" relation="include">
-        </childnode>
-        <childnode refid="9" relation="include">
-        </childnode>
-        <childnode refid="7" relation="include">
-        </childnode>
+        <label>/home/huijin/git/CCEX/include/cluster_hash.h</label>
+        <link refid="cluster__hash_8h_source"/>
       </node>
       <node id="6">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/option.h</label>
+        <label>/home/huijin/git/CCEX/include/cluster_pcce.h</label>
+        <link refid="cluster__pcce_8h_source"/>
+      </node>
+      <node id="9">
+        <label>/home/huijin/git/CCEX/include/defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
         <link refid="option_8h_source"/>
       </node>
-      <node id="10">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/output.h</label>
+      <node id="11">
+        <label>/home/huijin/git/CCEX/include/output.h</label>
         <link refid="output_8h_source"/>
-        <childnode refid="6" relation="include">
-        </childnode>
         <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
         </childnode>
       </node>
       <node id="1">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/qubit.h</label>
+        <label>/home/huijin/git/CCEX/include/qubit.h</label>
         <link refid="qubit_8h"/>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="6" relation="include">
-        </childnode>
-        <childnode refid="9" relation="include">
-        </childnode>
         <childnode refid="7" relation="include">
         </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
       </node>
-      <node id="9">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/reader.h</label>
+      <node id="10">
+        <label>/home/huijin/git/CCEX/include/reader.h</label>
         <link refid="reader_8h_source"/>
       </node>
-      <node id="7">
-        <label>/Users/huijin/Documents/GitHub/CCEX/include/simulator.h</label>
+      <node id="8">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
         <link refid="simulator_8h_source"/>
       </node>
     </invincdepgraph>
@@ -138,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="148" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="41" bodyend="48" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="148" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="148" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="41" bodyend="48" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="148" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a9e6e90d7a9584308757865ec6b19ddb2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -159,7 +167,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="149" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="50" bodyend="53" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="149" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="149" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="50" bodyend="53" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="149" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a6eedd653b6800f121259b2e2e089a9c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -180,7 +188,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="150" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="55" bodyend="71" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="150" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="150" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="55" bodyend="71" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="150" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ac9ceba40cf962f89c8e6d1132b9df95c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -197,7 +205,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="151" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="74" bodyend="93" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="151" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="151" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="74" bodyend="93" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="151" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ac4b95a476edfc9104098f7e48ff2f2e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -218,7 +226,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="152" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="95" bodyend="141" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="152" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="152" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="95" bodyend="141" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="152" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aafad57f5c068bdca6420c8955c37dec8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -235,7 +243,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="153" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="144" bodyend="159" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="153" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="153" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="144" bodyend="159" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="153" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a5b6edc8e889cd8f52085311a12cc3043" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -260,7 +268,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="156" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="199" bodyend="224" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="156" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="156" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="199" bodyend="224" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="156" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aaf6cbe6a72b0007d02fb43f47be4d5d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -289,7 +297,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="157" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="226" bodyend="235" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="157" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="157" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="226" bodyend="235" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="157" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a51e614ecf6dc8210b7917b0312191ccd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -318,7 +326,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="158" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="237" bodyend="250" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="158" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="158" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="237" bodyend="250" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="158" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a1259898fa6ddba6bd7e06ea4d7e369a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -343,7 +351,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="159" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="252" bodyend="265" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="159" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="159" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="252" bodyend="265" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="159" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a8c70c7b57898ae70255cb38924209c47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -368,7 +376,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="160" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="267" bodyend="280" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="160" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="160" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="267" bodyend="280" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="160" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ac2e1f870ff753b199cc23bf1e5343753" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -393,7 +401,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="161" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="282" bodyend="294" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="161" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="161" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="282" bodyend="294" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="161" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a67df31b547ae3a0fb500b9e110eaa09c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -422,7 +430,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="162" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="296" bodyend="317" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="162" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="162" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="296" bodyend="317" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="162" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a46a67de2f012aa002869a33473dc79bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd **</type>
@@ -439,7 +447,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="163" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="172" bodyend="185" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="163" declcolumn="11"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="163" column="11" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="172" bodyend="185" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="163" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a4f1e7c7df12e8e85cde3e2c112cffb14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd *</type>
@@ -456,7 +464,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="164" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="187" bodyend="197" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="164" declcolumn="12"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="164" column="12" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="187" bodyend="197" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="164" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a4ea75a66fcf852fa6ef49a13a212e737" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -473,7 +481,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="167" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="320" bodyend="323" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="167" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="167" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="320" bodyend="323" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="167" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a122e8cc3fe04fda22236538ab1330e5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -494,7 +502,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="170" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="162" bodyend="170" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="170" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="170" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="162" bodyend="170" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="170" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aa8da720f7badcaef81650225a556db3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
@@ -507,7 +515,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="174" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="11" bodyend="30" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="174" declcolumn="12"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="174" column="12" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="11" bodyend="30" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="174" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aebb7ea793f0187bcc49214923c8df639" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -524,7 +532,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="177" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="614" bodyend="654" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="177" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="177" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="629" bodyend="669" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="177" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a18adfd484d631b24ea39effb17baff4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -545,7 +553,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="178" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="561" bodyend="575" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="178" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="178" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="576" bodyend="590" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="178" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1af42cb87cfbf86dab8dac7b57dfb8c6cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -562,7 +570,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="179" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="577" bodyend="591" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="179" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="179" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="592" bodyend="606" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="179" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a13957bf59be2db2833c38b8bae0fc405" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -579,7 +587,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="180" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="593" bodyend="596" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="180" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="180" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="608" bodyend="611" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="180" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a050f9574dee170941a6b92c1dfc7f503" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -596,7 +604,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="181" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="598" bodyend="600" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="181" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="181" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="613" bodyend="615" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="181" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ab38cadf0fa65eb87e8db71d0a58add2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -613,7 +621,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="182" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="602" bodyend="612" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="182" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="182" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="617" bodyend="627" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="182" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ac1ac692b91c0b5c5dfd534436ae584d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -630,7 +638,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="185" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="336" bodyend="340" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="185" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="185" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="336" bodyend="340" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="185" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a0ba58b396ae67f2a2ea954e434595b56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -647,7 +655,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="186" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="342" bodyend="352" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="186" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="186" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="342" bodyend="352" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="186" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1af8452e46c7d5bf255f6e78a884b40699" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -664,7 +672,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="187" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="354" bodyend="357" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="187" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="187" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="354" bodyend="357" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="187" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a84f43d736d42d9ac064ffce1095f85bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -685,7 +693,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="190" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="360" bodyend="362" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="190" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="190" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="360" bodyend="362" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="190" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a6aeed5e74fbbc8f32548aa9d2f4ac8e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -706,7 +714,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="191" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="364" bodyend="366" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="191" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="191" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="364" bodyend="366" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="191" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aba4cbaf1dc63797a73781c636d2c755d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -727,7 +735,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="192" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="376" bodyend="378" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="192" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="192" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="376" bodyend="378" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="192" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a103c7892763b345321616cf69a417e60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -748,7 +756,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="193" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="368" bodyend="374" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="193" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="193" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="368" bodyend="374" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="193" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a3c9efdc2d478a22bd7aa3f7e48642ba7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -769,7 +777,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="194" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="380" bodyend="386" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="194" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="194" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="380" bodyend="386" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="194" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a7981d8f74a9047360ed0b5c4cb87f8f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -798,7 +806,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="195" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="388" bodyend="395" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="195" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="195" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="388" bodyend="400" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="195" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a934a12377cb15d0b97432b0e2cb840e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -819,7 +827,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="196" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="397" bodyend="399" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="196" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="196" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="402" bodyend="404" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="196" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ad83b088cfb1be623c77189ac334e60a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -840,7 +848,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="197" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="401" bodyend="403" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="197" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="197" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="406" bodyend="408" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="197" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ac9319da853557a660b2d0cd1ab2f868f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -861,7 +869,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="198" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="405" bodyend="407" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="198" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="198" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="410" bodyend="412" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="198" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a4b9b092eb258e56ea79f4b779b474b9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -886,7 +894,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="199" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="478" bodyend="480" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="199" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="199" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="483" bodyend="485" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="199" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a1ae8b208dd48a354d48dfdb21799cc4f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -911,7 +919,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="200" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="482" bodyend="484" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="200" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="200" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="487" bodyend="489" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="200" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a38f6252d82c461c3c6bfc41429c3ed68" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -936,7 +944,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="201" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="486" bodyend="488" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="201" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="201" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="491" bodyend="493" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="201" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a730321d41576eb2869b51d0cd17643e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -961,7 +969,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="202" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="490" bodyend="494" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="202" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="202" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="495" bodyend="499" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="202" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a8085a9b2e4e09d3a25291602c9b5a21e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -986,7 +994,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="203" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="496" bodyend="498" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="203" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="203" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="501" bodyend="503" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="203" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a98c8ac794f815c01a6cf3198a5e462cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1011,7 +1019,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="204" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="500" bodyend="502" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="204" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="204" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="505" bodyend="507" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="204" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a06adbf28da37d64b8719fe21613a710b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1036,7 +1044,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="205" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="504" bodyend="506" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="205" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="205" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="509" bodyend="511" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="205" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aa36d42342c0c3f9e92a649def188c8aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1061,7 +1069,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="206" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="508" bodyend="510" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="206" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="206" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="513" bodyend="515" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="206" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a9912adc80412ddcbf72283f477835337" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1086,7 +1094,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="207" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="512" bodyend="515" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="207" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="207" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="517" bodyend="525" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="207" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a9aba66f88595c3a6427a67e1ed434e82" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1111,7 +1119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="208" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="517" bodyend="520" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="208" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="208" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="527" bodyend="535" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="208" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a92d53023231774329afb43515ae426af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1128,7 +1136,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="211" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="411" bodyend="413" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="211" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="211" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="416" bodyend="418" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="211" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a43602ef791226ac908285556eea20b77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -1145,7 +1153,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="212" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="415" bodyend="417" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="212" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="212" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="420" bodyend="422" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="212" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a871a60183fc08c7afe14facece6a1f8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int *</type>
@@ -1162,7 +1170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="213" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="419" bodyend="421" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="213" declcolumn="12"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="213" column="12" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="424" bodyend="426" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="213" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a91703901a507a52d9e26bd7a16e8a21e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int *</type>
@@ -1179,7 +1187,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="214" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="423" bodyend="425" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="214" declcolumn="12"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="214" column="12" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="428" bodyend="430" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="214" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a789505486835402072a8519b15d83974" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd **</type>
@@ -1196,7 +1204,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="215" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="427" bodyend="429" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="215" declcolumn="11"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="215" column="11" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="432" bodyend="434" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="215" declcolumn="11"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aa6e1e16173a894c62d3ba6e321899b84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1221,7 +1229,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="216" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="431" bodyend="433" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="216" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="216" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="436" bodyend="438" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="216" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ace3511c49f18f11b931cc1dc2482993b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1238,7 +1246,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="217" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="435" bodyend="437" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="217" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="217" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="440" bodyend="442" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="217" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a49773f2cf68d5f6f6bd48548ed0b0af8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1255,7 +1263,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="218" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="439" bodyend="441" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="218" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="218" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="444" bodyend="446" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="218" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1abc14c288673cc49fda527e1be63be7c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1272,7 +1280,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="219" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="443" bodyend="445" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="219" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="219" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="448" bodyend="450" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="219" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a287e038431f226d4c8cd87bb85a42820" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>char *</type>
@@ -1293,7 +1301,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="220" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="527" bodyend="529" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="220" declcolumn="12"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="220" column="12" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="542" bodyend="544" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="220" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a5185ffc14ec13d30ee5024a9b8045091" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>float</type>
@@ -1314,7 +1322,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="221" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="531" bodyend="533" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="221" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="221" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="546" bodyend="548" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="221" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a3e9f9e838128b9f9eb6a733d5e64ad42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1335,7 +1343,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="222" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="535" bodyend="537" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="222" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="222" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="550" bodyend="552" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="222" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a02dfada0b662b2ce8eb9036fe1d4e915" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double *</type>
@@ -1356,7 +1364,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="223" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="539" bodyend="541" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="223" declcolumn="12"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="223" column="12" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="554" bodyend="556" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="223" declcolumn="12"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a8f6dc3eee81c414eaeca4a87378349fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1377,7 +1385,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="224" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="551" bodyend="553" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="224" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="224" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="566" bodyend="568" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="224" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a0cfb5cd962893c658becd7f4b6065b6e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -1398,7 +1406,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="225" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="555" bodyend="557" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="225" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="225" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="570" bodyend="572" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="225" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aa2ac9548d4bcfa2ad0ef89a53680f45c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1419,7 +1427,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="226" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="543" bodyend="545" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="226" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="226" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="558" bodyend="560" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="226" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a7b851d6bad14846152c5b2bebd75ea71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MatrixXcd</type>
@@ -1440,7 +1448,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="227" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="547" bodyend="549" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="227" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="227" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="562" bodyend="564" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="227" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a9f8741d042da0cdf68d09d0b64cb036b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1457,7 +1465,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="230" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="33" bodyend="38" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="230" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="230" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="33" bodyend="38" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="230" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1a988e9577546f8eea559828f969543efb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1474,7 +1482,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="231" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="449" bodyend="455" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="231" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="231" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="454" bodyend="460" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="231" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1ab88a26b05d22f2069cb3123c924992a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1491,7 +1499,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="232" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="457" bodyend="466" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="232" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="232" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="462" bodyend="471" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="232" declcolumn="13"/>
       </memberdef>
       <memberdef kind="function" id="qubit_8h_1aafe8f76084e8c5ff931eba2fc03ae5e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1508,7 +1516,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" line="233" column="13" bodyfile="/Users/huijin/Documents/GitHub/CCEX/src/qubit.cpp" bodystart="468" bodyend="471" declfile="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h" declline="233" declcolumn="13"/>
+        <location file="/home/huijin/git/CCEX/include/qubit.h" line="233" column="13" bodyfile="/home/huijin/git/CCEX/src/qubit.cpp" bodystart="473" bodyend="476" declfile="/home/huijin/git/CCEX/include/qubit.h" declline="233" declcolumn="13"/>
       </memberdef>
     </sectiondef>
     <briefdescription>
@@ -1660,6 +1668,6 @@
 <codeline lineno="234"><highlight class="normal"></highlight></codeline>
 <codeline lineno="235"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>__CCEX_QUBIT_H_</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/Users/huijin/Documents/GitHub/CCEX/include/qubit.h"/>
+    <location file="/home/huijin/git/CCEX/include/qubit.h"/>
   </compounddef>
 </doxygen>

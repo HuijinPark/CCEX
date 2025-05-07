@@ -66,7 +66,6 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     ////////////////////////////////
     // Density matrix
     ////////////////////////////////
-
     // Check if this is the ensemble calculation
     int nstate = Config_getNstate(cnf);
     bool isEnsemble = false;
@@ -79,7 +78,6 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     ////////////////////////////////
     // Propagation
     ////////////////////////////////
-
     // Quantity
     char* quantity = Config_getQuantity(cnf);
 
@@ -95,7 +93,7 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
 
     MatrixXcd* result_tot = nullptr; // Density matrix before trace out (total density matrix)
     if (strcasecmp(op->savemode,"allfull")==0){
-        MatrixXcd* result_tot = new MatrixXcd[nstep]; //!
+        result_tot = new MatrixXcd[nstep]; //!
     }
 
     MatrixXcd* Upulses = new MatrixXcd[pulse->npulse];
@@ -113,16 +111,15 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     //std::cout << qwer.cwiseAbs() << std::endl;
     //printf("\n");
     for (int i=0; i<nstep; i++){
-
         MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree, Upulses);
-
         // Density matrix for time
         MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
 
+        // Save the density matrix
         if (strcasecmp(op->savemode,"allfull")==0){
             result_tot[i] = rhot;
         }
-
+    
         // Trace for tha bath state
         MatrixXcd reducedRhot = rhot;
         for (int ib=nspin-1; ib>=0; ib--){
@@ -141,11 +138,11 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
             fprintf(stderr,"Error : Quantity is neither coherence or dm\n");
             exit(1);
         }
-
         // Update tFree
         tfree += deltat;
     }
 
+    // Save the density matrix
     if (strcasecmp(op->savemode,"allfull")==0){
         int* cluster = allocInt1d(nspin);
         for (int i = 0; i<nspin; i++){

@@ -119,7 +119,14 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a94ae332f008b81e37d8df344a3c7d9b7" id="r_a94ae332f008b81e37d8df344a3c7d9b7"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94ae332f008b81e37d8df344a3c7d9b7">pulsename</a> [100]</td></tr>
 <tr class="separator:a94ae332f008b81e37d8df344a3c7d9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1bd05f903769ac217b18fb0c2ebc31a" id="r_af1bd05f903769ac217b18fb0c2ebc31a"><td class="memItemLeft" align="right" valign="top">double **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1bd05f903769ac217b18fb0c2ebc31a">sequence</a></td></tr>
+<tr class="memdesc:af1bd05f903769ac217b18fb0c2ebc31a"><td class="mdescLeft">&#160;</td><td class="mdescRight">: Related with pulse sequence.  <br /></td></tr>
 <tr class="separator:af1bd05f903769ac217b18fb0c2ebc31a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae5ebfae6aac76ba8cf2dbb18ee128a8" id="r_aae5ebfae6aac76ba8cf2dbb18ee128a8"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae5ebfae6aac76ba8cf2dbb18ee128a8">pulse_angles</a></td></tr>
+<tr class="separator:aae5ebfae6aac76ba8cf2dbb18ee128a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d1b542b8538b339943f80f4ec8b1cd1" id="r_a8d1b542b8538b339943f80f4ec8b1cd1"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d1b542b8538b339943f80f4ec8b1cd1">pulse_axes</a></td></tr>
+<tr class="separator:a8d1b542b8538b339943f80f4ec8b1cd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a80fc876df183220d65b3b1676c85ce" id="r_a4a80fc876df183220d65b3b1676c85ce"><td class="memItemLeft" align="right" valign="top">int *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a80fc876df183220d65b3b1676c85ce">sequence_indices</a></td></tr>
+<tr class="separator:a4a80fc876df183220d65b3b1676c85ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="ab083ce764799722049dac44ad7479bad" name="ab083ce764799722049dac44ad7479bad"></a>
@@ -133,7 +140,37 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The number of pulse (default : 0) </p>
+<p>The number of pulse (default : -) </p>
+
+</div>
+</div>
+<a id="aae5ebfae6aac76ba8cf2dbb18ee128a8" name="aae5ebfae6aac76ba8cf2dbb18ee128a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae5ebfae6aac76ba8cf2dbb18ee128a8">&#9670;&#160;</a></span>pulse_angles</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double* Pulse::pulse_angles</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>puulse angles: Array of rotation angle of pulse. Input file unit: Degree ==&gt; In code, radian. len(sequence) = len(pulse_angles) </p>
+
+</div>
+</div>
+<a id="a8d1b542b8538b339943f80f4ec8b1cd1" name="a8d1b542b8538b339943f80f4ec8b1cd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d1b542b8538b339943f80f4ec8b1cd1">&#9670;&#160;</a></span>pulse_axes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* Pulse::pulse_axes</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>pulse axes: Array of rotation axis of pulse. you can choose the axis of rotation angle. Input file parameters: "X", "Y", "Z", "I"(Identity) len(sequence) = len(pulse_axes) </p>
 
 </div>
 </div>
@@ -148,7 +185,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The pulse iteration (default : false) About npulse (Details) npulse = 0 : Ramsey (default) npulse = 1 : HahnEcho (default) npulse &gt; 1 : CPMG (default) </p>
+<p>The pulse iteration (default : false) About npulse (Details) npulse = 0 : Ramsey (default) npulse = 1 : HahnEcho (default) npulse &gt; 1 : CPMG (default) npulse = 4 &amp; pulsename = "WAHUHA" : WAHUHA (optional) </p>
 
 </div>
 </div>
@@ -163,7 +200,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The pulsename (default : "None") About pulsename (Details) pulsename = HahnEcho | Ramsey | CPMG above pulsename option doesn't need a sequence </p>
+<p>The pulsename (default : "None") About pulsename (Details) pulsename = HahnEcho | Ramsey | CPMG | WAHUHA | Manual above pulsename option without Maunal doesn't need a sequence "Manual" option must need a sequence If you want "Manual" option, then you have to choose the "gCCE" method!!! </p>
 
 </div>
 </div>
@@ -178,14 +215,29 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>pulse sequence (default : NULL) About sequence (Details) By using this parameter, we can adjust/delay pulse timing. (No unit)</p>
-<p>Input file format: sequence = { t1, t2, t3, ... , tn } (tn &lt; 1.0, n = npulse) (only pulse timing) ti is the time fraction of i-th pulse</p>
-<p>Array format: sequence is started with 0.0 and end with 1.0 sequence[npulse+1][4] (defulat : NULL) sequence[ipulse][0] = Fraction of Previous pulse sequence[ipulse][1] = Fraction of current pulse sequence[ipulse][2] = Difference of Fractions "[i][1] - [i][0]" sequence[ipulse][3] = The Index that have the same difference value if there is no the same difference value then give the current index ( This would reduce the calculational time cost ) e.g. Input file format : npulse = 0 (Ramasey) sequence parameter : sequence[0] = 0.0 , 1.0 , 1.0 , 0 e.g. Input file format : sequence = { 0.5 } (HahnEcho) sequence parameter : sequence[0] = 0.0 , 0.5 , 0.5 , 0 sequence[1] = 0.5 , 1.0 , 0.5 , 0 e.g. Input file format : sequence = { 0.25, 0.75 } (CPMG) sequence parameter : sequence[0] = 0.0 , 0.25 , 0.25 , 0 sequence[1] = 0.25 , 0.75 , 0.5 , 1 sequence[2] = 0.75 , 1.0 , 0.25 , 0 </p>
+
+<p>: Related with pulse sequence. </p>
+<p>pulse sequence (default : NULL) </p>
+
+</div>
+</div>
+<a id="a4a80fc876df183220d65b3b1676c85ce" name="a4a80fc876df183220d65b3b1676c85ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a80fc876df183220d65b3b1676c85ce">&#9670;&#160;</a></span>sequence_indices</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int* Pulse::sequence_indices</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>sequence_indices: The Index that have the same difference value if there is no the same difference value then give the current index ( This would reduce the calculational time cost ) len(sequence) = len(sequence_indices) </p>
 
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/Users/huijin/Documents/GitHub/CCEX/include/<a class="el" href="pulse_8h_source.html">pulse.h</a></li>
+<li>/home/huijin/git/CCEX/include/<a class="el" href="pulse_8h_source.html">pulse.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

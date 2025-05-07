@@ -95,6 +95,10 @@ typedef struct {
     char* qd_tensorfile_woqubit ; /**< Quadrupole tensor file name without qubit */
     double qd_cellpara[3]; 
 
+    // HF medi
+    bool hfmedi; /**< If true, we will add Hyperfine mediated term (Available only when you use CCE method), ref. N. Zhao, Nature Nanotechnology, 6, 242-246 (2011) (Supplementary)*/
+    bool knight; /**< If true, we will add the knight-field effect induced by transverse magnetic field (Available only when you use CCE method), ref. N. Zhao, Nature Nanotechnology, 6, 242-246 (2011) (Supplementary)*/ 
+
     // semi-classical options
     // int Interval_filter; // Default : 500      //gsl interval in integration
     // int Step_filter; // Default : 100          //filter function time table step
@@ -148,6 +152,8 @@ char*   Config_getQd_tensorfile(Config* cnf);
 char*   Config_getQd_tensorfile_woqubit(Config* cnf);
 double* Config_getQd_cellpara(Config* cnf);
 int     Config_getQd_readmode(Config* cnf);
+bool    Config_getHfmedi(Config* cnf);
+bool    Config_getKnight(Config* cnf);
 
 // set 
 void Config_setMethod(Config* cnf, char* method);
@@ -184,6 +190,8 @@ void Config_setQd_tensorfile(Config* cnf, char* qd_tensorfile);
 void Config_setQd_tensorfile_woqubit(Config* cnf, char* qd_tensorfile_woqubit);
 void Config_setQd_readmode(Config* cnf, int qd_readmode);
 void Config_setQd_cellpara(Config* cnf, double* qd_cellpara);
+void Config_setHfmedi(Config* cnf, bool hfmedi);
+void Config_setKnight(Config* cnf, bool knight);
 
 // alloc
 void Config_allocBathfiles(Config* cnf);

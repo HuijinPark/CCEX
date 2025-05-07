@@ -9,7 +9,7 @@
  */
 typedef struct {
 
-    int npulse; /**< The number of pulse (default : 0)*/
+    int npulse; /**< The number of pulse (default : -)*/
     bool pulseiter; /**< The pulse iteration (default : false)*/
     /**<
      * About npulse (Details)
@@ -52,6 +52,9 @@ typedef struct {
      *                        ( This would reduce the calculational time cost ) 
      *   len(sequence) = len(sequence_indices)
      */
+    double pulse_time;
+    double detuning_factor;
+
     //
     /**<
      * About sequence (Details)
@@ -81,26 +84,26 @@ typedef struct {
      * 
      * ex1) Ramsey sequence 
      *    inputfile tag:
-     *       - "npulse" = 0
+     *       - "npulse": 0
      *           or
-     *       - "pulsename" : "Manual",
-     *       - "sequence" = [["1.0", "I", 0.0]]
+     *       - "pulsename": "Manual",
+     *       - "sequence" : [["1.0", "I", 0.0]]
      *
      *
      * ex2) Hahn-Echo sequence 
      *    inputfile tag:
-     *       - "npulse" = 1
+     *       - "npulse" : 1
      *           or
      *       - "pulsename" : "Manual",
-     *       - "sequence" = [["0.5", "X", 180.0],
-     *                       ["0.5", "I",   0.0]]
+     *       - "sequence"  : [["0.5", "X", 180.0],
+     *                        ["0.5", "I",   0.0]]
      *
      * ex3) CPMG sequence 
      *    inputfile tag:
      *       - "npulse" > 1
      *           or
-     *       - "pulsename" : "Manual",
-     *       - "sequence" = [["1/{1tau}", "X", 180.0],
+     *       - "pulsename": "Manual",
+     *       - "sequence" : [["1/{1tau}", "X", 180.0],
      *                       ["1/{2tau}", "X", 180.0],
      *                       ["1/{2tau}", "X", 180.0],
      *                                  ...
@@ -109,10 +112,12 @@ typedef struct {
      *
      * ex3) WAHUHA sequence 
      *    inputfile tag:
-     *       - "npulse" = 4
+     *       - "npulse"   : 4
+     *       - "pulsename": "WAHUHA",
      *           or
-     *       - "pulsename" : "Manual",
-     *       - "sequence" = [["1/6", "X",  90.0],
+     *       - "npulse"   : 4
+     *       - "pulsename": "Manual",
+     *       - "sequence" : [["1/6", "X",  90.0],
      *                       ["1/6", "Y", 270.0],
      *                       ["2/6", "Y",  90.0],
      *                       ["1/6", "X", 270.0],
@@ -169,11 +174,15 @@ Pulse* Pulse_init();
 void Pulse_report(Pulse* pulse);
 
 void Pulse_setNpulse(Pulse* pulse, int npulse);
+void Pulse_setPulseTime(Pulse* pulse, double pulse_time);
+void Pulse_setPulseDetuningFactor(Pulse* pulse, double detuning_factor);
 void Pulse_setPulsename(Pulse* pulse, char* pulsename);
 void assign_sequence_indices(Pulse* pulse);
 void Pulse_setPulseiter(Pulse* pulse, bool pulseiter);
 
 int Pulse_getNpulse(Pulse* pulse);
+double Pulse_getPulseTime(Pulse* pulse);
+double Pulse_getPulseDetuningFactor(Pulse* pulse);
 char* Pulse_getPulsename(Pulse* pulse);
 char* Pulse_getPulseAxes(Pulse* pulse);
 double* Pulse_getPulseAngles(Pulse* pulse);

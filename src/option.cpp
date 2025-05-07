@@ -230,7 +230,21 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             break;
 
     }
+
     ////////////////////////////////////////////////////////////////////////
+    if (rank==0){
+        printf("\n");
+        printMessage("  - Additional Hamiltonian-related keys :");
+        printMessage("    [ hfmedi, knight ] \n");
+    }
+
+    bool hfmediDefault = false;
+    bool hfmedi = cJSON_ReadBool(root,"hfmedi",true,hfmediDefault);
+    Config_setHfmedi(cnf, hfmedi);
+
+    bool knightDefault = false;
+    bool knight = cJSON_ReadBool(root,"knight",true,knightDefault);
+    Config_setKnight(cnf, knight);
 
     cJSON_Delete(root);    
     freeChar1d(&data);
@@ -248,10 +262,10 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         printMessage("  - Read values of main-key 'Qubit'");
         printMessage("    sub-key of 'Qubit' : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] \n");
         printMessage("  - Read values of sub-key 'qubit'");
-        printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] \n");
+        printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ] \n");
         printMessage("  - Read values of sub-key 'intmap'");
         printMessage("    sub-sub-key : [ between, tensor ] \n");
-        printMessage("  - Read values of main-key 'qubitfile', 'zfs', 'qspin', 'alphams', betams'");
+        printMessage("  - Read values of main-key 'qubitfile', 'qzfs', 'qspin', 'qalphams', 'qbetams'");
     }
 
     char* data = cJSON_ReadFccein(fccein);
@@ -306,8 +320,8 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_setQubit_i_spin(qa,spin,0);
 
         // set the qubit state (alpha, beta)
-        float alphams = cJSON_ReadFloat(root,"alphams",true,alphaMsDefault);
-        float betams = cJSON_ReadFloat(root,"betams",true,betaMsDefault);
+        float alphams = cJSON_ReadFloat(root,"qalphams",true,alphaMsDefault);
+        float betams = cJSON_ReadFloat(root,"qbetams",true,betaMsDefault);
         QubitArray_setQubit_i_alpha_fromMs(qa,alphams,0);
         QubitArray_setQubit_i_beta_fromMs(qa,betams,0);
 
@@ -322,6 +336,9 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         // read interaction map
         MatrixXcd tensor = cJSON_ReadTensor(root,"qzfs",true,intmapDefault);
         tensor = KHZ_TO_RADKHZ(tensor);
+
+        // Set ZFS in qubit intmap 
+        QubitArray_setIntmap_i_j(qa,tensor,0,0); // qubit index:0,0
 
         // mediatedTerm IO
         cJSON_Delete(root);
@@ -359,7 +376,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             double* xyz = cJSON_ReadDouble1d(qubit,"xyz",false,NULL,3);
             double detuning = cJSON_ReadDouble(qubit,"detuning",true,detuningDefault); //kHz
             float alphams = cJSON_ReadFloat(qubit,"alphams",true,alphaMsDefault); 
-            float betams = cJSON_ReadFloat(qubit,"betams",true,betaMsDefault);
+            float betams = cJSON_ReadFloat(qubit,"betams",true,betaMsDefault); 
 
             // set qubit properties
             QubitArray_setQubit_i_name(qa,name,iqubit);
@@ -380,6 +397,10 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_allocIntmap(qa);
         QubitArray_setIntmap_dipAuto(qa);
 
+        // Set the initial interaction map
+        // as dipolar interaction tensor in radkHz
+        QubitArray_setIntmap_dipAuto(qa);
+
         // read interaction map
         cJSON* intmapArray = cJSON_GetObjectItem(QubitSection,"intmap");
         cJSON* intmap;
@@ -396,8 +417,15 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
                 qubit1_idx = QubitArray_getQubitIdx_fromName(qa,qubit1_name);
                 qubit2_idx = QubitArray_getQubitIdx_fromName(qa,qubit2_name);
                 // check if the qubit name exists
-                if (qubit1_idx == -1 || qubit2_idx == -1 || qubit1_idx > qubit2_idx) {
+                if (qubit1_idx == -1 || qubit2_idx == -1 ) {
                     fprintf(stderr, "Error: The qubit name is not found in the input file\n");
+                    exit(EXIT_FAILURE);
+                }
+                if (qubit1_idx > qubit2_idx){
+                    fprintf(stderr, "Error: First qubit index is greater than second qubit index\n");
+                    fprintf(stderr, "       qubit1_name = %s, qubit2_name = %s\n", qubit1_name, qubit2_name);
+                    fprintf(stderr, "       qubit1_idx = %d, qubit2_idx = %d\n", qubit1_idx, qubit2_idx);
+                    fprintf(stderr, "       qubit1_idx should be less than qubit2_idx\n");
                     exit(EXIT_FAILURE);
                 }
             }else{
@@ -496,7 +524,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     int order = cJSON_ReadInt(root,"order",false, -1); // read twice
     Cluster_setOrder(clus,order);
 
-    char* method = cJSON_ReadString(root,"method",true,"cce");
+    char* method = cJSON_ReadString(root,"method",true,"cce"); // read twice
     Cluster_setMethod(clus,method);
 
     bool addsubclus = cJSON_ReadBool(root,"addsubclus",true,true);
@@ -563,6 +591,12 @@ char parse_axis(cJSON* axis_json, int row_index) {
         exit(EXIT_FAILURE);
     }
 
+    // Check if the string is one of the allowed axes: X, Y, Z, I
+    if (strlen(axis_str) > 1) {
+        fprintf(stderr, "[Error] Axis at row %d is too long. Only single characters are allowed.\n", row_index);
+        exit(EXIT_FAILURE);
+    }
+
     char c = toupper(axis_str[0]);
 
     if (c == 'X' || c == 'Y' || c == 'Z' || c == 'I') {
@@ -584,20 +618,27 @@ std::string read_json_file(const std::string& fccein) {
 }
 
 void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
+
     if (rank == 0) {
-        std::cout << "\n[Info] Read Pulse Options ...\n";
-        std::cout << "  [ npulse, pulsename, sequence ]\n";
+        printf("\n");
+        printMessage("Read Pulse Options ...");
+        printMessage("  [ npulse, pulsename, sequence ] \n");
     }
 
     char*  data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
-    if (!root) {
-        if (rank == 0)
-            std::cerr << "[Error] JSON parse failed: " << cJSON_GetErrorPtr() << "\n";
-        throw std::runtime_error("JSON parsing failed");
+
+    if (root == NULL){
+        if (rank == 0) {
+            printf("Error before: %s\n", cJSON_GetErrorPtr());
+        }
+        exit(EXIT_FAILURE);
+        freeChar1d(&data);
     }
+
     bool made = false;
 
+    // Read "pulse number" (Default: -1, i.e. not set)
     int npulse = cJSON_ReadInt(root,"npulse",false, -1);
     Pulse_setNpulse(pulse,npulse);
 
@@ -618,8 +659,9 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     Pulse_allocAxes(pulse);
     Pulse_allocAngles(pulse);
     Pulse_allocSequenceIndices(pulse);
+
     cJSON* sequence_array = cJSON_GetObjectItem(root, "sequence");
-    if (!sequence_array) {
+    if (sequence_array == NULL){
         allocateDefaultSequence(pulse);
         made = true;
     }
@@ -1170,23 +1212,35 @@ MatrixXcd cJSON_ReadTensor(cJSON* root, char* key, bool _default, MatrixXcd defa
     MatrixXcd mat = MatrixXcd::Zero(row,col);
 
     cJSON* tensor = cJSON_GetObjectItem(root,key);
+
     if (cJSON_IsArray(tensor)) {
 
         for (int i = 0; i < cJSON_GetArraySize(tensor); ++i) {
 
+            if (i >= row){
+                fprintf(stderr, "Error: %s is too long in the input file (>3)\n",key);
+                exit(EXIT_FAILURE);
+            }
+
             cJSON* tensor_i = cJSON_GetArrayItem(tensor, i);
+            cJSON_Print(tensor_i);
             if (cJSON_IsArray(tensor_i)) {
                 for (int j = 0; j < cJSON_GetArraySize(tensor_i); ++j) {
 
+                    if (j >= col){
+                        fprintf(stderr, "Error: %s is too long in the input file (>3)\n",key);
+                        exit(EXIT_FAILURE);
+                    }
+
                     cJSON* tensor_i_j = cJSON_GetArrayItem(tensor_i, j);
                     
+                    cJSON_Print(tensor_i_j);
                     if (cJSON_IsNumber(tensor_i_j)) {
                         mat(i,j) = tensor_i_j->valuedouble;
                     }else{
                         fprintf(stderr, "Error: %s type error, it should be tensor\n",key);
                         exit(EXIT_FAILURE);
                     }   
-
                 }    
             }else{
                 fprintf(stderr, "Error: %s type error, it should be tensor\n",key);

@@ -1,5 +1,5 @@
 \doxysection{simulator.\+h}
-\hypertarget{simulator_8h_source}{}\label{simulator_8h_source}\index{/Users/huijin/Documents/GitHub/CCEX/include/simulator.h@{/Users/huijin/Documents/GitHub/CCEX/include/simulator.h}}
+\hypertarget{simulator_8h_source}{}\label{simulator_8h_source}\index{/home/huijin/git/CCEX/include/simulator.h@{/home/huijin/git/CCEX/include/simulator.h}}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_SIMULATOR\_H\_}}
@@ -29,6 +29,11 @@
 \DoxyCodeLine{00025\ MatrixXcd\ HamilQubitBath(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ MatrixXcd**\ qsigmas,\ MatrixXcd**\ bsigmas,\ \mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
 \DoxyCodeLine{00026\ MatrixXcd*\ HamilQubitBathSecularApp(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ MatrixXcd**\ bsigmas,\ \mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
 \DoxyCodeLine{00027\ }
-\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_SIMULATOR\_H\_}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ MatrixXcd**\ gatherSigmas(MatrixXcd**\ qsigmas,\ MatrixXcd**\ bsigmas,\ \textcolor{keywordtype}{int}\ nqubit,\ \textcolor{keywordtype}{int}\ nspin);}
+\DoxyCodeLine{00030\ MatrixXcd**\ gatherSigmas\_singlequbit(MatrixXcd*\ qsigma,\ MatrixXcd**\ bsigmas,\ \textcolor{keywordtype}{int}\ nqubit,\ \textcolor{keywordtype}{int}\ nspin);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{int}\ close\_state\_index(MatrixXcd\ state,\ MatrixXcd\ eigenVectors);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_SIMULATOR\_H\_}}
 
 \end{DoxyCode}

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['method_0',['method',['../structCluster.html#acfc81556c4ed78e0bce4c36119fe7150',1,'Cluster::method'],['../structConfig.html#a73d927bf5bdb0f39d024b23dc66f0c1c',1,'Config::method']]]
+  ['kmeans_5fpp_0',['kmeans_pp',['../structCluster.html#ae16ed95d44c972143ecfcd3d9c70018e',1,'Cluster']]],
+  ['knight_1',['knight',['../structConfig.html#ae2f2e716dbfb2d45a02fee1a6b678db8',1,'Config']]]
 ];

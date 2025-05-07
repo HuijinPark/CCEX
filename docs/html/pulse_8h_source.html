@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CCEX-1.0.0: /Users/huijin/Documents/GitHub/CCEX/include/pulse.h Source File</title>
+<title>CCEX-1.0.0: /home/huijin/git/CCEX/include/pulse.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -112,45 +112,62 @@ $(function(){initNavTree('pulse_8h_source.html',''); initResizable(true); });
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="structPulse.html#ab083ce764799722049dac44ad7479bad">   12</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structPulse.html#ab083ce764799722049dac44ad7479bad">npulse</a>; </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="structPulse.html#a4fcad551982a417a36f160cd0a6f0975">   13</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structPulse.html#a4fcad551982a417a36f160cd0a6f0975">pulseiter</a>; </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7">   20</a></span>    <span class="keywordtype">char</span> <a class="code hl_variable" href="structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7">pulsename</a>[100]; </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structPulse.html#af1bd05f903769ac217b18fb0c2ebc31a">   26</a></span>    <span class="keywordtype">double</span>** <a class="code hl_variable" href="structPulse.html#af1bd05f903769ac217b18fb0c2ebc31a">sequence</a>; </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>} <a class="code hl_struct" href="structPulse.html">Pulse</a>;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7">   21</a></span>    <span class="keywordtype">char</span> <a class="code hl_variable" href="structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7">pulsename</a>[100]; </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="structPulse.html#af1bd05f903769ac217b18fb0c2ebc31a">   33</a></span>    <span class="keywordtype">double</span>** <a class="code hl_variable" href="structPulse.html#af1bd05f903769ac217b18fb0c2ebc31a">sequence</a>; </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="structPulse.html#aae5ebfae6aac76ba8cf2dbb18ee128a8">   34</a></span>    <span class="keywordtype">double</span>*  <a class="code hl_variable" href="structPulse.html#aae5ebfae6aac76ba8cf2dbb18ee128a8">pulse_angles</a>; </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structPulse.html#a8d1b542b8538b339943f80f4ec8b1cd1">   40</a></span>    <span class="keywordtype">char</span>*    <a class="code hl_variable" href="structPulse.html#a8d1b542b8538b339943f80f4ec8b1cd1">pulse_axes</a>;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="structPulse.html#a4a80fc876df183220d65b3b1676c85ce">   47</a></span>    <span class="keywordtype">int</span>*     <a class="code hl_variable" href="structPulse.html#a4a80fc876df183220d65b3b1676c85ce">sequence_indices</a>;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="comment">//</span></div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>} <a class="code hl_struct" href="structPulse.html">Pulse</a>;</div>
 </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><a class="code hl_struct" href="structPulse.html">Pulse</a>* Pulse_init();</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="keywordtype">void</span> Pulse_report(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="keywordtype">void</span> Pulse_setNpulse(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse, <span class="keywordtype">int</span> npulse);</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keywordtype">void</span> Pulse_setPulsename(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse, <span class="keywordtype">char</span>* pulsename);</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="keywordtype">void</span> Pulse_setSequence_fromName(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keywordtype">void</span> Pulse_setSequence_fromInput(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse, <span class="keywordtype">double</span>* sequenceinput);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keywordtype">void</span> Pulse_setPulseiter(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse, <span class="keywordtype">bool</span> pulseiter);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="keywordtype">int</span> Pulse_getNpulse(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keywordtype">char</span>* Pulse_getPulsename(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="keywordtype">double</span>** Pulse_getSequence(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="keywordtype">bool</span> Pulse_getPulseiter(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment">// allocation</span></div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keywordtype">void</span> Pulse_allocSequence(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="keywordtype">void</span> Pulse_freeSequence(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="keywordtype">void</span> Pulse_freeAll(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span><span class="comment">// generate pulse sequence</span></div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="keywordtype">void</span> generateSequenceRamsey(<span class="keywordtype">double</span>*** sequence);</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keywordtype">void</span> generateSequenceHE(<span class="keywordtype">double</span>*** sequence);</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keywordtype">void</span> generateSequenceCPMG(<span class="keywordtype">double</span>*** sequence, <span class="keywordtype">int</span> npulse);</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keywordtype">void</span> generateSequenceEqual(<span class="keywordtype">double</span>*** sequence, <span class="keywordtype">int</span> npulse);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="preprocessor">#endif </span><span class="comment">// __CCEX_PULSE_H_</span></div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span><a class="code hl_struct" href="structPulse.html">Pulse</a>* Pulse_init();</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span><span class="keywordtype">void</span> Pulse_report(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span><span class="keywordtype">void</span> Pulse_setNpulse(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse, <span class="keywordtype">int</span> npulse);</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span><span class="keywordtype">void</span> Pulse_setPulsename(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse, <span class="keywordtype">char</span>* pulsename);</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span><span class="keywordtype">void</span> assign_sequence_indices(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span><span class="keywordtype">void</span> Pulse_setPulseiter(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse, <span class="keywordtype">bool</span> pulseiter);</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span><span class="keywordtype">int</span> Pulse_getNpulse(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span><span class="keywordtype">char</span>* Pulse_getPulsename(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span><span class="keywordtype">char</span>* Pulse_getPulseAxes(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span><span class="keywordtype">double</span>* Pulse_getPulseAngles(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span><span class="keywordtype">int</span>* Pulse_getSequenceIndices(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="keywordtype">double</span>** Pulse_getSequence(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="keywordtype">bool</span> Pulse_getPulseiter(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="comment">// allocation</span></div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="keywordtype">void</span> Pulse_allocSequence(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="keywordtype">void</span> Pulse_freeSequence(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="keywordtype">void</span> Pulse_freeAll(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="keywordtype">void</span> Pulse_allocAxes(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="keywordtype">void</span> Pulse_allocAngles(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="keywordtype">void</span> Pulse_allocSequenceIndices(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span><span class="keywordtype">void</span> Pulse_freeAxes(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span><span class="keywordtype">void</span> Pulse_freeAngles(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="keywordtype">void</span> Pulse_freeSequenceIndices(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span><span class="comment">// generate pulse sequence</span></div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span><span class="keywordtype">void</span> generateSequenceRamsey(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span><span class="keywordtype">void</span> generateSequenceHE(<a class="code hl_struct" href="structPulse.html">Pulse</a>* sequence);</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="keywordtype">void</span> generateSequenceWAHUHA(<a class="code hl_struct" href="structPulse.html">Pulse</a>* sequence);</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="keywordtype">void</span> generateSequenceCPMG(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="keywordtype">void</span> allocateDefaultSequence(<a class="code hl_struct" href="structPulse.html">Pulse</a>* pulse);</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span> </div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="preprocessor">#endif </span><span class="comment">// __CCEX_PULSE_H_</span></div>
 <div class="ttc" id="astructPulse_html"><div class="ttname"><a href="structPulse.html">Pulse</a></div><div class="ttdoc">This structure contains the pulse-related parameters.</div><div class="ttdef"><b>Definition</b> pulse.h:10</div></div>
+<div class="ttc" id="astructPulse_html_a4a80fc876df183220d65b3b1676c85ce"><div class="ttname"><a href="structPulse.html#a4a80fc876df183220d65b3b1676c85ce">Pulse::sequence_indices</a></div><div class="ttdeci">int * sequence_indices</div><div class="ttdef"><b>Definition</b> pulse.h:47</div></div>
 <div class="ttc" id="astructPulse_html_a4fcad551982a417a36f160cd0a6f0975"><div class="ttname"><a href="structPulse.html#a4fcad551982a417a36f160cd0a6f0975">Pulse::pulseiter</a></div><div class="ttdeci">bool pulseiter</div><div class="ttdef"><b>Definition</b> pulse.h:13</div></div>
-<div class="ttc" id="astructPulse_html_a94ae332f008b81e37d8df344a3c7d9b7"><div class="ttname"><a href="structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7">Pulse::pulsename</a></div><div class="ttdeci">char pulsename[100]</div><div class="ttdef"><b>Definition</b> pulse.h:20</div></div>
+<div class="ttc" id="astructPulse_html_a8d1b542b8538b339943f80f4ec8b1cd1"><div class="ttname"><a href="structPulse.html#a8d1b542b8538b339943f80f4ec8b1cd1">Pulse::pulse_axes</a></div><div class="ttdeci">char * pulse_axes</div><div class="ttdef"><b>Definition</b> pulse.h:40</div></div>
+<div class="ttc" id="astructPulse_html_a94ae332f008b81e37d8df344a3c7d9b7"><div class="ttname"><a href="structPulse.html#a94ae332f008b81e37d8df344a3c7d9b7">Pulse::pulsename</a></div><div class="ttdeci">char pulsename[100]</div><div class="ttdef"><b>Definition</b> pulse.h:21</div></div>
+<div class="ttc" id="astructPulse_html_aae5ebfae6aac76ba8cf2dbb18ee128a8"><div class="ttname"><a href="structPulse.html#aae5ebfae6aac76ba8cf2dbb18ee128a8">Pulse::pulse_angles</a></div><div class="ttdeci">double * pulse_angles</div><div class="ttdef"><b>Definition</b> pulse.h:34</div></div>
 <div class="ttc" id="astructPulse_html_ab083ce764799722049dac44ad7479bad"><div class="ttname"><a href="structPulse.html#ab083ce764799722049dac44ad7479bad">Pulse::npulse</a></div><div class="ttdeci">int npulse</div><div class="ttdef"><b>Definition</b> pulse.h:12</div></div>
-<div class="ttc" id="astructPulse_html_af1bd05f903769ac217b18fb0c2ebc31a"><div class="ttname"><a href="structPulse.html#af1bd05f903769ac217b18fb0c2ebc31a">Pulse::sequence</a></div><div class="ttdeci">double ** sequence</div><div class="ttdef"><b>Definition</b> pulse.h:26</div></div>
+<div class="ttc" id="astructPulse_html_af1bd05f903769ac217b18fb0c2ebc31a"><div class="ttname"><a href="structPulse.html#af1bd05f903769ac217b18fb0c2ebc31a">Pulse::sequence</a></div><div class="ttdeci">double ** sequence</div><div class="ttdoc">: Related with pulse sequence.</div><div class="ttdef"><b>Definition</b> pulse.h:33</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

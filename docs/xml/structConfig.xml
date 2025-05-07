@@ -17,6 +17,7 @@
 <para><itemizedlist>
 <listitem><para>cce : Conventional CCE method *using hash algorithm</para>
 </listitem><listitem><para>gcce : Generalized CCE method *using hash algorithm</para>
+</listitem><listitem><para>pcce : Parition CCE method *using hash algorithm</para>
 </listitem><listitem><para>dsj : Disjoint clustering algorithm , meaning that it consider the disjointed cluster</para>
 </listitem><listitem><para>itb : Inter-bathcluster clustering algorithm , meaning that it consider the pair interaction between disjointed bath cluster</para>
 </listitem><listitem><para>dsjitb : Disjoint + inter-bathcluster clustering algorithm , meaning that it consider the disjointed group and the interaction between disjointed clusters. (dsjitb with order = 2 gives the same result as normal CCE2) <xrefsect id="todo_1_todo000014"><xreftitle>Todo</xreftitle><xrefdescription><para>add pcce-related description HS_pcce <ref refid="structCluster_1acfc81556c4ed78e0bce4c36119fe7150" kindref="member">Cluster::method</ref></para>
@@ -26,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="33" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="33" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="34" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="34" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a408cf9618ed41aefd0b0c323f57e0730" prot="public" static="no" mutable="no">
         <type>char</type>
@@ -41,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="34" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="34" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="35" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="35" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a3a9071ea9a9409cefb8cbcea2184c879" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -56,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="37" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="37" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="38" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="38" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1abf4c62b17ba762512fab9da0f1e193be" prot="public" static="no" mutable="no">
         <type>float</type>
@@ -71,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="38" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="38" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="39" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="39" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a79389333cffeb4063cf1d39e89234c57" prot="public" static="no" mutable="no">
         <type>float</type>
@@ -86,7 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="39" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="39" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="40" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="40" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1af9d5e3a3b185555cbe04ad12733612b1" prot="public" static="no" mutable="no">
         <type>float</type>
@@ -101,7 +102,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="40" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="40" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="41" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="41" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a6539de558079f55df76dce79c4079b33" prot="public" static="no" mutable="no">
         <type>float</type>
@@ -116,7 +117,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="41" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="41" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="42" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="42" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1acd1675410784e93a9c9866de0c64807e" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -131,7 +132,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="42" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="42" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="43" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="43" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a2eeef76fa44792c24c3320ff6b4d19c8" prot="public" static="no" mutable="no">
         <type>float</type>
@@ -146,7 +147,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="43" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="43" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="44" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="44" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a39b6cf20220772b2326ddf423bf3a3f7" prot="public" static="no" mutable="no">
         <type>float</type>
@@ -161,7 +162,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="44" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="44" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="45" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a91b2aadf805896022127036ded259e79" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -176,7 +177,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="45" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="45" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="46" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a92ed038fd7676ed62640f59270a60545" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -191,7 +192,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="46" column="11" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="46" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="47" column="11" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="47" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a9f5ed3dfb6ae52627a94099cb837cfbf" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -206,7 +207,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="49" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="49" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="50" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a735f7f25b0847d08468616025a27ffe5" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -221,7 +222,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="50" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="50" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="51" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a26827d7c075042372d21965a827328c3" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -236,7 +237,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="51" column="9" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="51" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="52" column="9" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1afe80a72359e5fc90a5f0f16e9f1d357e" prot="public" static="no" mutable="no">
         <type>char **</type>
@@ -251,7 +252,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="52" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="52" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="53" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a1ce641fcaac86656dde150e974ff5ff7" prot="public" static="no" mutable="no">
         <type>double **</type>
@@ -266,7 +267,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="53" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="53" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="54" column="12" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1ae3244e507716ae5483bb32a2e4fef809" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -281,7 +282,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="54" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="54" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="55" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a7ce40e0c9e172e7b2e213101b154760b" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -296,7 +297,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="55" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="55" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="56" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="56" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a70ec8756f364dc3d40201f951476137e" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -311,7 +312,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="56" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="56" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="57" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="57" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1aae1991f77e6f99acc5342c1944b46736" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -326,7 +327,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="57" column="9" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="57" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="58" column="9" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="58" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a20fb9e36c4c73d0890445628232c5636" prot="public" static="no" mutable="no">
         <type>int *</type>
@@ -341,7 +342,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="58" column="9" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="58" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="59" column="9" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="59" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a716389cd405e9c041cd3ac7c7608ccdd" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -356,7 +357,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="61" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="61" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="62" column="12" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="62" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1ac923676eaaf0a911eb890ee419c2b8e6" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -371,7 +372,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="73" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="73" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="74" column="12" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="74" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a3d4d5a3943f20928bdce09e64fa4bb37" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -386,7 +387,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="85" column="9" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="85" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="86" column="9" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="86" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a52710072ec30b071e08c1b62f7450c0f" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -401,7 +402,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="86" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="86" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="87" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="87" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1af82a9ccd3b05247db3da179361faef85" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -416,7 +417,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="87" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="87" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="88" column="12" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="88" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a840b086fb6ef148cea4e370967da30e9" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -431,7 +432,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="88" column="9" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="88" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="89" column="9" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="89" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1adc1119b46a95084ddd4c7bfa2a8d50d9" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -446,7 +447,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="92" column="9" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="92" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="93" column="9" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a91d5741035098807bc28000a003bd35d" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -461,7 +462,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="93" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="93" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="94" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="94" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a93e5666a93192db9d1cd361381d64301" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -476,7 +477,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="94" column="10" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="94" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="95" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="95" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structConfig_1a6a556f62f5419389fe87348bb7754746" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -490,14 +491,44 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="95" column="12" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="95" bodyend="-1"/>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="96" column="12" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1aff67e82b8327ef5e798493c5c242400a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Config::hfmedi</definition>
+        <argsstring></argsstring>
+        <name>hfmedi</name>
+        <qualifiedname>Config::hfmedi</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If true, we will add Hyperfine mediated term (Available only when you use CCE method), ref. N. Zhao, Nature Nanotechnology, 6, 242-246 (2011) (Supplementary) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="99" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structConfig_1ae2f2e716dbfb2d45a02fee1a6b678db8" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool Config::knight</definition>
+        <argsstring></argsstring>
+        <name>knight</name>
+        <qualifiedname>Config::knight</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If true, we will add the knight-field effect induced by transverse magnetic field (Available only when you use CCE method), ref. N. Zhao, Nature Nanotechnology, 6, 242-246 (2011) (Supplementary) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/general.h" line="100" column="10" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="100" bodyend="-1"/>
       </memberdef>
     </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/huijin/Documents/GitHub/CCEX/include/general.h" line="12" column="1" bodyfile="/Users/huijin/Documents/GitHub/CCEX/include/general.h" bodystart="12" bodyend="108"/>
+    <location file="/home/huijin/git/CCEX/include/general.h" line="12" column="1" bodyfile="/home/huijin/git/CCEX/include/general.h" bodystart="12" bodyend="113"/>
     <listofallmembers>
       <member refid="structConfig_1a20fb9e36c4c73d0890445628232c5636" prot="public" virt="non-virtual"><scope>Config</scope><name>_flines</name></member>
       <member refid="structConfig_1aae1991f77e6f99acc5342c1944b46736" prot="public" virt="non-virtual"><scope>Config</scope><name>_nflines</name></member>
@@ -514,6 +545,8 @@
       <member refid="structConfig_1a840b086fb6ef148cea4e370967da30e9" prot="public" virt="non-virtual"><scope>Config</scope><name>hf_ignore_oor</name></member>
       <member refid="structConfig_1a3d4d5a3943f20928bdce09e64fa4bb37" prot="public" virt="non-virtual"><scope>Config</scope><name>hf_readmode</name></member>
       <member refid="structConfig_1a52710072ec30b071e08c1b62f7450c0f" prot="public" virt="non-virtual"><scope>Config</scope><name>hf_tensorfile</name></member>
+      <member refid="structConfig_1aff67e82b8327ef5e798493c5c242400a" prot="public" virt="non-virtual"><scope>Config</scope><name>hfmedi</name></member>
+      <member refid="structConfig_1ae2f2e716dbfb2d45a02fee1a6b678db8" prot="public" virt="non-virtual"><scope>Config</scope><name>knight</name></member>
       <member refid="structConfig_1a73d927bf5bdb0f39d024b23dc66f0c1c" prot="public" virt="non-virtual"><scope>Config</scope><name>method</name></member>
       <member refid="structConfig_1a26827d7c075042372d21965a827328c3" prot="public" virt="non-virtual"><scope>Config</scope><name>nbathfiles</name></member>
       <member refid="structConfig_1a91b2aadf805896022127036ded259e79" prot="public" virt="non-virtual"><scope>Config</scope><name>nstate</name></member>

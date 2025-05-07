@@ -24,7 +24,7 @@ cat << EOF > ${fopt}
 
 Method="gCCE"
 
-Directory="/home/ist1102/CCE/CODE/work/CCEX/example/Diamond_NV_P1Bath/bath"
+Directory="$(git rev-parse --show-toplevel)/example/Diamond_NV_P1Bath/bath"
 
 DefectFile="\${Directory}/${spin}_${ConcList[i]}/bath_${System}_${ConcList[i]}_Defect"
 BathFile="\${Directory}/${spin}_${ConcList[i]}/bath_${System}_${ConcList[i]}_"

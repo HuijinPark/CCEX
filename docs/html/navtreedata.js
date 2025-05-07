@@ -27,9 +27,8 @@ var NAVTREE =
   [ "CCEX-1.0.0", "index.html", [
     [ "Overview", "index.html", "index" ],
     [ "Getting started", "GettingStarted.html", null ],
-    [ "Input File", "InputFile.html", null ],
+    [ "Input File", "InputFile.html#InputFile", null ],
     [ "Examples", "Examples.html", null ],
-    [ "Tag variable", "TagVariable.html", null ],
     [ "Class List", "annotated.html", "annotated" ]
   ] ]
 ];

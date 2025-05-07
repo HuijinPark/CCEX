@@ -274,7 +274,7 @@ MatrixXcd mulMatrixXcdElementWise(MatrixXcd a, MatrixXcd b){
 void printInlineMatrixXcd(char* key, MatrixXcd mat){
     printf("      %-18s:   [ ", key);
 
-    if (mat.rows() * mat.cols() > 9){
+    if (mat.rows() * mat.cols() > 9 && mat.rows() * mat.cols() <= 400){
         int count = 0;
         for (int i = 0; i < mat.rows(); ++i) {
             for (int j = 0; j < mat.cols(); ++j) {
@@ -289,7 +289,7 @@ void printInlineMatrixXcd(char* key, MatrixXcd mat){
                 printf("\n%30s"," ");
             }          
         }
-    }else{
+    }else if (mat.rows() * mat.cols() <= 9){
         for (int i = 0; i < mat.rows(); ++i) {
             for (int j = 0; j < mat.cols(); ++j) {
                 std::complex<double> z = mat(i, j);
@@ -299,7 +299,28 @@ void printInlineMatrixXcd(char* key, MatrixXcd mat){
                 }
             }
         }
+    }else{
+        // print the non-zero elements in the matrix
+        // and print the rest as 0
+        for (int i = 0; i < mat.rows(); ++i) {
+            int count = 0;
+            for (int j = 0; j < mat.cols(); ++j) {
+                std::complex<double> z = mat(i, j);
+                if (fabs(z.real()) > FLT_EPSILON || fabs(z.imag()) > FLT_EPSILON){
+                    printf("(%d,%d) %3.2f%+-3.2fj", i,j,z.real(), z.imag());
+                    if (i != mat.rows() - 1 || j != mat.cols() - 1) {
+                        printf(", ");
+                    }
+                    count++;
+
+                    if (count%9 == 0 && (i == mat.rows() - 1 && j == mat.cols() - 1)){
+                        printf("\n%30s"," ");
+                    }
+                }
+            }
+        }
     }
+
     printf(" ]\n");
 }
 

@@ -8,17 +8,13 @@ int {\bfseries order}
 \begin{DoxyCompactList}\small\item\em Clusterizing order \+: See details in \doxylink{structConfig_a3a9071ea9a9409cefb8cbcea2184c879}{Config\+::order}. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{structCluster_a7c4d583750b7f37eb2ca537e23ad334f}{sK}}
 \begin{DoxyCompactList}\small\item\em parameters of p\+CCE \end{DoxyCompactList}\item 
-\Hypertarget{structCluster_a1ee43f70019a1d92a9b70c5ae5ac84b3}\label{structCluster_a1ee43f70019a1d92a9b70c5ae5ac84b3} 
-int {\bfseries max\+\_\+trial}
+int \mbox{\hyperlink{structCluster_a1ee43f70019a1d92a9b70c5ae5ac84b3}{max\+\_\+trial}}
 \item 
-\Hypertarget{structCluster_a22956121c5d115004869950c3bd87c5c}\label{structCluster_a22956121c5d115004869950c3bd87c5c} 
-int {\bfseries max\+\_\+iter}
+int \mbox{\hyperlink{structCluster_a22956121c5d115004869950c3bd87c5c}{max\+\_\+iter}}
 \item 
-\Hypertarget{structCluster_ae16ed95d44c972143ecfcd3d9c70018e}\label{structCluster_ae16ed95d44c972143ecfcd3d9c70018e} 
-bool {\bfseries kmeans\+\_\+pp}
+bool \mbox{\hyperlink{structCluster_ae16ed95d44c972143ecfcd3d9c70018e}{kmeans\+\_\+pp}}
 \item 
-\Hypertarget{structCluster_a85e14a7d5ed03ab4036531cb482e077e}\label{structCluster_a85e14a7d5ed03ab4036531cb482e077e} 
-bool {\bfseries iter\+\_\+detail}
+bool \mbox{\hyperlink{structCluster_a85e14a7d5ed03ab4036531cb482e077e}{iter\+\_\+detail}}
 \item 
 \Hypertarget{structCluster_acfc81556c4ed78e0bce4c36119fe7150}\label{structCluster_acfc81556c4ed78e0bce4c36119fe7150} 
 char {\bfseries method} \mbox{[}MAX\+\_\+\+CHARARRAY\+\_\+\+LENGTH\mbox{]}
@@ -54,7 +50,31 @@ The clusters for each order "{}k"{}.
 
 clusters\mbox{[}i\mbox{]}\mbox{[}j\mbox{]}\mbox{[}k\mbox{]} i \+: i-\/th order j \+: (if j==0) The number of clusters at order i (if j!=0) j-\/th clusters at order i k \+: (if k==0) The number that you will have to multiply(+)/divide(-\/) in the coherence calcualtion (if k!=0) The index of the spin in the cluster
 
-e.\+g. clusters\mbox{[}i=0\mbox{]}\mbox{[}j=0\mbox{]}\mbox{[}k=0\mbox{]} \+: The number how many you should calculate in 0-\/th order clusters\mbox{[}i=1\mbox{]}\mbox{[}j=0\mbox{]}\mbox{[}k=0\mbox{]} \+: The number of 1st order clusters clusters\mbox{[}i=1\mbox{]}\mbox{[}j!=0\mbox{]}\mbox{[}k=0\mbox{]} \+: The number how many you should calculate the coherence for 1st order and j-\/th cluster clusters\mbox{[}i=1\mbox{]}\mbox{[}j!=0\mbox{]}\mbox{[}k!=0\mbox{]} \+: The spin index in j-\/th cluster at 1st order \Hypertarget{structCluster_a1385a76b03a7f2f862526ff2bf449755}\index{Cluster@{Cluster}!nk@{nk}}
+e.\+g. clusters\mbox{[}i=0\mbox{]}\mbox{[}j=0\mbox{]}\mbox{[}k=0\mbox{]} \+: The number how many you should calculate in 0-\/th order clusters\mbox{[}i=1\mbox{]}\mbox{[}j=0\mbox{]}\mbox{[}k=0\mbox{]} \+: The number of 1st order clusters clusters\mbox{[}i=1\mbox{]}\mbox{[}j!=0\mbox{]}\mbox{[}k=0\mbox{]} \+: The number how many you should calculate the coherence for 1st order and j-\/th cluster clusters\mbox{[}i=1\mbox{]}\mbox{[}j!=0\mbox{]}\mbox{[}k!=0\mbox{]} \+: The spin index in j-\/th cluster at 1st order \Hypertarget{structCluster_a85e14a7d5ed03ab4036531cb482e077e}\index{Cluster@{Cluster}!iter\_detail@{iter\_detail}}
+\index{iter\_detail@{iter\_detail}!Cluster@{Cluster}}
+\doxysubsubsection{\texorpdfstring{iter\_detail}{iter\_detail}}
+{\footnotesize\ttfamily \label{structCluster_a85e14a7d5ed03ab4036531cb482e077e} 
+bool Cluster\+::iter\+\_\+detail}
+
+If you want to print detail for parition information, True. \Hypertarget{structCluster_ae16ed95d44c972143ecfcd3d9c70018e}\index{Cluster@{Cluster}!kmeans\_pp@{kmeans\_pp}}
+\index{kmeans\_pp@{kmeans\_pp}!Cluster@{Cluster}}
+\doxysubsubsection{\texorpdfstring{kmeans\_pp}{kmeans\_pp}}
+{\footnotesize\ttfamily \label{structCluster_ae16ed95d44c972143ecfcd3d9c70018e} 
+bool Cluster\+::kmeans\+\_\+pp}
+
+If you want to use kmeans++ method, True. (Default\+: True) \Hypertarget{structCluster_a22956121c5d115004869950c3bd87c5c}\index{Cluster@{Cluster}!max\_iter@{max\_iter}}
+\index{max\_iter@{max\_iter}!Cluster@{Cluster}}
+\doxysubsubsection{\texorpdfstring{max\_iter}{max\_iter}}
+{\footnotesize\ttfamily \label{structCluster_a22956121c5d115004869950c3bd87c5c} 
+int Cluster\+::max\+\_\+iter}
+
+It\textquotesingle{}s maximum value for kmeans algorithm opitimization. \Hypertarget{structCluster_a1ee43f70019a1d92a9b70c5ae5ac84b3}\index{Cluster@{Cluster}!max\_trial@{max\_trial}}
+\index{max\_trial@{max\_trial}!Cluster@{Cluster}}
+\doxysubsubsection{\texorpdfstring{max\_trial}{max\_trial}}
+{\footnotesize\ttfamily \label{structCluster_a1ee43f70019a1d92a9b70c5ae5ac84b3} 
+int Cluster\+::max\+\_\+trial}
+
+It\textquotesingle{}s maximum value for kmeans algorithm opitimization. \Hypertarget{structCluster_a1385a76b03a7f2f862526ff2bf449755}\index{Cluster@{Cluster}!nk@{nk}}
 \index{nk@{nk}!Cluster@{Cluster}}
 \doxysubsubsection{\texorpdfstring{nk}{nk}}
 {\footnotesize\ttfamily \label{structCluster_a1385a76b03a7f2f862526ff2bf449755} 
@@ -81,8 +101,8 @@ parameters of p\+CCE
 
 pcce \begin{DoxyRefDesc}{Todo}
 \item[\mbox{\hyperlink{todo__todo000013}{Todo}}]Hyeonsu should be write this part in detail. \end{DoxyRefDesc}
-
+Partition CCE variable p\+CCE(order N, s\+K) 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/\+Users/huijin/\+Documents/\+Git\+Hub/\+CCEX/include/cluster.\+h\end{DoxyCompactItemize}
+/home/huijin/git/\+CCEX/include/cluster.\+h\end{DoxyCompactItemize}

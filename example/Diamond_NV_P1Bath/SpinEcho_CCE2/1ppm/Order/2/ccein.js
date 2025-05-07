@@ -4,9 +4,9 @@
     "quantity"      : "coherence",
     
     # Config - File
-    "qubitfile"     :  "/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_Defect",
-    "gyrofile"      :  "/home/huijin/tutorial/Diamond_NV_P1Bath/bath/DiaP1_gyro",
-    "bathfile"      : ["/home/huijin/tutorial/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_"],
+    "qubitfile"     :  "/home/huijin/git/CCEX/example/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_Defect",
+    "gyrofile"      :  "/home/huijin/git/CCEX/example/Diamond_NV_P1Bath/bath/DiaP1_gyro",
+    "bathfile"      : ["/home/huijin/git/CCEX/example/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_"],
   #"avaaxfile"     :  "Random",
   #"statefile"     :  "Random",
   #"exstatefile"   :  "Random",
@@ -39,4 +39,25 @@
     # Output
     "savemode"    : "normal"
 
+,  "Defect"         : [
+		{   
+            "dfname": "P1",
+            "apprx": true,
+            "naddspin" : 0,
+            "navaax" : 12, 
+            "detuning" : [ [1,  "e",   84.946496],
+                           [2,  "e",   84.946496],
+                           [3,  "e",   84.946496],
+                           [4,  "e",     0.00000],
+                           [5,  "e",     0.00000],
+                           [6,  "e",     0.00000],
+                           [7,  "e",  -84.946496],
+                           [8,  "e",  -84.946496],
+                           [9,  "e",  -84.946496],
+                           [10, "e",  114.026400],
+                           [11, "e",     0.00000],
+                           [12, "e", -114.026400]]
+        }   
+
+                       ]
 }

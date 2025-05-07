@@ -108,7 +108,6 @@ MatrixXcd HamilBath(BathArray* ba, MatrixXcd** sigmas, Config* cnf){
             //char mesg[500];
             //sprintf(mesg,"Spin[%d] - Spin[%d] (%s) ",i,j,"Pair");
             //printInlineMatrixXcd(mesg,Hbij);
-
         }
     }
     ///////////////////////////////////////////////////////////
@@ -131,23 +130,7 @@ MatrixXcd HamilQubitBath(QubitArray* qa, BathArray* ba, MatrixXcd** qsigmas, Mat
     int totdim = qdim*bdim;
 
     // Pauli matrices
-    MatrixXcd** sigmas = new MatrixXcd*[nqubit+nspin];
-
-    for (int i=0; i<ntotspin; i++){
-        sigmas[i] = new MatrixXcd[4];
-
-        if (i<nqubit){
-            sigmas[i][0] = qsigmas[i][0];
-            sigmas[i][1] = qsigmas[i][1];
-            sigmas[i][2] = qsigmas[i][2];
-            sigmas[i][3] = qsigmas[i][3];
-        }else{
-            sigmas[i][0] = bsigmas[i-nqubit][0];
-            sigmas[i][1] = bsigmas[i-nqubit][1];
-            sigmas[i][2] = bsigmas[i-nqubit][2];
-            sigmas[i][3] = bsigmas[i-nqubit][3];
-        }
-    }
+    MatrixXcd** sigmas = gatherSigmas(qsigmas,bsigmas,nqubit,nspin);
 
     // Qubit - Bath Interaction Hamiltonian
     MatrixXcd Hqb = MatrixXcd::Zero(totdim,totdim);
@@ -205,24 +188,238 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
         Hqb += Hqbij;
     }
 
-    //! hyperfine mediated term
-    //! if (hfmedi){
+     //////////////////////////////////////////////////////////////////////////////////////
+    // Knight shift for transverse magnetic field
+    MatrixXcd Hqb_knight_a = MatrixXcd::Zero(bdim,bdim);
+    MatrixXcd Hqb_knight_b = MatrixXcd::Zero(bdim,bdim);
 
-    //! }
+    // (3|alpha_eig|-2)/D * (gamma_e/ gamma_n) * mat(Axx Axy Axz Ayx Ayy Ayz 0 0 0)
+    if (Config_getKnight(cnf)){
 
-    // get qubit sublevel
-    // MatrixXcd* qsigmas_general = QubitArray_PauliOperator_fromPsiaPsib(qa);
-    // MatrixXcd qsz = qsigmas_general[3];
+        // Delta (D)
+        MatrixXcd zfs_tensor = QubitArray_getIntmap_i_j(qa,iq,iq);
+        double Delta = zfs_tensor(2,2).real() * 3.0 / 2.0;
+
+        ////////////////////////////////////////////
+        // Get alpha/beta_abs
+        //
+        // Qubit effective two states
+        MatrixXcd psia = QubitArray_getPsia(qa);
+        MatrixXcd psib = QubitArray_getPsib(qa);
+
+        // Pauli matrices of Qubit
+        MatrixXcd** qsigmas = QubitArray_PauliOperators(qa);
+
+        // Eigenstates close to alpha and beta (alpha_eig, beta_eig)
+        int qdim = QubitArray_dim(qa);
+        MatrixXcd Hq = QubitArray_TotalHamil(qa,qsigmas,Config_getBfield(cnf));
+
+        Eigen::SelfAdjointEigenSolver<MatrixXcd> es(qdim);
+        es.compute(Hq);
+
+        MatrixXcd eigenVectors = es.eigenvectors();
+        VectorXcd eigenValues = es.eigenvalues();
+
+        // The closest eigen state from the alpha state
+        int ai = close_state_index(psia, eigenVectors); // Find <ei|alpha> > condidence (0.95)
+        int bi = close_state_index(psib, eigenVectors); // Find <ei|alpha> > condidence (0.95)
+
+        VectorXcd alpha_eig = eigenVectors.col(ai);
+        VectorXcd beta_eig  = eigenVectors.col(bi);
+
+        double alpha_abs = (alpha_eig.adjoint() * alpha_eig)(0,0).real();
+        double beta_abs  = ( beta_eig.adjoint() *  beta_eig)(0,0).real();
+        ////////////////////////////////////////////
+
+        // get gyros
+        double qgyro = QubitArray_getQubit_i_gyro(qa,iq);
+
+        // Bfield
+        float* bfield = Config_getBfield(cnf);
+        MatrixXcd bfield_vector = MatrixXcd::Zero(1,3);
+        bfield_vector(0,0) = (double)bfield[0];
+        bfield_vector(0,1) = (double)bfield[1];
+        bfield_vector(0,2) = (double)bfield[2];
+
+        // Main part of simulation 
+        for (int ib = 0; ib < nspin; ib++){
+            double bgyro = BathArray_getBath_i_gyro(ba,ib);
+            MatrixXcd tensor_iq_ib = BathArray_getBath_i_hypf_j(ba,ib,iq);
+            MatrixXcd g_tensor_tmp = tensor_iq_ib;
+            g_tensor_tmp(2,0) = doublec(0.0,0.0);
+            g_tensor_tmp(2,1) = doublec(0.0,0.0);
+            g_tensor_tmp(2,2) = doublec(0.0,0.0);
+            MatrixXcd g_tensor_alpha = ((3.0*alpha_abs - 2.0)/Delta) * (qgyro / bgyro) * g_tensor_tmp;
+            MatrixXcd g_tensor_beta  = ((3.0*beta_abs - 2.0)/Delta) * (qgyro / bgyro) * g_tensor_tmp;
+
+            // Vector K = B * g_tensor (1x3)
+            MatrixXcd Bvec_gten_alpha = bfield_vector * g_tensor_alpha;
+            MatrixXcd Bvec_gten_beta = bfield_vector * g_tensor_beta;
+
+            MatrixXcd Hqb_knight_a_tmp = calHamiltonianSingleInt(Bvec_gten_alpha, bsigmas[ib]); 
+            MatrixXcd Hqb_knight_b_tmp = calHamiltonianSingleInt(Bvec_gten_beta , bsigmas[ib]); 
+
+            Hqb_knight_a += expandHamiltonian(bsigmas, Hqb_knight_a_tmp, nspin, ib);
+            Hqb_knight_b += expandHamiltonian(bsigmas, Hqb_knight_b_tmp, nspin, ib);
+
+        } 
+
+        // free
+        for (int i=0; i<nqubit; i++){
+            delete[] qsigmas[i]; 
+        }
+        delete[] qsigmas;
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // HF mediated term (Pair correlation)
+    MatrixXcd Hqb_medi_a = MatrixXcd::Zero(bdim,bdim);
+    MatrixXcd Hqb_medi_b = MatrixXcd::Zero(bdim,bdim);
+
+    if (Config_getHfmedi(cnf)){
+
+        // Qubit effective two states
+        MatrixXcd psia = QubitArray_getPsia(qa);
+        MatrixXcd psib = QubitArray_getPsib(qa);
+
+        // Pauli matrices of Qubit
+        MatrixXcd** qsigmas = QubitArray_PauliOperators(qa);
+
+        // Projected qubit operator
+        // sigma_ab = (sab_x, sab_y, sab_z)
+        // sigma_ba = (sba_x, sba_y, sba_z) //sab is not an operator
+        MatrixXcd sigma_ab = projOperators(qsigmas[iq],psia,psib); // <psia|S|psib>
+        MatrixXcd sigma_ba = projOperators(qsigmas[iq],psib,psia); // <psia|S|psib>
+
+        // Eigenvalues for the eigenstates close to alpha and beta
+        int qdim = QubitArray_dim(qa);
+        MatrixXcd Hq = QubitArray_TotalHamil(qa,qsigmas,Config_getBfield(cnf));
+
+        Eigen::SelfAdjointEigenSolver<MatrixXcd> es(qdim);
+        es.compute(Hq);
+
+        MatrixXcd eigenVectors = es.eigenvectors();
+        VectorXcd eigenValues = es.eigenvalues();
+
+        // The closest eigen state from the alpha state
+        int ai = close_state_index(psia, eigenVectors); // Find <ei|alpha> > condidence (0.95)
+        int bi = close_state_index(psib, eigenVectors); // Find <ei|alpha> > condidence (0.95)
+
+        double omega_alpha = eigenValues[ai].real();
+        double omega_beta  = eigenValues[bi].real();
+
+        // Main part of HF medi (Virtual flip of the qubit) simulation.
+        // For the equation, see N. Zhao, Nature Nanotechnology, 6, 242-246 (2011)
+        for (int ib=0; ib<nspin; ib++){
+            for (int jb=ib+1; jb<nspin; jb++){
+                MatrixXcd tensor_iq_ib = BathArray_getBath_i_hypf_j(ba,ib,iq);
+                MatrixXcd tensor_iq_jb = BathArray_getBath_i_hypf_j(ba,jb,iq);
+
+                // Main result
+                MatrixXcd* Iib_AiAj_Ijb_ab = calHamiltonianHeteroInt_o2(sigma_ab, sigma_ba, bsigmas, tensor_iq_ib, tensor_iq_jb, nspin, ib, jb);
+
+                Hqb_medi_a += Iib_AiAj_Ijb_ab[0]/(omega_alpha - omega_beta );
+                Hqb_medi_b += Iib_AiAj_Ijb_ab[1]/(omega_beta  - omega_alpha);
+
+                delete[] Iib_AiAj_Ijb_ab;
+            }
+        }
+
+        // free
+        for (int i=0; i<nqubit; i++){
+            delete[] qsigmas[i]; 
+        }
+        delete[] qsigmas;
+    }
+    //////////////////////////////////////////////////////////////////////////////////////
+
+    // Get qubit sublevel
     MatrixXcd psia = QubitArray_getPsia(qa);
     MatrixXcd psib = QubitArray_getPsib(qa);
-
     double ms_a = findZbasisSubLevel(psia);
     double ms_b = findZbasisSubLevel(psib);
 
-    // Hqb
+    // Calculate all Hqb
     MatrixXcd* Hqb_PsiaPsib = new MatrixXcd[2];
-    Hqb_PsiaPsib[0] = ms_a * Hqb;
-    Hqb_PsiaPsib[1] = ms_b * Hqb;
+    Hqb_PsiaPsib[0] = ms_a * Hqb + Hqb_medi_a + Hqb_knight_a;
+    Hqb_PsiaPsib[1] = ms_b * Hqb + Hqb_medi_b + Hqb_knight_b;
 
     return Hqb_PsiaPsib;
+}
+
+MatrixXcd** gatherSigmas(MatrixXcd** qsigmas, MatrixXcd** bsigmas, int nqubit, int nspin){
+
+    int ntotspin = nqubit+nspin;
+
+    MatrixXcd** sigmas = new MatrixXcd*[nqubit+nspin];
+
+    for (int i=0; i<ntotspin; i++){
+        sigmas[i] = new MatrixXcd[4];
+
+        if (i<nqubit){
+            sigmas[i][0] = qsigmas[i][0];
+            sigmas[i][1] = qsigmas[i][1];
+            sigmas[i][2] = qsigmas[i][2];
+            sigmas[i][3] = qsigmas[i][3];
+        }else{
+            sigmas[i][0] = bsigmas[i-nqubit][0];
+            sigmas[i][1] = bsigmas[i-nqubit][1];
+            sigmas[i][2] = bsigmas[i-nqubit][2];
+            sigmas[i][3] = bsigmas[i-nqubit][3];
+        }
+    }
+
+    return sigmas;
+}
+
+MatrixXcd** gatherSigmas_singlequbit(MatrixXcd* qsigma, MatrixXcd** bsigmas, int nqubit, int nspin){
+
+    if (nqubit > 1){
+        fprintf(stderr,"Error gatherSigmas_singlequbit : nqubit > 1, current nqubit = %d\n",nqubit);
+        exit(1);
+    }
+
+    int ntotspin = nqubit+nspin;
+
+    MatrixXcd** sigmas = new MatrixXcd*[nqubit+nspin];
+
+    for (int i=0; i<ntotspin; i++){
+        sigmas[i] = new MatrixXcd[4];
+
+        if (i<nqubit){
+            sigmas[i][0] = qsigma[0];
+            sigmas[i][1] = qsigma[1];
+            sigmas[i][2] = qsigma[2];
+            sigmas[i][3] = qsigma[3];
+        }else{
+            sigmas[i][0] = bsigmas[i-nqubit][0];
+            sigmas[i][1] = bsigmas[i-nqubit][1];
+            sigmas[i][2] = bsigmas[i-nqubit][2];
+            sigmas[i][3] = bsigmas[i-nqubit][3];
+        }
+    }
+
+    return sigmas;
+} 
+
+int close_state_index(MatrixXcd state, MatrixXcd eigenVectors){
+
+    //double level_confidence = 0.95; //Original from pycce
+    double level_confidence = 0.51;
+
+    VectorXcd ev_state = eigenVectors.adjoint() * state;
+
+    for (int i = 0; i < ev_state.size(); ++i) {
+
+        double fidelity = std::norm(ev_state[i]);  // |⟨eigen_i | state⟩|^2
+
+        if (fidelity > level_confidence){
+            return i;
+        }
+    }
+
+    fprintf(stderr,"Error close_state_index (HF medi) \n");
+    exit(1);
 }

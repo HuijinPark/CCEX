@@ -507,7 +507,6 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
     //    BathArray_setProp_spins_i(ba_cluster,spins[i],i);       
     //}
 
-
     if (rank==0 && addedspin>0 && verbosity){
         printLineSection();
         BathArray_reportBath(ba_cluster);

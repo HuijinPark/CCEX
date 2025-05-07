@@ -8,6 +8,8 @@ Config* Config_init(){
     Config* cnf = (Config*)allocArray1d(1,sizeof(Config));
     cnf->method[0] = '\0';
     cnf->quantity[0] = '\0';
+    cnf->hfmedi = false;
+    cnf->knight = false;
     return cnf;
 }
 
@@ -135,6 +137,15 @@ void Config_freeQd_tensorfile_woqubit(Config* cnf){
 char* Config_getMethod(Config* cnf){
     return cnf->method;
 }
+
+bool Config_getHfmedi(Config* cnf){
+    return cnf->hfmedi;
+}
+
+bool Config_getKnight(Config* cnf){
+    return cnf->knight;
+}
+
 
 char* Config_getQuantity(Config* cnf){
     return cnf->quantity;
@@ -555,6 +566,15 @@ void Config_setQd_readmode(Config* cnf, int qd_readmode){
     cnf->qd_readmode = qd_readmode;
 }
 
+void Config_setHfmedi(Config* cnf, bool hfmedi){
+
+    cnf->hfmedi = hfmedi;
+}
+
+void Config_setKnight(Config* cnf, bool knight){
+
+    cnf->knight = knight;
+}
 
 
 void Config_report(Config* cnf){
@@ -604,4 +624,7 @@ void Config_report(Config* cnf){
         printStructElementChar("qd_tensorfile_woqubit",Config_getQd_tensorfile_woqubit(cnf));
         printStructElementDouble1d("qd_cellpara",Config_getQd_cellpara(cnf),3);
     }
+
+    printStructElementBool("hfmedi",Config_getHfmedi(cnf));
+    printStructElementBool("knight",Config_getKnight(cnf));
 }

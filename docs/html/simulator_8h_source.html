@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.13.2"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CCEX-1.0.0: /Users/huijin/Documents/GitHub/CCEX/include/simulator.h Source File</title>
+<title>CCEX-1.0.0: /home/huijin/git/CCEX/include/simulator.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -129,7 +129,12 @@ $(function(){initNavTree('simulator_8h_source.html',''); initResizable(true); })
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>MatrixXcd HamilQubitBath(<a class="code hl_struct" href="structQubitArray.html">QubitArray</a>* qa, <a class="code hl_struct" href="structBathArray.html">BathArray</a>* ba, MatrixXcd** qsigmas, MatrixXcd** bsigmas, <a class="code hl_struct" href="structConfig.html">Config</a>* cnf);</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>MatrixXcd* HamilQubitBathSecularApp(<a class="code hl_struct" href="structQubitArray.html">QubitArray</a>* qa, <a class="code hl_struct" href="structBathArray.html">BathArray</a>* ba, MatrixXcd** bsigmas, <a class="code hl_struct" href="structConfig.html">Config</a>* cnf);</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#endif </span><span class="comment">// __CCEX_SIMULATOR_H_</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>MatrixXcd** gatherSigmas(MatrixXcd** qsigmas, MatrixXcd** bsigmas, <span class="keywordtype">int</span> nqubit, <span class="keywordtype">int</span> nspin);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>MatrixXcd** gatherSigmas_singlequbit(MatrixXcd* qsigma, MatrixXcd** bsigmas, <span class="keywordtype">int</span> nqubit, <span class="keywordtype">int</span> nspin);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keywordtype">int</span> close_state_index(MatrixXcd state, MatrixXcd eigenVectors);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#endif </span><span class="comment">// __CCEX_SIMULATOR_H_</span></div>
 <div class="ttc" id="astructBathArray_html"><div class="ttname"><a href="structBathArray.html">BathArray</a></div><div class="ttdef"><b>Definition</b> bath.h:131</div></div>
 <div class="ttc" id="astructCluster_html"><div class="ttname"><a href="structCluster.html">Cluster</a></div><div class="ttdef"><b>Definition</b> cluster.h:16</div></div>
 <div class="ttc" id="astructConfig_html"><div class="ttname"><a href="structConfig.html">Config</a></div><div class="ttdef"><b>Definition</b> general.h:12</div></div>

@@ -419,6 +419,11 @@ void QubitArray_setIntmap_i_j(QubitArray* qa, const MatrixXcd tensor, int i, int
         exit(EXIT_FAILURE);
     }
     qa->intmap[i][j] = tensor;
+    // if (rank==0 && verbosity){
+    //     char message[500] = "\0";
+    //     snprintf(message,500,"The interaction tensor[%d][%d] is set",i,j);
+    //     printMessage(message);
+    // }
 }
 
 void QubitArray_setPsia(QubitArray* qa, const MatrixXcd psia){ // auto normalized
@@ -539,11 +544,21 @@ void QubitArray_setQubit_i_beta(QubitArray* qa, const MatrixXcd beta, int i){
 void QubitArray_setQubit_i_alpha_fromMs(QubitArray* qa, const float ms, int i){
     float S = QubitArray_getQubit_i_spin(qa,i);
     QubitArray_setQubit_i_alpha(qa,getSpinor(S,ms),i);
+    // if (rank==0 && verbosity){
+    //     char message[500] = "\0";
+    //     snprintf(message,500,"The initial 'alpha' state of the %dth-qubit(%s) is set from its 'ms' state(= %.1f)",i,qa->qubit[i]->name,ms);
+    //     printMessage(message);
+    // }
 }
 
 void QubitArray_setQubit_i_beta_fromMs(QubitArray* qa, const float ms, int i){
     float S = QubitArray_getQubit_i_spin(qa,i);
     QubitArray_setQubit_i_beta(qa,getSpinor(S,ms),i);
+    // if (rank==0 && verbosity){
+    //     char message[500] = "\0";
+    //     snprintf(message,500,"The initial 'beta' state of the %dth-qubit(%s) is set from its 'ms' state(= %.1f)",i,qa->qubit[i]->name,ms);
+    //     printMessage(message);
+    // }
 }
 
 // get

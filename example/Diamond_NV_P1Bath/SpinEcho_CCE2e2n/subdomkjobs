@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ConcList=( 5 50 )
+ConcList=( 1 )
 
 for (( i=0; i<${#ConcList[@]}; i++)) 
 do
@@ -11,7 +11,7 @@ do
 
     ./domkjobs RM
     ./domkjobs MKE 
-    ./domkjobs RunS 
+#    ./domkjobs RunS 
 #    ./domkjobs DS 
 #    ./domkjobs DSA 
 

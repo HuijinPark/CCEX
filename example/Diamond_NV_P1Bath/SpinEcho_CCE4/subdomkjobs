@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ConcList=( 1 10 100 )
+ConcList=( 1 )
 
 for (( i=0; i<${#ConcList[@]}; i++)) 
 do
@@ -9,10 +9,10 @@ do
     export SourceFileDir;
     export SourceFileName;
 
-#    ./domkjobs RM
+    ./domkjobs RM
     ./domkjobs MKE 
 #    ./domkjobs RunS 
-    ./domkjobs DS 
-    ./domkjobs DSA 
+#    ./domkjobs DS 
+#    ./domkjobs DSA 
 
 done 
