@@ -1,0 +1,1130 @@
+
+	Output POSCAR File :  4_modPOSCAR/contcar_NVHn1_up.vasp
+	 --------------------------------------------------
+	 -------------------------------------------------- 
+
+
+    ============================================================
+
+    <\Summary> make AQ tensor file for CCE calculation
+
+
+    Latest update :  Sun May  7 16:57:17 2023
+
+    Current time  :  Sun May  7 17:44:55 2023
+
+    ____________________________________________________________
+
+
+
+    Author        : Huijin Park
+
+    note1         : For VASP, you will find error 
+    		    if your INCAR file include NGYROMAG
+    		    This case need to be considered
+
+    note2         : POSCAR files should include defect information.
+    		    Also, Atomic name need to be consistant
+
+    update1       : (2023.02.15) Added key : [33m--addhfcore[0m 
+    		    In the case of VASP, 
+    		    We should add the core electronic contributions to fermi contact term 
+    		    (A_tot = A_1c + A_tot)
+
+    update2       : (2023.03.21) Added key : [33m--fidentify[0m 
+    		    The first line of the A file include VASP/QUANTUMESSPRESSO.
+
+    update3       : (2023.03.21) Added key : [33m--version[0m 
+    		    You can choose version : v1 or v2 
+    		    Previous version : Afile of VASP and QE was the same (The central spin factor was treated) 
+    		    New version : Afile of VASP/QE would be the same to the OUTCAR/hyperfine.out result
+
+    update4       : (2023.03.21) Added key : [33m--rangeformat[0m 
+    		    You can convert the format of cell' range from relativepos coordinate to vertex or xyz coordinate
+
+    update5       : (2023.05.05) Added key : [33m--ccein[0m 
+    		    You can get interaction tensors of &Exspin in cce.in file. 
+    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
+
+    update6       : (2023.05.06) Added key : [33m--cceindiag[0m 
+    		    If you want to check diagonalized value, use this option. 
+    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
+
+    ____________________________________________________________
+
+
+	Input argument : 
+
+	 [1] tool    : VASP
+	 [2] fposcar : 4_modPOSCAR/contcar_NVHn1_up.vasp
+	 [3] dfname  : VC
+
+
+	 opt. --A       : 3_OUTCAR/outcar_NVHn1_up
+	 opt. --Q       : 3_OUTCAR/outcar_NVHn1_up
+	 opt. --D       : []
+	 opt. --dfpos   : []
+	 opt. --ignoreatm : []
+	 opt. --fidentify : True
+	 opt. --addhfcore : False
+	 opt. --version : v2
+	 opt. --rangeformat : coord
+	 opt. --ccein   : 6_ExSpinData/cce_14N_v2.in
+	 opt. --JT      : 1
+	 opt. --addspins : 14N
+	 opt. --cceindiag : 6_ExSpinData/cce_14Ndiag_v2.in
+
+
+	=========================================
+
+			do_mkAQDdata : 
+
+	=========================================
+
+
+	Read INCAR part in OUTCAR ...
+	Read A tensor : T
+	Read Q tensor : T
+	Read D tensor : .FALSE.
+	NGYROMAG : NONE 
+	QUAD_EFG : NONE 
+	Read POSCAR(simple) part in OUTCAR ...
+	 atoms # = 576
+	 atomic species = ['C', 'H', 'N']
+	Read Quadrupole tensor part in OUTCAR ...
+	Read Hyperfine tensor part in OUTCAR ...
+	 ['C', 'H', 'N']
+	atm: C
+	isotopeData {'13C': (0.5, 6.7283, 0.00000, 0.0107)}
+	iso C {'13C': (0.5, 6.7283, 0.00000, 0.0107)}
+	atm: H
+	isotopeData {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)}
+	iso H {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)}
+	atm: N
+	isotopeData {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+	iso N {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+
+
+
+	=========================================
+	 READ OUTCAR (KEY : outcar_spHam) 
+	=========================================
+
+
+	----------------------------------------
+	extSpinHamilTensors : 
+	----------------------------------------
+
+	Atomic data from OUTCAR (KEY : atomicdata)
+	------------------------------
+	 *atom_data : ['C', 'H', 'N']
+	 *total_atom_num : 576
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)     0.000     1.000     0.000
+	    (2)     0.000     1.000     0.500
+	    (3)     1.000     0.250     1.000
+	      :
+	  (575)     0.500     0.590     0.458
+	  (576)     0.409     0.454     0.454
+
+	Quadrupole tensor (KEY : Qdata)
+	------------------------------
+
+	*EFG : EFG tensor (V/A^2) 
+
+	    idx       Vxx       Vxy       Vxz       Vyx       Vyy       Vyz       Vzx       Vzy       Vzz
+
+	    (1)    -0.164    -0.021    -0.014    -0.021     0.086    -0.029    -0.014    -0.029     0.077
+	    (2)    -0.194    -0.051    -0.028    -0.051     0.037     0.004    -0.028     0.004     0.157
+	    (3)     0.035    -0.039    -0.033    -0.039    -0.066     0.108    -0.033     0.108     0.031
+	      :
+	  (575)    11.626     0.374     0.143     0.374   -24.989    11.249     0.143    11.249    13.363
+	  (576)   -69.711   -78.584   -55.605   -78.584    23.680   -32.084   -55.605   -32.084    46.031
+
+	*EFG_diag : Diagonalized EFG tensor (V/A^2) 
+
+	    idx    Vxx(D)    Vyy(D)    Vzz(D)
+
+	    (1)     0.112     0.055    -0.166
+	    (2)     0.159     0.047    -0.207
+	    (3)     0.126     0.010    -0.137
+	      :
+	  (575)    16.431    11.617   -28.048
+	  (576)    68.847    68.102  -136.949
+
+	NMR quadrupolar parameters
+
+	*Cq  : quadrupolar parameter    Cq=e*Q*V_zz/h (MHz) 
+	*eta : asymmetry parameters     (V_yy - V_xx)/ V_zz 
+	*Q   : nuclear electric quadrupole moment in mb (millibarn = 10^-31 m^2) 
+
+	    idx        Cq       eta         q
+
+	    (1)    -0.000     0.340     1.000
+	    (2)    -0.000     0.543     1.000
+	    (3)    -0.000     0.849     1.000
+	      :
+	  (575)    -0.068     0.172     1.000
+	  (576)    -0.331     0.005     1.000
+	------------------------------
+
+	Hyperfine tensor (KEY : Adata)
+	------------------------------
+
+	Hyperfine tensor 
+
+	*Aiso : Fermi contact term (MHz) 
+	        (addhfcore - False) 
+	*Adip : Dipolar coupling term (MHz) 
+
+	    idx      Aiso       Axx       Axy       Axz       Ayx       Ayy       Ayz       Azx       Azy       Azz
+
+	    (1)     0.000    -0.000    -0.000     0.000    -0.000    -0.001     0.000     0.000     0.000     0.002
+	    (2)     0.000    -0.001    -0.000    -0.000    -0.000    -0.002    -0.000    -0.000    -0.000     0.003
+	    (3)     0.000    -0.002     0.000     0.000     0.000     0.001     0.000     0.000     0.000     0.001
+	      :
+	  (575)   -18.225     3.639    -0.008     0.010    -0.008    -5.752     3.842     0.010     3.842     2.113
+	  (576)     0.609     0.037    -0.078    -0.056    -0.078    -0.014    -0.005    -0.056    -0.005    -0.023
+
+	*Adiag : Diagonalized total Hyperfine tensor (MHz) 
+
+	    idx    Axx(D)    Ayy(D)    Azz(D)
+
+	    (1)    -0.001    -0.000     0.002
+	    (2)    -0.002    -0.001     0.003
+	    (3)     0.001     0.001    -0.002
+	      :
+	  (575)   -14.586   -14.546   -25.542
+	  (576)     0.594     0.516     0.717
+	------------------------------
+
+	Isotopic data (KEY : isodata)
+	------------------------------
+
+	 Atom : { Isotopes : ( S, gyro, eQ, conc) }
+
+	example) 
+	 isodata['B']['10B'].s          : spin          (no unit)
+	 isodata['B']['11B'].gyro       : gyro          (rad/ms/G)
+	 isodata['N']['14N'].q          : eQ            (barn = 10^-28 m^2)
+	 isodata['N']['15N'].conc       : concentration (%/100)
+
+	 C : {'13C': (0.5, 6.7283, 0.00000, 0.0107)} 
+	 H : {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)} 
+	 N : {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)} 
+
+
+	=========================================
+	 READ POSCAR (KEY : poscar or poscarmod) 
+	=========================================
+
+
+	 POSCAR from 4_modPOSCAR/contcar_NVHn1_up.vasp (KEY : poscar)
+	------------------------------
+	 *atom_data : ['C', 'H', 'C', 'N']
+	 *atom_data_num : [572, 1, 2, 1]
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)     0.000    -0.000     0.000
+	    (2)     0.000    -0.000     0.500
+	    (3)    -0.000     0.250    -0.000
+	      :
+	  (575)     0.500     0.590     0.458
+	  (576)     0.409     0.454     0.454
+
+
+	=========================================
+	          MAKE A,Q FILE                     
+	=========================================
+
+
+	 Relative positions from central defect (KEY : relativepos)
+	------------------------------
+
+	 *MinDif[A] : [-7.576 -8.748 -6.189]
+	 *MaxDif[A] : [6.318 8.02  5.676]
+	 *farthest_atoms_idx : [0, 572, 573]
+	 *farthest_atoms_info : C , [-7.576 -8.747 -6.185]
+	                      : C , [-7.576 -8.747 -6.185]
+	                      : C , [-7.576 -8.747 -6.185]
+	 *r_1i (cart) :  
+
+	    idx      atom     r_1ix     r_1iy     r_1iz
+
+	    (1)         C    -7.576    -8.747    -6.185
+	    (2)         C    -7.576    -8.748     0.000
+	    (3)         C    -7.576    -4.374    -6.187
+	      :
+	  (575)         C    -0.001     1.567    -0.516
+	  (576)         N    -1.379    -0.801    -0.567
+
+	--- Save files --- 
+	Afile : Afile
+	Qfile : Qfile
+
+
+	=========================================
+	                 DONE                     
+	=========================================
+
+    ____________________________________________________________
+
+    memory_usage_percent  :     6.500 %
+
+    Current memory KB     :    69.145 KB
+
+    Wall clock time       : 0:00:00.429708(s)
+
+    ============================================================
+        JOB DONE    
+    ============================================================
+
+    ============================================================
+
+    <\Summary> make AQ tensor file for CCE calculation
+
+
+    Latest update :  Sun May  7 16:57:17 2023
+
+    Current time  :  Sun May  7 17:44:56 2023
+
+    ____________________________________________________________
+
+
+
+    Author        : Huijin Park
+
+    note1         : For VASP, you will find error 
+    		    if your INCAR file include NGYROMAG
+    		    This case need to be considered
+
+    note2         : POSCAR files should include defect information.
+    		    Also, Atomic name need to be consistant
+
+    update1       : (2023.02.15) Added key : [33m--addhfcore[0m 
+    		    In the case of VASP, 
+    		    We should add the core electronic contributions to fermi contact term 
+    		    (A_tot = A_1c + A_tot)
+
+    update2       : (2023.03.21) Added key : [33m--fidentify[0m 
+    		    The first line of the A file include VASP/QUANTUMESSPRESSO.
+
+    update3       : (2023.03.21) Added key : [33m--version[0m 
+    		    You can choose version : v1 or v2 
+    		    Previous version : Afile of VASP and QE was the same (The central spin factor was treated) 
+    		    New version : Afile of VASP/QE would be the same to the OUTCAR/hyperfine.out result
+
+    update4       : (2023.03.21) Added key : [33m--rangeformat[0m 
+    		    You can convert the format of cell' range from relativepos coordinate to vertex or xyz coordinate
+
+    update5       : (2023.05.05) Added key : [33m--ccein[0m 
+    		    You can get interaction tensors of &Exspin in cce.in file. 
+    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
+
+    update6       : (2023.05.06) Added key : [33m--cceindiag[0m 
+    		    If you want to check diagonalized value, use this option. 
+    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
+
+    ____________________________________________________________
+
+
+	Input argument : 
+
+	 [1] tool    : VASP
+	 [2] fposcar : 4_modPOSCAR/contcar_NVHn1_up.vasp
+	 [3] dfname  : VC
+
+
+	 opt. --A       : 3_OUTCAR/outcar_NVHn1_up
+	 opt. --Q       : 3_OUTCAR/outcar_NVHn1_up
+	 opt. --D       : []
+	 opt. --dfpos   : []
+	 opt. --ignoreatm : []
+	 opt. --fidentify : True
+	 opt. --addhfcore : True
+	 opt. --version : v2
+	 opt. --rangeformat : coord
+	 opt. --ccein   : 6_ExSpinData/cce_14N_v2_addhfcore.in
+	 opt. --JT      : 1
+	 opt. --addspins : 14N
+	 opt. --cceindiag : 6_ExSpinData/cce_14Ndiag_v2_addhfcore.in
+
+
+	=========================================
+
+			do_mkAQDdata : 
+
+	=========================================
+
+
+	Read INCAR part in OUTCAR ...
+	Read A tensor : T
+	Read Q tensor : T
+	Read D tensor : .FALSE.
+	NGYROMAG : NONE 
+	QUAD_EFG : NONE 
+	Read POSCAR(simple) part in OUTCAR ...
+	 atoms # = 576
+	 atomic species = ['C', 'H', 'N']
+	Read Quadrupole tensor part in OUTCAR ...
+	Read Hyperfine tensor part in OUTCAR ...
+	 ['C', 'H', 'N']
+	atm: C
+	isotopeData {'13C': (0.5, 6.7283, 0.00000, 0.0107)}
+	iso C {'13C': (0.5, 6.7283, 0.00000, 0.0107)}
+	atm: H
+	isotopeData {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)}
+	iso H {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)}
+	atm: N
+	isotopeData {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+	iso N {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+
+
+
+	=========================================
+	 READ OUTCAR (KEY : outcar_spHam) 
+	=========================================
+
+
+	----------------------------------------
+	extSpinHamilTensors : 
+	----------------------------------------
+
+	Atomic data from OUTCAR (KEY : atomicdata)
+	------------------------------
+	 *atom_data : ['C', 'H', 'N']
+	 *total_atom_num : 576
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)     0.000     1.000     0.000
+	    (2)     0.000     1.000     0.500
+	    (3)     1.000     0.250     1.000
+	      :
+	  (575)     0.500     0.590     0.458
+	  (576)     0.409     0.454     0.454
+
+	Quadrupole tensor (KEY : Qdata)
+	------------------------------
+
+	*EFG : EFG tensor (V/A^2) 
+
+	    idx       Vxx       Vxy       Vxz       Vyx       Vyy       Vyz       Vzx       Vzy       Vzz
+
+	    (1)    -0.164    -0.021    -0.014    -0.021     0.086    -0.029    -0.014    -0.029     0.077
+	    (2)    -0.194    -0.051    -0.028    -0.051     0.037     0.004    -0.028     0.004     0.157
+	    (3)     0.035    -0.039    -0.033    -0.039    -0.066     0.108    -0.033     0.108     0.031
+	      :
+	  (575)    11.626     0.374     0.143     0.374   -24.989    11.249     0.143    11.249    13.363
+	  (576)   -69.711   -78.584   -55.605   -78.584    23.680   -32.084   -55.605   -32.084    46.031
+
+	*EFG_diag : Diagonalized EFG tensor (V/A^2) 
+
+	    idx    Vxx(D)    Vyy(D)    Vzz(D)
+
+	    (1)     0.112     0.055    -0.166
+	    (2)     0.159     0.047    -0.207
+	    (3)     0.126     0.010    -0.137
+	      :
+	  (575)    16.431    11.617   -28.048
+	  (576)    68.847    68.102  -136.949
+
+	NMR quadrupolar parameters
+
+	*Cq  : quadrupolar parameter    Cq=e*Q*V_zz/h (MHz) 
+	*eta : asymmetry parameters     (V_yy - V_xx)/ V_zz 
+	*Q   : nuclear electric quadrupole moment in mb (millibarn = 10^-31 m^2) 
+
+	    idx        Cq       eta         q
+
+	    (1)    -0.000     0.340     1.000
+	    (2)    -0.000     0.543     1.000
+	    (3)    -0.000     0.849     1.000
+	      :
+	  (575)    -0.068     0.172     1.000
+	  (576)    -0.331     0.005     1.000
+	------------------------------
+
+	Hyperfine tensor (KEY : Adata)
+	------------------------------
+
+	Hyperfine tensor 
+
+	*Aiso : Fermi contact term (MHz) 
+	        (addhfcore - True) 
+	*Adip : Dipolar coupling term (MHz) 
+
+	    idx      Aiso       Axx       Axy       Axz       Ayx       Ayy       Ayz       Azx       Azy       Azz
+
+	    (1)     0.000    -0.000    -0.000     0.000    -0.000    -0.001     0.000     0.000     0.000     0.002
+	    (2)     0.000    -0.001    -0.000    -0.000    -0.000    -0.002    -0.000    -0.000    -0.000     0.003
+	    (3)     0.000    -0.002     0.000     0.000     0.000     0.001     0.000     0.000     0.000     0.001
+	      :
+	  (575)   -14.249     3.639    -0.008     0.010    -0.008    -5.752     3.842     0.010     3.842     2.113
+	  (576)     0.622     0.037    -0.078    -0.056    -0.078    -0.014    -0.005    -0.056    -0.005    -0.023
+
+	*Adiag : Diagonalized total Hyperfine tensor (MHz) 
+
+	    idx    Axx(D)    Ayy(D)    Azz(D)
+
+	    (1)    -0.001    -0.000     0.002
+	    (2)    -0.002    -0.001     0.003
+	    (3)     0.001     0.001    -0.002
+	      :
+	  (575)   -14.586   -14.546   -25.542
+	  (576)     0.594     0.516     0.717
+	------------------------------
+
+	Isotopic data (KEY : isodata)
+	------------------------------
+
+	 Atom : { Isotopes : ( S, gyro, eQ, conc) }
+
+	example) 
+	 isodata['B']['10B'].s          : spin          (no unit)
+	 isodata['B']['11B'].gyro       : gyro          (rad/ms/G)
+	 isodata['N']['14N'].q          : eQ            (barn = 10^-28 m^2)
+	 isodata['N']['15N'].conc       : concentration (%/100)
+
+	 C : {'13C': (0.5, 6.7283, 0.00000, 0.0107)} 
+	 H : {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)} 
+	 N : {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)} 
+
+
+	=========================================
+	 READ POSCAR (KEY : poscar or poscarmod) 
+	=========================================
+
+
+	 POSCAR from 4_modPOSCAR/contcar_NVHn1_up.vasp (KEY : poscar)
+	------------------------------
+	 *atom_data : ['C', 'H', 'C', 'N']
+	 *atom_data_num : [572, 1, 2, 1]
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)     0.000    -0.000     0.000
+	    (2)     0.000    -0.000     0.500
+	    (3)    -0.000     0.250    -0.000
+	      :
+	  (575)     0.500     0.590     0.458
+	  (576)     0.409     0.454     0.454
+
+
+	=========================================
+	          MAKE A,Q FILE                     
+	=========================================
+
+
+	 Relative positions from central defect (KEY : relativepos)
+	------------------------------
+
+	 *MinDif[A] : [-7.576 -8.748 -6.189]
+	 *MaxDif[A] : [6.318 8.02  5.676]
+	 *farthest_atoms_idx : [0, 572, 573]
+	 *farthest_atoms_info : C , [-7.576 -8.747 -6.185]
+	                      : C , [-7.576 -8.747 -6.185]
+	                      : C , [-7.576 -8.747 -6.185]
+	 *r_1i (cart) :  
+
+	    idx      atom     r_1ix     r_1iy     r_1iz
+
+	    (1)         C    -7.576    -8.747    -6.185
+	    (2)         C    -7.576    -8.748     0.000
+	    (3)         C    -7.576    -4.374    -6.187
+	      :
+	  (575)         C    -0.001     1.567    -0.516
+	  (576)         N    -1.379    -0.801    -0.567
+
+	--- Save files --- 
+	Afile : Afile
+	Qfile : Qfile
+
+
+	=========================================
+	                 DONE                     
+	=========================================
+
+    ____________________________________________________________
+
+    memory_usage_percent  :     6.500 %
+
+    Current memory KB     :    69.145 KB
+
+    Wall clock time       : 0:00:00.420907(s)
+
+    ============================================================
+        JOB DONE    
+    ============================================================
+
+	Output POSCAR File :  4_modPOSCAR/contcar_NVHn1_dw.vasp
+	 --------------------------------------------------
+	 -------------------------------------------------- 
+
+
+    ============================================================
+
+    <\Summary> make AQ tensor file for CCE calculation
+
+
+    Latest update :  Sun May  7 16:57:17 2023
+
+    Current time  :  Sun May  7 17:44:57 2023
+
+    ____________________________________________________________
+
+
+
+    Author        : Huijin Park
+
+    note1         : For VASP, you will find error 
+    		    if your INCAR file include NGYROMAG
+    		    This case need to be considered
+
+    note2         : POSCAR files should include defect information.
+    		    Also, Atomic name need to be consistant
+
+    update1       : (2023.02.15) Added key : [33m--addhfcore[0m 
+    		    In the case of VASP, 
+    		    We should add the core electronic contributions to fermi contact term 
+    		    (A_tot = A_1c + A_tot)
+
+    update2       : (2023.03.21) Added key : [33m--fidentify[0m 
+    		    The first line of the A file include VASP/QUANTUMESSPRESSO.
+
+    update3       : (2023.03.21) Added key : [33m--version[0m 
+    		    You can choose version : v1 or v2 
+    		    Previous version : Afile of VASP and QE was the same (The central spin factor was treated) 
+    		    New version : Afile of VASP/QE would be the same to the OUTCAR/hyperfine.out result
+
+    update4       : (2023.03.21) Added key : [33m--rangeformat[0m 
+    		    You can convert the format of cell' range from relativepos coordinate to vertex or xyz coordinate
+
+    update5       : (2023.05.05) Added key : [33m--ccein[0m 
+    		    You can get interaction tensors of &Exspin in cce.in file. 
+    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
+
+    update6       : (2023.05.06) Added key : [33m--cceindiag[0m 
+    		    If you want to check diagonalized value, use this option. 
+    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
+
+    ____________________________________________________________
+
+
+	Input argument : 
+
+	 [1] tool    : VASP
+	 [2] fposcar : 4_modPOSCAR/contcar_NVHn1_dw.vasp
+	 [3] dfname  : VC
+
+
+	 opt. --A       : 3_OUTCAR/outcar_NVHn1_dw
+	 opt. --Q       : 3_OUTCAR/outcar_NVHn1_dw
+	 opt. --D       : []
+	 opt. --dfpos   : []
+	 opt. --ignoreatm : []
+	 opt. --fidentify : True
+	 opt. --addhfcore : False
+	 opt. --version : v2
+	 opt. --rangeformat : coord
+	 opt. --ccein   : 6_ExSpinData/cce_14N_v2.in
+	 opt. --JT      : 2
+	 opt. --addspins : 14N
+	 opt. --cceindiag : 6_ExSpinData/cce_14Ndiag_v2.in
+
+
+	=========================================
+
+			do_mkAQDdata : 
+
+	=========================================
+
+
+	Read INCAR part in OUTCAR ...
+	Read A tensor : T
+	Read Q tensor : T
+	Read D tensor : .FALSE.
+	NGYROMAG : NONE 
+	QUAD_EFG : NONE 
+	Read POSCAR(simple) part in OUTCAR ...
+	 atoms # = 576
+	 atomic species = ['C', 'H', 'N']
+	Read Quadrupole tensor part in OUTCAR ...
+	Read Hyperfine tensor part in OUTCAR ...
+	 ['C', 'H', 'N']
+	atm: C
+	isotopeData {'13C': (0.5, 6.7283, 0.00000, 0.0107)}
+	iso C {'13C': (0.5, 6.7283, 0.00000, 0.0107)}
+	atm: H
+	isotopeData {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)}
+	iso H {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)}
+	atm: N
+	isotopeData {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+	iso N {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+
+
+
+	=========================================
+	 READ OUTCAR (KEY : outcar_spHam) 
+	=========================================
+
+
+	----------------------------------------
+	extSpinHamilTensors : 
+	----------------------------------------
+
+	Atomic data from OUTCAR (KEY : atomicdata)
+	------------------------------
+	 *atom_data : ['C', 'H', 'N']
+	 *total_atom_num : 576
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)     1.000     0.000     0.000
+	    (2)     1.000     0.000     0.500
+	    (3)     1.000     0.250     1.000
+	      :
+	  (575)     0.500     0.410     0.667
+	  (576)     0.591     0.546     0.671
+
+	Quadrupole tensor (KEY : Qdata)
+	------------------------------
+
+	*EFG : EFG tensor (V/A^2) 
+
+	    idx       Vxx       Vxy       Vxz       Vyx       Vyy       Vyz       Vzx       Vzy       Vzz
+
+	    (1)    -0.092     0.007     0.006     0.007    -0.014     0.035     0.006     0.035     0.106
+	    (2)    -0.072     0.011     0.012     0.011    -0.028     0.076     0.012     0.076     0.100
+	    (3)     0.001     0.016     0.016     0.016    -0.099     0.120     0.016     0.120     0.098
+	      :
+	  (575)    11.627     0.373     0.140     0.373   -24.988    11.249     0.140    11.249    13.361
+	  (576)   -69.715   -78.585   -55.606   -78.585    23.677   -32.086   -55.606   -32.086    46.037
+
+	*EFG_diag : Diagonalized EFG tensor (V/A^2) 
+
+	    idx    Vxx(D)    Vyy(D)    Vzz(D)
+
+	    (1)    -0.093    -0.023     0.116
+	    (2)    -0.075    -0.061     0.136
+	    (3)    -0.156    -0.001     0.157
+	      :
+	  (575)    16.428    11.618   -28.047
+	  (576)    68.851    68.102  -136.953
+
+	NMR quadrupolar parameters
+
+	*Cq  : quadrupolar parameter    Cq=e*Q*V_zz/h (MHz) 
+	*eta : asymmetry parameters     (V_yy - V_xx)/ V_zz 
+	*Q   : nuclear electric quadrupole moment in mb (millibarn = 10^-31 m^2) 
+
+	    idx        Cq       eta         q
+
+	    (1)     0.000     0.602     1.000
+	    (2)     0.000     0.102     1.000
+	    (3)     0.000     0.985     1.000
+	      :
+	  (575)    -0.068     0.172     1.000
+	  (576)    -0.331     0.005     1.000
+	------------------------------
+
+	Hyperfine tensor (KEY : Adata)
+	------------------------------
+
+	Hyperfine tensor 
+
+	*Aiso : Fermi contact term (MHz) 
+	        (addhfcore - False) 
+	*Adip : Dipolar coupling term (MHz) 
+
+	    idx      Aiso       Axx       Axy       Axz       Ayx       Ayy       Ayz       Azx       Azy       Azz
+
+	    (1)     0.000     0.000     0.000    -0.000     0.000     0.001    -0.000    -0.000    -0.000    -0.002
+	    (2)     0.001     0.001     0.000     0.000     0.000     0.002     0.000     0.000     0.000    -0.003
+	    (3)     0.002     0.004     0.000    -0.000     0.000    -0.003    -0.000    -0.000    -0.000    -0.001
+	      :
+	  (575)    18.227    -3.640     0.008    -0.010     0.008     5.753    -3.842    -0.010    -3.842    -2.113
+	  (576)    -0.609    -0.037     0.078     0.056     0.078     0.014     0.005     0.056     0.005     0.023
+
+	*Adiag : Diagonalized total Hyperfine tensor (MHz) 
+
+	    idx    Axx(D)    Ayy(D)    Azz(D)
+
+	    (1)     0.002     0.000    -0.002
+	    (2)    -0.002     0.002     0.003
+	    (3)     0.001    -0.001     0.006
+	      :
+	  (575)    14.588    14.547    25.546
+	  (576)    -0.594    -0.516    -0.717
+	------------------------------
+
+	Isotopic data (KEY : isodata)
+	------------------------------
+
+	 Atom : { Isotopes : ( S, gyro, eQ, conc) }
+
+	example) 
+	 isodata['B']['10B'].s          : spin          (no unit)
+	 isodata['B']['11B'].gyro       : gyro          (rad/ms/G)
+	 isodata['N']['14N'].q          : eQ            (barn = 10^-28 m^2)
+	 isodata['N']['15N'].conc       : concentration (%/100)
+
+	 C : {'13C': (0.5, 6.7283, 0.00000, 0.0107)} 
+	 H : {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)} 
+	 N : {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)} 
+
+
+	=========================================
+	 READ POSCAR (KEY : poscar or poscarmod) 
+	=========================================
+
+
+	 POSCAR from 4_modPOSCAR/contcar_NVHn1_dw.vasp (KEY : poscar)
+	------------------------------
+	 *atom_data : ['C', 'H', 'C', 'N']
+	 *atom_data_num : [572, 1, 2, 1]
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)    -0.000     0.000     0.000
+	    (2)    -0.000     0.000     0.500
+	    (3)    -0.000     0.250    -0.000
+	      :
+	  (575)     0.500     0.410     0.667
+	  (576)     0.591     0.546     0.671
+
+
+	=========================================
+	          MAKE A,Q FILE                     
+	=========================================
+
+
+	 Relative positions from central defect (KEY : relativepos)
+	------------------------------
+
+	 *MinDif[A] : [-7.577 -8.748 -7.739]
+	 *MaxDif[A] : [6.316 8.02  4.636]
+	 *farthest_atoms_idx : [0, 572, 573]
+	 *farthest_atoms_info : C , [-7.576 -8.746 -7.731]
+	                      : C , [-7.576 -8.746 -7.731]
+	                      : C , [-7.576 -8.746 -7.731]
+	 *r_1i (cart) :  
+
+	    idx      atom     r_1ix     r_1iy     r_1iz
+
+	    (1)         C    -7.576    -8.746    -7.731
+	    (2)         C    -7.576    -8.746    -1.546
+	    (3)         C    -7.576    -4.373    -7.732
+	      :
+	  (575)         C     0.001    -1.567     0.516
+	  (576)         N     1.379     0.801     0.567
+
+	--- Save files --- 
+	Afile : Afile
+	Qfile : Qfile
+
+
+	=========================================
+	                 DONE                     
+	=========================================
+
+    ____________________________________________________________
+
+    memory_usage_percent  :     6.500 %
+
+    Current memory KB     :    69.156 KB
+
+    Wall clock time       : 0:00:00.426485(s)
+
+    ============================================================
+        JOB DONE    
+    ============================================================
+
+    ============================================================
+
+    <\Summary> make AQ tensor file for CCE calculation
+
+
+    Latest update :  Sun May  7 16:57:17 2023
+
+    Current time  :  Sun May  7 17:44:57 2023
+
+    ____________________________________________________________
+
+
+
+    Author        : Huijin Park
+
+    note1         : For VASP, you will find error 
+    		    if your INCAR file include NGYROMAG
+    		    This case need to be considered
+
+    note2         : POSCAR files should include defect information.
+    		    Also, Atomic name need to be consistant
+
+    update1       : (2023.02.15) Added key : [33m--addhfcore[0m 
+    		    In the case of VASP, 
+    		    We should add the core electronic contributions to fermi contact term 
+    		    (A_tot = A_1c + A_tot)
+
+    update2       : (2023.03.21) Added key : [33m--fidentify[0m 
+    		    The first line of the A file include VASP/QUANTUMESSPRESSO.
+
+    update3       : (2023.03.21) Added key : [33m--version[0m 
+    		    You can choose version : v1 or v2 
+    		    Previous version : Afile of VASP and QE was the same (The central spin factor was treated) 
+    		    New version : Afile of VASP/QE would be the same to the OUTCAR/hyperfine.out result
+
+    update4       : (2023.03.21) Added key : [33m--rangeformat[0m 
+    		    You can convert the format of cell' range from relativepos coordinate to vertex or xyz coordinate
+
+    update5       : (2023.05.05) Added key : [33m--ccein[0m 
+    		    You can get interaction tensors of &Exspin in cce.in file. 
+    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
+
+    update6       : (2023.05.06) Added key : [33m--cceindiag[0m 
+    		    If you want to check diagonalized value, use this option. 
+    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
+
+    ____________________________________________________________
+
+
+	Input argument : 
+
+	 [1] tool    : VASP
+	 [2] fposcar : 4_modPOSCAR/contcar_NVHn1_dw.vasp
+	 [3] dfname  : VC
+
+
+	 opt. --A       : 3_OUTCAR/outcar_NVHn1_dw
+	 opt. --Q       : 3_OUTCAR/outcar_NVHn1_dw
+	 opt. --D       : []
+	 opt. --dfpos   : []
+	 opt. --ignoreatm : []
+	 opt. --fidentify : True
+	 opt. --addhfcore : True
+	 opt. --version : v2
+	 opt. --rangeformat : coord
+	 opt. --ccein   : 6_ExSpinData/cce_14N_v2_addhfcore.in
+	 opt. --JT      : 2
+	 opt. --addspins : 14N
+	 opt. --cceindiag : 6_ExSpinData/cce_14Ndiag_v2_addhfcore.in
+
+
+	=========================================
+
+			do_mkAQDdata : 
+
+	=========================================
+
+
+	Read INCAR part in OUTCAR ...
+	Read A tensor : T
+	Read Q tensor : T
+	Read D tensor : .FALSE.
+	NGYROMAG : NONE 
+	QUAD_EFG : NONE 
+	Read POSCAR(simple) part in OUTCAR ...
+	 atoms # = 576
+	 atomic species = ['C', 'H', 'N']
+	Read Quadrupole tensor part in OUTCAR ...
+	Read Hyperfine tensor part in OUTCAR ...
+	 ['C', 'H', 'N']
+	atm: C
+	isotopeData {'13C': (0.5, 6.7283, 0.00000, 0.0107)}
+	iso C {'13C': (0.5, 6.7283, 0.00000, 0.0107)}
+	atm: H
+	isotopeData {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)}
+	iso H {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)}
+	atm: N
+	isotopeData {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+	iso N {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+
+
+
+	=========================================
+	 READ OUTCAR (KEY : outcar_spHam) 
+	=========================================
+
+
+	----------------------------------------
+	extSpinHamilTensors : 
+	----------------------------------------
+
+	Atomic data from OUTCAR (KEY : atomicdata)
+	------------------------------
+	 *atom_data : ['C', 'H', 'N']
+	 *total_atom_num : 576
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)     1.000     0.000     0.000
+	    (2)     1.000     0.000     0.500
+	    (3)     1.000     0.250     1.000
+	      :
+	  (575)     0.500     0.410     0.667
+	  (576)     0.591     0.546     0.671
+
+	Quadrupole tensor (KEY : Qdata)
+	------------------------------
+
+	*EFG : EFG tensor (V/A^2) 
+
+	    idx       Vxx       Vxy       Vxz       Vyx       Vyy       Vyz       Vzx       Vzy       Vzz
+
+	    (1)    -0.092     0.007     0.006     0.007    -0.014     0.035     0.006     0.035     0.106
+	    (2)    -0.072     0.011     0.012     0.011    -0.028     0.076     0.012     0.076     0.100
+	    (3)     0.001     0.016     0.016     0.016    -0.099     0.120     0.016     0.120     0.098
+	      :
+	  (575)    11.627     0.373     0.140     0.373   -24.988    11.249     0.140    11.249    13.361
+	  (576)   -69.715   -78.585   -55.606   -78.585    23.677   -32.086   -55.606   -32.086    46.037
+
+	*EFG_diag : Diagonalized EFG tensor (V/A^2) 
+
+	    idx    Vxx(D)    Vyy(D)    Vzz(D)
+
+	    (1)    -0.093    -0.023     0.116
+	    (2)    -0.075    -0.061     0.136
+	    (3)    -0.156    -0.001     0.157
+	      :
+	  (575)    16.428    11.618   -28.047
+	  (576)    68.851    68.102  -136.953
+
+	NMR quadrupolar parameters
+
+	*Cq  : quadrupolar parameter    Cq=e*Q*V_zz/h (MHz) 
+	*eta : asymmetry parameters     (V_yy - V_xx)/ V_zz 
+	*Q   : nuclear electric quadrupole moment in mb (millibarn = 10^-31 m^2) 
+
+	    idx        Cq       eta         q
+
+	    (1)     0.000     0.602     1.000
+	    (2)     0.000     0.102     1.000
+	    (3)     0.000     0.985     1.000
+	      :
+	  (575)    -0.068     0.172     1.000
+	  (576)    -0.331     0.005     1.000
+	------------------------------
+
+	Hyperfine tensor (KEY : Adata)
+	------------------------------
+
+	Hyperfine tensor 
+
+	*Aiso : Fermi contact term (MHz) 
+	        (addhfcore - True) 
+	*Adip : Dipolar coupling term (MHz) 
+
+	    idx      Aiso       Axx       Axy       Axz       Ayx       Ayy       Ayz       Azx       Azy       Azz
+
+	    (1)     0.000     0.000     0.000    -0.000     0.000     0.001    -0.000    -0.000    -0.000    -0.002
+	    (2)     0.001     0.001     0.000     0.000     0.000     0.002     0.000     0.000     0.000    -0.003
+	    (3)     0.002     0.004     0.000    -0.000     0.000    -0.003    -0.000    -0.000    -0.000    -0.001
+	      :
+	  (575)    14.250    -3.640     0.008    -0.010     0.008     5.753    -3.842    -0.010    -3.842    -2.113
+	  (576)    -0.622    -0.037     0.078     0.056     0.078     0.014     0.005     0.056     0.005     0.023
+
+	*Adiag : Diagonalized total Hyperfine tensor (MHz) 
+
+	    idx    Axx(D)    Ayy(D)    Azz(D)
+
+	    (1)     0.002     0.000    -0.002
+	    (2)    -0.002     0.002     0.003
+	    (3)     0.001    -0.001     0.006
+	      :
+	  (575)    14.588    14.547    25.546
+	  (576)    -0.594    -0.516    -0.717
+	------------------------------
+
+	Isotopic data (KEY : isodata)
+	------------------------------
+
+	 Atom : { Isotopes : ( S, gyro, eQ, conc) }
+
+	example) 
+	 isodata['B']['10B'].s          : spin          (no unit)
+	 isodata['B']['11B'].gyro       : gyro          (rad/ms/G)
+	 isodata['N']['14N'].q          : eQ            (barn = 10^-28 m^2)
+	 isodata['N']['15N'].conc       : concentration (%/100)
+
+	 C : {'13C': (0.5, 6.7283, 0.00000, 0.0107)} 
+	 H : {'1H': (0.5, 26.7522, 0.00000, 0.9999), '2H': (1.0, 4.1066, 0.00286, 0.0001)} 
+	 N : {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)} 
+
+
+	=========================================
+	 READ POSCAR (KEY : poscar or poscarmod) 
+	=========================================
+
+
+	 POSCAR from 4_modPOSCAR/contcar_NVHn1_dw.vasp (KEY : poscar)
+	------------------------------
+	 *atom_data : ['C', 'H', 'C', 'N']
+	 *atom_data_num : [572, 1, 2, 1]
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)    -0.000     0.000     0.000
+	    (2)    -0.000     0.000     0.500
+	    (3)    -0.000     0.250    -0.000
+	      :
+	  (575)     0.500     0.410     0.667
+	  (576)     0.591     0.546     0.671
+
+
+	=========================================
+	          MAKE A,Q FILE                     
+	=========================================
+
+
+	 Relative positions from central defect (KEY : relativepos)
+	------------------------------
+
+	 *MinDif[A] : [-7.577 -8.748 -7.739]
+	 *MaxDif[A] : [6.316 8.02  4.636]
+	 *farthest_atoms_idx : [0, 572, 573]
+	 *farthest_atoms_info : C , [-7.576 -8.746 -7.731]
+	                      : C , [-7.576 -8.746 -7.731]
+	                      : C , [-7.576 -8.746 -7.731]
+	 *r_1i (cart) :  
+
+	    idx      atom     r_1ix     r_1iy     r_1iz
+
+	    (1)         C    -7.576    -8.746    -7.731
+	    (2)         C    -7.576    -8.746    -1.546
+	    (3)         C    -7.576    -4.373    -7.732
+	      :
+	  (575)         C     0.001    -1.567     0.516
+	  (576)         N     1.379     0.801     0.567
+
+	--- Save files --- 
+	Afile : Afile
+	Qfile : Qfile
+
+
+	=========================================
+	                 DONE                     
+	=========================================
+
+    ____________________________________________________________
+
+    memory_usage_percent  :     6.500 %
+
+    Current memory KB     :    69.191 KB
+
+    Wall clock time       : 0:00:00.425213(s)
+
+    ============================================================
+        JOB DONE    
+    ============================================================

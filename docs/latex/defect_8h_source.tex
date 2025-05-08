@@ -1,0 +1,152 @@
+\doxysection{defect.\+h}
+\hypertarget{defect_8h_source}{}\label{defect_8h_source}\index{/home/huijin/git/CCEX/include/defect.h@{/home/huijin/git/CCEX/include/defect.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_DEFECT\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_DEFECT\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}utilities.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}bath.h"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}\{}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{comment}{/*\ Defect\ information\ */}}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{char}\ dfname[MAX\_CHARARRAY\_LENGTH];}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{bool}\ apprx;}
+\DoxyCodeLine{00016\ \ \ \ \ }
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{/*\ Defect'\ spin\ information\ */}}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{int}\ \ naddspin;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{char}**\ types;\ \textcolor{comment}{//\ spname[n]}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{float}*\ spins;\ \textcolor{comment}{//\ spin[n]}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{double}*\ gyros;\ \textcolor{comment}{//\ gyro[n]}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{double}*\ eqs;\ \textcolor{comment}{//\ eq[n]\ \ //quadrupole\ memomts\ eq\ in\ "{}milibarn\ *\ 10e+1"{}\ m\string^2\ =\ 10e-\/30\ m\string^2}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{/*\ Defect'\ spin\ interaction\ information\ */}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ changes\ for\ avaax,\ spin}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ navaax;\ \textcolor{comment}{//\ possible\ number\ of\ principal\ axis}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{double}***\ rxyzs;\ \textcolor{comment}{//\ rxyz[n+1][m][k]\ :\ n:\ avaax(1\string~navaax),\ m\ :\ addspin\ type\ ,\ k\ :\ x,y,z}}
+\DoxyCodeLine{00030\ \ \ \ \ MatrixXcd**\ hypf;\ \textcolor{comment}{//\ hypf[n+1][m]\ //\ (MHz)}}
+\DoxyCodeLine{00031\ \ \ \ \ MatrixXcd**\ efg;\ \textcolor{comment}{//\ quad[n+1][m]\ //\ (Hartree/Bohr\string^2)}}
+\DoxyCodeLine{00032\ \ \ \ \ MatrixXcd*\ zfs\ ;\ \textcolor{comment}{//\ zfs[n+1]\ \ //\ (MHz)}}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{double}*\ detuning;\ \textcolor{comment}{//\ detuning[n+1]\ //\ \ (MHz)}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{//\ n\ :\ available\ axis}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{//\ m\ :\ addspin\ type}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \}\ \mbox{\hyperlink{structDefect}{Defect}};}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}\{}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{int}\ nbathspin;}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}*\ naddspins;\ \textcolor{comment}{//\ naddspin[nbathspin]}}
+\DoxyCodeLine{00044\ \ \ \ \ \mbox{\hyperlink{structBathSpin}{BathSpin}}***\ subbath;\ \textcolor{comment}{//\ bspin[nbathspin][naddspin]}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{int}*\ paxes;\ \textcolor{comment}{//\ avaax[nbathspin]\ (Fix\ for\ the\ configuration)}}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{int}\ ndefect;}
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{structDefect}{Defect}}**\ defect;}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \}\mbox{\hyperlink{structDefectArray}{DefectArray}};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{comment}{//\ Update\ BathArray\ (input\ :\ Defect\_i,\ paxis(index),\ BathSpin)}}
+\DoxyCodeLine{00056\ \textcolor{comment}{//\ (1)\ mainspinidx\ =\ self-\/index}}
+\DoxyCodeLine{00057\ \textcolor{comment}{//\ (2)\ quad\ (zfs)\ =\ check\ paxis,\ replace\ the\ quad\ as\ zfs(axis)}}
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ (3)\ detuning\ =\ check\ paxis,\ add\ +=detuning(axis)}}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{void}\ updateMainSpins\_fromDefectArray(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba);}
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{void}\ updateDisorder\_main\_sub(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba);}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ updateDisorder\_sub\_sub(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{void}\ updateOverhaus\_qubit\_sub(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ ba);}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00064\ \textcolor{comment}{/*\ Low\ level\ functions\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{comment}{//\ init}}
+\DoxyCodeLine{00067\ \mbox{\hyperlink{structDefectArray}{DefectArray}}*\ DefectArray\_init();}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \textcolor{comment}{//\ set\ defect\ information}}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{void}\ DefectArray\_setNdefect(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ ndefect);}
+\DoxyCodeLine{00071\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_dfname(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{char}*\ dfname);}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_apprx(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{bool}\ apprx);}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_naddspin(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ naddspin);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_types(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{char}**\ types);}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_spins(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{float}*\ spins);}
+\DoxyCodeLine{00076\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_gyros(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{double}*\ gyros);}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_eqs(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{double}*\ eqs);}
+\DoxyCodeLine{00078\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_navaax(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ navaax);}
+\DoxyCodeLine{00079\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_iax\_isp\_rxyz(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax,\ \textcolor{keywordtype}{int}\ isp,\ \textcolor{keywordtype}{double}*\ rxyzs);}
+\DoxyCodeLine{00080\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_iax\_isp\_hypf(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax,\ \textcolor{keywordtype}{int}\ isp,\ MatrixXcd\ hypf);}
+\DoxyCodeLine{00081\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_iax\_isp\_efg(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax,\ \textcolor{keywordtype}{int}\ isp,\ MatrixXcd\ efg);}
+\DoxyCodeLine{00082\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_iax\_zfs(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax,\ MatrixXcd\ zfs);}
+\DoxyCodeLine{00083\ \textcolor{keywordtype}{void}\ DefectArray\_setDefect\_idf\_iax\_detuning(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax,\ \textcolor{keywordtype}{double}\ detuning);}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \textcolor{comment}{//\ find\ defect\ index\ from\ name}}
+\DoxyCodeLine{00086\ \textcolor{keywordtype}{int}\ DefectArray\_findDefectIndex(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{char}*\ dfname);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00088\ \textcolor{comment}{//\ get\ defect\ information}}
+\DoxyCodeLine{00089\ \textcolor{keywordtype}{int}\ DefectArray\_getNdefect(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00090\ \textcolor{keywordtype}{char}*\ DefectArray\_getDefect\_idf\_dfname(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf);}
+\DoxyCodeLine{00091\ \textcolor{keywordtype}{bool}\ DefectArray\_getDefect\_idf\_apprx(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf);}
+\DoxyCodeLine{00092\ \textcolor{keywordtype}{int}\ DefectArray\_getDefect\_idf\_naddspin(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf);}
+\DoxyCodeLine{00093\ \textcolor{keywordtype}{char}*\ DefectArray\_getDefect\_idf\_isp\_types(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ isp);}
+\DoxyCodeLine{00094\ \textcolor{keywordtype}{float}\ DefectArray\_getDefect\_idf\_isp\_spins(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ isp);}
+\DoxyCodeLine{00095\ \textcolor{keywordtype}{double}\ DefectArray\_getDefect\_idf\_isp\_gyros(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ isp);}
+\DoxyCodeLine{00096\ \textcolor{keywordtype}{double}\ DefectArray\_getDefect\_idf\_isp\_eqs(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ isp);}
+\DoxyCodeLine{00097\ \textcolor{keywordtype}{int}\ DefectArray\_getDefect\_idf\_navaax(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf);}
+\DoxyCodeLine{00098\ \textcolor{keywordtype}{double}*\ DefectArray\_getDefect\_idf\_iax\_isp\_rxyz(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax,\ \textcolor{keywordtype}{int}\ isp);}
+\DoxyCodeLine{00099\ MatrixXcd\ DefectArray\_getDefect\_idf\_iax\_isp\_hypf(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax,\ \textcolor{keywordtype}{int}\ isp);}
+\DoxyCodeLine{00100\ MatrixXcd\ DefectArray\_getDefect\_idf\_iax\_isp\_efg(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax,\ \textcolor{keywordtype}{int}\ isp);}
+\DoxyCodeLine{00101\ MatrixXcd\ DefectArray\_getDefect\_idf\_iax\_zfs(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax);}
+\DoxyCodeLine{00102\ \textcolor{keywordtype}{double}\ DefectArray\_getDefect\_idf\_iax\_detuning(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ iax);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \textcolor{comment}{//\ alloc\ defect\ information}}
+\DoxyCodeLine{00105\ \textcolor{keywordtype}{void}\ DefectArray\_allocDefect(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);\ \textcolor{comment}{//\ defect\ :\ ndefect}}
+\DoxyCodeLine{00106\ \textcolor{keywordtype}{void}\ DefectArray\_allocDefect\_idf(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf,\ \textcolor{keywordtype}{int}\ navaax,\ \textcolor{keywordtype}{int}\ naddspin);}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00108\ \textcolor{comment}{//\ set\ subspin\ information}}
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{void}\ DefectArray\_setPaxes\_i(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ ibs,\ \textcolor{keywordtype}{int}\ axis);\ \textcolor{comment}{//\ paxes}}
+\DoxyCodeLine{00110\ \textcolor{keywordtype}{void}\ DefectArray\_setPaxesRandom(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba);\ \textcolor{comment}{//\ nbathspin\ (//\ before\ calculate)}}
+\DoxyCodeLine{00111\ \textcolor{keywordtype}{void}\ DefectArray\_setSubbathStatesRandom(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba);\ \textcolor{comment}{//\ subbath-\/>staets}}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ DefectArray\_setNaddspins(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba);\ \textcolor{comment}{//\ before\ calculate}}
+\DoxyCodeLine{00113\ \textcolor{keywordtype}{void}\ DefectArray\_setSubbath(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \textcolor{comment}{//\ alloc\ subspin\ information}}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}\ DefectArray\_allocPaxes(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ nbathspin);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ DefectArray\_allocNaddspins(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ nbathspin);\ \textcolor{comment}{//\ before\ calculate}}
+\DoxyCodeLine{00118\ \textcolor{keywordtype}{void}\ DefectArray\_allocSubbath(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \textcolor{keywordtype}{int}\ nqubit);}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \textcolor{comment}{//\ get\ subspin\ information}}
+\DoxyCodeLine{00121\ \textcolor{keywordtype}{int}\ DefectArray\_getNbathspin(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{int}\ DefectArray\_getPaxes\_i(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ ibs);}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{int}\ DefectArray\_getNaddspins\_i(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ ibs);}
+\DoxyCodeLine{00124\ \mbox{\hyperlink{structBathSpin}{BathSpin}}*\ DefectArray\_getSubbath\_i\_isp(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ ibs,\ \textcolor{keywordtype}{int}\ isp);\ \textcolor{comment}{//\ control\ this\ with\ BathSpin\_get/set\ functions}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \textcolor{comment}{//\ free\ }}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}\ DefectArray\_freePaxes(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{void}\ DefectArray\_freeNaddspins(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{void}\ DefectArray\_freeSubbath(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{void}\ DefectArray\_freeAll(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \textcolor{comment}{//\ report}}
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{void}\ DefectArray\_reportAll(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \textcolor{keywordtype}{void}\ DefectArray\_reportSubbath\_props(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);\ \textcolor{comment}{//\ name,\ spin,\ gyro,\ xyz,\ mainspidx}}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{void}\ DefectArray\_reportSubbath\_states(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);\ \textcolor{comment}{//\ state\ }}
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{void}\ DefectArray\_reportSubbath\_hypfs(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ nqubit);\ \textcolor{comment}{//\ hypf}}
+\DoxyCodeLine{00141\ \textcolor{keywordtype}{void}\ DefectArray\_reportSubbath\_quads(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);\ \textcolor{comment}{//quad}}
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{void}\ DefectArray\_reportSubbath\_hypf\_subs(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);\ \textcolor{comment}{//\ hypf\_sub}}
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{void}\ DefectArray\_reportSubbath\_disorders(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);\ \textcolor{comment}{//\ disorder}}
+\DoxyCodeLine{00144\ \textcolor{comment}{//,\ detuning\ (detuning\ is\ not\ implemented\ yet)}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \textcolor{keywordtype}{void}\ DefectArray\_reportDefect\_idf(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \textcolor{keywordtype}{int}\ idf);}
+\DoxyCodeLine{00147\ \textcolor{keywordtype}{void}\ DefectArray\_reportPaxes(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{void}\ DefectArray\_reportNaddspins(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa);}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\_\_CCEX\_DEFECT\_H\_}}
+
+\end{DoxyCode}

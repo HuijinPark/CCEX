@@ -1,0 +1,532 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="simulator_8h" kind="file" language="C++">
+    <compoundname>simulator.h</compoundname>
+    <includes local="no">unsupported/Eigen/MatrixFunctions</includes>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includes refid="qubit_8h" local="yes">qubit.h</includes>
+    <includes refid="bath_8h" local="yes">bath.h</includes>
+    <includes refid="defect_8h" local="yes">defect.h</includes>
+    <includes refid="output_8h" local="yes">output.h</includes>
+    <includes refid="pulse_8h" local="yes">pulse.h</includes>
+    <includes refid="cluster_8h" local="yes">cluster.h</includes>
+    <includes refid="general_8h" local="yes">general.h</includes>
+    <includedby refid="simulator_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator.cpp</includedby>
+    <includedby refid="simulator__cce_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator_cce.cpp</includedby>
+    <includedby refid="simulator__gcce_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator_gcce.cpp</includedby>
+    <includedby refid="simulator__hamiltonian_8cpp" local="yes">/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp</includedby>
+    <incdepgraph>
+      <node id="9">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>cluster.h</label>
+        <link refid="cluster_8h_source"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>output.h</label>
+        <link refid="output_8h_source"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>pulse.h</label>
+        <link refid="pulse_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/huijin/git/CCEX/include/simulator.h</label>
+        <link refid="simulator_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="5">
+        <label>iostream</label>
+      </node>
+      <node id="6">
+        <label>mpi.h</label>
+      </node>
+      <node id="7">
+        <label>unistd.h</label>
+      </node>
+      <node id="2">
+        <label>unsupported/Eigen/MatrixFunctions</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="simulator_8h_1ad3027e845b2436c5e8176bfdb2e2c996" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void calculate</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, DefectArray *dfa, Config *cc, Pulse *pulse, Cluster *cluster, Output *output, int ***localClusters)</argsstring>
+        <name>calculate</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cc</declname>
+        </param>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cluster</declname>
+        </param>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>int ***</type>
+          <declname>localClusters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="14" column="6" bodyfile="/home/huijin/git/CCEX/src/simulator.cpp" bodystart="6" bodyend="444" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="14" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1ac51d9c9dce82efc03a2b441892396e99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+        <definition>BathArray * createBathArray</definition>
+        <argsstring>(int *cluster, int nspin, BathArray *ba, DefectArray *dfa, int nqubit)</argsstring>
+        <name>createBathArray</name>
+        <param>
+          <type>int *</type>
+          <declname>cluster</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="16" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator.cpp" bodystart="446" bodyend="536" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="16" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1a1501f4664e2008e614a90187de05edc4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd * calCoherenceGcce</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, Config *cnf, Pulse *pls, Output *op)</argsstring>
+        <name>calCoherenceGcce</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pls</declname>
+        </param>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>op</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="18" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_gcce.cpp" bodystart="5" bodyend="137" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="18" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1af33e1a04593c780ca81d43984e744d7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd * calCoherenceCce</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, Config *cnf, Pulse *pls)</argsstring>
+        <name>calCoherenceCce</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pls</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="19" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_cce.cpp" bodystart="5" bodyend="386" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="19" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1a786766da1e60bea6ff70988a91c1e344" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd calPropagatorGcce</definition>
+        <argsstring>(QubitArray *qa, MatrixXcd Htot, Pulse *pls, double tfree)</argsstring>
+        <name>calPropagatorGcce</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>Htot</declname>
+        </param>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pls</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>tfree</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="21" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_gcce.cpp" bodystart="244" bodyend="333" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="21" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1a06350445b4a7a52d61e791052ea9da91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd HamilQubit</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, MatrixXcd **sigmas, Config *cnf)</argsstring>
+        <name>HamilQubit</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="23" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="4" bodyend="29" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="23" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1a875ebff295b343d5541a6825ed8695dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd HamilBath</definition>
+        <argsstring>(BathArray *ba, MatrixXcd **sigmas, Config *cnf)</argsstring>
+        <name>HamilBath</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>sigmas</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="24" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="31" bodyend="121" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="24" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1aa6dda483876a7c31131690da87cfb780" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd HamilQubitBath</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, MatrixXcd **qsigmas, MatrixXcd **bsigmas, Config *cnf)</argsstring>
+        <name>HamilQubitBath</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>qsigmas</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>bsigmas</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="25" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="123" bodyend="153" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="25" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1a7981db3eed9183d026cf5fb1cc418627" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd *</type>
+        <definition>MatrixXcd * HamilQubitBathSecularApp</definition>
+        <argsstring>(QubitArray *qa, BathArray *ba, MatrixXcd **bsigmas, Config *cnf)</argsstring>
+        <name>HamilQubitBathSecularApp</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>bsigmas</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="26" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="155" bodyend="350" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="26" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1a216497f3063cb347f0c3f015e1575d2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd **</type>
+        <definition>MatrixXcd ** gatherSigmas</definition>
+        <argsstring>(MatrixXcd **qsigmas, MatrixXcd **bsigmas, int nqubit, int nspin)</argsstring>
+        <name>gatherSigmas</name>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>qsigmas</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>bsigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="29" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="352" bodyend="375" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="29" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1a2a023c7e82d0cebae361a42da74807ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd **</type>
+        <definition>MatrixXcd ** gatherSigmas_singlequbit</definition>
+        <argsstring>(MatrixXcd *qsigma, MatrixXcd **bsigmas, int nqubit, int nspin)</argsstring>
+        <name>gatherSigmas_singlequbit</name>
+        <param>
+          <type>MatrixXcd *</type>
+          <declname>qsigma</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>bsigmas</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="30" column="11" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="377" bodyend="405" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="30" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="simulator_8h_1a199fe96f01a4b0f030664e3ac9f9a3d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int close_state_index</definition>
+        <argsstring>(MatrixXcd state, MatrixXcd eigenVectors)</argsstring>
+        <name>close_state_index</name>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>eigenVectors</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/simulator.h" line="31" column="5" bodyfile="/home/huijin/git/CCEX/src/simulator_hamiltonian.cpp" bodystart="407" bodyend="425" declfile="/home/huijin/git/CCEX/include/simulator.h" declline="31" declcolumn="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_SIMULATOR_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_SIMULATOR_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;unsupported/Eigen/MatrixFunctions&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;qubit.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;bath.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;defect.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;output.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;pulse.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;cluster.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;general.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>calculate(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cc,<sp/><ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/><ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cluster,<sp/><ref refid="structOutput" kindref="compound">Output</ref>*<sp/>output,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>localClusters);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>createBathArray(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cluster,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal">MatrixXcd*<sp/>calCoherenceGcce(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf,<sp/><ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pls,<sp/><ref refid="structOutput" kindref="compound">Output</ref>*<sp/>op);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal">MatrixXcd*<sp/>calCoherenceCce(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf,<sp/><ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pls);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">MatrixXcd<sp/>calPropagatorGcce(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/>MatrixXcd<sp/>Htot,<sp/><ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pls,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tfree);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal">MatrixXcd<sp/>HamilQubit(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">MatrixXcd<sp/>HamilBath(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>sigmas,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal">MatrixXcd<sp/>HamilQubitBath(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>qsigmas,<sp/>MatrixXcd**<sp/>bsigmas,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal">MatrixXcd*<sp/>HamilQubitBathSecularApp(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/>MatrixXcd**<sp/>bsigmas,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">MatrixXcd**<sp/>gatherSigmas(MatrixXcd**<sp/>qsigmas,<sp/>MatrixXcd**<sp/>bsigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">MatrixXcd**<sp/>gatherSigmas_singlequbit(MatrixXcd*<sp/>qsigma,<sp/>MatrixXcd**<sp/>bsigmas,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nspin);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>close_state_index(MatrixXcd<sp/>state,<sp/>MatrixXcd<sp/>eigenVectors);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>__CCEX_SIMULATOR_H_</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/simulator.h"/>
+  </compounddef>
+</doxygen>

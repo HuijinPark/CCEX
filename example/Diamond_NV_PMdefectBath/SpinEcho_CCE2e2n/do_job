@@ -1,0 +1,28 @@
+#!/bin/sh
+
+PMdefectlist=( P1 NV0 N2p NVHn VH0 VHn Vn Vp )
+#PMdefectlist=( N2p NVHn VH0 VHn Vn Vp )
+ConcList=( 10 12 50 )
+ConcList=( 10  )
+
+for (( i=0; i<${#PMdefectlist[@]}; i++)) 
+do
+
+
+for (( j=0; j<${#ConcList[@]}; j++)) 
+do
+
+    cd "${ConcList[j]}ppm_${PMdefectlist[i]}"
+    cd "./B0/"
+
+    PMdefect=${PMdefectlist[i]}
+    export PMdefect
+
+        ./../../job
+
+    cd ../
+    cd ../
+    wait
+
+done 
+done 

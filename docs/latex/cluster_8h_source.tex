@@ -1,0 +1,116 @@
+\doxysection{cluster.\+h}
+\hypertarget{cluster_8h_source}{}\label{cluster_8h_source}\index{/home/huijin/git/CCEX/include/cluster.h@{/home/huijin/git/CCEX/include/cluster.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_CLUSTER\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_CLUSTER\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}general.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}bath.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}utilities.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structCluster_ae77394af156e2e278a34f12e83d66cb7}{order}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \mbox{\hyperlink{structCluster_a7c4d583750b7f37eb2ca537e23ad334f}{sK}};\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \mbox{\hyperlink{structCluster_a1ee43f70019a1d92a9b70c5ae5ac84b3}{max\_trial}};\ \ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \mbox{\hyperlink{structCluster_a22956121c5d115004869950c3bd87c5c}{max\_iter}};\ \ \ }
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structCluster_ae16ed95d44c972143ecfcd3d9c70018e}{kmeans\_pp}};\ \ \ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structCluster_a85e14a7d5ed03ab4036531cb482e077e}{iter\_detail}};\ }
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structCluster_acfc81556c4ed78e0bce4c36119fe7150}{method}}[MAX\_CHARARRAY\_LENGTH];}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keywordtype}{int}*\ \mbox{\hyperlink{structCluster_a1385a76b03a7f2f862526ff2bf449755}{nk}};\ }
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structCluster_a33621fac416bdd2eea40805e74730748}{addsubclus}};\ }
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{int}***\ \mbox{\hyperlink{structCluster_afd65bde6cf52f123d1d1ab7a3fd9805c}{clusinfo}};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \}\ \mbox{\hyperlink{structCluster}{Cluster}};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \textcolor{comment}{/*\ High\ Level\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{comment}{//\ init}}
+\DoxyCodeLine{00108\ \mbox{\hyperlink{structCluster}{Cluster}}*\ Cluster\_init();}
+\DoxyCodeLine{00109\ \textcolor{keywordtype}{void}\ Cluster\_clusterize(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structConfig}{Config}}*\ config);}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{comment}{//\ free}}
+\DoxyCodeLine{00112\ \textcolor{keywordtype}{void}\ Cluster\_freeAll(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ MPI}}
+\DoxyCodeLine{00115\ \textcolor{comment}{//\ int***\ Clsuter\_getLocalClusters\_MPI(Cluster*\ cls);}}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \textcolor{comment}{//\ find\ clusters}}
+\DoxyCodeLine{00118\ \textcolor{comment}{//\ void\ Cluster\_find\_clusinfo\_hash(Cluster*\ cls,\ BathArray*\ batharr,\ Config*\ config);\ //\ normal\ (hash)\ algorithm}}
+\DoxyCodeLine{00119\ \textcolor{comment}{//\ void\ Cluster\_find\_clusinfo\_dsj(Cluster*\ cls,\ BathArray*\ batharr,\ Config*\ config);\ //\ disjoint\ algorithm}}
+\DoxyCodeLine{00120\ \textcolor{comment}{//\ void\ Cluster\_find\_clusinfo\_itb(Cluster*\ cls,\ BathArray*\ batharr,\ Config*\ config);\ //\ inter-\/bathcluster\ algorithm}}
+\DoxyCodeLine{00121\ \textcolor{comment}{//\ void\ Cluster\_find\_clusinfo\_dsjitb(Cluster*\ cls,\ BathArray*\ batharr,\ Config*\ config);\ //\ disjoint\ +\ inter-\/bathcluster\ algorithm}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{comment}{//\ report}}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{void}\ Cluster\_report(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{void}\ Cluster\_reportNk(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{void}\ Cluster\_reportClusinfo(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{void}\ reportClusinfo(\textcolor{keywordtype}{int}***\ clusinfo,\ \textcolor{keywordtype}{int}\ order);}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \textcolor{comment}{/*\ Low\ Level\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00131\ \textcolor{comment}{//\ clusinfo\ controller}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{keywordtype}{void}\ Cluster\_allocClusinfo(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order);\ \textcolor{comment}{//\ alloc\ clusinfo[order+1]\ :\ 0\ \string~\ order}}
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{void}\ Cluster\_freeClusinfo(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{void}\ Cluster\_setClusinfo\_0th(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);\ \textcolor{comment}{//\ Actually\ do\ nothing}}
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{void}\ Cluster\_setClusinfo\_1th(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba);\ \textcolor{comment}{//\ bathspins\ =\ clusinfo[1][j][k]}}
+\DoxyCodeLine{00138\ \textcolor{keywordtype}{int}\ Cluster\_setClusinfo\_addcluster(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}\ iter,\ \textcolor{keywordtype}{int}*\ cluster);\ \textcolor{comment}{//\ add\ new\ cluster,\ return\ the\ index\ of\ the\ cluster}}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{void}\ Cluster\_setClusinfo\_chgcluster(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}*\ cluster,\ \textcolor{keywordtype}{int}\ ic);\ \textcolor{comment}{//\ change\ cluster\ at\ ic-\/th\ cluster}}
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{void}\ Cluster\_setClusinfo\_chgiter(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}\ iter,\ \textcolor{keywordtype}{int}\ ic);\ \textcolor{comment}{//\ change\ iter\ at\ ic-\/th\ cluster\ }}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00142\ \textcolor{comment}{//void\ Cluster\_setSk(Cluster*\ cls,\ int\ sk);\ //}}
+\DoxyCodeLine{00143\ \textcolor{comment}{//void\ Cluster\_getSk(Cluster*\ cls);\ //\ output}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \textcolor{comment}{//\ what's\ iter\ :\ \ \ \ \ }}
+\DoxyCodeLine{00148\ \textcolor{comment}{//\ The\ number\ how\ many\ you\ will\ multiply/divide\ }}
+\DoxyCodeLine{00149\ \textcolor{comment}{//\ in\ the\ coherence\ calculation\ for\ 0\ th\ order}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \textcolor{keywordtype}{int}\ Cluster\_getClusinfo\_ncluster(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order);\ \textcolor{comment}{//\ get\ the\ number\ of\ clusters\ at\ order}}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{int}*\ Cluster\_getClusinfo\_itercluster(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}\ ic);\ \textcolor{comment}{//\ get\ ic-\/th\ iter+cluster\ at\ order\ [0]\ =\ iter,\ [1\string~]\ =\ cluster}}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{int}\ Cluster\_getClusinfo\_iter(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}\ ic);\ \textcolor{comment}{//\ get\ ic-\/th\ iter+cluster\ at\ order\ [0]\ =\ iter,\ [1\string~]\ =\ cluster}}
+\DoxyCodeLine{00154\ \textcolor{keywordtype}{int}*\ Cluster\_getClusinfo\_cluster\_copy(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}\ ic);\ \textcolor{comment}{//\ get\ ic-\/th\ cluster\ at\ order\ (copy)}}
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{int}***\ Cluster\_getClusinfo(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{comment}{//\ nk\ controller}}
+\DoxyCodeLine{00158\ \textcolor{keywordtype}{void}\ Cluster\_allocNk(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00159\ \textcolor{keywordtype}{void}\ Cluster\_freeNk(\mbox{\hyperlink{structCluster}{Cluster}}*\ qa);}
+\DoxyCodeLine{00160\ \textcolor{keywordtype}{int}\ Cluster\_getNk\_order(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ i);\ \textcolor{comment}{//\ get\ the\ number\ of\ clusters\ at\ ith-\/orderr\ at\ ith-\/order}}
+\DoxyCodeLine{00161\ \textcolor{keywordtype}{int}*\ Cluster\_getNk(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00163\ \textcolor{comment}{//\ others\ controller}}
+\DoxyCodeLine{00164\ \textcolor{keywordtype}{char}*\ Cluster\_getMethod(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00165\ \textcolor{keywordtype}{int}\ Cluster\_getOrder(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00166\ \textcolor{keywordtype}{bool}\ Cluster\_getAddsubclus(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00167\ \textcolor{keywordtype}{int}\ Cluster\_getSk(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{int}\ Cluster\_getMax\_iter(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00169\ \textcolor{keywordtype}{int}\ Cluster\_getMax\_trial(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00170\ \textcolor{keywordtype}{bool}\ Cluster\_getKmeans\_pp(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00171\ \textcolor{keywordtype}{bool}\ Cluster\_getIter\_detail(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls);}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{comment}{//\ set\ }}
+\DoxyCodeLine{00174\ \textcolor{keywordtype}{void}\ Cluster\_setOrder(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ order);}
+\DoxyCodeLine{00175\ \textcolor{keywordtype}{void}\ Cluster\_setMethod(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{char}*\ method);}
+\DoxyCodeLine{00176\ \textcolor{keywordtype}{void}\ Cluster\_setAddsubclus(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{bool}\ addsubclus);}
+\DoxyCodeLine{00177\ \textcolor{keywordtype}{void}\ Cluster\_setNk(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}*\ nk);\ \textcolor{comment}{//\ set\ the\ number\ of\ clusters\ at\ ith-\/order}}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{void}\ Cluster\_setSk(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ sK);}
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{void}\ Cluster\_setMax\_trial(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ max\_trial);}
+\DoxyCodeLine{00180\ \textcolor{keywordtype}{void}\ Cluster\_setMax\_iter(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ max\_iter);}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{void}\ Cluster\_setKmeans\_pp(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{bool}\ kmeans\_pp);}
+\DoxyCodeLine{00182\ \textcolor{keywordtype}{void}\ Cluster\_setIter\_detail(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{bool}\ iter\_detail);}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_CLUSTER\_H\_}}
+
+\end{DoxyCode}

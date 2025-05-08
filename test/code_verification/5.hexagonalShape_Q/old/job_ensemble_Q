@@ -1,0 +1,62 @@
+#!/bin/sh
+#SBATCH -J heaxgonal_test
+#SBATCH -p 24core
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --cpus-per-task=1
+#SBATCH --out outfile
+#SBATCH --time=48:00:00
+#SBATCH --qos=small-1
+#SBATCH --exclusive
+
+#module purge 
+module load  intel-23.2/icc-23.2  intel-23.2/gsl-2.8  intel-23.2/eigen-3.4.0
+
+#core number
+node_process=$SLURM_NPROCS
+node_process=1
+#node_process=$((1 * 24))
+
+#bath number
+Num_Runfig=1
+#Num_Runfig=20
+configure=$(seq 1 1 ${Num_Runfig})
+
+#option input
+option_input=cce.in
+inputfile13C="../../CCE_Reprod/Bath_Data/4.hexagonal_data/bath_"
+outfilename='CCE_v12_test'
+
+interval=20
+#Nowpwd=/home/huijin/scrp/CCE_Code/17.5.5.version11_pm_apprx
+Nowpwd=/home/huijin/scrp/CCE_Code/17.4.6.version11_detuning_hexa
+
+#time checking
+startTime=$(date +%s.%N)
+startTime_string=`date`
+#############################################################################
+#about CCE2 calculation 
+for m in $configure
+do
+    mpirun -n ${node_process} $Nowpwd/CCEXv12.out -f ${option_input} -I ${inputfile13C}${m} -o ${outfilename} -v  > Process_$m
+
+#    mv ${outfilename}_wiDiv ${outfilename}_wiDiv_${m}
+#    mv ${outfilename}_noDiv ${outfilename}_noDiv_${m}
+
+done
+
+#Plotting
+#./runPlot
+
+
+#############################################################################
+endTime=$(date +%s.%N)
+endTime_string=`date`
+
+elapsed=`echo "($endTime-$startTime)" |bc`
+htime=`echo "$elapsed/3600"|bc`
+mtime=`echo "($elapsed/60)-($htime*60)"|bc`
+stime=`echo "$elapsed-(($elapsed/60)*60)"|bc`
+echo "Start time : $startTime_string"
+echo "End time   : $endTime_string"
+echo "Total time : ${htime}H ${mtime}M ${stime}S"

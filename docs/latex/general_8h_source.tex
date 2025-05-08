@@ -1,0 +1,206 @@
+\doxysection{general.\+h}
+\hypertarget{general_8h_source}{}\label{general_8h_source}\index{/home/huijin/git/CCEX/include/general.h@{/home/huijin/git/CCEX/include/general.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_SIMULATOR\_GENERAL\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_SIMULATOR\_GENERAL\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}utilities.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{//\ Method}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structConfig_a73d927bf5bdb0f39d024b23dc66f0c1c}{method}}[MAX\_CHARARRAY\_LENGTH];}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structConfig_a408cf9618ed41aefd0b0c323f57e0730}{quantity}}[MAX\_CHARARRAY\_LENGTH];\ \ }
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{comment}{//\ General\ options}}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structConfig_a3a9071ea9a9409cefb8cbcea2184c879}{order}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structConfig_abf4c62b17ba762512fab9da0f1e193be}{bfield}}[3];\ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structConfig_a79389333cffeb4063cf1d39e89234c57}{rbath}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structConfig_af9d5e3a3b185555cbe04ad12733612b1}{rdip}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structConfig_a6539de558079f55df76dce79c4079b33}{deltat}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structConfig_acd1675410784e93a9c9866de0c64807e}{nstep}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structConfig_a2eeef76fa44792c24c3320ff6b4d19c8}{rbathcut}};\ \ \ \ \ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{structConfig_a39b6cf20220772b2326ddf423bf3a3f7}{rdipcut}};\ \ \ \ \ \ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structConfig_a91b2aadf805896022127036ded259e79}{nstate}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \mbox{\hyperlink{structConfig_a92ed038fd7676ed62640f59270a60545}{seed}};\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{//\ Qubit\ and\ Bath\ file\ options}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structConfig_a9f5ed3dfb6ae52627a94099cb837cfbf}{qubitfile}};\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structConfig_a735f7f25b0847d08468616025a27ffe5}{gyrofile}};\ }
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structConfig_a26827d7c075042372d21965a827328c3}{nbathfiles}};\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{char}**\ \mbox{\hyperlink{structConfig_afe80a72359e5fc90a5f0f16e9f1d357e}{bathfiles}};\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordtype}{double}**\ \mbox{\hyperlink{structConfig_a1ce641fcaac86656dde150e974ff5ff7}{bathadjust}};\ }
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structConfig_ae3244e507716ae5483bb32a2e4fef809}{avaaxfile}};\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structConfig_a7ce40e0c9e172e7b2e213101b154760b}{statefile}};\ }
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structConfig_a70ec8756f364dc3d40201f951476137e}{exstatefile}}\ ;\ }
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structConfig_aae1991f77e6f99acc5342c1944b46736}{\_nflines}};\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{int}*\ \mbox{\hyperlink{structConfig_a20fb9e36c4c73d0890445628232c5636}{\_flines}};\ }
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{comment}{//\ tensorfile-\/related}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structConfig_a716389cd405e9c041cd3ac7c7608ccdd}{DefectTotSpin}};\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Central\ spin\ number\ in\ reading\ Atensor\ file\ (default\ S\ =\ 1)}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ It\ is\ nesessary\ for\ calulation\ of\ Hyperfin\ tensor\ with\ Atensor\ file}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ <ex.1>}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ you\ use\ the\ Q.E.,\ you\ will\ set\ this\ value\ which\ you\ want\ (S=5/2\ -\/-\/>\ DefectTotSpin\ =\ 5/2)}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ <ex.2>}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ using\ VASP\ version,\ you\ don't\ consider\ the\ DefectTotSpin\ value\ (DefectTotSpin\ =\ 1)}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ <ex.3>}}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ But\ if\ you\ wat\ to\ use\ other\ central\ spin\ which\ is\ different\ from\ A-\/file\ in\ VASP\ version,}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ you\ have\ to\ set\ the\ central\ spin\ which\ you\ want\ (S=3/2\ -\/-\/>\ DefectTotSpin\ =3/2)}}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ,\ and\ then\ you\ will\ change\ CorrTotSpin\ !!!}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structConfig_ac923676eaaf0a911eb890ee419c2b8e6}{CorrTotSpin}};\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Correlation\ value\ of\ total\ spin\ in\ A-\/tensor\ (default\ :\ NULL)}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ <ex.1>}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ A-\/tensor\ file\ of\ Q.E.,\ automatically\ it\ adapt\ the\ central\ spin\ S\ =\ 1/2\ into\ A-\/file}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/>\ CorrTotSpin\ =\ 1/2}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ <ex.2>}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ using\ VASP\ version,\ you\ don't\ consider\ the\ CorrTotSpin\ value\ (CorrTotSpin\ =\ NULL)}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ <ex.3>}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ But\ if\ you\ want\ to\ use\ other\ central\ spin\ which\ is\ different\ from\ A-\/file\ in\ VASP\ version,}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ you\ have\ to\ set\ the\ central\ spin\ of\ A-\/file\ (VASP;\ Half\ of\ Total\ magnetic\ moment\ (S/2))}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{comment}{//\ DFT\ Hyperfine\ tensor}}
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structConfig_a3d4d5a3943f20928bdce09e64fa4bb37}{hf\_readmode}};\ \ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structConfig_a52710072ec30b071e08c1b62f7450c0f}{hf\_tensorfile}};\ }
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{structConfig_af82a9ccd3b05247db3da179361faef85}{hf\_cutoff}}\ ;\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structConfig_a840b086fb6ef148cea4e370967da30e9}{hf\_ignore\_oor}};\ }
+\DoxyCodeLine{00090\ \ \ \ \ }
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{comment}{//\ DFT\ Quadrupole\ tensor}}
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structConfig_adc1119b46a95084ddd4c7bfa2a8d50d9}{qd\_readmode}};\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structConfig_a91d5741035098807bc28000a003bd35d}{qd\_tensorfile}};\ }
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keywordtype}{char}*\ \mbox{\hyperlink{structConfig_a93e5666a93192db9d1cd361381d64301}{qd\_tensorfile\_woqubit}}\ ;\ }
+\DoxyCodeLine{00096\ \ \ \ \ \textcolor{keywordtype}{double}\ qd\_cellpara[3];\ }
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{comment}{//\ HF\ medi}}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structConfig_aff67e82b8327ef5e798493c5c242400a}{hfmedi}};\ }
+\DoxyCodeLine{00100\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structConfig_ae2f2e716dbfb2d45a02fee1a6b678db8}{knight}};\ \ }
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{comment}{//\ semi-\/classical\ options}}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{comment}{//\ int\ Interval\_filter;\ //\ Default\ :\ 500\ \ \ \ \ \ //gsl\ interval\ in\ integration}}
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{comment}{//\ int\ Step\_filter;\ //\ Default\ :\ 100\ \ \ \ \ \ \ \ \ \ //filter\ function\ time\ table\ step}}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{//\ double\ epsabs\_filter;\ //\ Default\ :\ 1e-\/10}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{comment}{//\ double\ tolerance\_filter;\ //\ Default\ :\ 1e-\/10}}
+\DoxyCodeLine{00107\ \ \ \ \ \textcolor{comment}{//\ double\ RoundOff\_err\_filter;\ //\ Default\ :\ 1e+6}}
+\DoxyCodeLine{00108\ \ \ \ \ \textcolor{comment}{//\ int\ SaveCorr;\ //\ Default\ :\ 1\ \ \ \ //1\ :\ save\ the\ correlation\ function}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{comment}{//filter\ function\ time\ table}}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{comment}{//\ std::vector<double>\ FilterTable;\ \ \ \ //[0\ \string~\ 1],\ step\ :\ Step\_filter}}
+\DoxyCodeLine{00112\ \ \ \ \ }
+\DoxyCodeLine{00113\ \}\ \mbox{\hyperlink{structConfig}{Config}};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \mbox{\hyperlink{structConfig}{Config}}*\ Config\_init();}
+\DoxyCodeLine{00116\ \textcolor{keywordtype}{void}\ Config\_freeAll(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00117\ \textcolor{keywordtype}{void}\ Config\_report(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \textcolor{comment}{/*\ Low\ level\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{comment}{//\ get}}
+\DoxyCodeLine{00122\ \textcolor{keywordtype}{char}*\ \ \ Config\_getMethod(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00123\ \textcolor{keywordtype}{char}*\ \ \ Config\_getQuantity(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00124\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_getOrder(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00125\ \textcolor{keywordtype}{float}*\ \ Config\_getBfield(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00126\ \textcolor{keywordtype}{float}\ \ \ Config\_getRbath(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00127\ \textcolor{keywordtype}{float}\ \ \ Config\_getRdip(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00128\ \textcolor{keywordtype}{float}\ \ \ Config\_getDeltat(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00129\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_getNstep(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00130\ \textcolor{keywordtype}{float}\ \ \ Config\_getRbathcut(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00131\ \textcolor{keywordtype}{float}\ \ \ Config\_getRdipcut(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00132\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_getNstate(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00133\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_getSeed(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00134\ \textcolor{keywordtype}{char}*\ \ \ Config\_getQubitfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00135\ \textcolor{keywordtype}{char}*\ \ \ Config\_getGyrofile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00136\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_getNbathfiles(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00137\ \textcolor{keywordtype}{char}*\ \ \ Config\_getBathfiles\_i(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00138\ \textcolor{keywordtype}{double}*\ Config\_getBathadjust\_i(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00139\ \textcolor{keywordtype}{char}*\ \ \ Config\_getAvaaxfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00140\ \textcolor{keywordtype}{char}*\ \ \ Config\_getStatefile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00141\ \textcolor{keywordtype}{char}*\ \ \ Config\_getExstatefile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00142\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_get\_nflines(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00143\ \textcolor{keywordtype}{int}*\ \ \ \ Config\_get\_flines(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00144\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_get\_flines\_i(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00145\ \textcolor{keywordtype}{double}\ \ Config\_getDefectTotSpin(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00146\ \textcolor{keywordtype}{double}\ \ Config\_getCorrTotSpin(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00147\ \textcolor{keywordtype}{char}*\ \ \ Config\_getHf\_tensorfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00148\ \textcolor{keywordtype}{double}\ \ Config\_getHf\_cutoff(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00149\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_getHf\_ignore\_oor(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00150\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_getHf\_readmode(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00151\ \textcolor{keywordtype}{char}*\ \ \ Config\_getQd\_tensorfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00152\ \textcolor{keywordtype}{char}*\ \ \ Config\_getQd\_tensorfile\_woqubit(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00153\ \textcolor{keywordtype}{double}*\ Config\_getQd\_cellpara(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00154\ \textcolor{keywordtype}{int}\ \ \ \ \ Config\_getQd\_readmode(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00155\ \textcolor{keywordtype}{bool}\ \ \ \ Config\_getHfmedi(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00156\ \textcolor{keywordtype}{bool}\ \ \ \ Config\_getKnight(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \textcolor{comment}{//\ set\ }}
+\DoxyCodeLine{00159\ \textcolor{keywordtype}{void}\ Config\_setMethod(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ method);}
+\DoxyCodeLine{00160\ \textcolor{keywordtype}{void}\ Config\_setQuantity(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ quantity);}
+\DoxyCodeLine{00161\ \textcolor{keywordtype}{void}\ Config\_setOrder(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ order);}
+\DoxyCodeLine{00162\ \textcolor{keywordtype}{void}\ Config\_setBfield(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{float}*\ bfield);}
+\DoxyCodeLine{00163\ \textcolor{keywordtype}{void}\ Config\_setBfield\_z(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{float}\ bz);}
+\DoxyCodeLine{00164\ \textcolor{keywordtype}{void}\ Config\_setRbath(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{float}\ rbath);}
+\DoxyCodeLine{00165\ \textcolor{keywordtype}{void}\ Config\_setRdip(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{float}\ rdip);}
+\DoxyCodeLine{00166\ \textcolor{keywordtype}{void}\ Config\_setDeltat(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{float}\ deltat);}
+\DoxyCodeLine{00167\ \textcolor{keywordtype}{void}\ Config\_setNstep(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ nstep);}
+\DoxyCodeLine{00168\ \textcolor{keywordtype}{void}\ Config\_setRbathcut(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{float}\ rbathcut);}
+\DoxyCodeLine{00169\ \textcolor{keywordtype}{void}\ Config\_setRdipcut(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{float}\ rdipcut);}
+\DoxyCodeLine{00170\ \textcolor{keywordtype}{void}\ Config\_setNstate(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ nstate);}
+\DoxyCodeLine{00171\ \textcolor{keywordtype}{void}\ Config\_setSeed(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ seed);}
+\DoxyCodeLine{00172\ \textcolor{keywordtype}{void}\ Config\_setQubitfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ qubitfile);}
+\DoxyCodeLine{00173\ \textcolor{keywordtype}{void}\ Config\_setGyrofile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ gyrofile);}
+\DoxyCodeLine{00174\ \textcolor{keywordtype}{void}\ Config\_setNbathfiles(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ nbathfiles);}
+\DoxyCodeLine{00175\ \textcolor{keywordtype}{void}\ Config\_setBathfiles\_i(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ bathfiles,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00176\ \textcolor{keywordtype}{void}\ Config\_setBathadjust\_i(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{double}*\ bathadjust,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00177\ \textcolor{keywordtype}{void}\ Config\_setAvaaxfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ avaaxfile);}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{void}\ Config\_setStatefile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ statefile);}
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{void}\ Config\_setExstatefile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ exstatefile);}
+\DoxyCodeLine{00180\ \textcolor{keywordtype}{void}\ Config\_set\_nflines(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ nflines);}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{void}\ Config\_set\_flines\_i(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ fline,\ \textcolor{keywordtype}{int}\ i);}
+\DoxyCodeLine{00182\ }
+\DoxyCodeLine{00183\ \textcolor{keywordtype}{void}\ Config\_setDefectTotSpin(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{double}\ DefectTotSpin);}
+\DoxyCodeLine{00184\ \textcolor{keywordtype}{void}\ Config\_setCorrTotSpin(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{double}\ CorrTotSpin);}
+\DoxyCodeLine{00185\ \textcolor{keywordtype}{void}\ Config\_setHf\_tensorfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ hf\_tensorfile);}
+\DoxyCodeLine{00186\ \textcolor{keywordtype}{void}\ Config\_setHf\_cutoff(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{double}\ hf\_cutoff);}
+\DoxyCodeLine{00187\ \textcolor{keywordtype}{void}\ Config\_setHf\_ignore\_oor(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ hf\_ignore\_oor);}
+\DoxyCodeLine{00188\ \textcolor{keywordtype}{void}\ Config\_setHf\_readmode(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ hf\_readmode);}
+\DoxyCodeLine{00189\ \textcolor{keywordtype}{void}\ Config\_setQd\_tensorfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ qd\_tensorfile);}
+\DoxyCodeLine{00190\ \textcolor{keywordtype}{void}\ Config\_setQd\_tensorfile\_woqubit(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{char}*\ qd\_tensorfile\_woqubit);}
+\DoxyCodeLine{00191\ \textcolor{keywordtype}{void}\ Config\_setQd\_readmode(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ qd\_readmode);}
+\DoxyCodeLine{00192\ \textcolor{keywordtype}{void}\ Config\_setQd\_cellpara(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{double}*\ qd\_cellpara);}
+\DoxyCodeLine{00193\ \textcolor{keywordtype}{void}\ Config\_setHfmedi(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{bool}\ hfmedi);}
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{void}\ Config\_setKnight(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{bool}\ knight);}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{comment}{//\ alloc}}
+\DoxyCodeLine{00197\ \textcolor{keywordtype}{void}\ Config\_allocBathfiles(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00198\ \textcolor{keywordtype}{void}\ Config\_reallocBathfiles(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ oldsize,\ \textcolor{keywordtype}{int}\ newsize);}
+\DoxyCodeLine{00199\ \textcolor{keywordtype}{void}\ Config\_allocBathadjust(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00200\ \textcolor{keywordtype}{void}\ Config\_reallocBathadjust(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ oldsize,\ \textcolor{keywordtype}{int}\ newsize);}
+\DoxyCodeLine{00201\ \textcolor{keywordtype}{void}\ Config\_allocGyrofile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00202\ \textcolor{keywordtype}{void}\ Config\_allocQubitfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00203\ \textcolor{keywordtype}{void}\ Config\_allocAvaaxfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00204\ \textcolor{keywordtype}{void}\ Config\_allocStatefile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00205\ \textcolor{keywordtype}{void}\ Config\_allocExstatefile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00206\ \textcolor{keywordtype}{void}\ Config\_alloc\_flines(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ size);}
+\DoxyCodeLine{00207\ \textcolor{keywordtype}{void}\ Config\_realloc\_flines(\mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ oldsize,\ \textcolor{keywordtype}{int}\ newsize);}
+\DoxyCodeLine{00208\ \textcolor{keywordtype}{void}\ Config\_allocHf\_tensorfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00209\ \textcolor{keywordtype}{void}\ Config\_allocQd\_tensorfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00210\ \textcolor{keywordtype}{void}\ Config\_allocQd\_tensorfile\_woqubit(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \textcolor{comment}{//\ free}}
+\DoxyCodeLine{00213\ \textcolor{keywordtype}{void}\ Config\_freeBathfiles(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00214\ \textcolor{keywordtype}{void}\ Config\_freeBathadjust(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00215\ \textcolor{keywordtype}{void}\ Config\_freeGyrofile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00216\ \textcolor{keywordtype}{void}\ Config\_freeQubitfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00217\ \textcolor{keywordtype}{void}\ Config\_freeAvaaxfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00218\ \textcolor{keywordtype}{void}\ Config\_freeStatefile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00219\ \textcolor{keywordtype}{void}\ Config\_freeExstatefile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00220\ \textcolor{keywordtype}{void}\ Config\_free\_flines(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00221\ \textcolor{keywordtype}{void}\ Config\_freeHf\_tensorfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00222\ \textcolor{keywordtype}{void}\ Config\_freeQd\_tensorfile(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00223\ \textcolor{keywordtype}{void}\ Config\_freeQd\_tensorfile\_woqubit(\mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_SIMULATOR\_GENERAL\_H\_}}
+
+\end{DoxyCode}

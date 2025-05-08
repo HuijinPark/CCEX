@@ -1,0 +1,54 @@
+&CONTROL
+calMethod=single
+/
+
+&File
+DefectFile  = ../Bath_Data/1.single_data/bath_DiaP1_1ppm_Defect
+GyroFile    = ../Bath_Data/1.single_data/DiaP1_gyro
+BathFile    = ../Bath_Data/1.single_data/bath_DiaP1_1ppm_1
+AvaaxFile   = ../Bath_Data/1.single_data/bathJT_DiaP1_1ppm_1
+StateFile   = ../Bath_Data/1.single_data/state_DiaP1_1ppm_1
+ExStateFile = ../Bath_Data/1.single_data/stateEx_DiaP1_1ppm_1
+/
+
+&DetailOption
+Order = 2
+Pulse = 1
+B0 = 500
+deltaT = 0.01
+nStep = 300  
+rBath = 850
+rDip = 620
+rDsrdr = 10000 !400
+alpha = -1
+beta = 0
+clusalgo = 0
+addclus = 0
+Nk = 0:0
+/
+
+&HAMILTONIAN
+enJTEOpt = 3
+HFOpt = 0
+HFFile = 0
+HFCutoff = 0
+QuadOpt = 0
+/
+
+&Exspin 
+exspin = P1
+naddspin = 1
+types = 14N 
+spins = 1    
+eqs   = 2.044 
+gyros = 1.9337792 
+avaax = 4
+A(1) =  14N   81.312000     0.000000    0.000000    0.000000    81.312000    0.000000   0.000000    0.000000    114.026400   
+A(2) =  14N  103.121928    12.591967    8.903264   12.591967    88.581975    5.140302   8.903264    5.140302     84.946496   
+A(3) =  14N  103.121923   -12.591970   -8.903263  -12.591970    88.581981    5.140303  -8.903263    5.140303     84.946496   
+A(4) =  14N   81.312000    -0.000001    0.000000   -0.000001   110.391904  -10.280603   0.000000  -10.280603     84.946496   
+Q(1) =  14N    0.521910     0.000000    0.000000    0.000000     0.522771   -0.000086   0.000000   -0.000086     -1.044681 
+Q(2) =  14N   -0.522214    -0.603404   -0.426335   -0.603404     0.174349   -0.246178  -0.426335   -0.246178      0.347865
+Q(3) =  14N   -0.522354     0.603323    0.426364    0.603323     0.174489   -0.246128   0.426364   -0.246128      0.347865
+Q(4) =  14N    0.522771     0.000081   -0.000029    0.000081    -0.870636    0.492306  -0.000029    0.492306      0.347865
+

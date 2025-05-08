@@ -1,0 +1,29 @@
+#!/bin/sh
+
+source ${src}
+
+if [ ${VariableName} == "B0" ];then
+    varOpt="${B0Opt}"
+    unit="G"
+elif [ ${VariableName} == "rBath" ];then
+    varOpt="${rBathOpt}"
+    unit="A"
+elif [ ${VariableName} == "rDip" ];then
+    varOpt="${rDipOpt}"
+    unit="A"
+#elif [ ${VariableName} == "rDsrdr" ];then
+#    varOpt="${rDsrdrOpt}"
+#    unit="A"
+elif [ ${VariableName} == "Order" ];then
+    varOpt="${OrderOpt}"
+    unit=""
+elif [ ${VariableName} == "Nk" ];then
+    varOpt="${NkOpt}"
+    unit=""
+elif [ ${VariableName} == "Pulse" ];then
+    varOpt="${PulseOpt}"
+    unit=""
+elif [ ${VariableName} == "sK" ];then
+    varOpt="${sKOpt}"
+    unit=""
+fi

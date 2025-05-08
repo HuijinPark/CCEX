@@ -1,0 +1,62 @@
+\doxysection{pulse.\+h}
+\hypertarget{pulse_8h_source}{}\label{pulse_8h_source}\index{/home/huijin/git/CCEX/include/pulse.h@{/home/huijin/git/CCEX/include/pulse.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_PULSE\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_PULSE\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}./../include/utilities.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{structPulse_ab083ce764799722049dac44ad7479bad}{npulse}};\ }
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structPulse_a4fcad551982a417a36f160cd0a6f0975}{pulseiter}};\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structPulse_a94ae332f008b81e37d8df344a3c7d9b7}{pulsename}}[100];\ }
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{double}**\ \mbox{\hyperlink{structPulse_af1bd05f903769ac217b18fb0c2ebc31a}{sequence}};\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{double}*\ \ \mbox{\hyperlink{structPulse_aae5ebfae6aac76ba8cf2dbb18ee128a8}{pulse\_angles}};\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{char}*\ \ \ \ \mbox{\hyperlink{structPulse_a8d1b542b8538b339943f80f4ec8b1cd1}{pulse\_axes}};}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}*\ \ \ \ \ \mbox{\hyperlink{structPulse_a4a80fc876df183220d65b3b1676c85ce}{sequence\_indices}};}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00165\ \}\ \mbox{\hyperlink{structPulse}{Pulse}};}
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \mbox{\hyperlink{structPulse}{Pulse}}*\ Pulse\_init();}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{keywordtype}{void}\ Pulse\_report(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \textcolor{keywordtype}{void}\ Pulse\_setNpulse(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse,\ \textcolor{keywordtype}{int}\ npulse);}
+\DoxyCodeLine{00172\ \textcolor{keywordtype}{void}\ Pulse\_setPulsename(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse,\ \textcolor{keywordtype}{char}*\ pulsename);}
+\DoxyCodeLine{00173\ \textcolor{keywordtype}{void}\ assign\_sequence\_indices(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00174\ \textcolor{keywordtype}{void}\ Pulse\_setPulseiter(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse,\ \textcolor{keywordtype}{bool}\ pulseiter);}
+\DoxyCodeLine{00175\ }
+\DoxyCodeLine{00176\ \textcolor{keywordtype}{int}\ Pulse\_getNpulse(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00177\ \textcolor{keywordtype}{char}*\ Pulse\_getPulsename(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00178\ \textcolor{keywordtype}{char}*\ Pulse\_getPulseAxes(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00179\ \textcolor{keywordtype}{double}*\ Pulse\_getPulseAngles(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00180\ \textcolor{keywordtype}{int}*\ Pulse\_getSequenceIndices(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00181\ \textcolor{keywordtype}{double}**\ Pulse\_getSequence(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00182\ \textcolor{keywordtype}{bool}\ Pulse\_getPulseiter(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{comment}{//\ allocation}}
+\DoxyCodeLine{00185\ \textcolor{keywordtype}{void}\ Pulse\_allocSequence(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00186\ \textcolor{keywordtype}{void}\ Pulse\_freeSequence(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00187\ \textcolor{keywordtype}{void}\ Pulse\_freeAll(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \textcolor{keywordtype}{void}\ Pulse\_allocAxes(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00190\ \textcolor{keywordtype}{void}\ Pulse\_allocAngles(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00191\ \textcolor{keywordtype}{void}\ Pulse\_allocSequenceIndices(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00192\ \textcolor{keywordtype}{void}\ Pulse\_freeAxes(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00193\ \textcolor{keywordtype}{void}\ Pulse\_freeAngles(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00194\ \textcolor{keywordtype}{void}\ Pulse\_freeSequenceIndices(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00195\ }
+\DoxyCodeLine{00196\ \textcolor{comment}{//\ generate\ pulse\ sequence}}
+\DoxyCodeLine{00197\ \textcolor{keywordtype}{void}\ generateSequenceRamsey(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00198\ \textcolor{keywordtype}{void}\ generateSequenceHE(\mbox{\hyperlink{structPulse}{Pulse}}*\ sequence);}
+\DoxyCodeLine{00199\ \textcolor{keywordtype}{void}\ generateSequenceWAHUHA(\mbox{\hyperlink{structPulse}{Pulse}}*\ sequence);}
+\DoxyCodeLine{00200\ \textcolor{keywordtype}{void}\ generateSequenceCPMG(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00201\ \textcolor{keywordtype}{void}\ allocateDefaultSequence(\mbox{\hyperlink{structPulse}{Pulse}}*\ pulse);}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_PULSE\_H\_}}
+
+\end{DoxyCode}

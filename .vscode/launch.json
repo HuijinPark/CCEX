@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug CCEX nqubit2",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "/Users/istblue/Desktop/codes/CCEX/bin/main.out",
+        "args": [
+          "-f", "/Users/istblue/Desktop/codes/CCEX_TestFolders/error_nqubit/tempccein.js",
+          "-I", "/Users/istblue/Desktop/codes/CCEX_TestFolders/error_nqubit/bath_test",
+          "-S", "Random",
+          "-o", "/Users/istblue/Desktop/codes/CCEX_TestFolders/error_nqubit/res1/5A_1_det0.970_order1_P1_5A_1",
+          "-N", "1",
+          "-v"
+        ],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",  // 실행 디렉토리
+        "environment": [],
+        "externalConsole": true,
+        "MIMode": "lldb",
+        "preLaunchTask": "build"
+
+      }
+    ]
+  }

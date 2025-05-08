@@ -1,0 +1,56 @@
+\doxysection{reader.\+h}
+\hypertarget{reader_8h_source}{}\label{reader_8h_source}\index{/home/huijin/git/CCEX/include/reader.h@{/home/huijin/git/CCEX/include/reader.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_READER\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_READER\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}qubit.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}bath.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}defect.h"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}general.h"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keywordtype}{void}\ readQubitfile(\mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00011\ \textcolor{keywordtype}{void}\ readBathfiles(\mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00012\ \textcolor{keywordtype}{void}\ readGyrofile(\mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structConfig}{Config}}*\ cnf);}
+\DoxyCodeLine{00013\ \textcolor{keywordtype}{void}\ readHftensorfile(\mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \mbox{\hyperlink{structConfig}{Config}}*\ config);}
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{void}\ readQdtensorfile(\mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structQubitArray}{QubitArray}}*\ qa,\ \mbox{\hyperlink{structConfig}{Config}}*\ config);}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keywordtype}{void}\ setBathStates(\mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ i);\ \textcolor{comment}{//\ read\ or\ random\ set}}
+\DoxyCodeLine{00017\ \textcolor{keywordtype}{void}\ setDefectPaxes(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structConfig}{Config}}*\ cnf);\ \textcolor{comment}{//\ read\ or\ random\ set}}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{void}\ setSubbathStates(\mbox{\hyperlink{structDefectArray}{DefectArray}}*\ dfa,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structConfig}{Config}}*\ cnf,\ \textcolor{keywordtype}{int}\ i);\ \textcolor{comment}{//\ read\ or\ random\ set}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keywordtype}{int}\ compare\_dist(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}\ *b);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ Read\ tensor\ files}}
+\DoxyCodeLine{00023\ \textcolor{keywordtype}{bool}\ READ\_BD\_vertex(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ inputfile,\ \textcolor{keywordtype}{double}***\ vertex,\ \textcolor{keywordtype}{double}***\ center,\ \textcolor{keywordtype}{double}***\ normal,\ \textcolor{keywordtype}{char}**\ vertex\_condi);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{void}\ READ\_Tensor(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ inputfile,\ \textcolor{keywordtype}{double}***\ Tensor,\textcolor{keywordtype}{int}\ numCol);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ READ\_Tensor\_etc(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ inputfile,\ \textcolor{keywordtype}{char}**\ names,\ \textcolor{keywordtype}{int}\ nspecies,\ \textcolor{keywordtype}{double}***\ Tensor,\textcolor{keywordtype}{char}*\ condition,\ \textcolor{keywordtype}{int}\ numCol);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ READ\_Tensor\_const(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ inputfile,\ \textcolor{keywordtype}{char}**\ names,\ \textcolor{keywordtype}{int}\ nspecies,\ \textcolor{keywordtype}{double}**\ Array,\textcolor{keywordtype}{char}*\ condition);}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{bool}\ READ\_Tensor\_array(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ inputfile,\ \textcolor{keywordtype}{double}(*Array)[3],\textcolor{keywordtype}{char}*\ condition,\textcolor{keywordtype}{int}\ numCol);}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{int}\ READ\_Tensor\_ver(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ inputfile,\textcolor{keywordtype}{double}*\ SpinFactor,\ \textcolor{keywordtype}{double}\ DefectTotSpin,\ \textcolor{keywordtype}{double}*\ CorrTotSpin);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ printHfInfo\_version(\textcolor{keywordtype}{int}\ version,\ \textcolor{keywordtype}{double}\ DefectTotSpin,\ \textcolor{keywordtype}{double}\ CorrTotSpin,\ \textcolor{keywordtype}{double}\ SpinFactor);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{void}\ printHfInfo\_BD(\textcolor{keywordtype}{double}**\ vertex,\ \textcolor{keywordtype}{double}**\ center,\ \textcolor{keywordtype}{double}**\ normal,\ \textcolor{keywordtype}{double}\ MinDif[3],\ \textcolor{keywordtype}{double}\ MaxDif[3],\ \textcolor{keywordtype}{bool}\ Usingvertex);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ printHfInfo\_etc(\textcolor{keywordtype}{double}**\ A\_Etc,\ \textcolor{keywordtype}{double}*\ A\_Gfactor,\ \textcolor{keywordtype}{char}**\ names,\ \textcolor{keywordtype}{int}\ nspecies,\ \textcolor{keywordtype}{int}\ mode);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ printHfInfo\_tensor(\textcolor{keywordtype}{double}**\ AtensorArray,\ \textcolor{keywordtype}{int}\ mode);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{bool}\ CheckPosition(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ Posi[3],\textcolor{keywordtype}{double}*\ refPosi);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{bool}\ FIND\_AtomPosi(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ refPosi[3],\ \textcolor{keywordtype}{double}**\ TensorValue,\ \textcolor{keywordtype}{int}*\ num);}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{bool}\ CheckBD\_Range(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ Posi[3],\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ minRange[3],\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ maxRange[3],\textcolor{keywordtype}{double}\ err);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{bool}\ CheckBD\_vertex(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ Posi[3],\textcolor{keywordtype}{double}**\ vertex,\ \textcolor{keywordtype}{double}**\ center,\ \textcolor{keywordtype}{double}**\ normal,\ \textcolor{keywordtype}{double}\ err);}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{bool}\ CheckingUniqeBD(\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ Posi[3],\ \textcolor{keywordtype}{double}**\ center,\ \textcolor{keywordtype}{double}**\ normal);}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ CreatePlaneInfo(\textcolor{keywordtype}{double}**\ vertex,\ \textcolor{keywordtype}{double}***\ center,\ \textcolor{keywordtype}{double}***\ normal);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{double}\ ReDefinediff(\textcolor{keywordtype}{double}\ difXYZ,\textcolor{keyword}{const}\ \ \textcolor{keywordtype}{double}\ minRange,\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ maxRange,\textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ Copy\_Length);}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ CalCenter(\textcolor{keywordtype}{double}**\ center,\ \textcolor{keywordtype}{double}\ p1[],\ \textcolor{keywordtype}{double}\ p2[],\ \textcolor{keywordtype}{double}\ p3[],\ \textcolor{keywordtype}{double}\ p4[]);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ CalNormal(\textcolor{keywordtype}{double}**\ normal,\ \textcolor{keywordtype}{double}\ u[],\ \textcolor{keywordtype}{double}\ v[]);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ vector\_diff(\textcolor{keywordtype}{double}\ (*result)[3],\ \textcolor{keywordtype}{double}\ p1[],\ \textcolor{keywordtype}{double}\ p2[]);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{double}\ vector\_dot(\textcolor{keywordtype}{double}\ u[],\ \textcolor{keywordtype}{double}\ v[]);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ vector\_cross(\textcolor{keywordtype}{double}**\ cross\_P,\ \textcolor{keywordtype}{double}\ u[],\ \textcolor{keywordtype}{double}\ v[],\ \textcolor{keywordtype}{bool}\ norm);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_READER\_H\_}}
+
+\end{DoxyCode}

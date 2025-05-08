@@ -1,0 +1,28 @@
+var annotated =
+[
+    [ "BathArray", "structBathArray.html", "structBathArray" ],
+    [ "BathSpin", "structBathSpin.html", "structBathSpin" ],
+    [ "BathSpinArray", "structBathSpinArray.html", null ],
+    [ "CalConfig", "structCalConfig.html", null ],
+    [ "cJSON", "structcJSON.html", null ],
+    [ "cJSON_Hooks", "structcJSON__Hooks.html", null ],
+    [ "Cluster", "structCluster.html", "structCluster" ],
+    [ "ClusterConfig", "structClusterConfig.html", null ],
+    [ "Config", "structConfig.html", "structConfig" ],
+    [ "Defect", "structDefect.html", null ],
+    [ "DefectArray", "structDefectArray.html", null ],
+    [ "DoubleComplex", "structDoubleComplex.html", "structDoubleComplex" ],
+    [ "DoubleTensor", "structDoubleTensor.html", "structDoubleTensor" ],
+    [ "error", "structerror.html", null ],
+    [ "HashCluster", "structHashCluster.html", null ],
+    [ "internal_hooks", "structinternal__hooks.html", null ],
+    [ "Output", "structOutput.html", "structOutput" ],
+    [ "parse_buffer", "structparse__buffer.html", null ],
+    [ "Partition_info", "structPartition__info.html", null ],
+    [ "Point", "structPoint.html", null ],
+    [ "printbuffer", "structprintbuffer.html", null ],
+    [ "Property", "structProperty.html", null ],
+    [ "Pulse", "structPulse.html", "structPulse" ],
+    [ "Qubit", "structQubit.html", "structQubit" ],
+    [ "QubitArray", "structQubitArray.html", "structQubitArray" ]
+];

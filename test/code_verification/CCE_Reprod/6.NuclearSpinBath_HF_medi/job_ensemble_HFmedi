@@ -1,0 +1,72 @@
+#!/bin/sh
+#SBATCH -J modifiedCCEX 
+#SBATCH -p 24core
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
+#SBATCH --cpus-per-task=1
+#SBATCH --out outfile
+#SBATCH --time=48:00:00
+#SBATCH --qos=small-1
+#SBATCH --exclusive
+
+#module purge 
+module load icc18 icc18.impi fftw mkl2018 
+export LD_LIBRARY_PATH=/home/CQML/lib/gsl-2.7.1/lib:$LD_LIBRARY_PATH
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+NTASKS=$(($SLURM_NTASKS_PER_NODE * $SLURM_JOB_NUM_NODES))
+
+echo "NTASKS =" $NTASKS
+echo "NUM_NODES = " $SLURM_JOB_NUM_NODES
+env | grep SLURM
+
+node_process=$NTASKS
+node_process=$SLURM_NPROCS
+
+#bath number
+Num_Runfig=1
+configure=$(seq 1 1 ${Num_Runfig})
+
+#option input
+option_input="cce.in"
+inputfile13C="../Bath_Data/2.ensemble_data/bath_NV_Dia_1007_"
+outfilename='CCE_v10_Hf_medi_test'
+
+interval=20
+Nowpwd=`pwd`
+
+#time checking
+startTime=$(date +%s.%N)
+startTime_string=`date`
+#############################################################################
+#about CCE2 calculation 
+for m in $configure
+do
+
+		mpirun -n ${node_process} ${Nowpwd}/../../CCEXv10_DiaMulti.out -f ${option_input} -I ${inputfile13C}${m} -o ${outfilename}  > Process_$m
+
+		#mv ${outfilename}_wiDiv ${outfilename}_wiDiv_${m}
+		#mv ${outfilename}_noDiv ${outfilename}_noDiv_${m}
+
+		#errorCorrection.py ${outfilename}_wiDiv_${m} ${outfilename}_noDiv_${m} 1 ${outfilename}_EC_${m} 
+
+done
+
+#Plotting
+
+
+##next calculation
+#cd ../../../
+#./2_sbatch_all
+
+#############################################################################
+endTime=$(date +%s.%N)
+endTime_string=`date`
+
+elapsed=`echo "($endTime-$startTime)" |bc`
+htime=`echo "$elapsed/3600"|bc`
+mtime=`echo "($elapsed/60)-($htime*60)"|bc`
+stime=`echo "$elapsed-(($elapsed/60)*60)"|bc`
+echo "Start time : $startTime_string"
+echo "End time   : $endTime_string"
+echo "Total time : ${htime}H ${mtime}M ${stime}S"

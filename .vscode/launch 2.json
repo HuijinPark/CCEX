@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug CCEX",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/main.out",
+            "args": [
+                "-f", "/Users/istblue/Downloads/test/ccein.js",
+                "-I", "${workspaceFolder}/example/Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_1",
+                "-a", "Random1",
+                "-s", "${workspaceFolder}/example/Diamond_NV_P1Bath/bath/14N_1ppm/state_DiaP1_1ppm_",
+                "-S", "Random",
+                "-o", "./res/test_1",
+                "-N", "1"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false,
+            "console": "integratedTerminal",
+            "preLaunchTask": "build"
+
+        }
+    ]
+}

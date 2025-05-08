@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="GettingStarted" kind="page">
+    <compoundname>GettingStarted</compoundname>
+    <title>Getting Started</title>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This is the getting started guide.</para>
+<sect1 id="GettingStarted_1HowToRun">
+<title>How to run</title><para><linebreak/>
+</para>
+<para>To run the code using <computeroutput> mpirun </computeroutput>, use the following command : <linebreak/>
+</para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>process_number<sp/>code_path<sp/>-f<sp/>input_file<sp/></highlight></codeline>
+</programlisting></para>
+<para><itemizedlist>
+<listitem><para>process_number : The number of processes to run. <linebreak/>
+</para>
+</listitem><listitem><para>code_path : The path to your executable code. <linebreak/>
+</para>
+</listitem><listitem><para>input_file : The input file required for the code to run. <linebreak/>
+ (input file should be <computeroutput>.json</computeroutput> file) <linebreak/>
+</para>
+</listitem></itemizedlist>
+</para>
+<para><bold>Example</bold> </para>
+<para><programlisting><codeline><highlight class="normal">$<sp/>mpirun<sp/>-n<sp/>4<sp/>/usr/local/bin/mycode<sp/>-f<sp/>data/input.json<sp/></highlight></codeline>
+</programlisting></para>
+<para><bold>Possble</bold> <bold>command-line</bold> <bold>options</bold> <itemizedlist>
+<listitem><para>-h : Help option <linebreak/>
+</para>
+</listitem><listitem><para>-f : <ref refid="InputFile_1InputFile" kindref="member">Input file</ref> option (Required) (See <ref refid="InputFile_1InputFile" kindref="member">Input file</ref>) <linebreak/>
+</para>
+</listitem><listitem><para>-m : Method (See <ref refid="InputFile_1tag_method" kindref="member">method</ref>) <linebreak/>
+</para>
+</listitem><listitem><para>-q : Quantity (See <ref refid="InputFile_1tag_quantity" kindref="member">quantity</ref>) <linebreak/>
+</para>
+</listitem><listitem><para>-I : File path to set the position of bath spins (See <ref refid="InputFile_1tag_bathfile" kindref="member">bathfiles</ref>) <linebreak/>
+</para>
+</listitem><listitem><para>-s : File path to set the spin state of bath spins (See <ref refid="InputFile_1tag_statefile" kindref="member">statefile</ref>) <linebreak/>
+</para>
+</listitem><listitem><para>-a : File path to set principal axies of the defects in the bath (See <ref refid="InputFile_1tag_avaaxfile" kindref="member">avaaxfile</ref>) <linebreak/>
+</para>
+</listitem><listitem><para>-S : File path to set the spin state of on-site spins of the defects in the bath (See <ref refid="InputFile_1tag_exstatefile" kindref="member">exstatefile) </ref><linebreak/>
+</para>
+</listitem><listitem><para>-N : The number of state configuration to do time ensemble average (See <ref refid="InputFile_1tag_nstate" kindref="member">nstate</ref>) <linebreak/>
+</para>
+</listitem><listitem><para>-B : Magnetic field in z direction (Unit : G) (See <ref refid="InputFile_1tag_bfield" kindref="member">bfield</ref>) <linebreak/>
+</para>
+</listitem><listitem><para>-o : Result file path (See <ref refid="InputFile_1tag_outfile" kindref="member">outfile</ref>) <linebreak/>
+</para>
+</listitem></itemizedlist>
+</para>
+<para><bold>About</bold> <bold>options</bold> </para>
+<para>The code read options twice :<itemizedlist>
+<listitem><para>Read options from input file called as In-file options</para>
+</listitem><listitem><para>Read optoins from command line called as Command-line options <linebreak/>
+<simplesect kind="note"><para>Command-line options are &quot;priority&quot;</para>
+</simplesect>
+<hruler/>
+ </para>
+</listitem></itemizedlist>
+</para>
+</sect1>
+<sect1 id="GettingStarted_1Workflow">
+<title>Workflow</title><para>The CCEX software follow the below work process.</para>
+<para>When you give the arguments in the command line, the code frist read the arguments. <linebreak/>
+Note that if you don&apos;t give the input file accesible with -f option, then the code doesn&apos;t work. <linebreak/>
+ Code read the all tags in input file and update the ... <linebreak/>
+</para>
+<para><image type="html" name="CCEX_workflow.png" inline="yes"></image>
+ </para>
+</sect1>
+    </detaileddescription>
+    <location file="GettingStarted.dox"/>
+  </compounddef>
+</doxygen>

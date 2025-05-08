@@ -1,0 +1,350 @@
+        Read General Options ...
+
+order: 1
+        Read File Options ...
+
+        Read Qubit Options ...
+
+
+    ===============================================================
+
+    < Structure QubitArray > 
+
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+      -------------------------------------------------
+
+      qubit name        :   qubit1               
+      spin              :   1                    
+      gyro (radkHz/G)   :   -17608.597           
+      detuning (kHz)    :   0.000                
+      overhaus (kHz)    :   0.000                
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      beta              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+
+      -------------------------------------------------
+
+    >> Interactions (kHz)
+
+      intmap[0][0]      :   [ -960000.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, -960000.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 1920000.00j+0.00 ]
+
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ===============================================================
+
+        Read Cluster Options ...
+
+        Read Pulse Options ...
+
+        Read Output Options ...
+
+
+    ===============================================================
+
+    < Structure Config > 
+
+      method            :   gcce                 
+      quantity          :   coherence            
+      order             :   1                    
+      bfield            :   [ 0.00      , 0.00      , 448.84     ]
+      rbath             :   10                   
+      rdip              :   10                   
+      deltat            :   1e-05                
+      nstep             :   50                   
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   0                    
+      seed              :   1715435162           
+      qubitfile         :   (null)               
+      gyrofile          :   ./gyro               
+      nbathfiles        :   1                    
+      bathfiles         :   ./bath_1             
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      avaaxfile         :   (null)               
+      statefile         :   (null)               
+      exstatefile       :   (null)               
+      DefectTotSpin     :   1.000                
+      CorrTotSpin       :   0.000                
+      hf_readmode       :   3                    
+      hf_tensorfile     :   ./Atensor            
+      hf_cutoff         :   0.000                
+      hf_ignore_oor     :   0                    
+      qd_readmode       :   0                    
+
+    ===============================================================
+
+
+    ===============================================================
+
+    < Structure QubitArray > 
+
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+      -------------------------------------------------
+
+      qubit name        :   qubit1               
+      spin              :   1                    
+      gyro (radkHz/G)   :   -17608.597           
+      detuning (kHz)    :   0.000                
+      overhaus (kHz)    :   0.000                
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   [ 0.00j+0.00, 0.00j+0.00, 1.00j+0.00 ]
+      beta              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+
+      -------------------------------------------------
+
+    >> Interactions (kHz)
+
+      intmap[0][0]      :   [ -960000.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, -960000.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 1920000.00j+0.00 ]
+
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ===============================================================
+
+
+    ===============================================================
+
+    < Structure Cluster > 
+
+
+    >> General properties
+
+      order             :   1                    
+      method            :   gcce                 
+      addsubclus        :   true                 
+
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0     ]
+
+
+    ===============================================================
+
+
+    ===============================================================
+
+    < Structure Pulse > 
+
+      pulsename         :   CPMG                 
+      npulse            :   32                   
+      pulseiter         :   false                
+                            * ture  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+
+    >> Sequence
+
+      -------------------------------------------------
+                        start      end     diff   index
+ 
+       sequence[0] :    0.000    0.016    0.016    0.000 
+       sequence[1] :    0.016    0.047    0.031    1.000 
+       sequence[2] :    0.047    0.078    0.031    1.000 
+       sequence[3] :    0.078    0.109    0.031    1.000 
+       sequence[4] :    0.109    0.141    0.031    1.000 
+       sequence[5] :    0.141    0.172    0.031    1.000 
+       sequence[6] :    0.172    0.203    0.031    1.000 
+       sequence[7] :    0.203    0.234    0.031    1.000 
+       sequence[8] :    0.234    0.266    0.031    1.000 
+       sequence[9] :    0.266    0.297    0.031    1.000 
+       sequence[10] :    0.297    0.328    0.031    1.000 
+       sequence[11] :    0.328    0.359    0.031    1.000 
+       sequence[12] :    0.359    0.391    0.031    1.000 
+       sequence[13] :    0.391    0.422    0.031    1.000 
+       sequence[14] :    0.422    0.453    0.031    1.000 
+       sequence[15] :    0.453    0.484    0.031    1.000 
+       sequence[16] :    0.484    0.516    0.031    1.000 
+       sequence[17] :    0.516    0.547    0.031    1.000 
+       sequence[18] :    0.547    0.578    0.031    1.000 
+       sequence[19] :    0.578    0.609    0.031    1.000 
+       sequence[20] :    0.609    0.641    0.031    1.000 
+       sequence[21] :    0.641    0.672    0.031    1.000 
+       sequence[22] :    0.672    0.703    0.031    1.000 
+       sequence[23] :    0.703    0.734    0.031    1.000 
+       sequence[24] :    0.734    0.766    0.031    1.000 
+       sequence[25] :    0.766    0.797    0.031    1.000 
+       sequence[26] :    0.797    0.828    0.031    1.000 
+       sequence[27] :    0.828    0.859    0.031    1.000 
+       sequence[28] :    0.859    0.891    0.031    1.000 
+       sequence[29] :    0.891    0.922    0.031    1.000 
+       sequence[30] :    0.922    0.953    0.031    1.000 
+       sequence[31] :    0.953    0.984    0.031    1.000 
+       sequence[32] :    0.984    1.000    0.016    0.000 
+      -------------------------------------------------
+
+
+    ===============================================================
+
+
+    ===============================================================
+
+    < Structure Output > 
+
+      savemode          :   normal               
+      outfile           :   ./CPMG_result        
+
+
+    ===============================================================
+
+        QubitArray already set with option ...
+
+        Read GyroFile : ./gyro
+        Current nspecies = 1 
+        Read BathFile[0] : ./bath_1
+        Current nspin = 1 
+      -------------------------------------------------
+
+    >> Read the Hyperfine interaction from DFT inputfile...
+
+      HF Tensor file :  :   ./Atensor            
+      HF Readmode :     :   3                    
+		Successfully, The version tag is read from Tensorfile (VASP)
+		You will use the raw data of A-tensor file
+
+	Your Hyperfine file version is 'VASP'
+		Now doesn't consider the SpinFactor(1.000000) due to using raw data of A-file!!
+
+	[Min Range] (angstrom) : -10.000000  -10.000000  -10.000000
+	[Max Range] (angstrom) : +10.000000  +10.000000  +10.000000
+
+	[g-factor] (no-unit) :
+	13C  =      1.000000
+
+	[A etc] (MHz) :
+	Iso  		A-tensor
+	13C  :      0.000000 
+
+	[A-tensor] (MHz) :
+	ion  					position						Fermi				A-tensor
+	  1  	   +1.000000    +1.000000    +1.000000         0.000000         0.000000     0.000000     0.000000     0.000000     0.000000     0.000000     0.003000     0.000000     0.213154 
+
+        Read the Hyperfine interaction from DFT inputfile... Done
+      nspecies          :   1                    
+      names             :   [ 13C        ]
+      gyros             :   [ 6.73       ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   1                    
+      -------------------------------------------------
+      [  0]     13C   1.000   1.000   1.000   ( S = 0.5, gyro =   6.728 )
+
+      -------------------------------------------------
+      hypf[0][0]        :   [ 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 0.00j+0.00, 18.85j+0.00, 0.00j+0.00, 1339.29j+0.00 ]
+
+
+	 Clustering 1st order ... 
+      clusinfo          :   
+
+           0-th order ... 
+           Cluster[0][    0] :   1 (Iter)
+
+           Total 0-Cluster # :  1 # 
+
+
+
+           1-th order ... 
+           Cluster[1][    1] :   1 [0   ]
+
+           Total 1-Cluster # :  1 # 
+
+
+
+    ===============================================================
+
+    < MPI distribution for the clusters > 
+
+
+    ===============================================================
+
+    < gCCE calculation > 
+
+
+    ===============================================================
+
+    < Main calculation loop > 
+
+      -------------------------------------------------
+        Ensemble calculation
+      -------------------------------------------------
+
+      -------------------------------------------------
+
+    >> Calculate 0-th cluster...
+
+
+
+    >> Wall time : 0.02[s]
+
+
+      -------------------------------------------------
+
+      -------------------------------------------------
+
+    >> Calculate 1-th cluster...
+
+
+        At rank 0, 1 cluster (100%) is computed at 0.13 s
+
+        # Wall time : 0.13[s]
+
+      -------------------------------------------------
+
+
+    >> Gather the results (MPI)...
+
+
+
+    >> Save the results...
+
+
+
+    ===============================================================
+
+        JOB DONE : Wall time = 0.13433 s
+
+    ===============================================================
+
+

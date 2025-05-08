@@ -1,0 +1,54 @@
+\doxysection{output.\+h}
+\hypertarget{output_8h_source}{}\label{output_8h_source}\index{/home/huijin/git/CCEX/include/output.h@{/home/huijin/git/CCEX/include/output.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_OUTPUT\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_OUTPUT\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}general.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}bath.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}utilities.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00009\ \ \ \ }
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{comment}{//\ Intermediate\ Save}}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{comment}{//\ char*\ InterSaveClusterFile;\ /**<\ File\ name\ to\ save\ clusters'\ information\ */}}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{comment}{//\ char*\ InterSaveCoherenceFile;\ /**<\ File\ name\ to\ save\ coherence\ functions\ of\ clusters\ */}}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{char}\ \mbox{\hyperlink{structOutput_a7f85059a943e07bad7f1b76d4e5a99d8}{savemode}}[20];\ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{//\ all\ :\ coherence\ function\ for\ each\ cluster\ and\ each\ state\ :\ output\ =\ output\_\{cluster\}\_\{state\}\_wD/nD}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{comment}{//\ normal\ :\ coherence\ function\ for\ each\ state\ (default)\ :\ output\ =\ output\_\{state\}\_wD/nD}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{comment}{//\ avg\ :\ averaged\ coherence\ function\ for\ all\ states\ :\ ouput\ =\ output\_avg\_wD/nD}}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{//\ info\ :\ normal\ save\ mode\ +\ deep\ learning\ information\ (Azx,\ Azz,\ bathfile)\ :\ output\ =\ output\_\{state\}\_wD/nD}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{comment}{//\ Final\ Save\ (Main\ result)}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ outfile1.\ actual\ result\ }}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{//\ outfile2.\ the\ result\ to\ compare\ them\ to\ remove\ the\ diverged\ points}}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//\ char*\ OutputFileHead;\ /**<\ File\ name\ to\ save\ final\ result\ */}}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{//\ char*\ OutputFileTail;\ /**<\ File\ name\ to\ save\ final\ result\ */}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//\ char*\ OutputFileHeadDisjoint;\ /**<\ File\ name\ to\ save\ final\ result\ */}}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//\ char*\ OutputFileTailDisjoint;\ /**<\ File\ name\ to\ save\ final\ result\ */}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{char}*\ outfile;\ \textcolor{comment}{//\ output\ file\ name\ with\ mode\ (auto\ generated)}}
+\DoxyCodeLine{00028\ \}\ \mbox{\hyperlink{structOutput}{Output}};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \mbox{\hyperlink{structOutput}{Output}}*\ Output\_init();}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{void}\ Output\_save(\mbox{\hyperlink{structOutput}{Output}}*\ op,\ MatrixXcd*\ result\_wD,\ MatrixXcd*\ result\_nD,\ \textcolor{keywordtype}{int}\ nstep,\ \textcolor{keywordtype}{float}\ deltat,\ \textcolor{keywordtype}{int}\ istate);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ Output\_save\_all(\mbox{\hyperlink{structOutput}{Output}}*\ op,\ MatrixXcd*\ result,\ \textcolor{keywordtype}{int}\ nstep,\ \textcolor{keywordtype}{float}\ deltat,\textcolor{keywordtype}{int}*\ cluster,\ \textcolor{keywordtype}{int}\ nspin,\ \textcolor{keywordtype}{int}\ istate);}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ Output\_save\_info(\mbox{\hyperlink{structOutput}{Output}}*\ op,\ MatrixXcd*\ result\_wD,\ MatrixXcd*\ result\_nD,\ \textcolor{keywordtype}{int}\ nstep,\ \textcolor{keywordtype}{float}\ deltat,\ \textcolor{keywordtype}{int}\ istate,\ \textcolor{keywordtype}{double}\ Azx,\ \textcolor{keywordtype}{double}\ Azz,\ \textcolor{keywordtype}{char}*\ bathfile);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ Output\_setSavemode(\mbox{\hyperlink{structOutput}{Output}}*\ op,\ \textcolor{keywordtype}{char}*\ savemode);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{char}*\ Output\_getSavemode(\mbox{\hyperlink{structOutput}{Output}}*\ op);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{void}\ Output\_allocOutfile(\mbox{\hyperlink{structOutput}{Output}}*\ op);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ Output\_freeOutfile(\mbox{\hyperlink{structOutput}{Output}}*\ op);}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{void}\ Output\_setOutfile(\mbox{\hyperlink{structOutput}{Output}}*\ op,\ \textcolor{keywordtype}{char}*\ outfile);}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{char}*\ Output\_getOutfile(\mbox{\hyperlink{structOutput}{Output}}*\ op);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ Output\_report(\mbox{\hyperlink{structOutput}{Output}}*\ op);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ Output\_freeAll(\mbox{\hyperlink{structOutput}{Output}}*\ op);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_OUTPUT\_H\_}}
+
+\end{DoxyCode}

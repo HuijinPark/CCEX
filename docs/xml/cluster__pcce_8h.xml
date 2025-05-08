@@ -1,0 +1,1251 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="cluster__pcce_8h" kind="file" language="C++">
+    <compoundname>cluster_pcce.h</compoundname>
+    <includes local="no">stdio.h</includes>
+    <includes local="no">time.h</includes>
+    <includes refid="bath_8h" local="yes">bath.h</includes>
+    <includes local="yes">mpi.h</includes>
+    <includes refid="cluster_8h" local="yes">cluster.h</includes>
+    <includes refid="general_8h" local="yes">general.h</includes>
+    <includedby refid="cluster_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster.cpp</includedby>
+    <includedby refid="cluster__pcce_8cpp" local="yes">/home/huijin/git/CCEX/src/cluster_pcce.cpp</includedby>
+    <incdepgraph>
+      <node id="4">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>cluster.h</label>
+        <link refid="cluster_8h_source"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/huijin/git/CCEX/include/cluster_pcce.h</label>
+        <link refid="cluster__pcce_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="7">
+        <label>iostream</label>
+      </node>
+      <node id="8">
+        <label>mpi.h</label>
+      </node>
+      <node id="2">
+        <label>stdio.h</label>
+      </node>
+      <node id="3">
+        <label>time.h</label>
+      </node>
+      <node id="9">
+        <label>unistd.h</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="structPoint" prot="public">Point</innerclass>
+    <innerclass refid="structPartition__info" prot="public">Partition_info</innerclass>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="cluster__pcce_8h_1adae31771c34b352e9e7347002af790fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void clusterizePcce</definition>
+        <argsstring>(Cluster *cls, BathArray *ba, Config *config)</argsstring>
+        <name>clusterizePcce</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>config</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="24" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="16" bodyend="127" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="24" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1acf3a1a0dfd001487e4ae95a2937703fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void simulator_cluster_partition</definition>
+        <argsstring>(BathSpin **bath, Partition_info *pinfo, Cluster *cls, Point *best_centers, int *best_assigned_idx)</argsstring>
+        <name>simulator_cluster_partition</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> **</type>
+          <declname>bath</declname>
+        </param>
+        <param>
+          <type><ref refid="structPartition__info" kindref="compound">Partition_info</ref> *</type>
+          <declname>pinfo</declname>
+        </param>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>best_centers</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>best_assigned_idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="25" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="131" bodyend="407" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="25" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a7a1445a095e496d0f8f57bfb8a8e6a66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void shrink_restspins</definition>
+        <argsstring>(BathArray *ba, int rest_nspin)</argsstring>
+        <name>shrink_restspins</name>
+        <param>
+          <type><ref refid="structBathArray" kindref="compound">BathArray</ref> *</type>
+          <declname>ba</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>rest_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="26" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="409" bodyend="422" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="26" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a70bf38a7bebe453a21a295f8956b8a17" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void update_global_best</definition>
+        <argsstring>(int index, double *inertia, double *sil, int *trial, double *global_best_inertia, double *global_best_sil, int *global_best_trial)</argsstring>
+        <name>update_global_best</name>
+        <param>
+          <type>int</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>inertia</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>sil</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>trial</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>global_best_inertia</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>global_best_sil</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>global_best_trial</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="27" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="425" bodyend="431" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="27" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a576d3197256d2b37939aa26bdd7de0cc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_pcce_info</definition>
+        <argsstring>(int bath_nspin, int nqubit, int ncenter, int pcce_nspin, int rest_nspin)</argsstring>
+        <name>print_pcce_info</name>
+        <param>
+          <type>int</type>
+          <declname>bath_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>nqubit</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>rest_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="28" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="446" bodyend="454" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="28" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a39f1ba7c2cfc5a8953854fbceb77d9d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void initializeCentroids</definition>
+        <argsstring>(Point *spins, Point *centers, int ncenter, int pcce_nspin)</argsstring>
+        <name>initializeCentroids</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="29" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="469" bodyend="494" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="29" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a83d1960bb1d5ff52024134e20e36e0df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void choose_initial_method</definition>
+        <argsstring>(bool kmeans_pp, Point *spins, Point *centers, int pcce_nspin, int ncenter)</argsstring>
+        <name>choose_initial_method</name>
+        <param>
+          <type>bool</type>
+          <declname>kmeans_pp</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="30" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="496" bodyend="511" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="30" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a01b4f00976e0e234d92f5b7cc818b42c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void kMeansPlusPlus</definition>
+        <argsstring>(Point *spins, Point *centers, int pcce_nspin, int ncenter)</argsstring>
+        <name>kMeansPlusPlus</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="31" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="513" bodyend="554" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="31" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a7dde77302f976e84e08f8e539c140aff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void shuffle_spins</definition>
+        <argsstring>(Point *array, int *shuffle_idxs, int pcce_nspin)</argsstring>
+        <name>shuffle_spins</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>shuffle_idxs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="32" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="555" bodyend="570" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="32" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1aa872b13b6190f451e46a416f643d9a5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void changeIdx_inverse_shuffle_idx</definition>
+        <argsstring>(int *shuffle_idx, int *inverse_shuffle_idx, int pcce_nspin)</argsstring>
+        <name>changeIdx_inverse_shuffle_idx</name>
+        <param>
+          <type>int *</type>
+          <declname>shuffle_idx</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>inverse_shuffle_idx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="33" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="572" bodyend="577" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="33" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a6df241c32cec4bda7e0803f62253fe27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void assignCentroids</definition>
+        <argsstring>(int *assigned_cluster_idx, double **distances, int pcce_nspin, int ncenter)</argsstring>
+        <name>assignCentroids</name>
+        <param>
+          <type>int *</type>
+          <declname>assigned_cluster_idx</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="34" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="579" bodyend="608" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="34" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a85713ae9942c449e94912cd5ff3af8b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void calc_dist_to_centers</definition>
+        <argsstring>(Point *spins, Point *centers, double **distances, int pcce_nspin, int ncenter)</argsstring>
+        <name>calc_dist_to_centers</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>distances</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="35" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="610" bodyend="621" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="35" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a2cb0a2b9e2cc3d2102a706904198c12a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copy_best_centers</definition>
+        <argsstring>(Point *centers, Point *best_centers, int ncenter)</argsstring>
+        <name>copy_best_centers</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>best_centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="36" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="734" bodyend="738" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="36" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a5398450f2130b0e68a8689236da62a4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copy_best_assigned</definition>
+        <argsstring>(int *assigned, int *best_assigned, int pcce_nspin)</argsstring>
+        <name>copy_best_assigned</name>
+        <param>
+          <type>int *</type>
+          <declname>assigned</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>best_assigned</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="37" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="740" bodyend="744" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="37" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a1bdbe8088b22e756482673bb928b1f0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copy_best_idxList</definition>
+        <argsstring>(int *idxList, int *best_idxList, int pcce_nspin)</argsstring>
+        <name>copy_best_idxList</name>
+        <param>
+          <type>int *</type>
+          <declname>idxList</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>best_idxList</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="38" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="746" bodyend="750" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="38" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1ab399075583dba866544c4d2b039f5161" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copy_best_spins</definition>
+        <argsstring>(Point *spins, Point *best_spins, int pcce_nspin)</argsstring>
+        <name>copy_best_spins</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>best_spins</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="39" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="752" bodyend="756" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="39" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1aa1cd163515f3b9b75f7ce63392a5e105" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void copy_bath_to_point_type</definition>
+        <argsstring>(BathSpin **bath, Point *spins, int pcce_nspin)</argsstring>
+        <name>copy_bath_to_point_type</name>
+        <param>
+          <type><ref refid="structBathSpin" kindref="compound">BathSpin</ref> **</type>
+          <declname>bath</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="40" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="758" bodyend="764" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="40" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1adb850cb60a1ce19a58e8cc6299135007" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_BD</definition>
+        <argsstring>(char *str, int num)</argsstring>
+        <name>print_BD</name>
+        <param>
+          <type>char *</type>
+          <declname>str</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>num</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="41" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="770" bodyend="776" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="41" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a36ee04deeee2569341f12b31f397844b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_centers</definition>
+        <argsstring>(int ncenter, Point *centers, int rank)</argsstring>
+        <name>print_centers</name>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="42" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="779" bodyend="785" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="42" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a2ee1003651338526cbfac2441dde7593" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_kmeans_converge_info</definition>
+        <argsstring>(int trial, int iteration, int ncenter, Point **centers)</argsstring>
+        <name>print_kmeans_converge_info</name>
+        <param>
+          <type>int</type>
+          <declname>trial</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iteration</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> **</type>
+          <declname>centers</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="43" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="788" bodyend="794" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="43" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1aa07c9cdb3bafd3beb401c8f2d6ebb5ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_optimize_kmeans_info</definition>
+        <argsstring>(int trial, int iteration, double inertia, double best_inertia, double best_sil, int rank)</argsstring>
+        <name>print_optimize_kmeans_info</name>
+        <param>
+          <type>int</type>
+          <declname>trial</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>iteration</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>inertia</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>best_inertia</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>best_sil</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="44" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="797" bodyend="807" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="44" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a2c21780bb5a4230b669f81d85ccdfd65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_assign_idx</definition>
+        <argsstring>(int *assign_idx, int pcce_nspin, int rank)</argsstring>
+        <name>print_assign_idx</name>
+        <param>
+          <type>int *</type>
+          <declname>assign_idx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="45" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="810" bodyend="817" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="45" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a638626bf18221c6f40f5b0716ad6e567" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_spins</definition>
+        <argsstring>(Point *spins, int pcce_nspin, int rank)</argsstring>
+        <name>print_spins</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="46" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="819" bodyend="825" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="46" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1ab329b807f003edfad95c4d2538abefd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_time</definition>
+        <argsstring>(clock_t start, clock_t end)</argsstring>
+        <name>print_time</name>
+        <param>
+          <type>clock_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>clock_t</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="47" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="827" bodyend="834" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="47" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1aef76d83cf38d2178999b8a4da5a5b07c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void write_centers</definition>
+        <argsstring>(FILE **c_savefile, Point **centers, int ncenter)</argsstring>
+        <name>write_centers</name>
+        <param>
+          <type>FILE **</type>
+          <declname>c_savefile</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> **</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="48" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="837" bodyend="849" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="48" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1addc0ffa14a8cc9df7b8fd6c9c0051709" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void write_spins</definition>
+        <argsstring>(FILE **s_savefile, Point **spins, int **assigned_idx, int pcce_nspin)</argsstring>
+        <name>write_spins</name>
+        <param>
+          <type>FILE **</type>
+          <declname>s_savefile</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> **</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type>int **</type>
+          <declname>assigned_idx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="49" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="852" bodyend="863" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="49" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a6702bdd461e4fd9edbc9c54c08755315" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_best_spins</definition>
+        <argsstring>(Point **spins, int **assigned_idx, int pcce_nspin)</argsstring>
+        <name>print_best_spins</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> **</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type>int **</type>
+          <declname>assigned_idx</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="50" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="866" bodyend="876" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="50" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a4e5c9cb81b7e743949b321dffee89acf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_best_centers</definition>
+        <argsstring>(Point **centers, int ncenter)</argsstring>
+        <name>print_best_centers</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> **</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="51" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="879" bodyend="889" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="51" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1ab8236bdb6b61f20a61579d9a86be854d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double silhouetteCoefficient</definition>
+        <argsstring>(Point *spins, int *assignments, Point *centers, int pcce_nspin, int ncenter)</argsstring>
+        <name>silhouetteCoefficient</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>assignments</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="53" column="8" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="675" bodyend="726" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="53" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a55482fd967a823defee280d2f3597448" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double calculateInertia</definition>
+        <argsstring>(Point *spins, Point *centers, int *assignments, int pcce_nspin, int ncenter)</argsstring>
+        <name>calculateInertia</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>assignments</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="54" column="8" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="663" bodyend="673" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="54" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a76a1e0caeb30010e46a84fe756629ce5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double calc_dist</definition>
+        <argsstring>(double *arr1, double *arr2)</argsstring>
+        <name>calc_dist</name>
+        <param>
+          <type>double *</type>
+          <declname>arr1</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>arr2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="55" column="8" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="436" bodyend="444" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="55" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a59ce6bcbe05a29b4798de2db4bdbb205" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double distance</definition>
+        <argsstring>(Point p1, Point p2)</argsstring>
+        <name>distance</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref></type>
+          <declname>p1</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref></type>
+          <declname>p2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="56" column="8" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="728" bodyend="730" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="56" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a40b6caf897e0081db52277ea50fd4d05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int if_contain</definition>
+        <argsstring>(int *arr, int arr_size, int value)</argsstring>
+        <name>if_contain</name>
+        <param>
+          <type>int *</type>
+          <declname>arr</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>arr_size</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="58" column="5" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="459" bodyend="466" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="58" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a6e0d752f8eb34a988cd8609a9b6a051c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool updateCentroids</definition>
+        <argsstring>(Point *spins, int *assignments, Point *centers, int pcce_nspin, int ncenter)</argsstring>
+        <name>updateCentroids</name>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>spins</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>assignments</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="59" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="623" bodyend="661" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="59" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a0e9a228dfcb40ba903f68d7b58408e5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void BathArray_connectivity_pcce</definition>
+        <argsstring>(int ***cmap, float ***stmap, Point *centers, float rdip, float rdipcut, int pcce_nspin)</argsstring>
+        <name>BathArray_connectivity_pcce</name>
+        <param>
+          <type>int ***</type>
+          <declname>cmap</declname>
+        </param>
+        <param>
+          <type>float ***</type>
+          <declname>stmap</declname>
+        </param>
+        <param>
+          <type><ref refid="structPoint" kindref="compound">Point</ref> *</type>
+          <declname>centers</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>rdip</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>rdipcut</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="62" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="891" bodyend="926" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="62" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a53c541e68006be18f52f6e812a0a981b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int **</type>
+        <definition>int ** Cluster_setCenterIdx_spinIdx_2dArr</definition>
+        <argsstring>(int ncenter, int sK, int pcce_nspin, int *best_assigned_idx)</argsstring>
+        <name>Cluster_setCenterIdx_spinIdx_2dArr</name>
+        <param>
+          <type>int</type>
+          <declname>ncenter</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sK</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pcce_nspin</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>best_assigned_idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="63" column="5" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="929" bodyend="954" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="63" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1ab4f28fdd3cf79f031367281815181883" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_clusinfo_sorder_i</definition>
+        <argsstring>(int ***pcceClusInfo, int sorder, int n_cInfo)</argsstring>
+        <name>print_clusinfo_sorder_i</name>
+        <param>
+          <type>int ***</type>
+          <declname>pcceClusInfo</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sorder</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n_cInfo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="64" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="956" bodyend="961" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="64" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a3ba2164b952020ad5a20c742bfa2e5ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void print_clusinfo_sorder_i_j</definition>
+        <argsstring>(int ***pcceClusInfo, int sorder, int n_cinfo, int cIdx)</argsstring>
+        <name>print_clusinfo_sorder_i_j</name>
+        <param>
+          <type>int ***</type>
+          <declname>pcceClusInfo</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sorder</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>n_cinfo</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>cIdx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="65" column="6" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="963" bodyend="971" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="65" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="cluster__pcce_8h_1a8515a97fbccd6ee237c47c0fcc3b7969" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int ***</type>
+        <definition>int *** convert_centerIdx_to_spinIdx</definition>
+        <argsstring>(Cluster *cls, int cOrder, int sK, int **cs2dArr)</argsstring>
+        <name>convert_centerIdx_to_spinIdx</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>cls</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>cOrder</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sK</declname>
+        </param>
+        <param>
+          <type>int **</type>
+          <declname>cs2dArr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/cluster_pcce.h" line="66" column="5" bodyfile="/home/huijin/git/CCEX/src/cluster_pcce.cpp" bodystart="973" bodyend="1041" declfile="/home/huijin/git/CCEX/include/cluster_pcce.h" declline="66" declcolumn="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_CLUSTER_PCCE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_CLUSTER_PCCE_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdio.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;time.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;bath.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;mpi.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;cluster.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;general.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="structPoint" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,<sp/>y,<sp/>z;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">}<sp/><ref refid="structPoint" kindref="compound">Point</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17" refid="structPartition__info" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sK;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rest_nspin;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">}<sp/><ref refid="structPartition__info" kindref="compound">Partition_info</ref>;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clusterizePcce(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/><ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/><ref refid="structConfig" kindref="compound">Config</ref>*<sp/>config);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>simulator_cluster_partition(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>**<sp/>bath,<sp/><ref refid="structPartition__info" kindref="compound">Partition_info</ref>*<sp/>pinfo,<sp/><ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>best_centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>best_assigned_idx);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>shrink_restspins(<ref refid="structBathArray" kindref="compound">BathArray</ref>*<sp/>ba,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rest_nspin);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>update_global_best(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>index,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*inertia,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*sil,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*trial,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*global_best_inertia,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*global_best_sil,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*global_best_trial);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_pcce_info(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>bath_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nqubit,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rest_nspin);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initializeCentroids(<ref refid="structPoint" kindref="compound">Point</ref>*<sp/>spins,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin)<sp/>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>choose_initial_method(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>kmeans_pp,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>spins,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>kMeansPlusPlus(<ref refid="structPoint" kindref="compound">Point</ref><sp/>*spins,<sp/><ref refid="structPoint" kindref="compound">Point</ref><sp/>*centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter)<sp/>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>shuffle_spins(<ref refid="structPoint" kindref="compound">Point</ref><sp/>*array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>shuffle_idxs,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin)<sp/>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>changeIdx_inverse_shuffle_idx(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>shuffle_idx,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>inverse_shuffle_idx,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>assignCentroids(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>assigned_cluster_idx,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>distances,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter)<sp/>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>calc_dist_to_centers(<ref refid="structPoint" kindref="compound">Point</ref>*<sp/>spins,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>centers,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>distances,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter)<sp/>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copy_best_centers(<ref refid="structPoint" kindref="compound">Point</ref>*<sp/>centers,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>best_centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copy_best_assigned(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>assigned,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>best_assigned,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copy_best_idxList(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>idxList,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>best_idxList,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copy_best_spins(<ref refid="structPoint" kindref="compound">Point</ref>*<sp/>spins,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>best_spins,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copy_bath_to_point_type(<ref refid="structBathSpin" kindref="compound">BathSpin</ref>**<sp/>bath,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>spins,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_BD(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>str,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_centers(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rank);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_kmeans_converge_info(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>trial,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iteration,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter,<sp/><ref refid="structPoint" kindref="compound">Point</ref>**<sp/>centers);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_optimize_kmeans_info(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>trial,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iteration,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>inertia,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>best_inertia,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>best_sil,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rank);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_assign_idx(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*assign_idx,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rank)<sp/>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_spins(<ref refid="structPoint" kindref="compound">Point</ref><sp/>*spins,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rank);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_time(clock_t<sp/>start,<sp/>clock_t<sp/>end);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>write_centers(FILE<sp/>**c_savefile,<sp/><ref refid="structPoint" kindref="compound">Point</ref><sp/>**centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>write_spins(FILE<sp/>**s_savefile,<sp/><ref refid="structPoint" kindref="compound">Point</ref><sp/>**spins,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>assigned_idx,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_best_spins(<ref refid="structPoint" kindref="compound">Point</ref><sp/>**spins,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>assigned_idx,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_best_centers(<ref refid="structPoint" kindref="compound">Point</ref><sp/>**centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>silhouetteCoefficient(<ref refid="structPoint" kindref="compound">Point</ref><sp/>*spins,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*assignments,<sp/><ref refid="structPoint" kindref="compound">Point</ref><sp/>*centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>calculateInertia(<ref refid="structPoint" kindref="compound">Point</ref><sp/>*spins,<sp/><ref refid="structPoint" kindref="compound">Point</ref><sp/>*centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*assignments,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>calc_dist(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>arr1,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>arr2);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>distance(<ref refid="structPoint" kindref="compound">Point</ref><sp/>p1,<sp/><ref refid="structPoint" kindref="compound">Point</ref><sp/>p2);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//int<sp/>compare_dist(const<sp/>void<sp/>*a,<sp/>const<sp/>void<sp/>*b);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>if_contain(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>arr,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>arr_size,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>value)<sp/>;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>updateCentroids(<ref refid="structPoint" kindref="compound">Point</ref><sp/>*spins,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>*assignments,<sp/><ref refid="structPoint" kindref="compound">Point</ref><sp/>*centers,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter)<sp/>;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>BathArray_connectivity_pcce(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>cmap,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">***<sp/>stmap,<sp/><ref refid="structPoint" kindref="compound">Point</ref>*<sp/>centers,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>rdip,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>rdipcut,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>Cluster_setCenterIdx_spinIdx_2dArr(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncenter,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sK,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>pcce_nspin,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>best_assigned_idx);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_clusinfo_sorder_i(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>pcceClusInfo,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sorder,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_cInfo);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_clusinfo_sorder_i_j(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>pcceClusInfo,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sorder,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_cinfo,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cIdx);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">***<sp/>convert_centerIdx_to_spinIdx(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>cls,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cOrder,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sK,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">**<sp/>cs2dArr);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>__CCEX_CLUSTER_PCCE_H_</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/cluster_pcce.h"/>
+  </compounddef>
+</doxygen>

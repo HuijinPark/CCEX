@@ -1,0 +1,83 @@
+\doxysection{cluster\+\_\+hash.\+h}
+\hypertarget{cluster__hash_8h_source}{}\label{cluster__hash_8h_source}\index{/home/huijin/git/CCEX/include/cluster\_hash.h@{/home/huijin/git/CCEX/include/cluster\_hash.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_CLUSTER\_HASH\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_CLUSTER\_HASH\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <string.h>}\ \ \textcolor{comment}{/*\ strcpy\ */}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdlib.h>}\ \ \textcolor{comment}{/*\ malloc\ */}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdio.h>}\ \ \ \textcolor{comment}{/*\ printf\ */}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <time.h>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}../zlib/uthash/src/uthash.h"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}cluster.h"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{comment}{//\ id\ :\ clustered\ spin\ indeices(char)}}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{//\ spins\ :\ clustered\ spin}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{comment}{//\ strength\ :\ coupling\ strength}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *id;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{int}\ *spins;}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{float}\ strength;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{//\ solve\ tilde\ }}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{comment}{//\ \ [0][0][0]\ :\ None}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ \ [i][0][0]\ :\ The\ number\ of\ subclusters}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{//\ \ [i][j][0]\ :\ each\ subcluster\ j,\ length\ =\ order}}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//\ \ [i][j][k]\ :\ k-\/th\ spin\ in\ j-\/th\ subcluster\ }}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{//int***\ subclusters\_connected;}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{comment}{//int***\ subclusters\_notConnected;}}
+\DoxyCodeLine{00026\ \ \ \ \ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{//\ count\ :\ The\ number\ that\ you\ have\ to\ multi.\ or\ div.}}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{int}\ count;}
+\DoxyCodeLine{00029\ \ \ \ \ }
+\DoxyCodeLine{00030\ \ \ \ \ UT\_hash\_handle\ hh;\ \ \ }
+\DoxyCodeLine{00031\ \}\ \mbox{\hyperlink{structProperty}{Property}};\ }
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//N\ :\ cluster\ order}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{//prop\ :\ cluster\ properties}}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ N;}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{structProperty}{Property}}\ *prop;\ }
+\DoxyCodeLine{00038\ \ \ \ \ UT\_hash\_handle\ hh;\ \ \ }
+\DoxyCodeLine{00039\ \}\ \mbox{\hyperlink{structHashCluster}{HashCluster}};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ clusterizeHash(\mbox{\hyperlink{structCluster}{Cluster}}*\ CCE,\ \textcolor{keywordtype}{int}\ nspin,\ \textcolor{keywordtype}{int}**\ spmap,\ \textcolor{keywordtype}{float}**\ stmap);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ convertClusinfoToHash(\mbox{\hyperlink{structHashCluster}{HashCluster}}**\ hashClusters,\ \mbox{\hyperlink{structCluster}{Cluster}}*\ CCE);}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ solveTilde(\mbox{\hyperlink{structHashCluster}{HashCluster}}**\ hashcluster,\ \mbox{\hyperlink{structCluster}{Cluster}}*\ CCE,\ \textcolor{keywordtype}{int}\ nspin);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ makeHashClusterO1(\mbox{\hyperlink{structHashCluster}{HashCluster}}**\ hashclusters,\ \textcolor{keywordtype}{int}\ nspin);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{void}\ makeHashClusterO2(\mbox{\hyperlink{structHashCluster}{HashCluster}}**\ hashclusters,\ \textcolor{keywordtype}{int}\ nspin,\ \textcolor{keywordtype}{int}**\ spmap,\ \textcolor{keywordtype}{float}**\ stmap);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ makeHashClusterOn(\mbox{\hyperlink{structHashCluster}{HashCluster}}**\ hashclusters,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}\ nspin,\ \textcolor{keywordtype}{int}**\ spmap,\ \textcolor{keywordtype}{float}**\ stmap,\ \textcolor{keywordtype}{int}*\ nks);\ \textcolor{comment}{//nks\ =\ CCE-\/>nk}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ freeHashCluster(\mbox{\hyperlink{structHashCluster}{HashCluster}}**\ hashClusters,\ \textcolor{keywordtype}{int}\ order);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{int}\ addCluster(\mbox{\hyperlink{structHashCluster}{HashCluster}}**\ hashClusters,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keywordtype}{id},\textcolor{keywordtype}{int}*\ spins,\ \textcolor{keywordtype}{float}\ strength,\textcolor{keywordtype}{int}\ count);}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{int}\ by\_strength(\textcolor{keyword}{const}\ \mbox{\hyperlink{structProperty}{Property}}*\ a,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structProperty}{Property}}*\ b);}
+\DoxyCodeLine{00053\ \mbox{\hyperlink{structHashCluster}{HashCluster}}*\ findCluster(\mbox{\hyperlink{structHashCluster}{HashCluster}}*\ hashClusters,\ \textcolor{keywordtype}{int}\ order);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{int}\ setMaxLengthStr(\textcolor{keywordtype}{int}\ nSpin,\ \textcolor{keywordtype}{int}\ order);}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{void}\ addSpin(\textcolor{keywordtype}{int}**\ newcluster,\ \textcolor{keywordtype}{int}*\ oldcluster,\ \textcolor{keywordtype}{int}\ oldn,\ \textcolor{keywordtype}{int}\ spin);}
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{void}\ typeStr(\textcolor{keywordtype}{char}**\ destination,\ \textcolor{keywordtype}{int}*\ cluster,\ \textcolor{keywordtype}{int}\ order,\ \textcolor{keywordtype}{int}\ nSpin);}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{keywordtype}{int}\ binarySearch(\textcolor{keywordtype}{int}*\ arr,\ \textcolor{keywordtype}{int}\ low,\ \textcolor{keywordtype}{int}\ high,\ \textcolor{keywordtype}{int}\ target);}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{float}\ minStrength(\textcolor{keywordtype}{float}\ currentStrength,\ \textcolor{keywordtype}{float}**\ strengthMap,\ \textcolor{keywordtype}{int}*\ oldcluster,\ \textcolor{keywordtype}{int}\ oldn,\ \textcolor{keywordtype}{int}\ newspin);}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{float}\ addAllStrength(\textcolor{keywordtype}{float}\ currentStrength,\ \textcolor{keywordtype}{float}**\ strengthMap,\ \textcolor{keywordtype}{int}*\ oldcluster,\ \textcolor{keywordtype}{int}\ oldn,\ \textcolor{keywordtype}{int}\ newspin);}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ printClusters(\mbox{\hyperlink{structHashCluster}{HashCluster}}*\ hashClusters);}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ printProperties(\mbox{\hyperlink{structProperty}{Property}}*\ hashProperties);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{int}*\ parseClusterIdToIntArray(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \textcolor{keywordtype}{id},\ \textcolor{keywordtype}{int}*\ count);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{int}\ countDigits(\textcolor{keywordtype}{int}\ number);}
+\DoxyCodeLine{00070\ \textcolor{keywordtype}{int}\ search2dArr(\textcolor{keywordtype}{int}**\ arr,\ \textcolor{keywordtype}{int}\ low,\ \textcolor{keywordtype}{int}\ high,\ \textcolor{keywordtype}{int}\ left,\ \textcolor{keywordtype}{int}\ \ right,\ \textcolor{keywordtype}{int}*\ target);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{void}\ updateNk(\textcolor{keywordtype}{int}**\ Nk,\ \textcolor{keywordtype}{int}\ order,\ \mbox{\hyperlink{structHashCluster}{HashCluster}}*\ hashClusters);}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{void}\ addSubClusters(\mbox{\hyperlink{structHashCluster}{HashCluster}}**\ hashclusters,\ \textcolor{keywordtype}{int}\ nspin,\ \textcolor{keywordtype}{float}**\ stmap,\ \textcolor{keywordtype}{int}\ n);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ generateCombinations(\textcolor{keywordtype}{int}*\ arr,\ \textcolor{keywordtype}{int}***\ data,\ \textcolor{keywordtype}{int}*\ tempCombination,\ \textcolor{keywordtype}{int}\ start,\ \textcolor{keywordtype}{int}\ end,\ \textcolor{keywordtype}{int}\ index,\ \textcolor{keywordtype}{int}\ r,\ \textcolor{keywordtype}{int}*\ nCombination);}
+\DoxyCodeLine{00075\ \textcolor{keywordtype}{float}\ addAllStrengthForAllSpins(\textcolor{keywordtype}{float}**\ strengthMap,\ \textcolor{keywordtype}{int}*\ cluster,\ \textcolor{keywordtype}{int}\ order);}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_CLUSTER\_HASH\_H\_}}
+
+\end{DoxyCode}

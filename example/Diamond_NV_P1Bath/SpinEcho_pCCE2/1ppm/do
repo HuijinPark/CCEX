@@ -1,0 +1,76 @@
+#!/bin/sh
+
+unit=""
+VariableName="sK"
+varOpt="1 2 3 4"
+
+node=2
+qos=3
+
+vsrcjob="{Nstate}_VariableArray"
+
+#############################################
+# Run jobs for variables
+#############################################
+if [[ "${vsrcjob}" == *"_VariableArray"* ]];then 
+
+    echo ""
+    echo "  Run job version : ${vsrcjob}"
+
+    varOptArray=(${varOpt})
+    nVarOptArray=${#varOptArray[@]}
+
+    varOptSta=0
+    varOptEnd=$(( ${nVarOptArray} - 1 ))
+
+    cd ./${VariableName}/
+    
+        QosChanger job $node $qos "off"
+        sbatch --array=${varOptSta}-${varOptEnd} job
+
+        for (( i=${varOptSta}; i<=${varOptEnd}; i++))
+        do
+            echo "  ${VariableName} = ${varOptArray[i]}"
+        done        
+    cd ..
+
+    echo ""
+fi
+#############################################
+# Run jobs for the number of configurations 
+#############################################
+if [[ "${vsrcjob}" == *"_ConfigArray"* ]];then 
+
+    echo ""
+    echo "   Run job version : ${vsrcjob}"
+
+    for var in ${varOpt} 
+    do
+        cd ./${VariableName}/${var}${unit}
+        
+        #############################################
+        # Make array 
+        #############################################
+        ArrayValues=""
+    
+        for (( i=1; i<50; i=(( ${i} + 50 )) ))
+        do
+            if [ "${i}" == "1" ];then
+                ArrayValues+="${i}"
+            else
+                ArrayValues+=",${i}"
+            fi
+        done
+        #############################################
+    
+        QosChanger job $node $qos "off"
+        sbatch --array=${ArrayValues} job
+    
+        cd ../../
+    
+        echo "   ${VariableName} = ${var}"
+    done
+
+    echo ""
+fi
+#############################################

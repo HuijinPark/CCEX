@@ -1,0 +1,275 @@
+/home/huijin/scrp/pyFunction/12.4.AQtensor_reader/examples/case2.4.hBN_VB_VASP
+
+    ============================================================
+
+    <\Summary> make AQ tensor file for CCE calculation
+
+
+    Latest update :  Thu Feb 16 05:24:49 2023
+
+    Current time  :  Thu Feb 16 05:29:58 2023
+
+    ____________________________________________________________
+
+
+
+    author        : Huijin Park
+
+    note1         : For VASP, you will find error 
+		    if your INCAR file include NGYROMAG
+		    This case need to be considered
+
+    note2         : POSCAR files should include defect information.
+		    Also, Atomic name need to be consistant
+
+    update1       : (2023.02.15) In the case of VASP, 
+		    We should add the core electronic contributions to fermi contact term 
+		    (A_tot = A_1c + A_tot)
+
+    ____________________________________________________________
+
+
+	Input argument : 
+
+	 [1] tool    : VASP
+	 [2] fposcar : ./VASP_CONTCAR_flat
+	 [3] dfname  : VB
+	 [4] HF      : on
+	 [5] Q       : on
+	 [6] foutcar : ./VASP_OUTCAR_flat
+
+
+	 opt. --foutcar2 : []
+	 opt. --ignoreatm : []
+
+
+	=========================================
+
+			do_mkAQDdata : 
+
+	=========================================
+
+
+	Read INCAR part in OUTCAR ...
+	Read A tensor : .TRUE.
+	Read Q tensor : .TRUE.
+	Read D tensor : .TRUE.
+	NGYROMAG : NONE 
+	QUAD_EFG : NONE 
+	Read POSCAR(simple) part in OUTCAR ...
+	 atoms # = 107
+	 atomic species = ['B', 'N']
+	Read Quadrupole tensor part in OUTCAR ...
+	Read Hyperfine tensor part in OUTCAR ...
+	Read ZFS tensor part in OUTCAR ...
+	 ['B', 'N']
+	atm: B
+	isotopeData {'10B': (3.0, 2.8747, 0.08459, 0.1990), '11B': (1.5, 8.5847, 0.04059, 0.8010)}
+	iso B {'10B': (3.0, 2.8747, 0.08459, 0.1990), '11B': (1.5, 8.5847, 0.04059, 0.8010)}
+	atm: N
+	isotopeData {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+	iso N {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
+[['10B', 0.6002149999999999], ['11B', 1.7924326000000004], ['14N', 0.403761], ['15N', -0.56637768]]
+
+
+
+	=========================================
+	 READ OUTCAR (KEY : outcar_spHam) 
+	=========================================
+
+
+	----------------------------------------
+	extSpinHamilTensors : 
+	----------------------------------------
+
+	Atomic data from OUTCAR (KEY : atomicdata)
+	------------------------------
+	 *atom_data : ['B', 'N']
+	 *total_atom_num : 107
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)     0.056     0.166     0.500
+	    (2)     0.056     0.500     0.500
+	    (3)     0.056     0.833     0.500
+	      :
+	  (106)     0.441     0.442     0.500
+	  (107)     0.500     0.617     0.500
+
+	Quadrupole tensor (KEY : Qdata)
+	------------------------------
+
+	*EFG : EFG tensor (V/A^2) 
+
+	    idx       Vxx       Vxy       Vxz       Vyx       Vyy       Vyz       Vzx       Vzy       Vzz
+
+	    (1)   -17.232     0.270     0.000     0.270   -17.104    -0.000     0.000    -0.000    34.336
+	    (2)   -17.314     0.362    -0.000     0.362   -17.050    -0.000    -0.000    -0.000    34.363
+	    (3)   -17.361     0.286     0.000     0.286   -16.986     0.000     0.000     0.000    34.347
+	      :
+	  (106)    21.677    25.445    -0.000    25.445    -7.189     0.000    -0.000     0.000   -14.488
+	  (107)   -21.424    -0.000    -0.000    -0.000    35.721     0.000    -0.000     0.000   -14.296
+
+	*EFG_diag : Diagonalized EFG tensor (V/A^2) 
+
+	    idx    Vxx(D)    Vyy(D)    Vzz(D)
+
+	    (1)   -17.445   -16.891    34.336
+	    (2)   -17.567   -16.796    34.363
+	    (3)   -17.515   -16.832    34.347
+	      :
+	  (106)   -22.009   -14.488    36.497
+	  (107)   -21.424   -14.296    35.721
+
+	NMR quadrupolar parameters
+
+	*Cq  : quadrupolar parameter    Cq=e*Q*V_zz/h (MHz) 
+	*eta : asymmetry parameters     (V_yy - V_xx)/ V_zz 
+	*Q   : nuclear electric quadrupole moment in mb (millibarn = 10^-31 m^2) 
+
+	    idx        Cq       eta         q
+
+	    (1)     0.083     0.016     1.000
+	    (2)     0.083     0.022     1.000
+	    (3)     0.083     0.020     1.000
+	      :
+	  (106)     0.088     0.206     1.000
+	  (107)     0.086     0.200     1.000
+	------------------------------
+
+	Hyperfine tensor (KEY : Adata)
+	------------------------------
+
+	Hyperfine tensor 
+
+	*Aiso : Fermi contact term (MHz) 
+	*Adip : Dipolar coupling term (MHz) 
+
+	    idx      Aiso       Axx       Axy       Axz       Ayx       Ayy       Ayz       Azx       Azy       Azz
+
+	    (1)     0.000     0.004     0.000     0.000     0.000    -0.001     0.000     0.000     0.000    -0.003
+	    (2)     0.001     0.006    -0.000    -0.000    -0.000    -0.003    -0.000    -0.000    -0.000    -0.003
+	    (3)     0.000     0.004    -0.000    -0.000    -0.000    -0.001     0.000    -0.000     0.000    -0.003
+	      :
+	  (106)    15.867     5.636     6.077     0.000     6.077    -1.242     0.000     0.000     0.000    -4.393
+	  (107)    15.893    -4.786     0.000    -0.000     0.000     9.178     0.000    -0.000     0.000    -4.392
+
+	*Adiag : Diagonalized total Hyperfine tensor (MHz) 
+
+	    idx    Axx(D)    Ayy(D)    Azz(D)
+
+	    (1)    -0.003    -0.002     0.004
+	    (2)    -0.002    -0.002     0.007
+	    (3)    -0.003    -0.001     0.004
+	      :
+	  (106)    15.816    15.423    29.388
+	  (107)    15.845    15.451    29.416
+	------------------------------
+
+	Zero Field splitting tensor (KEY : Ddata)
+	------------------------------
+
+	*ZFS : ZFS tensor (MHz) 
+
+	   -35.586     0.000     0.000
+	     0.000 -1069.836     0.000
+	     0.000     0.000  1105.421
+
+	Diagonalized ZFS tensor 
+	*D_diag : Diagonalized ZFS tensor (MHz) 
+	*D_eigvec : Eigenvectors for diagonalized ZFS tensor 
+
+	    idx    Dii(D)  eigvec_x  eigvec_y  eigvec_z
+
+	    (1)   -35.586     1.000     0.000     0.000
+	    (2) -1069.836     0.000     1.000     0.000
+	    (3)  1105.421     0.000     0.000     1.000
+
+	ZFS parameters (MHz) 
+	*D : axial component D = 3/2*D_zz (MHz) 
+	*E : transverse component E = (D_xx-D_yy)/2 (MHz) 
+
+	   D =   1658.131
+	   E =    517.125
+	------------------------------
+
+	Isotopic data (KEY : isodata)
+	------------------------------
+
+	 Atom : { Isotopes : ( S, gyro, eQ, conc) }
+
+	example) 
+	 isodata['B']['10B'].s          : spin          (no unit)
+	 isodata['B']['11B'].gyro       : gyro          (rad/ms/G)
+	 isodata['N']['14N'].q          : eQ            (barn = 10^-28 m^2)
+	 isodata['N']['15N'].conc       : concentration (%/100)
+
+	 B : {'10B': (3.0, 2.8747, 0.08459, 0.1990), '11B': (1.5, 8.5847, 0.04059, 0.8010)} 
+	 N : {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)} 
+
+
+	=========================================
+	 READ POSCAR (KEY : poscar or poscarmod) 
+	=========================================
+
+
+	 POSCAR from ./VASP_CONTCAR_flat (KEY : poscar)
+	------------------------------
+	 *atom_data : ['B', 'N']
+	 *atom_data_num : [53, 54]
+	 *unit_cell_information :  
+
+	    idx    frac_x    frac_y    frac_z
+
+	    (1)     0.056     0.166     0.500
+	    (2)     0.056     0.500     0.500
+	    (3)     0.056     0.833     0.500
+	      :
+	  (106)     0.441     0.442     0.500
+	  (107)     0.500     0.617     0.500
+
+
+	=========================================
+	          MAKE A,Q FILE                     
+	=========================================
+
+
+	 Relative positions from central defect (KEY : relativepos)
+	------------------------------
+
+	 *MinDif[A] : [-11.31487845, -6.523696333189624, 0.0]
+	 *MaxDif[A] : [10.059153276625947, 6.51522065967543, 0.0]
+	 *farthest_atoms_idx : [26, 79]
+	 *farthest_atom_info : [['B', -11.31487845, 6.5113760890327335, 0.0], ['N', -11.31487845, -5.081543312070149, 0.0]]
+	 *r_1i (cart) :  
+
+	    idx      atom     r_1ix     r_1iy     r_1iz
+
+	    (1)         B   -10.058    -4.357     0.000
+	    (2)         B   -10.057    -0.010     0.000
+	    (3)         B   -10.057     4.337     0.000
+	      :
+	  (106)         N    -1.328    -0.761     0.000
+	  (107)         N     0.000     1.523     0.000
+
+	--- Save files --- 
+	Afile : Afile
+	Qfile : Qfile
+
+
+	=========================================
+	                 DONE                     
+	=========================================
+
+    ____________________________________________________________
+
+    memory_usage_percent  :     6.100 %
+
+    Current memory KB     :    62.516 KB
+
+    Wall clock time       : 0:00:00.524717(s)
+
+    ============================================================
+        JOB DONE    
+    ============================================================

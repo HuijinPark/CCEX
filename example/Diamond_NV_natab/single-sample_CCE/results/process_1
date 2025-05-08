@@ -1,0 +1,394 @@
+
+
+    ======================================================================
+
+                   ______   ______  _______ ___   ___ 
+                  /      | /      ||   ____|\  \ /  / 
+                 |  ,----'|  ,----'|  |__    \  V  /  
+                 |  |     |  |     |   __|    >   <   
+                 |  `----.|  `----.|  |____  /  .  \  
+                  \______| \______||_______|/__/ \__\ 
+                __   _   _   _  _       _   _     _   _   _ _   
+               / _| / \ | \_/ || |     //  / \   | | / \ | | |  
+              ( (_ ( o )| \_/ || |_   //  | o |n_| |( o )| U |  
+               \__| \_,7|_| |_||___| //   |_n_|\__/  \_/ |___|  
+
+
+            Program CCEX starts on Tue Feb 11 13:27:35 2025
+                The CCEX code has compiled at 'Feb  7 2025' 
+    ======================================================================
+
+        Option filename : './ccein.js' 
+
+        Read Config Options ...
+
+          - General option-related keys : 
+            [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] 
+
+          - File-related keys :
+            [ qubitfile, gyrofile, bathfile, bathadjust, avaaxfile, statefile, exstatefile ] 
+
+          - Tensorfile-related keys :
+            [ DefectTotSpin, CorrTotSpin, 
+              hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, 
+              qd_readmode, qd_tensorfile, qd_tensorfile_woqubit ] 
+
+        Read Qubit Options ...
+
+          - Read values of main-key 'Qubit'
+            sub-key : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] 
+
+          - Read values of sub-key 'qubit'
+            sub-sub-key : [ name, spin, gyro, xyz, detuning, alpha, beta ] 
+
+          - Read values of sub-key 'intmap'
+            sub-sub-key : [ between, tensor ] 
+
+        Read Defect Options ...
+
+          - Read values of main-key 'Defect' (Array format)
+            sub-key : [ dfname, naddspin, navaax, apprx,   ( type : single value) 
+                        types, spins, gyros, eqs,          ( type : array ) 
+                        rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) 
+
+        Read Cluster Options ...
+          [ order, method, addsubclus, nk ] 
+
+        Read Pulse Options ...
+          [ npulse, pulsename, sequence ] 
+
+        Read Output Options ...
+          [ savemode, outfile ] 
+
+	>> Read ./ccein.js file successfully ..
+
+
+    ======================================================================
+        Report all structures 
+    ======================================================================
+
+    ----------------------------------------------------------------------
+    < Structure Config > 
+
+      method            :   CCE                  
+      quantity          :   coherence            
+      order             :   2                    
+      bfield            :   [ 0.00      , 0.00      , 500.00     ]
+      rbath             :   50                   
+      rdip              :   10                   
+      deltat            :   0.001                
+      nstep             :   2000                 
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   20                   
+      seed              :   1739248055           
+      qubitfile         :   ../bath/bath_Diamond_NV_natab_defect
+      gyrofile          :   ../bath/gyro_13C     
+      nbathfiles        :   1                    
+      bathfiles         :   ../bath/bath_Diamond_NV_natab_1
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      avaaxfile         :   (null)               
+      statefile         :   (null)               
+      exstatefile       :   (null)               
+      DefectTotSpin     :   1                    
+      CorrTotSpin       :   0                    
+      hf_readmode       :   0                    
+      qd_readmode       :   0                    
+
+
+    ----------------------------------------------------------------------
+    < Structure QubitArray > 
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+      -------------------------------------------------
+
+      qubit name        :   q0                   
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   (+1+0j) | 1 >  
+      beta              :   (+1+0j) | 0 >  
+
+      -------------------------------------------------
+
+    >> Interactions (radkHz)
+
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ----------------------------------------------------------------------
+    < Structure Cluster > 
+
+    >> General properties
+
+      order             :   2                    
+      method            :   CCE                  
+      addsubclus        :   true                 
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0    ,   2 : 0     ]
+
+
+
+    ----------------------------------------------------------------------
+    < Structure Pulse > 
+
+      pulsename         :   HahnEcho             
+      npulse            :   1                    
+      pulseiter         :   false                
+                            * ture  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+    >> Sequence
+
+      -------------------------------------------------
+                        start      end     diff   index
+ 
+       sequence[0] :    0.000    0.500    0.500    0.000 
+       sequence[1] :    0.500    1.000    0.500    0.000 
+      -------------------------------------------------
+
+
+    ----------------------------------------------------------------------
+    < Structure Output > 
+
+      savemode          :   normal               
+      outfile           :   ./results/CCE2_Diamond_NV_natab_1
+
+
+    ===============================================================
+
+
+
+    ======================================================================
+        Read files 
+    ======================================================================
+
+    >> Qubit file
+
+        Read QubitFile : ../bath/bath_Diamond_NV_natab_defect ... 
+        Qubit[0].xyz    :   [ 73.74     , 75.73     , 73.97      ]
+
+    >> Gyromagnetic ratio file
+
+        Read GyroFile : ../bath/gyro_13C
+      nspecies          :   1                    
+      names             :   [ 13C        ]
+      gyros             :   [ 6.73       ]
+      spins             :   [ 0.50       ]
+
+    >> Bath configuration files
+
+      -------------------------------------------------
+        Read BathFile[0] : ../bath/bath_Diamond_NV_natab_1
+
+        - Number of bath spins : 974 (nspin = 974)
+      [  0]   13C  24.558  69.175  69.337   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+      [  1]   13C  25.819  64.079  79.633   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+      [  2]   13C  27.080  67.719  89.930   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+           : 
+
+      [972]   13C 121.659  68.447  79.633   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+      [973]   13C 121.659  72.816  65.733   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+      -------------------------------------------------
+
+    >> Read the Hyperfine interaction from DFT inputfile...
+
+      HF Readmode       :      0 ( Point-dipole tensor )
+
+    >> Bath Hyperfine tensors (radkHz) 
+
+      hypf[ib][iq] (ib : bath spin index, iq : qubit index)
+      hypf[0][0]        :   [ 1.94j-0.00, 0.39j-0.00, 0.28j-0.00, 0.39j-0.00, -0.96j-0.00, 0.04j-0.00, 0.28j-0.00, 0.04j-0.00, -0.98j-0.00 ]
+      hypf[1][0]        :   [ 1.83j-0.00, 0.69j-0.00, -0.34j-0.00, 0.69j-0.00, -0.85j-0.00, -0.08j-0.00, -0.34j-0.00, -0.08j-0.00, -0.98j-0.00 ]
+      hypf[2][0]        :   [ 1.62j-0.00, 0.45j-0.00, -0.90j-0.00, 0.45j-0.00, -0.92j-0.00, -0.15j-0.00, -0.90j-0.00, -0.15j-0.00, -0.70j-0.00 ]
+         :
+
+      hypf[972][0]      :   [ 2.04j-0.00, -0.47j-0.00, 0.37j-0.00, -0.47j-0.00, -1.00j-0.00, -0.06j-0.00, 0.37j-0.00, -0.06j-0.00, -1.03j-0.00 ]
+      hypf[973][0]      :   [ 2.06j-0.00, -0.19j-0.00, -0.54j-0.00, -0.19j-0.00, -1.07j-0.00, 0.03j-0.00, -0.54j-0.00, 0.03j-0.00, -0.99j-0.00 ]
+
+
+    ===============================================================
+
+    ----------------------------------------------------------------------
+    < BathArray > 
+
+      nspecies          :   1                    
+      names             :   [ 13C        ]
+      gyros             :   [ 6.73       ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   974                  
+      -------------------------------------------------
+      [  0]   13C  24.558  69.175  69.337   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+      [  1]   13C  25.819  64.079  79.633   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+      [  2]   13C  27.080  67.719  89.930   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+         :
+      [972]   13C 121.659  68.447  79.633   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+      [973]   13C 121.659  72.816  65.733   ( S = 0.5, gyro =      6.728, mainspidx = -1 )
+
+      -------------------------------------------------
+
+      -------------------------------------------------
+          Wall time = 0.00316 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Clusterize 
+   ======================================================================
+
+
+	 CCE1 ... 
+		 update "Nk"
+		 0:0  1:974  2:0  
+
+
+	 CCE2 ... 
+		 update "Nk"
+		 0:0  1:974  2:3370  
+
+		 update "Nk"
+		 0:0  1:974  2:3370  
+
+		 update "Nk"
+		 0:0  1:974  2:3370  
+
+      clusinfo          :   
+
+           0-th order ... 
+           Cluster[0][    0] :   0 (Iter)
+
+           Total 0-Cluster # :  1 # 
+
+
+
+           1-th order ... 
+           Cluster[1][    1] :  -4 [0   ]
+           Cluster[1][    2] :  -4 [1   ]
+           Cluster[1][    3] :  -4 [3   ]
+           Cluster[1][    4] :  -5 [4   ]
+                : 
+           Cluster[1][  961] :  -3 [970 ]
+           Cluster[1][  962] :   1 [971 ]
+           Cluster[1][  963] :  -3 [972 ]
+           Cluster[1][  964] :  -3 [973 ]
+
+           Total 1-Cluster # :  964 # 
+
+
+
+           2-th order ... 
+           Cluster[2][    1] :   1 [164, 165 ]
+           Cluster[2][    2] :   1 [394, 395 ]
+           Cluster[2][    3] :   1 [303, 304 ]
+           Cluster[2][    4] :   1 [552, 553 ]
+                : 
+           Cluster[2][ 3367] :   1 [603, 634 ]
+           Cluster[2][ 3368] :   1 [917, 932 ]
+           Cluster[2][ 3369] :   1 [571, 649 ]
+           Cluster[2][ 3370] :   1 [591, 660 ]
+
+           Total 2-Cluster # :  3370 # 
+
+
+      -------------------------------------------------
+          Wall time = 0.05164 s
+      -------------------------------------------------
+
+
+   ======================================================================
+       Main calculation 
+   ======================================================================
+
+    < CCE calculation (Single-sample approach) : Iteration # 1 > 
+
+    >> Randomize main-bath states...
+
+        Warning(readStateFile): Cannot open the state file ((null)1)
+        The bath state is randomly generated
+
+      nbathspin (#)     :   974                  
+      -------------------------------------------------
+      bath[0].state     :   -0.5                 
+      bath[1].state     :   0.5                  
+      bath[2].state     :   -0.5                 
+         :
+      bath[972].state   :   -0.5                 
+      bath[973].state   :   -0.5                 
+      -------------------------------------------------
+
+    >> Qubit overhaus (radkHz)
+
+      Qubit[0].overhaus :   0                    
+
+    >> Bath Disorders (radkHz)
+
+      Bath[0].disorder  :   0.0445               
+      Bath[1].disorder  :   -0.166               
+      Bath[2].disorder  :   0.0993               
+         :
+      Bath[972].disorder:   1.59                 
+      Bath[973].disorder:   -0.405               
+
+    >> Set psia, psib from qubit alpha, beta...
+
+      psia              :   [ 1.00j+0.00, 0.00j+0.00, 0.00j+0.00 ]
+      psib              :   [ 0.00j+0.00, 1.00j+0.00, 0.00j+0.00 ]
+    >> Set psi0 from psia, psib...
+
+      psi0              :   [ 0.71j+0.00, 0.71j+0.00, 0.00j+0.00 ]
+
+    >> Calculate 1-th cluster...
+
+[mpiexec@idm4] Sending Ctrl-C to processes as requested
+[mpiexec@idm4] Press Ctrl-C again to force abort
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 0 PID 1472285 RUNNING AT idm4
+=   KILLED BY SIGNAL: 2 (Interrupt)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 1 PID 1472286 RUNNING AT idm4
+=   KILLED BY SIGNAL: 2 (Interrupt)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 2 PID 1472287 RUNNING AT idm4
+=   KILLED BY SIGNAL: 2 (Interrupt)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 3 PID 1472288 RUNNING AT idm4
+=   KILLED BY SIGNAL: 2 (Interrupt)
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   RANK 4 PID 1472289 RUNNING AT idm4
+=   KILLED BY SIGNAL: 2 (Interrupt)
+===================================================================================

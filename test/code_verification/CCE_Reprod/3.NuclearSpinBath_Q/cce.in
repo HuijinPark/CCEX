@@ -1,0 +1,49 @@
+&CONTROL
+calMethod=ensemble
+/
+
+&File
+DefectFile = ../Bath_Data/2.ensemble_data/bath_h_BN_after_relax_Flat_1L_Defect
+GyroFile= ../Bath_Data/2.ensemble_data/Gyro_h_BN
+!SaveFile= CCE2Out_h_BN_bubble_single_VB_Z_1_FWHM_2
+!SaveFileNoDiv= CCE2Out_h_BN_bubble_single_VB_Z_1_FWHM_2_noDiv
+!SaveFileWiDiv= CCE2Out_h_BN_bubble_single_VB_Z_1_FWHM_2_wiDiv
+!BathFile=  
+!BathStateFile= 
+!P1BathFile = 
+!P1StateFile = 
+/
+
+&DetailOption
+Order = 2
+Pulse = 1
+B0= 30000
+deltaT= 0.002
+nStep = 100
+
+rBath = 23
+rDip = 10
+#rDsrdr = 100
+!rBath4C13C = 0
+!r13CP1 = 0
+!r13C13C = 0
+/
+
+&HAMILTONIAN
+enJTEOpt = 0
+!JTEvalue(3) = 4 5 6
+!JTEvalue(4) = 1 2 3 3 3 3 3 
+!JTEvalue(1) = 1 2 3 
+
+HFOpt = 0
+HFFile = 0
+HFCutoff = 0
+
+QuadOpt = 2
+!QuadExp(1)={0,11}    # 95Mo
+!QuadExp(2)=21    # 97Mo
+!QuadExp(3)=311    # 33S
+QuadFileWiDefect = ../Bath_Data/2.ensemble_data/Qtensor_relaxed_flat_single_h_BN
+!QuadFileWoDefect = 
+!QuadCellPara = {0, 0, 11.9772682}
+/

@@ -1,0 +1,382 @@
+#include "../include/pulse.h"
+#include "../include/memory.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+
+#define MAX_SEQUENCE 100
+
+/* Low-level functions ------------------------------------------------------*/
+
+Pulse* Pulse_init(){
+    Pulse* pulse = (Pulse*)allocArray1d(1, sizeof(Pulse));
+    pulse->npulse = 0;
+    pulse->pulseiter = false;
+    pulse->pulsename[0] = '\0';
+
+    pulse->pulse_axes       = NULL;
+    pulse->pulse_angles     = NULL;
+    pulse->sequence_indices = NULL;
+    pulse->sequence         = NULL;
+    return pulse;
+}
+
+void Pulse_setNpulse(Pulse* pulse, int npulse){
+    pulse->npulse = npulse;
+}
+
+void Pulse_setPulsename(Pulse* pulse, char* pulsename){
+    strcpy(pulse->pulsename, pulsename);
+}
+
+void Pulse_setPulseiter(Pulse* pulse, bool pulseiter){
+    pulse->pulseiter = pulseiter;
+}
+
+void assign_sequence_indices(Pulse* pulse) {
+    for (int i = 0; i < (pulse->npulse)+1; ++i) {
+        int found = 0;
+        for (int j = 0; j < i; ++j) {
+            if ((pulse->sequence)[i][2] == (pulse->sequence)[j][2]) {
+                pulse->sequence_indices[i] = pulse->sequence_indices[j];
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            (pulse->sequence_indices)[i] = i;
+        }
+    }
+}
+
+//void Pulse_setSequence_fromInput(Pulse* pulse, double* seqinput){
+//
+//    // e.g. Input file format :
+//    // if pulse->npulse = 4
+//    // input : seqinput : [0.2, 0.4, 0.6, 0.8] //gives pulse timing
+//
+//    if (pulse->sequence == NULL){
+//        printf("Error, pulse->sequence is not allocated! \n");
+//        exit(1);
+//    }
+//
+//    int npulse = Pulse_getNpulse(pulse);
+//
+//    for (int i=0; i<(npulse+1); i++){
+//
+//        double start = 0.0;
+//        double end = 1.0;
+//
+//        if (i==0 && i!=npulse){
+//            start = 0.0;
+//            end = seqinput[i];    
+//        }
+//        else if (i!=0 && i==npulse){
+//            start = seqinput[i];
+//            end = 1.0;
+//        }
+//        else if (i==0 && i==npulse){
+//            start = 0.0;
+//            end = 1.0;
+//        }
+//        else{
+//            start = seqinput[i-1];
+//            end = seqinput[i];
+//        }
+//
+//        (pulse->sequence)[i][0] = start; 
+//        (pulse->sequence)[i][1] = end;
+//        (pulse->sequence)[i][2] = end - start; 
+//
+//        // Find 3-rd value
+//        bool findSameDiffIdx = false;
+//        for (int j=0; j<i; j++){
+//            if ((pulse->sequence)[j][2] == (pulse->sequence)[i][2]){
+//                (pulse->sequence)[i][3] = (double)j;
+//                if ((int)(pulse->sequence)[j][3] != (int)(pulse->sequence)[i][3]){
+//                    printf("Error, the SameDifferenceIndex is different! \n");
+//                }
+//                findSameDiffIdx = true;
+//                break;
+//            }
+//        }
+//        if (findSameDiffIdx){;}
+//        else{ (pulse->sequence)[i][3] = (double)i; }
+//    }
+//}
+
+int Pulse_getNpulse(Pulse* pulse){
+    return pulse->npulse;
+}
+
+char* Pulse_getPulsename(Pulse* pulse){
+    return pulse->pulsename;
+}
+
+bool Pulse_getPulseiter(Pulse* pulse){
+    return pulse->pulseiter;
+}
+
+double** Pulse_getSequence(Pulse* pulse){
+    return pulse->sequence;
+}
+
+char* Pulse_getPulseAxes(Pulse* pulse){
+    return pulse->pulse_axes;
+}
+
+double* Pulse_getPulseAngles(Pulse* pulse){
+    return pulse->pulse_angles;
+}
+
+int* Pulse_getSequenceIndices(Pulse* pulse){
+    return pulse->sequence_indices;
+}
+void Pulse_report(Pulse* pulse){
+
+    int      npulse    = Pulse_getNpulse(pulse);
+    char*    pulsename = Pulse_getPulsename(pulse);
+    bool     pulseiter = Pulse_getPulseiter(pulse);
+    double** sequence  = Pulse_getSequence(pulse);
+
+    printTitle("Structure Pulse");
+
+    printStructElementChar("pulsename", Pulse_getPulsename(pulse));
+    printStructElementInt("npulse", Pulse_getNpulse(pulse));
+    
+    printStructElementBool("pulseiter", Pulse_getPulseiter(pulse));
+    printf("%27s * true  - pulse is applied to each qubit\n"," ");
+    printf("%27s * false - pulse is applied to qubit-array\n"," ");
+    
+    if (sequence != NULL){
+        printSubTitle("Sequence");
+        printLine();
+        //printf("%6s               %8s %8s %8s %8s \n"," ","start","end","diff\n");
+        //for (int i=0; i<npulse+1; i++){
+        //    printf("%6s sequence[%d] : %8.3lf %8.3lf %8.3lf\n"
+        //    ," ",i,sequence[i][0],sequence[i][1],sequence[i][2]);
+        //}
+        printf("%9s   %9s   %9s   %9s   %9s   %9s\n", "Start", "End", "Diff", "Axis", "Angle", "Index");
+        for (int i=0; i<(pulse->npulse)+1; i++){
+            printf("%9.3f   ", pulse->sequence[i][0]);
+            printf("%9.3f   ", pulse->sequence[i][1]);
+            printf("%9.3f   ", pulse->sequence[i][2]);
+            printf("%9s   "  , pulse->pulse_axes[i]);
+            printf("%9.2f   ", pulse->pulse_angles[i]);
+            printf("%9d\n", pulse->sequence_indices[i]);
+        }
+        printLine();
+    }
+}
+
+//////////////////////////
+//      Allocation      //
+//////////////////////////
+void Pulse_allocSequence(Pulse* pulse){
+    pulse->sequence = allocDouble2d((pulse->npulse)+1, 2);
+}
+
+void Pulse_allocAxes(Pulse* pulse){
+    pulse->pulse_axes = allocChar2d((pulse->npulse)+1, MAX_CHARARRAY_LENGTH);
+}
+
+void Pulse_allocAngles(Pulse* pulse){
+    pulse->pulse_angles = allocDouble1d((pulse->npulse)+1);
+}
+
+void Pulse_allocSequenceIndices(Pulse* pulse){
+    pulse->sequence_indices = allocInt1d((pulse->npulse)+1);
+}
+
+
+//////////////////////////
+//         Free         //
+//////////////////////////
+void Pulse_freeSequence(Pulse* pulse){
+    int npulse = Pulse_getNpulse(pulse);
+    freeDouble2d(&(pulse->sequence), npulse+1);
+}
+
+void Pulse_freeAxes(Pulse* pulse){
+    freeChar2d(&(pulse->pulse_axes), (pulse->npulse)+1);
+}
+
+void Pulse_freeAngles(Pulse* pulse){
+    freeDouble1d(&(pulse->pulse_angles));
+}
+
+void Pulse_freeSequenceIndices(Pulse* pulse){
+    int npulse = Pulse_getNpulse(pulse);
+    freeInt1d(&(pulse->sequence_indices));
+}
+
+void Pulse_freeAll(Pulse* pulse){
+    //Pulse_freeTauFractions(pulse);
+    Pulse_freeSequence(pulse);
+    Pulse_freeAxes(pulse);
+    Pulse_freeAngles(pulse);
+    Pulse_freeSequenceIndices(pulse);
+    freeArray1d((void**)&pulse);
+}
+
+void allocateDefaultSequence(Pulse* pulse) {
+    if (strcasecmp(pulse->pulsename, "WAHUHA") == 0) {
+        Pulse_setPulsename(pulse,"WAHUHA");
+        generateSequenceWAHUHA(pulse);
+    } else{
+        if (pulse->npulse == 0 || strcasecmp(pulse->pulsename, "Ramsey") == 0) {
+            Pulse_setPulsename(pulse,"Ramsey");
+            generateSequenceRamsey(pulse);
+        }
+        else if (pulse->npulse == 1 || strcasecmp(pulse->pulsename, "HahnEcho") == 0) {
+            Pulse_setPulsename(pulse,"HahnEcho");
+            generateSequenceHE(pulse);
+        }
+        else if (pulse->npulse > 1 || strcasecmp(pulse->pulsename, "CPMG") == 0) {
+            Pulse_setPulsename(pulse,"CPMG");
+            generateSequenceCPMG(pulse);
+        }
+    }
+}
+
+void generateSequenceRamsey(Pulse* pulse){
+    
+    (pulse->sequence)[0][0]      = 0.0; 
+    (pulse->sequence)[0][1]      = 1.0; 
+    (pulse->sequence)[0][2]      = 1.0; 
+    strcpy((pulse->pulse_axes)[0], "I");
+    (pulse->pulse_angles)[0]     = 0.0; 
+    (pulse->sequence_indices)[0] =   0;
+
+}
+
+void generateSequenceHE(Pulse* pulse){
+
+    printf("generateSequenceHE\n");
+    (pulse->sequence)[0][0]    =   0.0; 
+    (pulse->sequence)[0][1]    =   0.5; 
+    (pulse->sequence)[0][2]    =   0.5; 
+    strcpy((pulse->pulse_axes)[0], "X");
+    (pulse->pulse_angles)[0]     = 180.0; 
+    (pulse->sequence_indices)[0] =     0;
+    printf("pulse->pulse_axes[0] : %s\n", pulse->pulse_axes[0]);
+
+    (pulse->sequence)[1][0]    =   0.5; 
+    (pulse->sequence)[1][1]    =   1.0; 
+    (pulse->sequence)[1][2]    =   0.5; 
+    strcpy((pulse->pulse_axes)[1], "I");
+    (pulse->pulse_angles)[1]     =   0; 
+    (pulse->sequence_indices)[1] =   0;
+    printf("pulse->pulse_axes[1] : %s\n", pulse->pulse_axes[1]);
+
+
+    printf("pulse->pulse_axes[0] : %s\n", pulse->pulse_axes[0]);
+    printf("pulse->pulse_axes[1] : %s\n", pulse->pulse_axes[1]);
+}
+
+void generateSequenceWAHUHA(Pulse* pulse){
+
+    (pulse->sequence)[0][0]      =       0.0; 
+    (pulse->sequence)[0][1]      =   1.0/6.0; 
+    (pulse->sequence)[0][2]      =   1.0/6.0; 
+    strcpy((pulse->pulse_axes)[0], "X");
+    (pulse->pulse_angles)[0]     =      90.0; 
+    (pulse->sequence_indices)[0] =         0;
+
+    (pulse->sequence)[1][0]      =   1.0/6.0; 
+    (pulse->sequence)[1][1]      =   2.0/6.0; 
+    (pulse->sequence)[1][2]      =   1.0/6.0; 
+    strcpy((pulse->pulse_axes)[1], "Y");
+    (pulse->pulse_angles)[1]     =     270.0; 
+    (pulse->sequence_indices)[1] =         0;
+
+    (pulse->sequence)[2][0]      =   2.0/6.0; 
+    (pulse->sequence)[2][1]      =   4.0/6.0; 
+    (pulse->sequence)[2][2]      =   2.0/6.0; 
+    strcpy((pulse->pulse_axes)[2], "Y");
+    (pulse->pulse_angles)[2]     =      90.0; 
+    (pulse->sequence_indices)[2] =         2;
+
+    (pulse->sequence)[3][0]      =   4.0/6.0; 
+    (pulse->sequence)[3][1]      =   5.0/6.0; 
+    (pulse->sequence)[3][2]      =   1.0/6.0; 
+    strcpy((pulse->pulse_axes)[3], "X");
+    (pulse->pulse_angles)[3]     =     270.0; 
+    (pulse->sequence_indices)[3] =         0;
+
+    (pulse->sequence)[4][0]      =   5.0/6.0; 
+    (pulse->sequence)[4][1]      =       1.0; 
+    (pulse->sequence)[4][2]      =   1.0/6.0; 
+    strcpy((pulse->pulse_axes)[4], "I");
+    (pulse->pulse_angles)[4]     =       0.0; 
+    (pulse->sequence_indices)[4] =         0;
+}
+
+void generateSequenceCPMG(Pulse* pulse){
+
+    // n : pulse
+    // c : sequence i
+    // sequence (2c-1)/2n * T
+
+    int npulse = pulse -> npulse;
+    double start = 0.0;
+    double end = 1.0;
+
+    for (int i=0; i<(npulse+1); i++){
+
+        if (i==0 && i!=npulse){
+            start = 0.0;
+            end = double(2*(i+1)-1)/double(2*npulse); 
+        }
+        else if (i!=0 && i==npulse){
+            start = double(2*i-1)/double(2*npulse);
+            end = 1.0;
+        }
+        else if (i==0 && i==npulse){
+            start = 0.0;
+            end = 1.0;
+        }
+        else{
+            start = double(2*i-1)/double(2*npulse);
+            end = double(2*(i+1)-1)/double(2*npulse); 
+        }
+
+        (pulse->sequence)[i][0]   = start; 
+        (pulse->sequence)[i][1]   = end;
+        (pulse->sequence)[i][2]   = end - start; 
+        strcpy((pulse->pulse_axes)[i], "X");
+        (pulse->pulse_angles)[i]  =       180.0; 
+
+        // Find 3-rd value
+        if (i==0 || i==npulse){
+            pulse->sequence_indices[i] = 0; 
+        }
+        else{
+            pulse->sequence_indices[i] = 1; 
+        }
+    }
+}
+
+
+//void generateSequenceEqual(double*** sequence, int npulse){
+void generateSequenceEqual(Pulse* pulse){
+
+    // n : pulse
+    // c : sequence i
+    // sequence c/n * T
+    int npulse = pulse->npulse;
+    double start = 0.0;
+    double end = 1.0;
+    double diff = 1.0/double(npulse+1);
+
+    for (int i=0; i<(npulse+1); i++){
+
+        (pulse->sequence)[i][0] = diff * i; 
+        (pulse->sequence)[i][1] = diff * (i+1);
+        (pulse->sequence)[i][2] = diff;
+
+        (pulse->sequence_indices)[i]= 0; 
+
+    }
+}
+

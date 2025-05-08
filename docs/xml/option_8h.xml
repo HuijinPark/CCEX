@@ -1,0 +1,898 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.13.2" xml:lang="en-US">
+  <compounddef id="option_8h" kind="file" language="C++">
+    <compoundname>option.h</compoundname>
+    <includes refid="general_8h" local="yes">general.h</includes>
+    <includes refid="qubit_8h" local="yes">qubit.h</includes>
+    <includes refid="defect_8h" local="yes">defect.h</includes>
+    <includes refid="cluster_8h" local="yes">cluster.h</includes>
+    <includes refid="pulse_8h" local="yes">pulse.h</includes>
+    <includes refid="output_8h" local="yes">output.h</includes>
+    <includes refid="json_8h" local="yes">json.h</includes>
+    <includes refid="utilities_8h" local="yes">utilities.h</includes>
+    <includedby refid="option_8cpp" local="yes">/home/huijin/git/CCEX/src/option.cpp</includedby>
+    <incdepgraph>
+      <node id="10">
+        <label>bath.h</label>
+        <link refid="bath_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>cluster.h</label>
+        <link refid="cluster_8h_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>defect.h</label>
+        <link refid="defect_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>general.h</label>
+        <link refid="general_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>json.h</label>
+        <link refid="json_8h_source"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>/home/huijin/git/CCEX/include/option.h</label>
+        <link refid="option_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>output.h</label>
+        <link refid="output_8h_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>pulse.h</label>
+        <link refid="pulse_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>qubit.h</label>
+        <link refid="qubit_8h_source"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>utilities.h</label>
+        <link refid="utilities_8h_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>Eigen/Dense</label>
+      </node>
+      <node id="5">
+        <label>iostream</label>
+      </node>
+      <node id="6">
+        <label>mpi.h</label>
+      </node>
+      <node id="15">
+        <label>stddef.h</label>
+      </node>
+      <node id="7">
+        <label>unistd.h</label>
+      </node>
+    </incdepgraph>
+    <sectiondef kind="func">
+      <memberdef kind="function" id="option_8h_1a73145d60a9a6dde94905ea48637aa00a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_readOptionConfig</definition>
+        <argsstring>(Config *cnf, char *fccein)</argsstring>
+        <name>cJSON_readOptionConfig</name>
+        <param>
+          <type><ref refid="structConfig" kindref="compound">Config</ref> *</type>
+          <declname>cnf</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>fccein</declname>
+        </param>
+        <briefdescription>
+<para>Read the option from the input file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Read &amp;General tag options <simplesect kind="note"><para>free the 1d values from <ref refid="structcJSON" kindref="compound">cJSON</ref> should be free if it is not string </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="14" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="14" bodyend="252" declfile="/home/huijin/git/CCEX/include/option.h" declline="14" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a18aeb7d2ac26d688a155de5b85a20a87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_readOptionQubitArray</definition>
+        <argsstring>(QubitArray *qa, char *fccein)</argsstring>
+        <name>cJSON_readOptionQubitArray</name>
+        <param>
+          <type><ref refid="structQubitArray" kindref="compound">QubitArray</ref> *</type>
+          <declname>qa</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>fccein</declname>
+        </param>
+        <briefdescription>
+<para>Read the option from the input file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Read &amp;<ref refid="structQubit" kindref="compound">Qubit</ref> tag options </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="15" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="258" bodyend="488" declfile="/home/huijin/git/CCEX/include/option.h" declline="15" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a93cbafcbcc5bcaff2749cc6ebfa82acf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_readOptionCluster</definition>
+        <argsstring>(Cluster *clus, char *fccein)</argsstring>
+        <name>cJSON_readOptionCluster</name>
+        <param>
+          <type><ref refid="structCluster" kindref="compound">Cluster</ref> *</type>
+          <declname>clus</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>fccein</declname>
+        </param>
+        <briefdescription>
+<para>Read the option from the input file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Read &amp;<ref refid="structCluster" kindref="compound">Cluster</ref> tag options </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="16" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="495" bodyend="557" declfile="/home/huijin/git/CCEX/include/option.h" declline="16" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1aabd14a766502f8cc34280e166ba52de9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_readOptionPulse</definition>
+        <argsstring>(Pulse *pulse, char *fccein)</argsstring>
+        <name>cJSON_readOptionPulse</name>
+        <param>
+          <type><ref refid="structPulse" kindref="compound">Pulse</ref> *</type>
+          <declname>pulse</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>fccein</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="18" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="603" bodyend="690" declfile="/home/huijin/git/CCEX/include/option.h" declline="18" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a6628675ac6077650760ca4b308b987e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_readOptionOutput</definition>
+        <argsstring>(Output *output, char *fccein)</argsstring>
+        <name>cJSON_readOptionOutput</name>
+        <param>
+          <type><ref refid="structOutput" kindref="compound">Output</ref> *</type>
+          <declname>output</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>fccein</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="19" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="764" bodyend="795" declfile="/home/huijin/git/CCEX/include/option.h" declline="19" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1ad15e4bc073ef18f308405afd980208a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_readOptionDefectArray</definition>
+        <argsstring>(DefectArray *dfa, char *fccein)</argsstring>
+        <name>cJSON_readOptionDefectArray</name>
+        <param>
+          <type><ref refid="structDefectArray" kindref="compound">DefectArray</ref> *</type>
+          <declname>dfa</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>fccein</declname>
+        </param>
+        <briefdescription>
+<para>Read the option from the input file. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Read &amp;<ref refid="structDefect" kindref="compound">Defect</ref> tag options <simplesect kind="note"><para>Unit of the input file :<itemizedlist>
+<listitem><para>rxyzs : [Angstrom]</para>
+</listitem><listitem><para>hypf : [MHz]</para>
+</listitem><listitem><para>efg : [Hartree/Bohr^2]</para>
+</listitem><listitem><para>zfs : [MHz]</para>
+</listitem><listitem><para>gyros : [radkHz/G]</para>
+</listitem><listitem><para>eqs : [10^-30 m^2]</para>
+</listitem><listitem><para>detuning : [MHz] </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="20" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="810" bodyend="925" declfile="/home/huijin/git/CCEX/include/option.h" declline="20" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a97c3a05c2947e61634872a1de1263288" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char * cJSON_ReadFccein</definition>
+        <argsstring>(char *fccein)</argsstring>
+        <name>cJSON_ReadFccein</name>
+        <param>
+          <type>char *</type>
+          <declname>fccein</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="22" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="928" bodyend="958" declfile="/home/huijin/git/CCEX/include/option.h" declline="22" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a2009735db395f4d651bf8bad59262083" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char * cJSON_ReadFilePath</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, char *default_value)</argsstring>
+        <name>cJSON_ReadFilePath</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="23" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="960" bodyend="980" declfile="/home/huijin/git/CCEX/include/option.h" declline="23" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a99ae54e0d171f47cbcd6fc4450e7de8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char * cJSON_ReadString</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, char *default_value)</argsstring>
+        <name>cJSON_ReadString</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="24" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1020" bodyend="1033" declfile="/home/huijin/git/CCEX/include/option.h" declline="24" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a1eb81cd1ec189abe60e9d99dd944b251" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int cJSON_ReadInt</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, int default_value)</argsstring>
+        <name>cJSON_ReadInt</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="26" column="5" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1065" bodyend="1079" declfile="/home/huijin/git/CCEX/include/option.h" declline="26" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a71e76f5268d5be8c5b1fdc892c516be2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float</type>
+        <definition>float cJSON_ReadFloat</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, float default_value)</argsstring>
+        <name>cJSON_ReadFloat</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>float</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="27" column="7" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1204" bodyend="1217" declfile="/home/huijin/git/CCEX/include/option.h" declline="27" declcolumn="7"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1ace4bc52a3d271b0bb2d21f3797517778" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double cJSON_ReadDouble</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, double default_value)</argsstring>
+        <name>cJSON_ReadDouble</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="28" column="8" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1114" bodyend="1127" declfile="/home/huijin/git/CCEX/include/option.h" declline="28" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1aba7906dcd35e88eefbc1e707b1e7e958" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cJSON_ReadBool</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, bool default_value)</argsstring>
+        <name>cJSON_ReadBool</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="29" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1248" bodyend="1261" declfile="/home/huijin/git/CCEX/include/option.h" declline="29" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1af6e24613b66d1654c79848aae77b575a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char **</type>
+        <definition>char ** cJSON_ReadString1d</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, char **default_value, int isze)</argsstring>
+        <name>cJSON_ReadString1d</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>default_value</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>isze</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="31" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1035" bodyend="1063" declfile="/home/huijin/git/CCEX/include/option.h" declline="31" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1ae09f523ee9a0520fe33e8181ff864130" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char **</type>
+        <definition>char ** cJSON_ReadFilePath1d</definition>
+        <argsstring>(int *length, cJSON *root, char *key, bool _default, char **default_value)</argsstring>
+        <name>cJSON_ReadFilePath1d</name>
+        <param>
+          <type>int *</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="32" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="982" bodyend="1018" declfile="/home/huijin/git/CCEX/include/option.h" declline="32" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1aa3feb7c8d2dc33e4d9b2f7ab7522ef16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int *</type>
+        <definition>int * cJSON_ReadInt1d</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, int *default_value, int size)</argsstring>
+        <name>cJSON_ReadInt1d</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>int *</type>
+          <declname>default_value</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="33" column="5" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1081" bodyend="1112" declfile="/home/huijin/git/CCEX/include/option.h" declline="33" declcolumn="5"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a8976241aee4d9aee5ed3b57abc57f6ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>float *</type>
+        <definition>float * cJSON_ReadFloat1d</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, float *default_value, int size)</argsstring>
+        <name>cJSON_ReadFloat1d</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>float *</type>
+          <declname>default_value</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="34" column="7" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1219" bodyend="1246" declfile="/home/huijin/git/CCEX/include/option.h" declline="34" declcolumn="7"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a80451474d28bf53ee67bf8b182ee38d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double *</type>
+        <definition>double * cJSON_ReadDouble1d</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, double *default_value, int size)</argsstring>
+        <name>cJSON_ReadDouble1d</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>default_value</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="35" column="8" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1129" bodyend="1160" declfile="/home/huijin/git/CCEX/include/option.h" declline="35" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a2f68f51854669b01d4dddf510295340f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double **</type>
+        <definition>double ** cJSON_ReadDouble2d</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, double **default_value, int row, int col)</argsstring>
+        <name>cJSON_ReadDouble2d</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>default_value</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="36" column="8" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1163" bodyend="1202" declfile="/home/huijin/git/CCEX/include/option.h" declline="36" declcolumn="8"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1aad7367ed50287681b3f461adacb6e783" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MatrixXcd</type>
+        <definition>MatrixXcd cJSON_ReadTensor</definition>
+        <argsstring>(cJSON *root, char *key, bool _default, MatrixXcd default_value)</argsstring>
+        <name>cJSON_ReadTensor</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>_default</declname>
+        </param>
+        <param>
+          <type>MatrixXcd</type>
+          <declname>default_value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="38" column="11" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1263" bodyend="1302" declfile="/home/huijin/git/CCEX/include/option.h" declline="38" declcolumn="11"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1ad86bc6d9142752cbbea62c6b65cf09f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_ReadDefectInfo_IntCharDoubleArray</definition>
+        <argsstring>(cJSON *root, char *key, int valuecount, double ****array, char **types, int navaax, int naddspin)</argsstring>
+        <name>cJSON_ReadDefectInfo_IntCharDoubleArray</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>valuecount</declname>
+        </param>
+        <param>
+          <type>double ****</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>types</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>navaax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>naddspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="40" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1304" bodyend="1366" declfile="/home/huijin/git/CCEX/include/option.h" declline="40" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1af4299302b065e3685848ce5ecaf8139d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_ReadDefectInfo_IntCharMatrixXcd2d</definition>
+        <argsstring>(cJSON *root, char *key, int valuecount, MatrixXcd ***array, char **types, int navaax, int naddspin)</argsstring>
+        <name>cJSON_ReadDefectInfo_IntCharMatrixXcd2d</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>valuecount</declname>
+        </param>
+        <param>
+          <type>MatrixXcd ***</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>types</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>navaax</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>naddspin</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="41" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1368" bodyend="1437" declfile="/home/huijin/git/CCEX/include/option.h" declline="41" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a879144a3b8d8369965c3bba4a916a063" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_ReadDefectInfo_IntCharMatrixXcd1d</definition>
+        <argsstring>(cJSON *root, char *key, int valuecount, MatrixXcd **array, int navaax)</argsstring>
+        <name>cJSON_ReadDefectInfo_IntCharMatrixXcd1d</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>valuecount</declname>
+        </param>
+        <param>
+          <type>MatrixXcd **</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>navaax</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="42" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1439" bodyend="1503" declfile="/home/huijin/git/CCEX/include/option.h" declline="42" declcolumn="6"/>
+      </memberdef>
+      <memberdef kind="function" id="option_8h_1a8a291fbe45c46e7385b5418b623c52a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cJSON_ReadDefectInfo_IntCharDouble</definition>
+        <argsstring>(cJSON *root, char *key, double **array, int navaax)</argsstring>
+        <name>cJSON_ReadDefectInfo_IntCharDouble</name>
+        <param>
+          <type><ref refid="structcJSON" kindref="compound">cJSON</ref> *</type>
+          <declname>root</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>double **</type>
+          <declname>array</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>navaax</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/huijin/git/CCEX/include/option.h" line="43" column="6" bodyfile="/home/huijin/git/CCEX/src/option.cpp" bodystart="1507" bodyend="1553" declfile="/home/huijin/git/CCEX/include/option.h" declline="43" declcolumn="6"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="preprocessor">#ifndef<sp/>__CCEX_OPTION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>__CCEX_OPTION_H_</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;general.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;qubit.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;defect.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;cluster.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;pulse.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;output.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;json.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;utilities.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_readOptionConfig(<ref refid="structConfig" kindref="compound">Config</ref>*<sp/>cnf,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>fccein);<sp/></highlight><highlight class="comment">//<sp/>general.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_readOptionQubitArray(<ref refid="structQubitArray" kindref="compound">QubitArray</ref>*<sp/>qa,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>fccein);<sp/></highlight><highlight class="comment">//qubit.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_readOptionCluster(<ref refid="structCluster" kindref="compound">Cluster</ref>*<sp/>clus,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>fccein);<sp/></highlight><highlight class="comment">//<sp/>cluster.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>cJSON_readOptionBathArray(BathArray*<sp/>ba,<sp/>char*<sp/>fccein);<sp/>//<sp/>bath.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_readOptionPulse(<ref refid="structPulse" kindref="compound">Pulse</ref>*<sp/>pulse,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>fccein);<sp/></highlight><highlight class="comment">//<sp/>pulse.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_readOptionOutput(<ref refid="structOutput" kindref="compound">Output</ref>*<sp/>output,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>fccein);<sp/></highlight><highlight class="comment">//<sp/>output.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_readOptionDefectArray(<ref refid="structDefectArray" kindref="compound">DefectArray</ref>*<sp/>dfa,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>fccein);<sp/></highlight><highlight class="comment">//<sp/>defect.h</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>cJSON_ReadFccein(</highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>fccein);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>cJSON_ReadFilePath(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>default_value);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>cJSON_ReadString(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>default_value);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>cJSON_ReadInt(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>default_value);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>cJSON_ReadFloat(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>default_value);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>cJSON_ReadDouble(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>default_value);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>cJSON_ReadBool(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>default_value);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>cJSON_ReadString1d(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>default_value,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>isze);<sp/></highlight><highlight class="comment">//<sp/>memory<sp/>free<sp/>is<sp/>needed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>cJSON_ReadFilePath1d(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>length,<sp/><ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>default_value);<sp/></highlight><highlight class="comment">//<sp/>memory<sp/>free<sp/>is<sp/>needed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>cJSON_ReadInt1d(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>default_value,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size);<sp/></highlight><highlight class="comment">//<sp/>memory<sp/>free<sp/>is<sp/>needed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>cJSON_ReadFloat1d(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>default_value,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size);<sp/></highlight><highlight class="comment">//<sp/>memory<sp/>free<sp/>is<sp/>needed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>cJSON_ReadDouble1d(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>default_value,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>size);<sp/></highlight><highlight class="comment">//<sp/>memory<sp/>free<sp/>is<sp/>needed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>cJSON_ReadDouble2d(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>default_value,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>row,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>col);<sp/></highlight><highlight class="comment">//<sp/>memory<sp/>free<sp/>is<sp/>needed</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">MatrixXcd<sp/>cJSON_ReadTensor(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>_default,<sp/>MatrixXcd<sp/>default_value);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_ReadDefectInfo_IntCharDoubleArray(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>valuecount,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">****<sp/>array,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>types,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>navaax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>naddspin);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_ReadDefectInfo_IntCharMatrixXcd2d(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>valuecount,<sp/>MatrixXcd***<sp/>array,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">**<sp/>types,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>navaax,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>naddspin);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_ReadDefectInfo_IntCharMatrixXcd1d(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>valuecount,<sp/>MatrixXcd**<sp/>array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>navaax);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cJSON_ReadDefectInfo_IntCharDouble(<ref refid="structcJSON" kindref="compound">cJSON</ref>*<sp/>root,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>key,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">**<sp/>array,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>navaax);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>cJSON_PrintNotFount(</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="comment">//<sp/>void<sp/>checkComparable(Config*<sp/>cnf,<sp/>QubitArray*<sp/>qa,<sp/>BathArray*<sp/>ba,<sp/>Cluster*<sp/>clus,<sp/>Pulse*<sp/>pulse,<sp/>Output*<sp/>output);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="comment">//<sp/>DefectTotalSpin<sp/>vs<sp/>qa-&gt;qubit[i]-&gt;spin</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>__CCEX_OPTION_H_</highlight><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/huijin/git/CCEX/include/option.h"/>
+  </compounddef>
+</doxygen>

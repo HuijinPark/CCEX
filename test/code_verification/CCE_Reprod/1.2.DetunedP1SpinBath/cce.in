@@ -1,0 +1,54 @@
+&CONTROL
+calMethod=single
+/
+
+&File
+DefectFile  = ../Bath_Data/1.single_data/bath_DiaP1_1ppm_Defect
+GyroFile    = ../Bath_Data/1.single_data/DiaP1_gyro
+BathFile    = ../Bath_Data/1.single_data/bath_DiaP1_1ppm_1
+AvaaxFile   = ../Bath_Data/1.single_data/bathJT_DiaP1detun_1
+StateFile   = ../Bath_Data/1.single_data/state_DiaP1_1ppm_1
+ExStateFile = ../Bath_Data/1.single_data/stateEx_DiaP1_1ppm_1
+/
+
+&DetailOption
+Order = 2
+Pulse = 1
+B0 = 500
+deltaT = 0.01
+nStep = 300  
+rBath = 850
+rDip = 620
+rDsrdr = 10000 !400
+alpha = -1
+beta = 0
+clusalgo = 0
+addclus = 0
+Nk = 0:0
+/
+
+&HAMILTONIAN
+enJTEOpt = 0
+HFOpt = 0
+HFFile = 0
+HFCutoff = 0
+QuadOpt = 0
+/
+
+&Exspin 
+exspin = P1
+naddspin = 0
+avaax = 12
+detun(1) =    e   84.946496
+detun(2) =    e   84.946496
+detun(3) =    e   84.946496
+detun(4) =    e     0.00000
+detun(5) =    e     0.00000
+detun(6) =    e     0.00000
+detun(7) =    e  -84.946496
+detun(8) =    e  -84.946496
+detun(9) =    e  -84.946496
+detun(10) =   e  114.026400 
+detun(11) =   e     0.00000 
+detun(12) =   e -114.026400
+

@@ -1,0 +1,80 @@
+\doxysection{Pulse Struct Reference}
+\hypertarget{structPulse}{}\label{structPulse}\index{Pulse@{Pulse}}
+
+
+{\ttfamily \#include $<$pulse.\+h$>$}
+
+
+
+\doxysubsection{Detailed Description}
+This structure contains the pulse-\/related parameters. \doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{structPulse_ab083ce764799722049dac44ad7479bad}{npulse}}
+\item 
+bool \mbox{\hyperlink{structPulse_a4fcad551982a417a36f160cd0a6f0975}{pulseiter}}
+\item 
+char \mbox{\hyperlink{structPulse_a94ae332f008b81e37d8df344a3c7d9b7}{pulsename}} \mbox{[}100\mbox{]}
+\item 
+double \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structPulse_af1bd05f903769ac217b18fb0c2ebc31a}{sequence}}
+\begin{DoxyCompactList}\small\item\em \+: Related with pulse sequence. \end{DoxyCompactList}\item 
+double \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structPulse_aae5ebfae6aac76ba8cf2dbb18ee128a8}{pulse\+\_\+angles}}
+\item 
+char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structPulse_a8d1b542b8538b339943f80f4ec8b1cd1}{pulse\+\_\+axes}}
+\item 
+int \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structPulse_a4a80fc876df183220d65b3b1676c85ce}{sequence\+\_\+indices}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structPulse_ab083ce764799722049dac44ad7479bad}\index{Pulse@{Pulse}!npulse@{npulse}}
+\index{npulse@{npulse}!Pulse@{Pulse}}
+\doxysubsubsection{\texorpdfstring{npulse}{npulse}}
+{\footnotesize\ttfamily \label{structPulse_ab083ce764799722049dac44ad7479bad} 
+int Pulse\+::npulse}
+
+The number of pulse (default \+: -\/) \Hypertarget{structPulse_aae5ebfae6aac76ba8cf2dbb18ee128a8}\index{Pulse@{Pulse}!pulse\_angles@{pulse\_angles}}
+\index{pulse\_angles@{pulse\_angles}!Pulse@{Pulse}}
+\doxysubsubsection{\texorpdfstring{pulse\_angles}{pulse\_angles}}
+{\footnotesize\ttfamily \label{structPulse_aae5ebfae6aac76ba8cf2dbb18ee128a8} 
+double\texorpdfstring{$\ast$}{*} Pulse\+::pulse\+\_\+angles}
+
+puulse angles\+: Array of rotation angle of pulse. Input file unit\+: Degree ==\texorpdfstring{$>$}{>} In code, radian. len(sequence) = len(pulse\+\_\+angles) \Hypertarget{structPulse_a8d1b542b8538b339943f80f4ec8b1cd1}\index{Pulse@{Pulse}!pulse\_axes@{pulse\_axes}}
+\index{pulse\_axes@{pulse\_axes}!Pulse@{Pulse}}
+\doxysubsubsection{\texorpdfstring{pulse\_axes}{pulse\_axes}}
+{\footnotesize\ttfamily \label{structPulse_a8d1b542b8538b339943f80f4ec8b1cd1} 
+char\texorpdfstring{$\ast$}{*} Pulse\+::pulse\+\_\+axes}
+
+pulse axes\+: Array of rotation axis of pulse. you can choose the axis of rotation angle. Input file parameters\+: "{}\+X"{}, "{}\+Y"{}, "{}\+Z"{}, "{}\+I"{}(Identity) len(sequence) = len(pulse\+\_\+axes) \Hypertarget{structPulse_a4fcad551982a417a36f160cd0a6f0975}\index{Pulse@{Pulse}!pulseiter@{pulseiter}}
+\index{pulseiter@{pulseiter}!Pulse@{Pulse}}
+\doxysubsubsection{\texorpdfstring{pulseiter}{pulseiter}}
+{\footnotesize\ttfamily \label{structPulse_a4fcad551982a417a36f160cd0a6f0975} 
+bool Pulse\+::pulseiter}
+
+The pulse iteration (default \+: false) About npulse (Details) npulse = 0 \+: Ramsey (default) npulse = 1 \+: Hahn\+Echo (default) npulse \texorpdfstring{$>$}{>} 1 \+: CPMG (default) npulse = 4 \& pulsename = "{}\+WAHUHA"{} \+: WAHUHA (optional) \Hypertarget{structPulse_a94ae332f008b81e37d8df344a3c7d9b7}\index{Pulse@{Pulse}!pulsename@{pulsename}}
+\index{pulsename@{pulsename}!Pulse@{Pulse}}
+\doxysubsubsection{\texorpdfstring{pulsename}{pulsename}}
+{\footnotesize\ttfamily \label{structPulse_a94ae332f008b81e37d8df344a3c7d9b7} 
+char Pulse\+::pulsename\mbox{[}100\mbox{]}}
+
+The pulsename (default \+: "{}\+None"{}) About pulsename (Details) pulsename = Hahn\+Echo \texorpdfstring{$\vert$}{|} Ramsey \texorpdfstring{$\vert$}{|} CPMG \texorpdfstring{$\vert$}{|} WAHUHA \texorpdfstring{$\vert$}{|} Manual above pulsename option without Maunal doesn\textquotesingle{}t need a sequence "{}\+Manual"{} option must need a sequence If you want "{}\+Manual"{} option, then you have to choose the "{}g\+CCE"{} method!!! \Hypertarget{structPulse_af1bd05f903769ac217b18fb0c2ebc31a}\index{Pulse@{Pulse}!sequence@{sequence}}
+\index{sequence@{sequence}!Pulse@{Pulse}}
+\doxysubsubsection{\texorpdfstring{sequence}{sequence}}
+{\footnotesize\ttfamily \label{structPulse_af1bd05f903769ac217b18fb0c2ebc31a} 
+double\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} Pulse\+::sequence}
+
+
+
+\+: Related with pulse sequence. 
+
+pulse sequence (default \+: NULL) \Hypertarget{structPulse_a4a80fc876df183220d65b3b1676c85ce}\index{Pulse@{Pulse}!sequence\_indices@{sequence\_indices}}
+\index{sequence\_indices@{sequence\_indices}!Pulse@{Pulse}}
+\doxysubsubsection{\texorpdfstring{sequence\_indices}{sequence\_indices}}
+{\footnotesize\ttfamily \label{structPulse_a4a80fc876df183220d65b3b1676c85ce} 
+int\texorpdfstring{$\ast$}{*} Pulse\+::sequence\+\_\+indices}
+
+sequence\+\_\+indices\+: The Index that have the same difference value if there is no the same difference value then give the current index ( This would reduce the calculational time cost ) len(sequence) = len(sequence\+\_\+indices) 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/huijin/git/\+CCEX/include/pulse.\+h\end{DoxyCompactItemize}

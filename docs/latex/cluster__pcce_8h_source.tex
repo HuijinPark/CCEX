@@ -1,0 +1,73 @@
+\doxysection{cluster\+\_\+pcce.\+h}
+\hypertarget{cluster__pcce_8h_source}{}\label{cluster__pcce_8h_source}\index{/home/huijin/git/CCEX/include/cluster\_pcce.h@{/home/huijin/git/CCEX/include/cluster\_pcce.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ \_\_CCEX\_CLUSTER\_PCCE\_H\_}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ \_\_CCEX\_CLUSTER\_PCCE\_H\_}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <time.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}bath.h"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}mpi.h"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}cluster.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}general.h"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}\{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{double}\ x,\ y,\ z;}
+\DoxyCodeLine{00014\ \}\ \mbox{\hyperlink{structPoint}{Point}};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}\{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{int}\ sK;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{int}\ ncenter;}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{int}\ pcce\_nspin;}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{int}\ rest\_nspin;}
+\DoxyCodeLine{00022\ \}\ \mbox{\hyperlink{structPartition__info}{Partition\_info}};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{void}\ clusterizePcce(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \mbox{\hyperlink{structConfig}{Config}}*\ config);}
+\DoxyCodeLine{00025\ \textcolor{keywordtype}{void}\ simulator\_cluster\_partition(\mbox{\hyperlink{structBathSpin}{BathSpin}}**\ bath,\ \mbox{\hyperlink{structPartition__info}{Partition\_info}}*\ pinfo,\ \mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \mbox{\hyperlink{structPoint}{Point}}*\ best\_centers,\ \textcolor{keywordtype}{int}*\ best\_assigned\_idx);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ shrink\_restspins(\mbox{\hyperlink{structBathArray}{BathArray}}*\ ba,\ \textcolor{keywordtype}{int}\ rest\_nspin);}
+\DoxyCodeLine{00027\ \textcolor{keywordtype}{void}\ update\_global\_best(\textcolor{keywordtype}{int}\ index,\ \textcolor{keywordtype}{double}\ *inertia,\ \textcolor{keywordtype}{double}\ *sil,\ \textcolor{keywordtype}{int}\ *trial,\ \textcolor{keywordtype}{double}\ *global\_best\_inertia,\ \textcolor{keywordtype}{double}\ *global\_best\_sil,\ \textcolor{keywordtype}{int}\ *global\_best\_trial);}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{void}\ print\_pcce\_info(\textcolor{keywordtype}{int}\ bath\_nspin,\ \textcolor{keywordtype}{int}\ nqubit,\ \textcolor{keywordtype}{int}\ ncenter,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ rest\_nspin);}
+\DoxyCodeLine{00029\ \textcolor{keywordtype}{void}\ initializeCentroids(\mbox{\hyperlink{structPoint}{Point}}*\ spins,\ \mbox{\hyperlink{structPoint}{Point}}*\ centers,\ \textcolor{keywordtype}{int}\ ncenter,\ \textcolor{keywordtype}{int}\ pcce\_nspin)\ ;}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ choose\_initial\_method(\textcolor{keywordtype}{bool}\ kmeans\_pp,\ \mbox{\hyperlink{structPoint}{Point}}*\ spins,\ \mbox{\hyperlink{structPoint}{Point}}*\ centers,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ ncenter);}
+\DoxyCodeLine{00031\ \textcolor{keywordtype}{void}\ kMeansPlusPlus(\mbox{\hyperlink{structPoint}{Point}}\ *spins,\ \mbox{\hyperlink{structPoint}{Point}}\ *centers,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ ncenter)\ ;}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ shuffle\_spins(\mbox{\hyperlink{structPoint}{Point}}\ *array,\ \textcolor{keywordtype}{int}*\ shuffle\_idxs,\ \textcolor{keywordtype}{int}\ pcce\_nspin)\ ;}
+\DoxyCodeLine{00033\ \textcolor{keywordtype}{void}\ changeIdx\_inverse\_shuffle\_idx(\textcolor{keywordtype}{int}*\ shuffle\_idx,\ \textcolor{keywordtype}{int}*\ inverse\_shuffle\_idx,\ \textcolor{keywordtype}{int}\ pcce\_nspin);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ assignCentroids(\textcolor{keywordtype}{int}*\ assigned\_cluster\_idx,\ \textcolor{keywordtype}{double}**\ distances,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ ncenter)\ ;}
+\DoxyCodeLine{00035\ \textcolor{keywordtype}{void}\ calc\_dist\_to\_centers(\mbox{\hyperlink{structPoint}{Point}}*\ spins,\ \mbox{\hyperlink{structPoint}{Point}}*\ centers,\ \textcolor{keywordtype}{double}**\ distances,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ ncenter)\ ;}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ copy\_best\_centers(\mbox{\hyperlink{structPoint}{Point}}*\ centers,\ \mbox{\hyperlink{structPoint}{Point}}*\ best\_centers,\ \textcolor{keywordtype}{int}\ ncenter);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ copy\_best\_assigned(\textcolor{keywordtype}{int}*\ assigned,\ \textcolor{keywordtype}{int}*\ best\_assigned,\ \textcolor{keywordtype}{int}\ pcce\_nspin);}
+\DoxyCodeLine{00038\ \textcolor{keywordtype}{void}\ copy\_best\_idxList(\textcolor{keywordtype}{int}*\ idxList,\ \textcolor{keywordtype}{int}*\ best\_idxList,\ \textcolor{keywordtype}{int}\ pcce\_nspin);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ copy\_best\_spins(\mbox{\hyperlink{structPoint}{Point}}*\ spins,\ \mbox{\hyperlink{structPoint}{Point}}*\ best\_spins,\ \textcolor{keywordtype}{int}\ pcce\_nspin);}
+\DoxyCodeLine{00040\ \textcolor{keywordtype}{void}\ copy\_bath\_to\_point\_type(\mbox{\hyperlink{structBathSpin}{BathSpin}}**\ bath,\ \mbox{\hyperlink{structPoint}{Point}}*\ spins,\ \textcolor{keywordtype}{int}\ pcce\_nspin);}
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ print\_BD(\textcolor{keywordtype}{char}*\ str,\ \textcolor{keywordtype}{int}\ num);}
+\DoxyCodeLine{00042\ \textcolor{keywordtype}{void}\ print\_centers(\textcolor{keywordtype}{int}\ ncenter,\ \mbox{\hyperlink{structPoint}{Point}}*\ centers,\ \textcolor{keywordtype}{int}\ rank);}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ print\_kmeans\_converge\_info(\textcolor{keywordtype}{int}\ trial,\ \textcolor{keywordtype}{int}\ iteration,\ \textcolor{keywordtype}{int}\ ncenter,\ \mbox{\hyperlink{structPoint}{Point}}**\ centers);}
+\DoxyCodeLine{00044\ \textcolor{keywordtype}{void}\ print\_optimize\_kmeans\_info(\textcolor{keywordtype}{int}\ trial,\ \textcolor{keywordtype}{int}\ iteration,\ \textcolor{keywordtype}{double}\ inertia,\ \textcolor{keywordtype}{double}\ best\_inertia,\ \textcolor{keywordtype}{double}\ best\_sil,\ \textcolor{keywordtype}{int}\ rank);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ print\_assign\_idx(\textcolor{keywordtype}{int}\ *assign\_idx,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ rank)\ ;}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{void}\ print\_spins(\mbox{\hyperlink{structPoint}{Point}}\ *spins,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ rank);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ print\_time(clock\_t\ start,\ clock\_t\ end);}
+\DoxyCodeLine{00048\ \textcolor{keywordtype}{void}\ write\_centers(FILE\ **c\_savefile,\ \mbox{\hyperlink{structPoint}{Point}}\ **centers,\ \textcolor{keywordtype}{int}\ ncenter);}
+\DoxyCodeLine{00049\ \textcolor{keywordtype}{void}\ write\_spins(FILE\ **s\_savefile,\ \mbox{\hyperlink{structPoint}{Point}}\ **spins,\ \textcolor{keywordtype}{int}**\ assigned\_idx,\ \textcolor{keywordtype}{int}\ pcce\_nspin);}
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{void}\ print\_best\_spins(\mbox{\hyperlink{structPoint}{Point}}\ **spins,\ \textcolor{keywordtype}{int}**\ assigned\_idx,\ \textcolor{keywordtype}{int}\ pcce\_nspin);}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{void}\ print\_best\_centers(\mbox{\hyperlink{structPoint}{Point}}\ **centers,\ \textcolor{keywordtype}{int}\ ncenter);}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{double}\ silhouetteCoefficient(\mbox{\hyperlink{structPoint}{Point}}\ *spins,\ \textcolor{keywordtype}{int}\ *assignments,\ \mbox{\hyperlink{structPoint}{Point}}\ *centers,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ ncenter);}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{double}\ calculateInertia(\mbox{\hyperlink{structPoint}{Point}}\ *spins,\ \mbox{\hyperlink{structPoint}{Point}}\ *centers,\ \textcolor{keywordtype}{int}\ *assignments,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ ncenter);}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{double}\ calc\_dist(\textcolor{keywordtype}{double}*\ arr1,\ \textcolor{keywordtype}{double}*\ arr2);}
+\DoxyCodeLine{00056\ \textcolor{keywordtype}{double}\ distance(\mbox{\hyperlink{structPoint}{Point}}\ p1,\ \mbox{\hyperlink{structPoint}{Point}}\ p2);}
+\DoxyCodeLine{00057\ \textcolor{comment}{//int\ compare\_dist(const\ void\ *a,\ const\ void\ *b);}}
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{int}\ if\_contain(\textcolor{keywordtype}{int}*\ arr,\ \textcolor{keywordtype}{int}\ arr\_size,\ \textcolor{keywordtype}{int}\ value)\ ;}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{bool}\ updateCentroids(\mbox{\hyperlink{structPoint}{Point}}\ *spins,\ \textcolor{keywordtype}{int}\ *assignments,\ \mbox{\hyperlink{structPoint}{Point}}\ *centers,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}\ ncenter)\ ;}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keywordtype}{void}\ BathArray\_connectivity\_pcce(\textcolor{keywordtype}{int}***\ cmap,\ \textcolor{keywordtype}{float}***\ stmap,\ \mbox{\hyperlink{structPoint}{Point}}*\ centers,\ \textcolor{keywordtype}{float}\ rdip,\ \textcolor{keywordtype}{float}\ rdipcut,\ \textcolor{keywordtype}{int}\ pcce\_nspin);}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{int}**\ Cluster\_setCenterIdx\_spinIdx\_2dArr(\textcolor{keywordtype}{int}\ ncenter,\ \textcolor{keywordtype}{int}\ sK,\ \textcolor{keywordtype}{int}\ pcce\_nspin,\ \textcolor{keywordtype}{int}*\ best\_assigned\_idx);}
+\DoxyCodeLine{00064\ \textcolor{keywordtype}{void}\ print\_clusinfo\_sorder\_i(\textcolor{keywordtype}{int}***\ pcceClusInfo,\ \textcolor{keywordtype}{int}\ sorder,\ \textcolor{keywordtype}{int}\ n\_cInfo);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{void}\ print\_clusinfo\_sorder\_i\_j(\textcolor{keywordtype}{int}***\ pcceClusInfo,\ \textcolor{keywordtype}{int}\ sorder,\ \textcolor{keywordtype}{int}\ n\_cinfo,\ \textcolor{keywordtype}{int}\ cIdx);}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{int}***\ convert\_centerIdx\_to\_spinIdx(\mbox{\hyperlink{structCluster}{Cluster}}*\ cls,\ \textcolor{keywordtype}{int}\ cOrder,\ \textcolor{keywordtype}{int}\ sK,\ \textcolor{keywordtype}{int}**\ cs2dArr);}
+\DoxyCodeLine{00067\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ \_\_CCEX\_CLUSTER\_PCCE\_H\_}}
+
+\end{DoxyCode}
