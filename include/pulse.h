@@ -31,6 +31,7 @@ typedef struct {
      *  @brief : Related with pulse sequence.
      */
     double** sequence; /**< pulse sequence (default : NULL)*/
+    double*  pulse_fracs; 
     double*  pulse_angles; 
     /**<
      * puulse angles: Array of rotation angle of pulse.
@@ -54,6 +55,34 @@ typedef struct {
      */
     double pulse_time;
     double detuning_factor;
+
+    int      bnpulse; /**< The number of pulse (default : -)*/
+    char     bpulse_defect[50];
+    double   bspin;
+    double   balphams;
+    double   bbetams;
+    MatrixXcd bpsia;
+    MatrixXcd bpsib;
+    double   bpulse_energy_shift;
+    double** bsequence; /**< pulse sequence for specific bath spin (default : NULL)*/
+    double*  bpulse_fracs; 
+    double*  bpulse_angles; 
+    char*    bpulse_axes;
+    //int*     bsequence_indices;
+
+
+    // total sequence 
+    int      total_npulse;
+    double** total_sequence; 
+    double*  total_pulse_fracs;
+    double*  total_pulse_angles; 
+    char*    total_pulse_axes;
+    double*  total_bpulse_angles; 
+    char*    total_bpulse_axes;
+    int*     total_sequence_indices;
+    //int*     qpulseidx;
+    //int*     bpulseidx;
+
 
     //
     /**<
@@ -173,41 +202,110 @@ Pulse* Pulse_init();
 
 void Pulse_report(Pulse* pulse);
 
+//////////////////////
+// Setting function //
+//////////////////////
 void Pulse_setNpulse(Pulse* pulse, int npulse);
+void Pulse_setPulseiter(Pulse* pulse, bool pulseiter);
+void Pulse_setPulsename(Pulse* pulse, char* pulsename);
 void Pulse_setPulseTime(Pulse* pulse, double pulse_time);
 void Pulse_setPulseDetuningFactor(Pulse* pulse, double detuning_factor);
-void Pulse_setPulsename(Pulse* pulse, char* pulsename);
-void assign_sequence_indices(Pulse* pulse);
-void Pulse_setPulseiter(Pulse* pulse, bool pulseiter);
 
+void Pulse_setBNpulse(Pulse* pulse, int bnpulse);
+void Pulse_setBPulse_Defect(Pulse* pulse, char* bpulse_defect);
+void Pulse_setBPulse_bspin(Pulse* pulse, double bspin);
+void Pulse_setBPulse_alphams(Pulse* pulse, double balphams);
+void Pulse_setBPulse_betams(Pulse* pulse, double bbetams);
+void Pulse_setBPulse_bpsia_fromMs(Pulse* pulse);
+void Pulse_setBPulse_bpsib_fromMs(Pulse* pulse);
+void Pulse_setBPulse_EnergyShift(Pulse* pulse, double bpulse_energy_shift);
+
+void Pulse_setTotNPulse(Pulse* pulse, int total_npulse);
+void Pulse_setTotSequence(Pulse* pulse, double** total_sequence);
+void Pulse_setTotPulseFracs(Pulse* pulse, double* total_pulse_fracs);
+void Pulse_setTotPulseAngles(Pulse* pulse, double* total_pulse_angles);
+void Pulse_setTotPulseAxes(Pulse* pulse, char* total_pulse_axes);
+void Pulse_setTotBPulseAngles(Pulse* pulse, double* total_bpulse_angles);
+void Pulse_setTotBPulseAxes(Pulse* pulse, char* total_bpulse_axes);
+
+void assign_sequence_indices(Pulse* pulse);
+void assign_total_sequence_indices(Pulse* pulse);
+
+// Get function
 int Pulse_getNpulse(Pulse* pulse);
+bool Pulse_getPulseiter(Pulse* pulse);
+char* Pulse_getPulsename(Pulse* pulse);
+double** Pulse_getSequence(Pulse* pulse);
+double* Pulse_getPulseFracs(Pulse* pulse);
+double* Pulse_getPulseAngles(Pulse* pulse);
+char* Pulse_getPulseAxes(Pulse* pulse);
+int* Pulse_getSequenceIndices(Pulse* pulse);
+
 double Pulse_getPulseTime(Pulse* pulse);
 double Pulse_getPulseDetuningFactor(Pulse* pulse);
-char* Pulse_getPulsename(Pulse* pulse);
-char* Pulse_getPulseAxes(Pulse* pulse);
-double* Pulse_getPulseAngles(Pulse* pulse);
-int* Pulse_getSequenceIndices(Pulse* pulse);
-double** Pulse_getSequence(Pulse* pulse);
-bool Pulse_getPulseiter(Pulse* pulse);
+
+int Pulse_getBNpulse(Pulse* pulse);
+char* Pulse_getBPulse_Defect(Pulse* pulse);
+double Pulse_getBPulse_bspin(Pulse* pulse);
+double Pulse_getBPulse_balphams(Pulse* pulse);
+double Pulse_getBPulse_bbetams(Pulse* pulse);
+MatrixXcd Pulse_getBPulse_bpsia(Pulse* pulse);
+MatrixXcd Pulse_getBPulse_bpsib(Pulse* pulse);
+double Pulse_getBPulse_EnergyShift(Pulse* pulse);
+double** Pulse_getBSequence(Pulse* pulse);
+double* Pulse_getBPulseFracs(Pulse* pulse);
+double* Pulse_getBPulseAngles(Pulse* pulse);
+char* Pulse_getBPulseAxes(Pulse* pulse);
+
+int Pulse_getTotNpulse(Pulse* pulse);
+double** Pulse_getTotSequence(Pulse* pulse);
+double* Pulse_getTotPulseFracs(Pulse* pulse);
+double* Pulse_getTotPulseAngles(Pulse* pulse);
+double* Pulse_getTotBPulseAngles(Pulse* pulse);
+char* Pulse_getTotPulseAxes(Pulse* pulse);
+char* Pulse_getTotBPulseAxes(Pulse* pulse);
+int* Pulse_getTotSequenceIndices(Pulse* pulse);
 
 // allocation
 void Pulse_allocSequence(Pulse* pulse);
-void Pulse_freeSequence(Pulse* pulse);
-void Pulse_freeAll(Pulse* pulse);
-
 void Pulse_allocAxes(Pulse* pulse);
 void Pulse_allocAngles(Pulse* pulse);
 void Pulse_allocSequenceIndices(Pulse* pulse);
-void Pulse_freeAxes(Pulse* pulse);
+void Pulse_allocBSequence(Pulse* pulse);
+void Pulse_allocBAxes(Pulse* pulse);
+void Pulse_allocBAngles(Pulse* pulse);
+void Pulse_allocFracs(Pulse* pulse);
+void Pulse_allocBFracs(Pulse* pulse);
+void Pulse_allocTotalSequenceIndices(Pulse* pulse);
+
+// Free function
+void Pulse_freeSequence(Pulse* pulse);
+void Pulse_freeFracs(Pulse* pulse);
 void Pulse_freeAngles(Pulse* pulse);
+void Pulse_freeAxes(Pulse* pulse);
 void Pulse_freeSequenceIndices(Pulse* pulse);
 
+void Pulse_freeBSequence(Pulse* pulse);
+void Pulse_freeBFracs(Pulse* pulse);
+void Pulse_freeBAngles(Pulse* pulse);
+void Pulse_freeBAxes(Pulse* pulse);
+
+void Pulse_freeTotSequence(Pulse* pulse);
+void Pulse_freeTotFracs(Pulse* pulse);
+void Pulse_freeTotAngles(Pulse* pulse);
+void Pulse_freeTotAxes(Pulse* pulse);
+void Pulse_freeTotBAngles(Pulse* pulse);
+void Pulse_freeTotBAxes(Pulse* pulse);
+void Pulse_freeTotSequenceIndices(Pulse* pulse);
+
+void Pulse_freeAll(Pulse* pulse);
 // generate pulse sequence
 void generateSequenceRamsey(Pulse* pulse);
 void generateSequenceHE(Pulse* sequence);
 void generateSequenceWAHUHA(Pulse* sequence);
 void generateSequenceCPMG(Pulse* pulse);
 void allocateDefaultSequence(Pulse* pulse);
+
 
 
 #endif // __CCEX_PULSE_H_

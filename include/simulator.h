@@ -13,6 +13,7 @@
 
 //MatrixXcd cal_Upulse_withDetuning(QubitArray* qa, Pulse* pulse, double angle, MatrixXcd sigma, MatrixXcd sigma_z);
 void calUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse);
+void calbUpulses(MatrixXcd* Upulses, BathArray* ba, Pulse* pulse);
 void calTDUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse, MatrixXcd Hq);
 void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cc, Pulse* pulse, Cluster* cluster, Output* output, int*** localClusters);
 
@@ -21,7 +22,7 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
 MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op);
 MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls);
 
-MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pls, double tfree, MatrixXcd* Upulses);
+MatrixXcd calPropagatorGcce(QubitArray* qa, BathArray* ba, MatrixXcd Htot, Pulse* pls, double tfree, MatrixXcd* Upulses, MatrixXcd* bUpulses);
 
 MatrixXcd HamilQubit(QubitArray* qa, BathArray* ba, MatrixXcd** sigmas, Config* cnf);
 MatrixXcd HamilBath(BathArray* ba, MatrixXcd** sigmas, Config* cnf);

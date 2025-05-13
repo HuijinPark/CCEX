@@ -1,3 +1,4 @@
+#include <iomanip>      // std::setprecision
 #include "../include/simulator.h"
 #include "../include/hamiltonian.h"
 #include "../include/memory.h"
@@ -17,6 +18,9 @@ Matrix3cd Sx_spin1() {
     return Sx;
 }
 
+// ////////////////// // 
+// BathArray Type: 
+// ba - > ba_cluster !! 
 MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pulse, Output* op){
 
     int nqubit = QubitArray_getNqubit(qa);
@@ -30,7 +34,6 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     ////////////////////////////////
     // Hamiltonian
     ////////////////////////////////
-
     // Declare the total Hamiltonian
     MatrixXcd Htot = MatrixXcd::Zero(totdim,totdim);
 
@@ -41,8 +44,22 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     MatrixXcd Hq = HamilQubit(qa,ba,qsigmas,cnf);
     MatrixXcd Hq_expand = kron(Hq,MatrixXcd::Identity(bdim,bdim));
 
-    // Bath Hamiltonian
+    // Qubit's pulse Hamiltonian
+    MatrixXcd* Upulses  = new MatrixXcd[pulse->total_npulse];
+    if (pulse->detuning_factor == 1.0){
+        //printf("Function: calUpulses\n");
+        calUpulses(Upulses, qa, pulse);
+        //calTDUpulses(Upulses, qa, pulse, Hq);
+    } else{
+        calTDUpulses(Upulses, qa, pulse, Hq);
+    }
+
+    MatrixXcd* bUpulses = new MatrixXcd[pulse->total_npulse];
     if (nspin > 0){
+        // Bath's pulse Hamiltonian
+        calbUpulses(bUpulses, ba, pulse);
+
+        // Bath Hamiltonian
         MatrixXcd** bsigmas = BathArray_PauliOperators(ba);
         MatrixXcd Hb = HamilBath(ba,bsigmas,cnf);
         MatrixXcd Hb_expand = kron(MatrixXcd::Identity(qdim,qdim),Hb);
@@ -96,22 +113,8 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
         result_tot = new MatrixXcd[nstep]; //!
     }
 
-    MatrixXcd* Upulses = new MatrixXcd[pulse->npulse];
-    if (pulse->detuning_factor == 1.0){
-        //printf("Function: calUpulses\n");
-        calUpulses(Upulses, qa, pulse);
-        //calTDUpulses(Upulses, qa, pulse, Hq);
-    } else{
-        calTDUpulses(Upulses, qa, pulse, Hq);
-    }
-
-    //printf("Upulse[0] : \n");
-    //MatrixXcd qwer = Upulses[0];
-    //std::cout << Upulses[0] << std::endl;
-    //std::cout << qwer.cwiseAbs() << std::endl;
-    //printf("\n");
     for (int i=0; i<nstep; i++){
-        MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree, Upulses);
+        MatrixXcd Utot = calPropagatorGcce(qa, ba, Htot, pulse, tfree, Upulses, bUpulses);
         // Density matrix for time
         MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
 
@@ -158,6 +161,7 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     }
     delete[] qsigmas;
     delete[] Upulses;
+    delete[] bUpulses;
     if (result_tot != nullptr){
         delete[] result_tot;
     }
@@ -189,17 +193,20 @@ double getPhase(char axis) {
 double getAngle(double degree) {
     return degree * (M_PI / 180.0);  // Radian
 } 
-MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double tfree, MatrixXcd* Upulses){
+//MatrixXcd calPropagatorGcce(QubitArray* qa, BathArray* ba, MatrixXcd Htot, Pulse* pulse, double tfree, MatrixXcd* Upulses){
+MatrixXcd calPropagatorGcce(QubitArray* qa, BathArray* ba, MatrixXcd Htot, Pulse* pulse, double tfree, MatrixXcd* Upulses, MatrixXcd* bUpulses){
 
-    double** sequence        = Pulse_getSequence(pulse);
-    int*    sequence_indices = Pulse_getSequenceIndices(pulse);
-    int     qdim             = QubitArray_dim(qa);
-    int     npulse           = Pulse_getNpulse(pulse);
+    std::cout << std::fixed << std::setprecision(1);
+    int nspin               = BathArray_getNspin(ba);
+    int qdim                = QubitArray_dim(qa);
+    int total_npulse        = Pulse_getTotNpulse(pulse);
+    double** total_sequence = Pulse_getTotSequence(pulse);
+    int* total_sequence_indices = Pulse_getTotSequenceIndices(pulse);
 
     /////////////////////////////////////////////////////////////
     // Propagator for total
     MatrixXcd Utotal;
-    MatrixXcd* Ufrees = new MatrixXcd[npulse+1];
+    MatrixXcd* Ufrees = new MatrixXcd[total_npulse+1];
 
     // Propagator(total) =  U(tauN+1) (U_pulseN) ... (U_pulse1) U(tau1)
     // Pulse Index  0    1    2    3    4    5    6    7    8    |
@@ -207,20 +214,39 @@ MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double
     //              |tau1|tau2|           .......           |tau9|
     //              |seq1|seq2|           .......           |seq9|
     // Pulse delay  0                                          tfree
-    for (int ipulse=0; ipulse<npulse+1; ipulse++){
+    for (int ipulse=0; ipulse<total_npulse+1; ipulse++){
         
         // Propagator for free evolution
-        double       tau = tfree * sequence[ipulse][2];
-        int sameTauIndex = sequence_indices[ipulse];
+        double       tau = tfree * total_sequence[ipulse][2];
+        int sameTauIndex = total_sequence_indices[ipulse];
 
         MatrixXcd Upulse;
-        if (ipulse < npulse){
-            Upulse = Upulses[ipulse];
-        } else {
-            Upulse = MatrixXcd::Identity(qdim, qdim);
+        MatrixXcd bUpulse;
+        if (ipulse < total_npulse){
+            Upulse  = Upulses[ipulse];
+            if (nspin > 0){
+                bUpulse = bUpulses[ipulse];
+            }else{
+                bUpulse = MatrixXcd::Identity(1, 1);
+            }
+            //std::cout << " Upulse = \n" << Upulse << std::endl;
+            //std::cout << "bUpulse = \n" << bUpulse << std::endl;
+        } 
+        else {
+            Upulse  = MatrixXcd::Identity(qdim, qdim);
+            int bdim = Htot.rows() / Upulse.rows();
+            bUpulse = MatrixXcd::Identity(bdim, bdim);
         }
-        int bdim = Htot.rows() / Upulse.rows();
-        Upulse   = kron(Upulse, MatrixXcd::Identity(bdim, bdim));
+        //Upulse   = kron(Upulse, MatrixXcd::Identity(bdim, bdim));
+        //printf("========================================\n");
+        //std::cout << "[DEBUG] (Tau & TauIdx) = " << tau << " & " << sameTauIndex << std::endl; 
+        //std::cout << "(ipulse / total_npulse) = " << ipulse << " / " << total_npulse << std::endl;
+        //std::cout << "Qubit UPulse = \n" << Upulse << std::endl;
+        //std::cout << "\n Bath UPulse = \n" << bUpulse << std::endl;
+
+        Upulse   = kron(Upulse, bUpulse);
+        //std::cout << "\nQubit & Bath UPulse = \n" << Upulse << std::endl;
+        //printf("\n");
         
         // Propagator for free evolution
         MatrixXcd Ufree;
@@ -237,13 +263,13 @@ MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double
         // =================================== //
         //     Calculate U_total operator      //
         // =================================== //
-        if (ipulse==0 && ipulse != npulse){
+        if (ipulse == 0 && ipulse != total_npulse){
             Utotal = Upulse * Ufree;
         }
-        else if (ipulse==0 && ipulse == npulse){
+        else if (ipulse == 0 && ipulse == total_npulse){
             Utotal = Ufree;
         }
-        else if (ipulse==npulse){
+        else if (ipulse == total_npulse){
             Utotal = Ufree * Utotal;
         }
         else {
@@ -258,7 +284,7 @@ MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double
     return Utotal;
 }
 
-MatrixXcd cal_Upulse_when_pulseiter_isFalse(QubitArray* qa, Pulse* pulse, double angle, MatrixXcd sigma){
+MatrixXcd cal_Upulse_when_pulseiter_isFalse(Pulse* pulse, double angle, MatrixXcd sigma){
     MatrixXcd exponent = ((-1.0) * doublec(0.0,1.0) * sigma * angle / 2.0); 
     MatrixXcd Upulse = exponent.exp();
     return Upulse;
@@ -278,7 +304,7 @@ MatrixXcd cal_Upulse_when_pulseiter_isTrue(QubitArray* qa, Pulse* pulse, double 
         }
 
         MatrixXcd* sigmas = getGeneralPauliOperators(alpha, beta); // sigma[0]=I, [1]=X, [2]=Y, [3]=Z
-        MatrixXcd  sigma = getPauliOperator(sigmas, (pulse->pulse_axes[ipulse]));
+        MatrixXcd  sigma = getPauliOperator(sigmas, (pulse->total_pulse_axes[ipulse]));
 
         // Expand (tensor product)
         MatrixXcd sigma_expanded = MatrixXcd::Identity(1, 1);
@@ -304,7 +330,7 @@ MatrixXcd cal_Upulse_when_pulseiter_isTrue(QubitArray* qa, Pulse* pulse, double 
     return U_total;
 }
 
-MatrixXcd cal_Upulse_when_pulseiter_isTrue_whenOnlyXPulse(QubitArray* qa, Pulse* pulse, double angle){
+MatrixXcd cal_Upulse_when_pulseiter_isTrue_whenOnlyXPulse(QubitArray* qa, double angle){
 
     int nqubit = QubitArray_getNqubit(qa);
     int  qdim  = QubitArray_dim(qa);
@@ -352,27 +378,27 @@ MatrixXcd cal_Upulse_when_pulseiter_isTrue_whenOnlyXPulse(QubitArray* qa, Pulse*
 void calUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse){
 
     // Pulse Operator Up  = exp [ -(i/2) * sigma * theta ] where theta = (Rabi_Freq) * t
-    int     npulse        = Pulse_getNpulse(pulse);
-    double* pulse_angles  = Pulse_getPulseAngles(pulse);
-    char*   pulse_axes    = Pulse_getPulseAxes(pulse);
-    bool    pulseiter     = Pulse_getPulseiter(pulse);
-    int     qdim          = QubitArray_dim(qa);
+    int     total_npulse        = Pulse_getTotNpulse(pulse);
+    double* total_pulse_angles  = Pulse_getTotPulseAngles(pulse);
+    char*   total_pulse_axes    = Pulse_getTotPulseAxes(pulse);
+    bool    pulseiter           = Pulse_getPulseiter(pulse);
+    int     qdim                = QubitArray_dim(qa);
 
     /////////////////////////////////////////////////////////////
     // Propagator for pulse
     //  Upulse = exp(-i*sigma_x*pi/2) -> Pi-Pulse
-    for (int ipulse=0; ipulse<npulse; ipulse++){
+    for (int ipulse=0; ipulse<total_npulse; ipulse++){
         MatrixXcd Upulse = MatrixXcd::Identity(qdim,qdim);
-        double angle = getAngle(pulse_angles[ipulse]);  // Radian
+        double angle = getAngle(total_pulse_angles[ipulse]);  // Radian
         if (!pulseiter){
             MatrixXcd* sigmas = QubitArray_PauliOperator_fromPsiaPsib(qa);
-            MatrixXcd  sigma = getPauliOperator(sigmas, (pulse_axes[ipulse]));
-            Upulse = cal_Upulse_when_pulseiter_isFalse(qa, pulse, angle, sigma);
+            MatrixXcd  sigma = getPauliOperator(sigmas, (total_pulse_axes[ipulse]));
+            Upulse = cal_Upulse_when_pulseiter_isFalse(pulse, angle, sigma);
             delete[] sigmas;
 
         } else{
             if ((strcasecmp(pulse->pulsename, "CPMG") == 0) || (strcasecmp(pulse->pulsename, "HahnEcho") == 0) || (strcasecmp(pulse->pulsename, "Ramsey") == 0)){
-                Upulse = cal_Upulse_when_pulseiter_isTrue_whenOnlyXPulse(qa, pulse, angle);
+                Upulse = cal_Upulse_when_pulseiter_isTrue_whenOnlyXPulse(qa, angle);
             }else{
                 Upulse = cal_Upulse_when_pulseiter_isTrue(qa, pulse, angle, ipulse);
             }
@@ -381,19 +407,6 @@ void calUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse){
     }
     //return Upulses;
 }
-
-//MatrixXcd cal_Upulse_withDetuning(QubitArray* qa, Pulse* pulse, double angle, MatrixXcd sigma, MatrixXcd sigma_z){
-//
-//    printf("Function: cal_Upulse_withDetuning \n");
-//    // Pulse Operator Up  = exp [ -(i/2) * sigma * theta ] where theta = (Rabi_Freq) * t
-//    double detuning_factor = Pulse_getPulseDetuningFactor(pulse);
-//    double ptime = (pulse->pulse_time) / 1e6;
-//    //std::cout << "Detun/Omega: " << detuning / angle * ptime << std::endl;
-//
-//    MatrixXcd factor = (detuning * ptime * sigma_z) + (angle * sigma);
-//    MatrixXcd U_detuning = ((-1.0) * doublec(0.0,1.0) * factor / 2.0).exp(); 
-//    return U_detuning;
-//}
 
 double calQubit_Energy_difference(QubitArray* qa, MatrixXcd Hq){
     MatrixXcd psia = QubitArray_getPsia(qa);
@@ -422,11 +435,11 @@ double calQubit_Energy_difference(QubitArray* qa, MatrixXcd Hq){
 void calTDUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse, MatrixXcd Hq){
 
     // Pulse Operator Up  = exp [ -(i/2) * sigma * theta ] where theta = (Rabi_Freq) * t
-    int     npulse        = Pulse_getNpulse(pulse);
-    double* pulse_angles  = Pulse_getPulseAngles(pulse);
-    char*   pulse_axes    = Pulse_getPulseAxes(pulse);
-    bool    pulseiter     = Pulse_getPulseiter(pulse);
-    int     qdim          = QubitArray_dim(qa);
+    int     total_npulse       = Pulse_getTotNpulse(pulse);
+    double* total_pulse_angles = Pulse_getTotPulseAngles(pulse);
+    char*   total_pulse_axes   = Pulse_getTotPulseAxes(pulse);
+    bool    pulseiter          = Pulse_getPulseiter(pulse);
+    int     qdim               = QubitArray_dim(qa);
     double detuning_factor = Pulse_getPulseDetuningFactor(pulse);
 
     /////////////////////////////////////////////////////////////
@@ -434,15 +447,15 @@ void calTDUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse, MatrixXcd Hq
     //printf("Calculating pulse energy level difference! \n");
     double Ediff = calQubit_Energy_difference(qa, Hq);
 
-    for (int ipulse=0; ipulse<npulse; ipulse++){
+    for (int ipulse=0; ipulse<total_npulse; ipulse++){
         MatrixXcd Upulse = MatrixXcd::Identity(qdim,qdim);
-        double angle = getAngle(pulse_angles[ipulse]);  // Radian
+        double angle = getAngle(total_pulse_angles[ipulse]);  // Radian
         if (!pulseiter){
 
             MatrixXcd* sigmas = QubitArray_PauliOperator_fromPsiaPsib(qa);
             MatrixXcd  ox = getPauliOperator(sigmas, 'X');
             MatrixXcd  oy = getPauliOperator(sigmas, 'Y');
-            char axis     = pulse_axes[ipulse];
+            char axis     = total_pulse_axes[ipulse];
 
             //printf(" || Calculating Time-dependent pulse operator || \n");
             Upulse = cal_TDUpulse(qa, Hq, pulse, ox, oy, axis, angle, Ediff, detuning_factor, pulse->pulse_time, 10000);
@@ -503,3 +516,54 @@ MatrixXcd cal_TDUpulse(QubitArray* qa, MatrixXcd Hq, Pulse* pulse, MatrixXcd ox,
     }
     return TDUpulse;
 }
+
+void calbUpulses(MatrixXcd* bUpulses, BathArray* ba, Pulse* pulse){
+
+    std::cout << std::fixed << std::setprecision(1);
+
+    int     nspin               = BathArray_getNspin(ba);
+    int     total_npulse        = Pulse_getTotNpulse(pulse);
+    double* total_bpulse_angles = Pulse_getTotBPulseAngles(pulse);
+    char*   total_bpulse_axes   = Pulse_getBPulseAxes(pulse);
+    int bdim = BathArray_dim(ba);
+    ///////////////////////////////////////////////////////////////
+    // Propagator for pulse
+    //  Upulse = exp(-i*sigma_x*pi/2) -> Pi-Pulse
+    MatrixXcd    bpsia = pulse->bpsia;
+    MatrixXcd    bpsib = pulse->bpsib;
+    MatrixXcd* bsigmas = getGeneralPauliOperators(bpsia, bpsib); // sigma[0]=I, [1]=X, [2]=Y, [3]=Z
+                                                                 //
+    for (int bipulse=0; bipulse<total_npulse; bipulse++){
+        double     bangle = getAngle(total_bpulse_angles[bipulse]);  // Radian
+        MatrixXcd  bsigma = getPauliOperator(bsigmas, (pulse->total_bpulse_axes[bipulse]));
+        MatrixXcd bUpulse = MatrixXcd::Identity(1, 1);
+
+        for (int bidx=0; bidx<nspin; bidx++){
+            //printf("======================================\n");
+            //std::cout << "[DEBUG] bidx & bipulse : " << bidx << " & " << bipulse << std::endl;
+
+            MatrixXcd tempbUpulse;
+            if ( strcasecmp(ba->bath[bidx]->name, pulse->bpulse_defect) == 0 && 
+                    (std::abs(pulse->bpulse_energy_shift-(ba->bath[bidx]->detuning)) < 10) ){ // Energy Diff < 10 [rad*kHz]
+                tempbUpulse = cal_Upulse_when_pulseiter_isFalse(pulse, bangle, bsigma);
+                //bUpulse = tempbUpulse * bUpulse;
+                //printf("[DEBUG] Bath Pulse On!! \n");
+                //std::cout << "tempbUpulse [On] : \n" << tempbUpulse << "\n" << std::endl;
+            }
+            else{
+                float S = BathArray_getBath_i_spin(ba, bidx);
+                int tempbdim = (int)(2*S+1);
+                tempbUpulse = MatrixXcd::Identity(tempbdim, tempbdim);
+                //printf("-----\n");
+                //std::cout << tempbUpulse <<std::endl;
+                //printf("[DEBUG] Bath Pulse Off!! \n");
+                //std::cout << "tempbUpulse [Off] : \n" << tempbUpulse << "\n" << std::endl;
+            }
+            bUpulse = kron(bUpulse, tempbUpulse);
+
+        }
+        bUpulses[bipulse]  = bUpulse;
+    }
+    delete[] bsigmas;
+}
+

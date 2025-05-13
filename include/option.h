@@ -42,8 +42,9 @@ void cJSON_ReadDefectInfo_IntCharMatrixXcd2d(cJSON* root, char* key, int valueco
 void cJSON_ReadDefectInfo_IntCharMatrixXcd1d(cJSON* root, char* key, int valuecount, MatrixXcd** array, int navaax);
 void cJSON_ReadDefectInfo_IntCharDouble(cJSON* root, char* key, double** array, int navaax);
 
-//void cJSON_PrintNotFount(
-
+void parse_manual_sequence(Pulse* pulse, cJSON* sequence_array);
+void parse_manual_bsequence(Pulse* pulse, cJSON* bsequence_array);
+void build_tot_sequence(Pulse* pulse, double*** total_sequence, double** total_fracs, char** total_pulse_axes, double** total_pulse_angles, char** total_bpulse_axes, double** total_bpulse_angles, int* total_npulse);
 // void checkComparable(Config* cnf, QubitArray* qa, BathArray* ba, Cluster* clus, Pulse* pulse, Output* output);
 // DefectTotalSpin vs qa->qubit[i]->spin
 

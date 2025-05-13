@@ -493,6 +493,8 @@ void updateMainSpins_fromDefectArray(DefectArray* dfa, BathArray* ba){
 
         additional_detuning = MHZ_TO_RADKHZ(additional_detuning); //radkHz
         BathArray_setBath_i_detuning(ba,(current_detuning+additional_detuning),ibs); //radkHz
+        printf("[DEBUG] additional detuning: \n");
+        std::cout << additional_detuning << std::endl;
         ////////////////////////////////////
     }
 }

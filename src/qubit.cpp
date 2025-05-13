@@ -189,6 +189,9 @@ MatrixXcd* QubitArray_PauliOperator_fromPsiaPsib(QubitArray* qa){
     MatrixXcd psia = QubitArray_getPsia(qa);
     MatrixXcd psib = QubitArray_getPsib(qa);
 
+    //printf("[DEBUG] : Alpha state -> psia:\n");
+    //std::cout << s
+
     // sigmas:
     // sigmas[0] = I, sigmas[1] = X, sigmas[2] = Y, sigmas[3] = Z
     MatrixXcd* sigmas = getGeneralPauliOperators(psia,psib);

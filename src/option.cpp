@@ -385,7 +385,11 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             QubitArray_setQubit_i_gyro(qa,gyro,iqubit);
             QubitArray_setQubit_i_detuning(qa,KHZ_TO_RADKHZ(detuning),iqubit); // radkHz
             QubitArray_setQubit_i_alpha_fromMs(qa,alphams,iqubit);
+            printf("[DEBUG] a2 :\n");
             QubitArray_setQubit_i_beta_fromMs(qa,betams,iqubit);
+            printf("[DEBUG] std::cout << qa->qubit[iqubit]->beta << std::endl;\n");
+            std::cout << qa->qubit[iqubit]->beta << std::endl;
+            std::cout << betams << std::endl;
             iqubit++;
             freeDouble1d(&xyz);
         }
@@ -648,7 +652,7 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     double pulse_time     = cJSON_ReadDouble(root, "pulse_time", true, 0.0);
     Pulse_setPulseTime(pulse,pulse_time);
     // Input pulse detuning offset (default : 0)
-    double detuning_factor = cJSON_ReadDouble(root, "detuning_factor", true, 0.0);
+    double detuning_factor = cJSON_ReadDouble(root, "detuning_factor", true, 1.0);
     Pulse_setPulseDetuningFactor(pulse,detuning_factor);
     // ================= //
 
@@ -656,6 +660,7 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     Pulse_setPulsename(pulse,pulsename);
 
     Pulse_allocSequence(pulse);
+    Pulse_allocFracs(pulse);
     Pulse_allocAxes(pulse);
     Pulse_allocAngles(pulse);
     Pulse_allocSequenceIndices(pulse);
@@ -666,46 +671,75 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
         made = true;
     }
     if (strcasecmp(pulse->pulsename, "Manual") == 0) {
-        if (!(sequence_array && cJSON_IsArray(sequence_array))) {
-            fprintf(stderr, "[Error] sequence_array is missing or not a valid JSON array. [case pulse name = manual]\n");
-            exit(EXIT_FAILURE);
-        }
-
-        int count = cJSON_GetArraySize(sequence_array);
-        if (count != (pulse->npulse) + 1) {
-            throw std::runtime_error("Mismatch between sequence length and npulse");
-        }
-
-        double total_frac = 0.0;
-        for (int i = 0; i < (pulse->npulse)+1; ++i) {
-            cJSON* item = cJSON_GetArrayItem(sequence_array, i);
-            if (!cJSON_IsArray(item)) continue;
-
-            cJSON* frac  = cJSON_GetArrayItem(item, 0);
-            cJSON* axis  = cJSON_GetArrayItem(item, 1);
-            cJSON* angle = cJSON_GetArrayItem(item, 2);
-
-            if (!frac || !axis || !angle) continue;
-
-            pulse->sequence[i][0] = total_frac;               
-            double fraction       = parse_fraction(frac->valuestring);
-            total_frac            = total_frac + fraction;
-            pulse->sequence[i][1] = total_frac ;               
-            pulse->sequence[i][2] = fraction;                               // fraction
-            pulse->pulse_axes[i]    = parse_axis(axis, i);                  // axis
-            pulse->pulse_angles[i]  = static_cast<double>(angle->valueint); // angle
-        }
-        assign_sequence_indices(pulse);
-        if (total_frac - 1.0 > 1e-9){
-            throw std::runtime_error("Total Fraction is not 1: ");
-        }
+        parse_manual_sequence(pulse, sequence_array);
     }
+
+    // New tag~! 2025.05.09 
+    // Read Bath pulse sequence !! 
+    char* bpulse_defect = cJSON_ReadString(root,"bpulse_defect",true,"NoneNoNe");
+    double bpulse_energy_shift = cJSON_ReadDouble(root, "bpulse_energy_shift", true, 0.0);
+    double bspin          = cJSON_ReadDouble(root, "bspin", true, 0.5);
+    double balphams       = cJSON_ReadDouble(root, "balphams", true,  0.5);
+    double bbetams        = cJSON_ReadDouble(root, "bbetams",  true, -0.5);
+
+    int bnpulse = cJSON_ReadInt(root,"bnpulse",true, 0);
+    Pulse_setBNpulse(pulse,bnpulse);
+    Pulse_setBPulse_Defect(pulse,bpulse_defect);
+    Pulse_setBPulse_EnergyShift(pulse, bpulse_energy_shift);
+    Pulse_setBPulse_bspin(pulse, bspin);
+    Pulse_setBPulse_alphams(pulse, balphams);
+    Pulse_setBPulse_betams(pulse, bbetams);
+    Pulse_setBPulse_bpsia_fromMs(pulse);
+    Pulse_setBPulse_bpsib_fromMs(pulse);
+
+    ////////////////////////////////
+    // Generate Bath pulse sequence
+    Pulse_allocBSequence(pulse);
+    Pulse_allocBFracs(pulse);
+    Pulse_allocBAxes(pulse);
+    Pulse_allocBAngles(pulse);
+    if ((pulse->bnpulse != 0)){
+        //Pulse_allocBSequenceIndices(pulse);
+        cJSON* bsequence_array = cJSON_GetObjectItem(root, "bsequence");
+        parse_manual_bsequence(pulse, bsequence_array);
+    }else{
+        pulse->bsequence[0][0]  = 0.0;
+        pulse->bsequence[0][1]  = 1.0;
+        pulse->bsequence[0][2]  = 1.0;
+        pulse->bpulse_fracs[0]  = 1.0;
+        pulse->bpulse_axes[0]   = 'I';
+        pulse->bpulse_angles[0] = 0.0;
+    }
+
+    //////////////////////////
+    // Generate total sequence 
+    int      total_npulse;
+    double** total_sequence;     double* total_pulse_fracs;
+    double*  total_pulse_angles; char*   total_pulse_axes;
+    double* total_bpulse_angles; char*   total_bpulse_axes;
+
+    build_tot_sequence(pulse, &total_sequence, &total_pulse_fracs, 
+                        &total_pulse_axes, &total_pulse_angles, 
+                        &total_bpulse_axes, &total_bpulse_angles, &total_npulse);
+
+    Pulse_setTotNPulse(pulse, total_npulse);
+    Pulse_setTotPulseFracs(pulse, total_pulse_fracs);
+    Pulse_setTotPulseAxes(pulse, total_pulse_axes);
+    Pulse_setTotPulseAngles(pulse, total_pulse_angles);
+    Pulse_setTotBPulseAxes(pulse, total_bpulse_axes);
+    Pulse_setTotBPulseAngles(pulse, total_bpulse_angles);
+    Pulse_setTotSequence(pulse, total_sequence);
+
+    Pulse_allocTotalSequenceIndices(pulse);
+    assign_total_sequence_indices(pulse);
 
     //////////////////////////
     cJSON_Delete(root);
     freeChar1d(&data);
+
 }
 
+//////////////////////////////////////////////////////
 void cJSON_readOptionOutput(Output* op, char* fccein){
 
     if (rank==0){
@@ -1459,8 +1493,6 @@ void cJSON_ReadDefectInfo_IntCharMatrixXcd1d(cJSON* root, char* key, int valueco
     }
 }
 
-
-
 void cJSON_ReadDefectInfo_IntCharDouble(cJSON* root, char* key, double** array, int navaax){
 
     // itemArray2d : (int, char, MatrixXcd) * n
@@ -1506,5 +1538,215 @@ void cJSON_ReadDefectInfo_IntCharDouble(cJSON* root, char* key, double** array, 
 
         // Find double array values
         (*array)[iax] = cJSON_GetArrayItem(itemArray1d, 2)->valuedouble;
+    }
+}
+
+void parse_manual_sequence(Pulse* pulse, cJSON* sequence_array) {
+    if (!(sequence_array && cJSON_IsArray(sequence_array))) {
+        fprintf(stderr, "[Error] sequence_array is missing or not a valid JSON array. [case pulse name = manual]\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int count = cJSON_GetArraySize(sequence_array);
+    if (count != (pulse->npulse) + 1) {
+        throw std::runtime_error("\n\n !! Mismatch between sequence length and npulse !! \n");
+    }
+
+    double total_frac = 0.0;
+    for (int i = 0; i < (pulse->npulse) + 1; ++i) {
+        cJSON* item = cJSON_GetArrayItem(sequence_array, i);
+        if (!cJSON_IsArray(item)) continue;
+
+        cJSON* frac  = cJSON_GetArrayItem(item, 0);
+        cJSON* axis  = cJSON_GetArrayItem(item, 1);
+        cJSON* angle = cJSON_GetArrayItem(item, 2);
+
+        if (!frac || !axis || !angle) continue;
+
+        pulse->sequence[i][0] = total_frac;
+        double fraction       = parse_fraction(frac->valuestring);
+        total_frac           += fraction;
+        pulse->sequence[i][1] = total_frac;
+        pulse->sequence[i][2] = fraction;
+
+        pulse->pulse_fracs[i]  = fraction;
+        std::cout << "pulse->pulse_fracs[" << i << "] = " << pulse->pulse_fracs[i] << std::endl;
+        pulse->pulse_axes[i]   = parse_axis(axis, i);
+        pulse->pulse_angles[i] = static_cast<double>(angle->valuedouble);
+    }
+
+    assign_sequence_indices(pulse);
+
+    if (total_frac - 1.0 > 1e-9) {
+        throw std::runtime_error("Total Fraction is not 1");
+    }
+}
+
+void parse_manual_bsequence(Pulse* pulse, cJSON* bsequence_array) {
+    if (!(bsequence_array && cJSON_IsArray(bsequence_array))) {
+        fprintf(stderr, "[Error] bsequence_array is missing or not a valid JSON array. [case pulse name = manual]\n");
+        exit(EXIT_FAILURE);
+    }
+
+    int count = cJSON_GetArraySize(bsequence_array);
+    if (count != (pulse->bnpulse) + 1) {
+        throw std::runtime_error("\n\n  !! Mismatch between bsequence length and bnpulse ||\n");
+    }
+
+    double btotal_frac = 0.0;
+    for (int i = 0; i < (pulse->bnpulse) + 1; ++i) {
+        cJSON* item = cJSON_GetArrayItem(bsequence_array, i);
+        if (!cJSON_IsArray(item)) continue;
+
+        cJSON* bfrac  = cJSON_GetArrayItem(item, 0);
+        cJSON* baxis  = cJSON_GetArrayItem(item, 1);
+        cJSON* bangle = cJSON_GetArrayItem(item, 2);
+
+        if (!bfrac || !baxis || !bangle) continue;
+
+        pulse->bsequence[i][0] = btotal_frac;
+        double bfraction       = parse_fraction(bfrac->valuestring);
+        btotal_frac           += bfraction;
+        pulse->bsequence[i][1] = btotal_frac;
+        pulse->bsequence[i][2] = bfraction;
+
+        pulse->bpulse_fracs[i]  = bfraction;
+        pulse->bpulse_axes[i]   = parse_axis(baxis, i);
+        pulse->bpulse_angles[i] = static_cast<double>(bangle->valuedouble);
+    }
+
+    //assign_bsequence_indices(pulse);
+
+    if (btotal_frac - 1.0 > 1e-9) {
+        throw std::runtime_error("Total Fraction is not 1");
+    }
+}
+
+void build_tot_sequence(Pulse* pulse, double*** total_sequence, double** total_fracs, char** total_pulse_axes, double** total_pulse_angles, char** total_bpulse_axes, double** total_bpulse_angles, int* total_npulse){
+
+    const double*  pulse_fracs  =   pulse->pulse_fracs;
+    const double*  bpulse_fracs =  pulse->bpulse_fracs;
+    const int            npulse =        pulse->npulse;
+    const int           bnpulse =       pulse->bnpulse;
+    const char*      pulse_axes =    pulse->pulse_axes;
+    const double*  pulse_angles =  pulse->pulse_angles;
+    const char*     bpulse_axes =   pulse->bpulse_axes;
+    const double* bpulse_angles = pulse->bpulse_angles;
+
+
+    double pulse_times[512], bpulse_times[512];
+    double edges[1024];
+    int edge_count = 0;
+
+    // build absolute pulse times
+    double acc = 0.0;
+    for (int i = 0; i < npulse; ++i){
+        acc += pulse_fracs[i];
+        pulse_times[i] = acc;
+        edges[edge_count++] = acc;
+    }
+
+    acc = 0.0;
+    for (int i = 0; i < bnpulse; ++i){
+        acc += bpulse_fracs[i];
+        bpulse_times[i] = acc;
+        edges[edge_count++] = acc;
+    }
+
+    // sort edges
+    for (int i = 0; i < edge_count - 1; ++i){
+        for (int j = i + 1; j < edge_count; ++j){
+            if (edges[i] > edges[j]){
+                double tmp = edges[i]; edges[i] = edges[j]; edges[j] = tmp;
+            }
+        }
+    }
+
+    // remove duplicates
+    double unique_edges[1024];
+    int unique_count = 0;
+    if (edge_count == 0 || edges[0] > 1e-12)
+        unique_edges[unique_count++] = 0.0; // 시작점 보장
+
+    for (int i = 0; i < edge_count; ++i){
+        if (unique_count == 0 || fabs(edges[i] - unique_edges[unique_count - 1]) > 1e-12) {
+            unique_edges[unique_count++] = edges[i];
+        }
+    }
+
+    if (fabs(unique_edges[unique_count - 1] - 1.0) > 1e-12)
+        unique_edges[unique_count++] = 1.0;  // 종료점 보장
+
+    int seg_count = unique_count - 1;
+
+    *total_fracs          = allocDouble1d(seg_count);
+    *total_pulse_axes     = allocChar1d(seg_count);
+    *total_pulse_angles   = allocDouble1d(seg_count);
+    *total_bpulse_axes    = allocChar1d(seg_count);
+    *total_bpulse_angles  = allocDouble1d(seg_count);
+    *total_sequence       = allocDouble2d(seg_count, 3);
+
+    int valid_seg_count = 0;
+
+    for (int i = 0; i < seg_count; ++i){
+        double t1 = unique_edges[i];
+        double t2 = unique_edges[i + 1];
+        double duration = t2 - t1;
+
+        if (duration < 1e-12) continue;
+
+        (*total_fracs)[valid_seg_count] = duration;
+
+        // Qubit pulse detection at t2
+        int qidx = -1;
+        double qubit_t = 0.0;
+        for (int q = 0; q < npulse; ++q){
+            qubit_t += pulse_fracs[q];
+            if (fabs(qubit_t - t2) < 1e-12){
+                if (!(pulse_axes[q] == 'I' || fabs(pulse_angles[q]) < 1e-6)) {
+                    qidx = q;
+                }
+                break;
+            }
+        }
+
+        // Bath pulse detection at t2
+        int bidx = -1;
+        double bath_t = 0.0;
+        for (int b = 0; b < bnpulse; ++b){
+            bath_t += bpulse_fracs[b];
+            if (fabs(bath_t - t2) < 0.01){
+                bidx = b;
+                break;
+            } 
+        }
+
+        // assign qubit pulse info
+        if (qidx == -1) {
+            (*total_pulse_axes)[valid_seg_count] = 'I';
+            (*total_pulse_angles)[valid_seg_count] = 0.0;
+        } else {
+            (*total_pulse_axes)[valid_seg_count] = pulse_axes[qidx];
+            (*total_pulse_angles)[valid_seg_count] = pulse_angles[qidx];
+        }
+        // assign bath pulse info
+        if (bidx == -1 || bidx >= bnpulse){
+            (*total_bpulse_axes)[valid_seg_count] = 'I';
+            (*total_bpulse_angles)[valid_seg_count] = 0.0;
+        } else{
+            (*total_bpulse_axes)[valid_seg_count] = bpulse_axes[bidx];
+            (*total_bpulse_angles)[valid_seg_count] = bpulse_angles[bidx];
+        }
+
+        ++valid_seg_count;
+    }
+    *total_npulse   = valid_seg_count - 1;
+    *total_sequence = allocDouble2d(*total_npulse+1, 3);
+    double tempfrac = 0.0;
+    for (int i=0; i<=*total_npulse; i++){
+        (*total_sequence)[i][0] = tempfrac;
+        tempfrac += (*total_fracs)[i];
+        (*total_sequence)[i][1] = tempfrac;
+        (*total_sequence)[i][2] = (*total_fracs)[i];
     }
 }
