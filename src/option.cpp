@@ -648,7 +648,7 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     double pulse_time     = cJSON_ReadDouble(root, "pulse_time", true, 0.0);
     Pulse_setPulseTime(pulse,pulse_time);
     // Input pulse detuning offset (default : 0)
-    double detuning_factor = cJSON_ReadDouble(root, "detuning_factor", true, 0.0);
+    double detuning_factor = cJSON_ReadDouble(root, "detuning_factor", true, 1.0);
     Pulse_setPulseDetuningFactor(pulse,detuning_factor);
     // ================= //
 

@@ -14,7 +14,7 @@ Pulse* Pulse_init(){
     //pulse->pulse_time     = 0.0;
     pulse->pulseiter = false;
     pulse->pulsename[0] = '\0';
-    pulse->detuning_factor = 0.0;
+    pulse->detuning_factor = 1.0;
 
     pulse->pulse_axes       = NULL;
     pulse->pulse_angles     = NULL;

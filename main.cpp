@@ -289,10 +289,6 @@ int main(int argc, char* argv[]){
     readBathfiles(ba,qa,cnf);  // set bath xyz position and properties
     MPI_Barrier(MPI_COMM_WORLD);
 
-    //
-    // 
-    //
-
     // Hyperfine tensor
     readHftensorfile(ba,qa,cnf); // set hyperfine tensor only from file
     MPI_Barrier(MPI_COMM_WORLD);
@@ -338,10 +334,10 @@ int main(int argc, char* argv[]){
     MPI_Barrier(MPI_COMM_WORLD);
 
     if (rank==0){
-        //printf("    ----------------------------------------------------------------------\n");
-        //printTitle("QubitArray");
-        //QubitArray_report(qa);
-        //printf("\n");
+        printf("    ----------------------------------------------------------------------\n");
+        printTitle("QubitArray");
+        QubitArray_report(qa);
+        printf("\n");
 
         printf("    ----------------------------------------------------------------------\n");
         printTitle("BathArray");

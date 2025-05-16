@@ -454,7 +454,7 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
         BathArray_setNspin(ba_cluster, nspin_cluster);
 
         if (nspin_cluster==1){ 
-            BathArray_allocBath(ba_cluster,nspin_cluster); 
+            BathArray_allocBath(ba_cluster,nqubit); 
         }
         else{                  
             BathArray_reallocBath(ba_cluster,nspin_cluster-1,nspin_cluster,nqubit); 
@@ -493,19 +493,6 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
             }
         }
     }
-
-    //// Set the properties
-    //int nspecies = BathArray_getProp_nspecies(ba);
-    //BathArray_setProp_nspecies(ba_cluster,nspecies);
-    //BathArray_allocProp(ba_cluster);
-    //char** names = BathArray_getProp_names(ba);
-    //double* gyros = BathArray_getProp_gyros(ba);
-    //float* spins = BathArray_getProp_spins(ba);
-    //for (int i=0; i<nspecies; i++){
-    //    BathArray_setProp_names_i(ba_cluster,names[i],i);
-    //    BathArray_setProp_gyros_i(ba_cluster,gyros[i],i);
-    //    BathArray_setProp_spins_i(ba_cluster,spins[i],i);       
-    //}
 
     if (rank==0 && addedspin>0 && verbosity){
         printLineSection();

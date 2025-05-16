@@ -315,7 +315,7 @@ int Cluster_setClusinfo_addcluster(Cluster* cls, int order, int iter, int* clust
     reallocInt2d(&(cls->clusinfo[order]),ncluster_old,ncluster_new, order+1);
 
     // set new cluster
-    copyInt1d(&(cls->clusinfo[order][ic][1]),cluster,order+1);
+    copyInt1d(&(cls->clusinfo[order][ic][1]),cluster,order);
 
     // set iter at 0-th element (It is the number how many it will calculated)
     cls->clusinfo[order][ic][0] = iter;

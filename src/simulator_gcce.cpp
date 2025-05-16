@@ -98,18 +98,11 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
 
     MatrixXcd* Upulses = new MatrixXcd[pulse->npulse];
     if (pulse->detuning_factor == 1.0){
-        //printf("Function: calUpulses\n");
         calUpulses(Upulses, qa, pulse);
-        //calTDUpulses(Upulses, qa, pulse, Hq);
     } else{
         calTDUpulses(Upulses, qa, pulse, Hq);
     }
 
-    //printf("Upulse[0] : \n");
-    //MatrixXcd qwer = Upulses[0];
-    //std::cout << Upulses[0] << std::endl;
-    //std::cout << qwer.cwiseAbs() << std::endl;
-    //printf("\n");
     for (int i=0; i<nstep; i++){
         MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree, Upulses);
         // Density matrix for time
@@ -438,13 +431,11 @@ void calTDUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse, MatrixXcd Hq
         MatrixXcd Upulse = MatrixXcd::Identity(qdim,qdim);
         double angle = getAngle(pulse_angles[ipulse]);  // Radian
         if (!pulseiter){
-
             MatrixXcd* sigmas = QubitArray_PauliOperator_fromPsiaPsib(qa);
             MatrixXcd  ox = getPauliOperator(sigmas, 'X');
             MatrixXcd  oy = getPauliOperator(sigmas, 'Y');
             char axis     = pulse_axes[ipulse];
-
-            //printf(" || Calculating Time-dependent pulse operator || \n");
+            // printf(" || Calculating Time-dependent pulse operator || \n");
             Upulse = cal_TDUpulse(qa, Hq, pulse, ox, oy, axis, angle, Ediff, detuning_factor, pulse->pulse_time, 10000);
             delete[] sigmas;
 
@@ -480,17 +471,17 @@ MatrixXcd cal_TDUpulse(QubitArray* qa, MatrixXcd Hq, Pulse* pulse, MatrixXcd ox,
     const int qdim = ox.rows();
     double dt = ptime / static_cast<double>(Nstep);
 
-    //printf("Qubit Hamiltonian : \n");
-    //std::cout << Hq << std::endl;
-    //printf("\n");
-    //std::cout << "Pulse angle: " << pulse_angle << "  rad"  << std::endl;
-    //std::cout << "Omega_Rabi : " << Omega_Rabi  << "  rad*kHz" << std::endl;
-    //std::cout << "detuning   : " << detuning    << "  rad*kHz" << std::endl;
-    //std::cout << "Omega      : " << Omega       << "  rad*kHz" << std::endl;
-    //std::cout << "omega      : " << omega       << "  rad*kHz" << std::endl;
-    //std::cout << "phase      : " << phase                      << std::endl;
-    //std::cout << "Pulse Time : " << pulse_time << "  ns" << std::endl;
-    //std::cout << "dt         : " << dt*1e6 << "  ns" << std::endl;
+    // printf("Qubit Hamiltonian : \n");
+    // std::cout << Hq << std::endl;
+    // printf("\n");
+    // std::cout << "Pulse angle: " << pulse_angle << "  rad"  << std::endl;
+    // std::cout << "Omega_Rabi : " << Omega_Rabi  << "  rad*kHz" << std::endl;
+    // std::cout << "detuning   : " << detuning    << "  rad*kHz" << std::endl;
+    // std::cout << "Omega      : " << Omega       << "  rad*kHz" << std::endl;
+    // std::cout << "omega      : " << omega       << "  rad*kHz" << std::endl;
+    // std::cout << "phase      : " << phase                      << std::endl;
+    // std::cout << "Pulse Time : " << pulse_time << "  ns" << std::endl;
+    // std::cout << "dt         : " << dt*1e6 << "  ns" << std::endl;
 
     MatrixXcd TDUpulse = MatrixXcd::Identity(qdim, qdim);
     //MatrixXcd** qsigmas = QubitArray_PauliOperators(qa);
@@ -501,5 +492,6 @@ MatrixXcd cal_TDUpulse(QubitArray* qa, MatrixXcd Hq, Pulse* pulse, MatrixXcd ox,
         MatrixXcd U = ((-1.0) * doublec(0.0, 1.0) * H * dt).exp();
         TDUpulse = U * TDUpulse;  
     }
+
     return TDUpulse;
 }
