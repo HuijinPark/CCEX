@@ -628,6 +628,9 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     char*  data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
 
+    bool pulseiter = cJSON_ReadBool(root,"pulseiter",true,false);
+    Pulse_setPulseiter(pulse, pulseiter);
+
     if (root == NULL){
         if (rank == 0) {
             printf("Error before: %s\n", cJSON_GetErrorPtr());

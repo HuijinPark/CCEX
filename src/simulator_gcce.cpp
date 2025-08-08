@@ -39,6 +39,8 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
 
     // Qubit Hamiltonian
     MatrixXcd Hq = HamilQubit(qa,ba,qsigmas,cnf);
+    //std::cout << "Hq = \n" << Hq << std::endl;
+    //exit(1);
     MatrixXcd Hq_expand = kron(Hq,MatrixXcd::Identity(bdim,bdim));
 
     // Bath Hamiltonian
@@ -99,6 +101,7 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     MatrixXcd* Upulses = new MatrixXcd[pulse->npulse];
     if (pulse->detuning_factor == 1.0){
         calUpulses(Upulses, qa, pulse);
+        //calTDUpulses(Upulses, qa, pulse, Hq);
     } else{
         calTDUpulses(Upulses, qa, pulse, Hq);
     }
@@ -257,6 +260,42 @@ MatrixXcd cal_Upulse_when_pulseiter_isFalse(QubitArray* qa, Pulse* pulse, double
     return Upulse;
 }
 
+MatrixXcd cal_TDUpulse_when_pulseiter_isTrue(QubitArray* qa, MatrixXcd Hq, Pulse* pulse, double angle, int ipulse) {
+
+    int nqubit             = QubitArray_getNqubit(qa);
+    double detuning_factor = Pulse_getPulseDetuningFactor(pulse);
+    char axis              = pulse->total_pulse_axes[ipulse];
+    double Ediff           = calQubit_Energy_difference(qa, Hq);
+    std::cout << "Ediff : " << Ediff << std::endl;
+    std::cout << "Qubit Hamiltonian : \n" << Hq  << std::endl;
+
+    MatrixXcd U_total = MatrixXcd::Identity(1, 1); // 초기 유니타리
+
+    // 전체 유니타리 구성
+    for (int iq = 0; iq < nqubit; iq++) {
+        MatrixXcd alpha = QubitArray_getQubit_i_alpha(qa, iq);
+        MatrixXcd beta  = QubitArray_getQubit_i_beta(qa, iq);
+        std::cout << "alpha: \n" << alpha << std::endl;
+        std::cout << "beta : \n" << beta << std::endl;
+        exit(1);
+        if (alpha.size() == 0 || beta.size() == 0) {
+            fprintf(stderr, "[Error] alpha or beta not set for qubit %d\n", iq);
+            exit(EXIT_FAILURE);
+        }
+
+        MatrixXcd* sigmas = getGeneralPauliOperators(alpha, beta);
+        MatrixXcd ox = getPauliOperator(sigmas, 'X');
+        MatrixXcd oy = getPauliOperator(sigmas, 'Y');
+        MatrixXcd tempTDUpulse = cal_TDUpulse(qa, Hq, pulse, ox, oy, axis, angle, Ediff, detuning_factor, pulse->pulse_time, 10000);
+        U_total = kron(U_total, tempTDUpulse);
+
+        delete[] sigmas;
+    }
+
+    return U_total;
+}
+
+
 MatrixXcd cal_Upulse_when_pulseiter_isTrue(QubitArray* qa, Pulse* pulse, double angle, int ipulse) {
     int nqubit = QubitArray_getNqubit(qa);
     MatrixXcd U_total = MatrixXcd::Identity(1, 1); // 초기 유니타리 (1x1 단위행렬)
@@ -336,7 +375,9 @@ MatrixXcd cal_Upulse_when_pulseiter_isTrue_whenOnlyXPulse(QubitArray* qa, Pulse*
         }
         /////////////////////////////////////////////////////////////
         // -i*sigma_x_i
-        MatrixXcd Upulse_iq = ((-1.0) * doublec(0.0,1.0) * sigmaExpanded_x);
+        // MatrixXcd Upulse_iq = ((-1.0) * doublec(0.0,1.0) * sigmaExpanded_x); // Before 25.08.08
+        MatrixXcd exponent_iq = ((-1.0) * doublec(0.0,1.0) * sigmaExpanded_x * M_PI / 2.0); // Changed 25.08.08
+        MatrixXcd Upulse_iq = exponent_iq.exp(); // Changed 25.08.08
         Upulse = Upulse * Upulse_iq;
     }
     return Upulse;
@@ -441,12 +482,8 @@ void calTDUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse, MatrixXcd Hq
 
         } else{
             printf("There's code developed for pulse iter time-dependent pulse operator!\n");
+            Upulse = cal_Upulse_when_pulseiter_isTrue(qa, pulse, angle, ipulse);
             exit(1);
-            //if ((strcasecmp(pulse->pulsename, "CPMG") == 0) || (strcasecmp(pulse->pulsename, "HahnEcho") == 0) || (strcasecmp(pulse->pulsename, "Ramsey") == 0)){
-            //    Upulse = cal_Upulse_when_pulseiter_isTrue_whenOnlyXPulse(qa, pulse, angle);
-            //}else{
-            //    Upulse = cal_Upulse_when_pulseiter_isTrue(qa, pulse, angle, ipulse);
-            //}
         }
         Upulses[ipulse] = Upulse;
     }
@@ -471,17 +508,18 @@ MatrixXcd cal_TDUpulse(QubitArray* qa, MatrixXcd Hq, Pulse* pulse, MatrixXcd ox,
     const int qdim = ox.rows();
     double dt = ptime / static_cast<double>(Nstep);
 
-    // printf("Qubit Hamiltonian : \n");
-    // std::cout << Hq << std::endl;
-    // printf("\n");
-    // std::cout << "Pulse angle: " << pulse_angle << "  rad"  << std::endl;
-    // std::cout << "Omega_Rabi : " << Omega_Rabi  << "  rad*kHz" << std::endl;
-    // std::cout << "detuning   : " << detuning    << "  rad*kHz" << std::endl;
-    // std::cout << "Omega      : " << Omega       << "  rad*kHz" << std::endl;
-    // std::cout << "omega      : " << omega       << "  rad*kHz" << std::endl;
-    // std::cout << "phase      : " << phase                      << std::endl;
-    // std::cout << "Pulse Time : " << pulse_time << "  ns" << std::endl;
-    // std::cout << "dt         : " << dt*1e6 << "  ns" << std::endl;
+     printf("Qubit Hamiltonian : \n");
+     std::cout << Hq << std::endl;
+     printf("\n");
+     std::cout << "Pulse angle: " << pulse_angle << "  rad"  << std::endl;
+     std::cout << "Pulse Time : " << pulse_time << "  ns" << std::endl;
+     //std::cout << "dt         : " << dt*1e6 << "  ns" << std::endl;
+     std::cout << "w0         : " << Ediff*0.001  << "  rad*MHz" << std::endl;
+     std::cout << "Rabi       : " << Omega_Rabi*0.001  << "  rad*MHz" << std::endl;
+     std::cout << "w          : " << omega     *0.001  << "  rad*MHz" << std::endl;
+     std::cout << "Omega      : " << Omega     *0.001  << "  rad*MHz" << std::endl;
+     std::cout << "detuning   : " << detuning  *0.001  << "  rad*MHz" << std::endl;
+     //std::cout << "phase      : " << phase                      << std::endl;
 
     MatrixXcd TDUpulse = MatrixXcd::Identity(qdim, qdim);
     //MatrixXcd** qsigmas = QubitArray_PauliOperators(qa);
@@ -492,6 +530,8 @@ MatrixXcd cal_TDUpulse(QubitArray* qa, MatrixXcd Hq, Pulse* pulse, MatrixXcd ox,
         MatrixXcd U = ((-1.0) * doublec(0.0, 1.0) * H * dt).exp();
         TDUpulse = U * TDUpulse;  
     }
+    std::cout << "TDUpuslse : \n" << TDUpulse << std::endl;
+    //exit(1);
 
     return TDUpulse;
 }
