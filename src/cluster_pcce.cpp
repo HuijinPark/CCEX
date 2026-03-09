@@ -78,7 +78,7 @@ void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
         float rdipcut = Config_getRdipcut(config);
     
         // center >> cls->info for on
-        if (strcasecmp(cls->method, "pcce")==0){
+        if (strcasecmp(cls->method, "pcce")==0 || strcasecmp(cls->method, "pmecce")==0 || strcasecmp(cls->method, "pgcce")==0 || strcasecmp(cls->method, "pmegcce")==0){
             BathArray_connectivity_pcce(&cmap, &stmap, best_centers, rdip, rdipcut, ncenter);
             makeSparsemap(&spmap, cmap, ncenter);
             // main
@@ -357,6 +357,20 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
     for (int i=0; i<pcce_nspin; i++){
         best_assigned_idx[i] = global_best_inverse_assigned_idx[i];
     }
+
+    // Export partition assignments to file
+    if (rank == 0) {
+        FILE *pf = fopen("partition_assignments.dat", "w");
+        if (pf) {
+            fprintf(pf, "%d %d\n", pcce_nspin, ncenter);
+            for (int i = 0; i < pcce_nspin; i++) {
+                fprintf(pf, "%d\n", best_assigned_idx[i]);
+            }
+            fclose(pf);
+            printf("    Partition exported to partition_assignments.dat\n");
+        }
+    }
+
     MPI_Barrier(MPI_COMM_WORLD);
 
     //if (rank == 0){

@@ -51,13 +51,14 @@ int main(int argc, char* argv[]){
     char* fccein = NULL; 
 
     //Simulation objects
-    Config*      cnf = Config_init();
-    QubitArray*  qa  = QubitArray_init();
-    Cluster*     cls = Cluster_init();
-    BathArray*   ba  = BathArray_init();
-    DefectArray* dfa = DefectArray_init();
-    Pulse*       pls = Pulse_init();
-    Output*      op  = Output_init();
+    Config*            cnf = Config_init();
+    QubitArray*        qa  = QubitArray_init();
+    Cluster*           cls = Cluster_init();
+    BathArray*         ba  = BathArray_init();
+    DefectArray*       dfa = DefectArray_init();
+    Pulse*             pls = Pulse_init();
+    Output*            op  = Output_init();
+    JumpOperatorArray* joa = JumpOperatorArray_init();
 
     //=======================================================
     // Read options
@@ -101,6 +102,7 @@ int main(int argc, char* argv[]){
                 cJSON_readOptionCluster     (cls, fccein); // cluster.h
                 cJSON_readOptionPulse       (pls, fccein); // pulse.h
                 cJSON_readOptionOutput      (op,  fccein); // output.h
+                cJSON_readOptionJumpOperators(joa, fccein); // superoperator.h (ME-CCE)
 
                 if ( (strcasecmp(cls->method, "gCCE") == 0) && (strcasecmp(pls->pulsename, "Manual") == 0) ){
                     if (rank==0){
@@ -403,8 +405,13 @@ int main(int argc, char* argv[]){
     // reportClusinfo(localclusters,order);
     MPI_Barrier(MPI_COMM_WORLD);
 
+    // Report jump operators (ME-CCE)
+    if (rank==0 && JumpOperatorArray_getNjump(joa) > 0){
+        JumpOperatorArray_report(joa);
+    }
+
     // Calculate the dynamics
-    calculate(qa,ba,dfa,cnf,pls,cls,op,localclusters);
+    calculate(qa,ba,dfa,cnf,pls,cls,op,localclusters,joa);
     MPI_Barrier(MPI_COMM_WORLD);
 
     //=======================================================
@@ -418,6 +425,7 @@ int main(int argc, char* argv[]){
     DefectArray_freeAll(dfa);
     Pulse_freeAll(pls);
     Output_freeAll(op);
+    JumpOperatorArray_freeAll(joa);
 
     MPI_Barrier(MPI_COMM_WORLD);
     

@@ -69,8 +69,10 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
     // After clusterizing, 
     // the information would stored at cls.clusinfo
     ///////////////////////////////////////////////////////////////////
-    if (strcasecmp(method, "cce")==0 
-            || strcasecmp(method, "gcce")==0){
+    if (strcasecmp(method, "cce")==0
+            || strcasecmp(method, "gcce")==0
+            || strcasecmp(method, "mecce")==0
+            || strcasecmp(method, "megcce")==0){
 
         Cluster_setClusinfo_0th(cls);    // if order == 0
         Cluster_setClusinfo_1th(cls,ba); // if order == 1
@@ -92,11 +94,11 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
 
         }
     } 
-    else if (strcasecmp(method, "pcce")==0){
-        // Clusterize for all order 
+    else if (strcasecmp(method, "pcce")==0 || strcasecmp(method, "pmecce")==0 || strcasecmp(method, "pgcce")==0 || strcasecmp(method, "pmegcce")==0){
+        // Clusterize for all order
         // and Solve tilde (Division) of coherence function
         // Args Returns : cls->clusinfo (new address)
-        clusterizePcce(cls, ba, config); 
+        clusterizePcce(cls, ba, config);
     }
     else if (  strcmp(method, "dsj")==0 
              || strcmp(method, "itb")==0
@@ -125,7 +127,7 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config){
     //    freeHashCluster(&hashClusters, order);
     //}
 
-    if (strcasecmp(method, "gcce")!=0){
+    if (strcasecmp(method, "gcce")!=0 && strcasecmp(method, "megcce")!=0 && strcasecmp(method, "pgcce")!=0 && strcasecmp(method, "pmegcce")!=0){
         Cluster_setClusinfo_chgiter(cls, 0, 0, 0);
     }
 }
@@ -148,7 +150,7 @@ void Cluster_report(Cluster* cls){
     printStructElementChar("method",cls->method);
     printStructElementBool("addsubclus",Cluster_getAddsubclus(cls));
 
-    if (strcasecmp(cls->method,"pcce")==0){
+    if (strcasecmp(cls->method,"pcce")==0 || strcasecmp(cls->method,"pmecce")==0 || strcasecmp(cls->method,"pgcce")==0 || strcasecmp(cls->method,"pmegcce")==0){
         printSubTitle("Conduct pCCE method");
         printStructElementInt("max_trial",Cluster_getMax_trial(cls));
         printStructElementInt("max_iter",Cluster_getMax_iter(cls));

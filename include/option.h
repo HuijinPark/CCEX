@@ -9,6 +9,7 @@
 #include "output.h"
 #include "json.h"
 #include "utilities.h"
+#include "superoperator.h"
 
 
 void cJSON_readOptionConfig(Config* cnf, char* fccein); // general.h
@@ -18,6 +19,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein); // cluster.h
 void cJSON_readOptionPulse(Pulse* pulse, char* fccein); // pulse.h
 void cJSON_readOptionOutput(Output* output, char* fccein); // output.h
 void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein); // defect.h
+void cJSON_readOptionJumpOperators(JumpOperatorArray* joa, char* fccein); // superoperator.h (ME-CCE)
 
 char* cJSON_ReadFccein(char* fccein);
 char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_value);

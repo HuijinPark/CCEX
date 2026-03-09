@@ -279,8 +279,8 @@ int     Config_getQd_readmode(Config* cnf){
 // set 
 void Config_setMethod(Config* cnf, char* method){
 
-    const int opsize = 7;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"gCCE","CCE","dsj","itb","dsjitb","pCCE"};
+    const int opsize = 12;
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"gCCE","CCE","dsj","itb","dsjitb","pCCE","meCCE","megCCE","pmeCCE","pgCCE","pmegCCE"};
 
     int idx = findIndexCharFix(options,0,opsize-1,method);
     if (idx == -1) {

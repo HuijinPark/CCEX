@@ -1,0 +1,40 @@
+{
+    "method": "mecce",
+    "quantity": "coherence",
+    "qubitfile": "/Users/istblue/Desktop/codes/CCEX/test/mecce_test/qubit_espin",
+    "gyrofile": "/Users/istblue/Desktop/codes/CCEX/test/mecce_test/gyro_espin",
+    "bathfile": [
+        "/Users/istblue/Desktop/codes/CCEX/test/mecce_test/bath_espin"
+    ],
+    "order": 2,
+    "bfield": 300,
+    "rbath": 1400,
+    "rdip": 700,
+    "deltat": 0.04,
+    "nstep": 50,
+    "nstate": 0,
+    "qspin": 1.0,
+    "qalphams": -1,
+    "qbetams": 0,
+    "addsubclus": true,
+    "nk": [
+        0,
+        0,
+        0
+    ],
+    "npulse": 1,
+    "savemode": "normal",
+    "outfile": "/Users/istblue/Desktop/codes/CCEX/test/mecce_test/ccex_mecce_espin",
+    "jump_operators": [
+        {
+            "bath_name": "e",
+            "operator": "-+",
+            "rate": 0.00015915494309189535
+        },
+        {
+            "bath_name": "e",
+            "operator": "+-",
+            "rate": 0.00015915494309189535
+        }
+    ]
+}

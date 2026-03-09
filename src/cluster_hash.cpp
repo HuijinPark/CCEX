@@ -58,14 +58,13 @@ void freeHashCluster(HashCluster** hashClusters, int order){
 
     for (int n=1; n<order+1; n++){
         HashCluster *existingClusters = findCluster(*hashClusters,n);
+        if (existingClusters == NULL) continue;
         Property *existingCluster, *tmp;
-        if (existingClusters != NULL){
-            HASH_ITER(hh,existingClusters->prop, existingCluster, tmp)
-            {
-                free(existingCluster->spins);
-                free((char*)existingCluster->id);
-                HASH_DEL(existingClusters->prop,existingCluster);
-            }
+        HASH_ITER(hh,existingClusters->prop, existingCluster, tmp)
+        {
+            free(existingCluster->spins);
+            free((char*)existingCluster->id);
+            HASH_DEL(existingClusters->prop,existingCluster);
         }
         free(existingClusters->prop);
         free((char*)existingClusters->N);
@@ -217,7 +216,10 @@ void makeHashClusterO2(HashCluster** hashclusters, int nspin, int** spmap, float
             }
         }
     }
-    HASH_SORT(findCluster(*hashclusters,2)->prop,by_strength);
+    HashCluster *o2clusters = findCluster(*hashclusters,2);
+    if (o2clusters != NULL && o2clusters->prop != NULL){
+        HASH_SORT(o2clusters->prop,by_strength);
+    }
 }
 
 
@@ -312,9 +314,12 @@ void makeHashClusterOn(HashCluster** hashclusters, int order, int nspin, int** s
 
                 free(possibleSpins);
             }
-            HASH_SORT(findCluster(*hashclusters,n)->prop,by_strength);
-            //HASH_DELETE(hh2,potentialClusters,strongCluster);
-            //printProperties(findCluster(*hashclusters,n)->prop); 
+            {
+                HashCluster *onClusters = findCluster(*hashclusters,n);
+                if (onClusters != NULL && onClusters->prop != NULL){
+                    HASH_SORT(onClusters->prop,by_strength);
+                }
+            }
             /////////////////////////////////////////////////////////
             //
             //  Cut the number of clusters up to Nk
@@ -693,6 +698,7 @@ void solveTilde(HashCluster** hashclusters,Cluster* CCE, int nspin){
  
     for (int n=CCE->order; n>=1; n--){
         HashCluster *existingClusters = findCluster(*hashclusters,n);
+        if (existingClusters == NULL) continue;
         Property *existingCluster, *tmp;
 
         int nClusInfo = 1;

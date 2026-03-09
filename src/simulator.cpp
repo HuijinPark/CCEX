@@ -3,7 +3,7 @@
 #include "../include/memory.h"
 #include "../include/reader.h"
 
-void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pulse* pls, Cluster* cls, Output* op, int*** localclusters){
+void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pulse* pls, Cluster* cls, Output* op, int*** localclusters, JumpOperatorArray* joa){
 
     char message[500];
 
@@ -31,18 +31,42 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     int order = Cluster_getOrder(cls);
     int iter_0th = Cluster_getClusinfo_iter(cls,0,0);
     bool isGCCE = false;
-    
+    bool isMECCE = false;
+    bool isMEGCCE = false;
+    bool isPMECCE = false;
+    bool isPGCCE = false;
+    bool isPMEGCCE = false;
+
     ////////////////////////////////
     // Print the calculation method
     ////////////////////////////////
 
-    // gCCE or conventional CCE
+    // gCCE or conventional CCE or ME-CCE or ME-gCCE or pME-CCE
     if (strcasecmp(method,"gcce")==0 && iter_0th==0){
         // gCCE method requires the 0th cluster
         fprintf(stderr,"Error : calculate,, gCCE method requires the 0th cluster\n");
         exit(1);
     }else if (strcasecmp(method,"gcce")==0 && iter_0th>0){
         isGCCE = true;
+    }else if (strcasecmp(method,"mecce")==0){
+        isMECCE = true;
+    }else if (strcasecmp(method,"megcce")==0 && iter_0th==0){
+        fprintf(stderr,"Error : calculate,, ME-gCCE method requires the 0th cluster\n");
+        exit(1);
+    }else if (strcasecmp(method,"megcce")==0 && iter_0th>0){
+        isMEGCCE = true;
+    }else if (strcasecmp(method,"pmecce")==0){
+        isPMECCE = true;
+    }else if (strcasecmp(method,"pgcce")==0 && iter_0th==0){
+        fprintf(stderr,"Error : calculate,, pgCCE method requires the 0th cluster\n");
+        exit(1);
+    }else if (strcasecmp(method,"pgcce")==0 && iter_0th>0){
+        isPGCCE = true;
+    }else if (strcasecmp(method,"pmegcce")==0 && iter_0th==0){
+        fprintf(stderr,"Error : calculate,, pmegCCE method requires the 0th cluster\n");
+        exit(1);
+    }else if (strcasecmp(method,"pmegcce")==0 && iter_0th>0){
+        isPMEGCCE = true;
     }
     
     MPI_Barrier(MPI_COMM_WORLD);
@@ -206,7 +230,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             MatrixXcd* result_0th_inv = new MatrixXcd[nstep];
 
             int dim = 0;
-            if (isGCCE && strcasecmp(quantity,"dm")==0){
+            if ((isGCCE || isMEGCCE || isPGCCE || isPMEGCCE) && strcasecmp(quantity,"dm")==0){
                 dim = QubitArray_dim(qa);
             }else{
                 dim = 1;
@@ -224,13 +248,17 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             double steptime_sta = MPI_Wtime();
             double steptime_end = 0.0;
 
-            if (isGCCE){ // gcce
+            if (isGCCE || isMEGCCE || isPGCCE || isPMEGCCE){ // gcce or megcce or pgcce or pmegcce
                 // Zero-th order
                 if (rank==0){
                     printf("\n");
                     printSubTitle("Calculate 0-th cluster...");
                 }
-                result_0th = calCoherenceGcce(qa,NULL,cnf,pls,op);
+                if (isMEGCCE || isPMEGCCE){
+                    result_0th = calCoherenceMegcce(qa,NULL,cnf,pls,op,joa);
+                } else { // isGCCE or isPGCCE
+                    result_0th = calCoherenceGcce(qa,NULL,cnf,pls,op);
+                }
                 for (int istep=0; istep<nstep; istep++){
                     result_0th_inv[istep] = powMatrixXcdElementWise(result_0th[istep],-1);
                 }
@@ -279,9 +307,13 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     // BathArray_report(ba_cluster);
 
                     // Calculate the coherence
-                    if (isGCCE){ // gcce
-                        result_nth = calCoherenceGcce(qa, ba_cluster, cnf, pls,op);
-                    }else{ // cce
+                    if (isMECCE || isPMECCE){ // mecce or pmecce
+                        result_nth = calCoherenceMecce(qa, ba_cluster, cnf, pls, joa);
+                    }else if (isMEGCCE || isPMEGCCE){ // megcce or pmegcce
+                        result_nth = calCoherenceMegcce(qa, ba_cluster, cnf, pls, op, joa);
+                    }else if (isGCCE || isPGCCE){ // gcce or pgcce
+                        result_nth = calCoherenceGcce(qa, ba_cluster, cnf, pls, op);
+                    }else{ // cce, pcce
                         result_nth = calCoherenceCce(qa, ba_cluster, cnf, pls);
                     }
 
@@ -382,7 +414,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             ////////////////////////////////
             if (rank == 0){
                 std::complex<double> normalization;
-                if ( strcasecmp(quantity,"coherence")==0 && isGCCE){
+                if ( strcasecmp(quantity,"coherence")==0 && (isGCCE || isMEGCCE || isPGCCE || isPMEGCCE)){
                     normalization = result_wD_all[0].coeff(0);
                 }else{
                     normalization = std::complex<double>(1, 0);

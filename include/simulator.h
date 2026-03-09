@@ -10,17 +10,20 @@
 #include "pulse.h"
 #include "cluster.h"
 #include "general.h"
+#include "superoperator.h"
 
 //MatrixXcd cal_Upulse_withDetuning(QubitArray* qa, Pulse* pulse, double angle, MatrixXcd sigma, MatrixXcd sigma_z);
 void calUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse);
 void calbUpulses(MatrixXcd* Upulses, BathArray* ba, Pulse* pulse);
 void calTDUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse, MatrixXcd Hq);
-void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cc, Pulse* pulse, Cluster* cluster, Output* output, int*** localClusters);
+void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cc, Pulse* pulse, Cluster* cluster, Output* output, int*** localClusters, JumpOperatorArray* joa);
 
 BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* dfa, int nqubit);
 
 MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op);
 MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls);
+MatrixXcd* calCoherenceMecce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, JumpOperatorArray* joa);
+MatrixXcd* calCoherenceMegcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op, JumpOperatorArray* joa);
 
 MatrixXcd calPropagatorGcce(QubitArray* qa, BathArray* ba, MatrixXcd Htot, Pulse* pls, double tfree, MatrixXcd* Upulses, MatrixXcd* bUpulses);
 

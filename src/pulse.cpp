@@ -24,7 +24,7 @@ Pulse* Pulse_init(){
     // For "time-dependent Qubit spins' pulse operator" 
     pulse->pulsename[0] = '\0';
     pulse->pulse_time   = 0.0;
-    pulse->detuning_factor = 0.0;
+    pulse->detuning_factor = 1.0;
 
     // Bath spin pulse operator
     pulse->bnpulse             =    0;

@@ -38,7 +38,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         printMessage("    [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
     }
     char* method = cJSON_ReadString(root,"method",true,"cce");
-    Config_setMethod(cnf,method); // Current possible options : cce, gcce, pcce, dsj, dsjitb, itb
+    Config_setMethod(cnf,method); // Current possible options : cce, gcce, pcce, dsj, dsjitb, itb, mecce, megcce, pmecce
 
     char* quantity = cJSON_ReadString(root,"quantity",true,"coherence");
     Config_setQuantity(cnf,quantity); // Current possible options : coherence, noise, dm
@@ -544,7 +544,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     // all element would be "0" in which we consider all pairs within rdip
 
 
-    if (strcasecmp(Cluster_getMethod(clus),"pcce") == 0){
+    if (strcasecmp(Cluster_getMethod(clus),"pcce") == 0 || strcasecmp(Cluster_getMethod(clus),"pmecce") == 0 || strcasecmp(Cluster_getMethod(clus),"pgcce") == 0 || strcasecmp(Cluster_getMethod(clus),"pmegcce") == 0){
 
         if (rank==0){
             printMessage("  [ sK , max_trial, max_iter, kmeans_pp, iter_detail ] \n");
@@ -1749,4 +1749,90 @@ void build_tot_sequence(Pulse* pulse, double*** total_sequence, double** total_f
         (*total_sequence)[i][1] = tempfrac;
         (*total_sequence)[i][2] = (*total_fracs)[i];
     }
+}
+
+
+/**
+ * @brief Read jump operator options for ME-CCE from the input JSON file
+ * @details Reads the "jump_operators" array from the JSON input.
+ *          Each element should have: "bath_name", "operator", "rate"
+ *
+ * Example JSON:
+ * {
+ *     "jump_operators": [
+ *         {"bath_name": "E_up",   "operator": "+-", "rate": 0.001},
+ *         {"bath_name": "E_up",   "operator": "z",  "rate": 0.002},
+ *         {"bath_name": "E_down", "operator": "+-", "rate": 0.001}
+ *     ]
+ * }
+ *
+ * @note Rate unit in input file: MHz (converted to radkHz internally)
+ */
+void cJSON_readOptionJumpOperators(JumpOperatorArray* joa, char* fccein){
+
+    char* data = cJSON_ReadFccein(fccein);
+    cJSON* root = cJSON_Parse(data);
+
+    if (root == NULL){
+        freeChar1d(&data);
+        return; // No JSON or parse error - just return with empty joa
+    }
+
+    cJSON* jumpArray = cJSON_GetObjectItem(root, "jump_operators");
+    if (jumpArray == NULL || !cJSON_IsArray(jumpArray)){
+        // No jump operators defined - this is fine for non-ME-CCE methods
+        cJSON_Delete(root);
+        freeChar1d(&data);
+        return;
+    }
+
+    // Count the number of jump operators
+    int njump = 0;
+    cJSON* item;
+    cJSON_ArrayForEach(item, jumpArray){ njump++; }
+
+    if (njump == 0){
+        cJSON_Delete(root);
+        freeChar1d(&data);
+        return;
+    }
+
+    if (rank == 0){
+        printf("\n");
+        printMessage("Read Jump Operator Options (ME-CCE) ...");
+        char msg[200];
+        snprintf(msg, 200, "  Found %d jump operator(s)\n", njump);
+        printMessage(msg);
+    }
+
+    // Allocate
+    JumpOperatorArray_alloc(joa, njump);
+
+    // Read each jump operator
+    int idx = 0;
+    cJSON_ArrayForEach(item, jumpArray){
+        char* bath_name = cJSON_ReadString(item, "bath_name", false, NULL);
+        char* op_type   = cJSON_ReadString(item, "operator",  false, NULL);
+        double rate     = cJSON_ReadDouble(item, "rate",      false, 0.0);
+
+        if (bath_name == NULL || op_type == NULL){
+            fprintf(stderr, "Error: jump_operators[%d] must have 'bath_name' and 'operator' fields\n", idx);
+            exit(EXIT_FAILURE);
+        }
+
+        // Convert rate from MHz to radkHz
+        double rate_radkhz = MHZ_TO_RADKHZ(rate);
+
+        JumpOperatorArray_setOp(joa, idx, bath_name, op_type, rate_radkhz);
+
+        if (rank == 0){
+            printf("    [%d] bath_name: %s, operator: %s, rate: %.6e MHz (%.6e radkHz)\n",
+                   idx, bath_name, op_type, rate, rate_radkhz);
+        }
+
+        idx++;
+    }
+
+    cJSON_Delete(root);
+    freeChar1d(&data);
 }
