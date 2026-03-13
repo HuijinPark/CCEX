@@ -47,8 +47,8 @@
 
 | Bath | Operator | Rate (MHz) | Rate (rad/ms) |
 |------|----------|------------|----------------|
-| e (electron) | S⁺ (op: `"-+"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
-| e (electron) | S⁻ (op: `"+-"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
+| e (electron) | S⁺ ( op: `"+"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
+| e (electron) | S⁻ (op: `"-"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
 
 ### Verification Criterion
 - ME-CCE(rate=0) vs CCE: **max|diff| < 1×10⁻⁶** → PASS
@@ -79,8 +79,8 @@
 
 | Bath | Operator | Rate (MHz) | Rate (rad/ms) |
 |------|----------|------------|----------------|
-| e (electron) | S⁺ (op: `"-+"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
-| e (electron) | S⁻ (op: `"+-"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
+| e (electron) | S⁺ ( op: `"+"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
+| e (electron) | S⁻ (op: `"-"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
 
 ### Verification Criterion
 - ME-gCCE(rate=0) vs gCCE: **max|diff| < 1×10⁻⁶** → PASS
@@ -125,8 +125,8 @@
 
 | Bath | Operator | Rate (MHz) | Rate (rad/ms) |
 |------|----------|------------|----------------|
-| e (electron) | S⁺ (op: `"-+"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
-| e (electron) | S⁻ (op: `"+-"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
+| e (electron) | S⁺ ( op: `"+"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
+| e (electron) | S⁻ (op: `"-"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
 
 ### Verification Criterion
 - pmeCCE(rate=0) vs pCCE: **max|diff| < 1×10⁻⁶** → PASS
@@ -204,8 +204,8 @@
 
 | Bath | Operator | Rate (MHz) | Rate (rad/ms) |
 |------|----------|------------|----------------|
-| e (electron) | S⁺ (op: `"-+"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
-| e (electron) | S⁻ (op: `"+-"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
+| e (electron) | S⁺ ( op: `"+"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
+| e (electron) | S⁻ (op: `"-"`) | 1/(2π × 1000) ≈ 1.592 × 10⁻⁴ | 1.0 |
 
 ### Verification Criterion
 - pmegCCE(rate=0) vs pgCCE: **max|diff| < 1×10⁻⁶** → PASS

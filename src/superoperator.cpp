@@ -125,7 +125,7 @@ MatrixXcd get_jump_operator_matrix(const char* op_type, int dim, double rate){
     MatrixXcd op = MatrixXcd::Zero(dim, dim);
     double sqrt_rate = std::sqrt(rate);
 
-    if (strcasecmp(op_type, "+-") == 0){
+    if (strcasecmp(op_type, "-") == 0){
         // Lowering operator: sigma_-
         // For spin-1/2: |0><1| (maps |up> to |down>)
         // General: S_- with matrix elements <m-1|S_-|m> = sqrt(S(S+1) - m(m-1))
@@ -139,7 +139,7 @@ MatrixXcd get_jump_operator_matrix(const char* op_type, int dim, double rate){
             op(i, i - 1) = sqrt_rate * std::sqrt(S * (S + 1) - m_val * (m_val - 1));
         }
     }
-    else if (strcasecmp(op_type, "-+") == 0){
+    else if (strcasecmp(op_type, "+") == 0){
         // Raising operator: sigma_+ = (sigma_-)†
         double S = (dim - 1.0) / 2.0;
         MatrixXcd Sminus = MatrixXcd::Zero(dim, dim);

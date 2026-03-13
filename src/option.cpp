@@ -1760,9 +1760,9 @@ void build_tot_sequence(Pulse* pulse, double*** total_sequence, double** total_f
  * Example JSON:
  * {
  *     "jump_operators": [
- *         {"bath_name": "E_up",   "operator": "+-", "rate": 0.001},
+ *         {"bath_name": "E_up",   "operator": "-", "rate": 0.001},
  *         {"bath_name": "E_up",   "operator": "z",  "rate": 0.002},
- *         {"bath_name": "E_down", "operator": "+-", "rate": 0.001}
+ *         {"bath_name": "E_down", "operator": "-", "rate": 0.001}
  *     ]
  * }
  *

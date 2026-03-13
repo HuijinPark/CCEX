@@ -67,7 +67,7 @@ MatrixXcd collapse_superoperator_single(const MatrixXcd& C);
 
 /**
  * @brief Get the operator matrix from operator type string for given spin dimension
- * @param op_type Operator type string: "+-", "-+", "z", "x", "y"
+ * @param op_type Operator type string: "-", "+", "z", "x", "y"
  * @param dim Hilbert space dimension of the spin (2S+1)
  * @param rate Square root of the rate is multiplied to the operator
  */
