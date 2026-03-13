@@ -22,10 +22,12 @@
  * ================================================================ */
 
 /**
- * @brief Build incoherent superoperator for bath jump operators in qubit x bath space
- * @details Jump operators act on bath spins: C_full = I_qubit x C_bath
+ * @brief Build incoherent superoperator for jump operators in qubit x bath space
+ * @details Handles two types:
+ *   - bath_name = "center": qubit jump operator, C_full = C_qubit x I_bath
+ *   - otherwise: bath spin jump operator, C_full = I_qubit x C_bath
  */
-static MatrixXcd incoherent_superoperator_megcce(BathArray* ba, MatrixXcd** bsigmas,
+static MatrixXcd incoherent_superoperator_megcce(QubitArray* qa, BathArray* ba, MatrixXcd** bsigmas,
                                                   JumpOperatorArray* joa, int bdim, int qdim){
     int totdim = qdim * bdim;
     int N2 = totdim * totdim;
@@ -37,12 +39,24 @@ static MatrixXcd incoherent_superoperator_megcce(BathArray* ba, MatrixXcd** bsig
 
     int nspin = BathArray_getNspin(ba);
     MatrixXcd Iq = MatrixXcd::Identity(qdim, qdim);
+    MatrixXcd Ib = MatrixXcd::Identity(bdim, bdim);
 
     for (int ij = 0; ij < joa->njump; ij++){
         const char* target_name = joa->ops[ij]->bath_name;
         const char* op_type = joa->ops[ij]->op_type;
         double rate = joa->ops[ij]->rate;
 
+        // Qubit jump operator: bath_name = "qubit" or matches an actual qubit name
+        bool isQubit = (strcasecmp(target_name, "qubit") == 0 ||
+                        QubitArray_getQubitIdx_fromName(qa, target_name) >= 0);
+        if (isQubit){
+            MatrixXcd C_q    = get_jump_operator_matrix(op_type, qdim, rate);
+            MatrixXcd C_full = kron(C_q, Ib);
+            L_incoh += collapse_superoperator_single(C_full);
+            continue;
+        }
+
+        // Bath spin jump operators: C_full = I_qubit x C_bath
         for (int ib = 0; ib < nspin; ib++){
             char* spin_name = BathArray_getBath_i_name(ba, ib);
 
@@ -202,8 +216,8 @@ MatrixXcd* calCoherenceMegcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse*
 
     // Incoherent part: dissipators from jump operators on bath spins
     MatrixXcd L_incoh;
-    if (nspin > 0 && joa != NULL && joa->njump > 0){
-        L_incoh = incoherent_superoperator_megcce(ba, bsigmas, joa, bdim, qdim);
+    if (joa != NULL && joa->njump > 0){
+        L_incoh = incoherent_superoperator_megcce(qa, ba, bsigmas, joa, bdim, qdim);
     } else {
         int N2 = totdim * totdim;
         L_incoh = MatrixXcd::Zero(N2, N2);

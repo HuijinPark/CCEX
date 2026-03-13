@@ -3,6 +3,44 @@
 #include "../include/superoperator.h"
 #include <iostream>
 
+/**
+ * @brief Qubit incoherent superoperator for ME-CCE (secular approximation)
+ * @details For qubit jump operator C_q, the contribution to d(rho_tilde)/dt
+ *          where rho_tilde = <alpha|rho|beta> is:
+ *          [ <a|C_q|a><b|C_q|b>* - 1/2<a|C†C|a> - 1/2<b|C†C|b> ] * rho_tilde
+ *          which is a scalar × I in superoperator space.
+ *          Use bath_name = "center" in jump_operators to target the qubit.
+ */
+static MatrixXcd qubit_incoherent_superoperator_mecce(QubitArray* qa, JumpOperatorArray* joa, int N2){
+    MatrixXcd L_qubit = MatrixXcd::Zero(N2, N2);
+    if (joa == NULL || joa->njump == 0) return L_qubit;
+
+    int qdim = QubitArray_dim(qa);
+    MatrixXcd psia = QubitArray_getPsia(qa);
+    MatrixXcd psib = QubitArray_getPsib(qa);
+
+    for (int ij = 0; ij < joa->njump; ij++){
+        bool isQubit = (strcasecmp(joa->ops[ij]->bath_name, "qubit") == 0 ||
+                        QubitArray_getQubitIdx_fromName(qa, joa->ops[ij]->bath_name) >= 0);
+        if (!isQubit) continue;
+
+        const char* op_type = joa->ops[ij]->op_type;
+        double rate = joa->ops[ij]->rate;
+
+        MatrixXcd C_q   = get_jump_operator_matrix(op_type, qdim, rate);
+        MatrixXcd CdagC = C_q.adjoint() * C_q;
+
+        doublec caa      = (psia.adjoint() * C_q   * psia)(0,0);
+        doublec cbb_conj = std::conj((psib.adjoint() * C_q   * psib)(0,0));
+        doublec cdcaa    = (psia.adjoint() * CdagC * psia)(0,0);
+        doublec cdcbb    = (psib.adjoint() * CdagC * psib)(0,0);
+
+        doublec coeff = caa * cbb_conj - 0.5 * cdcaa - 0.5 * cdcbb;
+        L_qubit += coeff * MatrixXcd::Identity(N2, N2);
+    }
+    return L_qubit;
+}
+
 MatrixXcd *calCoherenceMecce(QubitArray *qa, BathArray *ba, Config *cnf,
                              Pulse *pls, JumpOperatorArray *joa) {
 
@@ -41,15 +79,19 @@ MatrixXcd *calCoherenceMecce(QubitArray *qa, BathArray *ba, Config *cnf,
   // Coherent part: projected superoperator
   MatrixXcd L_coh = projected_coherent_superoperator(Halpha, Hbeta);
 
-  // Incoherent part: dissipators from jump operators
+  // Incoherent part: bath spin dissipators
   MatrixXcd L_incoh = incoherent_superoperator(ba, bsigmas, joa, bdim);
 
+  // Incoherent part: qubit (center) dissipators — scalar × I contribution
+  MatrixXcd L_qubit = qubit_incoherent_superoperator_mecce(qa, joa, bdim * bdim);
+
   // Total Lindbladian
-  MatrixXcd L = L_coh + L_incoh;
+  MatrixXcd L = L_coh + L_incoh + L_qubit;
 
   // Flipped Lindbladian (swap alpha/beta) for CPMG
+  // L_qubit is symmetric under alpha<->beta swap, so it stays the same
   MatrixXcd L_flipped =
-      projected_coherent_superoperator(Hbeta, Halpha) + L_incoh;
+      projected_coherent_superoperator(Hbeta, Halpha) + L_incoh + L_qubit;
 
   ////////////////////////////////
   // Initial state
