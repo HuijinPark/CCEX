@@ -49,9 +49,15 @@ Usage
     ./compare.py -l                    list version folders
     ./compare.py -h                    this text
 
-Metric
+Output
 ------
-One RMS per (calculation, quantity), always over the COMPLEX coherence:
+Two figures per comparison, plus the tables they were drawn from:
+
+    rms_<target>_vs_<ref>.png     accuracy -- did the numbers move?
+    wall_<target>_vs_<ref>.png    cost     -- did it get faster?
+
+Accuracy is one RMS per (calculation, quantity), always over the COMPLEX
+coherence:
 
     RMS = sqrt( sum_i |L_ref(t_i) - L_new(t_i)|^2 / N )
 
@@ -59,9 +65,17 @@ A calculation is one test at one nstate.  The four quantities are the raw
 CCEX outputs _noDiv and _wiDiv, the analyzer's error-corrected _ErrCorr,
 and the ensemble average EnsAvg.  When a calculation has several bath
 configurations, all of their points are pooled into that one RMS.
+
+Cost is the wall time from the '[run] ... wall=..s' footer each job writes
+into its .process file, summed over the configurations of a calculation.
+Those files can grow to many GB, so only their last 32 kB is ever read.
+The figure shows absolute times on a log axis and the speedup ref/new per
+calculation; it is one run per calculation, so treat small ratios as noise.
 """
 
 import argparse
+import os
+import re
 import shutil
 import subprocess
 import sys
@@ -150,6 +164,41 @@ def load_coherence(path):
     return np.asarray(t), np.asarray(z, dtype=complex)
 
 
+RUN_FOOTER = re.compile(r"\[run\]\s+exit=(\d+)\s+cores=(\d+)\s+wall=([0-9.]+)s")
+
+
+def read_wall(path, tail_bytes=32768):
+    """Last '[run] exit=.. cores=.. wall=..s' footer of a .process file.
+
+    Seek-based on purpose: a .process file can reach many GB, and the footer is
+    always at the end, so never read the whole thing.
+    """
+    size = os.path.getsize(path)
+    with open(path, "rb") as fh:
+        fh.seek(max(0, size - tail_bytes))
+        tail = fh.read().decode("utf-8", "replace")
+    last = None
+    for m in RUN_FOOTER.finditer(tail):
+        last = m
+    if last is None:
+        return None
+    return {"exit": int(last.group(1)), "cores": int(last.group(2)),
+            "wall": float(last.group(3))}
+
+
+def wall_for_calculation(nstate_dir):
+    """Total wall over every .process of one calculation, plus the core counts."""
+    total, cores, n = 0.0, set(), 0
+    for p in sorted(nstate_dir.glob("*.process")):
+        got = read_wall(p)
+        if got is None:
+            continue
+        total += got["wall"]
+        cores.add(got["cores"])
+        n += 1
+    return (total, cores, n) if n else (None, cores, 0)
+
+
 def rms_for_calculation(ref_raw, tgt_raw):
     """{quantity: (rms, npoints, note)} pooling every file of that quantity."""
     acc = {q: {"sq": 0.0, "n": 0, "note": ""} for q in QUANTITIES}
@@ -186,7 +235,7 @@ def rms_for_calculation(ref_raw, tgt_raw):
 
 
 def compare(target, ref):
-    """[(test, nstate, {quantity: (rms, n, note)}), ...]"""
+    """[(test, nstate, {quantity: (rms, n, note)}, wall_ref, wall_tgt, cores), ...]"""
     ref_calcs = calculations(ref)
     if not ref_calcs:
         sys.exit(f"ERROR: reference '{ref}' has no results. Run its test.sh first.")
@@ -194,23 +243,31 @@ def compare(target, ref):
     rows = []
     for test, nstate, ref_raw in ref_calcs:
         tgt_raw = HERE / target / test / "results" / nstate / "raw"
+        wr, cr, _ = wall_for_calculation(ref_raw.parent)
         if not tgt_raw.is_dir():
-            rows.append((test, nstate, {q: (None, 0, "not run") for q in QUANTITIES}))
+            rows.append((test, nstate,
+                         {q: (None, 0, "not run") for q in QUANTITIES}, wr, None, cr))
             continue
-        rows.append((test, nstate, rms_for_calculation(ref_raw, tgt_raw)))
+        wt, ct, _ = wall_for_calculation(tgt_raw.parent)
+        rows.append((test, nstate, rms_for_calculation(ref_raw, tgt_raw),
+                     wr, wt, cr | ct))
     return rows
 
 
 # --------------------------------------------------------------------------
 # reporting
 # --------------------------------------------------------------------------
+def calc_label(test, nstate):
+    return f"{test}/{nstate}"
+
+
 def print_table(rows, target, ref):
-    wide = max(len(f"{t}/{n}") for t, n, _ in rows)
+    wide = max(len(calc_label(t, n)) for t, n, *_ in rows)
     head = f"  {'calculation':<{wide}}  " + "  ".join(f"{q:>11}" for q in QUANTITIES)
     print(f"\nRMS |dL|   {target} vs {ref}\n")
     print(head)
     print("  " + "-" * (len(head) - 2))
-    for test, nstate, res in rows:
+    for test, nstate, res, *_ in rows:
         cells = []
         for q in QUANTITIES:
             rms, _, note = res[q]
@@ -220,21 +277,57 @@ def print_table(rows, target, ref):
                 cells.append(f"{'0 (exact)':>11}")
             else:
                 cells.append(f"{rms:>11.3e}")
-        print(f"  {test + '/' + nstate:<{wide}}  " + "  ".join(cells))
+        print(f"  {calc_label(test, nstate):<{wide}}  " + "  ".join(cells))
 
-    vals = [r[0] for _, _, res in rows for r in res.values() if r[0] is not None]
+    vals = [r[0] for _, _, res, *_ in rows for r in res.values() if r[0] is not None]
     if vals:
         print(f"\n  max RMS = {max(vals):.3e}   ({sum(v == 0 for v in vals)}"
               f"/{len(vals)} comparisons are exactly 0)")
 
 
+def print_wall_table(rows, target, ref):
+    usable = [r for r in rows if r[3] and r[4]]
+    if not usable:
+        print("\n  (no wall times: .process footers missing on one side)")
+        return None
+
+    wide = max(len(calc_label(t, n)) for t, n, *_ in rows)
+    print(f"\nwall time [s]   {target} vs {ref}\n")
+    print(f"  {'calculation':<{wide}}  {ref[:11]:>11}  {target[:11]:>11}  "
+          f"{'speedup':>8}")
+    print("  " + "-" * (wide + 36))
+    for test, nstate, _, wr, wt, cores in rows:
+        lab = calc_label(test, nstate)
+        if not wr or not wt:
+            print(f"  {lab:<{wide}}  {'-' if not wr else f'{wr:.2f}':>11}  "
+                  f"{'-' if not wt else f'{wt:.2f}':>11}  {'-':>8}")
+            continue
+        print(f"  {lab:<{wide}}  {wr:>11.2f}  {wt:>11.2f}  {wr / wt:>7.3f}x")
+
+    tr = sum(r[3] for r in usable)
+    tt = sum(r[4] for r in usable)
+    print("  " + "-" * (wide + 36))
+    print(f"  {'total':<{wide}}  {tr:>11.2f}  {tt:>11.2f}  {tr / tt:>7.3f}x")
+
+    allcores = set().union(*(r[5] for r in usable))
+    if len(allcores) > 1:
+        print(f"\n  !! core counts differ across runs ({sorted(allcores)})"
+              f" -- the comparison is not apples to apples")
+    print("  note: single run per calculation, so small ratios are within noise")
+    return tr / tt
+
+
+def short_labels(rows):
+    return [f"{t.replace('Diamond_NV_', '')}\n{n}" for t, n, *_ in rows]
+
+
 def plot(rows, target, ref, out_png):
-    labels = [f"{t.replace('Diamond_NV_', '')}\n{n}" for t, n, _ in rows]
+    labels = short_labels(rows)
     ngroup, nbar = len(rows), len(QUANTITIES)
     x = np.arange(ngroup)
     width = 0.8 / nbar
 
-    vals = [r[0] for _, _, res in rows for r in res.values() if r[0] is not None]
+    vals = [r[0] for _, _, res, *_ in rows for r in res.values() if r[0] is not None]
     nonzero = [v for v in vals if v > 0]
     if nonzero:
         floor = 10 ** (np.floor(np.log10(min(nonzero))) - 1)
@@ -246,7 +339,7 @@ def plot(rows, target, ref, out_png):
 
     for k, q in enumerate(QUANTITIES):
         pos = x - 0.4 + width * (k + 0.5)
-        for i, (_, _, res) in enumerate(rows):
+        for i, (_, _, res, *_rest) in enumerate(rows):
             rms, _, note = res[q]
             if rms is None:
                 ax.text(pos[i], floor * 2, note, rotation=90, ha="center",
@@ -290,6 +383,71 @@ def plot(rows, target, ref, out_png):
     fig.tight_layout()
     fig.savefig(out_png, dpi=160, bbox_inches="tight")
     plt.close(fig)
+
+
+def plot_wall(rows, target, ref, out_png):
+    """Two panels: absolute wall time side by side, and speedup per calculation."""
+    usable = [r for r in rows if r[3] and r[4]]
+    if not usable:
+        return False
+
+    labels = short_labels(usable)
+    x = np.arange(len(usable))
+    wr = np.array([r[3] for r in usable])
+    wt = np.array([r[4] for r in usable])
+    speed = wr / wt
+
+    fig, (ax1, ax2) = plt.subplots(
+        2, 1, figsize=(1.6 * len(usable) + 3, 8.0),
+        gridspec_kw={"height_ratios": [2, 1.4], "hspace": 0.35})
+
+    # --- absolute wall time ---
+    w = 0.38
+    ax1.bar(x - w / 2, wr, w, label=ref, color="#8C8C8C", zorder=3)
+    ax1.bar(x + w / 2, wt, w, label=target, color="#4C72B0", zorder=3)
+    for xi, (a, b) in enumerate(zip(wr, wt)):
+        ax1.text(xi - w / 2, a, f"{a:.2f}", ha="center", va="bottom", fontsize=7)
+        ax1.text(xi + w / 2, b, f"{b:.2f}", ha="center", va="bottom", fontsize=7)
+    ax1.set_yscale("log")
+    ax1.set_ylim(min(wr.min(), wt.min()) / 3, max(wr.max(), wt.max()) * 4)
+    ax1.set_ylabel("wall time [s]  (log)")
+    ax1.set_xticks(x)
+    ax1.set_xticklabels([""] * len(x))
+    ax1.legend(fontsize=8, ncol=2, frameon=False, loc="upper left")
+    ax1.grid(axis="y", which="both", ls=":", lw=0.6, color="0.75", zorder=0)
+    ax1.set_axisbelow(True)
+
+    tr, tt = wr.sum(), wt.sum()
+    ax1.set_title(f"CCEX regression : wall time\n{target}  vs  {ref}"
+                  f"      total {tr:.2f}s -> {tt:.2f}s  ({tr / tt:.3f}x)",
+                  fontsize=11)
+
+    # --- speedup ---
+    colors = ["#55A868" if s > 1.02 else "#C44E52" if s < 0.98 else "#8C8C8C"
+              for s in speed]
+    ax2.bar(x, speed - 1.0, 0.6, bottom=1.0, color=colors, zorder=3)
+    for xi, s in enumerate(speed):
+        ax2.text(xi, s, f"{s:.3f}x", ha="center",
+                 va="bottom" if s >= 1 else "top", fontsize=7.5)
+    ax2.axhline(1.0, color="0.3", lw=1.2, zorder=4)
+    span = max(0.05, float(np.abs(speed - 1.0).max()) * 1.6)
+    ax2.set_ylim(1 - span, 1 + span)
+    ax2.set_ylabel("speedup  (ref / new)")
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(labels, fontsize=8)
+    ax2.grid(axis="y", ls=":", lw=0.6, color="0.75", zorder=0)
+    ax2.set_axisbelow(True)
+    ax2.text(0.995, 0.04, "above 1.0 = faster   |   single run, small "
+             "deviations are noise", transform=ax2.transAxes, ha="right",
+             va="bottom", fontsize=7.5, color="0.45")
+
+    for ax in (ax1, ax2):
+        for spine in ("top", "right"):
+            ax.spines[spine].set_visible(False)
+
+    fig.savefig(out_png, dpi=160, bbox_inches="tight")
+    plt.close(fig)
+    return True
 
 
 # --------------------------------------------------------------------------
@@ -407,10 +565,19 @@ def main():
             rc = 1
             continue
         rows = compare(target, ref)
+        root = HERE.parent.parent.parent
+
         print_table(rows, target, ref)
         out = HERE / f"rms_{target}_vs_{ref}.png"
         plot(rows, target, ref, out)
-        print(f"\n  wrote {out.relative_to(HERE.parent.parent.parent)}\n")
+        print(f"\n  wrote {out.relative_to(root)}")
+
+        print_wall_table(rows, target, ref)
+        outw = HERE / f"wall_{target}_vs_{ref}.png"
+        if plot_wall(rows, target, ref, outw):
+            print(f"\n  wrote {outw.relative_to(root)}\n")
+        else:
+            print()
     return rc
 
 
