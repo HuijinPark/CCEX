@@ -35,13 +35,16 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     if (rank==0){
         printMessage("  - General option-related keys : ");
-        printMessage("    [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
+        printMessage("    [ method, quantity, propagator, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
     }
     char* method = cJSON_ReadString(root,"method",true,"cce");
     Config_setMethod(cnf,method); // Current possible options : cce, gcce, pcce, dsj, dsjitb, itb
 
     char* quantity = cJSON_ReadString(root,"quantity",true,"coherence");
     Config_setQuantity(cnf,quantity); // Current possible options : coherence, noise, dm
+
+    char* propagator = cJSON_ReadString(root,"propagator",true,"eigen");
+    Config_setPropagator(cnf,propagator); // gCCE only : eigen (default) | expm (legacy)
 
     int order = cJSON_ReadInt(root,"order",false,-1);
     Config_setOrder(cnf,order);    
