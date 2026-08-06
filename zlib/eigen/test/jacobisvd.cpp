@@ -8,6 +8,15 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+// We explicitly disable deprecated declarations for this set of tests
+// because we purposely verify assertions for the deprecated SVD runtime
+// option behavior.
+#if defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
+
 // discard stack allocation as that too bypasses malloc
 #define EIGEN_STACK_ALLOCATION_LIMIT 0
 #define EIGEN_RUNTIME_NO_MALLOC
@@ -36,6 +45,9 @@ void jacobisvd(const MatrixType& a = MatrixType(), bool pickrandom = true)
 template<typename MatrixType> void jacobisvd_verify_assert(const MatrixType& m)
 {
   svd_verify_assert<JacobiSVD<MatrixType> >(m);
+  svd_verify_assert<JacobiSVD<MatrixType, FullPivHouseholderQRPreconditioner> >(m, true);
+  svd_verify_assert<JacobiSVD<MatrixType, ColPivHouseholderQRPreconditioner> >(m);
+  svd_verify_assert<JacobiSVD<MatrixType, HouseholderQRPreconditioner> >(m);
   Index rows = m.rows();
   Index cols = m.cols();
 
@@ -67,6 +79,23 @@ void jacobisvd_method()
   VERIFY_RAISES_ASSERT(m.jacobiSvd().matrixU());
   VERIFY_RAISES_ASSERT(m.jacobiSvd().matrixV());
   VERIFY_IS_APPROX(m.jacobiSvd(ComputeFullU|ComputeFullV).solve(m), m);
+  VERIFY_IS_APPROX(m.jacobiSvd(ComputeFullU|ComputeFullV).transpose().solve(m), m);
+  VERIFY_IS_APPROX(m.jacobiSvd(ComputeFullU|ComputeFullV).adjoint().solve(m), m);
+}
+
+namespace Foo {
+// older compiler require a default constructor for Bar
+// cf: https://stackoverflow.com/questions/7411515/
+class Bar {public: Bar() {}};
+bool operator<(const Bar&, const Bar&) { return true; }
+}
+// regression test for a very strange MSVC issue for which simply
+// including SVDBase.h messes up with std::max and custom scalar type
+void msvc_workaround()
+{
+  const Foo::Bar a;
+  const Foo::Bar b;
+  std::max EIGEN_NOT_A_MACRO (a,b);
 }
 
 EIGEN_DECLARE_TEST(jacobisvd)
@@ -122,4 +151,6 @@ EIGEN_DECLARE_TEST(jacobisvd)
   CALL_SUBTEST_9( svd_preallocate<void>() );
 
   CALL_SUBTEST_2( svd_underoverflow<void>() );
+
+  msvc_workaround();
 }
