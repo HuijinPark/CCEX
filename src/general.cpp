@@ -8,6 +8,7 @@ Config* Config_init(){
     Config* cnf = (Config*)allocArray1d(1,sizeof(Config));
     cnf->method[0] = '\0';
     cnf->quantity[0] = '\0';
+    cnf->propagator[0] = '\0';
     cnf->hfmedi = false;
     cnf->knight = false;
     return cnf;
@@ -149,6 +150,9 @@ bool Config_getKnight(Config* cnf){
 
 char* Config_getQuantity(Config* cnf){
     return cnf->quantity;
+}
+char* Config_getPropagator(Config* cnf){
+    return cnf->propagator;
 }
 
 int   Config_getOrder(Config* cnf){
@@ -314,6 +318,28 @@ void Config_setQuantity(Config* cnf, char* quantity){
     }
 
     strcpy(cnf->quantity,quantity);
+}
+
+void Config_setPropagator(Config* cnf, char* propagator){
+
+    // gCCE free-evolution propagator.
+    //   eigen : one SelfAdjointEigenSolver per cluster, exp(-i*H*tau) = M*diag(exp(-i*l*tau))*M^dag
+    //   expm  : Eigen's general matrix exponential per step, the original CCEX path
+    const int opsize = 2;
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"eigen","expm"};
+    int idx = findIndexCharFix(options,0,opsize-1,propagator);
+    if (idx == -1) {
+        fprintf(stderr, "Error: current propagator options (%s) is not available\n",propagator);
+        fprintf(stderr, "Available options are : ");
+        for (int i = 0; i < opsize; i++){
+            fprintf(stderr, "%s ",options[i]);
+        }
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Please check the input file or change the possible option set\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(cnf->propagator,propagator);
 }
 
 void Config_setOrder(Config* cnf, int order){
@@ -583,6 +609,7 @@ void Config_report(Config* cnf){
 
     printStructElementChar("method",Config_getMethod(cnf));
     printStructElementChar("quantity",Config_getQuantity(cnf));
+    printStructElementChar("propagator",Config_getPropagator(cnf));
     printStructElementInt("order",Config_getOrder(cnf));
     printStructElementFloat1d("bfield",Config_getBfield(cnf),3);
     printStructElementFloat("rbath",Config_getRbath(cnf));

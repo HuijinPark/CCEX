@@ -4,6 +4,48 @@
 
 #define sPI 3.14159265358979323846
 
+// exp(-i*x) for a real vector x. simulator_cce.cpp carries the same helper; both are
+// kept file-local rather than shared through a header so that adding this one cannot
+// perturb the CCE path's codegen, which is verified byte-for-byte against the reference.
+static inline void phaseVectorGcce(const Eigen::VectorXd& x, Eigen::VectorXcd& out){
+    const int n = (int)x.size();
+    out.resize(n);
+    for (int k=0; k<n; ++k){
+        out(k) = doublec(std::cos(x(k)), -std::sin(x(k)));
+    }
+}
+
+
+void prepareGcceWork(GcceWork* w, const MatrixXcd& Htot, bool useEigen){
+
+    w->useEigen = useEigen;
+
+    // propagator=expm keeps the original per-step matrix exponential, so there is no
+    // decomposition to prepare and no Hermiticity requirement to enforce.
+    if (!useEigen) return;
+
+    // The eigendecomposition below stands in for exp(-i*Htot*tau) only if Htot really
+    // is Hermitian. It is a Hamiltonian, so it must be -- check rather than assume,
+    // because SelfAdjointEigenSolver reads one triangle and would silently accept a
+    // non-Hermitian matrix by ignoring the other half.
+    double asym  = (Htot - Htot.adjoint()).cwiseAbs().maxCoeff();
+    double scale = Htot.cwiseAbs().maxCoeff();
+    if (scale > 0.0 && asym > 1e-12*scale){
+        fprintf(stderr,"Error : prepareGcceWork : Htot is not Hermitian "
+                       "(max|H-H^dag| = %.3e, max|H| = %.3e)\n", asym, scale);
+        exit(1);
+    }
+
+    Eigen::SelfAdjointEigenSolver<MatrixXcd> es(Htot);
+    if (es.info() != Eigen::Success){
+        fprintf(stderr,"Error : prepareGcceWork : eigendecomposition of Htot failed\n");
+        exit(1);
+    }
+    w->evals = es.eigenvalues();
+    w->M     = es.eigenvectors();
+    w->Madj  = w->M.adjoint();
+}
+
 Matrix3cd Sx_spin1() {
     Matrix3cd Sx = Matrix3cd::Zero();
     double factor = 1.0 / sqrt(2.0);
@@ -106,8 +148,13 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
         calTDUpulses(Upulses, qa, pulse, Hq);
     }
 
+    // Everything fixed for this cluster: the eigendecomposition that replaces a
+    // matrix exponential on every step.
+    GcceWork gw;
+    prepareGcceWork(&gw, Htot, strcasecmp(Config_getPropagator(cnf),"eigen")==0);
+
     for (int i=0; i<nstep; i++){
-        MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree, Upulses);
+        MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree, Upulses, &gw);
         // Density matrix for time
         MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
 
@@ -185,7 +232,7 @@ double getPhase(char axis) {
 double getAngle(double degree) {
     return degree * (M_PI / 180.0);  // Radian
 } 
-MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double tfree, MatrixXcd* Upulses){
+MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double tfree, MatrixXcd* Upulses, GcceWork* w){
 
     double** sequence        = Pulse_getSequence(pulse);
     int*    sequence_indices = Pulse_getSequenceIndices(pulse);
@@ -195,7 +242,8 @@ MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double
     /////////////////////////////////////////////////////////////
     // Propagator for total
     MatrixXcd Utotal;
-    MatrixXcd* Ufrees = new MatrixXcd[npulse+1];
+    // Reused across the nstep loop instead of new/delete on every call.
+    if ((int)w->Ufrees.size() < npulse+1){ w->Ufrees.resize(npulse+1); }
 
     // Propagator(total) =  U(tauN+1) (U_pulseN) ... (U_pulse1) U(tau1)
     // Pulse Index  0    1    2    3    4    5    6    7    8    |
@@ -218,17 +266,29 @@ MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double
         int bdim = Htot.rows() / Upulse.rows();
         Upulse   = kron(Upulse, MatrixXcd::Identity(bdim, bdim));
         
-        // Propagator for free evolution
-        MatrixXcd Ufree;
         // Calculate free evolution operators (Ufree)
         if (sameTauIndex == ipulse){ // if Ufree haven't been calculated
-            // U = exp(-iHtau)
-            Ufree = ((-1.0) * doublec(0.0,1.0) * Htot * tau).exp();
+            if (w->useEigen){
+                // U = exp(-iHtau), from the decomposition prepareGcceWork already did:
+                //   exp(-i*H*tau) = M * diag(exp(-i*lambda_k*tau)) * M^dag
+                // Htot does not change with the step, so one decomposition serves every
+                // tau instead of a matrix exponential per step.
+                w->evals_tau = w->evals * tau;
+                phaseVectorGcce(w->evals_tau, w->phase);
+                w->scratch.noalias()        = w->M * w->phase.asDiagonal();
+                w->Ufrees[ipulse].noalias() = w->scratch * w->Madj;
+            }else{
+                // propagator=expm : Eigen's general matrix exponential, as CCEX has
+                // always done it. Kept for reproducing numbers generated before the
+                // eigendecomposition path existed.
+                w->Ufrees[ipulse] = ((-1.0) * doublec(0.0,1.0) * Htot * tau).exp();
+            }
         }
         else{ // if Ufree have been calculated
             // get previously calculated Ufree for the same tau
-            Ufree = Ufrees[sameTauIndex];
+            w->Ufrees[ipulse] = w->Ufrees[sameTauIndex];
         }
+        const MatrixXcd& Ufree = w->Ufrees[ipulse];
 
         // =================================== //
         //     Calculate U_total operator      //
@@ -245,11 +305,8 @@ MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double
         else {
             Utotal = Upulse * Ufree * Utotal;
         }
-        Ufrees[ipulse] = Ufree;
     }
     
-    // free Ufrees
-    delete[] Ufrees;
 
     return Utotal;
 }

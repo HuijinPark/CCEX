@@ -21,7 +21,28 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
 MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op);
 MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls);
 
-MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pls, double tfree, MatrixXcd* Upulses);
+/**
+ * Scratch for the gCCE propagator, owned by the caller and reused across the nstep
+ * loop. Htot does not depend on the time step -- calCoherenceGcce builds it once and
+ * the loop only varies tau -- so one eigendecomposition covers every tau:
+ *     exp(-i*Htot*tau) = M * diag(exp(-i*lambda_k*tau)) * M^dag
+ * That replaces a matrix exponential per step with a handful of scalar exponentials.
+ * This is what simulator_cce.cpp has always done; gCCE was calling Eigen's general
+ * .exp(), which runs a complex Schur decomposition and does not know Htot is Hermitian.
+ */
+struct GcceWork {
+    bool useEigen;                       // false => legacy per-step matrix exponential
+    MatrixXcd M, Madj;                   // eigenvectors of Htot, and their adjoint
+    Eigen::VectorXd  evals;              // eigenvalues (real -- Htot is Hermitian)
+    Eigen::VectorXd  evals_tau;          // scratch
+    Eigen::VectorXcd phase;              // scratch
+    MatrixXcd scratch;                   // scratch
+    std::vector<MatrixXcd> Ufrees;       // per-pulse free-evolution propagators
+};
+
+/** Builds everything in GcceWork that is fixed for the cluster. Call once per cluster. */
+void prepareGcceWork(GcceWork* w, const MatrixXcd& Htot, bool useEigen);
+MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pls, double tfree, MatrixXcd* Upulses, GcceWork* w);
 
 MatrixXcd HamilQubit(QubitArray* qa, BathArray* ba, MatrixXcd** sigmas, Config* cnf);
 MatrixXcd HamilBath(BathArray* ba, MatrixXcd** sigmas, Config* cnf);
