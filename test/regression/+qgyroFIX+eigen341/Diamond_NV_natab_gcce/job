@@ -1,0 +1,302 @@
+#!/usr/bin/env bash
+#
+# Regression test (CCEX-origin v1.0.0) : Diamond NV(-) + natural-abundance 13C bath, gCCE order 2
+# ---------------------------------------------------------------------------
+# Same system, same bath, same parameters as Diamond_NV_natab_cce -- only the
+# method differs, so the two trees can be compared directly. Keep them in step.
+#
+# System (byte-identical to idm ~/9_tutorial/1_CCEX/0_SOP/0_DNV/0_natab/bath):
+#   gyrofile   gyro_13C                       md5 c191e61966ac5ad0877e9199dc5ac5e4
+#   bathfile   bath_Diamond_NV_natab_<i>      md5 6cfdb6d5940b665b4ce83ed5468189f6
+# The bath file is one whole spatial configuration, used as-is (6478 13C in a
+# 150 A cell); rbath then selects the spins that actually enter.
+#
+# rbath CEILING: the qubitfile's discarded commentary recorded how far the NV
+# sits from the nearest face of the bath cell -- 73.739 A ("Do not jump the
+# rBath limitation!! (limit :73.739)"). Past that the rbath sphere leaves the
+# cell and the bath is silently truncated on one side; CCEX does NOT check it.
+# rbath = 30 here, comfortably inside.
+# With rbath = 30 A and rdip = 8 A that is 222 bath spins and 370 pair clusters
+# (191 order-1 clusters survive the tilde bookkeeping).
+# This is a genuine gCCE-2 TRUNCATION: the test pins down reproducibility, not
+# convergence.
+#
+# WHAT MAKES THE gCCE ccein DIFFERENT FROM THE CCE ONE
+# (modelled on the NV gCCE runs in
+#  ~/Claude_Projects/MagneticField_rotation/0_Benchmark/2_Qiu/conv_ensemble_dt10us/f65)
+#
+#   * "Qubit" block instead of "qubitfile". gCCE propagates the qubit itself, so
+#     its Hamiltonian has to be complete: S = 1, gyro = -17608.59705 radkHz/G,
+#     and the zero-field splitting as an intmap tensor
+#         diag(-956666.67, -956666.67, +1913333.33)   [kHz]
+#     option.cpp applies KHZ_TO_RADKHZ to it; 1913333.33 kHz = (2/3) * 2.87 GHz,
+#     i.e. D_gs = 2.87 GHz. "qubitfile" only carries a position and would leave
+#     the NV as a bare S = 1 with Zeeman alone.
+#     The xyz is the same NV position the CCE test reads from its qubitfile.
+#
+#   * NO "alphaidx"/"betaidx". Those pick eigenvectors of Hq sorted by energy
+#     (simulator.cpp:151-161 -> QubitArray_setPsiaPsib_fromIdx). The f65 reference
+#     needs them because its field is nearly perpendicular to the NV axis
+#     (bfield = [65, 0, ~0]) so the eigenstates are not |ms>. Here B = 300 G is
+#     along z, ZFS and Zeeman are both diagonal in the ms basis, so alphams = 1 /
+#     betams = 0 selects |+1> and |0> exactly -- the same pair the CCE test uses.
+#
+# The huge ZFS phase does not survive into the coherence: gCCE divides every
+# cluster by the 0-th (bath-free) cluster, which is precisely the free-qubit
+# evolution, and normalises again at t = 0.
+#
+# Parameters that differ from the idm reference ccein.js, on purpose:
+#   bfield 3000 -> 300 G,  deltat 0.003 -> 0.3 ms,  nstep 500 -> 30,
+#   rbath 50 -> 30,  rdip 10 -> 8.
+# Kept: quantity coherence, npulse 1 (Hahn echo), alphams 1 / betams 0.
+#
+# "seed" is pinned in the ccein (arbitrary value, fixed only so the nstate > 0
+# runs are reproducible: without it CCEX seeds from time(NULL) and the sampled
+# bath state -- and therefore the output -- changes on every run).
+#
+# ---------------------------------------------------------------------------
+# WHAT THIS SCRIPT DOES
+#
+#   1. discovers the bath configurations   inputfiles/bath_Diamond_NV_natab_<i>
+#   2. reads "nstate" out of each ccein
+#   3. runs CCEX once per (ccein, bath config), 1 MPI rank
+#   4. error correction  (analyzer -err) : wiDiv / noDiv  ->  _ErrCorr
+#   5. ensemble average  (analyzer -ea)  : over ALL configs x ALL states
+#
+# Steps 4 and 5 size themselves from what step 1-2 found, so adding a bath
+# config file or raising "nstate" in a ccein needs no edit here:
+#
+#   nstate = 0 (ensemble bath)  -> average axis: CONF                (n = nconf)
+#   nstate > 0 (sampled bath)   -> average axes: CONF x STATE        (n = nconf * nstate)
+#
+# Usage:  ./job
+# Output: nstate = 0 and nstate = 1 are DIFFERENT calculations, so each ccein
+#         gets its own tree under results/<TAG>/ -- nothing is shared:
+#
+#   results/<TAG>/raw/<OUTBASE>_conf<i>[_state<s>]_{noDiv,wiDiv}          raw CCEX output
+#   results/<TAG>/raw/<OUTBASE>_conf<i>[_state<s>]_ErrCorr                error corrected
+#   results/<TAG>/raw/<OUTBASE>_EnsAvg_conv<N>                            ensemble average
+#   results/<TAG>/<OUTBASE>_EnsAvg_conv<N>.png                            figure
+#   results/<TAG>/<OUTBASE>_conf<i>.process                               code stdout+stderr
+#   results/<TAG>/.ccein/<TAG>_conf<i>.json                              generated run config
+#
+#         <TAG> appears in the directory only, not in the file names: the
+#         directory is what separates the two calculations, so repeating it
+#         in every file name would be noise. Inside a tree the names are
+#         still unambiguous -- nstate > 0 output carries CCEX's own _state<s>.
+#
+# The data files stay COMPLEX all the way through (CCEX writes Re+Imj, the error
+# correction thresholds on |L_wiDiv - L_noDiv|, and the ensemble average is taken
+# over complex values). Only the figures collapse to a component: the analyzer
+# plots the REAL PART -- plot_coherence_one uses data[:,1].real (DataSpace.py:818)
+# and plot_coherence_all hands matplotlib the complex array, which drops the
+# imaginary part. There is no |L| plot, and the imaginary-part plotter
+# (plot_coherence_all_imag, DataSpace.py:729) is never reachable from run.py.
+# ---------------------------------------------------------------------------
+
+set -uo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$HERE"
+REPO="$(cd "$HERE/../../../.." && pwd)"
+
+# --- knobs ------------------------------------------------------------------
+NCORES=1
+OUTBASE="gCCE2_Diamond_NV_natab"
+TAGS=(nstate0 nstate1)          # one ccein_<tag>.json per entry
+ERR_TOL=2.0                     # analyzer default; divergence threshold |L_wiDiv - L_noDiv|
+DO_PLOT=1                       # 1 = let the analyzer draw the coherence figures
+# ----------------------------------------------------------------------------
+#
+# Figure (DO_PLOT=1). matplotlib runs on the headless "agg" backend and the
+# analyzer only ever calls savefig, so no display is needed.
+#   <TAG>_EnsAvg_conv<N>.png   ensemble-averaged coherence   (analyzer -pl)
+# -pl combined with -ea takes the ensemble branch (run.py:218) and works for any
+# number of averaging axes. No fitting is requested: with nstep = 30 a T2 fit on
+# this aliased grid would not mean anything.
+
+CCEX_BIN="$REPO/bin/main.out"
+ANALYZER="$REPO/example/z.Analyzer/CoherenceAnalyzer.v1/run.py"
+
+# mpirun by ABSOLUTE path: the PATH entry on this box is /usr/bin/mpirun, the
+# system MPICH, which is not the MPI this binary was linked against. Override
+# with CCEX_MPI if oneAPI lives somewhere else.
+MPIRUN="${CCEX_MPI:-/opt/intel/oneapi/mpi/2021.18/bin/mpirun}"
+# shm forces shared-memory transport, which is what keeps single-node MPI from
+# hanging under WSL networkingMode=mirrored.
+export I_MPI_FABRICS="${I_MPI_FABRICS:-shm}"
+
+[ -x "$CCEX_BIN" ] || { echo "ERROR: CCEX binary not found: $CCEX_BIN" >&2
+                        echo "       build it:  cd $REPO && bash do_compile.sh wsl" >&2
+                        exit 1; }
+[ -f "$ANALYZER" ] || { echo "ERROR: analyzer not found: $ANALYZER" >&2; exit 1; }
+# setvars is not needed at run time (MKL is rpath'd) -- only fall back to it if
+# the absolute mpirun is missing.
+[ -x "$MPIRUN" ] || { . /opt/intel/oneapi/setvars.sh >/dev/null 2>&1 || true
+                      MPIRUN="$(command -v mpirun || echo "$MPIRUN")"; }
+[ -x "$MPIRUN" ] || { echo "ERROR: mpirun not found: $MPIRUN" >&2; exit 1; }
+
+# --- run one CCEX calculation ------------------------------------------------
+# Inlined here on purpose: this used to call ~/bin/run_ccex_wsl.sh, which lives
+# outside the repository. A regression test whose result depends on a script no
+# one else has is not a regression test, so the few lines that mattered are kept
+# below and nothing outside $REPO is read.
+#
+# Every line written here is indented by 5 spaces, matching the progress output
+# CCEX itself produces, so the header reads as part of the same log rather than
+# something bolted on top.
+#
+#   run_ccex <ccein.json> <ncores> <process file>   -> exit code of mpirun
+#   sets CCEX_WALL (seconds, 2 decimals) as a side effect
+IND="     "
+run_ccex() {
+    local ccein="$1" np="$2" proc="$3"
+
+    mkdir -p "$(dirname "$proc")"
+
+    # header first, so the .process exists even if the run dies immediately
+    {
+        echo "${IND}=================== CCEX run ==================="
+        echo "${IND}date         : $(date '+%Y-%m-%d %H:%M:%S %Z')"
+        echo "${IND}host         : $(hostname)"
+        echo "${IND}cores (-n)   : ${np}"
+        echo "${IND}I_MPI_FABRICS: ${I_MPI_FABRICS}"
+        echo "${IND}binary       : ${CCEX_BIN}"
+        echo "${IND}binary mtime : $(date -r "$CCEX_BIN" '+%Y-%m-%d %H:%M:%S' 2>/dev/null || echo '?')"
+        echo "${IND}mpirun       : ${MPIRUN}"
+        echo "${IND}ccein        : ${ccein}"
+        python3 -c "import json,sys; d=json.load(open(sys.argv[1])); print('${IND}params       :', {k:d.get(k) for k in ('method','order','rbath','rdip','sK','nk','nstep','deltat','nstate','npulse','bfield')})" "$ccein" 2>/dev/null || true
+        echo "${IND}cmdline      : ${MPIRUN} -n ${np} ${CCEX_BIN} -f ${ccein}"
+        echo "${IND}==============================================="
+        echo ""
+    } > "$proc"
+
+    local t0 t1 rc
+    t0=$(date +%s.%N)
+    "$MPIRUN" -n "$np" "$CCEX_BIN" -f "$ccein" >> "$proc" 2>&1
+    rc=$?
+    t1=$(date +%s.%N)
+    CCEX_WALL=$(awk "BEGIN{printf \"%.2f\", $t1-$t0}")
+
+    { echo ""
+      echo "${IND}[run] exit=${rc}  cores=${np}  wall=${CCEX_WALL}s"
+    } >> "$proc"
+
+    return $rc
+}
+
+# --- 1. discover bath configurations ----------------------------------------
+mapfile -t BATHFILES < <(ls -1 inputfiles/bath_Diamond_NV_natab_[0-9]* 2>/dev/null | sort -V)
+NCONF=${#BATHFILES[@]}
+[ "$NCONF" -gt 0 ] || { echo "ERROR: no bath config found (inputfiles/bath_Diamond_NV_natab_[0-9]*)" >&2; exit 1; }
+
+echo "CCEX_BIN     : $CCEX_BIN"
+echo "               $(stat -c '%y  %s bytes' "$CCEX_BIN")"
+echo "cores        : $NCORES"
+echo "bath configs : $NCONF"
+for i in "${!BATHFILES[@]}"; do echo "               [$((i+1))] ${BATHFILES[$i]}"; done
+echo
+
+rc_all=0
+for tag in "${TAGS[@]}"; do
+
+    CCEIN_BASE="inputfiles/ccein_${tag}.json"
+    [ -f "$CCEIN_BASE" ] || { echo "ERROR: missing $CCEIN_BASE" >&2; rc_all=1; continue; }
+
+    # one ccein = one calculation = its own results tree
+    RESDIR="results/${tag}"
+    mkdir -p "$RESDIR/raw" "$RESDIR/.ccein"
+
+    # --- 2. how many bath states does this ccein sample? ---------------------
+    NSTATE=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('nstate',0))" "$CCEIN_BASE")
+
+    echo "############################################################"
+    echo "# $tag   (nstate = $NSTATE, nconf = $NCONF)"
+    echo "############################################################"
+
+    # --- 3. run CCEX once per bath configuration ----------------------------
+    for i in $(seq 1 "$NCONF"); do
+        bathfile="${BATHFILES[$((i-1))]}"
+        ccein="${RESDIR}/.ccein/${tag}_conf${i}.json"
+        outfile="./${RESDIR}/raw/${OUTBASE}_conf${i}"
+
+        python3 - "$CCEIN_BASE" "$ccein" "$bathfile" "$outfile" <<'PY'
+import json, sys
+base, dest, bathfile, outfile = sys.argv[1:5]
+cfg = json.load(open(base))
+cfg["bathfile"] = ["./" + bathfile]
+cfg["outfile"]  = outfile
+json.dump(cfg, open(dest, "w"), indent=4)
+PY
+
+        proc="${RESDIR}/${OUTBASE}_conf${i}.process"
+
+        echo "--- $tag / config $i ---"
+        run_ccex "$ccein" "$NCORES" "$proc"
+        rc=$?
+        [ $rc -ne 0 ] && rc_all=$rc
+        echo "        process -> $proc   (cores=$NCORES, exit=$rc, wall=${CCEX_WALL}s)"
+    done
+    echo
+
+    # --- variable axes the analyzer has to sweep ----------------------------
+    # CONF and STATE are literal placeholders inside the filename format; the
+    # analyzer substitutes them with each value and takes the Cartesian product.
+    if [ "$NSTATE" -eq 0 ]; then
+        PATTERN="${OUTBASE}_confCONF"
+        VARARGS=(-vn CONF -v $(seq 1 "$NCONF"))
+        NSAMPLE=$NCONF
+    else
+        PATTERN="${OUTBASE}_confCONF_stateSTATE"
+        VARARGS=(-vn CONF STATE -v $(seq 1 "$NCONF") -v $(seq 1 "$NSTATE"))
+        NSAMPLE=$((NCONF * NSTATE))
+    fi
+
+    PLOT_EA=(); [ "$DO_PLOT" -eq 1 ] && PLOT_EA=(-pl)
+
+    # --- 4. error correction : wiDiv corrected against noDiv ----------------
+    echo "=== [$tag] error correction  (${NSAMPLE} file(s), tol = ${ERR_TOL}) ==="
+    python3 "$ANALYZER" \
+        -d "./${RESDIR}/raw/"     -fi "${PATTERN}_wiDiv" \
+        -err_d "./${RESDIR}/raw/" -err_fi "${PATTERN}_noDiv" \
+        "${VARARGS[@]}" \
+        -uc ms -err -err_tol "$ERR_TOL" -ntn \
+        -fo "./${RESDIR}/raw/${PATTERN}_ErrCorr" \
+        | grep -E "Write file|Done to correct|Read file number" || rc_all=1
+    echo
+
+    # --- 5. ensemble average over every config and every state --------------
+    echo "=== [$tag] ensemble average  (over ${NSAMPLE} sample(s)) ==="
+    python3 "$ANALYZER" \
+        -d "./${RESDIR}/raw/" -fi "${PATTERN}_ErrCorr" \
+        "${VARARGS[@]}" \
+        -uc ms -ea -ntn \
+        -fo "./${RESDIR}/raw/${OUTBASE}_EnsAvg" \
+        "${PLOT_EA[@]}" \
+        | grep -E "Total averaged number|Write ensemble|Save the plot|Read file number" || rc_all=1
+    # the analyzer names the png after -fo, so it drops next to the data file
+    if compgen -G "${RESDIR}/raw/*.png" > /dev/null; then
+        for p in "${RESDIR}"/raw/*.png; do
+            mv -f "$p" "${RESDIR}/"
+            echo "        moved -> ./${RESDIR}/$(basename "$p")"
+        done
+    fi
+    echo
+
+done
+
+echo "############################################################"
+echo "# results"
+echo "############################################################"
+for tag in "${TAGS[@]}"; do
+    [ -d "results/$tag" ] || continue
+    for d in raw; do
+        echo "results/$tag/$d/"
+        ls -1 "results/$tag/$d" 2>/dev/null | sed 's|^|    |'
+    done
+    echo "results/$tag/  (figure + logs)"
+    ls -1 results/"$tag"/*.png results/"$tag"/*.process 2>/dev/null | xargs -r -n1 basename | sed "s|^|    |"
+    echo
+done
+
+exit $rc_all
