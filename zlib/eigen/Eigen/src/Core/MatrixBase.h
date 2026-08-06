@@ -206,28 +206,22 @@ template<typename Derived> class MatrixBase
     EIGEN_DEVICE_FUNC
     DiagonalReturnType diagonal();
 
-    typedef typename internal::add_const<Diagonal<const Derived> >::type ConstDiagonalReturnType;
+    typedef Diagonal<const Derived> ConstDiagonalReturnType;
     EIGEN_DEVICE_FUNC
-    ConstDiagonalReturnType diagonal() const;
-
-    template<int Index> struct DiagonalIndexReturnType { typedef Diagonal<Derived,Index> Type; };
-    template<int Index> struct ConstDiagonalIndexReturnType { typedef const Diagonal<const Derived,Index> Type; };
+    const ConstDiagonalReturnType diagonal() const;
 
     template<int Index>
     EIGEN_DEVICE_FUNC
-    typename DiagonalIndexReturnType<Index>::Type diagonal();
+    Diagonal<Derived, Index> diagonal();
 
     template<int Index>
     EIGEN_DEVICE_FUNC
-    typename ConstDiagonalIndexReturnType<Index>::Type diagonal() const;
-
-    typedef Diagonal<Derived,DynamicIndex> DiagonalDynamicIndexReturnType;
-    typedef typename internal::add_const<Diagonal<const Derived,DynamicIndex> >::type ConstDiagonalDynamicIndexReturnType;
+    const Diagonal<const Derived, Index> diagonal() const;
 
     EIGEN_DEVICE_FUNC
-    DiagonalDynamicIndexReturnType diagonal(Index index);
+    Diagonal<Derived, DynamicIndex> diagonal(Index index);
     EIGEN_DEVICE_FUNC
-    ConstDiagonalDynamicIndexReturnType diagonal(Index index) const;
+    const Diagonal<const Derived, DynamicIndex> diagonal(Index index) const;
 
     template<unsigned int Mode> struct TriangularViewReturnType { typedef TriangularView<Derived, Mode> Type; };
     template<unsigned int Mode> struct ConstTriangularViewReturnType { typedef const TriangularView<const Derived, Mode> Type; };
@@ -456,19 +450,33 @@ template<typename Derived> class MatrixBase
 ///////// MatrixFunctions module /////////
 
     typedef typename internal::stem_function<Scalar>::type StemFunction;
-    const MatrixExponentialReturnValue<Derived> exp() const;
+#define EIGEN_MATRIX_FUNCTION(ReturnType, Name, Description) \
+    /** \returns an expression of the matrix Description of \c *this. \brief This function requires the <a href="unsupported/group__MatrixFunctions__Module.html"> unsupported MatrixFunctions module</a>. To compute the coefficient-wise Description use ArrayBase::##Name . */ \
+    const ReturnType<Derived> Name() const;
+#define EIGEN_MATRIX_FUNCTION_1(ReturnType, Name, Description, Argument) \
+    /** \returns an expression of the matrix Description of \c *this. \brief This function requires the <a href="unsupported/group__MatrixFunctions__Module.html"> unsupported MatrixFunctions module</a>. To compute the coefficient-wise Description use ArrayBase::##Name . */ \
+    const ReturnType<Derived> Name(Argument) const;
+
+    EIGEN_MATRIX_FUNCTION(MatrixExponentialReturnValue, exp, exponential)
+    /** \brief Helper function for the <a href="unsupported/group__MatrixFunctions__Module.html"> unsupported MatrixFunctions module</a>.*/
     const MatrixFunctionReturnValue<Derived> matrixFunction(StemFunction f) const;
-    const MatrixFunctionReturnValue<Derived> cosh() const;
-    const MatrixFunctionReturnValue<Derived> sinh() const;
-    const MatrixFunctionReturnValue<Derived> cos() const;
-    const MatrixFunctionReturnValue<Derived> sin() const;
-    const MatrixSquareRootReturnValue<Derived> sqrt() const;
-    const MatrixLogarithmReturnValue<Derived> log() const;
-    const MatrixPowerReturnValue<Derived> pow(const RealScalar& p) const;
-    const MatrixComplexPowerReturnValue<Derived> pow(const std::complex<RealScalar>& p) const;
+    EIGEN_MATRIX_FUNCTION(MatrixFunctionReturnValue, cosh, hyperbolic cosine)
+    EIGEN_MATRIX_FUNCTION(MatrixFunctionReturnValue, sinh, hyperbolic sine)
+#if EIGEN_HAS_CXX11_MATH
+    EIGEN_MATRIX_FUNCTION(MatrixFunctionReturnValue, atanh, inverse hyperbolic cosine)
+    EIGEN_MATRIX_FUNCTION(MatrixFunctionReturnValue, acosh, inverse hyperbolic cosine)
+    EIGEN_MATRIX_FUNCTION(MatrixFunctionReturnValue, asinh, inverse hyperbolic sine)
+#endif
+    EIGEN_MATRIX_FUNCTION(MatrixFunctionReturnValue, cos, cosine)
+    EIGEN_MATRIX_FUNCTION(MatrixFunctionReturnValue, sin, sine)
+    EIGEN_MATRIX_FUNCTION(MatrixSquareRootReturnValue, sqrt, square root)
+    EIGEN_MATRIX_FUNCTION(MatrixLogarithmReturnValue, log, logarithm)
+    EIGEN_MATRIX_FUNCTION_1(MatrixPowerReturnValue,        pow, power to \c p, const RealScalar& p)
+    EIGEN_MATRIX_FUNCTION_1(MatrixComplexPowerReturnValue, pow, power to \c p, const std::complex<RealScalar>& p)
 
   protected:
-    EIGEN_DEVICE_FUNC MatrixBase() : Base() {}
+    EIGEN_DEFAULT_COPY_CONSTRUCTOR(MatrixBase)
+    EIGEN_DEFAULT_EMPTY_CONSTRUCTOR_AND_DESTRUCTOR(MatrixBase)
 
   private:
     EIGEN_DEVICE_FUNC explicit MatrixBase(int);
