@@ -643,7 +643,7 @@ void BathArray_allocBath(BathArray* ba, int nqubit){
         BathArray_setBath_i_name(ba,"",i);
         BathArray_setBath_i_spin(ba,0.0,i);
         BathArray_setBath_i_gyro(ba,0.0,i);
-        BathArray_setBath_i_xyz(ba,(double[]){0.0,0.0,0.0},i);
+        double tmp_xyz[3] = {0.0,0.0,0.0}; BathArray_setBath_i_xyz(ba,tmp_xyz,i);
         BathArray_setBath_i_state(ba,0.0,i);
         BathArray_setBath_i_detuning(ba,0.0,i);
         BathArray_setBath_i_disorder(ba,0.0,i);
@@ -667,7 +667,7 @@ void BathArray_reallocBath(BathArray* ba, int old_length, int new_length, int nq
         BathArray_setBath_i_name(ba,"",i);
         BathArray_setBath_i_spin(ba,0.0,i);
         BathArray_setBath_i_gyro(ba,0.0,i);
-        BathArray_setBath_i_xyz(ba,(double[]){0.0,0.0,0.0},i);
+        double tmp_xyz[3] = {0.0,0.0,0.0}; BathArray_setBath_i_xyz(ba,tmp_xyz,i);
         BathArray_setBath_i_state(ba,0.0,i);
         BathArray_setBath_i_detuning(ba,0.0,i);
         BathArray_setBath_i_disorder(ba,0.0,i);
