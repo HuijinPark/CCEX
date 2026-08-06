@@ -243,7 +243,7 @@ MatrixXcd QubitArray_ZeemanHamil(QubitArray* qa, MatrixXcd** sigmas, int iq, flo
         exit(EXIT_FAILURE);
     }
     
-    float qgyro = QubitArray_getQubit_i_gyro(qa,iq);
+    double qgyro = QubitArray_getQubit_i_gyro(qa,iq);
     MatrixXcd vecZeeman = calZeemanVector(qgyro,bfield);
 
     return calHamiltonianSingleInt(vecZeeman,sigmas[iq]);

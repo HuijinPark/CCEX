@@ -264,7 +264,7 @@ MatrixXcd cal_TDUpulse_when_pulseiter_isTrue(QubitArray* qa, MatrixXcd Hq, Pulse
 
     int nqubit             = QubitArray_getNqubit(qa);
     double detuning_factor = Pulse_getPulseDetuningFactor(pulse);
-    char axis              = pulse->total_pulse_axes[ipulse];
+    char axis              = pulse->pulse_axes[ipulse];
     double Ediff           = calQubit_Energy_difference(qa, Hq);
     std::cout << "Ediff : " << Ediff << std::endl;
     std::cout << "Qubit Hamiltonian : \n" << Hq  << std::endl;
