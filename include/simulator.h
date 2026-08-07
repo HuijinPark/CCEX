@@ -38,11 +38,24 @@ struct GcceWork {
     Eigen::VectorXcd phase;              // scratch
     MatrixXcd scratch;                   // scratch
     std::vector<MatrixXcd> Ufrees;       // per-pulse free-evolution propagators
+
+    // evolution=vector only (see Config_setEvolution): |psi(t)>, the eigenbasis
+    // intermediate of one Ufree application, the phase factor of each distinct tau, and
+    // the pulse propagators already expanded over the bath.
+    Eigen::VectorXcd psi, psiscratch;
+    std::vector<Eigen::VectorXcd> phases;
+    std::vector<MatrixXcd> UpulsesExpanded;
 };
 
 /** Builds everything in GcceWork that is fixed for the cluster. Call once per cluster. */
 void prepareGcceWork(GcceWork* w, const MatrixXcd& Htot, bool useEigen);
 MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pls, double tfree, MatrixXcd* Upulses, GcceWork* w);
+
+/** evolution=vector: applies the same pulse sequence as calPropagatorGcce, but to the
+ *  state vector psi0 instead of assembling the propagator. Result in w->psi.
+ *  prepareGcceVectorWork must have been called for this cluster first. */
+void prepareGcceVectorWork(GcceWork* w, MatrixXcd* Upulses, int npulse, int bdim);
+const Eigen::VectorXcd& propagateStateGcce(const Eigen::VectorXcd& psi0, Pulse* pls, double tfree, GcceWork* w);
 
 MatrixXcd HamilQubit(QubitArray* qa, BathArray* ba, MatrixXcd** sigmas, Config* cnf);
 MatrixXcd HamilBath(BathArray* ba, MatrixXcd** sigmas, Config* cnf);

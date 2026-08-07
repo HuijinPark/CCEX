@@ -9,6 +9,7 @@ Config* Config_init(){
     cnf->method[0] = '\0';
     cnf->quantity[0] = '\0';
     cnf->propagator[0] = '\0';
+    cnf->evolution[0] = '\0';
     cnf->hfmedi = false;
     cnf->knight = false;
     return cnf;
@@ -153,6 +154,9 @@ char* Config_getQuantity(Config* cnf){
 }
 char* Config_getPropagator(Config* cnf){
     return cnf->propagator;
+}
+char* Config_getEvolution(Config* cnf){
+    return cnf->evolution;
 }
 
 int   Config_getOrder(Config* cnf){
@@ -340,6 +344,39 @@ void Config_setPropagator(Config* cnf, char* propagator){
     }
 
     strcpy(cnf->propagator,propagator);
+}
+
+void Config_setEvolution(Config* cnf, char* evolution){
+
+    // gCCE state representation.
+    //   matrix : propagate the full density matrix, rho(t) = U*rho0*U^dag, then partial-
+    //            trace it. What CCEX has always done; works for every configuration.
+    //   vector : rho0 is a pure state whenever nstate > 0 (QubitArray_Rho0 is always
+    //            psi0*psi0^dag, and BathArray_Rho0 is too unless it is the ensemble
+    //            average), so propagate |psi> instead. Each step becomes matrix-VECTOR
+    //            products, O(n^2) where the matrix path is O(n^3), and the partial trace
+    //            collapses to reshaping |psi> into a qdim x bdim matrix Psi and forming
+    //            Psi*Psi^dag.
+    // Same physics, different arithmetic: the results agree to rounding but are NOT
+    // bit-identical, which is why matrix stays the default. vector requires nstate > 0
+    // (an ensemble rho0 is mixed, so no state vector exists) and propagator=eigen (with
+    // expm the per-step matrix exponential dominates and there is nothing to win);
+    // calCoherenceGcce enforces both.
+    const int opsize = 2;
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"matrix","vector"};
+    int idx = findIndexCharFix(options,0,opsize-1,evolution);
+    if (idx == -1) {
+        fprintf(stderr, "Error: current evolution options (%s) is not available\n",evolution);
+        fprintf(stderr, "Available options are : ");
+        for (int i = 0; i < opsize; i++){
+            fprintf(stderr, "%s ",options[i]);
+        }
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Please check the input file or change the possible option set\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(cnf->evolution,evolution);
 }
 
 void Config_setOrder(Config* cnf, int order){
@@ -610,6 +647,7 @@ void Config_report(Config* cnf){
     printStructElementChar("method",Config_getMethod(cnf));
     printStructElementChar("quantity",Config_getQuantity(cnf));
     printStructElementChar("propagator",Config_getPropagator(cnf));
+    printStructElementChar("evolution",Config_getEvolution(cnf));
     printStructElementInt("order",Config_getOrder(cnf));
     printStructElementFloat1d("bfield",Config_getBfield(cnf),3);
     printStructElementFloat("rbath",Config_getRbath(cnf));

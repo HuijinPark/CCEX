@@ -15,6 +15,17 @@ static inline void phaseVectorGcce(const Eigen::VectorXd& x, Eigen::VectorXcd& o
     }
 }
 
+// exp(-i*Htot*tau) applied to w->psi, in place, without ever forming the propagator:
+//     exp(-i*H*tau)|v> = M ( exp(-i*lambda*tau) .* (M^dag |v>) )
+// Two matrix-vector products and one elementwise scaling, reading the decomposition
+// prepareGcceWork already computed. `phase` is exp(-i*lambda*tau) for this tau.
+// evolution=vector only.
+static inline void applyUfreeGcce(GcceWork* w, const Eigen::VectorXcd& phase){
+    w->psiscratch.noalias() = w->Madj * w->psi;
+    w->psiscratch.array()  *= phase.array();
+    w->psi.noalias()        = w->M * w->psiscratch;
+}
+
 
 void prepareGcceWork(GcceWork* w, const MatrixXcd& Htot, bool useEigen){
 
@@ -115,9 +126,39 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     bool isEnsemble = false;
     if (nstate == 0){isEnsemble = true;}
 
-    MatrixXcd qrho0 = QubitArray_Rho0(qa);
-    MatrixXcd brho0 = BathArray_Rho0(ba, isEnsemble);
-    MatrixXcd rho0 = kron(qrho0,brho0);
+    // evolution=vector propagates |psi> instead of rho, which needs rho0 to BE a pure
+    // state. QubitArray_Rho0 always is (psi0*psi0^dag) and BathArray_Rho0 is too except
+    // for the ensemble average, so the requirement is nstate > 0. Refuse rather than
+    // silently falling back -- a run that quietly used a different algorithm than the
+    // one it was asked for is worse than a run that stops.
+    const bool useVector = (strcasecmp(Config_getEvolution(cnf),"vector")==0);
+    if (useVector){
+        if (isEnsemble){
+            fprintf(stderr,"Error : evolution=vector needs a pure rho0, but nstate=0 "
+                           "(ensemble) makes the bath density matrix mixed. "
+                           "Use nstate > 0, or evolution=matrix.\n");
+            exit(1);
+        }
+        if (strcasecmp(Config_getPropagator(cnf),"eigen")!=0){
+            fprintf(stderr,"Error : evolution=vector requires propagator=eigen "
+                           "(with expm the per-step matrix exponential dominates and "
+                           "there is nothing to gain).\n");
+            exit(1);
+        }
+    }
+
+    MatrixXcd rho0;
+    Eigen::VectorXcd psi0;
+    if (useVector){
+        // BathArray_Psi0 leaves its result empty when nspin==0; the bath factor is the
+        // 1x1 identity there, so the qubit state is already the whole state.
+        psi0 = (nspin > 0) ? Eigen::VectorXcd(kron(QubitArray_getPsi0(qa),BathArray_Psi0(ba)))
+                           : Eigen::VectorXcd(QubitArray_getPsi0(qa));
+    }else{
+        MatrixXcd qrho0 = QubitArray_Rho0(qa);
+        MatrixXcd brho0 = BathArray_Rho0(ba, isEnsemble);
+        rho0 = kron(qrho0,brho0);
+    }
 
     ////////////////////////////////
     // Propagation
@@ -152,22 +193,44 @@ MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* p
     // matrix exponential on every step.
     GcceWork gw;
     prepareGcceWork(&gw, Htot, strcasecmp(Config_getPropagator(cnf),"eigen")==0);
+    if (useVector){ prepareGcceVectorWork(&gw, Upulses, pulse->npulse, bdim); }
 
+    MatrixXcd reducedRhot;
     for (int i=0; i<nstep; i++){
-        MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree, Upulses, &gw);
-        // Density matrix for time
-        MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
 
-        // Save the density matrix
-        if (strcasecmp(op->savemode,"allfull")==0){
-            result_tot[i] = rhot;
-        }
-    
-        // Trace for tha bath state
-        MatrixXcd reducedRhot = rhot;
-        for (int ib=nspin-1; ib>=0; ib--){
-            int bdim_i = BathArray_dimBath_i(ba, ib);
-            reducedRhot = partialtrace(reducedRhot, bdim_i, bdim_i);
+        if (useVector){
+            // |psi(t)> = Utot |psi0>, without ever forming Utot.
+            const Eigen::VectorXcd& psit = propagateStateGcce(psi0, pulse, tfree, &gw);
+
+            // Tracing the bath out of |psi><psi| is a reshape. kron() lays the state out
+            // as psi(iq*bdim + ib), so reading it as a qdim x bdim matrix Psi gives
+            //   (Tr_bath |psi><psi|)_{ij} = sum_b psi(i,b) conj(psi(j,b)) = (Psi Psi^dag)_{ij}
+            // which is exactly what the partialtrace chain below computes term by term.
+            Eigen::Map<const Eigen::Matrix<doublec,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> >
+                Psi(psit.data(), qdim, bdim);
+            reducedRhot.noalias() = Psi * Psi.adjoint();
+
+            // allfull wants the full qubit+bath density matrix; from a pure state that is
+            // an outer product, O(n^2), cheaper than the O(n^3) the matrix path pays.
+            if (strcasecmp(op->savemode,"allfull")==0){
+                result_tot[i] = psit * psit.adjoint();
+            }
+        }else{
+            MatrixXcd Utot = calPropagatorGcce(qa, Htot, pulse, tfree, Upulses, &gw);
+            // Density matrix for time
+            MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
+
+            // Save the density matrix
+            if (strcasecmp(op->savemode,"allfull")==0){
+                result_tot[i] = rhot;
+            }
+
+            // Trace for tha bath state
+            reducedRhot = rhot;
+            for (int ib=nspin-1; ib>=0; ib--){
+                int bdim_i = BathArray_dimBath_i(ba, ib);
+                reducedRhot = partialtrace(reducedRhot, bdim_i, bdim_i);
+            }
         }
 
         // Get the phase for qubit' two states
@@ -232,6 +295,63 @@ double getPhase(char axis) {
 double getAngle(double degree) {
     return degree * (M_PI / 180.0);  // Radian
 } 
+/**
+ * evolution=vector. calPropagatorGcce expands kron(Upulses[i], I_bdim) again on every
+ * step; nothing in it depends on the step, so the vector path expands once per cluster.
+ */
+void prepareGcceVectorWork(GcceWork* w, MatrixXcd* Upulses, int npulse, int bdim){
+
+    w->UpulsesExpanded.resize(npulse);
+    for (int ipulse=0; ipulse<npulse; ipulse++){
+        w->UpulsesExpanded[ipulse] = kron(Upulses[ipulse],MatrixXcd::Identity(bdim,bdim));
+    }
+}
+
+
+/**
+ * evolution=vector. The same operator as calPropagatorGcce, applied to a state instead
+ * of assembled. That function builds, for npulse pulses,
+ *     Utotal = Ufree_N (Upulse_{N-1} Ufree_{N-1}) ... (Upulse_0 Ufree_0)
+ * so applying it to a state runs right to left: Ufree_0 first, then alternating the
+ * pulse and the next Ufree. Every application is a matrix-VECTOR product, O(n^2), where
+ * assembling Utotal costs a chain of O(n^3) matrix-matrix products.
+ *
+ * Ufree(tau) is never formed either -- see applyUfreeGcce. Requires propagator=eigen;
+ * Config_setEvolution documents why, and calCoherenceGcce enforces it.
+ */
+const Eigen::VectorXcd& propagateStateGcce(const Eigen::VectorXcd& psi0, Pulse* pulse, double tfree, GcceWork* w){
+
+    double** sequence        = Pulse_getSequence(pulse);
+    int*    sequence_indices = Pulse_getSequenceIndices(pulse);
+    int     npulse           = Pulse_getNpulse(pulse);
+
+    // A pulse sequence repeats its delays -- CPMG runs npulse-1 identical inner taus --
+    // and the matrix path has always exploited that through sequence_indices. Do the
+    // same here: exp(-i*lambda*tau) costs one sincos per eigenvalue, so recomputing it
+    // for a tau already seen is the most expensive thing to get wrong. An identical tau
+    // gives an identical phase vector, so reusing it is bit-for-bit the same as
+    // recomputing it.
+    if ((int)w->phases.size() < npulse+1){ w->phases.resize(npulse+1); }
+    for (int ipulse=0; ipulse<npulse+1; ipulse++){
+        if (sequence_indices[ipulse] == ipulse){
+            w->evals_tau = w->evals * (tfree * sequence[ipulse][2]);
+            phaseVectorGcce(w->evals_tau, w->phases[ipulse]);
+        }
+    }
+
+    w->psi = psi0;
+    applyUfreeGcce(w, w->phases[sequence_indices[0]]);
+
+    for (int ipulse=1; ipulse<npulse+1; ipulse++){
+        w->psiscratch.noalias() = w->UpulsesExpanded[ipulse-1] * w->psi;
+        w->psi.swap(w->psiscratch);
+        applyUfreeGcce(w, w->phases[sequence_indices[ipulse]]);
+    }
+
+    return w->psi;
+}
+
+
 MatrixXcd calPropagatorGcce(QubitArray* qa, MatrixXcd Htot, Pulse* pulse, double tfree, MatrixXcd* Upulses, GcceWork* w){
 
     double** sequence        = Pulse_getSequence(pulse);
