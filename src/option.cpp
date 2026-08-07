@@ -35,7 +35,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     if (rank==0){
         printMessage("  - General option-related keys : ");
-        printMessage("    [ method, quantity, propagator, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
+        printMessage("    [ method, quantity, propagator, evolution, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
     }
     char* method = cJSON_ReadString(root,"method",true,"cce");
     Config_setMethod(cnf,method); // Current possible options : cce, gcce, pcce, dsj, dsjitb, itb
@@ -45,6 +45,18 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     char* propagator = cJSON_ReadString(root,"propagator",true,"eigen");
     Config_setPropagator(cnf,propagator); // gCCE only : eigen (default) | expm (legacy)
+
+    char* evolution = cJSON_ReadString(root,"evolution",true,"matrix");
+    Config_setEvolution(cnf,evolution); // gCCE only : matrix (default) | vector (rank-1)
+
+    // Only calCoherenceGcce reads evolution. Every other method would ignore the key
+    // silently and run the density-matrix path anyway, so refuse instead of letting the
+    // input file claim something the run does not do.
+    if (strcasecmp(evolution,"matrix")!=0 && strcasecmp(method,"gcce")!=0){
+        fprintf(stderr,"Error : evolution=%s is implemented for method=gCCE only "
+                       "(this run has method=%s).\n",evolution,method);
+        exit(EXIT_FAILURE);
+    }
 
     int order = cJSON_ReadInt(root,"order",false,-1);
     Config_setOrder(cnf,order);    

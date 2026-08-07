@@ -34,6 +34,7 @@ typedef struct {
     char method[MAX_CHARARRAY_LENGTH];
     char quantity[MAX_CHARARRAY_LENGTH];  /**< Measurment : coherence | noise  | dm   */
     char propagator[MAX_CHARARRAY_LENGTH];/**< gCCE free-evolution propagator : eigen | expm */
+    char evolution[MAX_CHARARRAY_LENGTH]; /**< gCCE state representation : matrix | vector   */
 
     // General options
     int   order;        /**< Maximum nuclear spins included in a cluster ( >= 0 )*/
@@ -123,6 +124,7 @@ void Config_report(Config* cnf);
 char*   Config_getMethod(Config* cnf);
 char*   Config_getQuantity(Config* cnf);
 char*   Config_getPropagator(Config* cnf);
+char*   Config_getEvolution(Config* cnf);
 int     Config_getOrder(Config* cnf);
 float*  Config_getBfield(Config* cnf);
 float   Config_getRbath(Config* cnf);
@@ -161,6 +163,7 @@ bool    Config_getKnight(Config* cnf);
 void Config_setMethod(Config* cnf, char* method);
 void Config_setQuantity(Config* cnf, char* quantity);
 void Config_setPropagator(Config* cnf, char* propagator);
+void Config_setEvolution(Config* cnf, char* evolution);
 void Config_setOrder(Config* cnf, int order);
 void Config_setBfield(Config* cnf, float* bfield);
 void Config_setBfield_z(Config* cnf, float bz);
