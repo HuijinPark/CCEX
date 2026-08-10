@@ -35,6 +35,7 @@ typedef struct {
     char quantity[MAX_CHARARRAY_LENGTH];  /**< Measurment : coherence | noise  | dm   */
     char propagator[MAX_CHARARRAY_LENGTH];/**< gCCE free-evolution propagator : eigen | expm */
     char evolution[MAX_CHARARRAY_LENGTH]; /**< gCCE state representation : matrix | vector   */
+    bool evolution_isdefault;             /**< true until an "evolution" key is actually read */
 
     // General options
     int   order;        /**< Maximum nuclear spins included in a cluster ( >= 0 )*/
@@ -164,6 +165,7 @@ void Config_setMethod(Config* cnf, char* method);
 void Config_setQuantity(Config* cnf, char* quantity);
 void Config_setPropagator(Config* cnf, char* propagator);
 void Config_setEvolution(Config* cnf, char* evolution);
+void Config_resolveEvolution(Config* cnf);
 void Config_setOrder(Config* cnf, int order);
 void Config_setBfield(Config* cnf, float* bfield);
 void Config_setBfield_z(Config* cnf, float bz);

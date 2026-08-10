@@ -46,25 +46,14 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     char* propagator = cJSON_ReadString(root,"propagator",true,"eigen");
     Config_setPropagator(cnf,propagator); // gCCE only : eigen (default) | expm (legacy)
 
-    // vector is the DEFAULT, but it only exists where its preconditions hold: gCCE, a
-    // pure rho0 (nstate > 0) and propagator=eigen. Those are resolved below, once nstate
-    // has been read -- so the value Config_report prints is the one that actually runs.
-    //
-    // Asking for it and getting it silently downgraded would be the worse failure, so the
-    // two cases are kept apart: an EXPLICIT "evolution" key is honoured to the letter and
-    // calCoherenceGcce refuses if it cannot be, while the default falls back quietly.
-    const bool evolutionIsExplicit = (cJSON_GetObjectItem(root,"evolution") != NULL);
+    // vector is the DEFAULT, but it only exists where its preconditions hold: gCCE, a pure
+    // rho0 (nstate > 0) and propagator=eigen. Do NOT decide that here -- this function
+    // runs from inside main.cpp's getopt loop, so -m and -N have not been applied yet.
+    // Only record whether the key was written; Config_resolveEvolution settles it once
+    // every source is in.
     char* evolution = cJSON_ReadString(root,"evolution",true,"vector");
     Config_setEvolution(cnf,evolution); // gCCE only : vector (default) | matrix (legacy)
-
-    // Only calCoherenceGcce reads evolution. Every other method would ignore the key
-    // silently and run the density-matrix path anyway, so refuse instead of letting the
-    // input file claim something the run does not do.
-    if (evolutionIsExplicit && strcasecmp(evolution,"matrix")!=0 && strcasecmp(method,"gcce")!=0){
-        fprintf(stderr,"Error : evolution=%s is implemented for method=gCCE only "
-                       "(this run has method=%s).\n",evolution,method);
-        exit(EXIT_FAILURE);
-    }
+    cnf->evolution_isdefault = (cJSON_GetObjectItem(root,"evolution") == NULL);
 
     int order = cJSON_ReadInt(root,"order",false,-1);
     Config_setOrder(cnf,order);    
@@ -105,19 +94,6 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     int nstate = cJSON_ReadInt(root,"nstate",true,0);
     Config_setNstate(cnf,nstate);
-
-    // Resolve the DEFAULTED evolution now that method, propagator and nstate are all
-    // known. An explicit key is left exactly as written -- calCoherenceGcce reports why
-    // it cannot run and stops. Anything set here is what Config_report prints, so the log
-    // always names the path the run actually took.
-    if (!evolutionIsExplicit){
-        bool vectorFits = (strcasecmp(method,"gcce")==0)
-                       && (nstate > 0)
-                       && (strcasecmp(propagator,"eigen")==0);
-        if (!vectorFits){
-            Config_setEvolution(cnf,(char*)"matrix");
-        }
-    }
 
     int seed = cJSON_ReadInt(root,"seed",true,-1);
     if (seed == -1) {
