@@ -10,7 +10,11 @@
 // init
 QubitArray* QubitArray_init(){
 
-    QubitArray* qa = (QubitArray*)allocArray1d(1,sizeof(QubitArray));
+    // new, not calloc: QubitArray holds MatrixXcd psia/psib/psi0 BY VALUE. calloc never
+    // ran their constructors and free() never ran their destructors, so every Eigen
+    // buffer those members allocated was leaked. `new T()` value-initialises, so the POD
+    // members are still zeroed exactly as calloc left them.
+    QubitArray* qa = new QubitArray();
 
     QubitArray_set_alphaidx(qa,NULL);
     QubitArray_set_betaidx(qa,NULL); 
@@ -31,10 +35,11 @@ QubitArray* QubitArray_init(){
 
 // free
 void QubitArray_freeAll(QubitArray* qa){
+    if (qa == NULL) return;
     QubitArray_freeQubit(qa);
     QubitArray_freeIntmap(qa);
     QubitArray_free_alphaidx_betaidx(qa);
-    freeArray1d((void**)&qa);
+    delete qa;   // runs ~MatrixXcd on psia/psib/psi0
 }
 
 // phyiscal properties
@@ -138,6 +143,8 @@ void QubitArray_setPsiaPsib_fromIdx(QubitArray* qa, float* bfield){
     // Set Psia, Psib
     QubitArray_setPsia(qa,psia);
     QubitArray_setPsib(qa,psib);
+
+    freeInt1d(&idx);   // getIndexInOrder allocates it and nobody was freeing it
 }
 
 // From Psia & Psib, set psi0 by adding them
@@ -343,7 +350,12 @@ MatrixXcd   QubitArray_Rho0(QubitArray* qa){
 void QubitArray_allocQubit(QubitArray* qa){
     // alloc as much as nqubit
     int nqubit = QubitArray_getNqubit(qa);
-    qa->qubit = (Qubit**)allocArray2d(nqubit,1,sizeof(Qubit));
+    // The POINTER array stays calloc -- pointers are POD. The Qubit OBJECTS get new,
+    // because Qubit holds MatrixXcd alpha/beta by value and needs its constructor.
+    qa->qubit = (Qubit**)allocArray1d(nqubit,sizeof(Qubit*));
+    for (int i=0; i<nqubit; i++){
+        qa->qubit[i] = new Qubit();
+    }
 }
 
 void QubitArray_allocIntmap(QubitArray* qa){
@@ -483,7 +495,10 @@ void QubitArray_freeQubit(QubitArray* qa){
         return;
     }
     int nqubit = QubitArray_getNqubit(qa);
-    freeArray2d((void***)&(qa->qubit),nqubit);
+    for (int i=0; i<nqubit; i++){
+        delete qa->qubit[i];   // runs ~MatrixXcd on alpha/beta
+    }
+    freeArray1d((void**)&(qa->qubit));
 }
 
 void QubitArray_freeIntmap(QubitArray* qa){
