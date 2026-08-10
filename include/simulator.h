@@ -2,6 +2,7 @@
 #define __CCEX_SIMULATOR_H_
 
 #include <unsupported/Eigen/MatrixFunctions>
+#include <vector>   // GcceWork/CceWork members; g++ gets it transitively, icpc does not
 #include "utilities.h"
 #include "qubit.h"
 #include "bath.h"
