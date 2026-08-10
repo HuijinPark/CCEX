@@ -349,19 +349,21 @@ void Config_setPropagator(Config* cnf, char* propagator){
 void Config_setEvolution(Config* cnf, char* evolution){
 
     // gCCE state representation.
+    //   vector : DEFAULT. rho0 is a pure state whenever nstate > 0 (QubitArray_Rho0 is
+    //            always psi0*psi0^dag, and BathArray_Rho0 is too unless it is the
+    //            ensemble average), so propagate |psi> instead of rho. Each step becomes
+    //            matrix-VECTOR products, O(n^2) where the matrix path is O(n^3), and the
+    //            partial trace collapses to reshaping |psi> into a qdim x bdim matrix Psi
+    //            and forming Psi*Psi^dag.
     //   matrix : propagate the full density matrix, rho(t) = U*rho0*U^dag, then partial-
-    //            trace it. What CCEX has always done; works for every configuration.
-    //   vector : rho0 is a pure state whenever nstate > 0 (QubitArray_Rho0 is always
-    //            psi0*psi0^dag, and BathArray_Rho0 is too unless it is the ensemble
-    //            average), so propagate |psi> instead. Each step becomes matrix-VECTOR
-    //            products, O(n^2) where the matrix path is O(n^3), and the partial trace
-    //            collapses to reshaping |psi> into a qdim x bdim matrix Psi and forming
-    //            Psi*Psi^dag.
-    // Same physics, different arithmetic: the results agree to rounding but are NOT
-    // bit-identical, which is why matrix stays the default. vector requires nstate > 0
-    // (an ensemble rho0 is mixed, so no state vector exists) and propagator=eigen (with
-    // expm the per-step matrix exponential dominates and there is nothing to win);
-    // calCoherenceGcce enforces both.
+    //            trace it. What CCEX did before; works for every configuration.
+    // Same physics, different arithmetic: the results agree to rounding but are not
+    // guaranteed bit-identical, so a converged series should not switch mid-way.
+    // vector needs nstate > 0 (an ensemble rho0 is mixed, so no state vector exists),
+    // propagator=eigen (with expm the per-step matrix exponential dominates and there is
+    // nothing to win) and method=gCCE. cJSON_readOptionConfig falls the DEFAULT back to
+    // matrix wherever those do not hold; an EXPLICIT evolution=vector is never downgraded
+    // -- calCoherenceGcce says why it cannot run and stops.
     const int opsize = 2;
     char options[opsize][MAX_CHARARRAY_LENGTH] = {"matrix","vector"};
     int idx = findIndexCharFix(options,0,opsize-1,evolution);
