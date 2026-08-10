@@ -1733,7 +1733,12 @@ void build_tot_sequence(Pulse* pulse, double*** total_sequence, double** total_f
         double bath_t = 0.0;
         for (int b = 0; b < bnpulse; ++b){
             bath_t += bpulse_fracs[b];
-            if (fabs(bath_t - t2) < 0.01){
+            // Tolerance was 0.01 (a hundredth of the whole sequence).  A bath pulse sitting
+            // that close to a qubit pulse matched at both segment edges and was applied twice,
+            // and two pi pulses cancel, so the pump silently did nothing.  The edge values come
+            // from this same accumulation, so exact matching is what is wanted; 1e-9 only
+            // absorbs float noise.  (Qubit branch above already uses 1e-12.)
+            if (fabs(bath_t - t2) < 1e-9){
                 bidx = b;
                 break;
             } 
