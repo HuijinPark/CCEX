@@ -101,6 +101,13 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     int seed = cJSON_ReadInt(root,"seed",true,-1);
     if (seed == -1) {
         seed = time(NULL);
+        // Without a seed the bath states come from a clock-seeded srand, so the same
+        // input run twice gives different numbers. Print the value that was used --
+        // reproducing the run afterwards needs it.
+        if (rank==0){
+            fprintf(stderr,"Warning: no \"seed\" in the input file -- seeding from time(NULL) (%d).\n"
+                           "         This run is NOT reproducible. Set \"seed\" to make it so.\n", seed);
+        }
     }
     Config_setSeed(cnf,seed);
     srand(seed);
@@ -927,8 +934,13 @@ char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_va
         if (access(item->valuestring, R_OK) == 0) {
             return item->valuestring;
         }else{
-            // fprintf(stderr, "Warning: %s cannot open/read (%d)\n",key,access(item->valuestring, R_OK));
-            // fprintf(stderr, "Current path: %s\n",item->valuestring);
+            // The path is returned anyway, so an unreadable file does not stop the run --
+            // whatever the caller meant to fill from it just keeps its default. Silence
+            // here is how a qubit ends up at the cell origin and the run still "works".
+            if (rank==0){
+                fprintf(stderr,"Warning: %s : cannot read \"%s\" -- continuing with defaults\n",
+                        key, item->valuestring);
+            }
             return item->valuestring;
         }
     }else{
