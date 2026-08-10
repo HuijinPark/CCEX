@@ -329,6 +329,16 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                         }
                     }
                     delete[] result_nth;
+
+                    // createBathArray builds ba_cluster fresh for every cluster and it was
+                    // never released -- one BathArray, its BathSpin objects, their hypf
+                    // arrays and every MatrixXcd inside, leaked per (state, config,
+                    // cluster). Safe to free here: BathArray_setBath_i copies name,
+                    // scalars, quad, hypf_sub and each hypf[j] BY VALUE (Eigen's
+                    // operator= deep-copies), so ba_cluster aliases nothing in the parent
+                    // bath, and result_nth is an independent new[] that has already been
+                    // consumed above.
+                    BathArray_freeAll(ba_cluster);
                 }
 
                 if (rank==0){
