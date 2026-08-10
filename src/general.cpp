@@ -10,6 +10,7 @@ Config* Config_init(){
     cnf->quantity[0] = '\0';
     cnf->propagator[0] = '\0';
     cnf->evolution[0] = '\0';
+    cnf->evolution_isdefault = true;
     cnf->hfmedi = false;
     cnf->knight = false;
     return cnf;
@@ -379,6 +380,40 @@ void Config_setEvolution(Config* cnf, char* evolution){
     }
 
     strcpy(cnf->evolution,evolution);
+}
+
+/**
+ * Pick the evolution path once every option source has been applied.
+ *
+ * This CANNOT be decided while the input file is being parsed. main.cpp reads the file
+ * from inside the getopt loop (case 'f'), so -m, -N and the rest are still to come:
+ * `-f ccein.json -N 1` on a file with no "nstate" key would have been resolved against
+ * nstate = 0 and frozen at matrix, even though the run does have a pure rho0. Call this
+ * after the loop, before Config_report, so the reported value is the one that runs.
+ *
+ * An explicit "evolution" is never rewritten -- only checked against the one condition
+ * that is fatal outside gCCE. calCoherenceGcce enforces the other two.
+ */
+void Config_resolveEvolution(Config* cnf){
+
+    bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
+
+    if (!cnf->evolution_isdefault){
+        // Only calCoherenceGcce reads evolution. Any other method would ignore it and run
+        // the density-matrix path anyway, so refuse rather than let the input claim
+        // something the run does not do.
+        if (strcasecmp(cnf->evolution,"matrix")!=0 && !isGCCE){
+            fprintf(stderr,"Error : evolution=%s is implemented for method=gCCE only "
+                           "(this run has method=%s).\n",cnf->evolution,cnf->method);
+            exit(EXIT_FAILURE);
+        }
+        return;
+    }
+
+    bool vectorFits = isGCCE
+                   && (cnf->nstate > 0)
+                   && (strcasecmp(cnf->propagator,"eigen")==0);
+    strcpy(cnf->evolution, vectorFits ? "vector" : "matrix");
 }
 
 void Config_setOrder(Config* cnf, int order){
