@@ -30,7 +30,7 @@
 #
 # rbath CEILING: the bath cell spans ~1048 A per side (coordinate ranges
 # x[0.000,1047.933] y[0.728,1046.960] z[0.000,1043.550]) and the NV sits
-# essentially at its centre, so the nearest cell face is ~521 A away. Past
+# essentially at its center, so the nearest cell face is ~521 A away. Past
 # that the rbath sphere would leave the cell and the bath would be silently
 # truncated on one side; CCEX does NOT check it. rbath = 300 here, well inside.
 # (The idm reference's rbath = 370 was inside too.)
@@ -57,7 +57,7 @@
 #   deltat 50e-04 -> 3e-4 ms (-> 11.7 us total), rbath 370 -> 200,
 #   rdip 310 -> 100.
 # Added: "seed" -- and it matters more here than anywhere else, because no avaax
-#   file is supplied, so CCEX RANDOMISES each P1's Jahn-Teller axis
+#   file is supplied, so CCEX RANDOMIZES each P1's Jahn-Teller axis
 #   ("Warning(setPaxes): ... The paxes is randomly generated"). The idm reference
 #   had no seed, so its axis assignment -- and its numbers -- were not
 #   reproducible. With seed = 1 the paxes draw is fixed.

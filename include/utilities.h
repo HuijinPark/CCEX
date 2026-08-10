@@ -72,7 +72,7 @@ using namespace Eigen;
 #define RADKHZ_TO_KHZ(x) (1 / (2.0 * M_PI) * x)
 
 // Gyromagnetic ratio of electron spin [radkHz/G]
-// Parenthesised and WITHOUT a trailing semicolon. The semicolon used to be part of the
+// Parenthesized and WITHOUT a trailing semicolon. The semicolon used to be part of the
 // macro body, so it only worked in `double g = GAMMA_ELECTRON;` -- where the extra `;`
 // became a null statement -- and was a syntax error anywhere an expression was wanted,
 // e.g. foo(GAMMA_ELECTRON) or 2*GAMMA_ELECTRON.

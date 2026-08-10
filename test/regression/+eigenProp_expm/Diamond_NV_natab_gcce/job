@@ -22,7 +22,7 @@
 # convergence.
 #
 # WHAT MAKES THE gCCE ccein DIFFERENT FROM THE CCE ONE
-# (modelled on the NV gCCE runs in
+# (modeled on the NV gCCE runs in
 #  ~/Claude_Projects/MagneticField_rotation/0_Benchmark/2_Qiu/conv_ensemble_dt10us/f65)
 #
 #   * "Qubit" block instead of "qubitfile". gCCE propagates the qubit itself, so
@@ -43,7 +43,7 @@
 #
 # The huge ZFS phase does not survive into the coherence: gCCE divides every
 # cluster by the 0-th (bath-free) cluster, which is precisely the free-qubit
-# evolution, and normalises again at t = 0.
+# evolution, and normalizes again at t = 0.
 #
 # Parameters that differ from the idm reference ccein.js, on purpose:
 #   bfield 3000 -> 300 G,  deltat 0.003 -> 0.3 ms,  nstep 500 -> 30,
