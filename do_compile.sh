@@ -46,13 +46,21 @@ LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lpthr
 INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
 LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
 
+# Header dependency tracking. -MMD writes obj/<name>.d listing every header the
+# translation unit actually included; -MP adds an empty target for each so that
+# DELETING a header does not stop the build. Without this, make only compares the
+# .o against its .cpp, so editing include/*.h recompiles nothing and mismatched
+# objects link with no warning at all.
+DEPFLAGS := -MMD -MP
+DEPS := \$(patsubst %.o,%.d,\$(filter %.o,\$(OBJS)))
+
 all: \$(TARGET)
 
 \$(TARGET): \$(OBJS) | \$(BIN_DIR)
 	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(DEPFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR):
 	mkdir -p \$(OBJ_DIR)
@@ -62,6 +70,8 @@ all: \$(TARGET)
 
 clean:
 	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
+
+-include \$(DEPS)
 
 EOF
 
@@ -102,13 +112,21 @@ LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lpthrea
 INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
 LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
 
+# Header dependency tracking. -MMD writes obj/<name>.d listing every header the
+# translation unit actually included; -MP adds an empty target for each so that
+# DELETING a header does not stop the build. Without this, make only compares the
+# .o against its .cpp, so editing include/*.h recompiles nothing and mismatched
+# objects link with no warning at all.
+DEPFLAGS := -MMD -MP
+DEPS := \$(patsubst %.o,%.d,\$(filter %.o,\$(OBJS)))
+
 all: \$(TARGET)
 
 \$(TARGET): \$(OBJS) | \$(BIN_DIR)
 	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(DEPFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR):
 	mkdir -p \$(OBJ_DIR)
@@ -118,6 +136,8 @@ all: \$(TARGET)
 
 clean:
 	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
+
+-include \$(DEPS)
 
 EOF
 
@@ -158,22 +178,32 @@ LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lpthr
 INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
 LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
 
+# Header dependency tracking. -MMD writes obj/<name>.d listing every header the
+# translation unit actually included; -MP adds an empty target for each so that
+# DELETING a header does not stop the build. Without this, make only compares the
+# .o against its .cpp, so editing include/*.h recompiles nothing and mismatched
+# objects link with no warning at all.
+DEPFLAGS := -MMD -MP
+DEPS := \$(patsubst %.o,%.d,\$(filter %.o,\$(OBJS)))
+
 all: \$(TARGET)
 
 \$(TARGET): \$(OBJS) | \$(BIN_DIR)
-        \$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-        \$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(DEPFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR):
-        mkdir -p \$(OBJ_DIR)
+	mkdir -p \$(OBJ_DIR)
 
 \$(BIN_DIR):
-        mkdir -p \$(BIN_DIR)
+	mkdir -p \$(BIN_DIR)
 
 clean:
-        rm -rf \$(OBJ_DIR) \$(BIN_DIR)
+	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
+
+-include \$(DEPS)
 
 EOF
 
@@ -211,13 +241,21 @@ LDFLAGS_MKL = -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lpthread -lm #-ldl
 INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) \$(INCLUDE_MPICH)
 LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
 
+# Header dependency tracking. -MMD writes obj/<name>.d listing every header the
+# translation unit actually included; -MP adds an empty target for each so that
+# DELETING a header does not stop the build. Without this, make only compares the
+# .o against its .cpp, so editing include/*.h recompiles nothing and mismatched
+# objects link with no warning at all.
+DEPFLAGS := -MMD -MP
+DEPS := \$(patsubst %.o,%.d,\$(filter %.o,\$(OBJS)))
+
 all: \$(TARGET)
 
 \$(TARGET): \$(OBJS) | \$(BIN_DIR)
 	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(DEPFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR):
 	mkdir -p \$(OBJ_DIR)
@@ -227,6 +265,8 @@ all: \$(TARGET)
 
 clean:
 	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
+
+-include \$(DEPS)
 
 EOF
 
@@ -309,13 +349,21 @@ INCLUDE := \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN)
 LIBRARY := \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
 
 .PHONY: all clean info
+# Header dependency tracking. -MMD writes obj/<name>.d listing every header the
+# translation unit actually included; -MP adds an empty target for each so that
+# DELETING a header does not stop the build. Without this, make only compares the
+# .o against its .cpp, so editing include/*.h recompiles nothing and mismatched
+# objects link with no warning at all.
+DEPFLAGS := -MMD -MP
+DEPS := \$(patsubst %.o,%.d,\$(filter %.o,\$(OBJS)))
+
 all: \$(TARGET)
 
 \$(TARGET): \$(OBJS) | \$(BIN_DIR)
 	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c \$< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+	\$(CXX) -c \$< -o \$@ \$(CXXFLAGS) \$(DEPFLAGS) \$(INCLUDE) \$(LIBRARY)
 
 \$(OBJ_DIR):
 	mkdir -p \$(OBJ_DIR)
@@ -331,6 +379,8 @@ info:
 
 clean:
 	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
+
+-include \$(DEPS)
 
 EOF
 
