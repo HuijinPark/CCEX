@@ -677,7 +677,23 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     // New tag~! 2025.05.09 
     // Read Bath pulse sequence !! 
     char* bpulse_defect = cJSON_ReadString(root,"bpulse_defect",true,"NoneNoNe");
-    double bpulse_energy_shift = cJSON_ReadDouble(root, "bpulse_energy_shift", true, 0.0);
+    // bpulse_energy_shift accepts a number (one pump tone) or an array (several tones)
+    cJSON* _bshift_item = cJSON_GetObjectItem(root, "bpulse_energy_shift");
+    int    _n_bshift = 1;
+    double bpulse_energy_shift = 0.0;
+    double* _bshifts = NULL;
+    if (_bshift_item != NULL && cJSON_IsArray(_bshift_item)){
+        _n_bshift = cJSON_GetArraySize(_bshift_item);
+        _bshifts = allocDouble1d(_n_bshift > 0 ? _n_bshift : 1);
+        for (int _i=0; _i<_n_bshift; _i++){
+            _bshifts[_i] = cJSON_GetArrayItem(_bshift_item, _i)->valuedouble;
+        }
+        if (_n_bshift > 0){ bpulse_energy_shift = _bshifts[0]; }
+    } else {
+        bpulse_energy_shift = cJSON_ReadDouble(root, "bpulse_energy_shift", true, 0.0);
+        _bshifts = allocDouble1d(1);
+        _bshifts[0] = bpulse_energy_shift;
+    }
     double bspin          = cJSON_ReadDouble(root, "bspin", true, 0.5);
     double balphams       = cJSON_ReadDouble(root, "balphams", true,  0.5);
     double bbetams        = cJSON_ReadDouble(root, "bbetams",  true, -0.5);
@@ -686,6 +702,8 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     Pulse_setBNpulse(pulse,bnpulse);
     Pulse_setBPulse_Defect(pulse,bpulse_defect);
     Pulse_setBPulse_EnergyShift(pulse, bpulse_energy_shift);
+    Pulse_setBPulse_EnergyShifts(pulse, _bshifts, _n_bshift);
+    freeDouble1d(&_bshifts);
     Pulse_setBPulse_bspin(pulse, bspin);
     Pulse_setBPulse_alphams(pulse, balphams);
     Pulse_setBPulse_betams(pulse, bbetams);

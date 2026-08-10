@@ -543,8 +543,15 @@ void calbUpulses(MatrixXcd* bUpulses, BathArray* ba, Pulse* pulse){
             //std::cout << "[DEBUG] bidx & bipulse : " << bidx << " & " << bipulse << std::endl;
 
             MatrixXcd tempbUpulse;
-            if ( strcasecmp(ba->bath[bidx]->name, pulse->bpulse_defect) == 0 && 
-                    (std::abs(pulse->bpulse_energy_shift-(ba->bath[bidx]->detuning)) < 10) ){ // Energy Diff < 10 [rad*kHz]
+            bool _bhit = false;
+            if ( strcasecmp(ba->bath[bidx]->name, pulse->bpulse_defect) == 0 ){
+                for (int _k=0; _k<pulse->n_bpulse_shift; _k++){ // any pump tone in range drives the spin
+                    if (std::abs(pulse->bpulse_energy_shifts[_k]-(ba->bath[bidx]->detuning)) < 10){ // Energy Diff < 10 [rad*kHz]
+                        _bhit = true; break;
+                    }
+                }
+            }
+            if ( _bhit ){
                 tempbUpulse = cal_Upulse_when_pulseiter_isFalse(pulse, bangle, bsigma);
                 //bUpulse = tempbUpulse * bUpulse;
                 //printf("[DEBUG] Bath Pulse On!! \n");

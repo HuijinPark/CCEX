@@ -33,6 +33,8 @@ Pulse* Pulse_init(){
     pulse->balphams            =  0.0;
     pulse->bbetams             =  0.0;
     pulse->bpulse_energy_shift =  0.0;
+    pulse->bpulse_energy_shifts = NULL;
+    pulse->n_bpulse_shift      =    0;
     // MatrixXcd bpsia; do not need to initialize (like qubit)
     // MatrixXcd bpsib; do not need to initialize (like qubit)
 
@@ -118,6 +120,19 @@ void Pulse_setBPulse_bpsib_fromMs(Pulse* pulse){
 
 void Pulse_setBPulse_EnergyShift(Pulse* pulse, double bpulse_energy_shift){
     pulse->bpulse_energy_shift = MHZ_TO_RADKHZ(bpulse_energy_shift);
+    Pulse_setBPulse_EnergyShifts(pulse, &bpulse_energy_shift, 1);
+}
+
+void Pulse_setBPulse_EnergyShifts(Pulse* pulse, double* shifts, int n){
+    if (pulse->bpulse_energy_shifts != NULL){
+        freeDouble1d(&(pulse->bpulse_energy_shifts));
+    }
+    pulse->n_bpulse_shift = n;
+    pulse->bpulse_energy_shifts = allocDouble1d(n > 0 ? n : 1);
+    for (int i=0; i<n; i++){
+        pulse->bpulse_energy_shifts[i] = MHZ_TO_RADKHZ(shifts[i]);
+    }
+    if (n > 0){ pulse->bpulse_energy_shift = pulse->bpulse_energy_shifts[0]; }
 }
 
 // 3) Total pulse sequence (Qubit + Bath)

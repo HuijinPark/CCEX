@@ -64,6 +64,8 @@ typedef struct {
     MatrixXcd bpsia;
     MatrixXcd bpsib;
     double   bpulse_energy_shift;
+    double*  bpulse_energy_shifts; /**< pump frequencies, rad*kHz (default : one entry) */
+    int      n_bpulse_shift;       /**< how many pump frequencies (default : 1) */
     double** bsequence; /**< pulse sequence for specific bath spin (default : NULL)*/
     double*  bpulse_fracs; 
     double*  bpulse_angles; 
@@ -219,6 +221,7 @@ void Pulse_setBPulse_betams(Pulse* pulse, double bbetams);
 void Pulse_setBPulse_bpsia_fromMs(Pulse* pulse);
 void Pulse_setBPulse_bpsib_fromMs(Pulse* pulse);
 void Pulse_setBPulse_EnergyShift(Pulse* pulse, double bpulse_energy_shift);
+void Pulse_setBPulse_EnergyShifts(Pulse* pulse, double* shifts, int n);
 
 void Pulse_setTotNPulse(Pulse* pulse, int total_npulse);
 void Pulse_setTotSequence(Pulse* pulse, double** total_sequence);
