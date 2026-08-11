@@ -13,14 +13,6 @@
 
 namespace Eigen {
 
-/** \class TensorTrace
-  * \ingroup CXX11_Tensor_Module
-  *
-  * \brief Tensor Trace class.
-  *
-  *
-  */
-
 namespace internal {
 template<typename Dims, typename XprType>
 struct traits<TensorTraceOp<Dims, XprType> > : public traits<XprType>
@@ -49,10 +41,13 @@ struct nested<TensorTraceOp<Dims, XprType>, 1, typename eval<TensorTraceOp<Dims,
 
 } // end namespace internal
 
-
-template<typename Dims, typename XprType>
-class TensorTraceOp : public TensorBase<TensorTraceOp<Dims, XprType> >
-{
+/**
+ * \ingroup CXX11_Tensor_Module
+ *
+ * \brief Tensor Trace class.
+ */
+template <typename Dims, typename XprType>
+class TensorTraceOp : public TensorBase<TensorTraceOp<Dims, XprType> > {
   public:
     typedef typename Eigen::internal::traits<TensorTraceOp>::Scalar Scalar;
     typedef typename Eigen::NumTraits<Scalar>::Real RealScalar;
@@ -91,18 +86,24 @@ struct TensorEvaluator<const TensorTraceOp<Dims, ArgType>, Device>
   typedef typename XprType::CoeffReturnType CoeffReturnType;
   typedef typename PacketType<CoeffReturnType, Device>::type PacketReturnType;
   static const int PacketSize = internal::unpacket_traits<PacketReturnType>::size;
+  typedef StorageMemory<CoeffReturnType, Device> Storage;
+  typedef typename Storage::Type EvaluatorPointerType;
 
   enum {
     IsAligned = false,
     PacketAccess = TensorEvaluator<ArgType, Device>::PacketAccess,
     BlockAccess = false,
-    PreferBlockAccess = false,
+    PreferBlockAccess = TensorEvaluator<ArgType, Device>::PreferBlockAccess,
     Layout = TensorEvaluator<ArgType, Device>::Layout,
     CoordAccess = false,
     RawAccess = false
   };
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
+  //===- Tensor block evaluation strategy (see TensorBlock.h) -------------===//
+  typedef internal::TensorBlockNotImplemented TensorBlock;
+  //===--------------------------------------------------------------------===//
+
+  EIGEN_STRONG_INLINE TensorEvaluator(const XprType& op, const Device& device)
     : m_impl(op.expression(), device), m_traceDim(1), m_device(device)
   {
 
@@ -128,6 +129,7 @@ struct TensorEvaluator<const TensorTraceOp<Dims, ArgType>, Device>
       }
     }
 
+    EIGEN_ONLY_USED_FOR_DEBUG(num_distinct_reduce_dims);
     eigen_assert(num_distinct_reduce_dims == NumReducedDims);
 
     // Compute the dimensions of the result.
@@ -205,12 +207,12 @@ struct TensorEvaluator<const TensorTraceOp<Dims, ArgType>, Device>
     return m_dimensions;
   }
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE bool evalSubExprsIfNeeded(Scalar* /*data*/) {
+  EIGEN_STRONG_INLINE bool evalSubExprsIfNeeded(EvaluatorPointerType /*data*/) {
     m_impl.evalSubExprsIfNeeded(NULL);
     return true;
   }
 
-  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void cleanup() {
+  EIGEN_STRONG_INLINE void cleanup() {
     m_impl.cleanup();
   }
 
@@ -249,6 +251,13 @@ struct TensorEvaluator<const TensorTraceOp<Dims, ArgType>, Device>
     return result;
   }
 
+#ifdef EIGEN_USE_SYCL
+  // binding placeholder accessors to a command group handler for SYCL
+  EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE void bind(cl::sycl::handler &cgh) const {
+    m_impl.bind(cgh);
+  }
+#endif
+
  protected:
   // Given the output index, finds the first index in the input tensor used to compute the trace
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE Index firstInput(Index index) const {
@@ -276,7 +285,7 @@ struct TensorEvaluator<const TensorTraceOp<Dims, ArgType>, Device>
   TensorEvaluator<ArgType, Device> m_impl;
   // Initialize the size of the trace dimension
   Index m_traceDim;
-  const Device& m_device;
+  const Device EIGEN_DEVICE_REF m_device;
   array<bool, NumInputDims> m_reduced;
   array<Index, NumReducedDims> m_reducedDims;
   array<Index, NumOutputDims> m_outputStrides;

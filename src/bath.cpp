@@ -635,7 +635,15 @@ void BathArray_reportBath_hypf_sub(BathArray* ba){
 
 void BathArray_allocBath(BathArray* ba, int nqubit){
     int nspin = BathArray_getNspin(ba);
-    ba->bath = (BathSpin**)allocArray2d(nspin,1,sizeof(BathSpin));
+    // The POINTER array stays calloc/realloc/free: pointers are POD, and keeping malloc
+    // semantics preserves realloc's in-place growth, which matters because createBathArray
+    // grows a cluster bath one spin at a time. The BathSpin OBJECTS get new, because
+    // BathSpin holds MatrixXcd quad/hypf_sub BY VALUE -- calloc never ran their
+    // constructors and free() never ran their destructors, so their Eigen buffers leaked.
+    ba->bath = (BathSpin**)allocArray1d(nspin,sizeof(BathSpin*));
+    for (int i=0; i<nspin; i++){
+        ba->bath[i] = new BathSpin();
+    }
     for (int i=0; i<nspin; i++){
         BathArray_allocBath_i_hypf(ba,i,nqubit);
         BathArray_setBath_i_mainspidx(ba,-1,i);
@@ -643,7 +651,7 @@ void BathArray_allocBath(BathArray* ba, int nqubit){
         BathArray_setBath_i_name(ba,"",i);
         BathArray_setBath_i_spin(ba,0.0,i);
         BathArray_setBath_i_gyro(ba,0.0,i);
-        BathArray_setBath_i_xyz(ba,(double[]){0.0,0.0,0.0},i);
+        double tmp_xyz[3] = {0.0,0.0,0.0}; BathArray_setBath_i_xyz(ba,tmp_xyz,i);
         BathArray_setBath_i_state(ba,0.0,i);
         BathArray_setBath_i_detuning(ba,0.0,i);
         BathArray_setBath_i_disorder(ba,0.0,i);
@@ -658,7 +666,12 @@ void BathArray_reallocBath(BathArray* ba, int old_length, int new_length, int nq
         exit(EXIT_FAILURE);
     }
     
-    reallocArray2d((void***)&(ba->bath),old_length,new_length,1,sizeof(BathSpin));
+    // realloc the POINTER array (POD, so realloc is legitimate and can grow in place),
+    // then construct the new BathSpin objects properly -- see BathArray_allocBath.
+    reallocArray1d((void**)&(ba->bath),new_length,sizeof(BathSpin*));
+    for (int i=old_length; i<new_length; i++){
+        ba->bath[i] = new BathSpin();
+    }
 
     for (int i=old_length; i<new_length; i++){
         BathArray_allocBath_i_hypf(ba,i,nqubit);
@@ -667,7 +680,7 @@ void BathArray_reallocBath(BathArray* ba, int old_length, int new_length, int nq
         BathArray_setBath_i_name(ba,"",i);
         BathArray_setBath_i_spin(ba,0.0,i);
         BathArray_setBath_i_gyro(ba,0.0,i);
-        BathArray_setBath_i_xyz(ba,(double[]){0.0,0.0,0.0},i);
+        double tmp_xyz[3] = {0.0,0.0,0.0}; BathArray_setBath_i_xyz(ba,tmp_xyz,i);
         BathArray_setBath_i_state(ba,0.0,i);
         BathArray_setBath_i_detuning(ba,0.0,i);
         BathArray_setBath_i_disorder(ba,0.0,i);
@@ -908,10 +921,15 @@ void BathArray_freeProp_spins(BathArray* ba){
 }
 
 void BathArray_freeBath(BathArray* ba){
+    if (ba->bath == NULL){
+        return;
+    }
     for (int i=0; i<ba->nspin; i++){
         BathArray_freeBath_i_hypf(ba,i);
-        freeArray1d((void**)&(ba->bath[i]));
+        delete ba->bath[i];   // runs ~MatrixXcd on quad/hypf_sub
     }
+    // The pointer array itself was never freed at all.
+    freeArray1d((void**)&(ba->bath));
 }
 
 void BathArray_freeBath_i_hypf(BathArray* ba, int i){

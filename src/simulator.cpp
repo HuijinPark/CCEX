@@ -44,7 +44,20 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     }else if (strcasecmp(method,"gcce")==0 && iter_0th>0){
         isGCCE = true;
     }
-    
+
+    // The Overhauser term reaches the Hamiltonian only through QubitArray_SingleHamil
+    // -> HamilQubit (simulator_hamiltonian.cpp:4), and calCoherenceGcce is its only
+    // caller. Under CCE the qubit is frozen into the classical labels alphams/betams, so
+    // its own Hamiltonian never enters -- the field is still parsed, stored and printed,
+    // which reads exactly like it took effect.
+    if (!isGCCE && QubitArray_getOverhaus(qa) && rank==0){
+        fprintf(stderr,"Warning: \"overhaus\" has no effect with method=%s.\n"
+                       "         CCE projects the qubit out, so the qubit Hamiltonian --\n"
+                       "         where the Overhauser field lives -- is never built.\n"
+                       "         Use method=gCCE for mean-field.\n", method);
+    }
+
+
     MPI_Barrier(MPI_COMM_WORLD);
 
     ////////////////////////////////
@@ -316,6 +329,16 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                         }
                     }
                     delete[] result_nth;
+
+                    // createBathArray builds ba_cluster fresh for every cluster and it was
+                    // never released -- one BathArray, its BathSpin objects, their hypf
+                    // arrays and every MatrixXcd inside, leaked per (state, config,
+                    // cluster). Safe to free here: BathArray_setBath_i copies name,
+                    // scalars, quad, hypf_sub and each hypf[j] BY VALUE (Eigen's
+                    // operator= deep-copies), so ba_cluster aliases nothing in the parent
+                    // bath, and result_nth is an independent new[] that has already been
+                    // consumed above.
+                    BathArray_freeAll(ba_cluster);
                 }
 
                 if (rank==0){
