@@ -27,7 +27,7 @@ Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> randMatrixUnitary(int size)
   MatrixType Q;
 
   int max_tries = 40;
-  bool is_unitary = false;
+  double is_unitary = false;
 
   while (!is_unitary && max_tries > 0)
   {

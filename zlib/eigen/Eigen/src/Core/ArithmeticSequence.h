@@ -172,8 +172,7 @@ seqN(FirstType first, SizeType size)  {
   return ArithmeticSequence<typename internal::cleanup_index_type<FirstType>::type,typename internal::cleanup_index_type<SizeType>::type>(first,size);
 }
 
-
-#if EIGEN_HAS_CXX11
+#ifdef EIGEN_PARSED_BY_DOXYGEN
 
 /** \returns an ArithmeticSequence starting at \a f, up (or down) to \a l, and with positive (or negative) increment \a incr
   *
@@ -184,15 +183,8 @@ seqN(FirstType first, SizeType size)  {
   *
   * \sa seqN(FirstType,SizeType,IncrType), seq(FirstType,LastType)
   */
-template<typename FirstType,typename LastType>
-auto seq(FirstType f, LastType l) -> decltype(seqN(typename internal::cleanup_index_type<FirstType>::type(f),
-                                                   (  typename internal::cleanup_index_type<LastType>::type(l)
-                                                    - typename internal::cleanup_index_type<FirstType>::type(f)+fix<1>())))
-{
-  return seqN(typename internal::cleanup_index_type<FirstType>::type(f),
-              (typename internal::cleanup_index_type<LastType>::type(l)
-               -typename internal::cleanup_index_type<FirstType>::type(f)+fix<1>()));
-}
+template<typename FirstType,typename LastType, typename IncrType>
+auto seq(FirstType f, LastType l, IncrType incr);
 
 /** \returns an ArithmeticSequence starting at \a f, up (or down) to \a l, and unit increment
   *
@@ -203,6 +195,22 @@ auto seq(FirstType f, LastType l) -> decltype(seqN(typename internal::cleanup_in
   *
   * \sa seqN(FirstType,SizeType), seq(FirstType,LastType,IncrType)
   */
+template<typename FirstType,typename LastType>
+auto seq(FirstType f, LastType l);
+
+#else // EIGEN_PARSED_BY_DOXYGEN
+
+#if EIGEN_HAS_CXX11
+template<typename FirstType,typename LastType>
+auto seq(FirstType f, LastType l) -> decltype(seqN(typename internal::cleanup_index_type<FirstType>::type(f),
+                                                   (  typename internal::cleanup_index_type<LastType>::type(l)
+                                                    - typename internal::cleanup_index_type<FirstType>::type(f)+fix<1>())))
+{
+  return seqN(typename internal::cleanup_index_type<FirstType>::type(f),
+              (typename internal::cleanup_index_type<LastType>::type(l)
+               -typename internal::cleanup_index_type<FirstType>::type(f)+fix<1>()));
+}
+
 template<typename FirstType,typename LastType, typename IncrType>
 auto seq(FirstType f, LastType l, IncrType incr)
   -> decltype(seqN(typename internal::cleanup_index_type<FirstType>::type(f),
@@ -309,26 +317,12 @@ seq(const symbolic::BaseExpr<FirstTypeDerived> &f, const symbolic::BaseExpr<Last
 }
 #endif // EIGEN_HAS_CXX11
 
+#endif // EIGEN_PARSED_BY_DOXYGEN
+
+
 #if EIGEN_HAS_CXX11
 /** \cpp11
-  * \returns a symbolic ArithmeticSequence representing the last \a size elements with a unit increment.
-  *
-  * \anchor indexing_lastN
-  *
-  *  It is a shortcut for: \code seq(last+fix<1>-size, last) \endcode
-  * 
-  * \sa lastN(SizeType,IncrType, seqN(FirstType,SizeType), seq(FirstType,LastType) */
-template<typename SizeType>
-auto lastN(SizeType size)
--> decltype(seqN(Eigen::last+fix<1>()-size, size))
-{
-  return seqN(Eigen::last+fix<1>()-size, size);
-}
-
-/** \cpp11
   * \returns a symbolic ArithmeticSequence representing the last \a size elements with increment \a incr.
-  *
-  * \anchor indexing_lastN_with_incr
   *
   * It is a shortcut for: \code seqN(last-(size-fix<1>)*incr, size, incr) \endcode
   * 
@@ -338,6 +332,19 @@ auto lastN(SizeType size, IncrType incr)
 -> decltype(seqN(Eigen::last-(size-fix<1>())*incr, size, incr))
 {
   return seqN(Eigen::last-(size-fix<1>())*incr, size, incr);
+}
+
+/** \cpp11
+  * \returns a symbolic ArithmeticSequence representing the last \a size elements with a unit increment.
+  *
+  *  It is a shortcut for: \code seq(last+fix<1>-size, last) \endcode
+  * 
+  * \sa lastN(SizeType,IncrType, seqN(FirstType,SizeType), seq(FirstType,LastType) */
+template<typename SizeType>
+auto lastN(SizeType size)
+-> decltype(seqN(Eigen::last+fix<1>()-size, size))
+{
+  return seqN(Eigen::last+fix<1>()-size, size);
 }
 #endif
 

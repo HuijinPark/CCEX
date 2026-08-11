@@ -174,27 +174,21 @@ MatrixXcd*** allocMatrixXcd3d(size_t m, size_t n, size_t l) {
     return array;
 }
 
-// These take ** for the same reason freeArray1d and the freeDouble/freeInt/freeFloat
-// family a few lines below do: so they can NULL the caller's pointer. They used to guard
-// only `ptr` and never touch `*ptr`, so a second call was a double delete[] -- the
-// opposite contract to every neighbouring free, despite the near-identical names.
 void freeMatrixXcd1d(MatrixXcd **ptr) {
-    if (ptr == NULL || *ptr == NULL) return;
+    if (!ptr) return;
     delete [] *ptr;
-    *ptr = NULL;
 }
 
 void freeMatrixXcd2d(MatrixXcd ***ptr, size_t m) {
-    if (ptr == NULL || *ptr == NULL) return;
+    if (!ptr) return;
     for (size_t i = 0; i < m; i++) {
         delete [] (*ptr)[i];
     }
     delete [] *ptr;
-    *ptr = NULL;
 }
 
 void freeMatrixXcd3d(MatrixXcd ****ptr, size_t m, size_t n) {
-    if (ptr == NULL || *ptr == NULL) return;
+    if (!ptr) return;
     for (size_t i = 0; i < m; i++) {
         for (size_t j = 0; j < n; j++) {
             delete [] (*ptr)[i][j];
@@ -202,7 +196,6 @@ void freeMatrixXcd3d(MatrixXcd ****ptr, size_t m, size_t n) {
         delete [] (*ptr)[i];
     }
     delete [] *ptr;
-    *ptr = NULL;
 }
 
 

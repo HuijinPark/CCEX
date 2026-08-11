@@ -1,21 +1,15 @@
+
 project(EigenLapack CXX)
 
-if(EIGEN_BUILD_LAPACK AND EIGEN_BUILD_BLAS)
+include("../cmake/language_support.cmake")
 
-include(CheckLanguage)
-check_language(Fortran)
-if(CMAKE_Fortran_COMPILER)
-  enable_language(Fortran)
-  if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "GNU")
-    if ("${CMAKE_Fortran_COMPILER_VERSION}" VERSION_GREATER_EQUAL 10.0)
-      # We use an old version of LAPACK with argument type mismatches.
-      # Allow them to compile anyway with newer GNU versions.
-      set(CMAKE_Fortran_FLAGS  "${CMAKE_Fortran_FLAGS} -fallow-argument-mismatch")
-    endif()
+workaround_9220(Fortran EIGEN_Fortran_COMPILER_WORKS)
+
+if(EIGEN_Fortran_COMPILER_WORKS)
+  enable_language(Fortran OPTIONAL)
+  if(NOT CMAKE_Fortran_COMPILER)
+    set(EIGEN_Fortran_COMPILER_WORKS OFF)
   endif()
-  set(EIGEN_Fortran_COMPILER_WORKS ON)
-else()
-  set(EIGEN_Fortran_COMPILER_WORKS OFF)
 endif()
 
 add_custom_target(lapack)
@@ -80,7 +74,7 @@ if(EIGEN_ENABLE_LAPACK_TESTS)
         sgetrf.f  dgetrf.f  cgetrf.f  zgetrf.f
         sgetrs.f  dgetrs.f  cgetrs.f  zgetrs.f)
     
-    file(GLOB ReferenceLapack_SRCS0 RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "reference/*.f")
+    FILE(GLOB ReferenceLapack_SRCS0 RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "reference/*.f")
     foreach(filename1 IN LISTS ReferenceLapack_SRCS0)
       string(REPLACE "reference/" "" filename ${filename1})
       list(FIND EigenLapack_SRCS ${filename} id1)
@@ -92,34 +86,29 @@ if(EIGEN_ENABLE_LAPACK_TESTS)
   endif()
   
   
-endif()
+endif(EIGEN_ENABLE_LAPACK_TESTS)
 
-endif()
-
-set(EIGEN_LAPACK_TARGETS "")
+endif(EIGEN_Fortran_COMPILER_WORKS)
 
 add_library(eigen_lapack_static ${EigenLapack_SRCS} ${ReferenceLapack_SRCS})
-list(APPEND EIGEN_LAPACK_TARGETS eigen_lapack_static)
+add_library(eigen_lapack SHARED ${EigenLapack_SRCS})
 
-if (EIGEN_BUILD_SHARED_LIBS)
-  add_library(eigen_lapack SHARED ${EigenLapack_SRCS})
-  list(APPEND EIGEN_LAPACK_TARGETS eigen_lapack)
-  target_link_libraries(eigen_lapack  eigen_blas)
+target_link_libraries(eigen_lapack  eigen_blas)
+
+if(EIGEN_STANDARD_LIBRARIES_TO_LINK_TO)
+  target_link_libraries(eigen_lapack_static ${EIGEN_STANDARD_LIBRARIES_TO_LINK_TO})
+  target_link_libraries(eigen_lapack        ${EIGEN_STANDARD_LIBRARIES_TO_LINK_TO})
 endif()
 
-foreach(target IN LISTS EIGEN_LAPACK_TARGETS)
-  if(EIGEN_STANDARD_LIBRARIES_TO_LINK_TO)
-    target_link_libraries(${target} ${EIGEN_STANDARD_LIBRARIES_TO_LINK_TO})
-  endif()
-  target_link_libraries(${target} Eigen3::Eigen)
-  add_dependencies(lapack ${target})
-  install(TARGETS ${target}
-          RUNTIME DESTINATION bin
-          LIBRARY DESTINATION lib
-          ARCHIVE DESTINATION lib)
-endforeach()
+add_dependencies(lapack eigen_lapack eigen_lapack_static)
 
+install(TARGETS eigen_lapack eigen_lapack_static
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib)
 
+        
+        
 get_filename_component(eigen_full_path_to_testing_lapack "./testing/" ABSOLUTE)
 if(EXISTS ${eigen_full_path_to_testing_lapack})
   
@@ -144,26 +133,24 @@ if(EXISTS ${eigen_full_path_to_testing_lapack})
   string(REGEX REPLACE "(.*)/STACK:(.*) (.*)" "\\1/STACK:900000000000000000 \\3"
     CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
   endif()
-  file(MAKE_DIRECTORY "${LAPACK_BINARY_DIR}/TESTING")
   add_subdirectory(testing/MATGEN)
   add_subdirectory(testing/LIN)
   add_subdirectory(testing/EIG)
   macro(add_lapack_test output input target)
     set(TEST_INPUT "${LAPACK_SOURCE_DIR}/testing/${input}")
-    set(TEST_OUTPUT "${LAPACK_BINARY_DIR}/TESTING/${output}")
+    set(TEST_OUTPUT "${LAPACK_BINARY_DIR}/testing/${output}")
+    get_target_property(TEST_LOC ${target} LOCATION)
     string(REPLACE "." "_" input_name ${input})
     set(testName "${target}_${input_name}")
     if(EXISTS "${TEST_INPUT}")
-      add_dependencies(buildtests ${target})
-      add_test(NAME LAPACK-${testName}
-        COMMAND "${CMAKE_COMMAND}"
-        -DTEST=$<TARGET_FILE:${target}>
+      add_test(LAPACK-${testName} "${CMAKE_COMMAND}"
+        -DTEST=${TEST_LOC}
         -DINPUT=${TEST_INPUT} 
         -DOUTPUT=${TEST_OUTPUT} 
         -DINTDIR=${CMAKE_CFG_INTDIR}
         -P "${LAPACK_SOURCE_DIR}/testing/runtest.cmake")
     endif()
-  endmacro()
+  endmacro(add_lapack_test)
 
   if (BUILD_SINGLE)
   add_lapack_test(stest.out stest.in xlintsts)
@@ -460,6 +447,3 @@ if(EXISTS ${eigen_full_path_to_testing_lapack})
 
 endif()
 
-elseif(EIGEN_BUILD_LAPACK AND NOT EIGEN_BUILD_BLAS)
- message(FATAL_ERROR "EIGEN_BUILD_LAPACK requires EIGEN_BUILD_BLAS")
-endif() #EIGEN_BUILD_LAPACK

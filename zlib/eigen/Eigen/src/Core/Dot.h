@@ -18,9 +18,14 @@ namespace internal {
 // with mismatched types, the compiler emits errors about failing to instantiate cwiseProduct BEFORE
 // looking at the static assertions. Thus this is a trick to get better compile errors.
 template<typename T, typename U,
-         bool NeedToTranspose = T::IsVectorAtCompileTime && U::IsVectorAtCompileTime &&
-                ((int(T::RowsAtCompileTime) == 1 && int(U::ColsAtCompileTime) == 1) ||
-                 (int(T::ColsAtCompileTime) == 1 && int(U::RowsAtCompileTime) == 1))>
+// the NeedToTranspose condition here is taken straight from Assign.h
+         bool NeedToTranspose = T::IsVectorAtCompileTime
+                && U::IsVectorAtCompileTime
+                && ((int(T::RowsAtCompileTime) == 1 && int(U::ColsAtCompileTime) == 1)
+                      |  // FIXME | instead of || to please GCC 4.4.0 stupid warning "suggest parentheses around &&".
+                         // revert to || as soon as not needed anymore.
+                    (int(T::ColsAtCompileTime) == 1 && int(U::RowsAtCompileTime) == 1))
+>
 struct dot_nocheck
 {
   typedef scalar_conj_product_op<typename traits<T>::Scalar,typename traits<U>::Scalar> conj_prod;
@@ -81,7 +86,7 @@ MatrixBase<Derived>::dot(const MatrixBase<OtherDerived>& other) const
 
 //---------- implementation of L2 norm and related functions ----------
 
-/** \returns, for vectors, the squared \em l2 norm of \c *this, and for matrices the squared Frobenius norm.
+/** \returns, for vectors, the squared \em l2 norm of \c *this, and for matrices the Frobenius norm.
   * In both cases, it consists in the sum of the square of all the matrix entries.
   * For vectors, this is also equals to the dot product of \c *this with itself.
   *
@@ -202,7 +207,7 @@ struct lpNorm_selector
   EIGEN_DEVICE_FUNC
   static inline RealScalar run(const MatrixBase<Derived>& m)
   {
-    EIGEN_USING_STD(pow)
+    EIGEN_USING_STD_MATH(pow)
     return pow(m.cwiseAbs().array().pow(p).sum(), RealScalar(1)/p);
   }
 };

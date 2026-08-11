@@ -57,8 +57,6 @@ template <typename Scalar,int DataLayout>
 static void test_simple_reductions() {
   Tensor<Scalar, 4, DataLayout> tensor(2, 3, 5, 7);
   tensor.setRandom();
-  // Add a little offset so that the product reductions won't be close to zero.
-  tensor += tensor.constant(Scalar(0.5f));
   array<ptrdiff_t, 2> reduction_axis2;
   reduction_axis2[0] = 1;
   reduction_axis2[1] = 3;
@@ -204,7 +202,7 @@ static void test_simple_reductions() {
           ++count;
         }
       }
-      VERIFY_IS_APPROX(result(i, j), sum / Scalar(count));
+      VERIFY_IS_APPROX(result(i, j), sum / count);
     }
   }
 
@@ -370,7 +368,7 @@ static void test_static_dims() {
   Tensor<float, 2, DataLayout> out(72, 97);
   in.setRandom();
 
-#if !EIGEN_HAS_CONSTEXPR
+#if !EIGEN_HAS_CONSTEXPR 
   array<int, 2> reduction_axis;
   reduction_axis[0] = 1;
   reduction_axis[1] = 3;
@@ -511,7 +509,6 @@ EIGEN_DECLARE_TEST(cxx11_tensor_reduction) {
   CALL_SUBTEST(( test_simple_reductions<float,ColMajor>() ));
   CALL_SUBTEST(( test_simple_reductions<float,RowMajor>() ));
   CALL_SUBTEST(( test_simple_reductions<Eigen::half,ColMajor>() ));
-  CALL_SUBTEST(( test_simple_reductions<Eigen::bfloat16,ColMajor>() ));
   CALL_SUBTEST(test_reductions_in_expr<ColMajor>());
   CALL_SUBTEST(test_reductions_in_expr<RowMajor>());
   CALL_SUBTEST(test_full_reductions<ColMajor>());

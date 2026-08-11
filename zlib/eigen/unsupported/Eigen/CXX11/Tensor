@@ -13,7 +13,18 @@
 
 #include "../../../Eigen/Core"
 
-#if EIGEN_HAS_CXX11
+#if defined(EIGEN_USE_SYCL)
+#undef min
+#undef max
+#undef isnan
+#undef isinf
+#undef isfinite
+#include <CL/sycl.hpp>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <utility>
+#endif
 
 #include "../SpecialFunctions"
 
@@ -33,15 +44,40 @@
   * Much of the documentation can be found \ref eigen_tensors "here".
   */
 
-#include <atomic>
-#include <chrono>
 #include <cmath>
 #include <cstddef>
 #include <cstring>
-#include <random>
-#include <thread>
 
-#if defined(EIGEN_USE_THREADS) || defined(EIGEN_USE_SYCL)
+#ifdef _WIN32
+typedef __int16 int16_t;
+typedef unsigned __int16 uint16_t;
+typedef __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
+#include <windows.h>
+#else
+#include <stdint.h>
+#include <unistd.h>
+#endif
+
+#if __cplusplus > 199711 || EIGEN_COMP_MSVC >= 1900
+#include <random>
+#endif
+
+#ifdef _WIN32
+#include <windows.h>
+#elif defined(__APPLE__)
+#include <mach/mach_time.h>
+#else
+#include <time.h>
+#endif
+
+#if defined(EIGEN_USE_LIBXSMM)
+#include "libxsmm.h"
+#endif
+
+#ifdef EIGEN_USE_THREADS
 #include "ThreadPool"
 #endif
 
@@ -51,6 +87,10 @@
     #include <hip/hip_runtime.h>
   #else
     #include <cuda_runtime.h>
+  #endif
+  #if __cplusplus >= 201103L
+    #include <atomic>
+    #include <unistd.h>
   #endif
 #endif
 
@@ -62,9 +102,6 @@
 #include "src/Tensor/TensorDeviceDefault.h"
 #include "src/Tensor/TensorDeviceThreadPool.h"
 #include "src/Tensor/TensorDeviceGpu.h"
-#ifndef gpu_assert
-#define gpu_assert(x)
-#endif
 #include "src/Tensor/TensorDeviceSycl.h"
 #include "src/Tensor/TensorIndexList.h"
 #include "src/Tensor/TensorDimensionList.h"
@@ -113,13 +150,7 @@
 #include "src/Tensor/TensorScan.h"
 #include "src/Tensor/TensorTrace.h"
 
-#ifdef EIGEN_USE_SYCL
-#include "src/Tensor/TensorReductionSycl.h"
-#include "src/Tensor/TensorConvolutionSycl.h"
-#include "src/Tensor/TensorContractionSycl.h"
-#include "src/Tensor/TensorScanSycl.h"
-#endif
-
+#include "src/Tensor/TensorSycl.h"
 #include "src/Tensor/TensorExecutor.h"
 #include "src/Tensor/TensorDevice.h"
 
@@ -133,5 +164,4 @@
 
 #include "../../../Eigen/src/Core/util/ReenableStupidWarnings.h"
 
-#endif  // EIGEN_HAS_CXX11
 //#endif // EIGEN_CXX11_TENSOR_MODULE

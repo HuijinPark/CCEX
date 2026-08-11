@@ -72,11 +72,7 @@ using namespace Eigen;
 #define RADKHZ_TO_KHZ(x) (1 / (2.0 * M_PI) * x)
 
 // Gyromagnetic ratio of electron spin [radkHz/G]
-// Parenthesized and WITHOUT a trailing semicolon. The semicolon used to be part of the
-// macro body, so it only worked in `double g = GAMMA_ELECTRON;` -- where the extra `;`
-// became a null statement -- and was a syntax error anywhere an expression was wanted,
-// e.g. foo(GAMMA_ELECTRON) or 2*GAMMA_ELECTRON.
-#define GAMMA_ELECTRON (-17608.597050)
+#define GAMMA_ELECTRON -17608.597050;
 
 /* File Constants -----------------------------------------------*/
 #define MAX_FILEPATH 500 /**< Maximum length of file path */

@@ -23,7 +23,7 @@ struct symbolic_last_tag {};
   * Can be used as a parameter to Eigen::seq and Eigen::seqN functions to symbolically reference the last element/row/columns
   * of the underlying vector or matrix once passed to DenseBase::operator()(const RowIndices&, const ColIndices&).
   *
-  * This symbolic placeholder supports standard arithmetic operations.
+  * This symbolic placeholder support standard arithmetic operation.
   *
   * A typical usage example would be:
   * \code
@@ -44,7 +44,7 @@ static const symbolic::SymbolExpr<internal::symbolic_last_tag> last; // PLEASE u
   * reference the last+1 element/row/columns of the underlying vector or matrix once
   * passed to DenseBase::operator()(const RowIndices&, const ColIndices&).
   *
-  * This symbolic placeholder supports standard arithmetic operations.
+  * This symbolic placeholder support standard arithmetic operation.
   * It is essentially an alias to last+fix<1>.
   *
   * \sa last
@@ -78,7 +78,7 @@ template<typename T, typename EnableIf = void> struct get_compile_time_incr {
 
 // Analogue of std::get<0>(x), but tailored for our needs.
 template<typename T>
-EIGEN_CONSTEXPR Index first(const T& x) EIGEN_NOEXCEPT { return x.first(); }
+Index first(const T& x) { return x.first(); }
 
 // IndexedViewCompatibleType/makeIndexedViewCompatible turn an arbitrary object of type T into something usable by MatrixSlice
 // The generic implementation is a no-op
@@ -100,8 +100,8 @@ struct SingleRange {
   };
   SingleRange(Index val) : m_value(val) {}
   Index operator[](Index) const { return m_value; }
-  static EIGEN_CONSTEXPR Index size() EIGEN_NOEXCEPT { return 1; }
-  Index first() const EIGEN_NOEXCEPT { return m_value; }
+  Index size() const { return 1; }
+  Index first() const { return m_value; }
   Index m_value;
 };
 
@@ -141,9 +141,9 @@ template<int XprSize>
 struct AllRange {
   enum { SizeAtCompileTime = XprSize };
   AllRange(Index size = XprSize) : m_size(size) {}
-  EIGEN_CONSTEXPR Index operator[](Index i) const EIGEN_NOEXCEPT { return i; }
-  EIGEN_CONSTEXPR Index size() const EIGEN_NOEXCEPT { return m_size.value(); }
-  EIGEN_CONSTEXPR Index first() const EIGEN_NOEXCEPT { return 0; }
+  Index operator[](Index i) const { return i; }
+  Index size() const { return m_size.value(); }
+  Index first() const { return 0; }
   variable_if_dynamic<Index,XprSize> m_size;
 };
 
@@ -168,7 +168,7 @@ template<int Size> struct get_compile_time_incr<AllRange<Size> > {
   * \ingroup Core_Module
   * Can be used as a parameter to DenseBase::operator()(const RowIndices&, const ColIndices&) to index all rows or columns
   */
-static const Eigen::internal::all_t all;
+static const Eigen::internal::all_t all; // PLEASE use Eigen::all instead of Eigen::placeholders::all
 
 
 namespace placeholders {

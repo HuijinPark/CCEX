@@ -30,9 +30,10 @@
 
 // The code depends on CXX11, so only include the module if the
 // compiler supports it.
-#if (EIGEN_COMP_CXXVER >= 11)
+#if __cplusplus > 199711L || EIGEN_COMP_MSVC >= 1900
 #include <cstddef>
 #include <cstring>
+#include <stdint.h>
 #include <time.h>
 
 #include <vector>
@@ -43,8 +44,11 @@
 #include <thread>
 #include <functional>
 #include <memory>
-#include <utility>
+#include "src/util/CXX11Meta.h"
+#include "src/util/MaxSizeVector.h"
 
+#include "src/ThreadPool/ThreadLocal.h"
+#ifndef EIGEN_THREAD_LOCAL
 // There are non-parenthesized calls to "max" in the  <unordered_map> header,
 // which trigger a check in test/main.h causing compilation to fail.
 // We work around the check here by removing the check for max in
@@ -53,11 +57,7 @@
 #undef max
 #endif
 #include <unordered_map>
-
-#include "src/util/CXX11Meta.h"
-#include "src/util/MaxSizeVector.h"
-
-#include "src/ThreadPool/ThreadLocal.h"
+#endif
 #include "src/ThreadPool/ThreadYield.h"
 #include "src/ThreadPool/ThreadCancel.h"
 #include "src/ThreadPool/EventCount.h"
