@@ -329,7 +329,6 @@ class SparseVector
     }
     #endif
 
-#ifndef EIGEN_NO_IO
     friend std::ostream & operator << (std::ostream & s, const SparseVector& m)
     {
       for (Index i=0; i<m.nonZeros(); ++i)
@@ -337,7 +336,6 @@ class SparseVector
       s << std::endl;
       return s;
     }
-#endif
 
     /** Destructor */
     inline ~SparseVector() {}

@@ -8,9 +8,6 @@ Config* Config_init(){
     Config* cnf = (Config*)allocArray1d(1,sizeof(Config));
     cnf->method[0] = '\0';
     cnf->quantity[0] = '\0';
-    cnf->propagator[0] = '\0';
-    cnf->evolution[0] = '\0';
-    cnf->evolution_isdefault = true;
     cnf->hfmedi = false;
     cnf->knight = false;
     return cnf;
@@ -152,12 +149,6 @@ bool Config_getKnight(Config* cnf){
 
 char* Config_getQuantity(Config* cnf){
     return cnf->quantity;
-}
-char* Config_getPropagator(Config* cnf){
-    return cnf->propagator;
-}
-char* Config_getEvolution(Config* cnf){
-    return cnf->evolution;
 }
 
 int   Config_getOrder(Config* cnf){
@@ -323,97 +314,6 @@ void Config_setQuantity(Config* cnf, char* quantity){
     }
 
     strcpy(cnf->quantity,quantity);
-}
-
-void Config_setPropagator(Config* cnf, char* propagator){
-
-    // gCCE free-evolution propagator.
-    //   eigen : one SelfAdjointEigenSolver per cluster, exp(-i*H*tau) = M*diag(exp(-i*l*tau))*M^dag
-    //   expm  : Eigen's general matrix exponential per step, the original CCEX path
-    const int opsize = 2;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"eigen","expm"};
-    int idx = findIndexCharFix(options,0,opsize-1,propagator);
-    if (idx == -1) {
-        fprintf(stderr, "Error: current propagator options (%s) is not available\n",propagator);
-        fprintf(stderr, "Available options are : ");
-        for (int i = 0; i < opsize; i++){
-            fprintf(stderr, "%s ",options[i]);
-        }
-        fprintf(stderr, "\n");
-        fprintf(stderr, "Please check the input file or change the possible option set\n");
-        exit(EXIT_FAILURE);
-    }
-
-    strcpy(cnf->propagator,propagator);
-}
-
-void Config_setEvolution(Config* cnf, char* evolution){
-
-    // gCCE state representation.
-    //   vector : DEFAULT. rho0 is a pure state whenever nstate > 0 (QubitArray_Rho0 is
-    //            always psi0*psi0^dag, and BathArray_Rho0 is too unless it is the
-    //            ensemble average), so propagate |psi> instead of rho. Each step becomes
-    //            matrix-VECTOR products, O(n^2) where the matrix path is O(n^3), and the
-    //            partial trace collapses to reshaping |psi> into a qdim x bdim matrix Psi
-    //            and forming Psi*Psi^dag.
-    //   matrix : propagate the full density matrix, rho(t) = U*rho0*U^dag, then partial-
-    //            trace it. What CCEX did before; works for every configuration.
-    // Same physics, different arithmetic: the results agree to rounding but are not
-    // guaranteed bit-identical, so a converged series should not switch mid-way.
-    // vector needs nstate > 0 (an ensemble rho0 is mixed, so no state vector exists),
-    // propagator=eigen (with expm the per-step matrix exponential dominates and there is
-    // nothing to win) and method=gCCE. cJSON_readOptionConfig falls the DEFAULT back to
-    // matrix wherever those do not hold; an EXPLICIT evolution=vector is never downgraded
-    // -- calCoherenceGcce says why it cannot run and stops.
-    const int opsize = 2;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"matrix","vector"};
-    int idx = findIndexCharFix(options,0,opsize-1,evolution);
-    if (idx == -1) {
-        fprintf(stderr, "Error: current evolution options (%s) is not available\n",evolution);
-        fprintf(stderr, "Available options are : ");
-        for (int i = 0; i < opsize; i++){
-            fprintf(stderr, "%s ",options[i]);
-        }
-        fprintf(stderr, "\n");
-        fprintf(stderr, "Please check the input file or change the possible option set\n");
-        exit(EXIT_FAILURE);
-    }
-
-    strcpy(cnf->evolution,evolution);
-}
-
-/**
- * Pick the evolution path once every option source has been applied.
- *
- * This CANNOT be decided while the input file is being parsed. main.cpp reads the file
- * from inside the getopt loop (case 'f'), so -m, -N and the rest are still to come:
- * `-f ccein.json -N 1` on a file with no "nstate" key would have been resolved against
- * nstate = 0 and frozen at matrix, even though the run does have a pure rho0. Call this
- * after the loop, before Config_report, so the reported value is the one that runs.
- *
- * An explicit "evolution" is never rewritten -- only checked against the one condition
- * that is fatal outside gCCE. calCoherenceGcce enforces the other two.
- */
-void Config_resolveEvolution(Config* cnf){
-
-    bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
-
-    if (!cnf->evolution_isdefault){
-        // Only calCoherenceGcce reads evolution. Any other method would ignore it and run
-        // the density-matrix path anyway, so refuse rather than let the input claim
-        // something the run does not do.
-        if (strcasecmp(cnf->evolution,"matrix")!=0 && !isGCCE){
-            fprintf(stderr,"Error : evolution=%s is implemented for method=gCCE only "
-                           "(this run has method=%s).\n",cnf->evolution,cnf->method);
-            exit(EXIT_FAILURE);
-        }
-        return;
-    }
-
-    bool vectorFits = isGCCE
-                   && (cnf->nstate > 0)
-                   && (strcasecmp(cnf->propagator,"eigen")==0);
-    strcpy(cnf->evolution, vectorFits ? "vector" : "matrix");
 }
 
 void Config_setOrder(Config* cnf, int order){
@@ -683,8 +583,6 @@ void Config_report(Config* cnf){
 
     printStructElementChar("method",Config_getMethod(cnf));
     printStructElementChar("quantity",Config_getQuantity(cnf));
-    printStructElementChar("propagator",Config_getPropagator(cnf));
-    printStructElementChar("evolution",Config_getEvolution(cnf));
     printStructElementInt("order",Config_getOrder(cnf));
     printStructElementFloat1d("bfield",Config_getBfield(cnf),3);
     printStructElementFloat("rbath",Config_getRbath(cnf));

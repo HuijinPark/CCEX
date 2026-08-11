@@ -12,6 +12,14 @@
 
 namespace Eigen {
 
+/** \class TensorEvaluator
+  * \ingroup CXX11_Tensor_Module
+  *
+  * \brief A cost model used to limit the number of threads used for evaluating
+  * tensor expression.
+  *
+  */
+
 // Class storing the cost of evaluating a tensor expression in terms of the
 // estimated number of operand bytes loads, bytes stored, and compute cycles.
 class TensorOpCost {
@@ -149,13 +157,6 @@ class TensorOpCost {
 // TODO(rmlarsen): Implement a policy that chooses an "optimal" number of theads
 // in [1:max_threads] instead of just switching multi-threading off for small
 // work units.
-/**
- * \ingroup CXX11_Tensor_Module
- *
- * \brief A cost model used to limit the number of threads used for evaluating
- * tensor expression.
- *
- */
 template <typename Device>
 class TensorCostModel {
  public:
@@ -176,8 +177,7 @@ class TensorCostModel {
     double threads = (cost - kStartupCycles) / kPerThreadCycles + 0.9;
     // Make sure we don't invoke undefined behavior when we convert to an int.
     threads = numext::mini<double>(threads, GenericNumTraits<int>::highest());
-    return numext::mini(max_threads,
-                        numext::maxi<int>(1, static_cast<int>(threads)));
+    return numext::mini(max_threads, numext::maxi<int>(1, threads));
   }
 
   // taskSize assesses parallel task size.

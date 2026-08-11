@@ -34,7 +34,7 @@ EIGEN_DECLARE_TEST(meta)
   VERIFY((!internal::is_same<float,double>::value));
   VERIFY((!internal::is_same<float,float&>::value));
   VERIFY((!internal::is_same<float,const float&>::value));
-
+  
   VERIFY(( internal::is_same<float,internal::remove_all<const float&>::type >::value));
   VERIFY(( internal::is_same<float,internal::remove_all<const float*>::type >::value));
   VERIFY(( internal::is_same<float,internal::remove_all<const float*&>::type >::value));
@@ -63,13 +63,13 @@ EIGEN_DECLARE_TEST(meta)
 
   VERIFY(( internal::is_same< internal::add_const_on_value_type<const float* const>::type, const float* const>::value));
   VERIFY(( internal::is_same< internal::add_const_on_value_type<float* const>::type, const float* const>::value));
-
+  
   VERIFY(( internal::is_same<float,internal::remove_reference<float&>::type >::value));
   VERIFY(( internal::is_same<const float,internal::remove_reference<const float&>::type >::value));
   VERIFY(( internal::is_same<float,internal::remove_pointer<float*>::type >::value));
   VERIFY(( internal::is_same<const float,internal::remove_pointer<const float*>::type >::value));
   VERIFY(( internal::is_same<float,internal::remove_pointer<float* const >::type >::value));
-
+  
 
   // is_convertible
   STATIC_CHECK(( internal::is_convertible<float,double>::value ));
@@ -87,16 +87,12 @@ EIGEN_DECLARE_TEST(meta)
   STATIC_CHECK(( internal::is_convertible<const Matrix3f&,const Matrix3f&>::value ));
   STATIC_CHECK((!internal::is_convertible<const Matrix3f&,Matrix3f&>::value ));
   STATIC_CHECK((!internal::is_convertible<const Matrix3f,Matrix3f&>::value ));
-  STATIC_CHECK(!( internal::is_convertible<Matrix3f,Matrix3f&>::value ));
-
-  STATIC_CHECK(!( internal::is_convertible<int,int&>::value ));
-  STATIC_CHECK(( internal::is_convertible<const int,const int& >::value ));
-
-  //STATIC_CHECK((!internal::is_convertible<Matrix3f,Matrix3d>::value )); //does not even compile because the conversion is prevented by a static assertion
+  STATIC_CHECK(( internal::is_convertible<Matrix3f,Matrix3f&>::value )); // std::is_convertible returns false here though Matrix3f from; Matrix3f& to = from; is valid.
+  //STATIC_CHECK((!internal::is_convertible<Matrix3f,Matrix3d>::value )); //does not work because the conversion is prevented by a static assertion
   STATIC_CHECK((!internal::is_convertible<Array33f,int>::value ));
   STATIC_CHECK((!internal::is_convertible<MatrixXf,float>::value ));
   {
-    float f = 0.0f;
+    float f;
     MatrixXf A, B;
     VectorXf a, b;
     VERIFY(( check_is_convertible(a.dot(b), f) ));
@@ -105,18 +101,26 @@ EIGEN_DECLARE_TEST(meta)
     VERIFY(( check_is_convertible(A*B, A) ));
   }
 
+  STATIC_CHECK(( !internal::is_convertible<MyInterface, MyImpl>::value ));
+  #if (!EIGEN_COMP_GNUC_STRICT) || (EIGEN_GNUC_AT_LEAST(4,8))
+  // GCC prior to 4.8 fails to compile this test:
+  // error: cannot allocate an object of abstract type 'MyInterface'
+  // In other word, it does not obey SFINAE.
+  // Nevertheless, we don't really care about supporting abstract type as scalar type!
+  STATIC_CHECK(( !internal::is_convertible<MyImpl, MyInterface>::value ));
+  #endif
+  STATIC_CHECK((  internal::is_convertible<MyImpl, const MyInterface&>::value ));
   {
-    int i = 0;
+    int i;
     VERIFY(( check_is_convertible(fix<3>(), i) ));
     VERIFY((!check_is_convertible(i, fix<DynamicIndex>()) ));
   }
-
 
   VERIFY((  internal::has_ReturnType<FooReturnType>::value ));
   VERIFY((  internal::has_ReturnType<ScalarBinaryOpTraits<int,int> >::value ));
   VERIFY(( !internal::has_ReturnType<MatrixXf>::value ));
   VERIFY(( !internal::has_ReturnType<int>::value ));
-
+  
   VERIFY(internal::meta_sqrt<1>::ret == 1);
   #define VERIFY_META_SQRT(X) VERIFY(internal::meta_sqrt<X>::ret == int(std::sqrt(double(X))))
   VERIFY_META_SQRT(2);

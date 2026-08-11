@@ -54,17 +54,12 @@ struct packetwise_redux_traits
 /* Value to be returned when size==0 , by default let's return 0 */
 template<typename PacketType,typename Func>
 EIGEN_DEVICE_FUNC
-PacketType packetwise_redux_empty_value(const Func& ) {
-  const typename unpacket_traits<PacketType>::type zero(0);
-  return pset1<PacketType>(zero);
-}
+PacketType packetwise_redux_empty_value(const Func& ) { return pset1<PacketType>(0); }
 
 /* For products the default is 1 */
 template<typename PacketType,typename Scalar>
 EIGEN_DEVICE_FUNC
-PacketType packetwise_redux_empty_value(const scalar_product_op<Scalar,Scalar>& ) {
-  return pset1<PacketType>(Scalar(1));
-}
+PacketType packetwise_redux_empty_value(const scalar_product_op<Scalar,Scalar>& ) { return pset1<PacketType>(1); }
 
 /* Perform the actual reduction */
 template<typename Func, typename Evaluator,
@@ -150,7 +145,7 @@ struct evaluator<PartialReduxExpr<ArgType, MemberOp, Direction> >
   enum {
     CoeffReadCost = TraversalSize==Dynamic ? HugeCost
                   : TraversalSize==0 ? 1
-                  : int(TraversalSize) * int(evaluator<ArgType>::CoeffReadCost) + int(CostOpType::value),
+                  : TraversalSize * evaluator<ArgType>::CoeffReadCost + int(CostOpType::value),
     
     _ArgFlags = evaluator<ArgType>::Flags,
 
@@ -210,13 +205,6 @@ struct evaluator<PartialReduxExpr<ArgType, MemberOp, Direction> >
                     Direction==Vertical ? idx : 0,
                     Direction==Vertical ? m_arg.rows() : Index(PacketSize),
                     Direction==Vertical ? Index(PacketSize) : m_arg.cols());
-
-    // FIXME
-    // See bug 1612, currently if PacketSize==1 (i.e. complex<double> with 128bits registers) then the storage-order of panel get reversed
-    // and methods like packetByOuterInner do not make sense anymore in this context.
-    // So let's just by pass "vectorization" in this case:
-    if(PacketSize==1)
-      return internal::pset1<PacketType>(coeff(idx));
     
     typedef typename internal::redux_evaluator<PanelType> PanelEvaluator;
     PanelEvaluator panel_eval(panel);

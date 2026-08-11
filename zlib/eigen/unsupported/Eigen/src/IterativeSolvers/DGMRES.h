@@ -57,7 +57,7 @@ void sortWithPermutation (VectorType& vec, IndexType& perm, typename IndexType::
 
 }
 /**
- * \ingroup IterativeLinearSolvers_Module
+ * \ingroup IterativeLInearSolvers_Module
  * \brief A Restarted GMRES with deflation.
  * This class implements a modification of the GMRES solver for
  * sparse linear systems. The basis is built with modified 
@@ -109,7 +109,6 @@ class DGMRES : public IterativeSolverBase<DGMRES<_MatrixType,_Preconditioner> >
     using Base::m_tolerance; 
   public:
     using Base::_solve_impl;
-    using Base::_solve_with_guess_impl;
     typedef _MatrixType MatrixType;
     typedef typename MatrixType::Scalar Scalar;
     typedef typename MatrixType::StorageIndex StorageIndex;
@@ -142,16 +141,30 @@ class DGMRES : public IterativeSolverBase<DGMRES<_MatrixType,_Preconditioner> >
   
   /** \internal */
   template<typename Rhs,typename Dest>
-  void _solve_vector_with_guess_impl(const Rhs& b, Dest& x) const
-  {
-    EIGEN_STATIC_ASSERT(Rhs::ColsAtCompileTime==1 || Dest::ColsAtCompileTime==1, YOU_TRIED_CALLING_A_VECTOR_METHOD_ON_A_MATRIX);
-    
-    m_iterations = Base::maxIterations();
-    m_error = Base::m_tolerance;
-    
-    dgmres(matrix(), b, x, Base::m_preconditioner);
+  void _solve_with_guess_impl(const Rhs& b, Dest& x) const
+  {    
+    bool failed = false;
+    for(Index j=0; j<b.cols(); ++j)
+    {
+      m_iterations = Base::maxIterations();
+      m_error = Base::m_tolerance;
+      
+      typename Dest::ColXpr xj(x,j);
+      dgmres(matrix(), b.col(j), xj, Base::m_preconditioner);
+    }
+    m_info = failed ? NumericalIssue
+           : m_error <= Base::m_tolerance ? Success
+           : NoConvergence;
+    m_isInitialized = true;
   }
 
+  /** \internal */
+  template<typename Rhs,typename Dest>
+  void _solve_impl(const Rhs& b, MatrixBase<Dest>& x) const
+  {
+    x = b;
+    _solve_with_guess_impl(b,x.derived());
+  }
   /** 
    * Get the restart value
     */
@@ -228,18 +241,7 @@ template<typename Rhs, typename Dest>
 void DGMRES<_MatrixType, _Preconditioner>::dgmres(const MatrixType& mat,const Rhs& rhs, Dest& x,
               const Preconditioner& precond) const
 {
-  const RealScalar considerAsZero = (std::numeric_limits<RealScalar>::min)();
-
-  RealScalar normRhs = rhs.norm();
-  if(normRhs <= considerAsZero) 
-  {
-    x.setZero();
-    m_error = 0;
-    return;
-  }
-
   //Initialization
-  m_isDeflInitialized = false;
   Index n = mat.rows(); 
   DenseVector r0(n); 
   Index nbIts = 0; 
@@ -247,11 +249,10 @@ void DGMRES<_MatrixType, _Preconditioner>::dgmres(const MatrixType& mat,const Rh
   m_Hes.resize(m_restart, m_restart);
   m_V.resize(n,m_restart+1);
   //Initial residual vector and initial norm
-  if(x.squaredNorm()==0) 
-    x = precond.solve(rhs);
+  x = precond.solve(x);
   r0 = rhs - mat * x; 
   RealScalar beta = r0.norm(); 
-  
+  RealScalar normRhs = rhs.norm();
   m_error = beta/normRhs; 
   if(m_error < m_tolerance)
     m_info = Success; 
@@ -264,10 +265,8 @@ void DGMRES<_MatrixType, _Preconditioner>::dgmres(const MatrixType& mat,const Rh
     dgmresCycle(mat, precond, x, r0, beta, normRhs, nbIts); 
     
     // Compute the new residual vector for the restart 
-    if (nbIts < m_iterations && m_info == NoConvergence) {
-      r0 = rhs - mat * x;
-      beta = r0.norm();
-    }
+    if (nbIts < m_iterations && m_info == NoConvergence)
+      r0 = rhs - mat * x; 
   }
 } 
 

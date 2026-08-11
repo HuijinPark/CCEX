@@ -16,7 +16,7 @@
 // for some reason gets sent to the gcc/host compiler instead of the gpu/nvcc/hipcc compiler
 // When compiling such files, gcc will end up trying to pick up the CUDA headers by 
 // default (see the code within "unsupported/Eigen/CXX11/Tensor" that is guarded by EIGEN_USE_GPU)
-// This will obviously not work when trying to compile tensorflow on a system with no CUDA
+// This will obsviously not work when trying to compile tensorflow on a sytem with no CUDA
 // To work around this issue for HIP systems (and leave the default behaviour intact), the
 // HIP tensorflow build defines EIGEN_USE_HIP when compiling all source files, and 
 // "unsupported/Eigen/CXX11/Tensor" has been updated to use HIP header when EIGEN_USE_HIP is
@@ -30,9 +30,6 @@
 #define gpuSuccess hipSuccess
 #define gpuErrorNotReady hipErrorNotReady
 #define gpuGetDeviceCount hipGetDeviceCount
-#define gpuGetLastError hipGetLastError
-#define gpuPeekAtLastError hipPeekAtLastError
-#define gpuGetErrorName hipGetErrorName
 #define gpuGetErrorString hipGetErrorString
 #define gpuGetDeviceProperties hipGetDeviceProperties
 #define gpuStreamDefault hipStreamDefault
@@ -60,9 +57,6 @@
 #define gpuSuccess cudaSuccess
 #define gpuErrorNotReady cudaErrorNotReady
 #define gpuGetDeviceCount cudaGetDeviceCount
-#define gpuGetLastError cudaGetLastError
-#define gpuPeekAtLastError cudaPeekAtLastError
-#define gpuGetErrorName cudaGetErrorName
 #define gpuGetErrorString cudaGetErrorString
 #define gpuGetDeviceProperties cudaGetDeviceProperties
 #define gpuStreamDefault cudaStreamDefault
@@ -84,16 +78,11 @@
 
 #endif
 
-// gpu_assert can be overridden
-#ifndef gpu_assert
-
-#if defined(EIGEN_HIP_DEVICE_COMPILE)
-// HIPCC do not support the use of assert on the GPU side.
+#if defined(EIGEN_HIP_DEVICE_COMPILE) || (defined(EIGEN_CUDACC) && (EIGEN_CUDACC_VER==0))
+// clang-cuda and HIPCC do not support the use of assert on the GPU side.
 #define gpu_assert(COND)
 #else
 #define gpu_assert(COND) assert(COND)
 #endif
-
-#endif // gpu_assert
 
 #endif  // EIGEN_CXX11_TENSOR_GPU_HIP_CUDA_DEFINES_H

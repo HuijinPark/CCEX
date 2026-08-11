@@ -412,20 +412,9 @@ void shrink_restspins(BathArray* ba, int rest_nspin){
         printf("Rest_nspin exceeds the size of the BathArray ba.\n");
     }
     
-    // Destroy the spins that fall off the end BEFORE shrinking the pointer array. The old
-    // code just shrank the array and dropped them: they were already leaked, and now that
-    // BathSpin is a properly constructed C++ object their MatrixXcd members would leak
-    // with them. createBathArray deep-copies every spin it takes, so nothing else aliases
-    // these -- they are ours to delete.
-    int old_nspin = ba->nspin;
     ba->nspin -= rest_nspin;
-    for (int i=ba->nspin; i<old_nspin; i++){
-        BathArray_freeBath_i_hypf(ba,i);
-        delete ba->bath[i];
-    }
     BathSpin** temp = (BathSpin**)realloc(ba->bath, ba->nspin * sizeof(BathSpin*));
-    // NB: the old check tested ba->bath, not temp -- it could never fire.
-    if (temp == NULL && ba->nspin>0){
+    if (ba->bath == NULL && ba->nspin>0){
         perror("Failed to realloc ba->bath\n");
         exit(EXIT_FAILURE);
     }

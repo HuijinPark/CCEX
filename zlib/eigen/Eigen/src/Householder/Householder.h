@@ -69,7 +69,7 @@ void MatrixBase<Derived>::makeHouseholder(
   Scalar& tau,
   RealScalar& beta) const
 {
-  using numext::sqrt;
+  using std::sqrt;
   using numext::conj;
   
   EIGEN_STATIC_ASSERT_VECTOR_ONLY(EssentialPart)

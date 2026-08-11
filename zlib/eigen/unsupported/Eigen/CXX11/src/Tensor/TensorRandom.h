@@ -2,7 +2,6 @@
 // for linear algebra.
 //
 // Copyright (C) 2016 Benoit Steiner <benoit.steiner.goog@gmail.com>
-// Copyright (C) 2018 Mehdi Goli <eigen@codeplay.com> Codeplay Software Ltd.
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -14,20 +13,49 @@
 namespace Eigen {
 namespace internal {
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE uint64_t get_random_seed() {
+namespace {
+
+EIGEN_DEVICE_FUNC uint64_t get_random_seed() {
 #if defined(EIGEN_GPU_COMPILE_PHASE)
   // We don't support 3d kernels since we currently only use 1 and
   // 2d kernels.
   gpu_assert(threadIdx.z == 0);
-  return blockIdx.x * blockDim.x + threadIdx.x 
-         + gridDim.x * blockDim.x * (blockIdx.y * blockDim.y + threadIdx.y);
+  return clock64() +
+      blockIdx.x * blockDim.x + threadIdx.x +
+      gridDim.x * blockDim.x * (blockIdx.y * blockDim.y + threadIdx.y);
+
+#elif defined _WIN32
+  // Use the current time as a baseline.
+  SYSTEMTIME st;
+  GetSystemTime(&st);
+  int time = st.wSecond + 1000 * st.wMilliseconds;
+  // Mix in a random number to make sure that we get different seeds if
+  // we try to generate seeds faster than the clock resolution.
+  // We need 2 random values since the generator only generate 16 bits at
+  // a time (https://msdn.microsoft.com/en-us/library/398ax69y.aspx)
+  int rnd1 = ::rand();
+  int rnd2 = ::rand();
+  uint64_t rnd = (rnd1 | rnd2 << 16) ^ time;
+  return rnd;
+
+#elif defined __APPLE__
+  // Same approach as for win32, except that the random number generator
+  // is better (// https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man3/random.3.html#//apple_ref/doc/man/3/random).
+  uint64_t rnd = ::random() ^ mach_absolute_time();
+  return rnd;
+
 #else
-  // Rely on Eigen's random implementation.
-  return random<uint64_t>();
+  // Augment the current time with pseudo random number generation
+  // to ensure that we get different seeds if we try to generate seeds
+  // faster than the clock resolution.
+  timespec ts;
+  clock_gettime(CLOCK_REALTIME, &ts);
+  uint64_t rnd = ::random() ^ ts.tv_nsec;
+  return rnd;
 #endif
 }
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE unsigned PCG_XSH_RS_generator(uint64_t* state, uint64_t stream) {
+static EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE unsigned PCG_XSH_RS_generator(uint64_t* state, uint64_t stream) {
   // TODO: Unify with the implementation in the non blocking thread pool.
   uint64_t current = *state;
   // Update the internal state
@@ -36,10 +64,13 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE unsigned PCG_XSH_RS_generator(uint64_t* st
   return static_cast<unsigned>((current ^ (current >> 22)) >> (22 + (current >> 61)));
 }
 
-EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE uint64_t PCG_XSH_RS_state(uint64_t seed) {
+static EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE uint64_t PCG_XSH_RS_state(uint64_t seed) {
   seed = seed ? seed : get_random_seed();
   return seed * 6364136223846793005ULL + 0xda3e39cb94b95bdbULL;
 }
+
+}  // namespace
+
 
 template <typename T> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 T RandomToTypeUniform(uint64_t* state, uint64_t stream) {
@@ -50,24 +81,16 @@ T RandomToTypeUniform(uint64_t* state, uint64_t stream) {
 
 template <> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 Eigen::half RandomToTypeUniform<Eigen::half>(uint64_t* state, uint64_t stream) {
-  // Generate 10 random bits for the mantissa, merge with exponent.
+  Eigen::half result;
+  // Generate 10 random bits for the mantissa
   unsigned rnd = PCG_XSH_RS_generator(state, stream);
-  const uint16_t half_bits = static_cast<uint16_t>(rnd & 0x3ffu) | (static_cast<uint16_t>(15) << 10);
-  Eigen::half result = Eigen::numext::bit_cast<Eigen::half>(half_bits);
+  result.x = static_cast<uint16_t>(rnd & 0x3ffu);
+  // Set the exponent
+  result.x |= (static_cast<uint16_t>(15) << 10);
   // Return the final result
   return result - Eigen::half(1.0f);
 }
 
-template <> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
-Eigen::bfloat16 RandomToTypeUniform<Eigen::bfloat16>(uint64_t* state, uint64_t stream) {
-
-  // Generate 7 random bits for the mantissa, merge with exponent.
-  unsigned rnd = PCG_XSH_RS_generator(state, stream);
-  const uint16_t half_bits = static_cast<uint16_t>(rnd & 0x7fu) | (static_cast<uint16_t>(127) << 7);
-  Eigen::bfloat16 result = Eigen::numext::bit_cast<Eigen::bfloat16>(half_bits);
-  // Return the final result
-  return result - Eigen::bfloat16(1.0f);
-}
 
 template <> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
 float RandomToTypeUniform<float>(uint64_t* state, uint64_t stream) {
@@ -124,41 +147,14 @@ template <typename T> class UniformRandomGenerator {
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE UniformRandomGenerator(
       uint64_t seed = 0) {
     m_state = PCG_XSH_RS_state(seed);
-    #ifdef EIGEN_USE_SYCL
-    // In SYCL it is not possible to build PCG_XSH_RS_state in one step.
-    // Therefor, we need two step to initializate the m_state.
-    // IN SYCL, the constructor of the functor is s called on the CPU
-    // and we get the clock seed here from the CPU. However, This seed is
-    //the same for all the thread. As unlike CUDA, the thread.ID, BlockID, etc is not a global function.
-    // and only  available on the Operator() function (which is called on the GPU).
-    // Thus for CUDA (((CLOCK  + global_thread_id)* 6364136223846793005ULL) + 0xda3e39cb94b95bdbULL) is passed to each thread
-    // but for SYCL ((CLOCK * 6364136223846793005ULL) + 0xda3e39cb94b95bdbULL) is passed to each thread and each thread adds
-    // the  (global_thread_id* 6364136223846793005ULL) for itself only once, in order to complete the construction
-    // similar to CUDA Therefore, the thread Id injection is not available at this stage.
-    //However when the operator() is called the thread ID will be avilable. So inside the opeator,
-    // we add the thrreadID, BlockId,... (which is equivalent of i)
-    //to the seed and construct the unique m_state per thead similar to cuda.
-    m_exec_once =false;
-   #endif
   }
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE UniformRandomGenerator(
       const UniformRandomGenerator& other) {
     m_state = other.m_state;
-    #ifdef EIGEN_USE_SYCL
-     m_exec_once =other.m_exec_once;
-    #endif
   }
 
   template<typename Index> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   T operator()(Index i) const {
-    #ifdef EIGEN_USE_SYCL
-      if(!m_exec_once) {
-      // This is the second stage of adding thread Id to the CPU clock seed and build unique seed per thread
-      // The (i * 6364136223846793005ULL) is the remaining part of the PCG_XSH_RS_state on the GPU side
-       m_state += (i * 6364136223846793005ULL);
-       m_exec_once =true;
-      }
-    #endif
     T result = RandomToTypeUniform<T>(&m_state, i);
     return result;
   }
@@ -167,14 +163,6 @@ template <typename T> class UniformRandomGenerator {
   Packet packetOp(Index i) const {
     const int packetSize = internal::unpacket_traits<Packet>::size;
     EIGEN_ALIGN_MAX T values[packetSize];
-      #ifdef EIGEN_USE_SYCL
-      if(!m_exec_once) {
-      // This is the second stage of adding thread Id to the CPU clock seed and build unique seed per thread
-       m_state += (i * 6364136223846793005ULL);
-       m_exec_once =true;
-      }
-    #endif
-    EIGEN_UNROLL_LOOP
     for (int j = 0; j < packetSize; ++j) {
       values[j] = RandomToTypeUniform<T>(&m_state, i);
     }
@@ -183,9 +171,6 @@ template <typename T> class UniformRandomGenerator {
 
  private:
   mutable uint64_t m_state;
-  #ifdef EIGEN_USE_SYCL
-  mutable bool m_exec_once;
-  #endif
 };
 
 template <typename Scalar>
@@ -237,37 +222,14 @@ template <typename T> class NormalRandomGenerator {
   // Uses the given "seed" if non-zero, otherwise uses a random seed.
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE NormalRandomGenerator(uint64_t seed = 0) {
     m_state = PCG_XSH_RS_state(seed);
-    #ifdef EIGEN_USE_SYCL
-    // In SYCL it is not possible to build PCG_XSH_RS_state in one step.
-    // Therefor, we need two steps to initializate the m_state.
-    // IN SYCL, the constructor of the functor is s called on the CPU
-    // and we get the clock seed here from the CPU. However, This seed is
-    //the same for all the thread. As unlike CUDA, the thread.ID, BlockID, etc is not a global function.
-    // and only  available on the Operator() function (which is called on the GPU).
-    // Therefore, the thread Id injection is not available at this stage. However when the operator()
-    //is called the thread ID will be avilable. So inside the opeator,
-    // we add the thrreadID, BlockId,... (which is equivalent of i)
-    //to the seed and construct the unique m_state per thead similar to cuda.
-    m_exec_once =false;
-   #endif
   }
   EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE NormalRandomGenerator(
       const NormalRandomGenerator& other) {
     m_state = other.m_state;
-#ifdef EIGEN_USE_SYCL
-    m_exec_once=other.m_exec_once;
-#endif
   }
 
  template<typename Index> EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE
   T operator()(Index i) const {
-    #ifdef EIGEN_USE_SYCL
-    if(!m_exec_once) {
-      // This is the second stage of adding thread Id to the CPU clock seed and build unique seed per thread
-      m_state += (i * 6364136223846793005ULL);
-      m_exec_once =true;
-    }
-    #endif
     T result = RandomToTypeNormal<T>(&m_state, i);
     return result;
   }
@@ -276,14 +238,6 @@ template <typename T> class NormalRandomGenerator {
   Packet packetOp(Index i) const {
     const int packetSize = internal::unpacket_traits<Packet>::size;
     EIGEN_ALIGN_MAX T values[packetSize];
-    #ifdef EIGEN_USE_SYCL
-    if(!m_exec_once) {
-      // This is the second stage of adding thread Id to the CPU clock seed and build unique seed per thread
-      m_state += (i * 6364136223846793005ULL);
-      m_exec_once =true;
-    }
-    #endif
-    EIGEN_UNROLL_LOOP
     for (int j = 0; j < packetSize; ++j) {
       values[j] = RandomToTypeNormal<T>(&m_state, i);
     }
@@ -292,9 +246,6 @@ template <typename T> class NormalRandomGenerator {
 
  private:
   mutable uint64_t m_state;
-   #ifdef EIGEN_USE_SYCL
-  mutable bool m_exec_once;
-  #endif
 };
 
 

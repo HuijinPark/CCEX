@@ -66,15 +66,14 @@
 #undef isnan
 #undef isinf
 #undef isfinite
-#undef I
 
-#include <boost/serialization/nvp.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include <boost/multiprecision/number.hpp>
 #include <boost/math/special_functions.hpp>
 #include <boost/math/complex.hpp>
 
-typedef boost::multiprecision::number<boost::multiprecision::cpp_dec_float<100>, boost::multiprecision::et_on> Real;
+namespace mp = boost::multiprecision;
+typedef mp::number<mp::cpp_dec_float<100>, mp::et_on> Real;
 
 namespace Eigen {
   template<> struct NumTraits<Real> : GenericNumTraits<Real> {
@@ -203,5 +202,6 @@ EIGEN_DECLARE_TEST(boostmultiprec)
   CALL_SUBTEST_9(( jacobisvd(Mat(internal::random<int>(EIGEN_TEST_MAX_SIZE/4, EIGEN_TEST_MAX_SIZE), internal::random<int>(EIGEN_TEST_MAX_SIZE/4, EIGEN_TEST_MAX_SIZE/2))) ));
   CALL_SUBTEST_10(( bdcsvd(Mat(internal::random<int>(EIGEN_TEST_MAX_SIZE/4, EIGEN_TEST_MAX_SIZE), internal::random<int>(EIGEN_TEST_MAX_SIZE/4, EIGEN_TEST_MAX_SIZE/2))) ));
 
-  CALL_SUBTEST_11(( test_simplicial_cholesky_T<Real,int,ColMajor>() ));
+  CALL_SUBTEST_11(( test_simplicial_cholesky_T<Real,int>() ));
 }
+

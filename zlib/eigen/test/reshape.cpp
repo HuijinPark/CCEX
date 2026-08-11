@@ -49,25 +49,10 @@ void check_auto_reshape4x4(MatType m)
   VERIFY(is_same_eq(m.template reshaped<Order>(AutoSize,  fix< 1> ),  m.template reshaped<Order>(v16,     fix< 1>)));
 }
 
-template <typename MatType>
-void check_direct_access_reshape4x4(MatType , internal::FixedInt<RowMajorBit>) {}
-
-template <typename MatType>
-void check_direct_access_reshape4x4(MatType m, internal::FixedInt<0>) {
-  VERIFY_IS_EQUAL(m.reshaped( 1, 16).data(), m.data());
-  VERIFY_IS_EQUAL(m.reshaped( 1, 16).innerStride(), 1);
-
-  VERIFY_IS_EQUAL(m.reshaped( 2, 8).data(), m.data());
-  VERIFY_IS_EQUAL(m.reshaped( 2, 8).innerStride(), 1);
-  VERIFY_IS_EQUAL(m.reshaped( 2, 8).outerStride(), 2);
-}
-
 // just test a 4x4 matrix, enumerate all combination manually
 template <typename MatType>
 void reshape4x4(MatType m)
 {
-  typedef typename MatType::Scalar Scalar;
-
   internal::VariableAndFixedInt<MatType::SizeAtCompileTime==Dynamic?-1: 1>  v1( 1);
   internal::VariableAndFixedInt<MatType::SizeAtCompileTime==Dynamic?-1: 2>  v2( 2);
   internal::VariableAndFixedInt<MatType::SizeAtCompileTime==Dynamic?-1: 4>  v4( 4);
@@ -139,7 +124,12 @@ void reshape4x4(MatType m)
   check_auto_reshape4x4<ColMajor> (m.transpose());
   check_auto_reshape4x4<AutoOrder>(m.transpose());
 
-  check_direct_access_reshape4x4(m,fix<MatType::Flags&RowMajorBit>);
+  VERIFY_IS_EQUAL(m.reshaped( 1, 16).data(), m.data());
+  VERIFY_IS_EQUAL(m.reshaped( 1, 16).innerStride(), 1);
+
+  VERIFY_IS_EQUAL(m.reshaped( 2, 8).data(), m.data());
+  VERIFY_IS_EQUAL(m.reshaped( 2, 8).innerStride(), 1);
+  VERIFY_IS_EQUAL(m.reshaped( 2, 8).outerStride(), 2);
 
   if((MatType::Flags&RowMajorBit)==0)
   {
@@ -160,8 +150,8 @@ void reshape4x4(MatType m)
   VERIFY_IS_EQUAL( m28r1, m28r2);
 
   VERIFY(is_same_eq(m.reshaped(v16,fix<1>), m.reshaped()));
-  VERIFY_IS_EQUAL(m.reshaped(16,1).eval(), m.reshaped().eval());
-  VERIFY_IS_EQUAL(m.reshaped(1,16).eval(), m.reshaped().transpose().eval());
+  VERIFY_IS_EQUAL(m.reshaped(16,1), m.reshaped());
+  VERIFY_IS_EQUAL(m.reshaped(1,16), m.reshaped().transpose());
   VERIFY_IS_EQUAL(m.reshaped().reshaped(2,8), m.reshaped(2,8));
   VERIFY_IS_EQUAL(m.reshaped().reshaped(4,4), m.reshaped(4,4));
   VERIFY_IS_EQUAL(m.reshaped().reshaped(8,2), m.reshaped(8,2));
@@ -173,48 +163,12 @@ void reshape4x4(MatType m)
 
   VERIFY(is_same_eq(m.reshaped(AutoSize,fix<1>), m.reshaped()));
   VERIFY_IS_EQUAL(m.template reshaped<RowMajor>(fix<1>,AutoSize), m.transpose().reshaped().transpose());
-
-  // check assignment
-  {
-    Matrix<Scalar,Dynamic,1> m1x(m.size()); m1x.setRandom();
-    VERIFY_IS_APPROX(m.reshaped() = m1x, m1x);
-    VERIFY_IS_APPROX(m, m1x.reshaped(4,4));
-    
-    Matrix<Scalar,Dynamic,Dynamic> m28(2,8); m28.setRandom();
-    VERIFY_IS_APPROX(m.reshaped(2,8) = m28, m28);
-    VERIFY_IS_APPROX(m, m28.reshaped(4,4));
-    VERIFY_IS_APPROX(m.template reshaped<RowMajor>(2,8) = m28, m28);
-
-    Matrix<Scalar,Dynamic,Dynamic> m24(2,4); m24.setRandom();
-    VERIFY_IS_APPROX(m(seq(0,last,2),all).reshaped(2,4) = m24, m24);
-
-    // check constness:
-    m.reshaped(2,8).nestedExpression() = m;
-  }
-}
-
-template<typename BlockType>
-void reshape_block(const BlockType& M) {
-  typename BlockType::PlainObject dense = M.eval();
-  Index rows = M.size() / 2;
-  Index cols = M.size() / rows;
-  VERIFY_IS_EQUAL(dense.reshaped(rows, cols), M.reshaped(rows, cols));
-  
-  for (Index i=0; i<rows; ++i) {
-    VERIFY_IS_EQUAL(dense.reshaped(rows, cols).row(i),
-                    M.reshaped(rows, cols).row(i));
-  }
-  
-  for (Index j = 0; j<cols; ++j) {
-    VERIFY_IS_EQUAL(dense.reshaped(rows, cols).col(j),
-                    M.reshaped(rows, cols).col(j));
-  }
 }
 
 EIGEN_DECLARE_TEST(reshape)
 {
-  typedef Matrix<int,Dynamic,Dynamic,RowMajor> RowMatrixXi;
-  typedef Matrix<int,4,4,RowMajor> RowMatrix4i;
+  typedef Matrix<int,Dynamic,Dynamic> RowMatrixXi;
+  typedef Matrix<int,4,4> RowMatrix4i;
   MatrixXi mx = MatrixXi::Random(4, 4);
   Matrix4i m4 = Matrix4i::Random(4, 4);
   RowMatrixXi rmx = RowMatrixXi::Random(4, 4);
@@ -231,5 +185,4 @@ EIGEN_DECLARE_TEST(reshape)
 
   CALL_SUBTEST(reshape4x4(rmx));
   CALL_SUBTEST(reshape4x4(rm4));
-  CALL_SUBTEST(reshape_block(rm4.col(1)));
 }
