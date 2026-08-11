@@ -203,6 +203,13 @@ int main(int argc, char* argv[]){
         fprintf(stderr, "Error: input file is required\n");
         exit(EXIT_FAILURE);
     }
+
+    // Every option source has been applied by here -- the input file (read from case 'f'
+    // above) and the flags that can override it, -m and -N in particular. Only now can
+    // the defaulted evolution be settled; doing it during the file parse would decide it
+    // against an nstate that -N had not yet supplied.
+    Config_resolveEvolution(cnf);
+
     MPI_Barrier(MPI_COMM_WORLD);
 
     //if (nbathfiles_current != nbathfiles_fromfccein){

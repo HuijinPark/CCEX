@@ -35,13 +35,25 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     if (rank==0){
         printMessage("  - General option-related keys : ");
-        printMessage("    [ method, quantity, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
+        printMessage("    [ method, quantity, propagator, evolution, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
     }
     char* method = cJSON_ReadString(root,"method",true,"cce");
     Config_setMethod(cnf,method); // Current possible options : cce, gcce, pcce, dsj, dsjitb, itb
 
     char* quantity = cJSON_ReadString(root,"quantity",true,"coherence");
     Config_setQuantity(cnf,quantity); // Current possible options : coherence, noise, dm
+
+    char* propagator = cJSON_ReadString(root,"propagator",true,"eigen");
+    Config_setPropagator(cnf,propagator); // gCCE only : eigen (default) | expm (legacy)
+
+    // vector is the DEFAULT, but it only exists where its preconditions hold: gCCE, a pure
+    // rho0 (nstate > 0) and propagator=eigen. Do NOT decide that here -- this function
+    // runs from inside main.cpp's getopt loop, so -m and -N have not been applied yet.
+    // Only record whether the key was written; Config_resolveEvolution settles it once
+    // every source is in.
+    char* evolution = cJSON_ReadString(root,"evolution",true,"vector");
+    Config_setEvolution(cnf,evolution); // gCCE only : vector (default) | matrix (legacy)
+    cnf->evolution_isdefault = (cJSON_GetObjectItem(root,"evolution") == NULL);
 
     int order = cJSON_ReadInt(root,"order",false,-1);
     Config_setOrder(cnf,order);    
@@ -86,6 +98,13 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     int seed = cJSON_ReadInt(root,"seed",true,-1);
     if (seed == -1) {
         seed = time(NULL);
+        // Without a seed the bath states come from a clock-seeded srand, so the same
+        // input run twice gives different numbers. Print the value that was used --
+        // reproducing the run afterwards needs it.
+        if (rank==0){
+            fprintf(stderr,"Warning: no \"seed\" in the input file -- seeding from time(NULL) (%d).\n"
+                           "         This run is NOT reproducible. Set \"seed\" to make it so.\n", seed);
+        }
     }
     Config_setSeed(cnf,seed);
     srand(seed);
@@ -912,8 +931,13 @@ char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_va
         if (access(item->valuestring, R_OK) == 0) {
             return item->valuestring;
         }else{
-            // fprintf(stderr, "Warning: %s cannot open/read (%d)\n",key,access(item->valuestring, R_OK));
-            // fprintf(stderr, "Current path: %s\n",item->valuestring);
+            // The path is returned anyway, so an unreadable file does not stop the run --
+            // whatever the caller meant to fill from it just keeps its default. Silence
+            // here is how a qubit ends up at the cell origin and the run still "works".
+            if (rank==0){
+                fprintf(stderr,"Warning: %s : cannot read \"%s\" -- continuing with defaults\n",
+                        key, item->valuestring);
+            }
             return item->valuestring;
         }
     }else{

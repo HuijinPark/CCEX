@@ -359,7 +359,12 @@ void makeHashClusterOn(HashCluster** hashclusters, int order, int nspin, int** s
 void typeStr(char** destination, int* cluster, int order, int nSpin){
     int nSpinDigit = countDigits(nSpin);
     for (int i=0; i<order; i++){
-        char str[nSpinDigit];
+        // +1 for the terminating NUL that sprintf always writes. Without it this
+        // overflows the VLA by one byte for every index with countDigits(nSpin) digits,
+        // which is a stack write past the end -- AddressSanitizer stops on it.
+        // setMaxLengthStr above already accounts for the NUL ("Additional length 1 for
+        // null"); only this temporary was missing it.
+        char str[nSpinDigit + 1];
         sprintf(str,"%d", cluster[i]);
         strcat(*destination,str);
         if (i!=order-1){
