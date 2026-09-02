@@ -57,6 +57,157 @@ void readQubitfile(QubitArray* qa, Config* cnf){
     exit(EXIT_FAILURE);
 }
 
+/**
+ * @brief Index of the qubit the rotation is taken about
+ * @details "reference_qubit" names it; without the key the first qubit is used, which
+ *          is unambiguous for as long as nqubit is restricted to 1. The lookup is by
+ *          exact name, so duplicate names are refused first -- otherwise a name would
+ *          silently resolve to whichever qubit happened to be listed earlier.
+ *
+ *          Written to survive the nqubit=1 restriction being lifted: nothing here
+ *          assumes there is only one qubit.
+*/
+static void checkQubitNamesUnique(QubitArray* qa){
+
+    int nqubit = QubitArray_getNqubit(qa);
+    for (int i=0; i<nqubit; i++){
+        for (int j=i+1; j<nqubit; j++){
+            if (strcmp(QubitArray_getQubit_i_name(qa,i),QubitArray_getQubit_i_name(qa,j)) == 0){
+                fprintf(stderr,"Error(coordinate_frame_rotation): qubit[%d] and qubit[%d] share the name \"%s\"\n",
+                        i,j,QubitArray_getQubit_i_name(qa,i));
+                fprintf(stderr,"reference_qubit resolves by exact name, so the names must be unique.\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+}
+
+static int resolveReferenceQubit(QubitArray* qa, Config* cnf){
+
+    int nqubit = QubitArray_getNqubit(qa);
+    checkQubitNamesUnique(qa);
+
+    char* refname = Config_getRot_reference_qubit(cnf);
+    if (refname[0] == '\0'){ return 0; } // not given : the first qubit
+
+    int iref = QubitArray_getQubitIdx_fromName(qa,refname);
+    if (iref < 0){
+        fprintf(stderr,"Error(coordinate_frame_rotation): reference_qubit \"%s\" is not one of the qubits\n",refname);
+        fprintf(stderr,"Defined qubit names are :");
+        for (int i=0; i<nqubit; i++){ fprintf(stderr," \"%s\"",QubitArray_getQubit_i_name(qa,i)); }
+        fprintf(stderr,"\n");
+        fprintf(stderr,"A single qubit given through \"qubitfile\" is named \"q0\" by default.\n");
+        exit(EXIT_FAILURE);
+    }
+    return iref;
+}
+
+/**
+ * @brief Check the coordinate_frame_rotation input against the QubitArray
+ * @details PURE VALIDATION. It opens nothing, reads no file and changes no state; it
+ *          only compares what the input file and the command line have already produced.
+ *          Called from main once every option source is in but before readQubitfile,
+ *          readBathfiles, readHftensorfile and readQdtensorfile -- so an unsupported
+ *          combination stops the run before a single tensor file is opened.
+ *
+ *          The checks live here rather than in cJSON_readOptionConfig because they need
+ *          BOTH structures: the Config knows the rotation and the readmodes, the
+ *          QubitArray knows how many qubits there are and what they are called, and
+ *          those are parsed by two different functions.
+ *
+ *          The multi-qubit restriction on external HF and QD tensor files is NOT new
+ *          here. readHftensorfile and readQdtensorfile have always refused nqubit > 1,
+ *          because one tensor file is written around one defect and applying it to
+ *          several qubits has no defined meaning. Those guards stay where they are; this
+ *          one only reports the same thing earlier and in terms of the rotation.
+ *
+ *          A no-op unless the rotation is enabled, so nothing about an existing input
+ *          changes.
+*/
+void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
+
+    if (!Config_getRot_enabled(cnf)){ return; }
+
+    int nqubit = QubitArray_getNqubit(qa);
+    if (nqubit < 1){
+        fprintf(stderr,"Error(coordinate_frame_rotation): no qubit is defined (nqubit = %d)\n",nqubit);
+        exit(EXIT_FAILURE);
+    }
+
+    checkQubitNamesUnique(qa);
+
+    ////////////////////////////////////////////////////////////////////////
+    // Single qubit : everything below is optional, exactly as before
+    ////////////////////////////////////////////////////////////////////////
+    if (nqubit == 1){
+        // reference_qubit and qubit_position_frame may both be omitted -- there is one
+        // qubit to rotate about and one frame it can be in. An explicit reference_qubit
+        // is still resolved (and still has to match) when the rotation runs.
+        return;
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // Several qubits : nothing may be left to a default
+    ////////////////////////////////////////////////////////////////////////
+    if (Config_getRot_reference_qubit(cnf)[0] == '\0'){
+        fprintf(stderr,"Error(coordinate_frame_rotation): nqubit = %d, so reference_qubit is required\n",nqubit);
+        fprintf(stderr,"It names the qubit the rotation is taken about, and with more than one qubit\n");
+        fprintf(stderr,"there is no sensible default. Defined qubit names are :");
+        for (int i=0; i<nqubit; i++){ fprintf(stderr," \"%s\"",QubitArray_getQubit_i_name(qa,i)); }
+        fprintf(stderr,"\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Resolves by exact name and is fatal if it does not match; the index is discarded
+    // here because this function only validates.
+    (void)resolveReferenceQubit(qa,cnf);
+
+    if (Config_getRot_qubit_position_frame(cnf)[0] == '\0'){
+        fprintf(stderr,"Error(coordinate_frame_rotation): nqubit = %d, so qubit_position_frame is required\n",nqubit);
+        fprintf(stderr,"State the frame every Qubit.xyz is written in. The only supported value is\n");
+        fprintf(stderr,"\"bath\": the same Cartesian basis and the same origin as the bath files, so that\n");
+        fprintf(stderr,"one rotation moves every qubit and every bath spin together.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // External tensor files : a pre-existing restriction, caught earlier
+    ////////////////////////////////////////////////////////////////////////
+    if (Config_getHf_readmode(cnf) != 0){
+        fprintf(stderr,"Error(coordinate_frame_rotation): hf_readmode = %d with nqubit = %d is not supported\n",
+                Config_getHf_readmode(cnf),nqubit);
+        fprintf(stderr,"readHftensorfile already refuses more than one qubit with a hyperfine tensor file:\n");
+        fprintf(stderr,"the file is written around a single defect, so which qubit it belongs to is not\n");
+        fprintf(stderr,"defined. Use hf_readmode = 0, or run one qubit at a time.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (Config_getQd_readmode(cnf) != 0){
+        fprintf(stderr,"Error(coordinate_frame_rotation): qd_readmode = %d with nqubit = %d is not supported\n",
+                Config_getQd_readmode(cnf),nqubit);
+        fprintf(stderr,"readQdtensorfile already refuses more than one qubit with a quadrupole tensor file,\n");
+        fprintf(stderr,"for the same reason. Use qd_readmode = 0, or run one qubit at a time.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // Every explicit intmap tensor has to say which frame it is in
+    ////////////////////////////////////////////////////////////////////////
+    for (int i=0; i<nqubit; i++){
+        for (int j=i; j<nqubit; j++){
+            if (QubitArray_getIntmap_i_j_frame(qa,i,j) != INTMAP_EXPLICIT_UNSPECIFIED){ continue; }
+            fprintf(stderr,"Error(coordinate_frame_rotation): the intmap tensor between \"%s\" and \"%s\"\n",
+                    QubitArray_getQubit_i_name(qa,i),QubitArray_getQubit_i_name(qa,j));
+            fprintf(stderr,"has no \"tensor_frame\", and with nqubit = %d it cannot be guessed.\n",nqubit);
+            fprintf(stderr,"  \"bath\"  : components are in the original bath Cartesian basis, and are\n");
+            fprintf(stderr,"            transformed as R*T*R^T\n");
+            fprintf(stderr,"  \"qubit\" : components are already in the common computational basis --\n");
+            fprintf(stderr,"            reference-qubit-aligned, NOT an individual local frame -- and\n");
+            fprintf(stderr,"            are left as written\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
 void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
 
     char message[MAX_FILEPATH];
@@ -74,7 +225,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
 
     // Read bath files
     int nspin_prev = 0;
-    int nspin = 0;    
+    int nspin = 0;
 
     for (int i=0; i<nbathfiles; i++){
 
@@ -202,6 +353,270 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
     //}
 }
 
+
+/**
+ * @brief Print the whole coordinate frame, including every qubit, once per run
+ * @details Wraps the pure-geometry report in utilities.cpp and adds what only the
+ *          QubitArray can say: which qubit the rotation was taken about, where every
+ *          qubit sits in each frame, and how the interaction tensors were handled.
+ * @param qsrc qubit positions BEFORE the rotation; the QubitArray already holds the
+ *             transformed ones by the time this runs
+*/
+static void reportCoordinateFrame(QubitArray* qa, Config* cnf, const double R[3][3],
+                                  const double r0[3], int iref, double** qsrc,
+                                  const char* defect_axis_reference,
+                                  int nint_rotated, int nint_kept, const int nprov[5]){
+
+    int nqubit = QubitArray_getNqubit(qa);
+
+    reportQubitAlignedRotation(Config_getRot_bath_axis(cnf),Config_getRot_qubit_axis(cnf),
+                               R,r0,Config_getBfield(cnf),defect_axis_reference);
+
+    char* posframe = Config_getRot_qubit_position_frame(cnf);
+    printf("      %-32s: %s\n","Qubit position frame",posframe[0] ? posframe : "bath (default)");
+    printf("      %-32s  all Qubit.xyz values use the same Cartesian basis and\n","Meaning:");
+    printf("      %-32s  origin as the bath files\n","");
+    printf("      %-32s  the physical axis of reference_qubit in the source frame\n","Qubit axis:");
+    printf("      %-32s  common reference-qubit-aligned computational frame,\n","tensor_frame = \"qubit\":");
+    printf("      %-32s  not an individual local frame\n","");
+    printf("\n");
+    printf("      %-32s: \"%s\"  (index %d of %d)\n","Reference qubit",
+           QubitArray_getQubit_i_name(qa,iref),iref,nqubit);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","r0, source frame",r0[0],r0[1],r0[2]);
+    printf("\n");
+
+    for (int iq=0; iq<nqubit; iq++){
+        double* now = QubitArray_getQubit_i_xyz(qa,iq);
+        printf("      qubit[%d] \"%s\"%s\n",iq,QubitArray_getQubit_i_name(qa,iq),
+               (iq==iref) ? "   (reference)" : "");
+        printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","  source frame",
+               qsrc[iq][0],qsrc[iq][1],qsrc[iq][2]);
+        printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","  computational frame",
+               now[0],now[1],now[2]);
+    }
+    printf("\n");
+
+    printf("      %-32s: %d transformed as R*T*R^T, %d left as written\n",
+           "Qubit intmap tensors",nint_rotated,nint_kept);
+    printf("      %-32s: %d default-zero, %d auto (source geometry),\n",
+           "  by provenance",nprov[INTMAP_DEFAULT_ZERO],nprov[INTMAP_AUTO_SOURCE_GEOMETRY]);
+    printf("      %-32s  %d explicit bath, %d explicit qubit, %d explicit unspecified\n","",
+           nprov[INTMAP_EXPLICIT_BATH],nprov[INTMAP_EXPLICIT_QUBIT],nprov[INTMAP_EXPLICIT_UNSPECIFIED]);
+    printf("\n");
+}
+
+/**
+ * @brief Move the bath into the qubit-aligned frame
+ * @details One pipeline step of its own, run once the bath positions and every stored
+ *          tensor are in place. Doing it here rather than inside readBathfiles keeps
+ *          the frame change to a single moment: bath POSITIONS are in the source frame
+ *          until this runs and in the qubit-aligned frame after it, and the tensors
+ *          that are still in the bath frame are transformed in the same pass, so
+ *          positions and the tensors beside them never disagree.
+ *
+ *          Tensor COMPONENTS are not all in one frame beforehand: hf_tensor_frame and
+ *          qd_tensor_frame say which basis the tensor FILES use, and a point-dipole
+ *          tensor CCEX computed itself is in the bath frame whatever they say. This
+ *          step normalizes them, transforming the bath-frame ones and leaving the
+ *          qubit-frame ones alone. hypf_bathframe is what tells the two apart.
+ *
+ *          Defect entries carry their own coordinate_frame. Their axis and rxyzs are
+ *          vectors, while hypf/efg/zfs are rank-2 tensors; bath-frame entries receive
+ *          the same R here before Defect construction. Scalar detuning does not move.
+ *
+ *          The tensor-file lookups happen before this, against un-moved coordinates,
+ *          because the position columns of those files are in the source bath frame.
+ *
+ *          The magnetic field is parsed independently of this transformation. After all
+ *          CLI overrides are applied, Config_validateBfieldAlignment checks that it lies
+ *          along the computational z axis.
+ *
+ *          rbath / rbathcut selection happens earlier, in the source frame, which is
+ *          equivalent: the rotation is taken about the reference qubit and an
+ *          orthogonal transformation about that point leaves every distance to it
+ *          unchanged. mindist is recomputed here anyway, so the value stored on each
+ *          spin describes the coordinates actually stored next to it.
+ *
+ *          A no-op unless coordinate_frame_rotation is enabled.
+*/
+void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* dfa, Config* cnf,
+                                  HypfProvenance hypf_bathframe){
+
+    if (!Config_getRot_enabled(cnf)){ return; }
+
+    double R[3][3];
+    buildQubitAlignedRotation(Config_getRot_bath_axis(cnf),Config_getRot_qubit_axis(cnf),R);
+
+    int iref = resolveReferenceQubit(qa,cnf);
+    int nqubit = QubitArray_getNqubit(qa);
+
+    // COPY the origin before anything moves: r0 aliases Qubit[iref].xyz otherwise, and
+    // the first rotateAboutPoint would rewrite the very point it rotates about.
+    double r0[3];
+    copyDouble1d(r0,QubitArray_getQubit_i_xyz(qa,iref),3);
+
+    // Kept for the report, which shows every qubit in both frames.
+    double** qsrc = allocDouble2d(nqubit,3);
+    for (int iq=0; iq<nqubit; iq++){
+        copyDouble1d(qsrc[iq],QubitArray_getQubit_i_xyz(qa,iq),3);
+    }
+
+    // Qubits first, bath second. mindist is the distance to the NEAREST qubit, so it can
+    // only be recomputed once every qubit has moved. The reference qubit has r_old = r0
+    // and therefore does not move at all.
+    for (int iq=0; iq<nqubit; iq++){
+        rotateAboutPoint(QubitArray_getQubit_i_xyz(qa,iq),R,r0);
+    }
+
+
+    // Which stored tensors are in the bath frame and therefore have to move with it.
+    //
+    // For the hyperfine tensors this is decided PER SPIN, not per run, because a single
+    // run can hold both kinds. hf_tensor_frame describes only what came out of the
+    // tensor file; anything readHftensorfile computed itself -- a point-dipole tensor,
+    // whether as the whole answer (readmode 0), as the anisotropic part next to an
+    // isotropic Fermi contact (readmode 1), or as the fallback for a spin the file did
+    // not cover (readmode 2/3) -- is in the source frame regardless. hypf_bathframe
+    // carries that distinction over from the reader.
+    //
+    // The point-dipole tensor is covariant, so R*T*R^T is the same thing as recomputing
+    // it from the rotated positions; test_rotation_unit.cpp checks that identity.
+    //
+    // The quadrupole side stays a single flag: readQdtensorfile has no computed-here
+    // fallback to distinguish, and qd_readmode = 0 leaves every quad at zero.
+    bool hf_file_is_bathframe = (strcasecmp(Config_getRot_hf_tensor_frame(cnf),"bath") == 0);
+    bool rotate_qd = (Config_getQd_readmode(cnf) == 0)
+                  || (strcasecmp(Config_getRot_qd_tensor_frame(cnf),"bath") == 0);
+
+    if (hypf_bathframe == NULL){
+        fprintf(stderr,"Error(coordinate_frame_rotation): the hyperfine provenance is missing.\n");
+        fprintf(stderr,"readHftensorfile must run, and hand its provenance over, before this step.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // Qubit-qubit interaction tensors
+    ////////////////////////////////////////////////////////////////////////
+    // Decided per entry from its recorded provenance, never from what kind of tensor it
+    // is: a self/ZFS tensor and a pair tensor are both 3x3 and both can be given in
+    // either frame. A qubit whose crystallographic orientation differs from the
+    // reference qubit is expressed by ITS OWN ZFS tensor, transformed by the same global
+    // R as everything else; off-diagonal elements surviving that is normal and correct.
+    int nint_rotated = 0, nint_kept = 0;
+    int nprov[5] = {0,0,0,0,0};
+
+    for (int i=0; i<nqubit; i++){
+        for (int j=i; j<nqubit; j++){
+
+            IntmapProvenance frame = QubitArray_getIntmap_i_j_frame(qa,i,j);
+            if ((int)frame >= 0 && (int)frame < 5){ nprov[(int)frame]++; }
+
+            bool rotate_this;
+            switch (frame){
+                case INTMAP_DEFAULT_ZERO:         rotate_this = false; break; // zero either way
+                case INTMAP_AUTO_SOURCE_GEOMETRY: rotate_this = true;  break;
+                case INTMAP_EXPLICIT_BATH:        rotate_this = true;  break;
+                case INTMAP_EXPLICIT_QUBIT:       rotate_this = false; break;
+                case INTMAP_EXPLICIT_UNSPECIFIED:
+                    // validateCoordinateFrameRotationInputs makes this unreachable for
+                    // nqubit > 1. At nqubit == 1 it is the legacy "qzfs" case, which was
+                    // never rotated and must keep not being rotated.
+                    if (nqubit > 1){
+                        fprintf(stderr,"Error(coordinate_frame_rotation): intmap[%d][%d] has no tensor_frame\n",i,j);
+                        fprintf(stderr,"and nqubit = %d. This should have been caught before any file was read.\n",nqubit);
+                        exit(EXIT_FAILURE);
+                    }
+                    rotate_this = false;
+                    break;
+                default:
+                    fprintf(stderr,"Error(coordinate_frame_rotation): intmap[%d][%d] has an unusable\n",i,j);
+                    fprintf(stderr,"provenance (state %d).\n",(int)frame);
+                    exit(EXIT_FAILURE);
+            }
+
+            if (rotate_this){
+                QubitArray_setIntmap_i_j(qa,rotateTensor(QubitArray_getIntmap_i_j(qa,i,j),R),i,j);
+                nint_rotated++;
+            }else{
+                nint_kept++;
+            }
+        }
+    }
+
+    int ndefect_rotated = DefectArray_applyCoordinateFrameRotation(dfa,R);
+
+    if (rank==0){
+        const char* defaxis =
+            (Config_getDefect_axis_reference(cnf) == DEFECT_AXIS_REFERENCE_QUBIT_AXIS) ? "qubit_axis" : NULL;
+        reportCoordinateFrame(qa,cnf,R,r0,iref,qsrc,defaxis,nint_rotated,nint_kept,nprov);
+        printf("      %-28s: %d transformed from bath to qubit frame\n",
+               "Defect templates",ndefect_rotated);
+        for (int idf=0; idf<DefectArray_getNdefect(dfa); idf++){
+            if (DefectArray_getDefect_idf_axis_set(dfa,idf)){
+                double* axis = DefectArray_getDefect_idf_axis(dfa,idf);
+                printf("      Defect[%s].axis, calc frame : [ %12.8lf, %12.8lf, %12.8lf ]\n",
+                       DefectArray_getDefect_idf_dfname(dfa,idf),axis[0],axis[1],axis[2]);
+            }
+        }
+        printf("\n");
+    }
+
+    freeDouble2d(&qsrc,nqubit);
+
+    int nspin  = BathArray_getNspin(ba);
+    int nhf_rotated = 0, nhf_kept = 0;
+
+    for (int i=0; i<nspin; i++){
+
+        double* xyz = BathArray_getBath_i_xyz(ba,i);
+        rotateAboutPoint(xyz,R,r0);
+        BathArray_setBath_i_mindist(ba,QubitArray_mindist(xyz,qa),i);
+
+        for (int j=0; j<nqubit; j++){
+
+            bool computed_here;
+            switch (hypf_bathframe[i][j]){
+                case HYPF_SOURCE_GEOMETRY: computed_here = true;  break;
+                case HYPF_FILE_TENSOR:     computed_here = false; break;
+                default:
+                    // Including HYPF_UNSET. Guessing either way is a silently wrong
+                    // Hamiltonian -- a missed rotation or a doubled one.
+                    fprintf(stderr,"Error(coordinate_frame_rotation): hypf[%d][%d] has no usable\n",i,j);
+                    fprintf(stderr,"provenance (state %d). Expected %d (from the tensor file) or %d\n",
+                            hypf_bathframe[i][j],HYPF_FILE_TENSOR,HYPF_SOURCE_GEOMETRY);
+                    fprintf(stderr,"(computed from the source geometry).\n");
+                    exit(EXIT_FAILURE);
+            }
+
+            if (hf_file_is_bathframe || computed_here){
+                BathArray_setBath_i_hypf_j(ba,rotateTensor(BathArray_getBath_i_hypf_j(ba,i,j),R),i,j);
+                nhf_rotated++;
+            }else{
+                nhf_kept++;
+            }
+        }
+
+        if (rotate_qd){
+            BathArray_setBath_i_quad(ba,rotateTensor(BathArray_getBath_i_quad(ba,i),R),i);
+        }
+    }
+
+    if (rank==0){
+        printf("      %-28s: %d transformed as R*T*R^T, %d left as written\n",
+               "hyperfine tensors",nhf_rotated,nhf_kept);
+        printf("      %-28s: %s\n","quadrupole tensors",
+               rotate_qd ? "transformed as R*T*R^T" : "left as written (qd_tensor_frame = qubit)");
+        printf("\n");
+
+        // readHftensorfile and readQdtensorfile each print their tensors when they finish,
+        // but that is BEFORE this step, so those values are the ones in the source frame.
+        // Print them again here, so the log ends on the tensors that actually reach the
+        // Hamiltonian rather than on the ones that were read.
+        printSubTitle("Tensors after the coordinate frame rotation");
+        BathArray_reportBath_hypf(ba,nqubit);
+        BathArray_reportBath_quad(ba);
+    }
+}
 
 void setBathStates(BathArray* ba, Config* cnf, int i){
 
@@ -559,7 +974,7 @@ void readGyrofile(BathArray* ba, Config* cnf){
     if(rank==0){printf("\n");}
 }
 
-void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
+void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance* hypf_bathframe){
 
     // Required bath spin properties 
     int nspecies = BathArray_getProp_nspecies(ba);
@@ -575,6 +990,20 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
     double CorrTotSpin = Config_getCorrTotSpin(cnf);
     double SpinFactor = 0.0;
 
+    // Provenance of every tensor this function is about to store. Both states occur in
+    // the same run: a spin outside the tensor file's range falls back to a point-dipole
+    // tensor even when every other spin was matched.
+    //
+    // Everything starts UNSET, deliberately. allocInt2d zeroes, and 0 is HYPF_FILE_TENSOR
+    // -- a real state -- so a storage path that forgot to record its provenance would
+    // otherwise pass silently as "came from the file" and skip a rotation it needed.
+    int nspin_prov  = BathArray_getNspin(ba);
+    int nqubit_prov = QubitArray_getNqubit(qa);
+    *hypf_bathframe = allocInt2d(nspin_prov,nqubit_prov);
+    for (int i=0; i<nspin_prov; i++){
+        for (int j=0; j<nqubit_prov; j++){ (*hypf_bathframe)[i][j] = HYPF_UNSET; }
+    }
+
     if (rank==0){
         printSubTitle("Read the Hyperfine interaction from DFT inputfile...");
     }
@@ -584,7 +1013,12 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
         if (rank==0){
             printf("      %-18s:   %4d ( Point-dipole tensor )\n\n", "HF Readmode ", hf_readmode);
         }
-        BathArray_setBathHypfs(ba,qa); 
+        BathArray_setBathHypfs(ba,qa);
+
+        // Every one of them was built from the source geometry.
+        for (int i=0; i<nspin_prov; i++){
+            for (int j=0; j<nqubit_prov; j++){ (*hypf_bathframe)[i][j] = HYPF_SOURCE_GEOMETRY; }
+        }
     }
     else if (hf_readmode==1 || hf_readmode==2 || hf_readmode==3){
 
@@ -756,14 +1190,23 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
 
                     if (hf_readmode == 1){
                         // fermi contact term + Point-dipole approximation
+                        // NOTE the DFT tensor read just above is DISCARDED here: Adip is
+                        // overwritten by a point-dipole tensor built from the source
+                        // geometry, and only the isotropic fc survives from the file. So
+                        // what gets stored is a bath-frame tensor no matter what
+                        // hf_tensor_frame says -- fc is a scalar and has no frame.
                         Adip = calPointDipoleTensor(qxyz, spxyz, qgyro, spgyro);
                         Atot = Adip + fc * MatrixXcd::Identity(3,3);
+                        (*hypf_bathframe)[ispin][iqubit] = HYPF_SOURCE_GEOMETRY;
                     }else if (hf_readmode == 2){
-                        // DFT dipolar tensor
+                        // DFT dipolar tensor : straight from the file
                         Atot = Adip;
+                        (*hypf_bathframe)[ispin][iqubit] = HYPF_FILE_TENSOR;
                     }else if (hf_readmode == 3){
-                        // fermi contact term + DFT dipolar tensor
+                        // fermi contact term + DFT dipolar tensor : the anisotropic part
+                        // is the file's, and the isotropic part has no frame
                         Atot = Adip + fc * MatrixXcd::Identity(3,3);
+                        (*hypf_bathframe)[ispin][iqubit] = HYPF_FILE_TENSOR;
                     }
                     BathArray_setBath_i_hypf_j(ba, Atot, ispin, iqubit);
 
@@ -781,12 +1224,14 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
                         // You CAN ignore the atoms that exist in the range.
                         Adip = calPointDipoleTensor(qxyz, spxyz, qgyro, spgyro);
                         BathArray_setBath_i_hypf_j(ba, Adip, ispin, iqubit);
+                        (*hypf_bathframe)[ispin][iqubit] = HYPF_SOURCE_GEOMETRY;
                     }
                 }else{
                     // If the atom in bath file doesn't exist in tensor file, 
                     // then, the hyperfine interaction would be simply dipolar interaction
                     Adip = calPointDipoleTensor(qxyz, spxyz, qgyro, spgyro);
                     BathArray_setBath_i_hypf_j(ba, Adip, ispin, iqubit);
+                    (*hypf_bathframe)[ispin][iqubit] = HYPF_SOURCE_GEOMETRY;
                 }
             }
         }
@@ -810,10 +1255,47 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
 
     }
 
+    ////////////////////////////////////////////////////////////
+    // Every tensor stored above must have said where it came from
+    ////////////////////////////////////////////////////////////
+    // An internal invariant, not an input check: Config_setHf_readmode already rejects
+    // anything outside 0-3, so no input should be able to reach this. It stays because
+    // the cost of being wrong is a silently mis-rotated Hamiltonian -- if a future
+    // storage path forgets to record its provenance, this is what says so.
+    int nunset = 0, first_i = -1, first_j = -1;
+    for (int i=0; i<nspin_prov; i++){
+        for (int j=0; j<nqubit_prov; j++){
+            if ((*hypf_bathframe)[i][j] == HYPF_UNSET){
+                if (nunset == 0){ first_i = i; first_j = j; }
+                nunset++;
+            }
+        }
+    }
+    if (nunset > 0){
+        fprintf(stderr,"Error(readHftensorfile): %d of %d hyperfine tensors were stored without\n",
+                nunset,nspin_prov*nqubit_prov);
+        fprintf(stderr,"recording which frame they are in; the first is hypf[%d][%d].\n",first_i,first_j);
+        fprintf(stderr,"hf_readmode = %d -- the supported values are 0, 1, 2 and 3.\n",
+                Config_getHf_readmode(cnf));
+        exit(EXIT_FAILURE);
+    }
+
     if (rank==0){
         int nqubit = QubitArray_getNqubit(qa);
         BathArray_reportBath_hypf(ba, nqubit); //report updated hyperfine tensors
     }
+}
+
+/**
+ * @brief readHftensorfile for callers that do not need the provenance
+ * @details The provenance only matters to applyCoordinateFrameRotation. This overload
+ *          keeps the older three-argument call working by owning the array itself.
+*/
+void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
+
+    HypfProvenance hypf_bathframe = NULL;
+    readHftensorfile(ba,qa,cnf,&hypf_bathframe);
+    freeInt2d(&hypf_bathframe,BathArray_getNspin(ba));
 }
 
 void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
@@ -2168,4 +2650,3 @@ void vector_cross(double** cross_P, double u[], double v[], bool norm){
         (*cross_P)[2] /= val;
     }
 }
-

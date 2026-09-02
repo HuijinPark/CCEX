@@ -91,7 +91,9 @@ int main(int argc, char* argv[]){
 
     // Read hyperfine tensorfile
     Config_setHf_readmode(cnf, 0);
-    readHftensorfile(ba, qa, cnf);
+    HypfProvenance hypf_bathframe = NULL;
+    readHftensorfile(ba, qa, cnf, &hypf_bathframe);
+    freeInt2d(&hypf_bathframe, BathArray_getNspin(ba));
 
     // Read quadrupole tensorfile
     Config_setQd_readmode(cnf, 1);

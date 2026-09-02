@@ -9,7 +9,41 @@
 
 void readQubitfile(QubitArray* qa, Config* cnf);
 void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf);
+
+// Pure validation of the coordinate_frame_rotation input against the QubitArray.
+// Opens no file and changes no state; call it once every option source is in and before
+// any reader runs, so that an unsupported combination fails before a file is touched.
+void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf);
+
+/**
+ * @enum HypfProvenanceState
+ * @brief Where one stored hyperfine tensor came from, and so which frame it is in
+ * @details HYPF_UNSET is not a fallback: readHftensorfile fills the whole array with it
+ *          and then has to overwrite every entry, so a storage path that forgets to say
+ *          where its tensor came from is a fatal error rather than a silent guess.
+ *          It cannot be 0 for that reason -- allocInt2d zeroes, and 0 is a real state.
+*/
+typedef enum {
+    HYPF_UNSET           = -1, /**< not yet decided; must not survive readHftensorfile */
+    HYPF_FILE_TENSOR     =  0, /**< read from the tensor file, so in the hf_tensor_frame basis */
+    HYPF_SOURCE_GEOMETRY =  1  /**< computed here from the source geometry, so bath frame */
+} HypfProvenanceState;
+
+/**
+ * @brief Which frame each stored hyperfine tensor is in, per [bath spin][qubit]
+ * @details Allocated and filled by readHftensorfile. applyCoordinateFrameRotation needs
+ *          the distinction because both states can occur in the SAME run: a spin the
+ *          tensor file does not cover falls back to a point-dipole tensor built from the
+ *          source geometry even when every other spin was matched.
+ * @ref HypfProvenanceState, readHftensorfile, applyCoordinateFrameRotation
+*/
+typedef int** HypfProvenance;
+
+void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* dfa, Config* cnf,
+                                  HypfProvenance hypf_bathframe);
 void readGyrofile(BathArray* ba, Config* cnf);
+void readHftensorfile(BathArray* ba, QubitArray* qa, Config* config, HypfProvenance* hypf_bathframe);
+// Kept for callers that do not need the provenance; allocates and releases it itself.
 void readHftensorfile(BathArray* ba, QubitArray* qa, Config* config);
 void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* config);
 

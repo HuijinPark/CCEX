@@ -8,11 +8,27 @@
  * @struct Defect
  * @brief Defect structure
 */
+typedef enum {
+    DEFECT_COORDINATE_FRAME_QUBIT = 0, /**< common computational/qubit-aligned frame */
+    DEFECT_COORDINATE_FRAME_BATH  = 1  /**< source bath/crystal frame */
+} DefectCoordinateFrame;
+
+typedef enum {
+    DEFECT_ZFS_NONE           = 0,
+    DEFECT_ZFS_INDEXED_LEGACY = 1, /**< legacy [[configuration,"e",[9]], ...] form */
+    DEFECT_ZFS_SHARED_DE       = 2, /**< shared {D,E,unit} form */
+    DEFECT_ZFS_SHARED_TENSOR   = 3  /**< shared {tensor,unit} form */
+} DefectZfsInputMode;
+
 typedef struct{
 
     /* Defect information */
     char dfname[MAX_CHARARRAY_LENGTH];
     bool apprx;
+    bool axis_set;              /**< whether an explicit physical symmetry axis was supplied */
+    double axis[3];             /**< normalized axis in coordinate_frame */
+    DefectCoordinateFrame coordinate_frame; /**< frame of axis and all frame-dependent data */
+    DefectZfsInputMode zfs_input_mode;
     
     /* Defect' spin information */
     int  naddspin;
@@ -24,7 +40,7 @@ typedef struct{
     /* Defect' spin interaction information */
     // changes for avaax, spin
 
-    int navaax; // possible number of principal axis
+    int navaax; // indexed configurations + reserved element 0 (legacy name)
 
     double*** rxyzs; // rxyz[n+1][m][k] : n: avaax(1~navaax), m : addspin type , k : x,y,z
     MatrixXcd** hypf; // hypf[n+1][m] // (MHz)
@@ -76,6 +92,9 @@ void DefectArray_setDefect_idf_spins(DefectArray* dfa, int idf, float* spins);
 void DefectArray_setDefect_idf_gyros(DefectArray* dfa, int idf, double* gyros);
 void DefectArray_setDefect_idf_eqs(DefectArray* dfa, int idf, double* eqs);
 void DefectArray_setDefect_idf_navaax(DefectArray* dfa, int idf, int navaax);
+void DefectArray_setDefect_idf_axis(DefectArray* dfa, int idf, const double axis[3]);
+void DefectArray_setDefect_idf_coordinate_frame(DefectArray* dfa, int idf, DefectCoordinateFrame frame);
+void DefectArray_setDefect_idf_zfs_input_mode(DefectArray* dfa, int idf, DefectZfsInputMode mode);
 void DefectArray_setDefect_idf_iax_isp_rxyz(DefectArray* dfa, int idf, int iax, int isp, double* rxyzs);
 void DefectArray_setDefect_idf_iax_isp_hypf(DefectArray* dfa, int idf, int iax, int isp, MatrixXcd hypf);
 void DefectArray_setDefect_idf_iax_isp_efg(DefectArray* dfa, int idf, int iax, int isp, MatrixXcd efg);
@@ -95,6 +114,10 @@ float DefectArray_getDefect_idf_isp_spins(DefectArray* dfa, int idf, int isp);
 double DefectArray_getDefect_idf_isp_gyros(DefectArray* dfa, int idf, int isp);
 double DefectArray_getDefect_idf_isp_eqs(DefectArray* dfa, int idf, int isp);
 int DefectArray_getDefect_idf_navaax(DefectArray* dfa, int idf);
+bool DefectArray_getDefect_idf_axis_set(DefectArray* dfa, int idf);
+double* DefectArray_getDefect_idf_axis(DefectArray* dfa, int idf);
+DefectCoordinateFrame DefectArray_getDefect_idf_coordinate_frame(DefectArray* dfa, int idf);
+DefectZfsInputMode DefectArray_getDefect_idf_zfs_input_mode(DefectArray* dfa, int idf);
 double* DefectArray_getDefect_idf_iax_isp_rxyz(DefectArray* dfa, int idf, int iax, int isp);
 MatrixXcd DefectArray_getDefect_idf_iax_isp_hypf(DefectArray* dfa, int idf, int iax, int isp);
 MatrixXcd DefectArray_getDefect_idf_iax_isp_efg(DefectArray* dfa, int idf, int iax, int isp);
@@ -104,6 +127,10 @@ double DefectArray_getDefect_idf_iax_detuning(DefectArray* dfa, int idf, int iax
 // alloc defect information
 void DefectArray_allocDefect(DefectArray* dfa); // defect : ndefect
 void DefectArray_allocDefect_idf(DefectArray* dfa, int idf, int navaax, int naddspin);
+
+// Re-express every bath-frame Defect template in the common computational frame.
+// Returns the number of Defect entries transformed. Scalar detuning is unchanged.
+int DefectArray_applyCoordinateFrameRotation(DefectArray* dfa, const double R[3][3]);
 
 // set subspin information
 void DefectArray_setPaxes_i(DefectArray* dfa, int ibs, int axis); // paxes

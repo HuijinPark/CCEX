@@ -166,6 +166,9 @@ int main(int argc, char* argv[]){
                 break;
 
             case 'B':
+                // Bz in the computational frame, which with the rotation on is the qubit
+                // axis -- so this composes with coordinate_frame_rotation rather than
+                // conflicting with it. Config_validateBfieldAlignment checks the result.
                 Config_setBfield_z(cnf,atof(optarg));
                 break;
 
@@ -209,6 +212,15 @@ int main(int argc, char* argv[]){
     // the defaulted evolution be settled; doing it during the file parse would decide it
     // against an nstate that -N had not yet supplied.
     Config_resolveEvolution(cnf);
+
+    // Same reason: -B lands after the file is parsed, so the field can only be checked
+    // against the rotation once both have been applied.
+    Config_validateBfieldAlignment(cnf);
+
+    // Needs the Config AND the QubitArray, which two different parsers build, so it can
+    // only run once both are done. Still before every reader, so an unsupported
+    // combination stops the run before a tensor file is opened.
+    validateCoordinateFrameRotationInputs(qa,cnf);
 
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -296,12 +308,33 @@ int main(int argc, char* argv[]){
     readBathfiles(ba,qa,cnf);  // set bath xyz position and properties
     MPI_Barrier(MPI_COMM_WORLD);
 
-    // Hyperfine tensor
-    readHftensorfile(ba,qa,cnf); // set hyperfine tensor only from file
+    // Hyperfine tensor. hypf_bathframe records, per (bath spin, qubit), whether the
+    // tensor stored was computed from the source geometry or read from the file; the
+    // rotation below needs it because a single run can hold both.
+    HypfProvenance hypf_bathframe = NULL;
+    readHftensorfile(ba,qa,cnf,&hypf_bathframe); // set hyperfine tensor only from file
     MPI_Barrier(MPI_COMM_WORLD);
 
     // Quadrupole tensor
     readQdtensorfile(ba,qa,cnf); // set quadrupole tensor only from file
+    MPI_Barrier(MPI_COMM_WORLD);
+
+    // Coordinate frame rotation, and the reason it sits HERE.
+    //
+    // The tensor files are keyed by POSITION, and those position columns are written in
+    // the source bath frame, so every lookup above has to run against un-moved
+    // coordinates. Tensor COMPONENTS are a separate question: they are in whichever basis
+    // hf_tensor_frame / qd_tensor_frame declares, and a point-dipole tensor CCEX computed
+    // itself is in the bath frame no matter what those say.
+    //
+    // This step normalizes the two into one: every qubit position and every bath-spin
+    // position is rotated by the same R about the same r0, and the tensors that are still
+    // in the bath frame -- HF, QD, Defect templates, and Qubit.intmap entries whose
+    // provenance says so -- are transformed with them. Tensors already in the
+    // computational frame are left untouched. The magnetic field is NOT settled here;
+    // that happened right after the CLI was parsed, above.
+    applyCoordinateFrameRotation(ba,qa,dfa,cnf,hypf_bathframe);
+    freeInt2d(&hypf_bathframe,BathArray_getNspin(ba));
     MPI_Barrier(MPI_COMM_WORLD);
 
     // Defect

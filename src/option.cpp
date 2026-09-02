@@ -2,8 +2,545 @@
 #include "../include/json.h"
 #include "../include/memory.h"
 
+#include <cmath>
 #include <fstream>
 #include <unistd.h>
+
+/**
+ * @brief Read a 3-vector axis, which must be exactly three JSON numbers
+ * @details Deliberately NOT cJSON_ReadDouble1d. That helper checks the array length but
+ *          then takes valuedouble unconditionally, and valuedouble is 0 for a string, a
+ *          null or a boolean -- so "qubit_axis": [1,"1",1] would quietly become [1,0,1],
+ *          a different but perfectly valid-looking axis, and the whole run would be
+ *          silently wrong. An axis is not a place to guess.
+ *
+ *          File-local on purpose: this is stricter than the shared cJSON_Read* family,
+ *          and tightening those would change how every other key is parsed.
+ * @param section_name name of the enclosing section, for the error message
+ * @param out [in,out] left at its default value if the key is absent and not required
+*/
+static void readAxis3(cJSON* section, const char* section_name, const char* key,
+                     double out[3], bool required){
+
+    cJSON* item = cJSON_GetObjectItem(section,key);
+    if (item == NULL){
+        if (required){
+            fprintf(stderr,"Error: %s.%s is required\n",section_name,key);
+            exit(EXIT_FAILURE);
+        }
+        return; // absent and optional : keep the default
+    }
+
+    if (!cJSON_IsArray(item) || cJSON_GetArraySize(item) != 3){
+        fprintf(stderr,"Error: %s.%s must be an array of exactly 3 numbers\n",section_name,key);
+        exit(EXIT_FAILURE);
+    }
+
+    int i = 0;
+    cJSON* element;
+    cJSON_ArrayForEach(element,item){
+        if (!cJSON_IsNumber(element)){
+            fprintf(stderr,"Error: %s.%s[%d] is not a number\n",section_name,key,i);
+            fprintf(stderr,"Write the axis as plain numbers, e.g. [0, 0, 1] -- not strings, null or booleans.\n");
+            exit(EXIT_FAILURE);
+        }
+        out[i] = element->valuedouble;
+        i++;
+    }
+}
+
+// A JSON boolean and nothing else. cJSON_ReadBool falls back to its default for any
+// other type, which would turn "enabled": "true" into a silent no-op.
+static bool readStrictBool(cJSON* section, const char* section_name, const char* key, bool default_value){
+
+    cJSON* item = cJSON_GetObjectItem(section,key);
+    if (item == NULL){ return default_value; }
+    if (!cJSON_IsBool(item)){
+        fprintf(stderr,"Error: %s.%s must be a boolean (true or false)\n",section_name,key);
+        exit(EXIT_FAILURE);
+    }
+    return (bool)item->valueint;
+}
+
+static DefectCoordinateFrame readDefectCoordinateFrame(cJSON* defect, const char* dfname,
+                                                       bool* was_explicit){
+
+    cJSON* item = cJSON_GetObjectItem(defect,"coordinate_frame");
+    *was_explicit = (item != NULL);
+
+    // Backward compatibility: legacy Defect tensors were consumed as already being in
+    // the computational frame, because there was no Defect frame conversion at all.
+    if (item == NULL){ return DEFECT_COORDINATE_FRAME_QUBIT; }
+
+    if (!cJSON_IsString(item) || item->valuestring == NULL){
+        fprintf(stderr,"Error: Defect[%s].coordinate_frame must be \"bath\" or \"qubit\"\n",dfname);
+        exit(EXIT_FAILURE);
+    }
+    if (strcasecmp(item->valuestring,"bath") == 0){ return DEFECT_COORDINATE_FRAME_BATH; }
+    if (strcasecmp(item->valuestring,"qubit") == 0){ return DEFECT_COORDINATE_FRAME_QUBIT; }
+
+    fprintf(stderr,"Error: Defect[%s].coordinate_frame = \"%s\" is not supported\n",
+            dfname,item->valuestring);
+    fprintf(stderr,"Use \"bath\" for crystal/bath-file components or \"qubit\" for computational-frame components.\n");
+    exit(EXIT_FAILURE);
+}
+
+static double readDefectFrequencyScaleToMHz(cJSON* object, const char* dfname,
+                                            const char* field_name){
+
+    cJSON* item = cJSON_GetObjectItem(object,"unit");
+    if (item == NULL){ return 1.0; } // documented default
+    if (!cJSON_IsString(item) || item->valuestring == NULL){
+        fprintf(stderr,"Error: Defect[%s].%s.unit must be a string\n",dfname,field_name);
+        exit(EXIT_FAILURE);
+    }
+
+    if (strcasecmp(item->valuestring,"Hz")  == 0){ return 1.0e-6; }
+    if (strcasecmp(item->valuestring,"kHz") == 0){ return 1.0e-3; }
+    if (strcasecmp(item->valuestring,"MHz") == 0){ return 1.0; }
+    if (strcasecmp(item->valuestring,"GHz") == 0){ return 1.0e3; }
+
+    fprintf(stderr,"Error: Defect[%s].%s.unit = \"%s\" is not supported\n",
+            dfname,field_name,item->valuestring);
+    fprintf(stderr,"Supported frequency units are Hz, kHz, MHz and GHz.\n");
+    exit(EXIT_FAILURE);
+}
+
+static double readFiniteNumber(cJSON* item, const char* what){
+    if (!cJSON_IsNumber(item) || !std::isfinite(item->valuedouble)){
+        fprintf(stderr,"Error: %s must be a finite JSON number\n",what);
+        exit(EXIT_FAILURE);
+    }
+    return item->valuedouble;
+}
+
+static MatrixXcd readDefectTensor3x3(cJSON* item, const char* what, double scale){
+
+    if (!cJSON_IsArray(item)){
+        fprintf(stderr,"Error: %s must be a flat 9-number or nested 3x3 array\n",what);
+        exit(EXIT_FAILURE);
+    }
+
+    MatrixXcd tensor = MatrixXcd::Zero(3,3);
+    int outer_size = cJSON_GetArraySize(item);
+
+    if (outer_size == 9){
+        for (int k=0; k<9; k++){
+            char element_label[220];
+            snprintf(element_label,sizeof(element_label),"%s[%d]",what,k);
+            tensor(k/3,k%3) = doublec(scale * readFiniteNumber(cJSON_GetArrayItem(item,k),element_label),0.0);
+        }
+        return tensor;
+    }
+
+    if (outer_size == 3){
+        for (int i=0; i<3; i++){
+            cJSON* row = cJSON_GetArrayItem(item,i);
+            if (!cJSON_IsArray(row) || cJSON_GetArraySize(row) != 3){
+                fprintf(stderr,"Error: %s row %d must contain exactly 3 numbers\n",what,i);
+                exit(EXIT_FAILURE);
+            }
+            for (int j=0; j<3; j++){
+                char element_label[220];
+                snprintf(element_label,sizeof(element_label),"%s[%d][%d]",what,i,j);
+                tensor(i,j) = doublec(scale * readFiniteNumber(cJSON_GetArrayItem(row,j),element_label),0.0);
+            }
+        }
+        return tensor;
+    }
+
+    fprintf(stderr,"Error: %s must be a flat 9-number or nested 3x3 array\n",what);
+    exit(EXIT_FAILURE);
+}
+
+static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
+                          bool coordinate_frame_explicit){
+
+    Defect* df = dfa->defect[idf];
+    cJSON* item = cJSON_GetObjectItem(defect,"zfs");
+
+    if (item == NULL){
+        cJSON_ReadDefectInfo_IntCharMatrixXcd1d(defect,(char*)"zfs",9,&df->zfs,nconfig+1);
+        DefectArray_setDefect_idf_zfs_input_mode(dfa,idf,DEFECT_ZFS_NONE);
+        return;
+    }
+
+    if (cJSON_IsArray(item)){
+        cJSON_ReadDefectInfo_IntCharMatrixXcd1d(defect,(char*)"zfs",9,&df->zfs,nconfig+1);
+        DefectArray_setDefect_idf_zfs_input_mode(dfa,idf,DEFECT_ZFS_INDEXED_LEGACY);
+        return;
+    }
+
+    if (!cJSON_IsObject(item)){
+        fprintf(stderr,"Error: Defect[%s].zfs must be an object or the legacy indexed array\n",df->dfname);
+        exit(EXIT_FAILURE);
+    }
+    if (!coordinate_frame_explicit){
+        fprintf(stderr,"Error: Defect[%s] uses an object-form zfs but has no coordinate_frame\n",df->dfname);
+        fprintf(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the tensor basis is explicit.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (nconfig < 1){
+        fprintf(stderr,"Error: Defect[%s] has an object-form zfs but navaax = %d\n",df->dfname,nconfig);
+        fprintf(stderr,"At least one indexed configuration is required.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    cJSON* D_item = cJSON_GetObjectItem(item,"D");
+    cJSON* E_item = cJSON_GetObjectItem(item,"E");
+    cJSON* tensor_item = cJSON_GetObjectItem(item,"tensor");
+    if ((D_item != NULL) == (tensor_item != NULL)){
+        fprintf(stderr,"Error: Defect[%s].zfs must contain exactly one of D or tensor\n",df->dfname);
+        exit(EXIT_FAILURE);
+    }
+    if (tensor_item != NULL && E_item != NULL){
+        fprintf(stderr,"Error: Defect[%s].zfs.E cannot be combined with zfs.tensor\n",df->dfname);
+        exit(EXIT_FAILURE);
+    }
+
+    double scale_to_mhz = readDefectFrequencyScaleToMHz(item,df->dfname,"zfs");
+    MatrixXcd zfs = MatrixXcd::Zero(3,3);
+    DefectZfsInputMode mode;
+
+    if (D_item != NULL){
+        if (!df->axis_set){
+            fprintf(stderr,"Error: Defect[%s].zfs uses D/E form but Defect[%s].axis is missing\n",
+                    df->dfname,df->dfname);
+            fprintf(stderr,"The symmetry axis is required to construct the Cartesian ZFS tensor.\n");
+            exit(EXIT_FAILURE);
+        }
+
+        char what[160];
+        snprintf(what,sizeof(what),"Defect[%s].zfs.D",df->dfname);
+        double D_mhz = scale_to_mhz * readFiniteNumber(D_item,what);
+        double E_mhz = 0.0;
+        if (E_item != NULL){
+            snprintf(what,sizeof(what),"Defect[%s].zfs.E",df->dfname);
+            E_mhz = scale_to_mhz * readFiniteNumber(E_item,what);
+        }
+        if (fabs(E_mhz) > 1.0e-12){
+            fprintf(stderr,"Error: Defect[%s].zfs.E is non-zero (%g MHz)\n",df->dfname,E_mhz);
+            fprintf(stderr,"An axis fixes z but not the transverse x/y directions needed by E. Use zfs.tensor instead.\n");
+            exit(EXIT_FAILURE);
+        }
+
+        // H_ZFS = S . [D (n n^T - I/3)] . S. For n=[1,1,1]/sqrt(3),
+        // D=2870 MHz gives the familiar +/-956.6667 MHz off-diagonal tensor.
+        for (int i=0; i<3; i++){
+            for (int j=0; j<3; j++){
+                double value = D_mhz * (df->axis[i]*df->axis[j] - ((i == j) ? 1.0/3.0 : 0.0));
+                zfs(i,j) = doublec(value,0.0);
+            }
+        }
+        mode = DEFECT_ZFS_SHARED_DE;
+    }else{
+        char tensor_label[160];
+        snprintf(tensor_label,sizeof(tensor_label),"Defect[%s].zfs.tensor",df->dfname);
+        zfs = readDefectTensor3x3(tensor_item,tensor_label,scale_to_mhz);
+        mode = DEFECT_ZFS_SHARED_TENSOR;
+    }
+
+    df->zfs[0] = MatrixXcd::Zero(3,3);
+    for (int iax=1; iax<=nconfig; iax++){ df->zfs[iax] = zfs; }
+    DefectArray_setDefect_idf_zfs_input_mode(dfa,idf,mode);
+}
+
+static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nconfig){
+
+    Defect* df = dfa->defect[idf];
+    cJSON* item = cJSON_GetObjectItem(defect,"detuning");
+
+    // The absent and legacy-array paths preserve the original MHz behavior exactly.
+    if (item == NULL || cJSON_IsArray(item)){
+        cJSON_ReadDefectInfo_IntCharDouble(defect,(char*)"detuning",&df->detuning,nconfig+1);
+        return;
+    }
+
+    if (!cJSON_IsObject(item)){
+        fprintf(stderr,"Error: Defect[%s].detuning must be an object or the legacy indexed array\n",
+                df->dfname);
+        exit(EXIT_FAILURE);
+    }
+
+    cJSON* values = cJSON_GetObjectItem(item,"values");
+    if (!cJSON_IsArray(values)){
+        fprintf(stderr,"Error: Defect[%s].detuning.values must be an indexed array\n",df->dfname);
+        fprintf(stderr,"Example: \"detuning\": {\"values\": [[1,\"e\",-2.14]], \"unit\": \"MHz\"}\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int iax=0; iax<=nconfig; iax++){ df->detuning[iax] = 0.0; }
+    double scale_to_mhz = readDefectFrequencyScaleToMHz(item,df->dfname,"detuning");
+
+    int nentry = cJSON_GetArraySize(values);
+    for (int i=0; i<nentry; i++){
+        cJSON* entry = cJSON_GetArrayItem(values,i);
+        if (!cJSON_IsArray(entry) || cJSON_GetArraySize(entry) != 3){
+            fprintf(stderr,"Error: Defect[%s].detuning.values[%d] must be [configuration, \"e\", value]\n",
+                    df->dfname,i);
+            exit(EXIT_FAILURE);
+        }
+
+        cJSON* iax_item = cJSON_GetArrayItem(entry,0);
+        if (!cJSON_IsNumber(iax_item)
+            || iax_item->valuedouble != (double)iax_item->valueint
+            || iax_item->valueint < 1 || iax_item->valueint > nconfig){
+            fprintf(stderr,"Error: Defect[%s].detuning.values[%d] configuration must be an integer in 1..%d\n",
+                    df->dfname,i,nconfig);
+            exit(EXIT_FAILURE);
+        }
+
+        cJSON* spin_item = cJSON_GetArrayItem(entry,1);
+        if (!cJSON_IsString(spin_item) || spin_item->valuestring == NULL
+            || strcasecmp(spin_item->valuestring,"e") != 0){
+            fprintf(stderr,"Error: Defect[%s].detuning.values[%d] spin label must be \"e\"\n",
+                    df->dfname,i);
+            exit(EXIT_FAILURE);
+        }
+
+        char what[180];
+        snprintf(what,sizeof(what),"Defect[%s].detuning.values[%d][2]",df->dfname,i);
+        df->detuning[iax_item->valueint] =
+            scale_to_mhz * readFiniteNumber(cJSON_GetArrayItem(entry,2),what);
+    }
+}
+
+static double readDefectGyroScaleToRadkHzPerG(cJSON* object, const char* dfname){
+
+    cJSON* item = cJSON_GetObjectItem(object,"unit");
+    if (item == NULL){ return 1.0; }
+    if (!cJSON_IsString(item) || item->valuestring == NULL){
+        fprintf(stderr,"Error: Defect[%s].gyros.unit must be a string\n",dfname);
+        exit(EXIT_FAILURE);
+    }
+
+    const char* unit = item->valuestring;
+    if (strcasecmp(unit,"radkHz/G") == 0 || strcasecmp(unit,"rad/ms/G") == 0){ return 1.0; }
+    if (strcasecmp(unit,"kHz/G") == 0){ return 2.0*M_PI; }
+    if (strcasecmp(unit,"MHz/G") == 0){ return 2.0*M_PI*1.0e3; }
+    if (strcasecmp(unit,"MHz/T") == 0){ return 2.0*M_PI*1.0e-1; }
+    if (strcasecmp(unit,"Hz/T") == 0){ return 2.0*M_PI*1.0e-7; }
+    if (strcasecmp(unit,"radMHz/T") == 0 || strcasecmp(unit,"rad/us/T") == 0){ return 1.0e-1; }
+    if (strcasecmp(unit,"rad/s/T") == 0){ return 1.0e-7; }
+
+    fprintf(stderr,"Error: Defect[%s].gyros.unit = \"%s\" is not supported\n",dfname,unit);
+    fprintf(stderr,"Supported gyro units are radkHz/G, rad/ms/G, kHz/G, MHz/G, MHz/T, Hz/T, radMHz/T and rad/s/T.\n");
+    exit(EXIT_FAILURE);
+}
+
+static double readDefectEqScaleTo1eMinus30m2(cJSON* object, const char* dfname){
+
+    cJSON* item = cJSON_GetObjectItem(object,"unit");
+    if (item == NULL){ return 1.0; }
+    if (!cJSON_IsString(item) || item->valuestring == NULL){
+        fprintf(stderr,"Error: Defect[%s].eqs.unit must be a string\n",dfname);
+        exit(EXIT_FAILURE);
+    }
+
+    const char* unit = item->valuestring;
+    if (strcasecmp(unit,"1e-30 m^2") == 0 || strcasecmp(unit,"1e-30m^2") == 0
+        || strcasecmp(unit,"10^-30 m^2") == 0 || strcasecmp(unit,"10^-30m^2") == 0
+        || strcasecmp(unit,"fm^2") == 0 || strcasecmp(unit,"fm2") == 0
+        || strcasecmp(unit,"10 mbarn") == 0){ return 1.0; }
+    if (strcasecmp(unit,"m^2") == 0 || strcasecmp(unit,"m2") == 0){ return 1.0e30; }
+    if (strcasecmp(unit,"cm^2") == 0 || strcasecmp(unit,"cm2") == 0){ return 1.0e26; }
+    if (strcasecmp(unit,"barn") == 0 || strcasecmp(unit,"b") == 0){ return 1.0e2; }
+    if (strcasecmp(unit,"mbarn") == 0 || strcasecmp(unit,"millibarn") == 0
+        || strcasecmp(unit,"mb") == 0){ return 1.0e-1; }
+
+    fprintf(stderr,"Error: Defect[%s].eqs.unit = \"%s\" is not supported\n",dfname,unit);
+    fprintf(stderr,"Supported quadrupole-moment units are 1e-30 m^2, fm^2, m^2, cm^2, barn and mbarn.\n");
+    exit(EXIT_FAILURE);
+}
+
+static double readDefectEfgScaleToHartreePerBohr2(cJSON* object, const char* dfname){
+
+    cJSON* item = cJSON_GetObjectItem(object,"unit");
+    if (item == NULL){ return 1.0; }
+    if (!cJSON_IsString(item) || item->valuestring == NULL){
+        fprintf(stderr,"Error: Defect[%s].efg.unit must be a string\n",dfname);
+        exit(EXIT_FAILURE);
+    }
+
+    const char* unit = item->valuestring;
+    if (strcasecmp(unit,"Hartree/Bohr^2") == 0 || strcasecmp(unit,"Ha/Bohr^2") == 0
+        || strcasecmp(unit,"Ha/a0^2") == 0 || strcasecmp(unit,"a.u.") == 0
+        || strcasecmp(unit,"au") == 0 || strcasecmp(unit,"atomic_unit") == 0){ return 1.0; }
+
+    // Keep these constants identical to BathSpin_setQuad_fromEFG. Numerically, one
+    // eV of electron potential energy per m^2 corresponds to one V/m^2; the electron
+    // charge is implicit in the stored eQ convention used by that routine.
+    const double hartree_to_ev = 27.211386;
+    const double bohr_to_m = 0.5291772e-10;
+    const double volt_per_m2_to_au = bohr_to_m*bohr_to_m/hartree_to_ev;
+
+    if (strcasecmp(unit,"V/m^2") == 0 || strcasecmp(unit,"V/m2") == 0){
+        return volt_per_m2_to_au;
+    }
+    if (strcasecmp(unit,"V/angstrom^2") == 0 || strcasecmp(unit,"V/angstrom2") == 0
+        || strcasecmp(unit,"V/A^2") == 0 || strcasecmp(unit,"V/A2") == 0){
+        return 1.0e20*volt_per_m2_to_au;
+    }
+
+    fprintf(stderr,"Error: Defect[%s].efg.unit = \"%s\" is not supported\n",dfname,unit);
+    fprintf(stderr,"Supported EFG units are Hartree/Bohr^2 (a.u.), V/m^2 and V/angstrom^2.\n");
+    exit(EXIT_FAILURE);
+}
+
+static cJSON* readDefectObjectValues(cJSON* object, const char* dfname,
+                                     const char* field_name, int expected_count){
+
+    cJSON* values = cJSON_GetObjectItem(object,"values");
+    if (!cJSON_IsArray(values) || cJSON_GetArraySize(values) != expected_count){
+        fprintf(stderr,"Error: Defect[%s].%s.values must be an array of exactly %d numbers\n",
+                dfname,field_name,expected_count);
+        exit(EXIT_FAILURE);
+    }
+    return values;
+}
+
+static void readDefectGyros(cJSON* defect, DefectArray* dfa, int idf,
+                            int naddspin, bool have_default){
+
+    Defect* df = dfa->defect[idf];
+    cJSON* item = cJSON_GetObjectItem(defect,"gyros");
+
+    if (item == NULL || cJSON_IsArray(item)){
+        double* values = cJSON_ReadDouble1d(defect,(char*)"gyros",have_default,NULL,naddspin);
+        DefectArray_setDefect_idf_gyros(dfa,idf,values);
+        freeDouble1d(&values);
+        return;
+    }
+    if (!cJSON_IsObject(item)){
+        fprintf(stderr,"Error: Defect[%s].gyros must be an object or the legacy value array\n",df->dfname);
+        exit(EXIT_FAILURE);
+    }
+
+    cJSON* values = readDefectObjectValues(item,df->dfname,"gyros",naddspin);
+    double scale = readDefectGyroScaleToRadkHzPerG(item,df->dfname);
+    for (int isp=0; isp<naddspin; isp++){
+        char what[180];
+        snprintf(what,sizeof(what),"Defect[%s].gyros.values[%d]",df->dfname,isp);
+        df->gyros[isp] = scale * readFiniteNumber(cJSON_GetArrayItem(values,isp),what);
+    }
+}
+
+static void readDefectEqs(cJSON* defect, DefectArray* dfa, int idf, int naddspin){
+
+    Defect* df = dfa->defect[idf];
+    cJSON* item = cJSON_GetObjectItem(defect,"eqs");
+
+    if (item == NULL || cJSON_IsArray(item)){
+        double* values = cJSON_ReadDouble1d(defect,(char*)"eqs",true,NULL,naddspin);
+        if (values != NULL){
+            DefectArray_setDefect_idf_eqs(dfa,idf,values);
+            freeDouble1d(&values);
+        }else{
+            double* defaults = allocDouble1d(naddspin);
+            DefectArray_setDefect_idf_eqs(dfa,idf,defaults);
+            freeDouble1d(&defaults);
+        }
+        return;
+    }
+    if (!cJSON_IsObject(item)){
+        fprintf(stderr,"Error: Defect[%s].eqs must be an object or the legacy value array\n",df->dfname);
+        exit(EXIT_FAILURE);
+    }
+
+    cJSON* values = readDefectObjectValues(item,df->dfname,"eqs",naddspin);
+    double scale = readDefectEqScaleTo1eMinus30m2(item,df->dfname);
+    for (int isp=0; isp<naddspin; isp++){
+        char what[180];
+        snprintf(what,sizeof(what),"Defect[%s].eqs.values[%d]",df->dfname,isp);
+        df->eqs[isp] = scale * readFiniteNumber(cJSON_GetArrayItem(values,isp),what);
+    }
+}
+
+static int findDefectSpinType(Defect* df, const char* spin_name){
+    for (int isp=0; isp<df->naddspin; isp++){
+        if (strcasecmp(df->types[isp],spin_name) == 0){ return isp; }
+    }
+    return -1;
+}
+
+static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int idf,
+                                            const char* field_name, MatrixXcd*** target,
+                                            int nconfig, int naddspin,
+                                            bool coordinate_frame_explicit){
+
+    Defect* df = dfa->defect[idf];
+    cJSON* item = cJSON_GetObjectItem(defect,field_name);
+
+    if (item == NULL || cJSON_IsArray(item)){
+        cJSON_ReadDefectInfo_IntCharMatrixXcd2d(defect,(char*)field_name,9,target,
+                                                df->types,nconfig+1,naddspin);
+        return;
+    }
+    if (!cJSON_IsObject(item)){
+        fprintf(stderr,"Error: Defect[%s].%s must be an object or the legacy indexed array\n",
+                df->dfname,field_name);
+        exit(EXIT_FAILURE);
+    }
+    if (!coordinate_frame_explicit){
+        fprintf(stderr,"Error: Defect[%s] uses object-form %s but has no coordinate_frame\n",
+                df->dfname,field_name);
+        fprintf(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the tensor basis is explicit.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    cJSON* values = cJSON_GetObjectItem(item,"values");
+    if (!cJSON_IsArray(values)){
+        fprintf(stderr,"Error: Defect[%s].%s.values must be an indexed tensor array\n",
+                df->dfname,field_name);
+        exit(EXIT_FAILURE);
+    }
+
+    double scale = (strcasecmp(field_name,"hypf") == 0)
+                 ? readDefectFrequencyScaleToMHz(item,df->dfname,"hypf")
+                 : readDefectEfgScaleToHartreePerBohr2(item,df->dfname);
+
+    for (int iax=0; iax<=nconfig; iax++){
+        for (int isp=0; isp<naddspin; isp++){ (*target)[iax][isp] = MatrixXcd::Zero(3,3); }
+    }
+
+    int nentry = cJSON_GetArraySize(values);
+    for (int i=0; i<nentry; i++){
+        cJSON* entry = cJSON_GetArrayItem(values,i);
+        if (!cJSON_IsArray(entry) || cJSON_GetArraySize(entry) != 3){
+            fprintf(stderr,"Error: Defect[%s].%s.values[%d] must be [configuration, spin, tensor]\n",
+                    df->dfname,field_name,i);
+            exit(EXIT_FAILURE);
+        }
+
+        cJSON* iax_item = cJSON_GetArrayItem(entry,0);
+        if (!cJSON_IsNumber(iax_item)
+            || iax_item->valuedouble != (double)iax_item->valueint
+            || iax_item->valueint < 1 || iax_item->valueint > nconfig){
+            fprintf(stderr,"Error: Defect[%s].%s.values[%d] configuration must be an integer in 1..%d\n",
+                    df->dfname,field_name,i,nconfig);
+            exit(EXIT_FAILURE);
+        }
+
+        cJSON* spin_item = cJSON_GetArrayItem(entry,1);
+        if (!cJSON_IsString(spin_item) || spin_item->valuestring == NULL){
+            fprintf(stderr,"Error: Defect[%s].%s.values[%d] spin label must be a string\n",
+                    df->dfname,field_name,i);
+            exit(EXIT_FAILURE);
+        }
+        int isp = findDefectSpinType(df,spin_item->valuestring);
+        if (isp < 0){
+            fprintf(stderr,"Error: Defect[%s].%s.values[%d] spin type \"%s\" is not in types\n",
+                    df->dfname,field_name,i,spin_item->valuestring);
+            exit(EXIT_FAILURE);
+        }
+
+        char tensor_label[220];
+        snprintf(tensor_label,sizeof(tensor_label),"Defect[%s].%s.values[%d][2]",
+                 df->dfname,field_name,i);
+        (*target)[iax_item->valueint][isp] =
+            readDefectTensor3x3(cJSON_GetArrayItem(entry,2),tensor_label,scale);
+    }
+}
 
 /**
  * @brief Read the option from the input file
@@ -35,7 +572,8 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     if (rank==0){
         printMessage("  - General option-related keys : ");
-        printMessage("    [ method, quantity, propagator, evolution, order, bfield, rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
+        printMessage("    [ method, quantity, propagator, evolution, order, bfield, ");
+        printMessage("      rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
     }
     char* method = cJSON_ReadString(root,"method",true,"cce");
     Config_setMethod(cnf,method); // Current possible options : cce, gcce, pcce, dsj, dsjitb, itb
@@ -71,6 +609,18 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         float bfield_z = cJSON_ReadFloat(root,"bfield",false,-1);
         bfieldtry[2] = bfield_z;
         Config_setBfield(cnf,bfieldtry);
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // magnetic_field_axis : removed
+    ////////////////////////////////////////////////////////////////////////
+    // It only ever existed in unreleased development work. Silently ignoring it would
+    // leave an old input running with a field direction it no longer describes, so the
+    // key is refused outright rather than skipped.
+    if (cJSON_GetObjectItem(root,"magnetic_field_axis") != NULL){
+        fprintf(stderr,"Error: \"magnetic_field_axis\" was removed.\n");
+        fprintf(stderr,"Use \"bfield\": [0,0,Bz] with coordinate_frame_rotation.\n");
+        exit(EXIT_FAILURE);
     }
     ////////////////////////////////////////////////////////////////////////
     
@@ -115,7 +665,8 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     if (rank==0){
         printf("\n");
         printMessage("  - File-related keys :");
-        printMessage("    [ qubitfile, gyrofile, bathfile, bathadjust, avaaxfile, statefile, exstatefile ] \n");    
+        printMessage("    [ qubitfile, gyrofile, bathfile, bathadjust, coordinate_frame_rotation, ");
+        printMessage("      defect_axis_reference, avaaxfile, statefile, exstatefile ] \n");
     }
 
     // qubitfile
@@ -155,6 +706,110 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     freeDouble2d(&bathadjustDefault,length);
     freeDouble2d(&bathadjust,length);
+
+    ////////////////////////////////////////////////////////////////////////
+    // Coordinate frame rotation
+    ////////////////////////////////////////////////////////////////////////
+    // Absent section, or "enabled": false, leaves Config at the values set by
+    // Config_init -- rotation off, both axes on +z -- so the run is bit-for-bit
+    // the legacy one.
+    //
+    // "bath_coordinate_rotation" was the name while the feature only moved bath
+    // POSITIONS. It now also decides the magnetic-field direction, so the name is
+    // wrong; it is still accepted, with a warning, so that inputs written against
+    // the earlier version keep working.
+    const char* ROTKEY = "coordinate_frame_rotation";
+    cJSON* RotSection    = cJSON_GetObjectItem(root,ROTKEY);
+    cJSON* RotSectionOld = cJSON_GetObjectItem(root,"bath_coordinate_rotation");
+
+    if (RotSection != NULL && RotSectionOld != NULL){
+        fprintf(stderr,"Error: both \"coordinate_frame_rotation\" and \"bath_coordinate_rotation\" are present\n");
+        fprintf(stderr,"They are the same option under two names. Keep \"coordinate_frame_rotation\".\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (RotSection == NULL && RotSectionOld != NULL){
+        RotSection = RotSectionOld;
+        ROTKEY = "bath_coordinate_rotation";
+        if (rank==0){
+            fprintf(stderr,"Warning: \"bath_coordinate_rotation\" is deprecated -- rename it to\n"
+                           "         \"coordinate_frame_rotation\". The behaviour is unchanged.\n");
+        }
+    }
+
+    if (RotSection != NULL){
+
+        // A non-object -- "coordinate_frame_rotation": true, or a path string -- has no
+        // children, so every sub-key below would read as missing and the run would go on
+        // silently WITHOUT the rotation the input clearly asked for.
+        if (!cJSON_IsObject(RotSection)){
+            fprintf(stderr,"Error: %s must be an object, e.g.\n",ROTKEY);
+            fprintf(stderr,"  \"%s\" : { \"enabled\" : true, \"bath_axis\" : [0,0,1], \"qubit_axis\" : [1,1,1] }\n",ROTKEY);
+            exit(EXIT_FAILURE);
+        }
+
+        bool rot_enabled = readStrictBool(RotSection,ROTKEY,"enabled",false);
+        Config_setRot_enabled(cnf,rot_enabled);
+
+        if (rot_enabled){
+            double bath_axis[3]  = {0.0,0.0,1.0};
+            double qubit_axis[3] = {0.0,0.0,1.0};
+
+            readAxis3(RotSection,ROTKEY,"bath_axis" ,bath_axis ,false);
+            readAxis3(RotSection,ROTKEY,"qubit_axis",qubit_axis,false);
+
+            Config_setRot_bath_axis(cnf,bath_axis);
+            Config_setRot_qubit_axis(cnf,qubit_axis);
+
+            // Which qubit the rotation is taken about. Optional while nqubit is
+            // restricted to 1, where there is nothing to disambiguate; when given it
+            // must name an existing qubit exactly (resolved in readBathfiles, where
+            // the QubitArray exists).
+            // Which basis the external tensor COMPONENTS are written in. No silent
+            // default: reading a bath-frame tensor as if it were already rotated (or
+            // the reverse) is a double / missing rotation that nothing downstream can
+            // detect, so it has to be stated. Required only where it has an effect --
+            // enforced below, once hf_readmode and qd_readmode have been read too.
+            cJSON* hfFrame = cJSON_GetObjectItem(RotSection,"hf_tensor_frame");
+            if (hfFrame != NULL){
+                if (!cJSON_IsString(hfFrame) || hfFrame->valuestring == NULL){
+                    fprintf(stderr,"Error: %s.hf_tensor_frame must be \"bath\" or \"qubit\"\n",ROTKEY);
+                    exit(EXIT_FAILURE);
+                }
+                Config_setRot_hf_tensor_frame(cnf,hfFrame->valuestring);
+            }
+
+            cJSON* qdFrame = cJSON_GetObjectItem(RotSection,"qd_tensor_frame");
+            if (qdFrame != NULL){
+                if (!cJSON_IsString(qdFrame) || qdFrame->valuestring == NULL){
+                    fprintf(stderr,"Error: %s.qd_tensor_frame must be \"bath\" or \"qubit\"\n",ROTKEY);
+                    exit(EXIT_FAILURE);
+                }
+                Config_setRot_qd_tensor_frame(cnf,qdFrame->valuestring);
+            }
+
+            // Which frame every Qubit.xyz is written in. One value for the whole
+            // QubitArray -- per-qubit frames are not supported, and would not make
+            // sense: a single R and r0 move every qubit and every bath spin together.
+            cJSON* posFrame = cJSON_GetObjectItem(RotSection,"qubit_position_frame");
+            if (posFrame != NULL){
+                if (!cJSON_IsString(posFrame) || posFrame->valuestring == NULL){
+                    fprintf(stderr,"Error: %s.qubit_position_frame must be the string \"bath\"\n",ROTKEY);
+                    exit(EXIT_FAILURE);
+                }
+                Config_setRot_qubit_position_frame(cnf,posFrame->valuestring);
+            }
+
+            cJSON* refItem = cJSON_GetObjectItem(RotSection,"reference_qubit");
+            if (refItem != NULL){
+                if (!cJSON_IsString(refItem) || refItem->valuestring == NULL){
+                    fprintf(stderr,"Error: %s.reference_qubit must be a qubit name (a string)\n",ROTKEY);
+                    exit(EXIT_FAILURE);
+                }
+                Config_setRot_reference_qubit(cnf,refItem->valuestring);
+            }
+        }
+    }
 
     char* avaaxfile = cJSON_ReadFilePath(root,"avaaxfile",true,NULL);
     if (avaaxfile != NULL) {
@@ -265,6 +920,72 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     bool knight = cJSON_ReadBool(root,"knight",true,knightDefault);
     Config_setKnight(cnf, knight);
 
+    ////////////////////////////////////////////////////////////////////////
+    // Defect axis reference
+    ////////////////////////////////////////////////////////////////////////
+    // Read here, after the rotation section, because the only value it can take names
+    // an axis that only that section defines.
+    cJSON* DefAxisItem = cJSON_GetObjectItem(root,"defect_axis_reference");
+
+    if (DefAxisItem != NULL){
+
+        if (!cJSON_IsString(DefAxisItem) || DefAxisItem->valuestring == NULL){
+            fprintf(stderr,"Error: defect_axis_reference must be a string\n");
+            fprintf(stderr,"The only accepted value is \"qubit_axis\".\n");
+            exit(EXIT_FAILURE);
+        }
+        if (strcasecmp(DefAxisItem->valuestring,"qubit_axis") != 0){
+            fprintf(stderr,"Error: defect_axis_reference = \"%s\" is not available\n",
+                    DefAxisItem->valuestring);
+            fprintf(stderr,"The only accepted value is \"qubit_axis\".\n");
+            exit(EXIT_FAILURE);
+        }
+        if (!Config_getRot_enabled(cnf)){
+            fprintf(stderr,"Error: defect_axis_reference = \"qubit_axis\" needs a qubit axis,\n");
+            fprintf(stderr,"and coordinate_frame_rotation is what defines one in the source frame.\n");
+            fprintf(stderr,"Enable coordinate_frame_rotation, or drop defect_axis_reference.\n");
+            exit(EXIT_FAILURE);
+        }
+        Config_setDefect_axis_reference(cnf,DEFECT_AXIS_REFERENCE_QUBIT_AXIS);
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // Cross-checks that need both the rotation section and the readmodes
+    ////////////////////////////////////////////////////////////////////////
+    if (Config_getRot_enabled(cnf)){
+
+        // readmode 1 discards the file's anisotropic tensor and rebuilds it as a
+        // point-dipole tensor from the source geometry, keeping only the isotropic
+        // Fermi-contact term, which has no frame. So hf_tensor_frame decides nothing
+        // there -- not required, and said out loud if it is given anyway.
+        if (Config_getHf_readmode(cnf) == 1 && Config_getRot_hf_tensor_frame(cnf)[0] != '\0' && rank==0){
+            printMessage("  Note: hf_tensor_frame is not applicable at hf_readmode = 1.");
+            printMessage("        Only the isotropic Fermi-contact term is taken from the file, and the");
+            printMessage("        point-dipole tensor is transformed from the bath frame regardless.\n");
+        }
+
+        if ((Config_getHf_readmode(cnf) == 2 || Config_getHf_readmode(cnf) == 3)
+            && Config_getRot_hf_tensor_frame(cnf)[0] == '\0'){
+            fprintf(stderr,"Error: hf_readmode = %d with the coordinate frame rotation on, but\n",
+                    Config_getHf_readmode(cnf));
+            fprintf(stderr,"coordinate_frame_rotation.hf_tensor_frame is not set.\n");
+            fprintf(stderr,"State the basis the tensor COMPONENTS in \"hf_tensorfile\" are written in:\n");
+            fprintf(stderr,"  \"bath\"  : the original bath Cartesian basis -- they get transformed\n");
+            fprintf(stderr,"  \"qubit\" : already the qubit-aligned basis -- they are left alone\n");
+            fprintf(stderr,"(The POSITION columns of that file are always read in the original frame.)\n");
+            exit(EXIT_FAILURE);
+        }
+        if (Config_getQd_readmode(cnf) != 0 && Config_getRot_qd_tensor_frame(cnf)[0] == '\0'){
+            fprintf(stderr,"Error: qd_readmode = %d with the coordinate frame rotation on, but\n",
+                    Config_getQd_readmode(cnf));
+            fprintf(stderr,"coordinate_frame_rotation.qd_tensor_frame is not set.\n");
+            fprintf(stderr,"State the basis the tensor COMPONENTS in \"qd_tensorfile\" are written in:\n");
+            fprintf(stderr,"  \"bath\"  : the original bath Cartesian basis -- they get transformed\n");
+            fprintf(stderr,"  \"qubit\" : already the qubit-aligned basis -- they are left alone\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
     cJSON_Delete(root);    
     freeChar1d(&data);
 }
@@ -283,7 +1004,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         printMessage("  - Read values of sub-key 'qubit'");
         printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ] \n");
         printMessage("  - Read values of sub-key 'intmap'");
-        printMessage("    sub-sub-key : [ between, tensor ] \n");
+        printMessage("    sub-sub-key : [ between, tensor, tensor_frame ] \n");
         printMessage("  - Read values of main-key 'qubitfile', 'qzfs', 'qspin', 'qalphams', 'qbetams'");
     }
 
@@ -358,6 +1079,9 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 
         // Set ZFS in qubit intmap 
         QubitArray_setIntmap_i_j(qa,tensor,0,0); // qubit index:0,0
+        // "qzfs" has no tensor_frame sub-key, and this path is single-qubit only, so it
+        // stays where the legacy code left it: read as written, never rotated.
+        QubitArray_setIntmap_i_j_frame(qa,INTMAP_EXPLICIT_UNSPECIFIED,0,0);
 
         // mediatedTerm IO
         cJSON_Delete(root);
@@ -456,8 +1180,36 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             MatrixXcd tensor = cJSON_ReadTensor(intmap,"tensor",true,intmapDefault);
             tensor = KHZ_TO_RADKHZ(tensor);
 
+            // Which basis the components are written in. Recorded, never guessed: a ZFS
+            // tensor and a pair tensor look the same, and so does one that has already
+            // been rotated. Whether the omission is fatal depends on nqubit and on
+            // whether the rotation is on, which validateCoordinateFrameRotationInputs
+            // decides once the whole input is in.
+            IntmapProvenance frame = INTMAP_EXPLICIT_UNSPECIFIED;
+            cJSON* tframe = cJSON_GetObjectItem(intmap,"tensor_frame");
+            if (tframe != NULL){
+                if (!cJSON_IsString(tframe) || tframe->valuestring == NULL){
+                    fprintf(stderr,"Error: Qubit.intmap[\"%s\",\"%s\"].tensor_frame must be \"bath\" or \"qubit\"\n",
+                            qubit1_name,qubit2_name);
+                    exit(EXIT_FAILURE);
+                }
+                if (strcasecmp(tframe->valuestring,"bath") == 0){
+                    frame = INTMAP_EXPLICIT_BATH;
+                }else if (strcasecmp(tframe->valuestring,"qubit") == 0){
+                    frame = INTMAP_EXPLICIT_QUBIT;
+                }else{
+                    fprintf(stderr,"Error: Qubit.intmap[\"%s\",\"%s\"].tensor_frame = \"%s\" is not available\n",
+                            qubit1_name,qubit2_name,tframe->valuestring);
+                    fprintf(stderr,"  \"bath\"  : components are in the original bath Cartesian basis\n");
+                    fprintf(stderr,"  \"qubit\" : components are already in the common computational basis\n");
+                    fprintf(stderr,"            (reference-qubit-aligned; NOT an individual local frame)\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
             // set Interaction map
             QubitArray_setIntmap_i_j(qa,tensor,qubit1_idx,qubit2_idx);
+            QubitArray_setIntmap_i_j_frame(qa,frame,qubit1_idx,qubit2_idx);
         }
 
         ////////////////////////////////////////////////////////////////////////
@@ -780,8 +1532,8 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         printf("\n");
         printMessage("Read Defect Options ...\n");
         printMessage("  - Read values of main-key 'Defect' (Array format)");
-        printMessage("    sub-key : [ dfname, naddspin, navaax, apprx,   ( type : single value) ");
-        printMessage("                types, spins, gyros, eqs,          ( type : array ) ");
+        printMessage("    sub-key : [ dfname, naddspin, navaax, apprx, coordinate_frame, ( type : single value) ");
+        printMessage("                axis, types, spins, gyros, eqs,    ( type : array ) ");
         printMessage("                rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) \n");
     }
 
@@ -834,6 +1586,29 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         bool apprx = cJSON_ReadBool(defect,"apprx",true,apprxDefault);
         DefectArray_setDefect_idf_apprx(dfa,idf,apprx);
 
+        bool coordinate_frame_explicit = false;
+        DefectCoordinateFrame coordinate_frame =
+            readDefectCoordinateFrame(defect,dfname,&coordinate_frame_explicit);
+        DefectArray_setDefect_idf_coordinate_frame(dfa,idf,coordinate_frame);
+
+        cJSON* axis_item = cJSON_GetObjectItem(defect,"axis");
+        if (axis_item != NULL){
+            if (!coordinate_frame_explicit){
+                fprintf(stderr,"Error: Defect[%s].axis is present but coordinate_frame is missing\n",dfname);
+                fprintf(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the axis basis is explicit.\n");
+                exit(EXIT_FAILURE);
+            }
+            double axis_raw[3] = {0.0,0.0,0.0};
+            double axis_normalized[3];
+            char section_label[160];
+            char axis_label[160];
+            snprintf(section_label,sizeof(section_label),"Defect[%s]",dfname);
+            snprintf(axis_label,sizeof(axis_label),"Defect[%s].axis",dfname);
+            readAxis3(defect,section_label,"axis",axis_raw,true);
+            normalizeAxisOrDie(axis_raw,axis_normalized,axis_label);
+            DefectArray_setDefect_idf_axis(dfa,idf,axis_normalized);
+        }
+
         ////////////////////////////////////////////////////////////////////////
         // Spin information
         ////////////////////////////////////////////////////////////////////////
@@ -852,20 +1627,8 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         freeFloat1d(&spins);
 
 
-        double* gyros = cJSON_ReadDouble1d(defect,"gyros",HaveDefault,NULL,naddspin);        
-        DefectArray_setDefect_idf_gyros(dfa,idf,gyros);
-        freeDouble1d(&gyros);
-
-        double* eqs = cJSON_ReadDouble1d(defect,"eqs",true,NULL,naddspin);
-        if (eqs != NULL){
-            DefectArray_setDefect_idf_eqs(dfa,idf,eqs);
-            freeDouble1d(&eqs);
-        }else{
-            // set default value
-            double* eqsDefault = allocDouble1d(naddspin);
-            DefectArray_setDefect_idf_eqs(dfa,idf,eqsDefault);
-            freeDouble1d(&eqsDefault);
-        }
+        readDefectGyros(defect,dfa,idf,naddspin,HaveDefault);
+        readDefectEqs(defect,dfa,idf,naddspin);
 
         ////////////////////////////////////////////////////////////////////////
         // Relative position && tensor information for each axis/additional spins
@@ -874,17 +1637,19 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         // Read rxyzs other wise set 0.0
         cJSON_ReadDefectInfo_IntCharDoubleArray(defect,"rxyzs",3,&(dfa->defect[idf]->rxyzs),dfa->defect[idf]->types,navaax+1,naddspin);
 
-        // Read hypf, otherwise set 0.0
-        cJSON_ReadDefectInfo_IntCharMatrixXcd2d(defect,"hypf",9,&(dfa->defect[idf]->hypf),dfa->defect[idf]->types,navaax+1,naddspin);
+        // Unit-aware objects are converted to the legacy internal units while parsing.
+        // Their tensor basis is explicit for the same reason as object-form zfs.
+        readDefectIndexedTensorWithUnit(defect,dfa,idf,"hypf",&(dfa->defect[idf]->hypf),
+                                        navaax,naddspin,coordinate_frame_explicit);
+        readDefectIndexedTensorWithUnit(defect,dfa,idf,"efg",&(dfa->defect[idf]->efg),
+                                        navaax,naddspin,coordinate_frame_explicit);
 
-        // Read quad, otherwise set 0.0
-        cJSON_ReadDefectInfo_IntCharMatrixXcd2d(defect,"efg",9,&(dfa->defect[idf]->efg),dfa->defect[idf]->types,navaax+1,naddspin);
+        // Object forms provide one physical tensor shared by every indexed
+        // configuration. The legacy list remains per-index and is unchanged.
+        readDefectZfs(defect,dfa,idf,navaax,coordinate_frame_explicit);
 
-        // Read zfs, otherwise set 0.0
-        cJSON_ReadDefectInfo_IntCharMatrixXcd1d(defect,"zfs",9,&(dfa->defect[idf]->zfs),navaax+1);
-
-        // Read detuning, otherwise set 0.0
-        cJSON_ReadDefectInfo_IntCharDouble(defect,"detuning",&(dfa->defect[idf]->detuning),navaax+1);
+        // The object form adds an explicit frequency unit; the legacy array stays MHz.
+        readDefectDetuning(defect,dfa,idf,navaax);
 
         // ////////////////////////////////////////////////////////////////////////
         idf++;
@@ -1319,7 +2084,7 @@ void cJSON_ReadDefectInfo_IntCharDoubleArray(cJSON* root, char* key, int valueco
 
         // Find axis index
         int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
-        if (iax < 0 || iax > navaax) {
+        if (iax < 0 || iax >= navaax) {
             fprintf(stderr, "Error : cJSON_ReadDefectInfo_IntCharDoubleArray");
             fprintf(stderr, "Error: %s[%d] is out of range\n", key, i);
             exit(EXIT_FAILURE);
@@ -1387,7 +2152,7 @@ void cJSON_ReadDefectInfo_IntCharMatrixXcd2d(cJSON* root, char* key, int valueco
 
         // Find axis index
         int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
-        if (iax < 0 || iax > navaax) {
+        if (iax < 0 || iax >= navaax) {
             fprintf(stderr, "cJSON_ReadDefectInfo_IntCharMatrixXcd2d");
             fprintf(stderr, "Error: %s[%d] is out of range\n", key, i);
             exit(EXIT_FAILURE);
@@ -1454,7 +2219,7 @@ void cJSON_ReadDefectInfo_IntCharMatrixXcd1d(cJSON* root, char* key, int valueco
 
         // Find axis index
         int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
-        if (iax < 0 || iax > navaax) {
+        if (iax < 0 || iax >= navaax) {
             fprintf(stderr, "cJSON_ReadDefectInfo_IntCharMatrixXcd1d");
             fprintf(stderr, "Error: %s[%d] is out of range\n", key, i);
             exit(EXIT_FAILURE);
@@ -1517,7 +2282,7 @@ void cJSON_ReadDefectInfo_IntCharDouble(cJSON* root, char* key, double** array, 
 
         // Find axis index
         int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
-        if (iax < 0 || iax > navaax) {
+        if (iax < 0 || iax >= navaax) {
             fprintf(stderr, "cJSON_ReadDefectInfo_IntCharDouble");
             fprintf(stderr, "Error: %s[%d] is out of range\n", key, i);
             exit(EXIT_FAILURE);

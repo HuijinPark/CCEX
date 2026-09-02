@@ -104,6 +104,16 @@ double sinTheta(double spin1[], double spin2[], double dist);
 double cosPhi(double spin1[], double spin2[]);
 double sinPhi(double spin1[], double spin2[]);
 
+// bath-coordinate rotation
+void normalizeAxisOrDie(const double v[3], double out[3], const char* what);
+double angleBetweenDeg(const double u[3], const double v[3]);
+void buildQubitAlignedRotation(const double bath_axis[3], const double qubit_axis[3], double R[3][3]);
+void rotateAboutPoint(double xyz[3], const double R[3][3], const double r0[3]);
+MatrixXcd rotateTensor(const MatrixXcd T, const double R[3][3]);
+void reportQubitAlignedRotation(const double bath_axis[3], const double qubit_axis[3],
+                                const double R[3][3], const double r0[3],
+                                const float bfield[3], const char* defect_axis_reference);
+
 /* Physics functions --------------------------------------------*/
 
 // spin state control
