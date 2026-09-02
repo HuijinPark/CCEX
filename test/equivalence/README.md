@@ -40,6 +40,7 @@ each was cut to, and from what, is in the generator next to the numbers.
 | S2b/c | NV + P1 10 ppm, CCE-2 and gCCE-2 | `Defect` with `naddspin = 0`, `navaax = 12`, `avaaxfile` | 0.3 / 1.0 s |
 | S3 | P1 bath, `Defect` `naddspin = 1` (14N), `navaax = 4` | `gyros` `eqs` `hypf` `efg` `zfs` `detuning`, state and extra-state files | 1.4 s |
 | S4 | hBN V_B, `hf_readmode 3` + `qd_readmode 2` | both DFT tensor readers, the vertex boundary, `hf/qd_tensor_frame` | 0.44 s |
+| S4b | the same over `Afile` instead of `Afile_vertex` | `CheckBD_Range`, the axis-aligned MinDif/MaxDif box | 0.43 s |
 | S5 | two NV, gCCE, explicit `intmap` self/ZFS tensors | `intmap` `tensor_frame`, `reference_qubit`, multi-qubit rotation | 0.29 s |
 
 S3's fixture is written for 24 ranks at `rbath` 850 (469 spins, 80 s). At
@@ -47,6 +48,18 @@ S3's fixture is written for 24 ranks at `rbath` 850 (469 spins, 80 s). At
 Defect code path. S4's is cut from `rbath` 20 to 6: 3897 spins and 121 s become
 101 spins and 0.44 s, well inside the region the A and Q files cover, so both
 readers stay on their file path rather than falling back.
+
+S4 and S4b differ only in which boundary test the tensor file selects, and a file
+picks exactly one: `Afile_vertex` carries `v1..v8` vertices and reaches
+`CheckBD_vertex`, `Afile` carries `MinDif[A]` / `MaxDif[A]` and reaches
+`CheckBD_Range`. Without S4b the axis-aligned box -- the one thing that makes a
+rotation of the tensor file's own coordinates impossible -- would never run.
+
+S4b needs `hf_ignore_oor = 1` and no quadrupole: both boxes are wider than the set
+of atoms their files list, so a spin can sit inside the box with no row of its own.
+The HF reader has a flag for that and the QD reader does not, which leaves the QD
+range boundary uncovered. So are `qd_readmode` 3 and 4, which upstream also
+records as untested rather than verified.
 
 ## What is compared
 

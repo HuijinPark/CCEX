@@ -88,9 +88,10 @@ declare -A SYSTEMS=(
   [S2c]="NV + P1 10ppm, gCCE-2, Defect naddspin=0"
   [S3]="P1 bath, Defect naddspin=1 (14N), navaax=4, avaax+state files"
   [S4]="hBN VB, hf_readmode 3 + qd_readmode 2 (DFT tensor files, vertex boundary)"
+  [S4b]="hBN VB, the same but with the MinDif/MaxDif axis-aligned boundary"
   [S5]="2 NV, gCCE, explicit intmap self/ZFS tensors"
 )
-ORDER=(S1a S1b S2a S2b S2c S3 S4 S5)
+ORDER=(S1a S1b S2a S2b S2c S3 S4 S4b S5)
 WANT=("${@:-${ORDER[@]}}")
 
 for sys in "${WANT[@]}"; do
@@ -126,10 +127,16 @@ PY
            run_pair S3 -s "$FIX/1.single_data/state_DiaP1_1ppm_" \
                        -S "$FIX/1.single_data/stateEx_DiaP1_1ppm_" -N 1 ;;
 
-      S4)  mkdir -p "$WORK/S4"
-           python3 - "$WORK/S4" "$FIX" <<'PY'
+      S4|S4b)
+           # S4  : Afile_vertex / Qfile_vertex -> CheckBD_vertex
+           # S4b : Afile        / Qfile        -> CheckBD_Range, the axis-aligned
+           #       MinDif/MaxDif box. Two different boundary tests over the same
+           #       system, and only one of them is reachable per file.
+           SUF=""; [ "$sys" = "S4" ] && SUF="_vertex"
+           mkdir -p "$WORK/$sys"
+           python3 - "$WORK/$sys" "$FIX" "$SUF" <<'PY'
 import json, sys
-work, fix = sys.argv[1:3]
+work, fix, suf = sys.argv[1:4]
 H=f"{fix}/4.hexagonal_data"
 # rbath 20 -> 6 : 3897 spins -> 101, and 121 s -> 0.4 s on one core. The A/Q files
 # cover this region comfortably, so both readers stay on their file path.
@@ -138,14 +145,23 @@ d = {"method":"CCE","quantity":"coherence",
      "bathfile":[f"{H}/bath_1"],
      "order":2,"bfield":30000,"rbath":6,"rdip":4,"deltat":0.002,"nstep":20,
      "nstate":0,"alphams":1,"betams":0,"npulse":1,
-     "hf_readmode":3,"hf_tensorfile":f"{H}/Afile_vertex","hf_cutoff":0,"hf_ignore_oor":0,
-     "qd_readmode":2,"qd_tensorfile":f"{H}/Qfile_vertex",
-     "qd_tensorfile_woqubit":f"{H}/Qfile_vertex",
+     # hf_ignore_oor=1: the MinDif/MaxDif box in Afile is wider than the set of atoms
+     # the file lists, so a spin can sit inside the box with no row of its own. Without
+     # this the range-boundary run stops there and never reaches a coherence to compare.
+     "hf_readmode":3,"hf_tensorfile":f"{H}/Afile{suf}","hf_cutoff":0,
+     "hf_ignore_oor":(0 if suf else 1),
+     # The QD reader has no counterpart to hf_ignore_oor, and Qfile's box is wide in
+     # the same way, so the range-boundary case runs without the quadrupole. S4 covers
+     # the QD reader over the vertex boundary; the QD range boundary stays uncovered.
+     "qd_readmode":(2 if suf else 0),
+     "qd_tensorfile":f"{H}/Qfile{suf}",
+     "qd_tensorfile_woqubit":f"{H}/Qfile{suf}",
      "outfile":"./OUT"}
 json.dump(d, open(f"{work}/legacy.json","w"), indent=4)
-print("    hBN VB: hf_readmode=3 qd_readmode=2 rbath=6")
+print(f"    hBN VB: hf_readmode={d['hf_readmode']} qd_readmode={d['qd_readmode']} "
+      f"rbath={d['rbath']} boundary={'vertex' if suf else 'MinDif/MaxDif'}")
 PY
-           run_pair S4 ;;
+           run_pair "$sys" ;;
 
       S5)  mkdir -p "$WORK/S5"
            python3 - "$WORK/S5" "$EX" <<'PY'
