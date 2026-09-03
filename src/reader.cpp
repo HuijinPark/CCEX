@@ -1425,11 +1425,11 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
         if (qd_readmode == 3 || qd_readmode == 4){
             //the information to checking BD for woqubit 
             isVertex_woDef = \
-            READ_BD_vertex(qd_tensorfile, &(Q_vertexwoDef), &(Q_centerwoDef), &(Q_normalwoDef), (vertex_condi));
+            READ_BD_vertex(qd_tensorfile_woqubit, &(Q_vertexwoDef), &(Q_centerwoDef), &(Q_normalwoDef), (vertex_condi));
     
             if (!isVertex_woDef){
-                bool Check_min = READ_Tensor_array(qd_tensorfile,&(Q_MinDifwoDef),"MinDif[A]",3);
-                bool Check_max = READ_Tensor_array(qd_tensorfile,&(Q_MaxDifwoDef),"MaxDif[A]",3);
+                bool Check_min = READ_Tensor_array(qd_tensorfile_woqubit,&(Q_MinDifwoDef),"MinDif[A]",3);
+                bool Check_max = READ_Tensor_array(qd_tensorfile_woqubit,&(Q_MaxDifwoDef),"MaxDif[A]",3);
                 if ((Check_min==false) || (Check_max==false)){
                     printf("\tThe Boundary Condition (vertex and Range) can not read from tensor file (%s)\n",qd_tensorfile_woqubit);
                     printf("\tPlz, Check the Tensor file !!!\n");
@@ -2394,11 +2394,16 @@ void printHfInfo_tensor(double** tensorArray, int mode){
             printf("%+12lf ",tensorArray[i][j]);
         }
         printf("    ");
-        //fermi contact
-        printf("%12lf ",tensorArray[i][3]);
-        printf("    ");
-        //A-tensor
-        for (int j=4; j<13; j++){
+        // Hyperfine files have a Fermi-contact column at index 3; quadrupole
+        // files do not. Both formats then contain exactly nine tensor entries.
+        int tensor_begin = 3;
+        if (mode == 0){
+            printf("%12lf ",tensorArray[i][3]);
+            printf("    ");
+            tensor_begin = 4;
+        }
+        for (int j=tensor_begin; j<tensor_begin+9; j++){
+
             printf("%12lf ",tensorArray[i][j]);
         }
         printf("\n");

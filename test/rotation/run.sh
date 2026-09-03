@@ -461,6 +461,53 @@ hex_case hex_hf2_rotq  2 0 "$HEXROT_HFQ" ; [ $RC -eq 0 ] || fail "hex_hf2_rotq f
 hex_case hex_qd2_norot 0 2 ""            ; [ $RC -eq 0 ] || fail "hex_qd2_norot failed (rc=$RC)"
 hex_case hex_qd2_rot   0 2 "$HEXROT_QD"  ; [ $RC -eq 0 ] || fail "hex_qd2_rot failed (rc=$RC, see $WORK/hex_qd2_rot.log)"
 
+# qd_readmode 3/4 need both the defect and no-defect files. Use one bath spin that
+# matches the defect file so this remains a fast reader test, and move every vertex
+# in the no-defect copy by +100 A along x. The two v1 reports then prove that the
+# second boundary was read from qd_tensorfile_woqubit rather than from qd_tensorfile
+# a second time.
+python3 - "$WORK/qd34_bath" "$HEX/Qfile_vertex" "$WORK/Qfile_wo_shifted" <<'PYEOF'
+import re, sys
+bath, source, shifted = sys.argv[1:4]
+with open(bath, "w") as f:
+    f.write("1.00000 0.00000 0.00000 0.00000\n")
+    f.write("22.45382 26.47004 23.38568 11B\n")
+lines = []
+for line in open(source):
+    m = re.match(r'^(v[1-8]\s*:\s*)([-+0-9.eE]+)(.*)$', line)
+    if m:
+        line = "%s%.15g%s\n" % (m.group(1), float(m.group(2)) + 100.0,
+                                  m.group(3).rstrip("\n"))
+    lines.append(line)
+with open(shifted, "w") as f:
+    f.writelines(lines)
+PYEOF
+
+for qdmode in 3 4; do
+    hex_case "hex_qd${qdmode}_files" 0 "$qdmode" \
+        "'bathfile': ['$WORK/qd34_bath'],
+         'qd_tensorfile_woqubit': '$WORK/Qfile_wo_shifted',
+         'qd_cellpara': [100.0,100.0,100.0]"
+    if [ $RC -ne 0 ]; then
+        fail "hex_qd${qdmode}_files failed (rc=$RC, see $WORK/hex_qd${qdmode}_files.log)"
+        continue
+    fi
+    python3 - "$WORK/hex_qd${qdmode}_files.log" <<'PYEOF'
+import math, re, sys
+text = open(sys.argv[1]).read()
+xs = [float(x) for x in re.findall(r'^\s*v1\s*:\s*([-+0-9.eE]+)', text, re.M)]
+# printHfInfo_BD emits vertex, face-center and normal blocks (three v1 lines)
+# for each file, so the first woDef vertex is xs[3].
+ok = len(xs) >= 4 and math.isclose(xs[3] - xs[0], 100.0, abs_tol=2e-6)
+sys.exit(0 if ok else 1)
+PYEOF
+    if [ $? -eq 0 ]; then
+        pass "[qd_readmode=$qdmode] woDef boundary comes from qd_tensorfile_woqubit"
+    else
+        fail "[qd_readmode=$qdmode] woDef boundary did not come from its own file"
+    fi
+done
+
 echo "  [hf_readmode=2, hf_tensor_frame=bath]"
 python3 check_tensors.py "$WORK/hex_hf2_norot.log" "$WORK/hex_hf2_rot.log" \
     --kind hypf --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect rotated

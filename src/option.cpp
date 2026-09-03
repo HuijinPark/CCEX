@@ -892,13 +892,18 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             Config_allocQd_tensorfile(cnf);
             Config_setQd_tensorfile(cnf,qd_tensorfile);
 
-            qd_tensorfile_woqubit = cJSON_ReadFilePath(root,"qd_tensorfile_woqubit",true,NULL);
+            // Both keys are REQUIRED here, and were meant to be. Passing them through as
+            // optional handed Config_setQd_tensorfile_woqubit and Config_setQd_cellpara a
+            // NULL, which reach strcpy and memcpy -- so an input that omitted either one
+            // segfaulted instead of being told what was missing. "false" as the _default
+            // argument was a string literal, which is a non-null pointer and therefore
+            // true, so qd_cellpara asked for the opposite of what it meant.
+            qd_tensorfile_woqubit = cJSON_ReadFilePath(root,"qd_tensorfile_woqubit",false,NULL);
             Config_allocQd_tensorfile_woqubit(cnf);
             Config_setQd_tensorfile_woqubit(cnf,qd_tensorfile_woqubit);
 
-            double* qd_cellpara = cJSON_ReadDouble1d(root, "qd_cellpara", "false", NULL,3);
+            double* qd_cellpara = cJSON_ReadDouble1d(root, "qd_cellpara", false, NULL,3);
             Config_setQd_cellpara(cnf,qd_cellpara);
-            Config_allocQd_tensorfile(cnf);
             freeDouble1d(&qd_cellpara);
 
             break;

@@ -599,9 +599,10 @@ At hf_readmode 2 and 3 the two kinds can occur together: a spin the tensor file 
 cover falls back to a point-dipole tensor built from the source geometry. Those fallbacks
 are always transformed, even under hf_tensor_frame = "qubit", while the matched
 file tensors are left alone. <br>
-qd_readmode 3 and 4 go through the same post-read transformation as mode 2. There is no
-test fixture for them in this repository, so that path is not exercised by the test
-suite; treat it as untested rather than verified. <br>
+qd_readmode 3 and 4 go through the same post-read transformation as mode 2. The test
+suite exercises their two-file reader with distinct wiDef and woDef boundaries and
+checks that each boundary comes from the requested file. Mode 2 additionally has the
+full hand-transformed versus automatic-rotation tensor/coherence comparison. <br>
 With more than one qubit, an external HF or QD tensor file is refused outright, before
 the file is opened. <b>This is not a new restriction introduced by the rotation:</b>
 readHftensorfile and readQdtensorfile have always refused nqubit > 1, because a tensor

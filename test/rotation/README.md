@@ -41,8 +41,9 @@ second kind only when `hf_tensor_frame` says `bath`. The two occur together:
 | 2 / 3, fallback | point dipole (spin not covered by the file) | always |
 
 `qd_readmode` keeps a single flag: `readQdtensorfile` has no computed-here
-fallback to distinguish. Modes 3 and 4 share this post-read path but have no
-fixture here, so they are untested, not verified.
+fallback to distinguish. Modes 3 and 4 share this post-read path. Their two-file
+reader is exercised with distinct wiDef and woDef boundaries; mode 2 additionally
+has the full hand-transformed versus automatic-rotation tensor/coherence check.
 
 ## Why it is split in two
 
