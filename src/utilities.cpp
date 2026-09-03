@@ -61,6 +61,298 @@ double sinPhi(double spin1[], double spin2[]){
     else return (spin2[1] - spin1[1]) / tmp_mn;
 }
 
+/////bath-coordinate rotation//////////////////////////////////
+// Tolerances. ROT_COLLINEAR_TOL is compared against |q x b| with q,b already unit,
+// so it IS the sine of the angle between the two axes -- 1e-8 rejects anything
+// closer than ~6e-7 degrees, where the azimuth of the new x axis is numerical noise.
+// ROT_ORTHO_TOL is the post-construction self-check on R, several orders looser
+// than the double-precision round-off the construction actually produces (~1e-16).
+#define ROT_ZERONORM_TOL 1e-12
+#define ROT_COLLINEAR_TOL 1e-8
+#define ROT_ORTHO_TOL 1e-10
+
+/**
+ * @brief Normalize v into out; fatal if it is not a usable direction
+ * @details Fatal if v is not three finite numbers, or has (numerically) zero length --
+ *          both leave the direction undefined, and a silently wrong axis here would
+ *          show up only as a wrong Hamiltonian much later.
+ * @param what name of the input, used in the error message
+*/
+void normalizeAxisOrDie(const double v[3], double out[3], const char* what){
+
+    for (int i=0; i<3; i++){
+        if (!std::isfinite(v[i])){
+            fprintf(stderr,"Error: %s[%d] is not a finite number (%g)\n",what,i,v[i]);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+    if (norm < ROT_ZERONORM_TOL){
+        fprintf(stderr,"Error: %s has zero norm ( [%g, %g, %g] )\n",what,v[0],v[1],v[2]);
+        fprintf(stderr,"An axis must be a non-zero direction vector.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i=0; i<3; i++){ out[i] = v[i]/norm; }
+}
+
+static void rotCross(const double u[3], const double v[3], double out[3]){
+    out[0] = u[1]*v[2] - u[2]*v[1];
+    out[1] = u[2]*v[0] - u[0]*v[2];
+    out[2] = u[0]*v[1] - u[1]*v[0];
+}
+
+static double rotDot(const double u[3], const double v[3]){
+    return u[0]*v[0] + u[1]*v[1] + u[2]*v[2];
+}
+
+/**
+ * @brief Angle between two directions, in degrees, in [0,180]
+ * @details atan2(|u x v|, u.v) rather than acos(u.v/|u||v|): acos loses almost all of
+ *          its precision exactly where this is used, near 0 and 180 degrees, where its
+ *          argument sits on a flat part of the cosine. atan2 stays accurate there.
+ *          The result is signless but NOT folded to [0,90] -- an antiparallel pair is
+ *          180 degrees apart, which is what makes a same-direction test possible.
+ *          Scale-independent, so the inputs need not be normalized.
+*/
+double angleBetweenDeg(const double u[3], const double v[3]){
+
+    double c[3];
+    rotCross(u,v,c);
+    return atan2(sqrt(rotDot(c,c)),rotDot(u,v)) * 180.0 / M_PI;
+}
+
+/**
+ * @brief Build the passive transform that puts the qubit axis on the computational +z
+ * @details The constructed R satisfies
+ *
+ *      R * normalize(qubit_axis) = [0,0,1]
+ *
+ *  i.e. it re-expresses a vector given in the bath file's own Cartesian frame in the
+ *  frame whose z axis IS the qubit symmetry axis. This is NOT the active rotation
+ *  that carries bath_axis onto qubit_axis; using that one would put the field and the
+ *  ZFS on the wrong axis.
+ *
+ *  R^T is the inverse, so what R^T maps onto qubit_axis is the computational [0,0,1] --
+ *  NOT bath_axis. The two coincide only in the special case bath_axis = [0,0,1]; for any
+ *  other bath_axis, R^T * bath_axis is some other vector entirely.
+ *
+ *      ez = q                  the new z axis is the qubit axis
+ *      ex = normalize(q x b)   bath_axis only fixes the AZIMUTH of x and y about ez;
+ *                              it does not change where z points
+ *      ey = ez x ex            right-handed
+ *
+ *  ex, ey, ez are the ROWS of R, so (R*v)[k] is the component of v along the k-th new
+ *  axis. For bath_axis=[0,0,1], qubit_axis=[1,1,1] this gives
+ *
+ *      ex = [ 1,-1, 0]/sqrt(2),  ey = [ 1, 1,-2]/sqrt(6),  ez = [ 1, 1, 1]/sqrt(3)
+ *
+ * @param bath_axis  reference axis of the bath file frame (azimuth reference only)
+ * @param qubit_axis qubit symmetry axis, in the bath file frame
+ * @param R          [out] 3x3 rotation matrix
+ */
+void buildQubitAlignedRotation(const double bath_axis[3], const double qubit_axis[3], double R[3][3]){
+
+    double b[3], q[3];
+    normalizeAxisOrDie(bath_axis ,b,"bath_axis");
+    normalizeAxisOrDie(qubit_axis,q,"qubit_axis");
+
+    double ex[3], ey[3], ez[3];
+    ez[0] = q[0]; ez[1] = q[1]; ez[2] = q[2];
+
+    rotCross(q,b,ex);
+    double cross_norm = sqrt(rotDot(ex,ex));
+
+    if (cross_norm < ROT_COLLINEAR_TOL){
+        // q x b vanishes, so the azimuth of the new x axis is undefined. The one case
+        // that still has an answer is "the qubit axis is already +z and so is the bath
+        // reference" -- then the frame does not move at all and R is the identity.
+        bool q_is_z = (fabs(q[0]) < ROT_COLLINEAR_TOL) && (fabs(q[1]) < ROT_COLLINEAR_TOL) && (q[2] > 0.0);
+        bool b_is_z = (fabs(b[0]) < ROT_COLLINEAR_TOL) && (fabs(b[1]) < ROT_COLLINEAR_TOL) && (b[2] > 0.0);
+
+        if (q_is_z && b_is_z){
+            for (int i=0; i<3; i++){
+                for (int j=0; j<3; j++){ R[i][j] = (i==j) ? 1.0 : 0.0; }
+            }
+            return;
+        }
+
+        fprintf(stderr,"Error(coordinate_frame_rotation): bath_axis and qubit_axis are parallel or antiparallel\n");
+        fprintf(stderr,"  normalized bath_axis  : [ %g, %g, %g ]\n",b[0],b[1],b[2]);
+        fprintf(stderr,"  normalized qubit_axis : [ %g, %g, %g ]\n",q[0],q[1],q[2]);
+        fprintf(stderr,"  |qubit_axis x bath_axis| = %g\n",cross_norm);
+        fprintf(stderr,"The cross product fixes the azimuth of the new x axis, so collinear axes\n");
+        fprintf(stderr,"leave the frame undefined. Pick a bath_axis that is not along qubit_axis\n");
+        fprintf(stderr,"(the only accepted collinear input is bath_axis=[0,0,1] with qubit_axis=[0,0,1],\n");
+        fprintf(stderr," which is the identity transformation).\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i=0; i<3; i++){ ex[i] /= cross_norm; }
+    rotCross(ez,ex,ey);
+
+    for (int j=0; j<3; j++){
+        R[0][j] = ex[j];
+        R[1][j] = ey[j];
+        R[2][j] = ez[j];
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    // Self-check : R must be a proper rotation that lands q on +z
+    ////////////////////////////////////////////////////////////////////////
+    double ortho_err = 0.0;
+    for (int i=0; i<3; i++){
+        for (int j=0; j<3; j++){
+            double rtr = R[0][i]*R[0][j] + R[1][i]*R[1][j] + R[2][i]*R[2][j]; // (R^T R)_ij
+            double target = (i==j) ? 1.0 : 0.0;
+            if (fabs(rtr-target) > ortho_err){ ortho_err = fabs(rtr-target); }
+        }
+    }
+
+    double det = R[0][0]*(R[1][1]*R[2][2] - R[1][2]*R[2][1])
+               - R[0][1]*(R[1][0]*R[2][2] - R[1][2]*R[2][0])
+               + R[0][2]*(R[1][0]*R[2][1] - R[1][1]*R[2][0]);
+
+    double zcheck_err = 0.0;
+    for (int i=0; i<3; i++){
+        double target = (i==2) ? 1.0 : 0.0;
+        double val = R[i][0]*q[0] + R[i][1]*q[1] + R[i][2]*q[2];
+        if (fabs(val-target) > zcheck_err){ zcheck_err = fabs(val-target); }
+    }
+
+    if (ortho_err > ROT_ORTHO_TOL || fabs(det-1.0) > ROT_ORTHO_TOL || zcheck_err > ROT_ORTHO_TOL){
+        fprintf(stderr,"Error(coordinate_frame_rotation): the constructed matrix is not a valid rotation\n");
+        fprintf(stderr,"  max|R^T R - I|            = %g (tol %g)\n",ortho_err,ROT_ORTHO_TOL);
+        fprintf(stderr,"  det(R)                    = %.15g (must be +1)\n",det);
+        fprintf(stderr,"  max|R*qubit_axis - [001]| = %g (tol %g)\n",zcheck_err,ROT_ORTHO_TOL);
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * @brief Apply the rotation about a fixed point : r_new = r0 + R * (r_old - r0)
+ * @param xyz [in,out] coordinate, overwritten in place
+ * @param R   rotation matrix from buildQubitAlignedRotation
+ * @param r0  point held fixed by the transformation (the central qubit)
+ */
+void rotateAboutPoint(double xyz[3], const double R[3][3], const double r0[3]){
+
+    double d[3];
+    for (int i=0; i<3; i++){ d[i] = xyz[i] - r0[i]; }
+
+    for (int i=0; i<3; i++){
+        xyz[i] = r0[i] + R[i][0]*d[0] + R[i][1]*d[1] + R[i][2]*d[2];
+    }
+}
+
+/**
+ * @brief Re-express a rank-2 tensor in the rotated frame : R * T * R^T
+ * @details The companion of rotateAboutPoint. A tensor whose COMPONENTS are written in
+ *          the bath file's Cartesian basis has to be transformed as well, or it would
+ *          keep describing the old axes while the positions describe the new ones.
+ *
+ *          R is real, so the transpose -- not the adjoint -- is the right inverse here;
+ *          they coincide numerically, but only transpose is correct in intent.
+ *
+ *          A tensor that was never filled in is returned untouched: BathArray leaves an
+ *          unset hyperfine tensor at 0x0, and there is nothing to rotate.
+ * @param T tensor in the original frame
+ * @param R rotation matrix from buildQubitAlignedRotation
+*/
+MatrixXcd rotateTensor(const MatrixXcd T, const double R[3][3]){
+
+    if (T.rows() != 3 || T.cols() != 3){ return T; }
+
+    MatrixXcd Rm = MatrixXcd::Zero(3,3);
+    for (int i=0; i<3; i++){
+        for (int j=0; j<3; j++){ Rm(i,j) = doublec(R[i][j],0.0); }
+    }
+
+    return Rm * T * Rm.transpose();
+}
+
+/**
+ * @brief Print the whole coordinate frame once, for the run log
+ * @details Called on rank 0 only, once per run -- never per bath spin. The point is that
+ *          a reader can reconstruct every frame the run used from this block alone: the
+ *          two input axes, where each computational axis lies in the source frame, R and
+ *          its self-checks, and the magnetic field written both ways round.
+ * @param bfield                 Config.bfield, i.e. the field in the COMPUTATIONAL frame
+ * @param defect_axis_reference  name of the recorded reference axis, or NULL if none
+*/
+void reportQubitAlignedRotation(const double bath_axis[3], const double qubit_axis[3],
+                                const double R[3][3], const double r0[3],
+                                const float bfield[3], const char* defect_axis_reference){
+
+    double b[3], q[3];
+    normalizeAxisOrDie(bath_axis ,b,"bath_axis");
+    normalizeAxisOrDie(qubit_axis,q,"qubit_axis");
+
+    double ortho_err = 0.0;
+    for (int i=0; i<3; i++){
+        for (int j=0; j<3; j++){
+            double rtr = R[0][i]*R[0][j] + R[1][i]*R[1][j] + R[2][i]*R[2][j];
+            double target = (i==j) ? 1.0 : 0.0;
+            if (fabs(rtr-target) > ortho_err){ ortho_err = fabs(rtr-target); }
+        }
+    }
+
+    double det = R[0][0]*(R[1][1]*R[2][2] - R[1][2]*R[2][1])
+               - R[0][1]*(R[1][0]*R[2][2] - R[1][2]*R[2][0])
+               + R[0][2]*(R[1][0]*R[2][1] - R[1][1]*R[2][0]);
+
+    double qz[3];
+    for (int i=0; i<3; i++){ qz[i] = R[i][0]*q[0] + R[i][1]*q[1] + R[i][2]*q[2]; }
+
+    // R^T takes a computational-frame vector back to the source frame. For a field along
+    // the computational z it returns Bz * ez, i.e. Bz * normalize(qubit_axis).
+    double bsrc[3];
+    for (int i=0; i<3; i++){
+        bsrc[i] = R[0][i]*(double)bfield[0] + R[1][i]*(double)bfield[1] + R[2][i]*(double)bfield[2];
+    }
+
+    printSubTitle("Coordinate frame rotation ...");
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","bath axis, source frame" ,b[0],b[1],b[2]);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","qubit axis, source frame",q[0],q[1],q[2]);
+    printf("\n");
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","computational x axis, source frame",R[0][0],R[0][1],R[0][2]);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","computational y axis, source frame",R[1][0],R[1][1],R[1][2]);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","computational z axis, source frame",R[2][0],R[2][1],R[2][2]);
+    printf("\n");
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 0",R[0][0],R[0][1],R[0][2]);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 1",R[1][0],R[1][1],R[1][2]);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 2",R[2][0],R[2][1],R[2][2]);
+    printf("      %-32s: %.15lf\n","det(R)",det);
+    printf("      %-32s: %.3e\n","max|R^T R - I|",ortho_err);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","R * normalize(qubit_axis)",qz[0],qz[1],qz[2]);
+    printf("\n");
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation origin r0, source frame",r0[0],r0[1],r0[2]);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","B field, computational frame",
+           (double)bfield[0],(double)bfield[1],(double)bfield[2]);
+    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","B field, source frame (R^T B)",bsrc[0],bsrc[1],bsrc[2]);
+    printf("\n");
+
+    if (defect_axis_reference != NULL){
+        printf("      %-32s: %s\n","Defect axis reference",defect_axis_reference);
+        printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","Reference axis, source frame",q[0],q[1],q[2]);
+        printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","Reference axis, calc frame",qz[0],qz[1],qz[2]);
+        printf("      %-32s: recorded for future JT-axis classification;\n","Status");
+        printf("      %-32s  not applied to the Defect Hamiltonian\n","");
+        printf("\n");
+    }
+
+    printf("      Every qubit position and every bath-spin position gets the same rigid\n");
+    printf("      transform r_new = r0 + R*(r_old - r0), about the reference qubit.\n");
+    printf("      Stored HF/QD tensors that are in the bath frame move with them, and each\n");
+    printf("      Qubit.intmap tensor follows its own recorded tensor_frame / provenance --\n");
+    printf("      the transformed and kept counts are listed below.\n");
+    printf("      Defect entries follow their own coordinate_frame: bath-frame axes,\n");
+    printf("      displacement vectors, and tensors are transformed; qubit-frame entries stay.\n");
+    printf("      Read as written in the computational frame: legacy top-level \"qzfs\" and \"bfield\".\n");
+    printf("\n");
+}
+
 ///////////////////////////////////////////////////////////////
 // Physics functions
 ///////////////////////////////////////////////////////////////

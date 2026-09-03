@@ -4,6 +4,18 @@
 #include "utilities.h"
 
 /**
+ * @enum DefectAxisReference
+ * @brief Reference axis for a future Jahn-Teller axis classification
+ * @details Set from the top-level "defect_axis_reference" key. QUBIT_AXIS means the
+ *          central qubit's symmetry axis, which only coordinate_frame_rotation defines,
+ *          so the key requires that section to be enabled.
+*/
+typedef enum {
+    DEFECT_AXIS_REFERENCE_NONE       = 0, /**< key absent (default) */
+    DEFECT_AXIS_REFERENCE_QUBIT_AXIS = 1  /**< "qubit_axis" */
+} DefectAxisReference;
+
+/**
  * @struct CalConfig
  * @brief This structure contains the parameters for the simulation.
  * @details Each parameter is read from the input file or options.
@@ -60,6 +72,77 @@ typedef struct {
     char* exstatefile ; /**< extra spin' state file */
     int _nflines; /**< number of file lines */
     int* _flines; /**< file line number of each bath spins */
+
+    // Bath coordinate rotation
+    /**
+     * @brief If true, the qubits and the bath are re-expressed in the qubit-aligned frame
+     * @details The transform is PASSIVE : it puts rot_qubit_axis on the computational
+     *          +z, so R * normalize(rot_qubit_axis) = [0,0,1].
+     *
+     *          Transformed:
+     *            - every Qubit.xyz, not just the reference one
+     *            - every bath-spin position
+     *            - intmap entries marked INTMAP_AUTO_SOURCE_GEOMETRY (the point-dipole
+     *              tensor built from the source qubit geometry)
+     *            - explicit Qubit.intmap entries with tensor_frame = "bath", self/ZFS
+     *              entries included
+     *            - stored HF / QD tensors that are in the bath frame -- every
+     *              point-dipole tensor CCEX computed itself, plus the tensor-file ones
+     *              when hf_tensor_frame / qd_tensor_frame say "bath"
+     *            - each Defect entry whose coordinate_frame is "bath": its physical
+     *              axis, rxyzs displacement vectors, and hypf/efg/zfs tensors
+     *
+     *          Kept as written:
+     *            - explicit Qubit.intmap entries with tensor_frame = "qubit"
+     *            - the legacy top-level "qzfs", which belongs to the single-qubit
+     *              qubitfile path and has no tensor_frame to declare; it is read as a
+     *              computational-frame tensor for backward compatibility
+     *            - each Defect entry whose coordinate_frame is "qubit"
+     *            - scalar Defect detuning values (frame independent)
+     *            - bfield
+     *
+     *          bfield is expressed directly in the computational frame. When
+     *          coordinate_frame_rotation is enabled, Config_validateBfieldAlignment
+     *          requires it to lie along the computational z axis, which represents
+     *          qubit_axis.
+     * @ref buildQubitAlignedRotation, applyCoordinateFrameRotation
+    */
+    bool rot_enabled;
+    double rot_bath_axis[3];  /**< Reference axis of the bath file frame; fixes the azimuth only (default [0,0,1]) */
+    double rot_qubit_axis[3]; /**< Qubit symmetry axis, in the bath file frame (default [0,0,1]) */
+    char rot_reference_qubit[MAX_CHARARRAY_LENGTH]; /**< Qubit.name held fixed by the rotation; empty = Qubit[0] */
+    /**
+     * @brief Frame every Qubit.xyz is written in : "bath"
+     * @details Applies to the whole QubitArray -- per-qubit frames are not a thing. Only
+     *          "bath" is supported: the qubit positions use the same Cartesian basis AND
+     *          the same origin as the bath files, so one R and one r0 move everything.
+     *          A "qubit" value would mean the qubit positions are already computational
+     *          while the bath is not, and readBathfiles would then mix frames in its
+     *          rbath / rbathcut selection, its mindist and its point-dipole tensors.
+     *          Required when nqubit > 1 and the rotation is on; empty means "bath".
+    */
+    char rot_qubit_position_frame[MAX_CHARARRAY_LENGTH];
+    /**
+     * @brief Basis the external HF tensor COMPONENTS are written in : "bath" | "qubit"
+     * @details "bath" means the 3x3 components are in the original bath Cartesian basis
+     *          and must be transformed as R*T*R^T; "qubit" means they are already in the
+     *          computational basis and are left alone. It says nothing about the POSITION
+     *          columns of the tensor file, which are always read in the original frame,
+     *          because that is what the lookup matches against.
+     *          Empty = not given; required when the rotation is on and hf_readmode > 0.
+    */
+    char rot_hf_tensor_frame[MAX_CHARARRAY_LENGTH];
+    char rot_qd_tensor_frame[MAX_CHARARRAY_LENGTH]; /**< Same, for the quadrupole tensors */
+
+    // Defect axis reference
+    /**
+     * @brief Which axis a future Jahn-Teller classification should measure against
+     * @details Recorded and validated only. Nothing in the Defect Hamiltonian, the JT
+     *          assignment, zfs, hypf, efg or rxyzs reads it yet, so setting it changes
+     *          no number this version produces -- the run log says as much.
+     * @ref DefectAxisReference
+    */
+    DefectAxisReference defect_axis_reference;
 
     // tensorfile-related
     double DefectTotSpin; /**< Total spin of defect : default : 1 */
@@ -147,6 +230,14 @@ char*   Config_getExstatefile(Config* cnf);
 int     Config_get_nflines(Config* cnf);
 int*    Config_get_flines(Config* cnf);
 int     Config_get_flines_i(Config* cnf, int i);
+bool    Config_getRot_enabled(Config* cnf);
+double* Config_getRot_bath_axis(Config* cnf);
+double* Config_getRot_qubit_axis(Config* cnf);
+char*   Config_getRot_reference_qubit(Config* cnf);
+char*   Config_getRot_qubit_position_frame(Config* cnf);
+char*   Config_getRot_hf_tensor_frame(Config* cnf);
+char*   Config_getRot_qd_tensor_frame(Config* cnf);
+DefectAxisReference Config_getDefect_axis_reference(Config* cnf);
 double  Config_getDefectTotSpin(Config* cnf);
 double  Config_getCorrTotSpin(Config* cnf);
 char*   Config_getHf_tensorfile(Config* cnf);
@@ -187,6 +278,18 @@ void Config_setStatefile(Config* cnf, char* statefile);
 void Config_setExstatefile(Config* cnf, char* exstatefile);
 void Config_set_nflines(Config* cnf, int nflines);
 void Config_set_flines_i(Config* cnf, int fline, int i);
+void Config_setRot_enabled(Config* cnf, bool rot_enabled);
+void Config_setRot_bath_axis(Config* cnf, double* rot_bath_axis);
+void Config_setRot_qubit_axis(Config* cnf, double* rot_qubit_axis);
+void Config_setRot_reference_qubit(Config* cnf, char* rot_reference_qubit);
+void Config_setRot_qubit_position_frame(Config* cnf, char* frame);
+void Config_setRot_hf_tensor_frame(Config* cnf, char* frame);
+void Config_setRot_qd_tensor_frame(Config* cnf, char* frame);
+void Config_setDefect_axis_reference(Config* cnf, DefectAxisReference reference);
+
+// With the rotation on, the computational z axis IS the qubit axis, so the field has to
+// lie along it. Checked once every option source (input file, then CLI) is in.
+void Config_validateBfieldAlignment(Config* cnf);
 
 void Config_setDefectTotSpin(Config* cnf, double DefectTotSpin);
 void Config_setCorrTotSpin(Config* cnf, double CorrTotSpin);

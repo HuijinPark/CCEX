@@ -12,6 +12,25 @@
  *       (2) The dimension of alpha, beta would be checked if it is 2*spin+1
  *       (3) The alpha, beta would be normalized
  */
+/**
+ * @enum IntmapProvenance
+ * @brief Where a QubitArray.intmap tensor came from, and so which frame it is in
+ * @details A coordinate frame rotation transforms the tensors that are still in the
+ *          source bath frame and leaves alone the ones already written in the common
+ *          computational frame. Nothing about a 3x3 tensor says which it is, so it is
+ *          recorded when the tensor is stored.
+ *
+ *          "qubit" here means the COMMON reference-qubit-aligned computational frame,
+ *          not any individual qubit's local frame.
+*/
+typedef enum {
+    INTMAP_DEFAULT_ZERO         = 0, /**< never written to; the zero tensor from allocation */
+    INTMAP_AUTO_SOURCE_GEOMETRY = 1, /**< point dipole computed from the source qubit geometry */
+    INTMAP_EXPLICIT_BATH        = 2, /**< explicit input, tensor_frame = "bath" */
+    INTMAP_EXPLICIT_QUBIT       = 3, /**< explicit input, tensor_frame = "qubit" */
+    INTMAP_EXPLICIT_UNSPECIFIED = 4  /**< explicit input with no tensor_frame given */
+} IntmapProvenance;
+
 typedef struct {
     
     /* Basic spin information (Essential) */
@@ -125,6 +144,14 @@ typedef struct {
     int nqubit; /**< The number of Qubit                                           */
     Qubit** qubit; /**< Qubit information (see struct Qubit)                       */
     MatrixXcd** intmap; /**< Interaction i-j (Unit : radkHz)                       */
+    /**
+     * @brief Which frame each intmap[i][j] is written in, and where it came from
+     * @details Sized like intmap. Needed because a coordinate frame rotation has to
+     *          transform some of these tensors and leave others alone, and the tensor
+     *          itself carries no clue which. See IntmapProvenance.
+     * @ref IntmapProvenance
+    */
+    int** intmap_frame;
     MatrixXcd psia; /**< Projected state alpha for QubitArray                      */
     MatrixXcd psib; /**< Projected state beta for QubitArray                       */
     MatrixXcd psi0; /**< Initial state of qubit                                    */
@@ -194,6 +221,7 @@ void        QubitArray_set_alphaidx(QubitArray* qa, const int* alphaidx);
 void        QubitArray_set_betaidx(QubitArray* qa, const int* betaidx);
 void        QubitArray_setIntmap_dipAuto(QubitArray* qa);
 void        QubitArray_setIntmap_i_j(QubitArray* qa, const MatrixXcd tensor, int i, int j);
+void        QubitArray_setIntmap_i_j_frame(QubitArray* qa, IntmapProvenance frame, int i, int j);
 void        QubitArray_setPsia(QubitArray* qa, const MatrixXcd psia);
 void        QubitArray_setPsib(QubitArray* qa, const MatrixXcd psib);
 void        QubitArray_setPsi0(QubitArray* qa, const MatrixXcd psi0);
@@ -215,6 +243,7 @@ int*        QubitArray_get_alphaidx(const QubitArray* qa);
 int*        QubitArray_get_betaidx(const QubitArray* qa);
 MatrixXcd** QubitArray_getIntmap(const QubitArray* qa);
 MatrixXcd   QubitArray_getIntmap_i_j(const QubitArray* qa, int i, int j);
+IntmapProvenance QubitArray_getIntmap_i_j_frame(const QubitArray* qa, int i, int j);
 MatrixXcd   QubitArray_getPsia(const QubitArray* qa);
 MatrixXcd   QubitArray_getPsib(const QubitArray* qa);
 MatrixXcd   QubitArray_getPsi0(const QubitArray* qa);

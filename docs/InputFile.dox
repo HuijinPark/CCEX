@@ -41,8 +41,10 @@ Tags in this section is about simulatation parameters such as file path, numeric
 - \ref tag_qubitfile     "qubitfile"   
 - \ref tag_gyrofile      "gyrofile"      
 - \ref tag_bathfile      "bathfile"      
-- \ref tag_bathadjust    "bathadjust"                    
-- \ref tag_avaaxfile     "avaaxfile"                     
+- \ref tag_bathadjust    "bathadjust"
+- \ref tag_coordinate_frame_rotation "coordinate_frame_rotation"
+- \ref tag_defect_axis_reference "defect_axis_reference"
+- \ref tag_avaaxfile     "avaaxfile"
 - \ref tag_statefile     "statefile"                     
 - \ref tag_exstatefile   "exstatefile"                  
 - \ref tag_DefectTotSpin "DefectTotSpin"                
@@ -210,6 +212,8 @@ The format is the following:
 - \ref tag_df_apprx         "apprx"        
 - \ref tag_df_naddspin      "naddspin"     
 - \ref tag_df_navaax        "navaax"       
+- \ref tag_df_axis          "axis"
+- \ref tag_df_coordinate_frame "coordinate_frame"
 - \ref tag_df_types         "types"        
 - \ref tag_df_spins         "spins"        
 - \ref tag_df_gyros         "gyros"        
@@ -449,6 +453,228 @@ Usually, this tag is required for multiple qubit calculation that wouldb have di
     \code bathadjust : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], ... [7.0, 8.0, 9.0]] \endcode </p>
 <p><b>Related variable:</b> \ref Config::bathadjust </p>
 
+\anchor tag_coordinate_frame_rotation
+## coordinate_frame_rotation
+<p><b>Description:</b><br>
+Re-express the qubits and the bath in the frame whose z axis is the reference qubit's
+symmetry axis. <br>
+Use it when the bath file is written in the crystal frame (e.g. diamond [001]) but the
+qubit is quantized along another direction (e.g. an NV along [111]). <br>
+More than one qubit is supported: every Qubit.xyz and every bath-spin position receives
+the same \f$R\f$ and the same \f$r_0\f$. <br></p>
+
+<p>
+Where it happens in the run. The magnetic field is settled first, immediately after the
+command line is parsed, so that -B can conflict before any file is opened. The bath is
+then read and rbath / rbathcut selection is applied, and the HF and QD tensor files are
+looked up -- by POSITION, against un-moved coordinates, because the position columns of
+those files are written in the source bath frame. Tensor COMPONENTS are a separate
+matter: they sit in whichever basis hf_tensor_frame / qd_tensor_frame declares. <br>
+Only then does the frame change, in one step: every qubit position and every bath-spin
+position is rotated, and the tensors that are still in the bath frame -- HF, QD, and the
+Qubit.intmap entries whose provenance says so -- are transformed with them, while tensors
+already in the computational frame are left as they are. Every Defect entry whose
+<tt>coordinate_frame</tt> is <tt>"bath"</tt> is normalized in this same step, before its
+on-site spins are constructed; clusterization follows. <br>
+</p>
+
+<p>
+The transformation is <b>passive</b>: it builds the rotation \f$R\f$ with <br>
+\f[ R \cdot \widehat{\texttt{qubit\_axis}} = [0,0,1] \f]
+and applies \f$ r_{new} = r_0 + R (r_{old} - r_0) \f$ to every qubit AND every bath spin
+alike, with \f$r_0\f$ the position of the REFERENCE QUBIT -- the one named by
+"reference_qubit", or the only qubit when that key is omitted. The reference qubit has
+\f$r_{old} = r_0\f$ and so does not move; everything else moves rigidly around it. It is
+NOT the active rotation that would carry bath_axis onto qubit_axis. <br>
+The frame is
+\f[ e_z = \hat q, \qquad e_x = \widehat{\hat q \times \hat b}, \qquad e_y = e_z \times e_x \f]
+with \f$e_x, e_y, e_z\f$ as the ROWS of \f$R\f$. bath_axis therefore only fixes the
+azimuth of x and y about the new z; it does not change where z points. <br>
+</p>
+
+<p>
+Both vectors are given in the bath file's own Cartesian frame. <b>Transformed:</b> every
+Qubit.xyz, every bath-spin position, the bath-frame HF / QD tensors stored next to them
+(every point-dipole tensor CCEX computed itself, plus the tensor-file ones where
+hf_tensor_frame / qd_tensor_frame say "bath"), and the \ref tag_intmap "Qubit.intmap"
+tensors whose provenance calls for it -- the automatic qubit-pair point-dipole tensor,
+and every explicit entry with \ref tag_tensor_frame "tensor_frame" = "bath", self/ZFS
+entries included. <br>
+For each Defect entry with \ref tag_df_coordinate_frame "coordinate_frame" = "bath",
+its \ref tag_df_axis "axis", rxyzs displacement vectors, and hypf / efg / zfs tensors
+are transformed by the same \f$R\f$. The displacement is a relative vector, so it receives
+\f$Rr\f$ without the rotation origin. Defect detuning is scalar and is not transformed.
+<br>
+</p>
+
+<p>
+<b>Not transformed:</b> explicit Qubit.intmap entries with tensor_frame = "qubit"; the
+legacy top-level "qzfs", which belongs to the single-qubit \ref tag_qubitfile "qubitfile"
+path, has no tensor_frame to declare, and is read as a computational-frame tensor for
+backward compatibility; each Defect entry whose coordinate_frame is "qubit"; scalar
+Defect detuning; and \ref tag_bfield "bfield". These are read as written in the
+computational frame (or are frame-independent). Legacy Defect entries without a
+coordinate_frame also default to "qubit" to preserve their previous numerical meaning.
+<br>
+</p>
+
+<p>
+For "bfield" that has a concrete meaning: with the rotation on, the computational z axis
+IS the qubit axis, so
+\code "bfield" : [0.0, 0.0, 500.0] \endcode
+is 500 G along +qubit_axis -- along the physical [111] for an NV -- and [0,0,-500] is the
+same magnitude the other way. Both signs are accepted; what is required is the LINE, not
+the direction. A scalar "bfield" still means [0,0,bz] and works the same way, as does the
+command-line -B, which sets bz. <br>
+A field with any transverse component is refused: a tilted field is not supported
+alongside the rotation in this version. The check runs once the input file and the
+command line have both been applied, against the final Config.bfield, and compares
+\f$ |B_\perp| = \sqrt{B_x^2+B_y^2} \f$ against \f$ 10^{-12}\max(1,|B|) \f$ -- a tight
+bound, because nothing rotates these numbers and anything larger is a component the user
+meant. A zero field is always allowed. <br>
+The run log prints the field both ways round, so the physical direction is visible:
+\f$ R^{T}[0,0,B_z] = B_z\,\widehat{\texttt{qubit\_axis}} \f$. <br>
+</p>
+
+<p>
+Refused: collinear bath_axis and qubit_axis, because the cross product then leaves the
+azimuth undefined -- the one exception is bath_axis = qubit_axis = [0,0,1], which is the
+identity. Also refused, with more than one qubit: an external HF or QD tensor file (a
+restriction that predates this option -- see hf_tensor_frame below), a missing
+reference_qubit or qubit_position_frame, and an explicit intmap entry with no
+tensor_frame. <br>
+Multi-qubit coherence is validated with method = gCCE. cCCE remains single-qubit and
+src/simulator_cce.cpp is untouched by this option. <br>
+</p>
+
+<p>
+"reference_qubit" names the qubit the rotation is taken about, by its exact
+\ref tag_qubit "Qubit" name. Its position is \f$r_0\f$, and it is the one thing that
+does not move. With a single qubit it is optional -- that qubit is used, and one supplied
+through \ref tag_qubitfile "qubitfile" is named "q0". <b>With more than one qubit it is
+required</b>, there being no sensible default. It must match an existing qubit exactly,
+and duplicate qubit names are refused. Any index may be named, not just the first. <br>
+When bath_axis and qubit_axis -- and therefore \f$R\f$ -- are held fixed, changing only
+reference_qubit changes the rotation ORIGIN. The two coordinate sets then differ by the
+rigid translation \f$(I-R)(r_0-r_1)\f$, so distances, interaction tensors and coherence
+are unchanged; only the printed coordinates move. <br>
+If reference_qubit is changed to a qubit with a DIFFERENT physical axis, qubit_axis must
+be changed to that qubit's actual source-frame axis as well. \f$R\f$ is then different
+too, and the relation above no longer holds. <br>
+</p>
+
+<p>
+"qubit_position_frame" states the frame every \ref tag_xyz "Qubit.xyz" is written in.
+One value for the whole QubitArray -- per-qubit frames are not accepted. The only
+supported value is <tt>"bath"</tt>: the qubit positions use the same Cartesian basis AND
+the same origin as the bath files, so a single \f$R\f$ and \f$r_0\f$ move every qubit
+and every bath spin together. <br>
+<tt>"qubit"</tt> is refused. It would put the qubit positions in the computational frame
+while the bath files are still read in the source frame, and readBathfiles would then
+compare the two in its rbath / rbathcut selection, its minimum-distance bookkeeping and
+its point-dipole tensors. <br>
+<b>Required when nqubit > 1 and the rotation is on.</b> With a single qubit it may be
+omitted and is treated as <tt>"bath"</tt>, so existing inputs are unaffected. <br>
+</p>
+
+<p>
+This option was called "bath_coordinate_rotation" while it only moved bath positions.
+That name is still accepted, with a warning; giving both is an error. <br>
+</p>
+
+<p>
+"hf_tensor_frame" and "qd_tensor_frame" say which basis the COMPONENTS of an external
+tensor file are written in. "bath" means the original bath Cartesian basis, so each
+tensor is transformed as \f$ T \rightarrow R\,T\,R^{T} \f$; "qubit" means they are
+already in the computational basis and are left alone. They say nothing about the
+POSITION columns of those files, which are always read in the original, unrotated frame
+-- that is what the lookup matches against, and the files themselves are never touched.
+<br>
+hf_readmode = 1 is a special case: it keeps only the isotropic Fermi-contact term from
+the file and rebuilds the anisotropic part as a point-dipole tensor from the source
+geometry, so what is stored is bath-frame whatever the key says. hf_tensor_frame is
+therefore neither required nor used at readmode 1; giving it is allowed and reported as
+not applicable. <br>
+At hf_readmode 2 and 3 the two kinds can occur together: a spin the tensor file does not
+cover falls back to a point-dipole tensor built from the source geometry. Those fallbacks
+are always transformed, even under hf_tensor_frame = "qubit", while the matched
+file tensors are left alone. <br>
+qd_readmode 3 and 4 go through the same post-read transformation as mode 2. There is no
+test fixture for them in this repository, so that path is not exercised by the test
+suite; treat it as untested rather than verified. <br>
+With more than one qubit, an external HF or QD tensor file is refused outright, before
+the file is opened. <b>This is not a new restriction introduced by the rotation:</b>
+readHftensorfile and readQdtensorfile have always refused nqubit > 1, because a tensor
+file is written around a single defect and which qubit it belongs to is undefined. The
+rotation only reports it earlier and in its own terms; both original guards remain in
+place. A per-qubit tensor-file schema is left for later work. <br>
+</p>
+
+<p>
+There is no default. With the rotation on and \ref tag_hf_readmode "hf_readmode" equal to
+2 or 3 (or \ref tag_qd_readmode "qd_readmode" non-zero), the corresponding key MUST be
+given:
+transforming a tensor twice, or not at all, produces something that still looks like a
+tensor, so it is the one mistake nothing downstream can catch. With readmode 0 the key
+has no numerical effect -- the point-dipole tensors are built from the source geometry
+and are always transformed. <br>
+</p>
+
+<p><b>Data Type:</b> Object { Boolean, Double List(3), Double List(3), String x4 } </p>
+<p><b>Default:</b> \code {"enabled": false, "bath_axis": [0,0,1], "qubit_axis": [0,0,1]} \endcode
+An absent section, or "enabled" : false, leaves the run numerically identical to a build
+without this option. </p>
+<p><b>Example:</b>
+    \code
+    "coordinate_frame_rotation" : {
+        "enabled"         : true,
+        "bath_axis"       : [0.0, 0.0, 1.0],
+        "qubit_axis"      : [1.0, 1.0, 1.0],
+        "reference_qubit" : "q0",
+        "qubit_position_frame" : "bath",
+        "hf_tensor_frame" : "bath",
+        "qd_tensor_frame" : "bath"
+    }
+    \endcode </p>
+<p><b>Related variable:</b> \ref Config::rot_enabled, \ref Config::rot_bath_axis, \ref Config::rot_qubit_axis, \ref Config::rot_reference_qubit </p>
+
+\anchor tag_defect_axis_reference
+## defect_axis_reference
+<p><b>Description:</b><br>
+Name the axis a future Jahn-Teller classification should measure defect axes against. <br>
+<b>This key changes no number that this version computes.</b> It is read, validated and
+written to the run log, and nothing else: it neither performs JT assignment nor changes
+the Defect Hamiltonian. Setting it does not move the coherence, the avaax assignments or
+the detuning table. This is separate from each Defect's own
+\ref tag_df_coordinate_frame "coordinate_frame": bath-frame Defect vectors and tensors
+are still converted by coordinate_frame_rotation regardless of this reference key. <br></p>
+
+<p>
+The only accepted value is the string "qubit_axis", meaning the central qubit's symmetry
+axis. That axis is defined only by
+\ref tag_coordinate_frame_rotation "coordinate_frame_rotation", so the key requires that
+section to be present and enabled; otherwise it is an error rather than a no-op. <br>
+Anything else is refused: another string, an array, a boolean. <br>
+</p>
+
+<p>
+With the rotation on, the run log reports what was recorded and says plainly that it is
+not applied: <br>
+<pre>
+      Defect axis reference           : qubit_axis
+      Reference axis, source frame    : [ normalize(qubit_axis) ]
+      Reference axis, calc frame      : [   0, 0, 1 ]
+      Status                          : recorded for future JT-axis classification;
+                                        not applied to the Defect Hamiltonian
+</pre>
+</p>
+
+<p><b>Data Type:</b> String </p>
+<p><b>Default:</b> absent -- no reference axis is recorded. </p>
+<p><b>Example:</b>
+    \code "defect_axis_reference" : "qubit_axis" \endcode </p>
+<p><b>Related variable:</b> \ref Config::defect_axis_reference </p>
+
 \anchor tag_avaaxfile
 ## avaaxfile
 <p><b>Description:</b><br>
@@ -566,6 +792,14 @@ If you want to use the hyperfine tensor obtained from DFT calculation, you shoul
 | `1`    | Fermi-contact term + point-dipole tensor |
 | `2`    | DFT dipolar tensor                       |
 | `3`    | Fermi-contact term + DFT dipole tensor   |
+
+<p>
+<b>Changed since v1.0.0:</b> a value outside 0..3 is now refused. It used to be
+accepted -- the range check could never fire -- and \ref tag_hf_tensorfile
+"hf_tensorfile" was then never read and no point-dipole tensor was built either, so
+the run completed with every hyperfine tensor left unset. Only an input that was
+already meaningless is affected, but it now stops instead of returning a number. <br></p>
+
 <p><b>Default:</b> 0 </p>
 <p><b>Example:</b> \code hf_readmode : 0 \endcode </p>
 <p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_hf_cutoff "hf_cutoff" \ref tag_hf_ignore_oor "hf_ignore_oor" </p>
@@ -863,7 +1097,49 @@ This tag is required to define the interaction map between qubits, including its
 <p>
     - \ref tag_between "between" : Interaction qubit pair
     - \ref tag_tensor "tensor"   : Interaction tensor
+    - \ref tag_tensor_frame "tensor_frame" : Basis the tensor components are written in
 </p>
+
+\anchor tag_tensor_frame
+## tensor_frame
+<p><b>Description:</b><br>
+Which Cartesian basis the components of this \ref tag_intmap "intmap" tensor are written
+in. Only meaningful together with
+\ref tag_coordinate_frame_rotation "coordinate_frame_rotation". <br></p>
+
+<p>
+    - <tt>"bath"</tt>  : the original bath Cartesian basis. The tensor is transformed as
+      \f$ T \rightarrow R\,T\,R^{T} \f$ along with the positions.
+    - <tt>"qubit"</tt> : the common computational basis, the one in which the reference
+      qubit's axis is +z. The tensor is left exactly as written.
+</p>
+
+<p>
+<b><tt>"qubit"</tt> does not mean an individual qubit's local frame.</b> There is one
+computational frame for the whole run, fixed by \c reference_qubit. A qubit whose
+crystallographic orientation differs from the reference one is described by ITS OWN ZFS
+tensor expressed in that common frame; with <tt>"bath"</tt> the same global \f$R\f$
+transforms it, and the off-diagonal elements that appear are correct and must not be
+diagonalized away. <br>
+</p>
+
+<p>
+The rule is the same for a self/ZFS entry (<tt>between: ["NV0","NV0"]</tt>) and for a
+pair entry (<tt>between: ["NV0","NV1"]</tt>): the frame is taken from this key, never
+guessed from which kind of tensor it is. <br>
+With the rotation on and more than one qubit, every explicit intmap entry MUST carry it;
+omitting it is an error, not a default. With a single qubit the key stays optional and an
+input without it behaves exactly as before -- the tensor is left as written. <br>
+An entry that is not given at all is either the zero tensor or, off the diagonal, the
+point-dipole tensor CCEX computes from the source qubit geometry; the latter is always
+transformed. <br>
+</p>
+
+<p><b>Data Type:</b> String </p>
+<p><b>Default:</b> absent. Fatal with the rotation on and nqubit > 1; otherwise the
+tensor is left as written. </p>
+<p><b>Example:</b> \code tensor_frame : "bath" \endcode </p>
+<p><b>Parent-tags:</b> \ref tag_intmap "intmap" </p>
 
 \anchor tag_between
 ## between
@@ -1048,16 +1324,27 @@ Removed <br>
 Detailed information of paramagnetic \(PM\) defect bath can be provided by this tag.
 <p><b>Data Type:</b> Dictionary List </p>
 <p><b>Default:</b> - </p>
-<p><b>Example:</b> 
-    \code Defect : [ { "dfname" : "D1", "naddspin" : 0, "navaax" : 4, "detuning" : [[1,0.0],[2,1.0],[3,2.0],[4,3.0]]}, 
-                     { "sdname" : "D2", ... } \endcode </p>
+<p><b>Example:</b>
+    \code
+    "Defect" : [{
+        "dfname" : "NV_0", "naddspin" : 0, "navaax" : 3,
+        "axis" : [1.0, 1.0, 1.0], "coordinate_frame" : "bath",
+        "zfs" : {"D" : 2870.0, "E" : 0.0, "unit" : "MHz"},
+        "detuning" : {
+            "values" : [[1,"e",-2.14], [2,"e",0.0], [3,"e",2.14]],
+            "unit" : "MHz"
+        }
+    }]
+    \endcode </p>
 <p><b>Related variable:</b> \ref DefectArray "DefectArray struct" \ref Defect "Defect struct" </p>
 <p><b>Sub-tags:</b></p>
 <p>
     - \ref tag_df_dfname "dfname" : Defect name
     - \ref tag_df_apprx "apprx"   : Approximation type
     - \ref tag_df_naddspin "naddspin" : Number of on-site nuclear spins of the PM defect
-    - \ref tag_df_navaax "navaax" : Number of possible principal axes of the defect
+    - \ref tag_df_navaax "navaax" : Number of indexed defect configurations
+    - \ref tag_df_axis "axis" : Physical symmetry-axis direction
+    - \ref tag_df_coordinate_frame "coordinate_frame" : Basis of Defect vectors and tensors
     - \ref tag_df_types "types" : On-site nuclear spin types
     - \ref tag_df_spins "spins" : Spin numbers of the on-site nuclear spins
     - \ref tag_df_gyros "gyros" : Gyromagnetic ratio of the on-site nuclear spins
@@ -1105,11 +1392,57 @@ Number of on-site nuclear spins of the paramagnetic defect. <br>
 \anchor tag_df_navaax
 ## navaax
 <p><b>Description:</b><br>
-Number of possible principal axes of the paramagnetic defect. <br>
+Number of indexed configurations available for the paramagnetic defect. The historical
+name is retained for compatibility, but an index can represent a frozen nuclear state
+(for example three \f$m_I\f$ detunings) rather than a different physical axis. A shared
+object-form zfs is broadcast to indices 1 through navaax. <br></p>
+
+<p>
+The indexed entries of \ref tag_df_rxyzs "rxyzs", \ref tag_df_hypf "hypf",
+\ref tag_df_efg "efg", zfs and \ref tag_df_detuning "detuning" must address a
+configuration in <b>1 .. navaax</b>; index 0 is reserved for the main spin and is
+written by CCEX itself. <br>
+<b>Changed since v1.0.0:</b> an index of navaax+1 is now refused. It used to be
+accepted, and wrote one element past the end of every one of those arrays, so an
+input that relied on it was already producing undefined results. This is the one
+change here that can stop an input which previously ran to completion. <br></p>
+
 <p><b>Data Type:</b> Int </p>
 <p><b>Default:</b> 0 </p>
 <p><b>Example:</b> \code navaax : 4 \endcode </p>
 <p><b>Related variable:</b> \ref Defect::navaax \ref DefectArray::paxes </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_axis
+## axis
+<p><b>Description:</b><br>
+Physical symmetry-axis direction of this defect, expressed in
+\ref tag_df_coordinate_frame "coordinate_frame". The vector is normalized when read.
+It is required by the D/E form of \ref tag_df_zfs "zfs". It is optional metadata for
+the explicit tensor form and is normally omitted for a scalar-detuning-only P1 model.
+Because an axis alone does not define transverse x and y directions, a non-zero E must
+be supplied with the explicit tensor form. <br></p>
+<p><b>Data Type:</b> Double List(3) </p>
+<p><b>Default:</b> absent </p>
+<p><b>Example:</b> \code "axis" : [1.0, 1.0, 1.0] \endcode </p>
+<p><b>Related variable:</b> \ref Defect::axis </p>
+<p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
+
+\anchor tag_df_coordinate_frame
+## Defect coordinate_frame
+<p><b>Description:</b><br>
+Basis in which this Defect's axis, rxyzs displacement vectors, and hypf / efg / zfs
+tensor components are written. <tt>"bath"</tt> means the source bath/crystal basis;
+when coordinate_frame_rotation is enabled they are re-expressed in the computational
+qubit frame. <tt>"qubit"</tt> means they are already in that frame and remain unchanged.
+Detuning is a scalar frequency and is unaffected. <br>
+This key is required when <tt>axis</tt> or an object-form <tt>zfs</tt>, <tt>hypf</tt>, or
+<tt>efg</tt> is used. For a legacy Defect without those features it defaults to
+<tt>"qubit"</tt>, preserving the old behavior. <br></p>
+<p><b>Data Type:</b> String: "bath" or "qubit" </p>
+<p><b>Default:</b> "qubit" for legacy entries </p>
+<p><b>Example:</b> \code "coordinate_frame" : "bath" \endcode </p>
+<p><b>Related variable:</b> \ref Defect::coordinate_frame </p>
 <p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
 
 \anchor tag_df_types
@@ -1139,10 +1472,17 @@ The number of spins should be the same as \ref tag_naddspin "naddspin". <br>
 <p><b>Description:</b><br>
 Gyromagnetic ratio of the on-site nuclear spins of the paramagnetic defect. <br>
 The number of gyros should be the same as \ref tag_naddspin "naddspin". <br>
-<p><b>Data Type:</b> Double List </p>
-<p><b>Unit:</b> rad/ms/G </p>
+The unit-aware form is
+\code "gyros" : {"values" : [3.0777051853], "unit" : "MHz/T"} \endcode
+Plain frequency units such as MHz/T and kHz/G mean \f$\gamma/2\pi\f$; units beginning
+with <tt>rad</tt> are angular gyromagnetic ratios. Values are normalized internally to
+rad kHz/G, numerically the same as rad/ms/G. The original bare list remains supported
+in that internal unit. <br>
+<p><b>Data Type:</b> Object {values, unit}, or legacy Double List </p>
+<p><b>Units:</b> radkHz/G (default), rad/ms/G, kHz/G, MHz/G, MHz/T, Hz/T,
+radMHz/T, rad/us/T, or rad/s/T </p>
 <p><b>Default:</b> - </p>
-<p><b>Example:</b> \code gyros : [-17608.597050, -17608.597050] \endcode </p>
+<p><b>Example:</b> \code "gyros" : {"values" : [3.0777051853], "unit" : "MHz/T"} \endcode </p>
 <p><b>Related variable:</b> \ref Defect::gyros </p>
 <p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
 
@@ -1151,10 +1491,15 @@ The number of gyros should be the same as \ref tag_naddspin "naddspin". <br>
 <p><b>Description:</b><br>
 Quadrupole moment \(eQ\) values of the on-site nuclear spins of the paramagnetic defect. <br>
 The number of eQ values should be the same as \ref tag_naddspin "naddspin". <br>
-<p><b>Data Type:</b> Double List </p>
-<p><b>Unit:</b> millibarn × 10^1 m^2 = 10^-30 m^2 </p>
+The stored quantity follows the existing area convention: one internal unit is
+\f$10^{-30}\,\mathrm{m^2}=1\,\mathrm{fm^2}=10\,\mathrm{mbarn}\f$. The unit-aware form is
+\code "eqs" : {"values" : [20.44], "unit" : "mbarn"} \endcode
+and is normalized to that internal unit. The original bare list remains supported in
+\f$10^{-30}\,\mathrm{m^2}\f$. <br>
+<p><b>Data Type:</b> Object {values, unit}, or legacy Double List </p>
+<p><b>Units:</b> 1e-30 m^2 (default), fm^2, m^2, cm^2, barn, or mbarn </p>
 <p><b>Default:</b> [0.0 , ..] </p>
-<p><b>Example:</b> \code eqs : [0.0, 0.0] \endcode </p>
+<p><b>Example:</b> \code "eqs" : {"values" : [20.44], "unit" : "mbarn"} \endcode </p>
 <p><b>Related variable:</b> \ref Defect::eqs </p>
 <p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
 
@@ -1177,8 +1522,19 @@ The number of \c rxyzs should be the same as \" \ref tag_naddspin "naddspin" x \
 <p><b>Description:</b><br>
 The hyperfine interaction between on-site nuclear spins and the electron spin associated with a paramagnetic defect. <br>
 The number of \c hypf should be the same as \" \ref tag_naddspin "naddspin" x \ref tag_navaax "navaax" \" <br>
-<p><b>Data Type:</b> 2D List </p>
-<p><b>Unit:</b> MHz </p>
+The unit-aware form wraps the same indexed entries in <tt>values</tt>. Each tensor may
+be a flat row-major 9-number array or a nested 3x3 array:
+\code
+"hypf" : {
+    "values" : [[1, "14N", [[81.312,0,0], [0,81.312,0], [0,0,114.0264]]]],
+    "unit" : "MHz"
+}
+\endcode
+It requires the Defect's \ref tag_df_coordinate_frame "coordinate_frame", because its
+Cartesian tensor basis must be explicit. Object values are normalized to MHz. The
+original bare indexed list remains supported and is interpreted as MHz. <br>
+<p><b>Data Type:</b> Object {values, unit}, or legacy 2D List </p>
+<p><b>Units:</b> Hz, kHz, MHz (default), or GHz </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> \code hypf : [[1, "15N", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
                                  [2, "1H", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] \endcode </p>
@@ -1190,8 +1546,19 @@ The number of \c hypf should be the same as \" \ref tag_naddspin "naddspin" x \r
 <p><b>Description:</b><br>
 The electric field gradient tensors of the paramagnetic defect. <br>
 The number of \c efg should be the same as \" \ref tag_naddspin "naddspin" x \ref tag_navaax "navaax" \" <br>
-<p><b>Data Type:</b> 2D List </p>
-<p><b>Unit:</b> Hartree/Bohr^2 </p>
+The unit-aware form follows the same indexed tensor syntax as hypf:
+\code
+"efg" : {
+    "values" : [[1, "14N", [[0.521910,0,0], [0,0.522771,-0.000086], [0,-0.000086,-1.044681]]]],
+    "unit" : "Hartree/Bohr^2"
+}
+\endcode
+It requires the Defect's \ref tag_df_coordinate_frame "coordinate_frame". Object
+values are normalized to Hartree/Bohr^2 before the existing eQ–EFG quadrupole conversion.
+The original bare indexed list remains supported in Hartree/Bohr^2. <br>
+<p><b>Data Type:</b> Object {values, unit}, or legacy 2D List </p>
+<p><b>Units:</b> Hartree/Bohr^2 (default; aliases Ha/Bohr^2, Ha/a0^2, a.u.),
+V/m^2, or V/angstrom^2 </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> \code efg : [[1, "14N", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
                                [2, "1H", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] \endcode </p>
@@ -1201,13 +1568,50 @@ The number of \c efg should be the same as \" \ref tag_naddspin "naddspin" x \re
 \anchor tag_df_zfs
 ## zfs
 <p><b>Description:</b><br>
-The zero-field splitting tensors of the electron spin associated with a paramagnetic defect. <br>
-The number of \c zfs should be the same as \" \ref tag_navaax "navaax" \" <br>
-<p><b>Data Type:</b> 2D List </p>
-<p><b>Unit:</b> MHz </p>
-<p><b>Default:</b> - </p>
-<p><b>Example:</b> \code zfs : [[1, "e", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
-                               [2, "e", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] \endcode </p>
+The zero-field splitting of the electron spin associated with a paramagnetic defect.
+Three input forms are accepted. <br></p>
+
+<p>
+The compact axial form constructs one Cartesian tensor from the normalized Defect axis:
+\f[ T = D\left(\hat n\hat n^T-I/3\right). \f]
+It is broadcast to every indexed configuration. E may be omitted or set to zero. A
+non-zero E is refused because one axis fixes z but not the transverse x/y basis; use an
+explicit tensor in that case.
+\code
+"axis" : [1.0, 1.0, 1.0],
+"coordinate_frame" : "bath",
+"zfs" : { "D" : 2870.0, "E" : 0.0, "unit" : "MHz" }
+\endcode
+</p>
+
+<p>
+The shared tensor form accepts either a nested 3x3 matrix or a flat row-major 9-number
+array, and also broadcasts it to every indexed configuration:
+\code
+"coordinate_frame" : "bath",
+"zfs" : {
+    "tensor" : [[0.0, 956.6667, 956.6667],
+                [956.6667, 0.0, 956.6667],
+                [956.6667, 956.6667, 0.0]],
+    "unit" : "MHz"
+}
+\endcode
+</p>
+
+<p>
+The original per-index syntax remains supported and is interpreted in MHz exactly as
+before. Here a separate 3x3 tensor may be supplied for every configuration:
+\code
+"zfs" : [[1, "e", [0.0, 956.6667, 956.6667, 956.6667, 0.0, 956.6667, 956.6667, 956.6667, 0.0]],
+         [2, "e", [0.0, 956.6667, 956.6667, 956.6667, 0.0, 956.6667, 956.6667, 956.6667, 0.0]]]
+\endcode
+</p>
+
+<p><b>Data Type:</b> Object {D, E, unit}, Object {tensor, unit}, or legacy 2D List </p>
+<p><b>Unit:</b> Object forms accept Hz, kHz, MHz (default), or GHz and are converted to
+MHz while parsing. The legacy indexed form is MHz. The Hamiltonian later converts the
+stored MHz values to angular kHz (rad/ms). </p>
+<p><b>Default:</b> zero tensor </p>
 <p><b>Related variable:</b> \ref Defect::zfs </p>
 <p><b>Parent-tags:</b> \ref tag_Defect "Defect" </p>
 
@@ -1218,9 +1622,20 @@ Detuning frequencies that will be applied to the electron spin associated with t
 The number of \c detuning should be the same as \" \ref tag_navaax "navaax" \" <br>
 This tag is used to approximate the spin interaction tensors related to the paramagnetic defect, <br>
 e.g., \f[ \vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z \f]. <br>
-<p><b>Data Type:</b> 2D List </p>
-<p><b>Unit:</b> MHz </p>
-<p><b>Default:</b> - </p>
+The unit-aware form wraps the same indexed values in an object:
+\code
+"detuning" : {
+    "values" : [[1, "e", -2.14], [2, "e", 0.0], [3, "e", 2.14]],
+    "unit" : "MHz"
+}
+\endcode
+The original bare indexed list remains supported and is interpreted as MHz. Missing
+configuration indices retain the zero default. <br>
+<p><b>Data Type:</b> Object {values, unit}, or legacy 2D List </p>
+<p><b>Unit:</b> The object form accepts Hz, kHz, MHz (default), or GHz and converts to
+MHz while parsing. The legacy indexed form is MHz. The Hamiltonian later converts the
+stored MHz values to angular kHz (rad/ms). </p>
+<p><b>Default:</b> zero for every unspecified configuration </p>
 <p><b>Example:</b> \code detuning : [[1, "e",  1.0],
                                      [2, "e",  2.0],
                                      [3, "e",  3.0],
@@ -1263,9 +1678,3 @@ You can specify this value via the "-o" command-line option.
 
 
 */
-
-
-
-
-
-
