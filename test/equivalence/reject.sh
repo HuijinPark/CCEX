@@ -111,6 +111,14 @@ df['axis'] = [1.0,1.0,1.0]"
 reject S3 rj_zfs_object_no_frame "object-form zfs but has no coordinate_frame" \
   "df = d['Defect'][0]
 df['zfs'] = {'D': 2870.0, 'unit': 'MHz'}"
+# The one behaviour change that can stop a v1.1.0 input which used to complete. The
+# arrays hold navaax+1 entries (index 0 is the main spin), so navaax+1 is one past the
+# end; it used to be accepted and written to. S3's own fixture uses 1..navaax, and
+# axis 1 shows that side is untouched.
+reject S3 rj_iax_out_of_range "out of range" \
+  "df = d['Defect'][0]
+df['hypf'] = df['hypf'] + [[df['navaax'] + 1, '14N', [0.0]*9]]"
+
 reject S3 rj_bad_unit "unit" \
   "df = d['Defect'][0]
 df['coordinate_frame'] = 'qubit'

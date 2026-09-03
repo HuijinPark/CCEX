@@ -2082,7 +2082,17 @@ void cJSON_ReadDefectInfo_IntCharDoubleArray(cJSON* root, char* key, int valueco
             exit(EXIT_FAILURE);
         }
 
-        // Find axis index
+        // Find axis index.
+        //
+        // NOTE the parameter called navaax here is the caller's navaax + 1: index 0 is
+        // reserved for the main spin, so DefectArray_allocDefect_idf allocates navaax+1
+        // entries and the valid range is 0 .. navaax.
+        //
+        // The bound was `iax > navaax` before, which accepted one index past the end of
+        // every array this reads into -- rxyzs, hypf, efg, zfs and detuning alike. An
+        // input addressing configuration navaax+1 therefore ran, and corrupted memory
+        // while it did. It is refused now, which is the one way this branch can stop a
+        // v1.1.0 input that used to complete.
         int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
         if (iax < 0 || iax >= navaax) {
             fprintf(stderr, "Error : cJSON_ReadDefectInfo_IntCharDoubleArray");
@@ -2150,7 +2160,9 @@ void cJSON_ReadDefectInfo_IntCharMatrixXcd2d(cJSON* root, char* key, int valueco
             exit(EXIT_FAILURE);
         }
 
-        // Find axis index
+        // Find axis index. navaax here is the caller's navaax + 1; valid range is
+        // 0 .. navaax. See cJSON_ReadDefectInfo_IntCharDoubleArray for why this is
+        // `>=` and not `>`.
         int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
         if (iax < 0 || iax >= navaax) {
             fprintf(stderr, "cJSON_ReadDefectInfo_IntCharMatrixXcd2d");
@@ -2217,7 +2229,9 @@ void cJSON_ReadDefectInfo_IntCharMatrixXcd1d(cJSON* root, char* key, int valueco
             exit(EXIT_FAILURE);
         }
 
-        // Find axis index
+        // Find axis index. navaax here is the caller's navaax + 1; valid range is
+        // 0 .. navaax. See cJSON_ReadDefectInfo_IntCharDoubleArray for why this is
+        // `>=` and not `>`.
         int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
         if (iax < 0 || iax >= navaax) {
             fprintf(stderr, "cJSON_ReadDefectInfo_IntCharMatrixXcd1d");
@@ -2280,7 +2294,9 @@ void cJSON_ReadDefectInfo_IntCharDouble(cJSON* root, char* key, double** array, 
             exit(EXIT_FAILURE);
         }
 
-        // Find axis index
+        // Find axis index. navaax here is the caller's navaax + 1; valid range is
+        // 0 .. navaax. See cJSON_ReadDefectInfo_IntCharDoubleArray for why this is
+        // `>=` and not `>`.
         int iax = cJSON_GetArrayItem(itemArray1d, 0)->valueint;
         if (iax < 0 || iax >= navaax) {
             fprintf(stderr, "cJSON_ReadDefectInfo_IntCharDouble");

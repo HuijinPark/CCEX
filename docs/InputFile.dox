@@ -1387,7 +1387,18 @@ Number of on-site nuclear spins of the paramagnetic defect. <br>
 Number of indexed configurations available for the paramagnetic defect. The historical
 name is retained for compatibility, but an index can represent a frozen nuclear state
 (for example three \f$m_I\f$ detunings) rather than a different physical axis. A shared
-object-form zfs is broadcast to indices 1 through navaax. <br>
+object-form zfs is broadcast to indices 1 through navaax. <br></p>
+
+<p>
+The indexed entries of \ref tag_df_rxyzs "rxyzs", \ref tag_df_hypf "hypf",
+\ref tag_df_efg "efg", zfs and \ref tag_df_detuning "detuning" must address a
+configuration in <b>1 .. navaax</b>; index 0 is reserved for the main spin and is
+written by CCEX itself. <br>
+<b>Changed since v1.0.0:</b> an index of navaax+1 is now refused. It used to be
+accepted, and wrote one element past the end of every one of those arrays, so an
+input that relied on it was already producing undefined results. This is the one
+change here that can stop an input which previously ran to completion. <br></p>
+
 <p><b>Data Type:</b> Int </p>
 <p><b>Default:</b> 0 </p>
 <p><b>Example:</b> \code navaax : 4 \endcode </p>
