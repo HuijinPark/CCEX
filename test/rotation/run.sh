@@ -890,6 +890,10 @@ ZFS0="[[2870.0,0.0,0.0],[0.0,2870.0,0.0],[0.0,0.0,-5740.0]]"
 ZFS1="[[1900.0,120.0,-80.0],[120.0,2100.0,45.0],[-80.0,45.0,-4000.0]]"
 PAIR="[[12.0,3.0,-5.0],[3.0,-7.0,2.0],[-5.0,2.0,-5.0]]"
 
+MQ_QUBITS_PREFIX="'Qubit': {'nqubit': 2, 'qubit': [
+    {'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},
+    {'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]"
+
 IM_BATH="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'bath','tensor':$ZFS0},
                     {'between':['NV1','NV1'],'tensor_frame':'bath','tensor':$ZFS1},
                     {'between':['NV0','NV1'],'tensor_frame':'bath','tensor':$PAIR}]"
@@ -903,6 +907,36 @@ mq_case mq_im_bath    "$MQROT, 'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','s
 [ $RC -eq 0 ] || fail "mq_im_bath run failed (rc=$RC, see $WORK/mq_im_bath.log)"
 mq_case mq_im_qubit   "$MQROT, 'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_QUBIT}"
 [ $RC -eq 0 ] || fail "mq_im_qubit run failed (rc=$RC, see $WORK/mq_im_qubit.log)"
+
+# Qubit.intmap historically means kHz when unit is absent. Exercise every supported
+# explicit unit against that legacy path using the same non-zero self tensor.
+IM_ONE_LEGACY="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','tensor':$ZFS0}]"
+IM_ONE_KHZ="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'kHz','tensor':$ZFS0}]"
+IM_ONE_MHZ="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'MHz',
+    'tensor':[[2.87,0.0,0.0],[0.0,2.87,0.0],[0.0,0.0,-5.74]]}]"
+IM_ONE_GHZ="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'GHz',
+    'tensor':[[0.00287,0.0,0.0],[0.0,0.00287,0.0],[0.0,0.0,-0.00574]]}]"
+IM_ONE_HZ="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'Hz',
+    'tensor':[[2870000.0,0.0,0.0],[0.0,2870000.0,0.0],[0.0,0.0,-5740000.0]]}]"
+
+for spec in legacy kHz MHz GHz Hz; do
+    case "$spec" in
+        legacy) im="$IM_ONE_LEGACY" ;;
+        kHz)    im="$IM_ONE_KHZ" ;;
+        MHz)    im="$IM_ONE_MHZ" ;;
+        GHz)    im="$IM_ONE_GHZ" ;;
+        Hz)     im="$IM_ONE_HZ" ;;
+    esac
+    mq_case "mq_im_unit_$spec" "${MQ_QUBITS_PREFIX}, ${im}}"
+    [ $RC -eq 0 ] || fail "[intmap unit/$spec] run failed (rc=$RC)"
+done
+
+for spec in kHz MHz GHz Hz; do
+    python3 check_tensors.py "$WORK/mq_im_unit_legacy.log" "$WORK/mq_im_unit_$spec.log" \
+        --kind intmap --bath-axis 0 0 1 --qubit-axis 0 0 1 --expect unchanged --tol 1e-6 \
+        | sed 's/^/  /'
+    if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
+done
 
 echo "    tensor_frame=bath : ZFS of both qubits and the explicit pair tensor"
 python3 check_tensors.py "$WORK/mq_im_norot.log" "$WORK/mq_im_bath.log" \
@@ -989,6 +1023,13 @@ mq_expect_fail mq_im_badframe \
 mq_expect_fail mq_im_frame_notstring \
     "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor_frame':7,'tensor':$ZFS0}]}" \
     "tensor_frame must be .bath. or .qubit."
+
+mq_expect_fail mq_im_badunit \
+    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'radkHz','tensor':$ZFS0}]}" \
+    "Supported frequency units are Hz, kHz, MHz and GHz"
+mq_expect_fail mq_im_unit_notstring \
+    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':7,'tensor':$ZFS0}]}" \
+    ".unit must be a string"
 
 mq_expect_fail mq_hfmode \
     "$MQROT, 'hf_readmode': 2, 'hf_tensorfile': './inputfiles/gyro_13C', 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath', 'hf_tensor_frame': 'bath'}" \
