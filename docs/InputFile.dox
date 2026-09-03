@@ -792,6 +792,14 @@ If you want to use the hyperfine tensor obtained from DFT calculation, you shoul
 | `1`    | Fermi-contact term + point-dipole tensor |
 | `2`    | DFT dipolar tensor                       |
 | `3`    | Fermi-contact term + DFT dipole tensor   |
+
+<p>
+<b>Changed since v1.0.0:</b> a value outside 0..3 is now refused. It used to be
+accepted -- the range check could never fire -- and \ref tag_hf_tensorfile
+"hf_tensorfile" was then never read and no point-dipole tensor was built either, so
+the run completed with every hyperfine tensor left unset. Only an input that was
+already meaningless is affected, but it now stops instead of returning a number. <br></p>
+
 <p><b>Default:</b> 0 </p>
 <p><b>Example:</b> \code hf_readmode : 0 \endcode </p>
 <p><b>Related Tags:</b> \ref tag_hf_tensorfile "hf_tensorfile" \ref tag_hf_cutoff "hf_cutoff" \ref tag_hf_ignore_oor "hf_ignore_oor" </p>

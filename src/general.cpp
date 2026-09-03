@@ -783,6 +783,11 @@ void Config_setHf_ignore_oor(Config* cnf, int hf_ignore_oor){
 
 void Config_setHf_readmode(Config* cnf, int hf_readmode){
 
+    // Anything outside 0..3 used to fall through -- the guard read
+    // "hf_readmode < 0 && hf_readmode > 3", which is never true -- and readHftensorfile
+    // has no else after its `==0` / `==1||2||3` branches, so neither
+    // BathArray_setBathHypfs nor the tensor file ever ran. Every bath spin kept an unset
+    // hyperfine tensor and the run finished, quietly, with no hyperfine coupling at all.
     if (hf_readmode < 0 || hf_readmode > 3) {
         fprintf(stderr, "Error: current hf_readmode (%d < 0 or > 3) is not available\n",hf_readmode);
         exit(EXIT_FAILURE);
