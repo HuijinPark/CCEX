@@ -462,8 +462,6 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
     BathArray* ba_cluster = BathArray_init();
     int nspin_cluster = 0;
 
-    int bdim = BathArray_dim(ba);
-
     // Create the bath array for the cluster
     int addedspin = 0;
     for (int ic=0; ic<nspin; ic++){

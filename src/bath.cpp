@@ -2,6 +2,7 @@
 #include "../include/memory.h"
 #include "../include/hamiltonian.h"
 #include <float.h> // FLT_EPSILON
+#include <limits.h> // INT_MAX
 
 /* High level functions --------------------------------------------*/
 
@@ -187,7 +188,15 @@ int BathArray_dim(BathArray* ba){
     int nspin = BathArray_getNspin(ba);
     int dim = 1;
     for (int i=0; i<nspin; i++){
-        dim *= BathArray_dimBath_i(ba,i);
+        int spin_dim = BathArray_dimBath_i(ba,i);
+        if (spin_dim <= 0 || dim > INT_MAX / spin_dim){
+            fprintf(stderr,
+                    "Error(BathArray_dim): Hilbert-space dimension exceeds INT_MAX "
+                    "at bath spin %d (partial dimension = %d, spin dimension = %d)\n",
+                    i,dim,spin_dim);
+            exit(EXIT_FAILURE);
+        }
+        dim *= spin_dim;
     }
     return dim;
 }
