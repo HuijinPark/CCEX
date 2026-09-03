@@ -760,6 +760,11 @@ expect_fail bf_tilted_y "$ROT111, 'bfield': [0.0,2.0,500.0]" \
 expect_fail bf_transverse "$ROT111, 'bfield': [1.0,1.0,0.0]" \
     "requires bfield to be aligned"
 
+expect_fail bf_string_element "$ROT111, 'bfield': [0.0,0.0,'500']" \
+    "must be a number"
+expect_fail bf_short_array "$ROT111, 'bfield': [0.0,500.0]" \
+    "bfield is too short"
+
 # Without the rotation the check is a no-op and an arbitrary field vector still works.
 run_case bf_tilted_norot "'bfield': [1.0,0.0,500.0]"
 [ $RC -eq 0 ] \
@@ -961,6 +966,10 @@ mq_expect_fail(){
 }
 
 ROTNOFRAME="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0'}"
+
+mq_expect_fail mq_xyz_string \
+    "$MQROT, 'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,'41'],'alphams':1.0,'betams':0.0}]}" \
+    "must be a number"
 
 mq_expect_fail mq_noposframe "$ROTNOFRAME" \
     "qubit_position_frame is required"

@@ -1874,9 +1874,14 @@ double* cJSON_ReadDouble1d(cJSON* root, char* key, bool _default, double* defaul
             if(i >= size){
                 fprintf(stderr, "Error: %s is too long in the input file\n",key);
                 exit(EXIT_FAILURE);
-            }else{
-                array[i] = itemElement->valuedouble;
             }
+            // A non-number element used to be read anyway: cJSON leaves valuedouble at 0
+            // for a string or a bool, so "bfield": [0,0,"500"] became [0,0,0] silently.
+            if (!cJSON_IsNumber(itemElement)){
+                fprintf(stderr, "Error: %s[%d] must be a number in the input file\n",key,i);
+                exit(EXIT_FAILURE);
+            }
+            array[i] = itemElement->valuedouble;
             i++;
         }
         if (i != size) {
@@ -1964,10 +1969,19 @@ float* cJSON_ReadFloat1d(cJSON* root, char* key, bool _default, float* default_v
             if(i >= size){
                 fprintf(stderr, "Error: %s is too long in the input file\n",key);
                 exit(EXIT_FAILURE);
-            }else{
-                array[i] = itemElement->valuedouble;
             }
+            // A non-number element used to be read anyway: cJSON leaves valuedouble at 0
+            // for a string or a bool, so "bfield": [0,0,"500"] became [0,0,0] silently.
+            if (!cJSON_IsNumber(itemElement)){
+                fprintf(stderr, "Error: %s[%d] must be a number in the input file\n",key,i);
+                exit(EXIT_FAILURE);
+            }
+            array[i] = itemElement->valuedouble;
             i++;
+        }
+        if (i != size) {
+            fprintf(stderr, "Error: %s is too short(%d) in the input file (expected size = %d)\n",key,i,size);
+            exit(EXIT_FAILURE);
         }
         return array;
     }else{
