@@ -106,6 +106,28 @@ static double readDefectFrequencyScaleToMHz(cJSON* object, const char* dfname,
     exit(EXIT_FAILURE);
 }
 
+static double readIntmapFrequencyScaleToKHz(cJSON* intmap, const char* qubit1_name,
+                                            const char* qubit2_name){
+
+    cJSON* item = cJSON_GetObjectItem(intmap,"unit");
+    if (item == NULL){ return 1.0; } // legacy Qubit.intmap tensors are in kHz
+    if (!cJSON_IsString(item) || item->valuestring == NULL){
+        fprintf(stderr,"Error: Qubit.intmap[\"%s\",\"%s\"].unit must be a string\n",
+                qubit1_name,qubit2_name);
+        exit(EXIT_FAILURE);
+    }
+
+    if (strcasecmp(item->valuestring,"Hz")  == 0){ return 1.0e-3; }
+    if (strcasecmp(item->valuestring,"kHz") == 0){ return 1.0; }
+    if (strcasecmp(item->valuestring,"MHz") == 0){ return 1.0e3; }
+    if (strcasecmp(item->valuestring,"GHz") == 0){ return 1.0e6; }
+
+    fprintf(stderr,"Error: Qubit.intmap[\"%s\",\"%s\"].unit = \"%s\" is not supported\n",
+            qubit1_name,qubit2_name,item->valuestring);
+    fprintf(stderr,"Supported frequency units are Hz, kHz, MHz and GHz.\n");
+    exit(EXIT_FAILURE);
+}
+
 static double readFiniteNumber(cJSON* item, const char* what){
     if (!cJSON_IsNumber(item) || !std::isfinite(item->valuedouble)){
         fprintf(stderr,"Error: %s must be a finite JSON number\n",what);
@@ -1004,7 +1026,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         printMessage("  - Read values of sub-key 'qubit'");
         printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ] \n");
         printMessage("  - Read values of sub-key 'intmap'");
-        printMessage("    sub-sub-key : [ between, tensor, tensor_frame ] \n");
+        printMessage("    sub-sub-key : [ between, tensor, unit, tensor_frame ] \n");
         printMessage("  - Read values of main-key 'qubitfile', 'qzfs', 'qspin', 'qalphams', 'qbetams'");
     }
 
@@ -1177,7 +1199,11 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             }
 
             // read tensor properties from the input file
+            // Read tensor properties from the input file. The absent-unit path is
+            // intentionally kHz for backward compatibility; explicit units are
+            // normalized to kHz here and then to CCEX's internal rad*kHz below.
             MatrixXcd tensor = cJSON_ReadTensor(intmap,"tensor",true,intmapDefault);
+            tensor *= readIntmapFrequencyScaleToKHz(intmap,qubit1_name,qubit2_name);
             tensor = KHZ_TO_RADKHZ(tensor);
 
             // Which basis the components are written in. Recorded, never guessed: a ZFS

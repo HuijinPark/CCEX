@@ -1082,10 +1082,12 @@ This tag is ultimately applied to set \ref QubitArray::psib \(i.e. \ref tag_psib
 Interaction map between qubits. <br>
 This tag is required to define the interaction map between qubits, including its self interaction \(e.g. Zero-field splitting\). <br>
 <p><b>Data Type:</b> Dictionary List </p>
-<p><b>Unit:</b> kHz </p>
+<p><b>Unit:</b> Selected independently for each entry by its optional
+\ref tag_intmap_unit "unit"; kHz when omitted. </p>
 <p><b>Default:</b> - </p>
 <p><b>Example:</b> 
     \code intmap : [ { "between" : ["q1","q1"],
+                       "unit"    : "MHz",
                        "tensor"  : [[0.0, 0.0, 0.0],
                                     [0.0, 0.0, 0.0], 
                                     [0.0, 0.0, 0.0]] }, 
@@ -1097,8 +1099,26 @@ This tag is required to define the interaction map between qubits, including its
 <p>
     - \ref tag_between "between" : Interaction qubit pair
     - \ref tag_tensor "tensor"   : Interaction tensor
+    - \ref tag_intmap_unit "unit" : Frequency unit of this tensor
     - \ref tag_tensor_frame "tensor_frame" : Basis the tensor components are written in
 </p>
+
+\anchor tag_intmap_unit
+## intmap unit
+<p><b>Description:</b><br>
+Frequency unit of the \ref tag_tensor "tensor" in this Qubit.intmap entry. Each entry
+may choose its own unit. Supported values are <tt>"Hz"</tt>, <tt>"kHz"</tt>,
+<tt>"MHz"</tt>, and <tt>"GHz"</tt>, matched case-insensitively. The tensor is converted
+to the internal rad*kHz representation while parsing. <br>
+Omitting this key preserves the legacy behavior: the tensor numbers are interpreted as
+kHz. The code, not the input author, supplies the factor of \f$2\pi\f$. <br>
+This key belongs to Qubit.intmap entries only. The legacy top-level \ref tag_qzfs
+"qzfs", which is read by the single-qubit \ref tag_qubitfile "qubitfile" path, has no
+unit sub-key and is always kHz. <br></p>
+<p><b>Data Type:</b> String </p>
+<p><b>Default:</b> <tt>"kHz"</tt> </p>
+<p><b>Example:</b> \code "unit" : "MHz" \endcode </p>
+<p><b>Parent-tags:</b> \ref tag_intmap "intmap" </p>
 
 \anchor tag_tensor_frame
 ## tensor_frame
@@ -1161,7 +1181,7 @@ Interaction tensor. <br>
 This tag is required to define the interaction tensor for a specific qubit pair. <br>
 This tensor is used to calculate the interaction between qubits. <br>
 <p><b>Data Type:</b> Double 2D List \(3x3\) </p>
-<p><b>Unit:</b> kHz </p>
+<p><b>Unit:</b> Given by the sibling \ref tag_intmap_unit "unit" key; kHz when omitted. </p>
 <p><b>Default:</b> \c [[0.0,0.0,0.0],[0.0,0.0,0.0],[0.0,0.0,0.0]] </p>
 <p><b>Example:</b> \code tensor : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]] \endcode </p>
 <p><b>Related tags:</b> \ref tag_between "between" </p>

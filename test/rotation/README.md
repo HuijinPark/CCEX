@@ -165,6 +165,12 @@ rather than guessing from what kind of tensor it is:
 | `INTMAP_EXPLICIT_QUBIT` | explicit, `tensor_frame: "qubit"` | never |
 | `INTMAP_EXPLICIT_UNSPECIFIED` | explicit, no `tensor_frame` | fatal at nqubit>1; kept at nqubit==1 (legacy `qzfs`) |
 
+Each explicit `Qubit.intmap` entry may also carry `unit: "Hz"`, `"kHz"`,
+`"MHz"`, or `"GHz"`. An absent unit retains the legacy kHz interpretation.
+The suite feeds the same non-zero self tensor through all five spellings and
+requires identical internal intmap tensors. Unknown and non-string units must
+fail before the simulation begins.
+
 `validateCoordinateFrameRotationInputs` (reader.cpp) runs in main right after
 `Config_validateBfieldAlignment` -- every option source in, no reader started --
 and refuses what cannot be made consistent. The validation tests check the
