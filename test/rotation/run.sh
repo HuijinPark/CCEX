@@ -31,7 +31,17 @@ cd "$HERE"
 REPO="$(cd "$HERE/../.." && pwd)"
 
 CCEX_BIN="$REPO/bin/main.out"
-MPIRUN="${CCEX_MPI:-/opt/intel/oneapi/mpi/2021.18/bin/mpirun}"
+
+# mpirun, in order of preference: CCEX_MPI, the Intel MPI the loaded module points at,
+# whatever is on PATH, and finally the WSL location this suite was written against. The
+# absolute path used to be the only choice, which made the suite WSL-only.
+MPIRUN="${CCEX_MPI:-}"
+if [ -z "$MPIRUN" ] || [ ! -x "$MPIRUN" ]; then
+    for __c in "${I_MPI_ROOT:-}/bin/mpirun" "$(command -v mpirun 2>/dev/null)" \
+               /opt/intel/oneapi/mpi/2021.18/bin/mpirun; do
+        [ -n "$__c" ] && [ -x "$__c" ] && { MPIRUN="$__c"; break; }
+    done
+fi
 export I_MPI_FABRICS="${I_MPI_FABRICS:-shm}"
 
 WORK="$HERE/_work"
@@ -42,8 +52,20 @@ WORK="$HERE/_work"
 # different -march gives it a different layout for the very same Eigen types, and the
 # first MatrixXcd returned across the boundary corrupts the heap ("double free or
 # corruption"). Keep them in step.
-CXX="$(sed -n 's/^CXX *:*= *//p' "$REPO/Makefile" | head -1)"
-CXXFLAGS="$(sed -n 's/^CXXFLAGS *:*= *//p; s/^CXXFLAGS *+= *//p' "$REPO/Makefile" | tr '\n' ' ')"
+#
+# The values are ASKED OF MAKE rather than scraped out of the file. Scraping breaks two
+# ways that matter: INCLUDE_MKL and LIBRARY_MKL are written in terms of other make
+# variables on the wsl preset, and several presets end a line with a `#` comment that a
+# sed would hand straight to the compiler.
+mkvar(){ make -C "$REPO" --no-print-directory --eval="__ccex_q: ; @echo $1" __ccex_q 2>/dev/null; }
+CXX="$(mkvar '$(CXX)')"
+CXXFLAGS="$(mkvar '$(CXXFLAGS)')"
+# The MKL line differs per server -- ILP64 sequential here, threaded with libiomp5
+# there, and the include/lib paths follow whichever oneAPI is installed. It used to be
+# hard-coded to one machine's 2026.0 tree, so the unit test could not link anywhere else.
+MKLFLAGS="$(mkvar '$(INCLUDE_MKL) $(LIBRARY_MKL) $(LDFLAGS_MKL)')"
+[ -n "$CXX" ] || { echo "ERROR: could not read CXX from $REPO/Makefile" >&2
+                   echo "       run do_compile.sh <server> first" >&2; exit 1; }
 
 npass=0
 nfail=0
@@ -71,9 +93,7 @@ UNIT_BIN="$WORK/test_rotation_unit.out"
 "$CXX" test_rotation_unit.cpp "$REPO"/obj/*.o -o "$UNIT_BIN" \
     $CXXFLAGS -w \
     -I"$REPO/zlib/eigen" -I"$REPO/zlib/uthash/include/" -I"$REPO/include/" \
-    -I/opt/intel/oneapi/mkl/2026.0/include \
-    -L/opt/intel/oneapi/mkl/2026.0/lib/intel64 -Wl,-rpath,/opt/intel/oneapi/mkl/2026.0/lib/intel64 \
-    -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lpthread -lm \
+    $MKLFLAGS \
     || { echo "ERROR: could not build the unit test" >&2; exit 1; }
 
 "$UNIT_BIN"
