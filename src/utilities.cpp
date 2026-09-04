@@ -417,7 +417,7 @@ MatrixXcd getSpinor(float S, float ms){
 }
 
 
-MatrixXcd kron(MatrixXcd A, MatrixXcd B){
+MatrixXcd kron(const MatrixXcd& A, const MatrixXcd& B){
     MatrixXcd C(A.rows()*B.rows(),A.cols()*B.cols());
     for (int i=0; i<A.rows(); i++){
         for (int j=0; j<A.cols(); j++){

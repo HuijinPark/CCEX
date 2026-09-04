@@ -120,7 +120,7 @@ void reportQubitAlignedRotation(const double bath_axis[3], const double qubit_ax
 float* substates(float S);
 bool isSubLevel(float S, float ms);
 MatrixXcd getSpinor(float S, float ms);
-MatrixXcd kron(MatrixXcd a, MatrixXcd b);
+MatrixXcd kron(const MatrixXcd& a, const MatrixXcd& b);
 MatrixXcd partialtrace(MatrixXcd Mij, int dimrow, int dimcol);
 double calNorm(MatrixXcd m);
 int normalize(MatrixXcd* m);
