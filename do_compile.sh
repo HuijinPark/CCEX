@@ -17,12 +17,23 @@ cat << EOF > ./Makefile
 
 CXX = mpiicpc
 
-CXXFLAGS = -std=c++11 -O3 -g #-Wall Higher level warning
+# icpx, not icpc. mpiicpc defaults to icpc (Intel C++ Classic), which Intel deprecated
+# in 2023 and which is 3.2x slower on this code -- 19.5 s vs 6.1 s on the P1 10 ppm gCCE
+# regression case, one rank on idm4. The speed is not from relaxed arithmetic: this
+# keeps -fp-model=precise, and icpc with -ipo and fp-model fast=2 still only reaches
+# 9.7 s. CCEX is Eigen-template-heavy and the Classic front end does not keep up with
+# the LLVM back end on that. icpx ships in the same module; nothing new to install.
+export I_MPI_CXX := icpx
+
+CXXFLAGS = -std=c++17 -O3 -g -DNDEBUG -fp-model=precise
 #CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
 CXXFLAGS += -Wno-deprecated-declarations
-CXXFLAGS += -diag-disable=2196
-CXXFLAGS += -diag-disable=10441
-CXXFLAGS += -Wno-writable-strings -fsanitize=address
+# -diag-disable is icpc-only; 10441 was silencing the Classic deprecation remark and has
+# nothing left to silence. -fsanitize=address is dropped because icpc never supported it:
+# it emitted "command line warning #10148: option '-fsanitize=address' not supported"
+# once per file and the binary had no asan symbols, so nothing was ever being checked.
+# icpx does support it -- add it to a separate debug build when you actually want it.
+CXXFLAGS += -Wno-writable-strings
 
 SRC_DIR=./src
 OBJ_DIR=./obj
@@ -358,5 +369,18 @@ else
  :
 fi
 
-make -j$(nproc)
+# A changed Makefile has to invalidate every object. make compares each .o against its
+# .cpp and the headers in the .d file -- never against the flags it was built with -- so
+# switching preset, compiler or optimization otherwise relinks the OLD objects and hands
+# back a binary that looks new and is not. Switching idm4 from icpc to icpx reproduced
+# exactly that: same 112 MB icpc binary, one second, exit 0.
+if ! cmp -s Makefile .ccex_makefile.stamp 2>/dev/null; then
+    echo "[build] build settings changed -- cleaning objects first"
+    make clean >/dev/null 2>&1 || true
+fi
+cp -f Makefile .ccex_makefile.stamp
+
+# idm4's login node is shared and has 24 cores; -j$(nproc) took all of them. Override
+# with CCEX_JOBS when you have the machine to yourself.
+make -j"${CCEX_JOBS:-5}"
 #make 
