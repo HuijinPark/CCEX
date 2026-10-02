@@ -111,8 +111,13 @@ void convertClusinfoToHash(HashCluster** hashClusters, Cluster* CCE){
 
 int addCluster(HashCluster** hashClusters, int order, const char* id,int* spins, float strength,int count)
 {
-    char* orderStr = (char*)calloc(countDigits(order)+1,sizeof(char));
-    sprintf(orderStr,"%d",order);
+    // Same stack-buffer change as findCluster. The heap copy is now made only on the
+    // branch that actually keeps it -- a brand new HashCluster takes ownership through
+    // c->N and it is released by freeHashCluster. The old code allocated on every call
+    // and freed it only when the property already existed, so it leaked one small block
+    // per inserted cluster (~25 MB per clusterize at production size).
+    char orderStr[16];
+    snprintf(orderStr,sizeof(orderStr),"%d",order);
     /* Check overlapping of key */
     HashCluster *c;
     HASH_FIND_STR(*hashClusters, orderStr, c);
@@ -131,7 +136,10 @@ int addCluster(HashCluster** hashClusters, int order, const char* id,int* spins,
                 exit(-1);
             }
             /* Value assignment 1st */
-            c->N = orderStr;
+            c->N = strdup(orderStr);
+            if (c->N==NULL){
+                exit(-1);
+            }
             c->prop = NULL;
             HASH_ADD_KEYPTR(hh, *hashClusters, c->N, strlen(c->N), c);
         }
@@ -145,7 +153,6 @@ int addCluster(HashCluster** hashClusters, int order, const char* id,int* spins,
         HASH_ADD_KEYPTR(hh, c->prop, p->id, strlen(p->id), p);
     }
     else{ 
-        free(orderStr);
         // The cluster already exist, so we cannot add
         return 0;
     }
@@ -359,7 +366,12 @@ void makeHashClusterOn(HashCluster** hashclusters, int order, int nspin, int** s
 void typeStr(char** destination, int* cluster, int order, int nSpin){
     int nSpinDigit = countDigits(nSpin);
     for (int i=0; i<order; i++){
-        char str[nSpinDigit];
+        // +1 for the terminating NUL that sprintf always writes. Without it this
+        // overflows the VLA by one byte for every index with countDigits(nSpin) digits,
+        // which is a stack write past the end -- AddressSanitizer stops on it.
+        // setMaxLengthStr above already accounts for the NUL ("Additional length 1 for
+        // null"); only this temporary was missing it.
+        char str[nSpinDigit + 1];
         sprintf(str,"%d", cluster[i]);
         strcat(*destination,str);
         if (i!=order-1){
@@ -377,13 +389,17 @@ int by_strength(const Property* a, const Property* b)
 
 HashCluster* findCluster(HashCluster* hashClusters, int order){
 
-    char* orderStr = (char*)calloc(countDigits(order)+1,sizeof(char));
-    sprintf(orderStr,"%d",order);
+    // The key is the decimal form of a small cluster order, and this runs once per
+    // candidate cluster -- 12.4M times for a production order-2 bath. calloc + sprintf +
+    // free per call showed up as most of clusterize in the profile, all of it allocator
+    // and vsprintf overhead for a one-character string. Format into a stack buffer; the
+    // bytes handed to HASH_FIND_STR are unchanged.
+    char orderStr[16];
+    snprintf(orderStr,sizeof(orderStr),"%d",order);
     /* Check overlapping of key */
     HashCluster *c;
     HASH_FIND_STR(hashClusters, orderStr, c);
-    
-    free(orderStr);
+
     return c;
 }
 

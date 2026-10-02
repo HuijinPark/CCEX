@@ -78,6 +78,13 @@ void DefectArray_allocDefect_idf(DefectArray* dfa, int idf, int navaax, int nadd
 
     Defect* df = dfa->defect[idf];
 
+    // Legacy Defect inputs had no frame tag and were consumed after the bath rotation,
+    // so their data was implicitly in the common computational frame. Keep that default.
+    df->axis_set = false;
+    df->axis[0] = 0.0; df->axis[1] = 0.0; df->axis[2] = 0.0;
+    df->coordinate_frame = DEFECT_COORDINATE_FRAME_QUBIT;
+    df->zfs_input_mode = DEFECT_ZFS_NONE;
+
     df->naddspin = naddspin;
 
     df->types = allocChar2d(naddspin,MAX_CHARARRAY_LENGTH);
@@ -133,6 +140,19 @@ void DefectArray_setDefect_idf_eqs(DefectArray* dfa, int idf, double* eqs){
 
 void DefectArray_setDefect_idf_navaax(DefectArray* dfa, int idf, int navaax){
     dfa->defect[idf]->navaax = navaax;
+}
+
+void DefectArray_setDefect_idf_axis(DefectArray* dfa, int idf, const double axis[3]){
+    for (int i=0; i<3; i++){ dfa->defect[idf]->axis[i] = axis[i]; }
+    dfa->defect[idf]->axis_set = true;
+}
+
+void DefectArray_setDefect_idf_coordinate_frame(DefectArray* dfa, int idf, DefectCoordinateFrame frame){
+    dfa->defect[idf]->coordinate_frame = frame;
+}
+
+void DefectArray_setDefect_idf_zfs_input_mode(DefectArray* dfa, int idf, DefectZfsInputMode mode){
+    dfa->defect[idf]->zfs_input_mode = mode;
 }
 
 void DefectArray_setDefect_idf_iax_isp_rxyz(DefectArray* dfa, int idf, int iax, int isp, double* rxyzs){
@@ -216,6 +236,22 @@ int DefectArray_getDefect_idf_navaax(DefectArray* dfa, int idf){
     return dfa->defect[idf]->navaax;
 }
 
+bool DefectArray_getDefect_idf_axis_set(DefectArray* dfa, int idf){
+    return dfa->defect[idf]->axis_set;
+}
+
+double* DefectArray_getDefect_idf_axis(DefectArray* dfa, int idf){
+    return dfa->defect[idf]->axis;
+}
+
+DefectCoordinateFrame DefectArray_getDefect_idf_coordinate_frame(DefectArray* dfa, int idf){
+    return dfa->defect[idf]->coordinate_frame;
+}
+
+DefectZfsInputMode DefectArray_getDefect_idf_zfs_input_mode(DefectArray* dfa, int idf){
+    return dfa->defect[idf]->zfs_input_mode;
+}
+
 double* DefectArray_getDefect_idf_iax_isp_rxyz(DefectArray* dfa, int idf, int iax, int isp){
     return dfa->defect[idf]->rxyzs[iax][isp];
 }
@@ -234,6 +270,42 @@ MatrixXcd DefectArray_getDefect_idf_iax_zfs(DefectArray* dfa, int idf, int iax){
 
 double DefectArray_getDefect_idf_iax_detuning(DefectArray* dfa, int idf, int iax){
     return dfa->defect[idf]->detuning[iax];
+}
+
+static void rotateDefectVector(double v[3], const double R[3][3]){
+    double src[3] = {v[0],v[1],v[2]};
+    for (int i=0; i<3; i++){
+        v[i] = R[i][0]*src[0] + R[i][1]*src[1] + R[i][2]*src[2];
+    }
+}
+
+int DefectArray_applyCoordinateFrameRotation(DefectArray* dfa, const double R[3][3]){
+
+    int nrotated = 0;
+
+    for (int idf=0; idf<dfa->ndefect; idf++){
+        Defect* df = dfa->defect[idf];
+        if (df->coordinate_frame != DEFECT_COORDINATE_FRAME_BATH){ continue; }
+
+        if (df->axis_set){ rotateDefectVector(df->axis,R); }
+
+        // Element 0 is reserved by the legacy representation; real configurations are
+        // 1..navaax-1. rxyzs are displacement vectors, so they receive R*r (no origin).
+        for (int iax=1; iax<df->navaax; iax++){
+            for (int isp=0; isp<df->naddspin; isp++){
+                rotateDefectVector(df->rxyzs[iax][isp],R);
+                df->hypf[iax][isp] = rotateTensor(df->hypf[iax][isp],R);
+                df->efg[iax][isp] = rotateTensor(df->efg[iax][isp],R);
+            }
+            df->zfs[iax] = rotateTensor(df->zfs[iax],R);
+        }
+
+        // detuning is a scalar frequency and is intentionally not transformed.
+        df->coordinate_frame = DEFECT_COORDINATE_FRAME_QUBIT;
+        nrotated++;
+    }
+
+    return nrotated;
 }
 
 int DefectArray_getNbathspin(DefectArray* dfa){
@@ -736,8 +808,25 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
     printStructElementChar("dfname",DefectArray_getDefect_idf_dfname(dfa,idf));
     printStructElementBool("apprx",DefectArray_getDefect_idf_apprx(dfa,idf));
     printStructElementInt("naddspin",DefectArray_getDefect_idf_naddspin(dfa,idf));
-    printf("      %-18s:   %-d - 1 # ( possible axis : 1 ~ %d )\n", "navaax", \
-    DefectArray_getDefect_idf_navaax(dfa,idf), DefectArray_getDefect_idf_navaax(dfa,idf)-1);
+    printf("      %-18s:   %d indexed configurations (1 ~ %d)\n", "navaax",
+           DefectArray_getDefect_idf_navaax(dfa,idf)-1,
+           DefectArray_getDefect_idf_navaax(dfa,idf)-1);
+
+    DefectCoordinateFrame frame = DefectArray_getDefect_idf_coordinate_frame(dfa,idf);
+    printStructElementChar("coordinate_frame",
+        (frame == DEFECT_COORDINATE_FRAME_BATH) ? (char*)"bath" : (char*)"qubit");
+    if (DefectArray_getDefect_idf_axis_set(dfa,idf)){
+        printStructElementDouble1d("axis",DefectArray_getDefect_idf_axis(dfa,idf),3);
+    }
+
+    const char* zfs_mode = "none";
+    switch (DefectArray_getDefect_idf_zfs_input_mode(dfa,idf)){
+        case DEFECT_ZFS_INDEXED_LEGACY: zfs_mode = "indexed legacy list"; break;
+        case DEFECT_ZFS_SHARED_DE:       zfs_mode = "shared D/E object"; break;
+        case DEFECT_ZFS_SHARED_TENSOR:   zfs_mode = "shared tensor object"; break;
+        default: break;
+    }
+    printStructElementChar("zfs input",(char*)zfs_mode);
 
     printStructElementChar2d("types",dfa->defect[idf]->types,DefectArray_getDefect_idf_naddspin(dfa,idf));
     printStructElementFloat1d("spins",dfa->defect[idf]->spins,DefectArray_getDefect_idf_naddspin(dfa,idf));
@@ -783,11 +872,21 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
     }
 
     printf("      ________________________________________________________________\n\n");
-    printf("      Zero-field splitting tensor (MHz) : zfs[iax] \n");
-    for (int i=1; i<DefectArray_getDefect_idf_navaax(dfa,idf); i++){
+    printf("      Zero-field splitting tensor (MHz)\n");
+    int izfs_begin = 1;
+    int izfs_end = DefectArray_getDefect_idf_navaax(dfa,idf);
+    DefectZfsInputMode zfs_input = DefectArray_getDefect_idf_zfs_input_mode(dfa,idf);
+    if (zfs_input == DEFECT_ZFS_SHARED_DE || zfs_input == DEFECT_ZFS_SHARED_TENSOR){
+        izfs_end = (izfs_end > 1) ? 2 : izfs_end; // the remaining entries are identical broadcasts
+    }
+    for (int i=izfs_begin; i<izfs_end; i++){
         char message[100];
         MatrixXcd tensor;
-        sprintf(message,"zfs[%d]",i);
+        if (zfs_input == DEFECT_ZFS_SHARED_DE || zfs_input == DEFECT_ZFS_SHARED_TENSOR){
+            sprintf(message,"zfs[shared]");
+        }else{
+            sprintf(message,"zfs[%d]",i);
+        }
         tensor = DefectArray_getDefect_idf_iax_zfs(dfa,idf,i);
         if (tensor.rows() != 0){
             printInlineMatrixXcd(message,tensor);

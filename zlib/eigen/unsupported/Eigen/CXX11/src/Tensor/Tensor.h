@@ -23,12 +23,12 @@ namespace Eigen {
   * The %Tensor class encompasses only dynamic-size objects so far.
   *
   * The first two template parameters are required:
-  * \tparam Scalar_ \anchor tensor_tparam_scalar Numeric type, e.g. float, double, int or std::complex<float>.
+  * \tparam Scalar_  Numeric type, e.g. float, double, int or `std::complex<float>`.
   *                 User defined scalar types are supported as well (see \ref user_defined_scalars "here").
   * \tparam NumIndices_ Number of indices (i.e. rank of the tensor)
   *
   * The remaining template parameters are optional -- in most cases you don't have to worry about them.
-  * \tparam Options_ \anchor tensor_tparam_options A combination of either \b #RowMajor or \b #ColMajor, and of either
+  * \tparam Options_  A combination of either \b #RowMajor or \b #ColMajor, and of either
   *                 \b #AutoAlign or \b #DontAlign.
   *                 The former controls \ref TopicStorageOrders "storage order", and defaults to column-major. The latter controls alignment, which is required
   *                 for vectorization. It defaults to aligning tensors. Note that tensors currently do not support any operations that profit from vectorization.
@@ -42,7 +42,7 @@ namespace Eigen {
   * \endcode
   *
   * This class can be extended with the help of the plugin mechanism described on the page
-  * \ref TopicCustomizingEigen by defining the preprocessor symbol \c EIGEN_TENSOR_PLUGIN.
+  * \ref TopicCustomizing_Plugins by defining the preprocessor symbol \c EIGEN_TENSOR_PLUGIN.
   *
   * <i><b>Some notes:</b></i>
   *
@@ -388,6 +388,7 @@ class Tensor : public TensorBase<Tensor<Scalar_, NumIndices_, Options_, IndexTyp
       resize(TensorEvaluator<const Assign, DefaultDevice>(assign, DefaultDevice()).dimensions());
       internal::TensorExecutor<const Assign, DefaultDevice>::run(assign, DefaultDevice());
     }
+
     template<typename OtherDerived>
     EIGEN_DEVICE_FUNC
     EIGEN_STRONG_INLINE Tensor(const TensorBase<OtherDerived, WriteAccessors>& other)
@@ -401,14 +402,13 @@ class Tensor : public TensorBase<Tensor<Scalar_, NumIndices_, Options_, IndexTyp
     #if EIGEN_HAS_RVALUE_REFERENCES
     EIGEN_DEVICE_FUNC
     EIGEN_STRONG_INLINE Tensor(Self&& other)
-      : Tensor()
+      : m_storage(std::move(other.m_storage))
     {
-      m_storage.swap(other.m_storage);
     }
     EIGEN_DEVICE_FUNC
     EIGEN_STRONG_INLINE Tensor& operator=(Self&& other)
     {
-      m_storage.swap(other.m_storage);
+      m_storage = std::move(other.m_storage);
       return *this;
     }
     #endif

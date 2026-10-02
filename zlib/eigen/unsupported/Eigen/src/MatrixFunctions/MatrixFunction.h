@@ -7,8 +7,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef EIGEN_MATRIX_FUNCTION
-#define EIGEN_MATRIX_FUNCTION
+#ifndef EIGEN_MATRIX_FUNCTION_H
+#define EIGEN_MATRIX_FUNCTION_H
 
 #include "StemFunction.h"
 
@@ -72,10 +72,10 @@ MatrixType MatrixFunctionAtomic<MatrixType>::compute(const MatrixType& A)
   MatrixType F = m_f(avgEival, 0) * MatrixType::Identity(rows, rows);
   MatrixType P = Ashifted;
   MatrixType Fincr;
-  for (Index s = 1; s < 1.1 * rows + 10; s++) { // upper limit is fairly arbitrary
+  for (Index s = 1; double(s) < 1.1 * double(rows) + 10.0; s++) { // upper limit is fairly arbitrary
     Fincr = m_f(avgEival, static_cast<int>(s)) * P;
     F += Fincr;
-    P = Scalar(RealScalar(1.0/(s + 1))) * P * Ashifted;
+    P = Scalar(RealScalar(1)/RealScalar(s + 1)) * P * Ashifted;
 
     // test whether Taylor series converged
     const RealScalar F_norm = F.cwiseAbs().rowwise().sum().maxCoeff();
@@ -566,4 +566,4 @@ const MatrixFunctionReturnValue<Derived> MatrixBase<Derived>::cosh() const
 
 } // end namespace Eigen
 
-#endif // EIGEN_MATRIX_FUNCTION
+#endif // EIGEN_MATRIX_FUNCTION_H

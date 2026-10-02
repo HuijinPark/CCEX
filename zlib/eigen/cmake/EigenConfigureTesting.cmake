@@ -8,8 +8,17 @@ ei_set_sitename()
 ei_set_build_string()
 
 add_custom_target(buildtests)
-add_custom_target(check COMMAND "ctest")
+add_custom_target(check COMMAND "ctest" ${EIGEN_CTEST_ARGS})
 add_dependencies(check buildtests)
+
+# Convenience target for only building GPU tests.
+add_custom_target(buildtests_gpu)
+add_custom_target(check_gpu COMMAND "ctest" "--output-on-failure" 
+                                            "--no-compress-output"
+                                            "--build-no-clean"
+                                            "-T" "test"
+                                            "-L" "gpu")
+add_dependencies(check_gpu buildtests_gpu)
 
 # check whether /bin/bash exists (disabled as not used anymore)
 # find_file(EIGEN_BIN_BASH_EXISTS "/bin/bash" PATHS "/" NO_DEFAULT_PATH)
@@ -49,15 +58,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(COVERAGE_FLAGS "-fprofile-arcs -ftest-coverage")
     set(CTEST_CUSTOM_COVERAGE_EXCLUDE "/test/")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_FLAGS}")
-  endif(EIGEN_COVERAGE_TESTING)
+  endif()
   
 elseif(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_CRT_SECURE_NO_WARNINGS /D_SCL_SECURE_NO_WARNINGS")
-endif(CMAKE_COMPILER_IS_GNUCXX)
-
-
-check_cxx_compiler_flag("-std=c++11" EIGEN_COMPILER_SUPPORT_CXX11)
-
-if(EIGEN_TEST_CXX11 AND EIGEN_COMPILER_SUPPORT_CXX11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
+
+

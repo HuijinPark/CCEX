@@ -2,14 +2,32 @@
 
 #include "../include/memory.h"
 #include <string.h>
+#include <float.h>  // DBL_EPSILON
 
 // init
 Config* Config_init(){
     Config* cnf = (Config*)allocArray1d(1,sizeof(Config));
     cnf->method[0] = '\0';
     cnf->quantity[0] = '\0';
+    cnf->propagator[0] = '\0';
+    cnf->evolution[0] = '\0';
+    cnf->evolution_isdefault = true;
     cnf->hfmedi = false;
     cnf->knight = false;
+
+    // Bath coordinate rotation : off. Config comes from calloc, so the two axes would
+    // otherwise be [0,0,0] -- set them to +z so that "enabled" with no axis given is a
+    // well-defined identity instead of a zero-norm error.
+    cnf->rot_enabled = false;
+    cnf->rot_bath_axis[0]  = 0.0; cnf->rot_bath_axis[1]  = 0.0; cnf->rot_bath_axis[2]  = 1.0;
+    cnf->rot_qubit_axis[0] = 0.0; cnf->rot_qubit_axis[1] = 0.0; cnf->rot_qubit_axis[2] = 1.0;
+    cnf->rot_reference_qubit[0] = '\0'; // empty : use Qubit[0]
+    cnf->rot_qubit_position_frame[0] = '\0'; // empty : "bath"
+    cnf->rot_hf_tensor_frame[0] = '\0'; // empty : not given
+    cnf->rot_qd_tensor_frame[0] = '\0';
+
+    cnf->defect_axis_reference = DEFECT_AXIS_REFERENCE_NONE;
+
     return cnf;
 }
 
@@ -150,6 +168,12 @@ bool Config_getKnight(Config* cnf){
 char* Config_getQuantity(Config* cnf){
     return cnf->quantity;
 }
+char* Config_getPropagator(Config* cnf){
+    return cnf->propagator;
+}
+char* Config_getEvolution(Config* cnf){
+    return cnf->evolution;
+}
 
 int   Config_getOrder(Config* cnf){
     return cnf->order;
@@ -235,6 +259,38 @@ int  Config_get_flines_i(Config* cnf, int i){
     return cnf->_flines[i];
 }
 
+bool Config_getRot_enabled(Config* cnf){
+    return cnf->rot_enabled;
+}
+
+double* Config_getRot_bath_axis(Config* cnf){
+    return cnf->rot_bath_axis;
+}
+
+double* Config_getRot_qubit_axis(Config* cnf){
+    return cnf->rot_qubit_axis;
+}
+
+char* Config_getRot_reference_qubit(Config* cnf){
+    return cnf->rot_reference_qubit;
+}
+
+char* Config_getRot_qubit_position_frame(Config* cnf){
+    return cnf->rot_qubit_position_frame;
+}
+
+char* Config_getRot_hf_tensor_frame(Config* cnf){
+    return cnf->rot_hf_tensor_frame;
+}
+
+char* Config_getRot_qd_tensor_frame(Config* cnf){
+    return cnf->rot_qd_tensor_frame;
+}
+
+DefectAxisReference Config_getDefect_axis_reference(Config* cnf){
+    return cnf->defect_axis_reference;
+}
+
 
 double  Config_getDefectTotSpin(Config* cnf){
     return cnf->DefectTotSpin;
@@ -314,6 +370,97 @@ void Config_setQuantity(Config* cnf, char* quantity){
     }
 
     strcpy(cnf->quantity,quantity);
+}
+
+void Config_setPropagator(Config* cnf, char* propagator){
+
+    // gCCE free-evolution propagator.
+    //   eigen : one SelfAdjointEigenSolver per cluster, exp(-i*H*tau) = M*diag(exp(-i*l*tau))*M^dag
+    //   expm  : Eigen's general matrix exponential per step, the original CCEX path
+    const int opsize = 2;
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"eigen","expm"};
+    int idx = findIndexCharFix(options,0,opsize-1,propagator);
+    if (idx == -1) {
+        fprintf(stderr, "Error: current propagator options (%s) is not available\n",propagator);
+        fprintf(stderr, "Available options are : ");
+        for (int i = 0; i < opsize; i++){
+            fprintf(stderr, "%s ",options[i]);
+        }
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Please check the input file or change the possible option set\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(cnf->propagator,propagator);
+}
+
+void Config_setEvolution(Config* cnf, char* evolution){
+
+    // gCCE state representation.
+    //   vector : DEFAULT. rho0 is a pure state whenever nstate > 0 (QubitArray_Rho0 is
+    //            always psi0*psi0^dag, and BathArray_Rho0 is too unless it is the
+    //            ensemble average), so propagate |psi> instead of rho. Each step becomes
+    //            matrix-VECTOR products, O(n^2) where the matrix path is O(n^3), and the
+    //            partial trace collapses to reshaping |psi> into a qdim x bdim matrix Psi
+    //            and forming Psi*Psi^dag.
+    //   matrix : propagate the full density matrix, rho(t) = U*rho0*U^dag, then partial-
+    //            trace it. What CCEX did before; works for every configuration.
+    // Same physics, different arithmetic: the results agree to rounding but are not
+    // guaranteed bit-identical, so a converged series should not switch mid-way.
+    // vector needs nstate > 0 (an ensemble rho0 is mixed, so no state vector exists),
+    // propagator=eigen (with expm the per-step matrix exponential dominates and there is
+    // nothing to win) and method=gCCE. cJSON_readOptionConfig falls the DEFAULT back to
+    // matrix wherever those do not hold; an EXPLICIT evolution=vector is never downgraded
+    // -- calCoherenceGcce says why it cannot run and stops.
+    const int opsize = 2;
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"matrix","vector"};
+    int idx = findIndexCharFix(options,0,opsize-1,evolution);
+    if (idx == -1) {
+        fprintf(stderr, "Error: current evolution options (%s) is not available\n",evolution);
+        fprintf(stderr, "Available options are : ");
+        for (int i = 0; i < opsize; i++){
+            fprintf(stderr, "%s ",options[i]);
+        }
+        fprintf(stderr, "\n");
+        fprintf(stderr, "Please check the input file or change the possible option set\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(cnf->evolution,evolution);
+}
+
+/**
+ * Pick the evolution path once every option source has been applied.
+ *
+ * This CANNOT be decided while the input file is being parsed. main.cpp reads the file
+ * from inside the getopt loop (case 'f'), so -m, -N and the rest are still to come:
+ * `-f ccein.json -N 1` on a file with no "nstate" key would have been resolved against
+ * nstate = 0 and frozen at matrix, even though the run does have a pure rho0. Call this
+ * after the loop, before Config_report, so the reported value is the one that runs.
+ *
+ * An explicit "evolution" is never rewritten -- only checked against the one condition
+ * that is fatal outside gCCE. calCoherenceGcce enforces the other two.
+ */
+void Config_resolveEvolution(Config* cnf){
+
+    bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
+
+    if (!cnf->evolution_isdefault){
+        // Only calCoherenceGcce reads evolution. Any other method would ignore it and run
+        // the density-matrix path anyway, so refuse rather than let the input claim
+        // something the run does not do.
+        if (strcasecmp(cnf->evolution,"matrix")!=0 && !isGCCE){
+            fprintf(stderr,"Error : evolution=%s is implemented for method=gCCE only "
+                           "(this run has method=%s).\n",cnf->evolution,cnf->method);
+            exit(EXIT_FAILURE);
+        }
+        return;
+    }
+
+    bool vectorFits = isGCCE
+                   && (cnf->nstate > 0)
+                   && (strcasecmp(cnf->propagator,"eigen")==0);
+    strcpy(cnf->evolution, vectorFits ? "vector" : "matrix");
 }
 
 void Config_setOrder(Config* cnf, int order){
@@ -490,6 +637,115 @@ void Config_set_flines_i(Config* cnf, int fline, int i){
     cnf->_flines[i] = fline;
 }
 
+// The axes are only copied here. Whether they describe a usable frame -- finite,
+// non-zero, not collinear -- is decided in one place, buildQubitAlignedRotation,
+// which is also what the rotation itself is built from.
+void Config_setRot_enabled(Config* cnf, bool rot_enabled){
+    cnf->rot_enabled = rot_enabled;
+}
+
+void Config_setRot_bath_axis(Config* cnf, double* rot_bath_axis){
+    copyDouble1d(cnf->rot_bath_axis,rot_bath_axis,3);
+}
+
+void Config_setRot_qubit_axis(Config* cnf, double* rot_qubit_axis){
+    copyDouble1d(cnf->rot_qubit_axis,rot_qubit_axis,3);
+}
+
+void Config_setRot_reference_qubit(Config* cnf, char* rot_reference_qubit){
+
+    if (strlen(rot_reference_qubit) >= MAX_CHARARRAY_LENGTH){
+        fprintf(stderr,"Error: reference_qubit \"%s\" is longer than a qubit name can be (%d characters)\n",
+                rot_reference_qubit,MAX_CHARARRAY_LENGTH-1);
+        exit(EXIT_FAILURE);
+    }
+    strcpy(cnf->rot_reference_qubit,rot_reference_qubit);
+}
+
+// "bath" or "qubit" and nothing else: an unrecognized string would otherwise be read
+// as "not bath", silently skipping a transformation the tensors needed.
+static void Config_setTensorFrame(char* dest, char* frame, const char* key){
+
+    if (strcasecmp(frame,"bath")!=0 && strcasecmp(frame,"qubit")!=0){
+        fprintf(stderr,"Error: %s must be \"bath\" or \"qubit\" (got \"%s\")\n",key,frame);
+        fprintf(stderr,"  \"bath\"  : tensor components are in the original bath Cartesian basis\n");
+        fprintf(stderr,"  \"qubit\" : tensor components are already in the qubit-aligned basis\n");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(dest,frame);
+}
+
+void Config_setRot_hf_tensor_frame(Config* cnf, char* frame){
+    Config_setTensorFrame(cnf->rot_hf_tensor_frame,frame,"coordinate_frame_rotation.hf_tensor_frame");
+}
+
+void Config_setRot_qd_tensor_frame(Config* cnf, char* frame){
+    Config_setTensorFrame(cnf->rot_qd_tensor_frame,frame,"coordinate_frame_rotation.qd_tensor_frame");
+}
+
+// Only "bath" for now. "qubit" is refused rather than deferred: it would put the qubit
+// positions in the computational frame while the bath is still in the source frame, and
+// readBathfiles would then compare the two in its rbath / rbathcut selection, its mindist
+// and its point-dipole tensors.
+void Config_setRot_qubit_position_frame(Config* cnf, char* frame){
+
+    if (strcasecmp(frame,"bath") != 0){
+        fprintf(stderr,"Error: coordinate_frame_rotation.qubit_position_frame must be \"bath\" (got \"%s\")\n",frame);
+        if (strcasecmp(frame,"qubit") == 0){
+            fprintf(stderr,"\"qubit\" is not supported in this version: the bath files are read in the\n");
+            fprintf(stderr,"source frame, so qubit positions already in the computational frame would be\n");
+            fprintf(stderr,"compared against them before anything is rotated.\n");
+        }
+        fprintf(stderr,"Write every Qubit.xyz in the same Cartesian basis and origin as the bath files.\n");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(cnf->rot_qubit_position_frame,frame);
+}
+
+void Config_setDefect_axis_reference(Config* cnf, DefectAxisReference reference){
+    cnf->defect_axis_reference = reference;
+}
+
+/**
+ * @brief With the rotation on, require the field to lie along the computational z axis
+ * @details Mirrors Config_resolveEvolution in timing: it cannot run during the file
+ *          parse, because -B is applied afterwards and would change the answer.
+ *
+ *          Without the rotation this is a no-op, so an arbitrary field vector keeps
+ *          working exactly as it always has. With the rotation on, the computational z
+ *          axis IS the qubit axis, and "bfield" is read in that computational frame --
+ *          so [0,0,500] means 500 G along +qubit_axis and [0,0,-500] means 500 G the
+ *          other way. Both are accepted: the requirement is the LINE, not the sign.
+ *          A tilted field is not supported alongside the rotation and is refused here.
+ *
+ *          The tolerance is tight on purpose. Nothing rotates these numbers -- they are
+ *          the input as written -- so anything beyond round-off in the parse is a real
+ *          transverse component that the user meant and that this version cannot honour.
+*/
+void Config_validateBfieldAlignment(Config* cnf){
+
+    if (!cnf->rot_enabled){ return; }
+
+    double bx = cnf->bfield[0], by = cnf->bfield[1], bz = cnf->bfield[2];
+    double bperp = sqrt(bx*bx + by*by);
+    double bnorm = sqrt(bx*bx + by*by + bz*bz);
+
+    if (bnorm == 0.0){ return; } // no field at all : nothing to align
+
+    double tol = 1.0e-12 * ((bnorm > 1.0) ? bnorm : 1.0);
+
+    if (bperp > tol){
+        fprintf(stderr,"Error: coordinate_frame_rotation requires bfield to be aligned\n");
+        fprintf(stderr,"with the computational z axis, which represents qubit_axis.\n");
+        fprintf(stderr,"Current bfield: [%g, %g, %g]\n",bx,by,bz);
+        fprintf(stderr,"  transverse component |B_perp| = %g  (tolerance %g)\n",bperp,tol);
+        fprintf(stderr,"Write the field as [0, 0, Bz]; Bz may be negative for the opposite\n");
+        fprintf(stderr,"direction along qubit_axis. A tilted field is not supported with the\n");
+        fprintf(stderr,"coordinate frame rotation.\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
 void Config_setDefectTotSpin(Config* cnf, double DefectTotSpin){
     cnf->DefectTotSpin = DefectTotSpin;
 }
@@ -527,7 +783,12 @@ void Config_setHf_ignore_oor(Config* cnf, int hf_ignore_oor){
 
 void Config_setHf_readmode(Config* cnf, int hf_readmode){
 
-    if (hf_readmode < 0 && hf_readmode > 3) {
+    // Anything outside 0..3 used to fall through -- the guard read
+    // "hf_readmode < 0 && hf_readmode > 3", which is never true -- and readHftensorfile
+    // has no else after its `==0` / `==1||2||3` branches, so neither
+    // BathArray_setBathHypfs nor the tensor file ever ran. Every bath spin kept an unset
+    // hyperfine tensor and the run finished, quietly, with no hyperfine coupling at all.
+    if (hf_readmode < 0 || hf_readmode > 3) {
         fprintf(stderr, "Error: current hf_readmode (%d < 0 or > 3) is not available\n",hf_readmode);
         exit(EXIT_FAILURE);
     }
@@ -559,8 +820,19 @@ void Config_setQd_cellpara(Config* cnf, double* qd_cellpara){
 
 void Config_setQd_readmode(Config* cnf, int qd_readmode){
 
-    if (qd_readmode < 0 && qd_readmode > 4) {
-        fprintf(stderr, "Error: possible qd_readmode is 0, 1, 2, 3, 4\n");
+    // The supported set is not a range: 1 was removed, so 0, 2, 3 and 4 are listed one
+    // by one rather than bounded. Anything else used to fall through -- the guard read
+    // "qd_readmode < 0 && qd_readmode > 4", which is never true -- and then missed every
+    // case of the switch in cJSON_readOptionConfig and every branch of readQdtensorfile,
+    // so the run went on quietly with no quadrupole interaction at all.
+    if (qd_readmode != 0 &&
+        qd_readmode != 2 &&
+        qd_readmode != 3 &&
+        qd_readmode != 4) {
+        fprintf(stderr,
+                "Error: current qd_readmode (%d) is not available; "
+                "supported values are 0, 2, 3 and 4\n",
+                qd_readmode);
         exit(EXIT_FAILURE);
     }
     cnf->qd_readmode = qd_readmode;
@@ -583,6 +855,8 @@ void Config_report(Config* cnf){
 
     printStructElementChar("method",Config_getMethod(cnf));
     printStructElementChar("quantity",Config_getQuantity(cnf));
+    printStructElementChar("propagator",Config_getPropagator(cnf));
+    printStructElementChar("evolution",Config_getEvolution(cnf));
     printStructElementInt("order",Config_getOrder(cnf));
     printStructElementFloat1d("bfield",Config_getBfield(cnf),3);
     printStructElementFloat("rbath",Config_getRbath(cnf));
@@ -601,6 +875,20 @@ void Config_report(Config* cnf){
         printStructElementChar("bathfiles",Config_getBathfiles_i(cnf,i));
         printStructElementDouble1d("bathadjust",Config_getBathadjust_i(cnf,i),3);
     }
+
+    printStructElementBool("frame_rotation",Config_getRot_enabled(cnf));
+    if (Config_getRot_enabled(cnf)){
+        printStructElementDouble1d("  bath_axis",Config_getRot_bath_axis(cnf),3);
+        printStructElementDouble1d("  qubit_axis",Config_getRot_qubit_axis(cnf),3);
+        printStructElementChar("  reference_qubit",
+            Config_getRot_reference_qubit(cnf)[0] ? Config_getRot_reference_qubit(cnf) : (char*)"(first qubit)");
+        printStructElementChar("  qubit_position_frame",
+            Config_getRot_qubit_position_frame(cnf)[0] ? Config_getRot_qubit_position_frame(cnf) : (char*)"bath (default)");
+    }
+
+    printStructElementChar("defect_axis_reference",
+        (Config_getDefect_axis_reference(cnf) == DEFECT_AXIS_REFERENCE_QUBIT_AXIS)
+        ? (char*)"qubit_axis" : (char*)"(none)");
 
     printStructElementChar("avaaxfile",Config_getAvaaxfile(cnf));
     printStructElementChar("statefile",Config_getStatefile(cnf));

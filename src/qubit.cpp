@@ -10,7 +10,11 @@
 // init
 QubitArray* QubitArray_init(){
 
-    QubitArray* qa = (QubitArray*)allocArray1d(1,sizeof(QubitArray));
+    // new, not calloc: QubitArray holds MatrixXcd psia/psib/psi0 BY VALUE. calloc never
+    // ran their constructors and free() never ran their destructors, so every Eigen
+    // buffer those members allocated was leaked. `new T()` value-initialises, so the POD
+    // members are still zeroed exactly as calloc left them.
+    QubitArray* qa = new QubitArray();
 
     QubitArray_set_alphaidx(qa,NULL);
     QubitArray_set_betaidx(qa,NULL); 
@@ -20,6 +24,7 @@ QubitArray* QubitArray_init(){
     QubitArray_setQubit(qa,NULL);
 
     qa->intmap = NULL;
+    qa->intmap_frame = NULL;
 
     // MatrixXcd psia; do not need to initialize
     // MatrixXcd psib; do not need to initialize
@@ -31,10 +36,11 @@ QubitArray* QubitArray_init(){
 
 // free
 void QubitArray_freeAll(QubitArray* qa){
+    if (qa == NULL) return;
     QubitArray_freeQubit(qa);
     QubitArray_freeIntmap(qa);
     QubitArray_free_alphaidx_betaidx(qa);
-    freeArray1d((void**)&qa);
+    delete qa;   // runs ~MatrixXcd on psia/psib/psi0
 }
 
 // phyiscal properties
@@ -138,6 +144,8 @@ void QubitArray_setPsiaPsib_fromIdx(QubitArray* qa, float* bfield){
     // Set Psia, Psib
     QubitArray_setPsia(qa,psia);
     QubitArray_setPsib(qa,psib);
+
+    freeInt1d(&idx);   // getIndexInOrder allocates it and nobody was freeing it
 }
 
 // From Psia & Psib, set psi0 by adding them
@@ -243,7 +251,7 @@ MatrixXcd QubitArray_ZeemanHamil(QubitArray* qa, MatrixXcd** sigmas, int iq, flo
         exit(EXIT_FAILURE);
     }
     
-    float qgyro = QubitArray_getQubit_i_gyro(qa,iq);
+    double qgyro = QubitArray_getQubit_i_gyro(qa,iq);
     MatrixXcd vecZeeman = calZeemanVector(qgyro,bfield);
 
     return calHamiltonianSingleInt(vecZeeman,sigmas[iq]);
@@ -343,17 +351,27 @@ MatrixXcd   QubitArray_Rho0(QubitArray* qa){
 void QubitArray_allocQubit(QubitArray* qa){
     // alloc as much as nqubit
     int nqubit = QubitArray_getNqubit(qa);
-    qa->qubit = (Qubit**)allocArray2d(nqubit,1,sizeof(Qubit));
+    // The POINTER array stays calloc -- pointers are POD. The Qubit OBJECTS get new,
+    // because Qubit holds MatrixXcd alpha/beta by value and needs its constructor.
+    qa->qubit = (Qubit**)allocArray1d(nqubit,sizeof(Qubit*));
+    for (int i=0; i<nqubit; i++){
+        qa->qubit[i] = new Qubit();
+    }
 }
 
 void QubitArray_allocIntmap(QubitArray* qa){
     // alloc as much as nqubit*nqubit
     int nqubit = QubitArray_getNqubit(qa);
     qa->intmap = new MatrixXcd*[nqubit];
+    qa->intmap_frame = new int*[nqubit];
     for (int i=0; i<nqubit; i++){
         qa->intmap[i] = new MatrixXcd[nqubit];
+        qa->intmap_frame[i] = new int[nqubit];
         for (int j=0; j<nqubit; j++){
             qa->intmap[i][j] = MatrixXcd::Zero(3,3);
+            // Every entry starts as the zero tensor nobody asked for. Whoever writes a
+            // real tensor says where it came from at the same time.
+            qa->intmap_frame[i][j] = INTMAP_DEFAULT_ZERO;
         }
     }
 }
@@ -408,8 +426,22 @@ void QubitArray_setIntmap_dipAuto(QubitArray* qa){
             double gyro2 = QubitArray_getQubit_i_gyro(qa,j);
             tensor = calPointDipoleTensor(xyz1,xyz2,gyro1,gyro2);
             qa->intmap[i][j] = tensor;
+            // Built from the qubit positions as they stand, which are source-frame until
+            // applyCoordinateFrameRotation runs. Writing the provenance here rather than
+            // once at the end keeps this idempotent: calling the function twice leaves
+            // both the tensor and its provenance exactly where they were.
+            qa->intmap_frame[i][j] = INTMAP_AUTO_SOURCE_GEOMETRY;
         }
     }
+}
+
+void QubitArray_setIntmap_i_j_frame(QubitArray* qa, IntmapProvenance frame, int i, int j){
+    int nqubit = QubitArray_getNqubit(qa);
+    if (i >= nqubit || j >= nqubit || i > j || i < 0 || j < 0){
+        fprintf(stderr,"Error: QubitArray_setIntmap_i_j_frame: i,j = %d,%d is out of range or i>j\n",i,j);
+        exit(EXIT_FAILURE);
+    }
+    qa->intmap_frame[i][j] = (int)frame;
 }
 
 void QubitArray_setIntmap_i_j(QubitArray* qa, const MatrixXcd tensor, int i, int j){
@@ -460,6 +492,10 @@ MatrixXcd** QubitArray_getIntmap(const QubitArray* qa){
     return qa->intmap;
 }
 
+IntmapProvenance QubitArray_getIntmap_i_j_frame(const QubitArray* qa, int i, int j){
+    return (IntmapProvenance)qa->intmap_frame[i][j];
+}
+
 MatrixXcd QubitArray_getIntmap_i_j(const QubitArray* qa, int i, int j){
     return qa->intmap[i][j];
 }
@@ -483,7 +519,10 @@ void QubitArray_freeQubit(QubitArray* qa){
         return;
     }
     int nqubit = QubitArray_getNqubit(qa);
-    freeArray2d((void***)&(qa->qubit),nqubit);
+    for (int i=0; i<nqubit; i++){
+        delete qa->qubit[i];   // runs ~MatrixXcd on alpha/beta
+    }
+    freeArray1d((void**)&(qa->qubit));
 }
 
 void QubitArray_freeIntmap(QubitArray* qa){
@@ -493,8 +532,12 @@ void QubitArray_freeIntmap(QubitArray* qa){
     int nqubit = QubitArray_getNqubit(qa);
     for (int i=0; i<nqubit; i++){
         delete[] qa->intmap[i];
+        if (qa->intmap_frame != NULL){ delete[] qa->intmap_frame[i]; }
     }
     delete[] qa->intmap;
+    if (qa->intmap_frame != NULL){ delete[] qa->intmap_frame; }
+    qa->intmap = NULL;
+    qa->intmap_frame = NULL;
 }
 
 void QubitArray_free_alphaidx_betaidx(QubitArray* qa){

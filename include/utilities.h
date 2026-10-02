@@ -72,7 +72,11 @@ using namespace Eigen;
 #define RADKHZ_TO_KHZ(x) (1 / (2.0 * M_PI) * x)
 
 // Gyromagnetic ratio of electron spin [radkHz/G]
-#define GAMMA_ELECTRON -17608.597050;
+// Parenthesized and WITHOUT a trailing semicolon. The semicolon used to be part of the
+// macro body, so it only worked in `double g = GAMMA_ELECTRON;` -- where the extra `;`
+// became a null statement -- and was a syntax error anywhere an expression was wanted,
+// e.g. foo(GAMMA_ELECTRON) or 2*GAMMA_ELECTRON.
+#define GAMMA_ELECTRON (-17608.597050)
 
 /* File Constants -----------------------------------------------*/
 #define MAX_FILEPATH 500 /**< Maximum length of file path */
@@ -100,13 +104,23 @@ double sinTheta(double spin1[], double spin2[], double dist);
 double cosPhi(double spin1[], double spin2[]);
 double sinPhi(double spin1[], double spin2[]);
 
+// bath-coordinate rotation
+void normalizeAxisOrDie(const double v[3], double out[3], const char* what);
+double angleBetweenDeg(const double u[3], const double v[3]);
+void buildQubitAlignedRotation(const double bath_axis[3], const double qubit_axis[3], double R[3][3]);
+void rotateAboutPoint(double xyz[3], const double R[3][3], const double r0[3]);
+MatrixXcd rotateTensor(const MatrixXcd T, const double R[3][3]);
+void reportQubitAlignedRotation(const double bath_axis[3], const double qubit_axis[3],
+                                const double R[3][3], const double r0[3],
+                                const float bfield[3], const char* defect_axis_reference);
+
 /* Physics functions --------------------------------------------*/
 
 // spin state control
 float* substates(float S);
 bool isSubLevel(float S, float ms);
 MatrixXcd getSpinor(float S, float ms);
-MatrixXcd kron(MatrixXcd a, MatrixXcd b);
+MatrixXcd kron(const MatrixXcd& a, const MatrixXcd& b);
 MatrixXcd partialtrace(MatrixXcd Mij, int dimrow, int dimcol);
 double calNorm(MatrixXcd m);
 int normalize(MatrixXcd* m);

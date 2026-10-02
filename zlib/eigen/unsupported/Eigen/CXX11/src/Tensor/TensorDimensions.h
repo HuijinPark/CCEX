@@ -13,22 +13,6 @@
 
 namespace Eigen {
 
-/** \internal
-  *
-  * \class TensorDimensions
-  * \ingroup CXX11_Tensor_Module
-  *
-  * \brief Set of classes used to encode and store the dimensions of a Tensor.
-  *
-  * The Sizes class encodes as part of the type the number of dimensions and the
-  * sizes corresponding to each dimension. It uses no storage space since it is
-  * entirely known at compile time.
-  * The DSizes class is its dynamic sibling: the number of dimensions is known
-  * at compile time but the sizes are set during execution.
-  *
-  * \sa Tensor
-  */
-
 // Boilerplate code
 namespace internal {
 
@@ -87,8 +71,19 @@ struct fixed_size_tensor_index_extraction_helper<Index, 0>
 }  // end namespace internal
 
 
-// Fixed size
 #ifndef EIGEN_EMULATE_CXX11_META_H
+/** \internal
+ *
+ * \ingroup CXX11_Tensor_Module
+ *
+ * \brief Fixed dimensions of a Tensor.
+ *
+ * The Sizes class encodes as part of the type the number of dimensions and the
+ * sizes corresponding to each dimension. It uses no storage space since it is
+ * entirely known at compile time.
+ *
+ * \sa Tensor
+ */
 template <typename std::ptrdiff_t... Indices>
 struct Sizes {
   typedef internal::numeric_list<std::ptrdiff_t, Indices...> Base;
@@ -256,9 +251,17 @@ struct tensor_index_linearization_helper<Index, NumIndices, 0, RowMajor>
 };
 }  // end namespace internal
 
-
-
-// Dynamic size
+/** \internal
+ *
+ * \ingroup CXX11_Tensor_Module
+ *
+ * \brief Dynamic dimensions of a Tensor.
+ *
+ * The DSizes class is its dynamic sibling: the number of dimensions is known
+ * at compile time but the sizes are set during execution.
+ *
+ * \sa Tensor
+ */
 template <typename DenseIndex, int NumDims>
 struct DSizes : array<DenseIndex, NumDims> {
   typedef array<DenseIndex, NumDims> Base;
@@ -383,8 +386,17 @@ struct DSizes : array<DenseIndex, NumDims> {
   }
 };
 
-
-
+template <typename IndexType, int NumDims>
+std::ostream& operator<<(std::ostream& os,
+                         const DSizes<IndexType, NumDims>& dims) {
+  os << "[";
+  for (int i = 0; i < NumDims; ++i) {
+    if (i > 0) os << ", ";
+    os << dims[i];
+  }
+  os << "]";
+  return os;
+}
 
 // Boilerplate
 namespace internal {
@@ -457,7 +469,7 @@ struct sizes_match_below_dim {
 template <typename Dims1, typename Dims2, ptrdiff_t n>
 struct sizes_match_below_dim<Dims1, Dims2, n, n> {
   static EIGEN_DEVICE_FUNC  EIGEN_STRONG_INLINE bool run(Dims1& dims1, Dims2& dims2) {
-    return (array_get<n-1>(dims1) == array_get<n-1>(dims2)) &
+    return (array_get<n-1>(dims1) == array_get<n-1>(dims2)) &&
         sizes_match_below_dim<Dims1, Dims2, n-1, n-1>::run(dims1, dims2);
   }
 };
@@ -472,7 +484,7 @@ struct sizes_match_below_dim<Dims1, Dims2, 0, 0> {
 
 
 template <typename Dims1, typename Dims2>
-EIGEN_DEVICE_FUNC bool dimensions_match(Dims1& dims1, Dims2& dims2) {
+EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE bool dimensions_match(Dims1 dims1, Dims2 dims2) {
   return internal::sizes_match_below_dim<Dims1, Dims2, internal::array_size<Dims1>::value, internal::array_size<Dims2>::value>::run(dims1, dims2);
 }
 
