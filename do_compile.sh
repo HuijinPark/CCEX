@@ -26,6 +26,10 @@ CXX = mpiicpc
 export I_MPI_CXX := icpx
 
 CXXFLAGS = -std=c++17 -O3 -g -DNDEBUG -fp-model=precise
+# utilities.h defines EIGEN_USE_MKL_ALL after <Eigen/Dense> is already included, so it
+# never took effect: every gemm, eigensolver and LU ran in Eigen's own code. Define it
+# on the command line so it precedes every Eigen include.
+CXXFLAGS += -DEIGEN_USE_MKL_ALL
 #CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
 CXXFLAGS += -Wno-deprecated-declarations
 # -diag-disable is icpc-only; 10441 was silencing the Classic deprecation remark and has
