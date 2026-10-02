@@ -17,6 +17,7 @@ MatrixXcd calOverhauserVector(double overhauser);
 MatrixXcd calPointDipoleTensor(double xyz1[3], double xyz2[3], double gamma1, double gamma2);
 
 MatrixXcd calHamiltonianHeteroInt(MatrixXcd** pmats, MatrixXcd tensor, int nspin, int ispin, int jspin);
+void addHamiltonianHeteroInt(MatrixXcd& H, MatrixXcd** pmats, const MatrixXcd& tensor, int nspin, int ispin, int jspin);
 MatrixXcd* calHamiltonianHeteroInt_o2(MatrixXcd Sab, MatrixXcd Sba, MatrixXcd** Pmats, MatrixXcd tensor_ib, MatrixXcd tensor_jb, int nSpin, int iSpin, int jSpin);
 MatrixXcd calHamiltonianSelfInt(MatrixXcd* pmat, MatrixXcd tensor);
 MatrixXcd calHamiltonianSingleInt(MatrixXcd Vector, MatrixXcd* pmat1);

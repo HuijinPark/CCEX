@@ -102,8 +102,9 @@ MatrixXcd HamilBath(BathArray* ba, MatrixXcd** sigmas, Config* cnf){
     // Pair correlation
     for (int i=0; i<nspin; i++){
         for (int j=i+1; j<nspin; j++){
-            MatrixXcd Hbij = BathArray_InteractionHamil(ba,sigmas,i,j);
-            Hb_pair += Hbij;
+            // Added in place: same entries as Hb_pair += BathArray_InteractionHamil(...),
+            // without the nine dense kron chains per pair.
+            BathArray_addInteractionHamil(ba,sigmas,i,j,Hb_pair);
 
             //char mesg[500];
             //sprintf(mesg,"Spin[%d] - Spin[%d] (%s) ",i,j,"Pair");

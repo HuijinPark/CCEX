@@ -185,6 +185,7 @@ MatrixXcd   BathArray_DetuningHamil(BathArray* ba, MatrixXcd** sigmas, int ib);
 MatrixXcd   BathArray_DisorderHamil(BathArray* ba, MatrixXcd** sigmas, int ib, bool rm_overlap);
 MatrixXcd   BathArray_QuadHamil(BathArray* ba, MatrixXcd** sigmas, int ib);
 MatrixXcd   BathArray_InteractionHamil(BathArray* ba, MatrixXcd** sigmas, int ib, int jb);
+void        BathArray_addInteractionHamil(BathArray* ba, MatrixXcd** sigmas, int ib, int jb, MatrixXcd& H);
 MatrixXcd** BathArray_PauliOperators(BathArray* ba);
 
 // density matrix

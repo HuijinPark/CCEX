@@ -412,6 +412,24 @@ MatrixXcd BathArray_InteractionHamil(BathArray* ba, MatrixXcd** sigmas, int ib, 
 
 }
 
+// Same term as BathArray_InteractionHamil, added straight into H (see addHamiltonianHeteroInt).
+void BathArray_addInteractionHamil(BathArray* ba, MatrixXcd** sigmas, int ib, int jb, MatrixXcd& H){
+
+    int nspin = BathArray_getNspin(ba);
+
+    if (ib<jb){
+        MatrixXcd tensor = BathArray_int_i_j(ba,ib,jb);
+        bool isEmpty = tensor.isZero(FLT_EPSILON);
+
+        if (!isEmpty){
+            addHamiltonianHeteroInt(H, sigmas, tensor, nspin, ib, jb);
+        }
+    }else{
+        fprintf(stderr,"Error: BathArray_addInteractionHamil: ib,jb = %d,%d is out of range or ib>jb\n",ib,jb);
+        exit(EXIT_FAILURE);
+    }
+}
+
 MatrixXcd** BathArray_PauliOperators(BathArray* ba){
 
     int nspin = BathArray_getNspin(ba);

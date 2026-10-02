@@ -1,6 +1,7 @@
 #include "../include/hamiltonian.h"
 #include "../include/memory.h"
 #include <iostream>
+#include <vector>
 
 /*! @brief point-dipole interaction tensor
  * @param[in] xyz1 position of spin 1
@@ -212,6 +213,63 @@ MatrixXcd calHamiltonianHeteroInt(MatrixXcd** Pmats, MatrixXcd Tensor, int nSpin
         Tensor(2,0) * SizSjx + Tensor(2,1) * SizSjy + Tensor(2,2) * SizSjz;
 
     return H;
+}
+
+/**
+ * @brief Add sum_ab Tensor(a,b) S_a^i S_b^j to H without forming the full kron chains
+ * @details calHamiltonianHeteroInt builds nine dim x dim kron chains per pair and sums them,
+ *          O(9 dim^2) work and memory per pair, and the caller then adds the dense result.
+ *          Everything outside spins i and j is an identity, so the pair term only couples
+ *          states that agree on every other spin. Build the (di dj) x (di dj) block h with the
+ *          same nine products in the same order, then add each nonzero h entry where it lands
+ *          in the full space: O(dim di dj) per pair. Each H entry receives the same value the
+ *          dense path would add (the chains only multiply in exact 1s and 0s), and the entries
+ *          the dense path adds as exact zeros are skipped.
+ * @note  Requires iSpin < jSpin (kron order: spin 0 is the most significant digit).
+*/
+void addHamiltonianHeteroInt(MatrixXcd& H, MatrixXcd** Pmats, const MatrixXcd& Tensor, int nSpin, int iSpin, int jSpin){
+
+    if (!(iSpin < jSpin)){
+        fprintf(stderr,"Error(addHamiltonianHeteroInt): need iSpin < jSpin (%d, %d)\n",iSpin,jSpin);
+        exit(EXIT_FAILURE);
+    }
+
+    // Mixed-radix strides in kron order
+    std::vector<long> dims(nSpin), strides(nSpin);
+    long dim = 1;
+    for (int s=nSpin-1; s>=0; s--){
+        dims[s] = Pmats[s][0].rows();
+        strides[s] = dim;
+        dim *= dims[s];
+    }
+    if (H.rows() != dim || H.cols() != dim){
+        fprintf(stderr,"Error(addHamiltonianHeteroInt): H is %ldx%ld, expected %ld\n",
+                (long)H.rows(),(long)H.cols(),dim);
+        exit(EXIT_FAILURE);
+    }
+
+    const MatrixXcd* Si = Pmats[iSpin];
+    const MatrixXcd* Sj = Pmats[jSpin];
+    MatrixXcd h = Tensor(0,0) * kron(Si[1],Sj[1]) + Tensor(0,1) * kron(Si[1],Sj[2]) + Tensor(0,2) * kron(Si[1],Sj[3]) +
+                  Tensor(1,0) * kron(Si[2],Sj[1]) + Tensor(1,1) * kron(Si[2],Sj[2]) + Tensor(1,2) * kron(Si[2],Sj[3]) +
+                  Tensor(2,0) * kron(Si[3],Sj[1]) + Tensor(2,1) * kron(Si[3],Sj[2]) + Tensor(2,2) * kron(Si[3],Sj[3]);
+
+    const long di = dims[iSpin], dj = dims[jSpin];
+    const long sti = strides[iSpin], stj = strides[jSpin];
+    for (long k=0; k<dim; k++){
+        long x = (k / sti) % di;
+        long y = (k / stj) % dj;
+        long base = k - x*sti - y*stj;
+        long row = x*dj + y;
+        for (long u=0; u<di; u++){
+            for (long v=0; v<dj; v++){
+                const doublec val = h(row, u*dj + v);
+                if (val != doublec(0.0,0.0)){
+                    H(k, base + u*sti + v*stj) += val;
+                }
+            }
+        }
+    }
 }
 
 /**
