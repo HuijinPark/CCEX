@@ -250,6 +250,86 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pu
             tfree += deltat;
         }
     //////////////////////////////////////////////////////////////
+    //  Single Sample, evolution=vector
+    //////////////////////////////////////////////////////////////
+    }else if (strcasecmp(Config_getEvolution(cnf),"vector")==0){
+
+        // The single-sample result is psi0^dag * UdownDagger * Uup * psi0, and the matrix
+        // branch below builds UdownDagger and Uup as full bdim x bdim products: two gemm
+        // per pulse interval, O(bdim^3) each. Only their action on psi0 is ever used, so
+        // apply the same factors to psi0 instead -- Uup*psi0 right to left as a column
+        // vector u, psi0^dag*UdownDagger left to right as a row vector r. Each factor
+        // becomes a matrix-vector product, O(bdim^2). The factors, their order and the
+        // phases are exactly those of the matrix branch; only the association of the
+        // products changes, so the results agree to rounding but are not bit-identical.
+        //
+        //   ipulse 0   : UdownDagger  = M_down diag(conj Ud)     Uup = M^dag diag(Uu) M_up^dag
+        //   ipulse odd : UdownDagger *= M^dag  diag(conj Uu)     Uup = M     diag(Ud) Uup
+        //   ipulse even: UdownDagger *= M      diag(conj Ud)     Uup = M^dag diag(Uu) Uup
+
+        const Eigen::VectorXcd    psi0v         = psi0.col(0);
+        const Eigen::RowVectorXcd psi0dag_Mdown = psi0v.adjoint() * M_down;   // step-independent
+        const Eigen::VectorXcd    Mupdag_psi0   = M_up.adjoint() * psi0v;     // step-independent
+        const MatrixXcd           Mdag          = M.adjoint();
+
+        // Phase vectors per distinct tau of the sequence (sequence_indices points a
+        // repeated interval back at its first occurrence, as in the matrix branch).
+        std::vector<Eigen::VectorXcd> UupTau(npulse+1), UdownTau(npulse+1);
+        Eigen::VectorXcd    u(bdim), utmp(bdim);
+        Eigen::RowVectorXcd r(bdim), rtmp(bdim);
+
+        for (int i = 0; i < nstep; i++) {
+
+            for (int ipulse=0; ipulse<npulse+1; ipulse++){
+
+                double tau       = tfree * sequence[ipulse][2];
+                int SameTauIndex = sequence_indices[ipulse];
+
+                if (SameTauIndex > ipulse){
+                    fprintf(stderr,"Error : calCoherenceCce : sequence index %d points ahead "
+                                   "of pulse interval %d\n",SameTauIndex,ipulse);
+                    exit(1);
+                }
+
+                if (SameTauIndex == ipulse){
+                    // Same real cos/sin of the real eigenvalues as the matrix branch.
+                    UupTau[ipulse].resize(bdim);
+                    UdownTau[ipulse].resize(bdim);
+                    for (int k=0; k<bdim; k++){
+                        double a_up   = es_up_Val(k).real()   * tau;
+                        double a_down = es_down_Val(k).real() * tau;
+                        UupTau[ipulse](k)   = doublec(std::cos(a_up),   -std::sin(a_up));
+                        UdownTau[ipulse](k) = doublec(std::cos(a_down), -std::sin(a_down));
+                    }
+                }
+                const Eigen::VectorXcd& Uu = UupTau[SameTauIndex];
+                const Eigen::VectorXcd& Ud = UdownTau[SameTauIndex];
+
+                if (ipulse==0){
+                    r = psi0dag_Mdown.cwiseProduct(Ud.adjoint());
+                    utmp = Mupdag_psi0.cwiseProduct(Uu);
+                    u.noalias() = Mdag * utmp;
+                }
+                else if (ipulse%2==1){
+                    rtmp.noalias() = r * Mdag;
+                    r = rtmp.cwiseProduct(Uu.adjoint());
+                    utmp = Ud.cwiseProduct(u);
+                    u.noalias() = M * utmp;
+                }
+                else{
+                    rtmp.noalias() = r * M;
+                    r = rtmp.cwiseProduct(Ud.adjoint());
+                    utmp = Uu.cwiseProduct(u);
+                    u.noalias() = Mdag * utmp;
+                }
+            }
+
+            result[i] = MatrixXcd::Zero(1,1);
+            result[i](0,0) = (r * u).value();
+            tfree += deltat;
+        }
+
+    //////////////////////////////////////////////////////////////
     //  Single Sample approch -> Huijin's code
     //////////////////////////////////////////////////////////////
     }else{

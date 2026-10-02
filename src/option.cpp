@@ -612,7 +612,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     // Only record whether the key was written; Config_resolveEvolution settles it once
     // every source is in.
     char* evolution = cJSON_ReadString(root,"evolution",true,"vector");
-    Config_setEvolution(cnf,evolution); // gCCE only : vector (default) | matrix (legacy)
+    Config_setEvolution(cnf,evolution); // gCCE : vector (default) | matrix (legacy); CCE, pCCE : matrix (default) | vector (nstate > 0)
     cnf->evolution_isdefault = (cJSON_GetObjectItem(root,"evolution") == NULL);
 
     int order = cJSON_ReadInt(root,"order",false,-1);

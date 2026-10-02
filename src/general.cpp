@@ -446,17 +446,21 @@ void Config_resolveEvolution(Config* cnf){
     bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
 
     if (!cnf->evolution_isdefault){
-        // Only calCoherenceGcce reads evolution. Any other method would ignore it and run
-        // the density-matrix path anyway, so refuse rather than let the input claim
-        // something the run does not do.
-        if (strcasecmp(cnf->evolution,"matrix")!=0 && !isGCCE){
-            fprintf(stderr,"Error : evolution=%s is implemented for method=gCCE only "
-                           "(this run has method=%s).\n",cnf->evolution,cnf->method);
+        // gCCE reads evolution in calCoherenceGcce. Every other method (CCE, pCCE) goes
+        // through calCoherenceCce, which reads it only on the single-sample branch: the
+        // ensemble branch (nstate = 0) takes a trace over the bath and has no state vector
+        // to propagate. Refuse that case rather than let the input claim something the run
+        // does not do.
+        if (strcasecmp(cnf->evolution,"vector")==0 && !isGCCE && cnf->nstate == 0){
+            fprintf(stderr,"Error : evolution=vector needs nstate > 0 for method=%s "
+                           "(the ensemble branch has no state vector).\n",cnf->method);
             exit(EXIT_FAILURE);
         }
         return;
     }
 
+    // DEFAULT. gCCE takes vector wherever it fits. CCE and pCCE stay on matrix unless the
+    // input asks for vector, so an existing converged series keeps its exact arithmetic.
     bool vectorFits = isGCCE
                    && (cnf->nstate > 0)
                    && (strcasecmp(cnf->propagator,"eigen")==0);
