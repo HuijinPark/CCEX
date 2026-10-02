@@ -267,66 +267,83 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pu
         //   ipulse odd : UdownDagger *= M^dag  diag(conj Uu)     Uup = M     diag(Ud) Uup
         //   ipulse even: UdownDagger *= M      diag(conj Ud)     Uup = M^dag diag(Uu) Uup
 
-        const Eigen::VectorXcd    psi0v         = psi0.col(0);
-        const Eigen::RowVectorXcd psi0dag_Mdown = psi0v.adjoint() * M_down;   // step-independent
-        const Eigen::VectorXcd    Mupdag_psi0   = M_up.adjoint() * psi0v;     // step-independent
-        const MatrixXcd           Mdag          = M.adjoint();
+        //
+        // The nstep time points are independent sequences that share every matrix and
+        // differ only in their phases, so carry them together as the columns of U (one
+        // column per step, Uup*psi0) and Rt (one column per step, (psi0^dag*UdownDagger)^T).
+        // Each factor is then one gemm with nstep columns instead of nstep gemv: the
+        // bdim x bdim matrix is read once per pulse interval instead of once per step,
+        // which is what bounds the gemv path at bdim ~ 1000 (pCCE sK 5).
+        // Row-vector products are carried transposed: (r*M)^T = M^T r^T, (r*M^dag)^T = conj(M) r^T.
 
-        // Phase vectors per distinct tau of the sequence (sequence_indices points a
-        // repeated interval back at its first occurrence, as in the matrix branch).
-        std::vector<Eigen::VectorXcd> UupTau(npulse+1), UdownTau(npulse+1);
-        Eigen::VectorXcd    u(bdim), utmp(bdim);
-        Eigen::RowVectorXcd r(bdim), rtmp(bdim);
+        const Eigen::VectorXcd psi0v         = psi0.col(0);
+        const Eigen::VectorXcd psi0dag_Mdown = (psi0v.adjoint() * M_down).transpose();  // step-independent
+        const Eigen::VectorXcd Mupdag_psi0   = M_up.adjoint() * psi0v;                  // step-independent
+        const MatrixXcd        Mdag          = M.adjoint();
+        const MatrixXcd        Mtr           = M.transpose();
+        const MatrixXcd        Mconj         = M.conjugate();
 
-        for (int i = 0; i < nstep; i++) {
+        // Free-evolution times of the steps, accumulated exactly as the matrix branch does.
+        std::vector<double> tfrees(nstep);
+        for (int i = 0; i < nstep; i++){ tfrees[i] = tfree; tfree += deltat; }
 
-            for (int ipulse=0; ipulse<npulse+1; ipulse++){
+        // Phase matrices (bdim x nstep) per distinct tau of the sequence (sequence_indices
+        // points a repeated interval back at its first occurrence, as in the matrix branch).
+        std::vector<MatrixXcd> PhUp(npulse+1), PhDown(npulse+1);
+        MatrixXcd U(bdim,nstep), Rt(bdim,nstep), tmp(bdim,nstep);
 
-                double tau       = tfree * sequence[ipulse][2];
-                int SameTauIndex = sequence_indices[ipulse];
+        for (int ipulse=0; ipulse<npulse+1; ipulse++){
 
-                if (SameTauIndex > ipulse){
-                    fprintf(stderr,"Error : calCoherenceCce : sequence index %d points ahead "
-                                   "of pulse interval %d\n",SameTauIndex,ipulse);
-                    exit(1);
-                }
+            int SameTauIndex = sequence_indices[ipulse];
 
-                if (SameTauIndex == ipulse){
-                    // Same real cos/sin of the real eigenvalues as the matrix branch.
-                    UupTau[ipulse].resize(bdim);
-                    UdownTau[ipulse].resize(bdim);
+            if (SameTauIndex > ipulse){
+                fprintf(stderr,"Error : calCoherenceCce : sequence index %d points ahead "
+                               "of pulse interval %d\n",SameTauIndex,ipulse);
+                exit(1);
+            }
+
+            if (SameTauIndex == ipulse){
+                // Same real cos/sin of the real eigenvalues as the matrix branch.
+                PhUp[ipulse].resize(bdim,nstep);
+                PhDown[ipulse].resize(bdim,nstep);
+                for (int i = 0; i < nstep; i++){
+                    double tau = tfrees[i] * sequence[ipulse][2];
                     for (int k=0; k<bdim; k++){
                         double a_up   = es_up_Val(k).real()   * tau;
                         double a_down = es_down_Val(k).real() * tau;
-                        UupTau[ipulse](k)   = doublec(std::cos(a_up),   -std::sin(a_up));
-                        UdownTau[ipulse](k) = doublec(std::cos(a_down), -std::sin(a_down));
+                        PhUp[ipulse](k,i)   = doublec(std::cos(a_up),   -std::sin(a_up));
+                        PhDown[ipulse](k,i) = doublec(std::cos(a_down), -std::sin(a_down));
                     }
                 }
-                const Eigen::VectorXcd& Uu = UupTau[SameTauIndex];
-                const Eigen::VectorXcd& Ud = UdownTau[SameTauIndex];
-
-                if (ipulse==0){
-                    r = psi0dag_Mdown.cwiseProduct(Ud.adjoint());
-                    utmp = Mupdag_psi0.cwiseProduct(Uu);
-                    u.noalias() = Mdag * utmp;
-                }
-                else if (ipulse%2==1){
-                    rtmp.noalias() = r * Mdag;
-                    r = rtmp.cwiseProduct(Uu.adjoint());
-                    utmp = Ud.cwiseProduct(u);
-                    u.noalias() = M * utmp;
-                }
-                else{
-                    rtmp.noalias() = r * M;
-                    r = rtmp.cwiseProduct(Ud.adjoint());
-                    utmp = Uu.cwiseProduct(u);
-                    u.noalias() = Mdag * utmp;
-                }
             }
+            const MatrixXcd& Pu = PhUp[SameTauIndex];
+            const MatrixXcd& Pd = PhDown[SameTauIndex];
 
+            if (ipulse==0){
+                // r = psi0^dag M_down diag(conj Ud);  u = M^dag diag(Uu) M_up^dag psi0
+                Rt  = Pd.conjugate().array().colwise() * psi0dag_Mdown.array();
+                tmp = Pu.array().colwise() * Mupdag_psi0.array();
+                U.noalias() = Mdag * tmp;
+            }
+            else if (ipulse%2==1){
+                // r <- r M^dag diag(conj Uu);  u <- M diag(Ud) u
+                tmp.noalias() = Mconj * Rt;
+                Rt = tmp.cwiseProduct(Pu.conjugate());
+                tmp = Pd.cwiseProduct(U);
+                U.noalias() = M * tmp;
+            }
+            else{
+                // r <- r M diag(conj Ud);  u <- M^dag diag(Uu) u
+                tmp.noalias() = Mtr * Rt;
+                Rt = tmp.cwiseProduct(Pd.conjugate());
+                tmp = Pu.cwiseProduct(U);
+                U.noalias() = Mdag * tmp;
+            }
+        }
+
+        for (int i = 0; i < nstep; i++){
             result[i] = MatrixXcd::Zero(1,1);
-            result[i](0,0) = (r * u).value();
-            tfree += deltat;
+            result[i](0,0) = Rt.col(i).cwiseProduct(U.col(i)).sum();
         }
 
     //////////////////////////////////////////////////////////////
