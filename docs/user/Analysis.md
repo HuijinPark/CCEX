@@ -67,5 +67,5 @@ percent of the reference area, and calls the first value under the tolerance the
 converged point; then it draws the curves and the differences. It takes six
 positional arguments (file list, variable values, variable name, unit,
 tolerance, output figure) and has no `--help`; the argument table is at the top
-of the file. The tutorials that used it have a `do_convtest` beside their
-`job`. Written from scratch it is twenty lines with `read_coherence`.
+of the file. No tutorial calls it now (their `do_convtest` scripts were removed on
+2026-09-23). Written from scratch it is twenty lines with `read_coherence`.

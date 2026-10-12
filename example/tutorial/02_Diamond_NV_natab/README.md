@@ -11,7 +11,7 @@ NV⁻ in diamond, natural-abundance ¹³C. the basic case; `bath/` holds one con
 | `single-sample_CCE/` | ccein.json | CCE2 with `nstate=20` sampled bath states per configuration, then the average over configurations and states | 20 conf × 20 states, 5 ranks | 58 s |
 
 Each calculation folder holds its `ccein*.json` inputs, `run.sh` and the idm `job`
-it was recorded with. `run.sh` runs every input on `NP` ranks for `NCONF` bath
+that submits it. `run.sh` runs every input on `NP` ranks for `NCONF` bath
 configurations (default 4 and 1) and then the post-processing that the recorded
 run did, all into `results/`:
 

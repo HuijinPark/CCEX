@@ -1,5 +1,5 @@
 #!/bin/sh
-# 04_Diamond_NV_P1Bath/SpinEcho_gCCE2_10ppm_ZFS: gCCE2 at 10 ppm and zero field, with and without the NV zero-field splitting (`job` is the field-sweep job the two came from)
+# 04_Diamond_NV_P1Bath/SpinEcho_gCCE2_10ppm_ZFS: gCCE2 at 10 ppm and zero field, with and without the NV zero-field splitting
 #
 # Recorded run: 1 bath configuration(s) x 1 sampled states, 4 MPI ranks on idm.
 # Here NCONF configurations on NP ranks; NSTATE sampled states. Set them to repeat the recorded run.

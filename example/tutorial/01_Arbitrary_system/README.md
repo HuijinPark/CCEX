@@ -7,7 +7,7 @@ A hand-written system. a bath, a gyromagnetic-ratio file and a qubit file writte
 | `./` | ccein.json | gCCE order 1 on a hand-written three-file system; the density matrix (`quantity=dm`) of one bath state | 1 conf × 1 states, 1 ranks | 0 s |
 
 Each calculation folder holds its `ccein*.json` inputs, `run.sh` and the idm `job`
-it was recorded with. `run.sh` runs every input on `NP` ranks for `NCONF` bath
+that submits it. `run.sh` runs every input on `NP` ranks for `NCONF` bath
 configurations (default 4 and 1) and then the post-processing that the recorded
 run did, all into `results/`:
 

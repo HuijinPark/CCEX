@@ -5,7 +5,7 @@ them: from the smallest hand-written input to the features this branch added.
 Each folder is one physical system (or one feature on a system above), and each
 calculation inside it is a folder with its inputs (`ccein*.json`, JSON with `#`
 comments), one `run.sh` that runs them and the post-processing, and the cluster
-`job` the results were first recorded with. The system folder's `README.md` has
+`job` that submits that `run.sh` on idm. The system folder's `README.md` has
 the table of its calculations.
 
 ## Running one

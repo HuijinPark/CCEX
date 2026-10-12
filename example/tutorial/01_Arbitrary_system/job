@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #SBATCH -J CCE2_Diamond_NV_natab
 #SBATCH -p 64core
 #SBATCH --nodes=2
@@ -8,31 +8,8 @@
 #SBATCH --time=2-00:00:00
 #SBATCH --qos=small-2
 #SBATCH --mem-per-cpu=0
-
-module purge 
-module load  intel-23.2/icc-23.2  intel-23.2/gsl-2.8  intel-23.2/eigen-3.4.0 
-
-#NodeProcess=$(($SLURM_NTASKS_PER_NODE * $SLURM_JOB_NUM_NODES))
-NodeProcess=1
-
-CodePath="$(git rev-parse --show-toplevel)/bin/main.out"
-InputFilePath="./ccein.json"
-
-mkdir ./results
-
-echo "Run calculation using codes $CodePath"
-
-for i in $(seq 1 1 1)
-do
-    BathFile="./bath"
-    OutputFile="./results/CCE2_Diamond_NV_natab_${i}"
-    
-    # [1] Method 1 : Using -I, -o options
-    mpirun -n ${NodeProcess} ${CodePath} -f ${InputFilePath} -I ${BathFile} -o "${OutputFile}" > ./results/process_${i}
-
-    # [2] Method 2 : Using -I options and outfile tag in ccein.json
-    # mpirun -n ${NodeProcess} ${CodePath} -f ${InputFilePath} -I ${BathFile} -v > ./results/process_${i}
-
-    # [3] Method 3 : Using input file only 
-    # mpirun -n ${NodeProcess} ${CodePath} -f ${InputFilePath} -v > ./results/process_${i}
-done
+# 01_Arbitrary_system on idm: runs this folder's run.sh with the job's ranks and the recorded number of
+# configurations (and sampled states), so a submitted run and a run by hand are the same calculation.
+# Submit with: QosChange job 1 && SbatchPath job
+cd "$SLURM_SUBMIT_DIR"
+NP=$SLURM_NTASKS NCONF=1 bash run.sh

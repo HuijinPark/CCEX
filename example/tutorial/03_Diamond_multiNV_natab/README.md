@@ -8,7 +8,7 @@ Several NV centres with a ¹³C pair. two and six NV centres; each calculation f
 | `NV6_13C2/` | ccein_NV6_13C2_hahnecho.json, ccein_NV6_13C2_ramsey.json | six NV centres with a 13C pair: the same two | 1 conf × 1 states, 1 ranks | stopped at 631 s; heavy: the Hahn echo alone took 8 min on 2 ranks and wrote 11 GB of density matrices; the Ramsey run was cut by the 10-minute limit |
 
 Each calculation folder holds its `ccein*.json` inputs, `run.sh` and the idm `job`
-it was recorded with. `run.sh` runs every input on `NP` ranks for `NCONF` bath
+that submits it. `run.sh` runs every input on `NP` ranks for `NCONF` bath
 configurations (default 4 and 1) and then the post-processing that the recorded
 run did, all into `results/`:
 
