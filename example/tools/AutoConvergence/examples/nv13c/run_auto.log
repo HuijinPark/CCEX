@@ -1,0 +1,34 @@
+[auto] runner /home/ljw95/bin/code_develop/CCEX-CQML/example/tools/AutoConvergence/autoconv (python python3), binary /home/ljw95/bin/code_develop/CCEX-CQML/bin/main.out
+[auto] the input, the source files or the decision code changed: earlier decisions moved to decisions.3.jsonl
+status: truncation-unresolved (rbath: rbath has not converged up to 52.581 A (the bath files cover up to 53.51 A): make larger baths, covering at least 65.726 A around the qubit)
+core-hours: 0.071
+
+WARNINGS
+  rbath advisory (not confirmed): 42.065 agrees with the largest computed 52.581 (0.36 %), but 2 passes in a row are needed; confirming needs rbath 65.726 and the bath files cover 53.51 Å
+  divergent points corrected (|wiDiv - noDiv| >= 2 or nan/inf -> noDiv): 41 (1 points, wiDiv up to 3.1)
+
+0. start
+  configurations: 70 found (config_{k}); test 10 [33, 41, 23, 64, 70, 20, 37, 28, 62, 48], production 60
+  bath: bulk, files cover 53.5 Å; 13C spin 0.5, density 0.00189 /Å^3
+  rbath candidates [17.23, 21.537, 26.922, 33.652] (; 300 spins at 33.7 Å)
+  rdip candidates [3.404, 4.255, 5.319, 6.648, 8.31, 10.388, 12.985] (; estimate 8.3 Å)
+  states: files data/cfg{k}_state
+  launcher: mpirun -n 4 (input)
+
+1. time window                                  (1_window.png)
+  T2 fit: T2 1.118 ms, n 2.55;  T_d (|L| = 0.01) 2.04 ms
+  fit points: the peaks (17 points, t = 0 and the points higher than both neighbours; 1_window_fit.png)
+  T2 here is a convergence measure from this fit, not the exact T2 of the system
+  time points: 150 per run, fixed (whether they are enough is not checked)
+  window = 1.5 x T_d = 3.05 ms, 150 points
+  revival: none;  slow configurations: 12 points above 0.01 after T_d (max 0.03)
+
+2. rdip  (rbath 33.652 Å, reference rdip 16.231 Å)(2_rdip.png)
+  rdip      3.404   4.255   5.319   6.648    8.31  10.388  12.985
+  |ΔA/A|  14.92 %  9.15 %  3.88 %  2.23 %  0.94 %  0.40 %  0.13 %
+  chosen 8.31 (threshold 2 %)
+
+3. rbath  (rdip 8.31 Å, reference rbath 52.581 Å)(3_rbath.png)
+  rbath      17.23   21.537   26.922  33.652  42.065
+  |ΔA/A|  167.25 %  50.90 %  10.63 %  2.78 %  0.36 %
+  not converged (threshold 2 %)

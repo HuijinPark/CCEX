@@ -1,386 +1,448 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# do_compile.sh <preset>  -- writes the Makefile for this machine, then runs make.
+#
+# The build rules are one template (the end of this file). A preset is only what
+# differs from machine to machine: the compiler, its flags, what to load, and
+# whether there is CUDA.
+#
+#   generic  any machine with an MPI C++ wrapper on PATH. Taken from the environment:
+#            CXX (default mpicxx), CC (default cc), CXXFLAGS (default below),
+#            CXXFLAGS_EXTRA, LIBRARY_EXTRA, and for the GPU binary CUDA_HOME
+#            (or nvcc on PATH), CUDA_ARCH (compute capability without the dot,
+#            e.g. 86) and NVCC. Examples:
+#                bash do_compile.sh generic
+#                CXX=mpic++ bash do_compile.sh generic
+#                CUDA_HOME=/usr/local/cuda CUDA_ARCH=86 bash do_compile.sh generic
+#   wsl-gnu  WSL/Ubuntu with Intel oneAPI: Intel MPI's mpicxx (g++ behind it); "wsl" is accepted
+#            as the old name
+#   wsl-icpx the same with icpx behind Intel MPI's mpicxx (needs the oneAPI C++ compiler:
+#            apt install intel-oneapi-compiler-dpcpp-cpp); closer to idm's icpx build and faster
+#   idm4     idm: module intel-23.2, mpiicpc with icpx
+#   gpu      idm4-gpu: OpenMPI + CUDA 12.8, the C++ with icpx when oneAPI is there (else gcc); builds the GPU binary too
+#   nurion   KISTI Nurion: intel/19.0.5 + impi/19.0.5
+#   mac      macOS with an MPI wrapper (Homebrew open-mpi or mpich)
+#
+# Every preset builds bin/main.out (CPU). A preset with CUDA also builds
+# bin/main_gpu.out, the same sources with -DCCEX_USE_CUDA and the CUDA kernels,
+# for "backend": "cuda" / "auto" in the input. Eigen, uthash and sqlite are in
+# external/; nothing else is needed. MKL is not used: EIGEN_USE_MKL_ALL used to be
+# defined after Eigen was included and had no effect, and no MKL symbol was ever
+# linked (2026-09-24: ldd showed no MKL library in the binaries the old MKL presets
+# made, and the 25-case numerics check gave the same numbers without MKL).
+#
+#   CCEX_JOBS=N       make -jN (default 5: idm's login node is shared)
+#   CCEX_SANITIZE=1   -fsanitize=address,undefined on the CPU objects, the adaptive ones and SQLite
 
 if [ $# -ne 1 ]; then
-    echo "Error, no input value"
-    echo "[1] Server : idm4 / mac / idm3 / nurion"
+    echo "usage: bash do_compile.sh <preset>" >&2
+    echo "  preset: generic / wsl-gnu (old name wsl) / wsl-icpx / idm4 / gpu / nurion / mac" >&2
     exit 1
 fi
-
-
-if [ ${1} == "idm4" ]; then
-
-module purge 
-#module load intel-23.2/fftw-3.3.10 intel-23.2/icc-23.2
-module load intel-23.2/icc-23.2
-
-cat << EOF > ./Makefile
-
-CXX = mpiicpc
-
-# icpx, not icpc. mpiicpc defaults to icpc (Intel C++ Classic), which Intel deprecated
-# in 2023 and which is 3.2x slower on this code -- 19.5 s vs 6.1 s on the P1 10 ppm gCCE
-# regression case, one rank on idm4. The speed is not from relaxed arithmetic: this
-# keeps -fp-model=precise, and icpc with -ipo and fp-model fast=2 still only reaches
-# 9.7 s. CCEX is Eigen-template-heavy and the Classic front end does not keep up with
-# the LLVM back end on that. icpx ships in the same module; nothing new to install.
-export I_MPI_CXX := icpx
-
-CXXFLAGS = -std=c++17 -O3 -g -DNDEBUG -fp-model=precise
-#CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
-CXXFLAGS += -Wno-deprecated-declarations
-# -diag-disable is icpc-only; 10441 was silencing the Classic deprecation remark and has
-# nothing left to silence. -fsanitize=address is dropped because icpc never supported it:
-# it emitted "command line warning #10148: option '-fsanitize=address' not supported"
-# once per file and the binary had no asan symbols, so nothing was ever being checked.
-# icpx does support it -- add it to a separate debug build when you actually want it.
-CXXFLAGS += -Wno-writable-strings
-
-SRC_DIR=./src
-OBJ_DIR=./obj
-BIN_DIR=./bin
-
-TARGET = \$(BIN_DIR)/main.out
-
-SRCS=\$(wildcard \$(SRC_DIR)/*.cpp)
-SRCS += main.cpp
-OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
-
-#INCLUDE_MPICH = -I/opt/homebrew/Cellar/mpich/4.2.1/include/
-INCLUDE_EIGEN = -I./zlib/eigen
-INCLUDE_UTHASH = -I./zlib/uthash/include/
-INCLUDE_MAIN = -I./include/
-
-#INCLUDE_MKL = -I /opt/intel/mkl/include
-#LIBRARY_MKL = -L /opt/intel/mkl/lib/intel64
-LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lpthread -liomp5 -m64 -xCORE-AVX512  #-lgsl -lgslcblas 
-
-INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
-LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
-
-# Header dependency tracking. -MMD writes obj/<name>.d listing every header the
-# translation unit actually included; -MP adds an empty target for each so that
-# DELETING a header does not stop the build. Without this, make only compares the
-# .o against its .cpp, so editing include/*.h recompiles nothing and mismatched
-# objects link with no warning at all.
-DEPFLAGS := -MMD -MP
-DEPS := \$(patsubst %.o,%.d,\$(filter %.o,\$(OBJS)))
-
-all: \$(TARGET)
-
-\$(TARGET): \$(OBJS) | \$(BIN_DIR)
-	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
-
-\$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(DEPFLAGS) \$(INCLUDE) \$(LIBRARY)
-
-\$(OBJ_DIR):
-	mkdir -p \$(OBJ_DIR)
-
-\$(BIN_DIR):
-	mkdir -p \$(BIN_DIR)
-
-clean:
-	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
-
--include \$(DEPS)
-
-EOF
-
-elif [ ${1} == "idm3" ]; then
-
-module purge 
-module load 22.2/gsl-2.7.1 22.2/icc-22.2 22.2/fftw-3.3.10
-
-cat << EOF > ./Makefile
-
-CXX = mpiicpc
-
-CXXFLAGS = -std=gnu++17 -O3 -g #-Wall Higher level warning
-#CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
-CXXFLAGS += -Wno-deprecated-declarations
-CXXFLAGS += -diag-disable=2196
-#CXXFLAGS += -Wno-writable-strings
-
-SRC_DIR=./src
-OBJ_DIR=./obj
-BIN_DIR=./bin
-
-TARGET = \$(BIN_DIR)/main.out
-
-SRCS=\$(wildcard \$(SRC_DIR)/*.cpp)
-SRCS += main.cpp
-OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
-
-#INCLUDE_MPICH = -I/opt/homebrew/Cellar/mpich/4.2.1/include/
-INCLUDE_EIGEN = -I./zlib/eigen
-INCLUDE_UTHASH = -I./zlib/uthash/include/
-INCLUDE_MAIN = -I./include/
-
-INCLUDE_MKL = -I /opt/intel/oneapi/mkl/latest/include/
-LIBRARY_MKL = -L /opt/intel/oneapi/mkl/latest/lib/intel64/
-LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lpthread -m64 #-lgsl -lgslcblas 
-
-INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
-LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
-
-all: \$(TARGET)
-
-\$(TARGET): \$(OBJS) | \$(BIN_DIR)
-	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
-
-\$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
-
-\$(OBJ_DIR):
-	mkdir -p \$(OBJ_DIR)
-
-\$(BIN_DIR):
-	mkdir -p \$(BIN_DIR)
-
-clean:
-	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
-
-EOF
-
-elif [ ${1} == "nurion" ]; then
-
-module purge
-module load craype-network-opa craype-mic-knl intel/19.0.5 impi/19.0.5
-
-
-cat << EOF > ./Makefile
-
-CXX = mpiicpc
-
-CXXFLAGS = -std=c++11 -O3 -g #-Wall Higher level warning
-#CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
-CXXFLAGS += -Wno-deprecated-declarations
-CXXFLAGS += -diag-disable=2196
-CXXFLAGS += -diag-disable=10441
-#CXXFLAGS += -Wno-writable-strings
-
-SRC_DIR=./src
-OBJ_DIR=./obj
-BIN_DIR=./bin
-
-TARGET = \$(BIN_DIR)/main.out
-
-SRCS=\$(wildcard \$(SRC_DIR)/*.cpp)
-SRCS += main.cpp
-OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
-
-INCLUDE_EIGEN = -I./zlib/eigen
-INCLUDE_UTHASH = -I./zlib/uthash/include/
-INCLUDE_MAIN = -I./include/
-
-LIBRARY_MKL = -L /apps/compiler/intel/19.0.5/mkl/lib/intel64
-LDFLAGS_MKL = -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_intel_thread -lpthread -liomp5 -m64 #-lgsl -lgslcblas 
-
-INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) #\$(INCLUDE_MPICH)
-LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
-
-all: \$(TARGET)
-
-\$(TARGET): \$(OBJS) | \$(BIN_DIR)
-	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
-
-\$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
-
-\$(OBJ_DIR):
-	mkdir -p \$(OBJ_DIR)
-
-\$(BIN_DIR):
-	mkdir -p \$(BIN_DIR)
-
-clean:
-	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
-
-EOF
-
-elif [ ${1} == "mac" ]; then
-
-
-cat << EOF > ./Makefile
-
-CXX = mpicxx
-
-CXXFLAGS = -std=c++11 -O2 -g #-Wall Higher level warning
-CXXFLAGS += -Wno-c++11-compat-deprecated-writable-strings 
-CXXFLAGS += -Wno-deprecated-declarations
-CXXFLAGS += -Wno-writable-strings -fsanitize=address
-
-SRC_DIR=./src
-OBJ_DIR=./obj
-BIN_DIR=./bin
-
-TARGET = \$(BIN_DIR)/main.out
-
-SRCS=\$(wildcard \$(SRC_DIR)/*.cpp)
-SRCS += main.cpp
-OBJS=\$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
-
-INCLUDE_MPICH = -I/opt/homebrew/Cellar/mpich/4.2.1/include/
-INCLUDE_EIGEN = -I./zlib/eigen #-3.4.0/
-INCLUDE_UTHASH = -I./zlib/uthash/include/
-INCLUDE_MAIN = -I./include/
-
-INCLUDE_MKL = -I/opt/intel/oneapi/mkl/latest/include/
-LIBRARY_MKL = -L/opt/intel/oneapi/mkl/latest/lib/
-LDFLAGS_MKL = -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lpthread -lm #-ldl #-liomp5 
-
-INCLUDE = \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN) \$(INCLUDE_MPICH)
-LIBRARY = \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
-
-all: \$(TARGET)
-
-\$(TARGET): \$(OBJS) | \$(BIN_DIR)
-	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
-
-\$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c $< -o \$@ \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
-
-\$(OBJ_DIR):
-	mkdir -p \$(OBJ_DIR)
-
-\$(BIN_DIR):
-	mkdir -p \$(BIN_DIR)
-
-clean:
-	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
-
-EOF
-
-elif [ ${1} == "wsl" ]; then
-
-# WSL/Ubuntu + Intel oneAPI 2026.
-#
-# Compiler: mpicxx (Intel MPI wrapper around g++; gcc backend, not icpx).
-#   Avoids icpc/icpx deprecation noise; matches the reference WSL build that
-#   is known to work with WSL networkingMode=mirrored. Critical: bash command
-#   hash must be cleared (hash -r) after sourcing setvars.sh, otherwise a
-#   previously-cached /usr/bin/mpicxx (broken system MPICH 4.2) shadows the
-#   Intel MPI wrapper. As a defense-in-depth, the Makefile uses the absolute
-#   path of mpicxx baked in at script time.
-#
-# MPI fabric: I_MPI_FABRICS=shm forces shared-memory transport, which
-#   bypasses the WSL network namespace. Required for single-node MPI to work
-#   correctly when networkingMode=mirrored is enabled.
-#
-# MKL: searches $(MKLROOT)/lib/intel64 first (oneAPI <=2025 layout), then
-#   falls back to $(MKLROOT)/lib (oneAPI 2026+ layout). rpath embedded.
-
-. /opt/intel/oneapi/setvars.sh > /dev/null 2>&1
-hash -r
-export I_MPI_FABRICS=shm
-
-MPICXX_BIN="${I_MPI_ROOT}/bin/mpicxx"
-if [ ! -x "$MPICXX_BIN" ]; then
-    echo "[wsl] ERROR: Intel MPI's mpicxx not found at $MPICXX_BIN" >&2
-    echo "[wsl] Check that Intel oneAPI is installed and setvars.sh succeeded." >&2
+PRESET="$1"
+
+# what every preset may set; the template reads these
+GPU=0
+MAKE_EXPORTS=""                       # a line the Makefile needs, e.g. which compiler an MPI wrapper calls
+CC="${CC:-cc}"
+NVCC="${NVCC:-}"
+CUDA_ARCH="${CUDA_ARCH:-}"
+LIBRARY_EXTRA="${LIBRARY_EXTRA:-}"
+NOTE=""
+# the warnings the code trips on every compiler; -fpermissive is for the C idioms in src/
+WARN="-fpermissive -Wno-deprecated-declarations -Wno-writable-strings -Wno-unused-result -Wno-format-overflow -Wno-format-security"
+
+load_modules() {
+    # the group's servers select compilers with environment modules; a machine without
+    # the module command, or without these modules, keeps what is on PATH
+    if ! type module >/dev/null 2>&1 && [ -r /etc/profile.d/modules.sh ]; then
+        . /etc/profile.d/modules.sh
+    fi
+    if type module >/dev/null 2>&1; then
+        module purge
+        module load "$@"
+    fi
+}
+
+case "$PRESET" in
+
+generic)
+    CXX="${CXX:-mpicxx}"
+    CXXFLAGS="${CXXFLAGS:--std=gnu++17 -O3 -g -march=native $WARN}"
+    if [ -z "${CUDA_HOME:-}" ] && command -v nvcc >/dev/null 2>&1; then
+        CUDA_HOME="$(dirname "$(dirname "$(command -v nvcc)")")"
+    fi
+    if [ -n "${CUDA_HOME:-}" ]; then
+        GPU=1
+        if [ -z "$CUDA_ARCH" ]; then
+            echo "[generic] CUDA_HOME is set: also building bin/main_gpu.out. Set CUDA_ARCH to the" >&2
+            echo "[generic] card's compute capability without the dot (e.g. 86); assuming 80." >&2
+            CUDA_ARCH=80
+        fi
+    fi
+    NOTE="generic: CXX=$CXX"
+    ;;
+
+wsl-gnu|wsl)
+    # Intel oneAPI: setvars.sh puts Intel MPI's mpicxx on PATH. hash -r, because a
+    # /usr/bin/mpicxx (Ubuntu's MPICH) seen earlier in the shell would shadow it; the
+    # absolute path is baked into the Makefile for the same reason. I_MPI_FABRICS=shm
+    # keeps single-node MPI off the WSL network namespace (needed with
+    # networkingMode=mirrored).
+    . /opt/intel/oneapi/setvars.sh > /dev/null 2>&1
+    hash -r
+    export I_MPI_FABRICS=shm
+    CXX="${I_MPI_ROOT}/bin/mpicxx"
+    if [ ! -x "$CXX" ]; then
+        echo "[wsl] Intel MPI's mpicxx not found at $CXX; is oneAPI installed and setvars.sh working?" >&2
+        exit 1
+    fi
+    CXXFLAGS="-std=gnu++17 -O3 -g -march=native -mtune=native -D_FORTIFY_SOURCE=0 $WARN"
+    NOTE="wsl-gnu: g++ behind Intel MPI $I_MPI_ROOT, I_MPI_FABRICS=shm"
+    ;;
+
+wsl-icpx)
+    # As wsl, with icpx behind Intel MPI's mpicxx (I_MPI_CXX, baked into the Makefile with its
+    # full path so a later make need not source setvars.sh). icpx's default is -fp-model=fast,
+    # which folds isinf/isnan; precise is set here for the core and the template keeps it for
+    # the adaptive objects (2026-09-30). The oneAPI version differs from idm's 2023.2, so the
+    # numbers are close to idm's but not bit for bit: check_numerics' head reference was recorded
+    # with the wsl-gnu (g++) build, and icpx 2026.1 differs from it by up to 3.5e-9 in noDiv in three
+    # P1 cases (2026-10-07), so run the standing checks with the wsl-gnu preset. --force: a shell that sourced setvars.sh
+    # before the compiler was installed would otherwise skip it and leave icpx off PATH.
+    . /opt/intel/oneapi/setvars.sh --force > /dev/null 2>&1
+    hash -r
+    export I_MPI_FABRICS=shm
+    CXX="${I_MPI_ROOT}/bin/mpicxx"
+    if ! command -v icpx >/dev/null 2>&1; then
+        echo "[wsl-icpx] icpx not found: apt install intel-oneapi-compiler-dpcpp-cpp, or use the wsl-gnu preset" >&2
+        exit 1
+    fi
+    MAKE_EXPORTS="export I_MPI_CXX := $(command -v icpx)"
+    CC="$(command -v icx)"
+    CXXFLAGS="-std=gnu++17 -O3 -g -march=native -fp-model=precise $WARN"
+    NOTE="wsl-icpx: icpx $(icpx --version | head -1 | grep -o '[0-9][0-9.]*' | head -1) behind Intel MPI $I_MPI_ROOT, I_MPI_FABRICS=shm"
+    ;;
+
+idm4)
+    load_modules intel-23.2/icc-23.2
+    CXX=mpiicpc
+    # icpx, not icpc: mpiicpc defaults to icpc (Intel C++ Classic, deprecated in 2023),
+    # which is 3.2x slower on this Eigen-template-heavy code (19.5 s against 6.1 s on
+    # the P1 10 ppm gCCE regression case). icpx is in the same module.
+    MAKE_EXPORTS="export I_MPI_CXX := icpx"
+    CXXFLAGS="-std=c++17 -O3 -g -DNDEBUG -fp-model=precise -xCORE-AVX512 -Wno-deprecated-declarations -Wno-writable-strings"
+    NOTE="idm4: mpiicpc with icpx"
+    ;;
+
+gpu)
+    # idm4-gpu: OpenMPI and CUDA 12.8 from modules; the C++ with icpx when oneAPI is
+    # installed (/opt/intel/oneapi; there is no module for it), which is 15-28% faster
+    # than gcc 11 on the CPU path (2026-09-24, 2 ranks: p1_cce4 26.6 s -> 19.1 s), and
+    # gcc otherwise. The .cu keeps nvcc's g++ host: nvcc 12.8 takes icpx as host compiler
+    # only from oneAPI 2024 on. RTX PRO 6000 Blackwell is compute capability 12.0. The
+    # login node is the compute node, so keep CCEX_JOBS small while jobs are running.
+    load_modules gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-12.8
+    CXX="$(command -v mpicxx)"          # OpenMPI's wrapper, found before setvars.sh puts Intel MPI's first
+    CC=gcc
+    CXX_NAME=gcc
+    if [ -r /opt/intel/oneapi/setvars.sh ]; then
+        . /opt/intel/oneapi/setvars.sh > /dev/null 2>&1
+        if command -v icpx >/dev/null 2>&1; then
+            MAKE_EXPORTS="export OMPI_CXX := $(command -v icpx)"   # the full path: a later make need not source setvars.sh
+            CC="$(command -v icx)"
+            CXX_NAME=icpx
+        fi
+    fi
+    CUDA_HOME="${CUDA_HOME:-/usr/local/cuda-12.8}"
+    CUDA_ARCH="${CUDA_ARCH:-120}"
+    GPU=1
+    CXXFLAGS="-std=gnu++17 -O3 -g -march=native $WARN"
+    [ "$CXX_NAME" = icpx ] && CXXFLAGS="$CXXFLAGS -fp-model=precise"
+    NOTE="gpu: $CXX_NAME + OpenMPI + CUDA $CUDA_HOME, arch $CUDA_ARCH"
+    ;;
+
+nurion)
+    load_modules craype-network-opa craype-mic-knl intel/19.0.5 impi/19.0.5
+    CXX=mpiicpc
+    # C++17: the code has needed it since the bundle clustering (2026-09); the preset
+    # said -std=c++11 until 2026-09-24, which no longer compiles.
+    CXXFLAGS="-std=c++17 -O3 -g -diag-disable=2196 -diag-disable=10441 -Wno-deprecated-declarations"
+    NOTE="nurion: mpiicpc, intel/19.0.5"
+    ;;
+
+mac)
+    CXX="${CXX:-mpicxx}"
+    CXXFLAGS="-std=gnu++17 -O2 -g $WARN"
+    NOTE="mac: $CXX"
+    ;;
+
+*)
+    # going on would run make with whatever Makefile the last preset left behind
+    echo "unknown preset: $PRESET" >&2
+    echo "  preset: generic / wsl-gnu (old name wsl) / wsl-icpx / idm4 / gpu / nurion / mac" >&2
+    exit 1
+    ;;
+esac
+
+CXXFLAGS="$CXXFLAGS ${CXXFLAGS_EXTRA:-}"
+# The refinement policies get their own flags (below), not CXXFLAGS, and they carry
+# infinities and NaNs as values (an unmeasured error is inf). A compiler whose default
+# assumes neither folds isnan()/isinf() to false: icpx 2023.2 at -O2 does both, icpc
+# 2023.2 isnan (measured 2026-09-30); on idm4-gpu a merge run crashed writing an
+# infinity into summary.json. So the compiler the Makefile will call is asked, with a
+# small program built with the policies' own flags; if it gets either wrong,
+# -fp-model=precise is added and asked again, and the build stops if that does not help.
+adaptive_fp_probe() {                   # $1: extra flags; prints "11" when isinf and isnan hold
+    probe_dir=$(mktemp -d) || return 1
+    cat > "$probe_dir/fp.cpp" <<'PROBE'
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+int main(int argc, char** argv) {
+    volatile double big = std::atof(argc > 1 ? argv[1] : "1e308");
+    double x = big*10.0, y = x-x;
+    std::printf("%d%d", (int)std::isinf(x), (int)std::isnan(y));
+    return 0;
+}
+PROBE
+    probe_env=""
+    case "$MAKE_EXPORTS" in export\ *) probe_env="$(echo "${MAKE_EXPORTS#export }" | sed 's/ *:= */=/')" ;; esac
+    if env $probe_env $CXX -std=gnu++17 -O2 -ffp-contract=off -fmath-errno $1 \
+           "$probe_dir/fp.cpp" -o "$probe_dir/fp" > /dev/null 2>&1; then
+        "$probe_dir/fp" 2> /dev/null
+    else
+        echo "nobuild"
+    fi
+    rm -f "$probe_dir/fp.cpp" "$probe_dir/fp"; rmdir "$probe_dir"
+}
+# "export I_MPI_CXX := icpx" -> "I_MPI_CXX=icpx": what the unit tests compiled outside make need too (unit-env)
+UNIT_ENV=""
+case "$MAKE_EXPORTS" in export\ *) UNIT_ENV="$(echo "${MAKE_EXPORTS#export }" | sed 's/ *:= */=/')" ;; esac
+ADAPTIVE_FP=""
+fp_answer="$(adaptive_fp_probe "")"
+# a probe that does not even build says nothing about isinf/isnan: the wrapper or its libraries are broken
+if [ "$fp_answer" = "nobuild" ]; then
+    echo "[build] $CXX cannot build a small C++ program (the MPI wrapper, its compiler or its libraries);" >&2
+    echo "        try: $CXX -std=gnu++17 hello.cpp" >&2
     exit 1
 fi
+if [ "$fp_answer" != "11" ]; then
+    ADAPTIVE_FP="-fp-model=precise"
+    fp_answer="$(adaptive_fp_probe "$ADAPTIVE_FP")"
+    if [ "$fp_answer" != "11" ]; then
+        echo "[build] the compiler behind $CXX drops isinf/isnan even with -fp-model=precise" >&2
+        echo "        (probe answered '$fp_answer', expected '11'); src/clustering/algo_adaptive needs both" >&2
+        exit 1
+    fi
+    echo "[build] src/clustering/algo_adaptive: $ADAPTIVE_FP (the compiler's default drops isinf/isnan)"
+fi
+# the sanitizer flags go on the adaptive and SQLite objects too (their own rules below), so that a
+# sanitized main.out checks the refinement code it runs in process (D20, 2026-10-02)
+SANFLAGS=""
+if [ "${CCEX_SANITIZE:-0}" = "1" ]; then
+    SANFLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+    CXXFLAGS="$CXXFLAGS $SANFLAGS"
+fi
+if [ "$GPU" = "1" ]; then
+    NVCC="${NVCC:-$CUDA_HOME/bin/nvcc}"
+    TARGETS='$(TARGET) $(TARGET_GPU)'
+else
+    TARGETS='$(TARGET)'
+fi
 
-echo "[wsl] I_MPI_ROOT      = $I_MPI_ROOT"
-echo "[wsl] MKLROOT         = $MKLROOT"
-echo "[wsl] MPICXX_BIN      = $MPICXX_BIN"
-echo "[wsl] I_MPI_FABRICS   = $I_MPI_FABRICS  (shm = shared memory; mirrored-mode safe)"
-
+# ----------------------------------------------------------------------------
+# The template. $VAR is filled in now; \$(VAR) stays for make.
+# ----------------------------------------------------------------------------
 cat << EOF > ./Makefile
-
-# Auto-generated by do_compile.sh wsl on \$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-# WSL/Ubuntu + Intel oneAPI 2026 + Intel MPI (mpicxx, g++ backend)
-
-CXX := ${MPICXX_BIN}
-
-MKLROOT_FALLBACK ?= ${MKLROOT}
-MKL_LIB_DIR := \$(firstword \$(wildcard \$(MKLROOT_FALLBACK)/lib/intel64 \$(MKLROOT_FALLBACK)/lib))
-ifeq (\$(strip \$(MKL_LIB_DIR)),)
-\$(error Could not find MKL library directory under \$(MKLROOT_FALLBACK)/lib)
-endif
-
-CXXFLAGS := -std=gnu++17 -O3 -g -march=native -mtune=native
-CXXFLAGS += -D_FORTIFY_SOURCE=0
-CXXFLAGS += -fpermissive
-CXXFLAGS += -Wno-deprecated-declarations
-CXXFLAGS += -Wno-writable-strings
-CXXFLAGS += -Wno-unused-result
-CXXFLAGS += -Wno-format-overflow
-CXXFLAGS += -Wno-format-security
+# Generated by "bash do_compile.sh $PRESET" on $(date -u +"%Y-%m-%dT%H:%M:%SZ"); do not edit, rerun the script.
+# $NOTE
+CXX := $CXX
+CC  := $CC
+$MAKE_EXPORTS
+CXXFLAGS := $CXXFLAGS
+NVCC      := $NVCC
+CUDA_HOME := ${CUDA_HOME:-}
+CUDA_ARCH := $CUDA_ARCH
 
 SRC_DIR := ./src
 OBJ_DIR := ./obj
+OBJ_GPU_DIR := ./obj_gpu
 BIN_DIR := ./bin
+TARGET     := \$(BIN_DIR)/main.out
+TARGET_GPU := \$(BIN_DIR)/main_gpu.out
 
-TARGET := \$(BIN_DIR)/main.out
+# The core in five directories (src/README.md); the bundle clustering is
+# clustering/bundle/, the compute backends are calculation/gpu/.
+CORE_DIRS := \$(SRC_DIR)/input \$(SRC_DIR)/physical \$(SRC_DIR)/clustering \$(SRC_DIR)/clustering/bundle \$(SRC_DIR)/calculation \$(SRC_DIR)/calculation/gpu \$(SRC_DIR)/common \$(SRC_DIR)/auto_convergence
+NAMES := \$(notdir \$(basename \$(wildcard \$(SRC_DIR)/*.cpp) \$(foreach d,\$(CORE_DIRS),\$(wildcard \$(d)/*.cpp))))
+OBJS     := \$(addprefix \$(OBJ_DIR)/,\$(addsuffix .o,\$(NAMES)))
+OBJS_GPU := \$(addprefix \$(OBJ_GPU_DIR)/,\$(addsuffix .o,\$(NAMES))) \$(OBJ_GPU_DIR)/gpu_backend.o
 
-SRCS := \$(wildcard \$(SRC_DIR)/*.cpp)
-SRCS += main.cpp
-OBJS := \$(patsubst \$(SRC_DIR)/%.cpp,\$(OBJ_DIR)/%.o,\$(SRCS))
+# The refinement policies (src/clustering/algo_adaptive) and sqlite do not depend on the backend:
+# compiled once, linked into both binaries. adaptive_main.cpp comes with its own main()
+# compiled out; what is wanted is adaptive_main, so that this binary runs the policies
+# itself. Their flags decide float results (the port was verified against CPython under
+# them) and are not shared with src/.
+ADAPTIVE_DIR  := ./src/clustering/algo_adaptive
+ADAPTIVE_OBJS := \$(patsubst \$(ADAPTIVE_DIR)/%.cpp,\$(OBJ_DIR)/adaptive_%.o,\$(wildcard \$(ADAPTIVE_DIR)/*.cpp)) \$(OBJ_DIR)/sqlite3.o
+ADAPTIVE_FPFLAGS := -ffp-contract=off -fmath-errno $ADAPTIVE_FP
+SANFLAGS := $SANFLAGS
+ADAPTIVE_INCLUDE := -I./include/clustering/algo_adaptive -I./external/sqlite
 
-INCLUDE_EIGEN  := -I./zlib/eigen
-INCLUDE_UTHASH := -I./zlib/uthash/include/
-INCLUDE_MAIN   := -I./include/
-INCLUDE_MKL    := -I\$(MKLROOT_FALLBACK)/include
+INCLUDE := -I./external/eigen -I./external/uthash/include/ -I./include/
+LIBRARY := -lpthread -ldl -lm $LIBRARY_EXTRA
+CUDA_LIBDIR := \$(firstword \$(wildcard \$(CUDA_HOME)/lib64 \$(CUDA_HOME)/lib))
+LIBRARY_GPU := -L\$(CUDA_LIBDIR) -Wl,-rpath,\$(CUDA_LIBDIR) -lcusolver -lcublas -lcudart
 
-LIBRARY_MKL := -L\$(MKL_LIB_DIR) -Wl,-rpath,\$(MKL_LIB_DIR)
-LDFLAGS_MKL := -DMKL_ILP64 -lmkl_intel_ilp64 -lmkl_core -lmkl_sequential -lpthread -lm
-
-INCLUDE := \$(INCLUDE_EIGEN) \$(INCLUDE_MKL) \$(INCLUDE_UTHASH) \$(INCLUDE_MAIN)
-LIBRARY := \$(LIBRARY_MKL) \$(LDFLAGS_MKL)
-
-.PHONY: all clean info
-# Header dependency tracking. -MMD writes obj/<name>.d listing every header the
-# translation unit actually included; -MP adds an empty target for each so that
-# DELETING a header does not stop the build. Without this, make only compares the
-# .o against its .cpp, so editing include/*.h recompiles nothing and mismatched
-# objects link with no warning at all.
+# Header dependency tracking: -MMD writes obj/<name>.d with every header the unit
+# included, -MP adds an empty target for each so that deleting a header does not stop
+# the build. Without it make compares the .o only against its .cpp.
 DEPFLAGS := -MMD -MP
-DEPS := \$(patsubst %.o,%.d,\$(filter %.o,\$(OBJS)))
 
-all: \$(TARGET)
+all: $TARGETS
 
-\$(TARGET): \$(OBJS) | \$(BIN_DIR)
-	\$(CXX) \$(OBJS) -o \$(TARGET) \$(CXXFLAGS) \$(INCLUDE) \$(LIBRARY)
+\$(TARGET): \$(OBJS) \$(ADAPTIVE_OBJS) | \$(BIN_DIR)
+	\$(CXX) \$^ -o \$@ \$(CXXFLAGS) \$(LIBRARY)
 
-\$(OBJ_DIR)/%.o: \$(SRC_DIR)/%.cpp | \$(OBJ_DIR)
-	\$(CXX) -c \$< -o \$@ \$(CXXFLAGS) \$(DEPFLAGS) \$(INCLUDE) \$(LIBRARY)
+\$(TARGET_GPU): \$(OBJS_GPU) \$(ADAPTIVE_OBJS) | \$(BIN_DIR)
+	\$(CXX) \$^ -o \$@ \$(CXXFLAGS) \$(LIBRARY) \$(LIBRARY_GPU)
 
-\$(OBJ_DIR):
-	mkdir -p \$(OBJ_DIR)
+# The same sources twice: \$(1) is where the objects go, \$(2) what that build adds.
+define COMPILE_RULES
+\$(1)/%.o: \$(SRC_DIR)/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1)/%.o: \$(SRC_DIR)/input/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1)/%.o: \$(SRC_DIR)/physical/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1)/%.o: \$(SRC_DIR)/clustering/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1)/%.o: \$(SRC_DIR)/clustering/bundle/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1)/%.o: \$(SRC_DIR)/calculation/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1)/%.o: \$(SRC_DIR)/calculation/gpu/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1)/%.o: \$(SRC_DIR)/common/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1)/%.o: \$(SRC_DIR)/auto_convergence/%.cpp | \$(1)
+	\$\$(CXX) -c \$\$< -o \$\$@ \$\$(CXXFLAGS) \$(2) \$\$(DEPFLAGS) \$\$(INCLUDE)
+\$(1):
+	mkdir -p \$(1)
+endef
+\$(eval \$(call COMPILE_RULES,\$(OBJ_DIR),))
+\$(eval \$(call COMPILE_RULES,\$(OBJ_GPU_DIR),-DCCEX_USE_CUDA))
+
+\$(OBJ_GPU_DIR)/gpu_backend.o: \$(SRC_DIR)/calculation/gpu/gpu_backend.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
+	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
+	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
+	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
+
+\$(OBJ_DIR)/adaptive_%.o: \$(ADAPTIVE_DIR)/%.cpp | \$(OBJ_DIR)
+	\$(CXX) -c \$< -o \$@ -std=gnu++17 -O2 -g -DCCEX_ADAPTIVE_NO_MAIN \$(ADAPTIVE_FPFLAGS) \$(SANFLAGS) \$(DEPFLAGS) \$(ADAPTIVE_INCLUDE)
+
+\$(OBJ_DIR)/sqlite3.o: ./external/sqlite/sqlite3.c | \$(OBJ_DIR)
+	\$(CC) -c \$< -o \$@ -O2 -w \$(SANFLAGS) -I./external/sqlite
 
 \$(BIN_DIR):
 	mkdir -p \$(BIN_DIR)
 
+# The GPU unit tests need the card: run "make gpu-test" inside a job. test_review_memory
+# includes cuda_runtime.h itself, hence the CUDA include folder.
+GPU_TESTS := test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory
+\$(BIN_DIR)/test_%.out: test/gpu_verification/check_gpu/test_%.cpp \$(OBJ_GPU_DIR)/gpu_backend.o | \$(BIN_DIR)
+	\$(CXX) \$(INCLUDE) -I\$(CUDA_HOME)/include -DCCEX_USE_CUDA \$(CXXFLAGS) \$< \$(OBJ_GPU_DIR)/gpu_backend.o \$(LIBRARY) \$(LIBRARY_GPU) -o \$@
+\$(BIN_DIR)/test_scaled_product.out: test/gpu_verification/check_gpu/test_scaled_product.cpp include/calculation/scaled_product.h | \$(BIN_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) \$< -o \$@
+\$(BIN_DIR)/test_hamiltonian_check.out: test/gpu_verification/check_gpu/test_hamiltonian_check.cpp include/calculation/hamiltonian_check.h | \$(BIN_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) \$< -o \$@
+# The CPU regression tests of check_gpu (D17): the build's own flags, -UNDEBUG for their asserts;
+# test_host_lifetimes links the objects of bin/main.out but main.o. MPIRUN=... picks the launcher.
+CPU_TESTS := test_cluster_log test_mpi_seed test_review_controls test_host_lifetimes
+# The bundle partition, connection and high-order expansion against their own oracles (D31): the two bundle
+# sources compiled into each test with the build's flags, -UNDEBUG for their asserts.
+BUNDLE_TESTS := test_adaptive_partition test_adaptive_connections test_adaptive_high_order
+# The pCCE partition cache file codec (D32): the test includes pcce_partition_cache.cpp itself, so it links the other
+# objects of main.out; it is given a file to write under obj/ and removes it.
+CACHE_TEST_OBJS := \$(filter-out \$(OBJ_DIR)/main.o \$(OBJ_DIR)/pcce_partition_cache.o,\$(OBJS))
+\$(BIN_DIR)/test_partition_cache_format.out: test/cluster_verification/check_pcce/test_partition_cache_format.cpp \$(CACHE_TEST_OBJS) | \$(BIN_DIR) \$(OBJ_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/test_partition_cache_format.test.d -MT \$@ \$< \$(CACHE_TEST_OBJS) \$(LIBRARY) -o \$@
+BUNDLE_SRCS := src/clustering/bundle/bundle_partition.cpp src/clustering/bundle/bundle_expansion.cpp src/clustering/bundle/bundle_powers.cpp
+\$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(BUNDLE_TESTS))): \$(BIN_DIR)/%.out: test/cluster_verification/check_pcce/%.cpp \$(BUNDLE_SRCS) | \$(BIN_DIR) \$(OBJ_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/\$*.test.d -MT \$@ \$< \$(BUNDLE_SRCS) -o \$@
+MPIRUN ?= mpirun
+# What they test is mostly inline in headers, so each writes obj/<test>.test.d (included below with the
+# other .d files) and is rebuilt when one of its headers changes.
+\$(BIN_DIR)/test_cluster_log.out \$(BIN_DIR)/test_mpi_seed.out \$(BIN_DIR)/test_review_controls.out: \$(BIN_DIR)/%.out: test/gpu_verification/check_gpu/%.cpp | \$(BIN_DIR) \$(OBJ_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/\$*.test.d -MT \$@ \$< -o \$@
+\$(BIN_DIR)/test_host_lifetimes.out: test/gpu_verification/check_gpu/test_host_lifetimes.cpp \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) \$(ADAPTIVE_OBJS) | \$(BIN_DIR) \$(OBJ_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/test_host_lifetimes.test.d -MT \$@ \$< \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) \$(ADAPTIVE_OBJS) \$(LIBRARY) -o \$@
+
+# How to compile a unit test against this build, for the drivers outside make (test/unit_build_env.sh, D26):
+# the compiler, the environment its wrapper needs, the flags, includes and libraries of bin/main.out, and its
+# objects but main.o, all with absolute paths. main.out comes first, so that what is printed is up to date.
+unit-env: \$(TARGET)
+	@echo "CCEX_UNIT_CXX='\$(CXX)'"
+	@echo "CCEX_UNIT_ENV='$UNIT_ENV'"
+	@echo "CCEX_UNIT_CXXFLAGS='\$(CXXFLAGS)'"
+	@echo "CCEX_UNIT_INCLUDES='\$(patsubst -I./%,-I\$(CURDIR)/%,\$(INCLUDE))'"
+	@echo "CCEX_UNIT_LIBS='\$(LIBRARY)'"
+	@echo "CCEX_UNIT_OBJS='\$(abspath \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) \$(ADAPTIVE_OBJS))'"
+
+.PHONY: all clean info gpu-test numeric-test cpu-test unit-env
+numeric-test: \$(BIN_DIR)/test_scaled_product.out \$(BIN_DIR)/test_hamiltonian_check.out
+	./\$(BIN_DIR)/test_scaled_product.out
+	./\$(BIN_DIR)/test_hamiltonian_check.out
+cpu-test: \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(CPU_TESTS) \$(BUNDLE_TESTS) test_partition_cache_format))
+	./\$(BIN_DIR)/test_cluster_log.out
+	./\$(BIN_DIR)/test_review_controls.out
+	\$(MPIRUN) -n 1 ./\$(BIN_DIR)/test_mpi_seed.out
+	\$(MPIRUN) -n 4 ./\$(BIN_DIR)/test_mpi_seed.out
+	\$(MPIRUN) -n 1 ./\$(BIN_DIR)/test_host_lifetimes.out
+	\$(MPIRUN) -n 4 ./\$(BIN_DIR)/test_host_lifetimes.out
+	./\$(BIN_DIR)/test_adaptive_partition.out
+	./\$(BIN_DIR)/test_adaptive_connections.out
+	./\$(BIN_DIR)/test_adaptive_high_order.out
+	./\$(BIN_DIR)/test_partition_cache_format.out \$(OBJ_DIR)/test_partition_cache.bin
+gpu-test: numeric-test \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(GPU_TESTS)))
+	./\$(BIN_DIR)/test_gcce_cuda.out
+	./\$(BIN_DIR)/test_cce_cuda.out
+	./\$(BIN_DIR)/test_gcce_accuracy.out
+	./\$(BIN_DIR)/test_gcce_accuracy.out test/gpu_verification/check_gpu/data/gcce_scale_separation_three_spins.txt
+	./\$(BIN_DIR)/test_gcce_refinement.out
+	./\$(BIN_DIR)/test_gcce_batch.out
+	./\$(BIN_DIR)/test_review_failure.out
+	./\$(BIN_DIR)/test_review_memory.out
+
 info:
-	@echo "CXX         = \$(CXX)"
-	@echo "MKLROOT     = \$(MKLROOT_FALLBACK)"
-	@echo "MKL_LIB_DIR = \$(MKL_LIB_DIR)"
-	@\$(CXX) -show 2>/dev/null | head -1
+	@echo "CXX      = \$(CXX)"
+	@echo "CXXFLAGS = \$(CXXFLAGS)"
+	@echo "targets  = $TARGETS"
+	@\$(CXX) -show 2>/dev/null | head -1 || true
 
 clean:
-	rm -rf \$(OBJ_DIR) \$(BIN_DIR)
+	rm -rf \$(OBJ_DIR) \$(OBJ_GPU_DIR) \$(BIN_DIR)
 
--include \$(DEPS)
-
+-include \$(wildcard \$(OBJ_DIR)/*.d \$(OBJ_GPU_DIR)/*.d)
 EOF
 
-else
- :
-fi
-
-# A changed Makefile has to invalidate every object. make compares each .o against its
-# .cpp and the headers in the .d file -- never against the flags it was built with -- so
-# switching preset, compiler or optimization otherwise relinks the OLD objects and hands
-# back a binary that looks new and is not. Switching idm4 from icpc to icpx reproduced
-# exactly that: same 112 MB icpc binary, one second, exit 0.
-if ! cmp -s Makefile .ccex_makefile.stamp 2>/dev/null; then
-    echo "[build] build settings changed -- cleaning objects first"
+# A changed Makefile has to invalidate every object: make compares each .o against its
+# .cpp and headers, never against the flags it was built with, so switching preset or
+# compiler would otherwise relink the old objects and hand back a binary that looks
+# new and is not.
+# The stamp is the Makefile without its first line, which holds the generation time (with it, every
+# rerun with the same preset cleaned and rebuilt everything; D23, 2026-10-02), followed by the list of
+# sources: the Makefile names them by wildcard, so a deleted source would leave its object and the
+# old binary in place, and make would not relink.
+build_fingerprint() {
+    tail -n +2 Makefile
+    find src external/sqlite \( -name '*.cpp' -o -name '*.c' -o -name '*.cu' \) | LC_ALL=C sort
+}
+if ! cmp -s <(build_fingerprint) .ccex_makefile.stamp 2>/dev/null; then
+    echo "[build] build settings or sources changed -- cleaning objects first"
     make clean >/dev/null 2>&1 || true
 fi
-cp -f Makefile .ccex_makefile.stamp
+build_fingerprint > .ccex_makefile.stamp
 
-# idm4's login node is shared and has 24 cores; -j$(nproc) took all of them. Override
-# with CCEX_JOBS when you have the machine to yourself.
+echo "[build] $NOTE"
 make -j"${CCEX_JOBS:-5}"
-#make 

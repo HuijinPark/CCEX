@@ -1,0 +1,287 @@
+# CCEX: the CMake build. The same binaries as do_compile.sh (main.out, and
+# main_gpu.out where there is CUDA), found the standard way:
+#
+#     cmake -B build                     # finds the MPI wrapper and, if there is one, nvcc
+#     cmake --build build -j 8           # -> build/bin/main.out
+#
+# Options (-D on the configure line):
+#     CCEX_CUDA=AUTO|ON|OFF   the CUDA backend binary; AUTO builds it when a CUDA compiler is found
+#     CCEX_NATIVE=ON|OFF      -march=native on the CPU objects (ON)
+#     CCEX_SANITIZE=ON|OFF    AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects (OFF)
+#     CCEX_BIN_DIR=<dir>      where the executables go (default <build>/bin); -DCCEX_BIN_DIR=$PWD/bin
+#                             puts them where do_compile.sh does and the checks look by default
+#     CMAKE_CUDA_ARCHITECTURES=<cc>   the card's compute capability, e.g. 86 or 120 (default: native)
+#     MPI_CXX_COMPILER=<wrapper>      when the wrapper is not the mpicxx on PATH, e.g. mpiicpc
+#     CMAKE_CXX_COMPILER=icpx         Intel's compiler for the C++ (idm4-gpu: 15-25% faster than gcc 11 on
+#                                     the CPU path); with CUDA add CMAKE_CUDA_HOST_COMPILER=g++, because
+#                                     nvcc 12.8 accepts icpx as host compiler only from oneAPI 2024 on
+#
+# The binaries stay in the build folder unless CCEX_BIN_DIR says otherwise. Until
+# 2026-10-01 they went to bin/ of the source tree, which do_compile.sh writes too, so a
+# CMake build and a do_compile.sh build (or two CMake builds with other flags) replaced
+# each other's main.out. The checks take the binary to test from CCEX_BIN, e.g.
+# CCEX_BIN=$PWD/build/bin/main.out, and the unit-test drivers of check_rotation and
+# check_pcce take the build folder from CCEX_BUILD_DIR.
+# Eigen, uthash and SQLite are in external/. MKL is not used (see do_compile.sh).
+
+cmake_minimum_required(VERSION 3.18)
+project(CCEX VERSION 2.0.0 LANGUAGES C CXX)
+
+set(CCEX_CUDA AUTO CACHE STRING "CUDA backend binary: AUTO, ON or OFF")
+option(CCEX_NATIVE "-march=native on the CPU objects" ON)
+option(CCEX_SANITIZE "AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects" OFF)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)                     # gnu++17, as the presets
+set(CCEX_BIN_DIR ${CMAKE_BINARY_DIR}/bin CACHE PATH "where the executables go")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CCEX_BIN_DIR})
+# Optimisation is set per target below (the refinement policies keep their own flags),
+# so a build type adds nothing on top.
+set(CMAKE_CXX_FLAGS_RELEASE "" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "" CACHE STRING "" FORCE)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "" FORCE)
+endif()
+
+find_package(MPI REQUIRED COMPONENTS CXX)
+find_package(Threads REQUIRED)
+
+# ---- CUDA: AUTO means "when nvcc is found"
+include(CheckLanguage)
+if(CCEX_CUDA STREQUAL "AUTO")
+  check_language(CUDA)
+  if(CMAKE_CUDA_COMPILER)
+    set(_ccex_cuda ON)
+  else()
+    set(_ccex_cuda OFF)
+  endif()
+elseif(CCEX_CUDA)
+  set(_ccex_cuda ON)
+else()
+  set(_ccex_cuda OFF)
+endif()
+if(_ccex_cuda)
+  if(NOT CMAKE_CUDA_ARCHITECTURES)
+    # "native" is a CMake 3.24 value; older CMake (3.18 is enough for the CPU build) needs the number
+    if(CMAKE_VERSION VERSION_LESS 3.24)
+      message(FATAL_ERROR "CCEX: CMake ${CMAKE_VERSION} cannot detect the card; give -DCMAKE_CUDA_ARCHITECTURES=<cc> (e.g. 86, 120) or -DCCEX_CUDA=OFF")
+    endif()
+    set(CMAKE_CUDA_ARCHITECTURES native)
+  endif()
+  enable_language(CUDA)
+  find_package(CUDAToolkit REQUIRED)
+  set(CMAKE_CUDA_STANDARD 17)
+endif()
+message(STATUS "CCEX: MPI ${MPI_CXX_COMPILER}; CUDA backend ${_ccex_cuda}")
+
+# ---- sources: the core in five directories (src/README.md), the bundle clustering in
+# clustering/bundle/, the compute backends in calculation/gpu/
+set(CCEX_CORE_DIRS input physical clustering clustering/bundle calculation calculation/gpu common auto_convergence)
+set(CCEX_CORE_SRCS ${CMAKE_SOURCE_DIR}/src/main.cpp)
+foreach(d ${CCEX_CORE_DIRS})
+  file(GLOB _srcs CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/src/${d}/*.cpp)
+  list(APPEND CCEX_CORE_SRCS ${_srcs})
+endforeach()
+file(GLOB CCEX_ADAPTIVE_SRCS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/src/clustering/algo_adaptive/*.cpp)
+
+set(CCEX_INCLUDE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/external/eigen ${CMAKE_SOURCE_DIR}/external/uthash/include)
+# the warnings the code trips on every compiler; -fpermissive is for the C idioms in src/
+set(CCEX_CXX_WARN -fpermissive -Wno-deprecated-declarations -Wno-writable-strings -Wno-unused-result -Wno-format-overflow -Wno-format-security)
+# -DCCEX_STRICT_WARNINGS=ON (the CI does it, D34): the suppressions above are dropped, the warnings come on, and the
+# kinds that are defects -- a printf/scanf format that does not match, a format that is not a literal, an
+# unsequenced write, an if that does not guard what its indentation says -- stop the build. The C idioms the
+# suppressions are for (string literals as char*, unused results) stay warnings.
+option(CCEX_STRICT_WARNINGS "warnings on, and format/sequence-point/misleading-indentation ones as errors" OFF)
+if(CCEX_STRICT_WARNINGS)
+  set(CCEX_CXX_WARN -fpermissive -Wall -Wformat=2 -Wno-write-strings
+      -Werror=format -Werror=format-security -Werror=sequence-point -Werror=misleading-indentation
+      -Wno-error=format-truncation)    # snprintf that may cut a message short: safe, so a warning only
+endif()
+set(CCEX_CPU_OPT -O3 -g)
+if(CCEX_NATIVE)
+  list(APPEND CCEX_CPU_OPT -march=native)
+endif()
+# icpx defaults to -fp-model=fast; the idm4 preset keeps precise, so the CMake build does too
+if(CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM|Intel")
+  list(APPEND CCEX_CPU_OPT -fp-model=precise)
+  set(CCEX_ADAPTIVE_FP -fp-model=precise)
+endif()
+# the adaptive and SQLite objects get them too (ccex_adaptive below), so that a sanitized main.out
+# checks the refinement code it runs in process (D20, 2026-10-02)
+set(CCEX_SANITIZE_OPT)
+if(CCEX_SANITIZE)
+  set(CCEX_SANITIZE_OPT -fsanitize=address,undefined -fno-omit-frame-pointer)
+  list(APPEND CCEX_CPU_OPT ${CCEX_SANITIZE_OPT})
+  add_link_options(-fsanitize=address,undefined)
+endif()
+
+# ---- the refinement policies and SQLite: compiled once, linked into both binaries.
+# adaptive_main.cpp comes with its own main() compiled out; what is wanted is
+# adaptive_main, so that the binary runs the policies itself. Their flags decide float
+# results (the port was verified against CPython under them) and are not shared.
+add_library(ccex_adaptive OBJECT ${CCEX_ADAPTIVE_SRCS} ${CMAKE_SOURCE_DIR}/external/sqlite/sqlite3.c)
+target_include_directories(ccex_adaptive PRIVATE ${CMAKE_SOURCE_DIR}/include/clustering/algo_adaptive ${CMAKE_SOURCE_DIR}/external/sqlite)
+target_compile_definitions(ccex_adaptive PRIVATE CCEX_ADAPTIVE_NO_MAIN)
+target_compile_options(ccex_adaptive PRIVATE
+  $<$<COMPILE_LANGUAGE:CXX>:-O2 -g -ffp-contract=off -fmath-errno ${CCEX_ADAPTIVE_FP} ${CCEX_SANITIZE_OPT}>
+  $<$<COMPILE_LANGUAGE:C>:-O2 -w ${CCEX_SANITIZE_OPT}>)
+
+# ---- the CPU binary: the core but main.cpp as an object library (ccex_core), which the unit tests link
+#      as well (cpu-test, and the drivers through unit-build.env below; D26)
+set(_ccex_lib_srcs ${CCEX_CORE_SRCS})
+list(REMOVE_ITEM _ccex_lib_srcs ${CMAKE_SOURCE_DIR}/src/main.cpp)
+add_library(ccex_core OBJECT ${_ccex_lib_srcs})
+target_include_directories(ccex_core PRIVATE ${CCEX_INCLUDE})
+target_compile_options(ccex_core PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN})
+target_link_libraries(ccex_core PRIVATE MPI::MPI_CXX)
+add_executable(ccex ${CMAKE_SOURCE_DIR}/src/main.cpp $<TARGET_OBJECTS:ccex_core> $<TARGET_OBJECTS:ccex_adaptive>)
+set_target_properties(ccex PROPERTIES OUTPUT_NAME main.out)
+target_include_directories(ccex PRIVATE ${CCEX_INCLUDE})
+target_compile_options(ccex PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN})
+target_link_libraries(ccex PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS})
+
+# How to compile a unit test against this build, for the drivers outside CMake (test/unit_build_env.sh,
+# D26): the compiler and the flags, includes and libraries the objects of ccex_core were built with (MPI as
+# FindMPI found it), and those objects with the refinement policies'. Written at generation, any generator.
+set(_unit_flags ${CMAKE_CXX17_EXTENSION_COMPILE_OPTION} ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} ${MPI_CXX_COMPILE_OPTIONS})
+foreach(d ${MPI_CXX_COMPILE_DEFINITIONS})
+  list(APPEND _unit_flags -D${d})
+endforeach()
+set(_unit_includes)
+foreach(i ${CCEX_INCLUDE} ${MPI_CXX_INCLUDE_DIRS})
+  list(APPEND _unit_includes -I${i})
+endforeach()
+set(_unit_libs ${MPI_CXX_LINK_FLAGS} ${MPI_CXX_LIBRARIES} -lpthread -ldl -lm)
+if(CCEX_SANITIZE)
+  list(APPEND _unit_libs -fsanitize=address,undefined)
+endif()
+# and the flags of the configuration the objects were built in (CMAKE_CXX_FLAGS_DEBUG etc.), which CMake adds to
+# every compile line: -D_GLIBCXX_DEBUG or an alignment flag there changes the layout the objects use (review
+# 78d583 R4). A multi-config generator gets one file per configuration, unit-build-<config>.env (R3).
+set(_unit_config_flags)
+foreach(c ${CMAKE_CONFIGURATION_TYPES} ${CMAKE_BUILD_TYPE})
+  string(TOUPPER "${c}" _c)
+  list(APPEND _unit_config_flags "$<$<CONFIG:${c}>:${CMAKE_CXX_FLAGS_${_c}}>")
+endforeach()
+string(JOIN " " _unit_flags_s ${CMAKE_CXX_FLAGS} ${_unit_config_flags} ${_unit_flags})
+string(JOIN " " _unit_includes_s ${_unit_includes})
+string(JOIN " " _unit_libs_s ${_unit_libs})
+# FindMPI quotes the rpath of its link flags; the drivers split on spaces and would keep the quotes
+string(REPLACE "\"" "" _unit_libs_s "${_unit_libs_s}")
+if(CMAKE_CONFIGURATION_TYPES)
+  set(_unit_env_file ${CMAKE_BINARY_DIR}/unit-build-$<CONFIG>.env)
+else()
+  set(_unit_env_file ${CMAKE_BINARY_DIR}/unit-build.env)
+endif()
+file(GENERATE OUTPUT ${_unit_env_file} CONTENT
+"CCEX_UNIT_CXX='${CMAKE_CXX_COMPILER}'
+CCEX_UNIT_ENV=''
+CCEX_UNIT_CXXFLAGS='${_unit_flags_s}'
+CCEX_UNIT_INCLUDES='${_unit_includes_s}'
+CCEX_UNIT_LIBS='${_unit_libs_s}'
+CCEX_UNIT_OBJS='$<JOIN:$<TARGET_OBJECTS:ccex_core>, > $<JOIN:$<TARGET_OBJECTS:ccex_adaptive>, >'
+")
+
+# ---- the CUDA binary: the same sources with -DCCEX_USE_CUDA, plus the kernels
+if(_ccex_cuda)
+  add_library(ccex_gpu_backend OBJECT ${CMAKE_SOURCE_DIR}/src/calculation/gpu/gpu_backend.cu)
+  target_include_directories(ccex_gpu_backend PRIVATE ${CMAKE_SOURCE_DIR}/include)
+  target_compile_options(ccex_gpu_backend PRIVATE -O3 -lineinfo)
+
+  add_executable(ccex_gpu ${CCEX_CORE_SRCS} $<TARGET_OBJECTS:ccex_adaptive> $<TARGET_OBJECTS:ccex_gpu_backend>)
+  set_target_properties(ccex_gpu PROPERTIES OUTPUT_NAME main_gpu.out)
+  target_include_directories(ccex_gpu PRIVATE ${CCEX_INCLUDE})
+  target_compile_definitions(ccex_gpu PRIVATE CCEX_USE_CUDA)
+  target_compile_options(ccex_gpu PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CCEX_CPU_OPT} ${CCEX_CXX_WARN}>)
+  target_link_libraries(ccex_gpu PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS}
+                        CUDA::cusolver CUDA::cublas CUDA::cudart)
+
+  # the GPU unit tests need the card: cmake --build build --target gpu-test, inside a job
+  set(_gpu_tests test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory)
+  foreach(t ${_gpu_tests})
+    add_executable(${t} EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/${t}.cpp $<TARGET_OBJECTS:ccex_gpu_backend>)
+    set_target_properties(${t} PROPERTIES OUTPUT_NAME ${t}.out)
+    target_include_directories(${t} PRIVATE ${CCEX_INCLUDE})
+    target_compile_definitions(${t} PRIVATE CCEX_USE_CUDA)
+    target_compile_options(${t} PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN})
+    target_link_libraries(${t} PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS} CUDA::cusolver CUDA::cublas CUDA::cudart)
+  endforeach()
+  add_custom_target(gpu-test
+    COMMAND $<TARGET_FILE:test_scaled_product>
+    COMMAND $<TARGET_FILE:test_hamiltonian_check>
+    COMMAND $<TARGET_FILE:test_gcce_cuda>
+    COMMAND $<TARGET_FILE:test_cce_cuda>
+    COMMAND $<TARGET_FILE:test_gcce_accuracy>
+    COMMAND $<TARGET_FILE:test_gcce_accuracy> ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/data/gcce_scale_separation_three_spins.txt
+    COMMAND $<TARGET_FILE:test_gcce_refinement>
+    COMMAND $<TARGET_FILE:test_gcce_batch>
+    COMMAND $<TARGET_FILE:test_review_failure>
+    COMMAND $<TARGET_FILE:test_review_memory>
+    DEPENDS test_scaled_product test_hamiltonian_check ${_gpu_tests}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+endif()
+
+# ---- the numeric unit tests (CPU) of the scaled product and of the Hamiltonian check the CUDA
+#      cCCE path makes: cmake --build build --target numeric-test
+foreach(t test_scaled_product test_hamiltonian_check)
+  add_executable(${t} EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/${t}.cpp)
+  set_target_properties(${t} PROPERTIES OUTPUT_NAME ${t}.out)
+  target_include_directories(${t} PRIVATE ${CCEX_INCLUDE})
+  target_compile_options(${t} PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN})
+  target_link_libraries(${t} PRIVATE MPI::MPI_CXX)
+endforeach()
+add_custom_target(numeric-test
+  COMMAND $<TARGET_FILE:test_scaled_product>
+  COMMAND $<TARGET_FILE:test_hamiltonian_check>
+  DEPENDS test_scaled_product test_hamiltonian_check)
+
+# ---- the CPU regression tests of check_gpu (D17): cmake --build build --target cpu-test.
+#      The flags of the CPU binary and -UNDEBUG for their asserts; test_host_lifetimes links the
+#      objects of main.out but main.cpp (ccex_core). Seed sharing and the empty-rank
+#      ownership run on 1 and 4 ranks (MPIEXEC_EXECUTABLE is the launcher FindMPI found).
+set(_cpu_tests test_cluster_log test_mpi_seed test_review_controls test_host_lifetimes)
+foreach(t ${_cpu_tests})
+  if(t STREQUAL "test_host_lifetimes")
+    add_executable(${t} EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/${t}.cpp
+                   $<TARGET_OBJECTS:ccex_core> $<TARGET_OBJECTS:ccex_adaptive>)
+  else()
+    add_executable(${t} EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/${t}.cpp)
+  endif()
+  set_target_properties(${t} PROPERTIES OUTPUT_NAME ${t}.out)
+  target_include_directories(${t} PRIVATE ${CCEX_INCLUDE})
+  target_compile_options(${t} PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} -UNDEBUG)
+  target_link_libraries(${t} PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS})
+endforeach()
+# the bundle partition, connection and high-order expansion against their own oracles (D31)
+set(_bundle_tests test_adaptive_partition test_adaptive_connections test_adaptive_high_order)
+foreach(t ${_bundle_tests})
+  add_executable(${t} EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/test/cluster_verification/check_pcce/${t}.cpp
+                 ${CMAKE_SOURCE_DIR}/src/clustering/bundle/bundle_partition.cpp ${CMAKE_SOURCE_DIR}/src/clustering/bundle/bundle_expansion.cpp
+                 ${CMAKE_SOURCE_DIR}/src/clustering/bundle/bundle_powers.cpp)
+  set_target_properties(${t} PROPERTIES OUTPUT_NAME ${t}.out)
+  target_include_directories(${t} PRIVATE ${CCEX_INCLUDE})
+  target_compile_options(${t} PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} -UNDEBUG)
+  target_link_libraries(${t} PRIVATE MPI::MPI_CXX)
+endforeach()
+# the pCCE partition cache file codec (D32): the test includes pcce_partition_cache.cpp, so it links the other
+# objects of ccex_core and writes (and removes) a file in the build folder
+add_executable(test_partition_cache_format EXCLUDE_FROM_ALL
+  ${CMAKE_SOURCE_DIR}/test/cluster_verification/check_pcce/test_partition_cache_format.cpp
+  $<FILTER:$<TARGET_OBJECTS:ccex_core>,EXCLUDE,pcce_partition_cache>)
+set_target_properties(test_partition_cache_format PROPERTIES OUTPUT_NAME test_partition_cache_format.out)
+target_include_directories(test_partition_cache_format PRIVATE ${CCEX_INCLUDE})
+target_compile_options(test_partition_cache_format PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} -UNDEBUG)
+target_link_libraries(test_partition_cache_format PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS})
+add_custom_target(cpu-test
+  COMMAND $<TARGET_FILE:test_cluster_log>
+  COMMAND $<TARGET_FILE:test_review_controls>
+  COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 1 $<TARGET_FILE:test_mpi_seed>
+  COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4 $<TARGET_FILE:test_mpi_seed>
+  COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 1 $<TARGET_FILE:test_host_lifetimes>
+  COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4 $<TARGET_FILE:test_host_lifetimes>
+  COMMAND $<TARGET_FILE:test_adaptive_partition>
+  COMMAND $<TARGET_FILE:test_adaptive_connections>
+  COMMAND $<TARGET_FILE:test_adaptive_high_order>
+  COMMAND $<TARGET_FILE:test_partition_cache_format> ${CMAKE_BINARY_DIR}/test_partition_cache.bin
+  DEPENDS ${_cpu_tests} ${_bundle_tests} test_partition_cache_format)

@@ -1,7 +1,109 @@
-2023.11.19
+# CCEX
 
-CCEX ![](https://komarev.com/ghpvc/?username=your-github-username&style=flat-square) ![](https://img.shields.io/github/watchers/{username}/{repo-name}.svg)
-===============
+CCEX computes the coherence of spin qubits in a bath of nuclear and electron spins
+by the cluster-correlation expansion (CCE). It is a C++ and MPI code of the CQML
+group at Sungkyunkwan University: <https://github.com/CQML-SKKU/CCEX>. This is
+version 2.0.0 (provisional; see `CITATION.cff`).
 
-![License](https://img.shields.io/badge/License-CQML-blue?style=flat-square&logo=c&logoColor=white&labelColor=e28a2b)<br/>
-**This code is for the simulation of qubit coherence dynamics<br/>**
+## What it computes
+
+The input names a qubit (or several), the bath around it and a pulse sequence.
+From the positions, gyromagnetic ratios and interaction tensors CCEX builds the
+spin Hamiltonian, divides the bath into clusters, solves the dynamics of every
+cluster exactly and combines them into the coherence `L(t)` of the qubit or, with
+gCCE, its density matrix.
+
+- Methods: conventional CCE, generalized CCE (gCCE), partition CCE (pCCE), and
+  the disjoint-cluster and inter-bath variants (`method`).
+- Sequences: Ramsey, Hahn echo, CPMG, WAHUHA, or any sequence written out pulse
+  by pulse (`npulse`, `sequence`).
+- Baths: nuclear spins with point-dipole or DFT tensors (hyperfine, quadrupole),
+  electron-spin defects with sampled bath states; one configuration or an
+  ensemble.
+- Beyond the standard clustering: bundle clustering and its adaptive refinement
+  (`cluster_mode`, the `Adaptive` block), a CUDA backend for the cluster
+  propagation (`backend`), and a coordinate frame rotation that lets the bath
+  file stay in the crystal frame (`coordinate_frame_rotation`).
+
+## Build
+
+```
+cmake -B build && cmake --build build -j 8      # any machine: finds the MPI wrapper and, if there is one, nvcc
+bash do_compile.sh <preset>                     # the group's machines: wsl-gnu, wsl-icpx, idm4, gpu, nurion, mac (or generic)
+```
+
+`do_compile.sh` gives `bin/main.out`, and, where there is CUDA, `bin/main_gpu.out` for
+`backend` cuda or auto; CMake gives the same two in `build/bin/` (`-DCCEX_BIN_DIR=$PWD/bin`
+puts them in `bin/`; until 2026-10-01 that was the default, and a CMake and a
+`do_compile.sh` build replaced each other's binaries). Needed: a C++17 compiler behind an MPI wrapper
+(`mpicxx`, `mpic++`, `mpiicpc`) and, for the GPU binary, the CUDA toolkit;
+Eigen, uthash and SQLite are bundled in `external/`, and nothing else is linked
+(MKL is not used). `CMakeLists.txt` takes `-DCCEX_CUDA=OFF`,
+`-DCMAKE_CUDA_ARCHITECTURES=<cc>`, `-DMPI_CXX_COMPILER=<wrapper>`,
+`-DCCEX_NATIVE=OFF`, `-DCCEX_SANITIZE=ON` and `-DCCEX_STRICT_WARNINGS=ON` (warnings on, format, sequence-point
+and misleading-indentation ones as errors; the CI builds with it); its objects stay in `build/`.
+`do_compile.sh` writes a `Makefile` at the top and loads the modules of the
+group's machines itself; `generic` takes `CXX`, `CC`, `CXXFLAGS`, `CUDA_HOME`
+and `CUDA_ARCH` from the environment. `bin/`, `obj/`, `build/` and the
+`Makefile` are build output and not in git.
+
+## Run
+
+```
+mpirun -n 4 bin/main.out -f ccein.js           # do_compile.sh build
+mpirun -n 4 build/bin/main.out -f ccein.js     # CMake build
+```
+
+The input file is JSON with `#` and `!` comments. Its keys are the reference in
+[docs/user/InputFile.md](docs/user/InputFile.md); the command-line options that
+override them are in [docs/user/GettingStarted.md](docs/user/GettingStarted.md).
+A run writes the coherence (or density matrix) per bath configuration into text
+files, which the analyzer in `example/analysis/` error-corrects, averages over
+the ensemble and plots. The quickest way in is a tutorial:
+
+```
+cd example/tutorial/02_Diamond_NV_natab/ensemble_CCE
+NP=4 NCONF=1 bash run.sh                      # writes results/
+```
+
+The tutorials run `bin/main.out`; after a CMake build give them the binary with
+`export CCEX_BIN=<repository>/build/bin/main.out` (and `CCEX_GPU_BIN` for
+`09_GPU_backend`).
+
+## Layout
+
+| Folder | What | Read |
+|---|---|---|
+| `src/`, `include/` | the code: five core groups (input, physical, clustering, calculation, common) plus `clustering/bundle/`, `clustering/algo_adaptive/` and `calculation/gpu/`; `src/main.cpp` is the entry point | `src/README.md` |
+| `example/` | `tutorial/` (ten worked examples, one system or feature each, with `run.sh`), `analysis/` (the coherence analyzer and the convergence test), `tools/` (bath generator, DFT tensor reader, job runner) | `example/README.md` |
+| `test/` | `code_verification/` (numerics against recorded references, the frame rotation, refusals, input forms), `cluster_verification/` (adaptive, bundle, pCCE), `gpu_verification/` (the CUDA backend, benchmarks, server jobs) | `test/README.md` |
+| `docs/` | `user/` (the manual pages), `methods/` (the added methods in detail), `doxygen/` (the site) | `docs/README.md` |
+| `external/` | Eigen 3.4.1, uthash and SQLite, kept in the tree so every server builds without packages | `external/README.md` |
+
+## Documentation
+
+- The manual: [Overview](docs/user/Overview.md), [Getting started](docs/user/GettingStarted.md),
+  [Input file](docs/user/InputFile.md) (every key, by group) and [Examples](docs/user/Examples.md).
+- The same pages with the API reference as a site: `cd docs/doxygen && doxygen Doxyfile`,
+  then open `html/index.html` (Doxygen 1.9 and graphviz). GitHub Actions builds
+  it from `.github/workflows/deploy_docs.yml`.
+- The methods this branch added, in detail: `docs/methods/` (clustering
+  terminology, bundle clustering, the `Adaptive` block, the GPU backend, the
+  frame rotation).
+
+## Checks
+
+```
+bash test/code_verification/run.sh          # needs bin/main.out, mpirun, and test/requirements.txt (numpy, scipy, matplotlib)
+```
+
+runs the four code checks in order; the cluster and GPU checks and what each
+needs are in `test/README.md`. To check a CMake build, give the checks its binary
+and its build folder: `CCEX_BIN=$PWD/build/bin/main.out CCEX_BUILD_DIR=$PWD/build` (the unit-test drivers take
+the compiler, flags and objects from the `unit-build.env` the build writes, any generator; `test/unit_build_env.sh`).
+`.github/workflows/ci.yml` builds with CMake and runs the fast checks on every push
+and pull request.
+
+## Citing
+
+The authors and the version are in [CITATION.cff](CITATION.cff).

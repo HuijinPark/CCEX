@@ -1,0 +1,5242 @@
+{
+  "scope": "Server CCE2 and CCE3 completed; CCE4 running and CCE5 awaiting dependency",
+  "recorded_utc": "2026-09-08T05:09:04.231781+00:00",
+  "transfer": {
+    "archive": "/tmp/ccex-server-cce2/source.tar.gz",
+    "archive_sha256": "3d2f53cc7a0bc6b858103bf22e67cce1dbe928a2f2dcf28769e38b8943096c76",
+    "file_count": 2119,
+    "remote_dir": "/home/dlwodnr95/tmp/ccex-cce2-20260907T164410Z",
+    "verified_files": 2119,
+    "build_job": "348",
+    "measure_job": "349"
+  },
+  "status": {
+    "checked_at": {
+      "status": 0,
+      "output": "2026-09-08T14:09:03+09:00"
+    },
+    "queue": {
+      "status": 0,
+      "output": "353 PENDING ccex-order5 (Dependency)\n352 RUNNING ccex-order4 idm4-gpu"
+    },
+    "accounting": {
+      "status": 0,
+      "output": "349|ccex-cce2-measure|COMPLETED|0:0|00:00:54|2026-09-08T13:34:23|2026-09-08T13:35:17|\n349.batch|batch|COMPLETED|0:0|00:00:54|2026-09-08T13:34:23|2026-09-08T13:35:17|808664K\n351|ccex-order3|COMPLETED|0:0|00:03:05|2026-09-08T13:35:17|2026-09-08T13:38:22|\n351.batch|batch|COMPLETED|0:0|00:03:05|2026-09-08T13:35:17|2026-09-08T13:38:22|24723380K\n352|ccex-order4|RUNNING|0:0|00:30:42|2026-09-08T13:38:22|Unknown|\n352.batch|batch|RUNNING|0:0|00:30:42|2026-09-08T13:38:22|Unknown|\n353|ccex-order5|PENDING|0:0|00:00:00|Unknown|Unknown|"
+    },
+    "order4": {
+      "status": "running",
+      "current_case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "current_backend": "cuda"
+    }
+  },
+  "build_environment": {
+    "time_utc": "2026-09-07T16:47:27.339859+00:00",
+    "hostname": "idm4-gpu",
+    "python": "3.13.10",
+    "environment": {
+      "SLURM_JOB_ID": "348",
+      "SLURM_JOB_NODELIST": "idm4-gpu",
+      "SLURM_CPUS_PER_TASK": "2",
+      "OMP_NUM_THREADS": "1",
+      "LOADEDMODULES": "gcc/gcc-11.5.0:gcc/openmpi-4.1.5:cuda/cuda-12.8:python/python3.13.10"
+    },
+    "cpu": "Architecture:        x86_64\nCPU op-mode(s):      32-bit, 64-bit\nByte Order:          Little Endian\nCPU(s):              32\nOn-line CPU(s) list: 0-31\nThread(s) per core:  1\nCore(s) per socket:  32\nSocket(s):           1\nNUMA node(s):        1\nVendor ID:           GenuineIntel\nCPU family:          6\nModel:               173\nModel name:          Intel(R) Xeon(R) 6731P\nStepping:            1\nCPU MHz:             4100.003\nCPU max MHz:         4100.0000\nCPU min MHz:         800.0000\nBogoMIPS:            5000.00\nVirtualization:      VT-x\nL1d cache:           48K\nL1i cache:           64K\nL2 cache:            2048K\nL3 cache:            147456K\nNUMA node0 CPU(s):   0-31\nFlags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cat_l2 cdp_l3 invpcid_single cdp_l2 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect avx_vnni avx512_bf16 wbnoinvd dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req hfi avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid bus_lock_detect cldemote movdiri movdir64b enqcmd fsrm md_clear serialize tsxldtrk pconfig arch_lbr amx_bf16 avx512_fp16 amx_tile amx_int8 flush_l1d arch_capabilities",
+    "memory": "total        used        free      shared  buff/cache   available\nMem:    269586214912 12022013952 212866179072   704139264 44698021888 254510886912\nSwap:   34359734272           0 34359734272",
+    "compiler": "g++ (GCC) 11.5.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "cuda": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0",
+    "mpi": "mpirun (Open MPI) 4.1.5\n\nReport bugs to http://www.open-mpi.org/community/help/",
+    "binary_sha256": {
+      "bin/main.cpu.out": "8025aee290dc8c2996fa20f81333e52c037fd2fc39a425d481a5fc47cf7528a3",
+      "bin/main.cuda.out": "bde1946c63cc33114ab8f691b9f35b83f709e9bd058d4d83a8f2df693e555e1d"
+    }
+  },
+  "cpu_compatibility": [
+    {
+      "case": "Diamond_NV_P1_10ppm_cce_nstate0",
+      "reference": {
+        "wall_s": 0.26578236202476546,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "55",
+            "build_s": "0.000313837",
+            "setup_s": "0.000240107",
+            "evolution_s": "0.002498616"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "16",
+            "clusters": "133",
+            "build_s": "0.016644559",
+            "setup_s": "0.006780544",
+            "evolution_s": "0.038582869"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.36603519797790796,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "55",
+            "build_s": "0.000337115",
+            "setup_s": "0.000244044",
+            "evolution_s": "0.002532887"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "16",
+            "clusters": "133",
+            "build_s": "0.016676665",
+            "setup_s": "0.006739162",
+            "evolution_s": "0.038818093"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 80,
+      "repeats": 1,
+      "reference_runs": [
+        {
+          "wall_s": 0.26578236202476546,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000313837",
+              "setup_s": "0.000240107",
+              "evolution_s": "0.002498616"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016644559",
+              "setup_s": "0.006780544",
+              "evolution_s": "0.038582869"
+            }
+          ]
+        }
+      ],
+      "target_runs": [
+        {
+          "wall_s": 0.36603519797790796,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000337115",
+              "setup_s": "0.000244044",
+              "evolution_s": "0.002532887"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016676665",
+              "setup_s": "0.006739162",
+              "evolution_s": "0.038818093"
+            }
+          ]
+        }
+      ],
+      "speedup": 0.726111487346107
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_cce_nstate1",
+      "reference": {
+        "wall_s": 0.21567231795052066,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "55",
+            "build_s": "0.000429821",
+            "setup_s": "0.000244815",
+            "evolution_s": "0.001437469"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "16",
+            "clusters": "133",
+            "build_s": "0.016495292",
+            "setup_s": "0.006729003",
+            "evolution_s": "0.035817586"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.26549827598500997,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "55",
+            "build_s": "0.000415383",
+            "setup_s": "0.000245623",
+            "evolution_s": "0.001417765"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "16",
+            "clusters": "133",
+            "build_s": "0.016377563",
+            "setup_s": "0.006723103",
+            "evolution_s": "0.032956205"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 80,
+      "repeats": 1,
+      "reference_runs": [
+        {
+          "wall_s": 0.21567231795052066,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000429821",
+              "setup_s": "0.000244815",
+              "evolution_s": "0.001437469"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016495292",
+              "setup_s": "0.006729003",
+              "evolution_s": "0.035817586"
+            }
+          ]
+        }
+      ],
+      "target_runs": [
+        {
+          "wall_s": 0.26549827598500997,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000415383",
+              "setup_s": "0.000245623",
+              "evolution_s": "0.001417765"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016377563",
+              "setup_s": "0.006723103",
+              "evolution_s": "0.032956205"
+            }
+          ]
+        }
+      ],
+      "speedup": 0.812330389530279
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "reference": {
+        "wall_s": 0.7668456559767947,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000017503",
+            "setup_s": "0.000043165",
+            "evolution_s": "0.000036014"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.001702365",
+            "setup_s": "0.000967823",
+            "evolution_s": "0.008449947"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.113665731",
+            "setup_s": "0.034289729",
+            "evolution_s": "0.427074089"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.816331023001112,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000007990",
+            "setup_s": "0.000041139",
+            "evolution_s": "0.000034944"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.001698658",
+            "setup_s": "0.000969445",
+            "evolution_s": "0.008156905"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.113468679",
+            "setup_s": "0.034387889",
+            "evolution_s": "0.424596665"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 80,
+      "repeats": 1,
+      "reference_runs": [
+        {
+          "wall_s": 0.7668456559767947,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000017503",
+              "setup_s": "0.000043165",
+              "evolution_s": "0.000036014"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001702365",
+              "setup_s": "0.000967823",
+              "evolution_s": "0.008449947"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.113665731",
+              "setup_s": "0.034289729",
+              "evolution_s": "0.427074089"
+            }
+          ]
+        }
+      ],
+      "target_runs": [
+        {
+          "wall_s": 0.816331023001112,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000007990",
+              "setup_s": "0.000041139",
+              "evolution_s": "0.000034944"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001698658",
+              "setup_s": "0.000969445",
+              "evolution_s": "0.008156905"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.113468679",
+              "setup_s": "0.034387889",
+              "evolution_s": "0.424596665"
+            }
+          ]
+        }
+      ],
+      "speedup": 0.9393807589935854
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+      "reference": {
+        "wall_s": 0.31564544199500233,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000013551",
+            "setup_s": "0.000040728",
+            "evolution_s": "0.000018283"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.001794942",
+            "setup_s": "0.001009468",
+            "evolution_s": "0.001299261"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.115661756",
+            "setup_s": "0.033764860",
+            "evolution_s": "0.019600187"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.36573397798929363,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000008093",
+            "setup_s": "0.000042366",
+            "evolution_s": "0.000020994"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.001658870",
+            "setup_s": "0.000989403",
+            "evolution_s": "0.001304782"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.116703339",
+            "setup_s": "0.033935437",
+            "evolution_s": "0.019733862"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 80,
+      "repeats": 1,
+      "reference_runs": [
+        {
+          "wall_s": 0.31564544199500233,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000013551",
+              "setup_s": "0.000040728",
+              "evolution_s": "0.000018283"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001794942",
+              "setup_s": "0.001009468",
+              "evolution_s": "0.001299261"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.115661756",
+              "setup_s": "0.033764860",
+              "evolution_s": "0.019600187"
+            }
+          ]
+        }
+      ],
+      "target_runs": [
+        {
+          "wall_s": 0.36573397798929363,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000008093",
+              "setup_s": "0.000042366",
+              "evolution_s": "0.000020994"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001658870",
+              "setup_s": "0.000989403",
+              "evolution_s": "0.001304782"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.116703339",
+              "setup_s": "0.033935437",
+              "evolution_s": "0.019733862"
+            }
+          ]
+        }
+      ],
+      "speedup": 0.863046533795781
+    },
+    {
+      "case": "Diamond_NV_natab_cce_nstate0",
+      "reference": {
+        "wall_s": 0.1648355019860901,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "2",
+            "clusters": "191",
+            "build_s": "0.000329679",
+            "setup_s": "0.000213617",
+            "evolution_s": "0.003819906"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "370",
+            "build_s": "0.002063914",
+            "setup_s": "0.001481762",
+            "evolution_s": "0.013076648"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.21524653502274305,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "2",
+            "clusters": "191",
+            "build_s": "0.000334353",
+            "setup_s": "0.000217660",
+            "evolution_s": "0.003850336"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "370",
+            "build_s": "0.002100796",
+            "setup_s": "0.001458962",
+            "evolution_s": "0.013213082"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60,
+      "repeats": 1,
+      "reference_runs": [
+        {
+          "wall_s": 0.1648355019860901,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000329679",
+              "setup_s": "0.000213617",
+              "evolution_s": "0.003819906"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.002063914",
+              "setup_s": "0.001481762",
+              "evolution_s": "0.013076648"
+            }
+          ]
+        }
+      ],
+      "target_runs": [
+        {
+          "wall_s": 0.21524653502274305,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000334353",
+              "setup_s": "0.000217660",
+              "evolution_s": "0.003850336"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.002100796",
+              "setup_s": "0.001458962",
+              "evolution_s": "0.013213082"
+            }
+          ]
+        }
+      ],
+      "speedup": 0.7657986316419612
+    },
+    {
+      "case": "Diamond_NV_natab_cce_nstate1",
+      "reference": {
+        "wall_s": 0.16509398800553754,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "2",
+            "clusters": "191",
+            "build_s": "0.000354809",
+            "setup_s": "0.000216391",
+            "evolution_s": "0.002158743"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "370",
+            "build_s": "0.001949289",
+            "setup_s": "0.001460090",
+            "evolution_s": "0.007765794"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.21507471601944417,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "2",
+            "clusters": "191",
+            "build_s": "0.000346833",
+            "setup_s": "0.000222683",
+            "evolution_s": "0.002037685"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "370",
+            "build_s": "0.001974645",
+            "setup_s": "0.001449441",
+            "evolution_s": "0.007460624"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60,
+      "repeats": 1,
+      "reference_runs": [
+        {
+          "wall_s": 0.16509398800553754,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000354809",
+              "setup_s": "0.000216391",
+              "evolution_s": "0.002158743"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.001949289",
+              "setup_s": "0.001460090",
+              "evolution_s": "0.007765794"
+            }
+          ]
+        }
+      ],
+      "target_runs": [
+        {
+          "wall_s": 0.21507471601944417,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000346833",
+              "setup_s": "0.000222683",
+              "evolution_s": "0.002037685"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.001974645",
+              "setup_s": "0.001449441",
+              "evolution_s": "0.007460624"
+            }
+          ]
+        }
+      ],
+      "speedup": 0.7676122561547958
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate0",
+      "reference": {
+        "wall_s": 0.26569904398638755,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000015782",
+            "setup_s": "0.000048603",
+            "evolution_s": "0.000030651"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.001530389",
+            "setup_s": "0.001115645",
+            "evolution_s": "0.011057586"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.010971833",
+            "setup_s": "0.006109037",
+            "evolution_s": "0.042196563"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.2653444239986129,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000010652",
+            "setup_s": "0.000046250",
+            "evolution_s": "0.000032261"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.001467002",
+            "setup_s": "0.001102733",
+            "evolution_s": "0.011106752"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.011202568",
+            "setup_s": "0.006165932",
+            "evolution_s": "0.041525423"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60,
+      "repeats": 1,
+      "reference_runs": [
+        {
+          "wall_s": 0.26569904398638755,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000015782",
+              "setup_s": "0.000048603",
+              "evolution_s": "0.000030651"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001530389",
+              "setup_s": "0.001115645",
+              "evolution_s": "0.011057586"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.010971833",
+              "setup_s": "0.006109037",
+              "evolution_s": "0.042196563"
+            }
+          ]
+        }
+      ],
+      "target_runs": [
+        {
+          "wall_s": 0.2653444239986129,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000010652",
+              "setup_s": "0.000046250",
+              "evolution_s": "0.000032261"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001467002",
+              "setup_s": "0.001102733",
+              "evolution_s": "0.011106752"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.011202568",
+              "setup_s": "0.006165932",
+              "evolution_s": "0.041525423"
+            }
+          ]
+        }
+      ],
+      "speedup": 1.001336451629285
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate1",
+      "reference": {
+        "wall_s": 0.2157042059698142,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000015766",
+            "setup_s": "0.000048276",
+            "evolution_s": "0.000017719"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.001516378",
+            "setup_s": "0.001151357",
+            "evolution_s": "0.002260110"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.010885224",
+            "setup_s": "0.006215935",
+            "evolution_s": "0.006428494"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.26563964603701606,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000008170",
+            "setup_s": "0.000049261",
+            "evolution_s": "0.000018819"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.001518828",
+            "setup_s": "0.001117713",
+            "evolution_s": "0.002265008"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.010750669",
+            "setup_s": "0.006146705",
+            "evolution_s": "0.006460637"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60,
+      "repeats": 1,
+      "reference_runs": [
+        {
+          "wall_s": 0.2157042059698142,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000015766",
+              "setup_s": "0.000048276",
+              "evolution_s": "0.000017719"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001516378",
+              "setup_s": "0.001151357",
+              "evolution_s": "0.002260110"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.010885224",
+              "setup_s": "0.006215935",
+              "evolution_s": "0.006428494"
+            }
+          ]
+        }
+      ],
+      "target_runs": [
+        {
+          "wall_s": 0.26563964603701606,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000008170",
+              "setup_s": "0.000049261",
+              "evolution_s": "0.000018819"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001518828",
+              "setup_s": "0.001117713",
+              "evolution_s": "0.002265008"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.010750669",
+              "setup_s": "0.006146705",
+              "evolution_s": "0.006460637"
+            }
+          ]
+        }
+      ],
+      "speedup": 0.8120181199901031
+    }
+  ],
+  "gpu_comparison": {
+    "cuda": [
+      {
+        "case": "Diamond_NV_P1_10ppm_cce_nstate0",
+        "reference": {
+          "wall_s": 0.23786268290132284,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000386520",
+              "setup_s": "0.000230116",
+              "evolution_s": "0.002544986"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016628584",
+              "setup_s": "0.006778319",
+              "evolution_s": "0.038679949"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.7378496199380606,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cuda",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000431458",
+              "setup_s": "0.138348201",
+              "evolution_s": "0.005204524"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cuda",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.017020194",
+              "setup_s": "0.146018366",
+              "evolution_s": "0.011935575"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 80,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.23786268290132284,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000373816",
+                "setup_s": "0.000237382",
+                "evolution_s": "0.002549355"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016521708",
+                "setup_s": "0.006784821",
+                "evolution_s": "0.039007696"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.23703052196651697,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000389146",
+                "setup_s": "0.000240907",
+                "evolution_s": "0.002523790"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016612981",
+                "setup_s": "0.006752205",
+                "evolution_s": "0.038355659"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.2479086760431528,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000386520",
+                "setup_s": "0.000230116",
+                "evolution_s": "0.002544986"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016628584",
+                "setup_s": "0.006778319",
+                "evolution_s": "0.038679949"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.7378496199380606,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000438426",
+                "setup_s": "0.138782025",
+                "evolution_s": "0.005220539"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016954115",
+                "setup_s": "0.146023621",
+                "evolution_s": "0.011943440"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7908214660128579,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000430346",
+                "setup_s": "0.138482018",
+                "evolution_s": "0.005227520"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.017115340",
+                "setup_s": "0.146121805",
+                "evolution_s": "0.011974154"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.725851729977876,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000431458",
+                "setup_s": "0.138348201",
+                "evolution_s": "0.005204524"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.017020194",
+                "setup_s": "0.146018366",
+                "evolution_s": "0.011935575"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.3223728473578267
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_cce_nstate1",
+        "reference": {
+          "wall_s": 0.23584661807399243,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000383476",
+              "setup_s": "0.000237352",
+              "evolution_s": "0.001458332"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016256416",
+              "setup_s": "0.006731297",
+              "evolution_s": "0.035765730"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.7375153999309987,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cuda",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000443517",
+              "setup_s": "0.144162547",
+              "evolution_s": "0.005272171"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cuda",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.017357329",
+              "setup_s": "0.148059580",
+              "evolution_s": "0.011758041"
+            }
+          ]
+        },
+        "max_abs_error": 1.000000082740371e-10,
+        "rms_error": 2.499999929295233e-11,
+        "values": 80,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.23870310105849057,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000336509",
+                "setup_s": "0.000241699",
+                "evolution_s": "0.001458647"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016293507",
+                "setup_s": "0.006702723",
+                "evolution_s": "0.035838463"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.23584661807399243,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000421787",
+                "setup_s": "0.000246478",
+                "evolution_s": "0.001442340"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016384913",
+                "setup_s": "0.006705613",
+                "evolution_s": "0.035851226"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.1969963520532474,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000383476",
+                "setup_s": "0.000237352",
+                "evolution_s": "0.001458332"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016256416",
+                "setup_s": "0.006731297",
+                "evolution_s": "0.035765730"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.7375153999309987,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000440229",
+                "setup_s": "0.144121634",
+                "evolution_s": "0.005253970"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.017394870",
+                "setup_s": "0.148207898",
+                "evolution_s": "0.011795324"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7492052000015974,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000431552",
+                "setup_s": "0.145956065",
+                "evolution_s": "0.005207562"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.017352331",
+                "setup_s": "0.147926049",
+                "evolution_s": "0.011821977"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7358914209762588,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000443517",
+                "setup_s": "0.144162547",
+                "evolution_s": "0.005272171"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.017357329",
+                "setup_s": "0.148059580",
+                "evolution_s": "0.011758041"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.31978534698537553
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+        "reference": {
+          "wall_s": 0.7464917530305684,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000013909",
+              "setup_s": "0.000035585",
+              "evolution_s": "0.000032645"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001686156",
+              "setup_s": "0.000962286",
+              "evolution_s": "0.008190299"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.114173585",
+              "setup_s": "0.034384073",
+              "evolution_s": "0.427245156"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 1.7191982259973884,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000008330",
+              "setup_s": "0.014374670",
+              "evolution_s": "0.111917679"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001999028",
+              "setup_s": "0.022884114",
+              "evolution_s": "0.088365531"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.085432089",
+              "setup_s": "0.349661693",
+              "evolution_s": "0.571437911"
+            }
+          ]
+        },
+        "max_abs_error": 1.000000082740371e-10,
+        "rms_error": 1.1180340812564418e-11,
+        "values": 80,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.7464917530305684,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000028802",
+                "setup_s": "0.000048725",
+                "evolution_s": "0.000037207"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001757095",
+                "setup_s": "0.000996086",
+                "evolution_s": "0.008275819"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.113906280",
+                "setup_s": "0.034450011",
+                "evolution_s": "0.425193588"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7443436699686572,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000016212",
+                "setup_s": "0.000051716",
+                "evolution_s": "0.000035165"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001712740",
+                "setup_s": "0.000957930",
+                "evolution_s": "0.008305244"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.113800738",
+                "setup_s": "0.034366864",
+                "evolution_s": "0.424718926"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7666421169415116,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000013909",
+                "setup_s": "0.000035585",
+                "evolution_s": "0.000032645"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001686156",
+                "setup_s": "0.000962286",
+                "evolution_s": "0.008190299"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.114173585",
+                "setup_s": "0.034384073",
+                "evolution_s": "0.427245156"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 1.7191982259973884,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000009017",
+                "setup_s": "0.014296941",
+                "evolution_s": "0.112345703"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001990421",
+                "setup_s": "0.022850508",
+                "evolution_s": "0.088282666"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.085576311",
+                "setup_s": "0.350004813",
+                "evolution_s": "0.580787995"
+              }
+            ]
+          },
+          {
+            "wall_s": 1.7110566620249301,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008180",
+                "setup_s": "0.014352200",
+                "evolution_s": "0.111205568"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001976333",
+                "setup_s": "0.022859183",
+                "evolution_s": "0.088265102"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.085753134",
+                "setup_s": "0.349191429",
+                "evolution_s": "0.571137393"
+              }
+            ]
+          },
+          {
+            "wall_s": 1.7538542479742318,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008330",
+                "setup_s": "0.014374670",
+                "evolution_s": "0.111917679"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001999028",
+                "setup_s": "0.022884114",
+                "evolution_s": "0.088365531"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.085432089",
+                "setup_s": "0.349661693",
+                "evolution_s": "0.571437911"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.43420923878483714
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+        "reference": {
+          "wall_s": 0.3386270890478045,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000011345",
+              "setup_s": "0.000035856",
+              "evolution_s": "0.000015845"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001625273",
+              "setup_s": "0.000895147",
+              "evolution_s": "0.001185542"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.108525896",
+              "setup_s": "0.031456158",
+              "evolution_s": "0.018206900"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 1.0427350049139932,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000007841",
+              "setup_s": "0.014572746",
+              "evolution_s": "0.110833083"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001779360",
+              "setup_s": "0.022711114",
+              "evolution_s": "0.006222333"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.084047659",
+              "setup_s": "0.340231331",
+              "evolution_s": "0.034039046"
+            }
+          ]
+        },
+        "max_abs_error": 1.000000082740371e-10,
+        "rms_error": 3.1622778669596344e-11,
+        "values": 80,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.3392182169482112,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000015493",
+                "setup_s": "0.000048910",
+                "evolution_s": "0.000019578"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001624183",
+                "setup_s": "0.000917789",
+                "evolution_s": "0.001188533"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.108783183",
+                "setup_s": "0.031501710",
+                "evolution_s": "0.018296848"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.3386270890478045,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000017228",
+                "setup_s": "0.000048403",
+                "evolution_s": "0.000017924"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001589751",
+                "setup_s": "0.000915273",
+                "evolution_s": "0.001184780"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.108523795",
+                "setup_s": "0.031421965",
+                "evolution_s": "0.018144527"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.3020429880125448,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000011345",
+                "setup_s": "0.000035856",
+                "evolution_s": "0.000015845"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001625273",
+                "setup_s": "0.000895147",
+                "evolution_s": "0.001185542"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.108525896",
+                "setup_s": "0.031456158",
+                "evolution_s": "0.018206900"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 1.0412042340030894,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008245",
+                "setup_s": "0.014540730",
+                "evolution_s": "0.108857726"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001800176",
+                "setup_s": "0.022792644",
+                "evolution_s": "0.006256119"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.086665611",
+                "setup_s": "0.340616500",
+                "evolution_s": "0.034626442"
+              }
+            ]
+          },
+          {
+            "wall_s": 1.045174097060226,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000007703",
+                "setup_s": "0.014444639",
+                "evolution_s": "0.109580663"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001789441",
+                "setup_s": "0.022763323",
+                "evolution_s": "0.006260175"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.083979606",
+                "setup_s": "0.340242696",
+                "evolution_s": "0.034099074"
+              }
+            ]
+          },
+          {
+            "wall_s": 1.0427350049139932,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000007841",
+                "setup_s": "0.014572746",
+                "evolution_s": "0.110833083"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001779360",
+                "setup_s": "0.022711114",
+                "evolution_s": "0.006222333"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.084047659",
+                "setup_s": "0.340231331",
+                "evolution_s": "0.034039046"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.32474894143957034
+      },
+      {
+        "case": "Diamond_NV_natab_cce_nstate0",
+        "reference": {
+          "wall_s": 0.1939977960428223,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000329274",
+              "setup_s": "0.000240213",
+              "evolution_s": "0.003588027"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.001902630",
+              "setup_s": "0.001343699",
+              "evolution_s": "0.012070448"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.7472841239068657,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cuda",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000408108",
+              "setup_s": "0.155268403",
+              "evolution_s": "0.017133278"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cuda",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.002276630",
+              "setup_s": "0.099749001",
+              "evolution_s": "0.032737590"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 60,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.18646244809497148,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000323390",
+                "setup_s": "0.000202617",
+                "evolution_s": "0.003609127"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001921102",
+                "setup_s": "0.001345803",
+                "evolution_s": "0.012163380"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.1939977960428223,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000325823",
+                "setup_s": "0.000210423",
+                "evolution_s": "0.003652131"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001917603",
+                "setup_s": "0.001356021",
+                "evolution_s": "0.012221024"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.19579342799261212,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000329274",
+                "setup_s": "0.000240213",
+                "evolution_s": "0.003588027"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001902630",
+                "setup_s": "0.001343699",
+                "evolution_s": "0.012070448"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.7478930950164795,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000422936",
+                "setup_s": "0.155897510",
+                "evolution_s": "0.017193548"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.002160802",
+                "setup_s": "0.099302818",
+                "evolution_s": "0.032704139"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7472841239068657,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000427749",
+                "setup_s": "0.154256646",
+                "evolution_s": "0.017195769"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.002430257",
+                "setup_s": "0.099433437",
+                "evolution_s": "0.032676734"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7393986900569871,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000408108",
+                "setup_s": "0.155268403",
+                "evolution_s": "0.017133278"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.002276630",
+                "setup_s": "0.099749001",
+                "evolution_s": "0.032737590"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.25960379705189657
+      },
+      {
+        "case": "Diamond_NV_natab_cce_nstate1",
+        "reference": {
+          "wall_s": 0.1950657960260287,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000362846",
+              "setup_s": "0.000197506",
+              "evolution_s": "0.002006913"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.001792519",
+              "setup_s": "0.001354443",
+              "evolution_s": "0.007136123"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.7461763239698485,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cuda",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000420884",
+              "setup_s": "0.161166590",
+              "evolution_s": "0.017208203"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cuda",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.002480986",
+              "setup_s": "0.109459905",
+              "evolution_s": "0.032591052"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 60,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.18623613694217056,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000349184",
+                "setup_s": "0.000207604",
+                "evolution_s": "0.001949226"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001796041",
+                "setup_s": "0.001361120",
+                "evolution_s": "0.007200694"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.20084514806512743,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000349033",
+                "setup_s": "0.000212596",
+                "evolution_s": "0.001986693"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001774693",
+                "setup_s": "0.001359457",
+                "evolution_s": "0.007139751"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.1950657960260287,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000362846",
+                "setup_s": "0.000197506",
+                "evolution_s": "0.002006913"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001792519",
+                "setup_s": "0.001354443",
+                "evolution_s": "0.007136123"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.7461763239698485,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000413097",
+                "setup_s": "0.162188396",
+                "evolution_s": "0.017252440"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.002517691",
+                "setup_s": "0.109449531",
+                "evolution_s": "0.032583015"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7918795039877295,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000419742",
+                "setup_s": "0.160855223",
+                "evolution_s": "0.017304241"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.002434387",
+                "setup_s": "0.109574521",
+                "evolution_s": "0.032653157"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7440100610256195,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000420884",
+                "setup_s": "0.161166590",
+                "evolution_s": "0.017208203"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cuda",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.002480986",
+                "setup_s": "0.109459905",
+                "evolution_s": "0.032591052"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.26142051115777687
+      },
+      {
+        "case": "Diamond_NV_natab_gcce_nstate0",
+        "reference": {
+          "wall_s": 0.23665440897457302,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000012100",
+              "setup_s": "0.000035981",
+              "evolution_s": "0.000036241"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001380907",
+              "setup_s": "0.001021939",
+              "evolution_s": "0.010186495"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.011118105",
+              "setup_s": "0.006156061",
+              "evolution_s": "0.042690420"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 1.451555019011721,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000008348",
+              "setup_s": "0.014292782",
+              "evolution_s": "0.109991803"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001679335",
+              "setup_s": "0.038064978",
+              "evolution_s": "0.234286338"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.012168211",
+              "setup_s": "0.163063658",
+              "evolution_s": "0.455026800"
+            }
+          ]
+        },
+        "max_abs_error": 1.0233685945722601e-06,
+        "rms_error": 1.5162004049151383e-07,
+        "values": 60,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.23665440897457302,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000017591",
+                "setup_s": "0.000051095",
+                "evolution_s": "0.000033976"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001398436",
+                "setup_s": "0.001031382",
+                "evolution_s": "0.010109403"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011080180",
+                "setup_s": "0.006163446",
+                "evolution_s": "0.042374249"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.2354033129522577,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000017025",
+                "setup_s": "0.000053100",
+                "evolution_s": "0.000034477"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001364969",
+                "setup_s": "0.001019314",
+                "evolution_s": "0.010176058"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011094303",
+                "setup_s": "0.006128097",
+                "evolution_s": "0.042807005"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.24552533903624862,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000012100",
+                "setup_s": "0.000035981",
+                "evolution_s": "0.000036241"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001380907",
+                "setup_s": "0.001021939",
+                "evolution_s": "0.010186495"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011118105",
+                "setup_s": "0.006156061",
+                "evolution_s": "0.042690420"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 1.451555019011721,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000009480",
+                "setup_s": "0.014353101",
+                "evolution_s": "0.111330797"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001691378",
+                "setup_s": "0.038131718",
+                "evolution_s": "0.234274174"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.012262903",
+                "setup_s": "0.166262078",
+                "evolution_s": "0.456190241"
+              }
+            ]
+          },
+          {
+            "wall_s": 1.4640037170611322,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008795",
+                "setup_s": "0.014267062",
+                "evolution_s": "0.110827714"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001692753",
+                "setup_s": "0.038041241",
+                "evolution_s": "0.234305173"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.012193998",
+                "setup_s": "0.163118719",
+                "evolution_s": "0.455070753"
+              }
+            ]
+          },
+          {
+            "wall_s": 1.4463689629919827,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008348",
+                "setup_s": "0.014292782",
+                "evolution_s": "0.109991803"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001679335",
+                "setup_s": "0.038064978",
+                "evolution_s": "0.234286338"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.012168211",
+                "setup_s": "0.163063658",
+                "evolution_s": "0.455026800"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.1630350940026353
+      },
+      {
+        "case": "Diamond_NV_natab_gcce_nstate1",
+        "reference": {
+          "wall_s": 0.18624233396258205,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000011590",
+              "setup_s": "0.000036919",
+              "evolution_s": "0.000014217"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001407634",
+              "setup_s": "0.001040495",
+              "evolution_s": "0.002096374"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.010377656",
+              "setup_s": "0.005751266",
+              "evolution_s": "0.005908741"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.8423751869704574,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000008824",
+              "setup_s": "0.014647411",
+              "evolution_s": "0.111206640"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001513019",
+              "setup_s": "0.037759094",
+              "evolution_s": "0.021036859"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cuda",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.011279937",
+              "setup_s": "0.162903915",
+              "evolution_s": "0.041086833"
+            }
+          ]
+        },
+        "max_abs_error": 2.754840465180454e-07,
+        "rms_error": 3.57848827220031e-08,
+        "values": 60,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.18598792795091867,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000016917",
+                "setup_s": "0.000046987",
+                "evolution_s": "0.000019738"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001377827",
+                "setup_s": "0.001039746",
+                "evolution_s": "0.002059106"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.010253662",
+                "setup_s": "0.005759403",
+                "evolution_s": "0.005914896"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.18624233396258205,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000015525",
+                "setup_s": "0.000051574",
+                "evolution_s": "0.000020305"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001435029",
+                "setup_s": "0.001049132",
+                "evolution_s": "0.002051042"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.010190717",
+                "setup_s": "0.005651043",
+                "evolution_s": "0.005896190"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.19780364900361747,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000011590",
+                "setup_s": "0.000036919",
+                "evolution_s": "0.000014217"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001407634",
+                "setup_s": "0.001040495",
+                "evolution_s": "0.002096374"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.010377656",
+                "setup_s": "0.005751266",
+                "evolution_s": "0.005908741"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.8423751869704574,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008806",
+                "setup_s": "0.014609253",
+                "evolution_s": "0.110182238"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001517279",
+                "setup_s": "0.037737468",
+                "evolution_s": "0.021034057"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011192193",
+                "setup_s": "0.163047188",
+                "evolution_s": "0.041128259"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.8485926839057356,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008492",
+                "setup_s": "0.014500549",
+                "evolution_s": "0.111361740"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001505899",
+                "setup_s": "0.037583664",
+                "evolution_s": "0.021036434"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011124136",
+                "setup_s": "0.162919480",
+                "evolution_s": "0.041089001"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.8234058549860492,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008824",
+                "setup_s": "0.014647411",
+                "evolution_s": "0.111206640"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001513019",
+                "setup_s": "0.037759094",
+                "evolution_s": "0.021036859"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cuda",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011279937",
+                "setup_s": "0.162903915",
+                "evolution_s": "0.041086833"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.22109190399160425
+      }
+    ],
+    "auto": [
+      {
+        "case": "Diamond_NV_P1_10ppm_cce_nstate0",
+        "reference": {
+          "wall_s": 0.23488175799138844,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000370867",
+              "setup_s": "0.000234420",
+              "evolution_s": "0.002528344"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016541395",
+              "setup_s": "0.006727914",
+              "evolution_s": "0.038480194"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.47708966105710715,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000309372",
+              "setup_s": "0.000228164",
+              "evolution_s": "0.002409305"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016708947",
+              "setup_s": "0.006728238",
+              "evolution_s": "0.038771188"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 80,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.2360583960544318,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000352917",
+                "setup_s": "0.000237229",
+                "evolution_s": "0.002549349"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016550407",
+                "setup_s": "0.006726082",
+                "evolution_s": "0.038468747"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.23488175799138844,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000357654",
+                "setup_s": "0.000240703",
+                "evolution_s": "0.002528977"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016475371",
+                "setup_s": "0.006804073",
+                "evolution_s": "0.038347263"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.197022883919999,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000370867",
+                "setup_s": "0.000234420",
+                "evolution_s": "0.002528344"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016541395",
+                "setup_s": "0.006727914",
+                "evolution_s": "0.038480194"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.47901692404411733,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000328621",
+                "setup_s": "0.000229385",
+                "evolution_s": "0.002473402"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016703416",
+                "setup_s": "0.006777363",
+                "evolution_s": "0.039210652"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.47536422696430236,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000324408",
+                "setup_s": "0.000226010",
+                "evolution_s": "0.002402971"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016547903",
+                "setup_s": "0.006765889",
+                "evolution_s": "0.038670792"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.47708966105710715,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000309372",
+                "setup_s": "0.000228164",
+                "evolution_s": "0.002409305"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016708947",
+                "setup_s": "0.006728238",
+                "evolution_s": "0.038771188"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.49232204586230455
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_cce_nstate1",
+        "reference": {
+          "wall_s": 0.19885168795008212,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000337421",
+              "setup_s": "0.000233376",
+              "evolution_s": "0.001429015"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016361800",
+              "setup_s": "0.006711374",
+              "evolution_s": "0.035870228"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.4848961909301579,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "55",
+              "build_s": "0.000354638",
+              "setup_s": "0.000235310",
+              "evolution_s": "0.001371535"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "16",
+              "clusters": "133",
+              "build_s": "0.016571482",
+              "setup_s": "0.006781879",
+              "evolution_s": "0.032993298"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 80,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.19885168795008212,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000418487",
+                "setup_s": "0.000240517",
+                "evolution_s": "0.001447118"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016277519",
+                "setup_s": "0.006693523",
+                "evolution_s": "0.035836434"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.20010525500401855,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000425798",
+                "setup_s": "0.000250784",
+                "evolution_s": "0.001445819"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016341162",
+                "setup_s": "0.006705003",
+                "evolution_s": "0.035851502"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.19809687894303352,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000337421",
+                "setup_s": "0.000233376",
+                "evolution_s": "0.001429015"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016361800",
+                "setup_s": "0.006711374",
+                "evolution_s": "0.035870228"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.4848961909301579,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000392477",
+                "setup_s": "0.000238728",
+                "evolution_s": "0.001379073"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016275150",
+                "setup_s": "0.006690527",
+                "evolution_s": "0.032943885"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4850831519579515,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000382620",
+                "setup_s": "0.000237486",
+                "evolution_s": "0.001374265"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016325319",
+                "setup_s": "0.006716387",
+                "evolution_s": "0.032905237"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4838457240257412,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "55",
+                "build_s": "0.000354638",
+                "setup_s": "0.000235310",
+                "evolution_s": "0.001371535"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "16",
+                "clusters": "133",
+                "build_s": "0.016571482",
+                "setup_s": "0.006781879",
+                "evolution_s": "0.032993298"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.41009125596270923
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+        "reference": {
+          "wall_s": 0.7560135930543765,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000011534",
+              "setup_s": "0.000035148",
+              "evolution_s": "0.000032443"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001755943",
+              "setup_s": "0.000981372",
+              "evolution_s": "0.008160960"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.114016403",
+              "setup_s": "0.034318729",
+              "evolution_s": "0.426848893"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.998803443973884,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000009149",
+              "setup_s": "0.000050025",
+              "evolution_s": "0.000043747"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001738617",
+              "setup_s": "0.000975064",
+              "evolution_s": "0.008274229"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.084184182",
+              "setup_s": "0.033846959",
+              "evolution_s": "0.420865679"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 80,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.7622825370635837,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000017284",
+                "setup_s": "0.000045789",
+                "evolution_s": "0.000034015"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001682186",
+                "setup_s": "0.000989265",
+                "evolution_s": "0.008392127"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.115366365",
+                "setup_s": "0.034362193",
+                "evolution_s": "0.425477677"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7429705560207367,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000016598",
+                "setup_s": "0.000059730",
+                "evolution_s": "0.000036611"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001707667",
+                "setup_s": "0.000972579",
+                "evolution_s": "0.008273758"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.113815817",
+                "setup_s": "0.034301061",
+                "evolution_s": "0.425230513"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.7560135930543765,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000011534",
+                "setup_s": "0.000035148",
+                "evolution_s": "0.000032443"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001755943",
+                "setup_s": "0.000981372",
+                "evolution_s": "0.008160960"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.114016403",
+                "setup_s": "0.034318729",
+                "evolution_s": "0.426848893"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.998803443973884,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008704",
+                "setup_s": "0.000048135",
+                "evolution_s": "0.000039632"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001687860",
+                "setup_s": "0.000968773",
+                "evolution_s": "0.008238620"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.084090437",
+                "setup_s": "0.033753609",
+                "evolution_s": "0.419408786"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.9395580179989338,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008688",
+                "setup_s": "0.000048806",
+                "evolution_s": "0.000038453"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001714059",
+                "setup_s": "0.000976465",
+                "evolution_s": "0.008355432"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.083891569",
+                "setup_s": "0.033724816",
+                "evolution_s": "0.419972785"
+              }
+            ]
+          },
+          {
+            "wall_s": 1.0381675210082904,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000009149",
+                "setup_s": "0.000050025",
+                "evolution_s": "0.000043747"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001738617",
+                "setup_s": "0.000975064",
+                "evolution_s": "0.008274229"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.084184182",
+                "setup_s": "0.033846959",
+                "evolution_s": "0.420865679"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.7569192893913812
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+        "reference": {
+          "wall_s": 0.3003292689099908,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000011400",
+              "setup_s": "0.000034815",
+              "evolution_s": "0.000015514"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001672895",
+              "setup_s": "0.000906892",
+              "evolution_s": "0.001223982"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.109152868",
+              "setup_s": "0.031564618",
+              "evolution_s": "0.018272382"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.5329285799525678,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000008200",
+              "setup_s": "0.000048204",
+              "evolution_s": "0.000022171"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "55",
+              "build_s": "0.001663070",
+              "setup_s": "0.000913453",
+              "evolution_s": "0.001220149"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "48",
+              "clusters": "133",
+              "build_s": "0.080115667",
+              "setup_s": "0.031281665",
+              "evolution_s": "0.018329190"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 80,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.2998837430495769,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000014430",
+                "setup_s": "0.000047103",
+                "evolution_s": "0.000019473"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001661830",
+                "setup_s": "0.000910655",
+                "evolution_s": "0.001202772"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.108601541",
+                "setup_s": "0.031427022",
+                "evolution_s": "0.018172668"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.3005062500014901,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000015564",
+                "setup_s": "0.000047707",
+                "evolution_s": "0.000020076"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001595689",
+                "setup_s": "0.000907749",
+                "evolution_s": "0.001245384"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.108539941",
+                "setup_s": "0.031416702",
+                "evolution_s": "0.018160629"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.3003292689099908,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000011400",
+                "setup_s": "0.000034815",
+                "evolution_s": "0.000015514"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001672895",
+                "setup_s": "0.000906892",
+                "evolution_s": "0.001223982"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.109152868",
+                "setup_s": "0.031564618",
+                "evolution_s": "0.018272382"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.5317351119592786,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008795",
+                "setup_s": "0.000048943",
+                "evolution_s": "0.000020984"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001637680",
+                "setup_s": "0.000903549",
+                "evolution_s": "0.001213240"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.080125758",
+                "setup_s": "0.031395500",
+                "evolution_s": "0.018368612"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.5330710349371657,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008421",
+                "setup_s": "0.000049404",
+                "evolution_s": "0.000019462"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001605983",
+                "setup_s": "0.000908413",
+                "evolution_s": "0.001213512"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.080097409",
+                "setup_s": "0.031224518",
+                "evolution_s": "0.018294301"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.5329285799525678,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008200",
+                "setup_s": "0.000048204",
+                "evolution_s": "0.000022171"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "55",
+                "build_s": "0.001663070",
+                "setup_s": "0.000913453",
+                "evolution_s": "0.001220149"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "48",
+                "clusters": "133",
+                "build_s": "0.080115667",
+                "setup_s": "0.031281665",
+                "evolution_s": "0.018329190"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.5635450606471902
+      },
+      {
+        "case": "Diamond_NV_natab_cce_nstate0",
+        "reference": {
+          "wall_s": 0.19606784998904914,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000325967",
+              "setup_s": "0.000191740",
+              "evolution_s": "0.003635261"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.001923019",
+              "setup_s": "0.001352062",
+              "evolution_s": "0.012215595"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.4226376550504938,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000324809",
+              "setup_s": "0.000214086",
+              "evolution_s": "0.003654520"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.001926971",
+              "setup_s": "0.001344748",
+              "evolution_s": "0.012174304"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 60,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.19735907390713692,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000321519",
+                "setup_s": "0.000206334",
+                "evolution_s": "0.003701803"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001920726",
+                "setup_s": "0.001356871",
+                "evolution_s": "0.012120242"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.18127888604067266,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000318838",
+                "setup_s": "0.000205340",
+                "evolution_s": "0.003621219"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001936008",
+                "setup_s": "0.001347617",
+                "evolution_s": "0.012282534"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.19606784998904914,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000325967",
+                "setup_s": "0.000191740",
+                "evolution_s": "0.003635261"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001923019",
+                "setup_s": "0.001352062",
+                "evolution_s": "0.012215595"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.4223070819862187,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000318825",
+                "setup_s": "0.000210312",
+                "evolution_s": "0.003641232"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001942418",
+                "setup_s": "0.001346862",
+                "evolution_s": "0.012176363"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4254479060182348,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000337880",
+                "setup_s": "0.000213126",
+                "evolution_s": "0.003626797"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001931391",
+                "setup_s": "0.001344674",
+                "evolution_s": "0.012204049"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4226376550504938,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000324809",
+                "setup_s": "0.000214086",
+                "evolution_s": "0.003654520"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001926971",
+                "setup_s": "0.001344748",
+                "evolution_s": "0.012174304"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.4639147687056524
+      },
+      {
+        "case": "Diamond_NV_natab_cce_nstate1",
+        "reference": {
+          "wall_s": 0.19805631809867918,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000358386",
+              "setup_s": "0.000193501",
+              "evolution_s": "0.002022583"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.001766828",
+              "setup_s": "0.001369144",
+              "evolution_s": "0.007129965"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.4221286909887567,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "2",
+              "clusters": "191",
+              "build_s": "0.000322238",
+              "setup_s": "0.000215174",
+              "evolution_s": "0.001917722"
+            },
+            {
+              "rank": "0",
+              "method": "cce",
+              "backend": "cpu",
+              "dim": "4",
+              "clusters": "370",
+              "build_s": "0.001778695",
+              "setup_s": "0.001358297",
+              "evolution_s": "0.006919967"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 60,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.19805631809867918,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000371063",
+                "setup_s": "0.000208118",
+                "evolution_s": "0.001919193"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001768087",
+                "setup_s": "0.001361154",
+                "evolution_s": "0.007113700"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.19825124193448573,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000380539",
+                "setup_s": "0.000208634",
+                "evolution_s": "0.001942082"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001791088",
+                "setup_s": "0.001363313",
+                "evolution_s": "0.007137489"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.1950573050417006,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000358386",
+                "setup_s": "0.000193501",
+                "evolution_s": "0.002022583"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001766828",
+                "setup_s": "0.001369144",
+                "evolution_s": "0.007129965"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.4221286909887567,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000343614",
+                "setup_s": "0.000250169",
+                "evolution_s": "0.001882814"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001712231",
+                "setup_s": "0.001353419",
+                "evolution_s": "0.006875256"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.42266308097168803,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000318142",
+                "setup_s": "0.000213739",
+                "evolution_s": "0.001904954"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001776594",
+                "setup_s": "0.001360391",
+                "evolution_s": "0.006921437"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4215848370222375,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "2",
+                "clusters": "191",
+                "build_s": "0.000322238",
+                "setup_s": "0.000215174",
+                "evolution_s": "0.001917722"
+              },
+              {
+                "rank": "0",
+                "method": "cce",
+                "backend": "cpu",
+                "dim": "4",
+                "clusters": "370",
+                "build_s": "0.001778695",
+                "setup_s": "0.001358297",
+                "evolution_s": "0.006919967"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.46918468781349515
+      },
+      {
+        "case": "Diamond_NV_natab_gcce_nstate0",
+        "reference": {
+          "wall_s": 0.24968433496542275,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000011401",
+              "setup_s": "0.000036681",
+              "evolution_s": "0.000027953"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001445388",
+              "setup_s": "0.001036447",
+              "evolution_s": "0.010137132"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.011057499",
+              "setup_s": "0.006226440",
+              "evolution_s": "0.042539225"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.4734813750255853,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000014309",
+              "setup_s": "0.000052380",
+              "evolution_s": "0.000034862"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001464471",
+              "setup_s": "0.001053554",
+              "evolution_s": "0.010161435"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.011065082",
+              "setup_s": "0.006193220",
+              "evolution_s": "0.042390142"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 60,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.24968433496542275,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000015598",
+                "setup_s": "0.000049290",
+                "evolution_s": "0.000030738"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001356966",
+                "setup_s": "0.001036660",
+                "evolution_s": "0.010172731"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011121827",
+                "setup_s": "0.006198329",
+                "evolution_s": "0.042689998"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.24700222199317068,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000017109",
+                "setup_s": "0.000049463",
+                "evolution_s": "0.000029960"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001367242",
+                "setup_s": "0.001027808",
+                "evolution_s": "0.010219750"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011195210",
+                "setup_s": "0.006170818",
+                "evolution_s": "0.042679224"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.449161853059195,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000011401",
+                "setup_s": "0.000036681",
+                "evolution_s": "0.000027953"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001445388",
+                "setup_s": "0.001036447",
+                "evolution_s": "0.010137132"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011057499",
+                "setup_s": "0.006226440",
+                "evolution_s": "0.042539225"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.4726012520259246,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000009160",
+                "setup_s": "0.000049547",
+                "evolution_s": "0.000035641"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001417386",
+                "setup_s": "0.001035065",
+                "evolution_s": "0.010148573"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011155359",
+                "setup_s": "0.006126580",
+                "evolution_s": "0.041966373"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4795601679943502,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008690",
+                "setup_s": "0.000053134",
+                "evolution_s": "0.000035624"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001410332",
+                "setup_s": "0.001073318",
+                "evolution_s": "0.010120106"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011210457",
+                "setup_s": "0.006226022",
+                "evolution_s": "0.041966529"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4734813750255853,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000014309",
+                "setup_s": "0.000052380",
+                "evolution_s": "0.000034862"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001464471",
+                "setup_s": "0.001053554",
+                "evolution_s": "0.010161435"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.011065082",
+                "setup_s": "0.006193220",
+                "evolution_s": "0.042390142"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.5273371839640592
+      },
+      {
+        "case": "Diamond_NV_natab_gcce_nstate1",
+        "reference": {
+          "wall_s": 0.1964954249560833,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000011493",
+              "setup_s": "0.000037072",
+              "evolution_s": "0.000014030"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001409128",
+              "setup_s": "0.001045515",
+              "evolution_s": "0.002049739"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.010194611",
+              "setup_s": "0.005736576",
+              "evolution_s": "0.005896939"
+            }
+          ]
+        },
+        "target": {
+          "wall_s": 0.4761615879833698,
+          "profiles": [
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "3",
+              "clusters": "1",
+              "build_s": "0.000008777",
+              "setup_s": "0.000049177",
+              "evolution_s": "0.000019311"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "6",
+              "clusters": "191",
+              "build_s": "0.001347100",
+              "setup_s": "0.001068396",
+              "evolution_s": "0.002092127"
+            },
+            {
+              "rank": "0",
+              "method": "gcce",
+              "backend": "cpu",
+              "dim": "12",
+              "clusters": "370",
+              "build_s": "0.010221009",
+              "setup_s": "0.005707340",
+              "evolution_s": "0.005965400"
+            }
+          ]
+        },
+        "max_abs_error": 0.0,
+        "rms_error": 0.0,
+        "values": 60,
+        "repeats": 3,
+        "reference_runs": [
+          {
+            "wall_s": 0.1965121920220554,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000015581",
+                "setup_s": "0.000048132",
+                "evolution_s": "0.000017907"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001369630",
+                "setup_s": "0.001078160",
+                "evolution_s": "0.002054702"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.009990182",
+                "setup_s": "0.005689073",
+                "evolution_s": "0.005878170"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.1964954249560833,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000016383",
+                "setup_s": "0.000048132",
+                "evolution_s": "0.000017663"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001341668",
+                "setup_s": "0.001041736",
+                "evolution_s": "0.002107955"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.010416157",
+                "setup_s": "0.005776723",
+                "evolution_s": "0.005898537"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.1951011240016669,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000011493",
+                "setup_s": "0.000037072",
+                "evolution_s": "0.000014030"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001409128",
+                "setup_s": "0.001045515",
+                "evolution_s": "0.002049739"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.010194611",
+                "setup_s": "0.005736576",
+                "evolution_s": "0.005896939"
+              }
+            ]
+          }
+        ],
+        "target_runs": [
+          {
+            "wall_s": 0.4660281609976664,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008615",
+                "setup_s": "0.000051602",
+                "evolution_s": "0.000019484"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001352774",
+                "setup_s": "0.001035973",
+                "evolution_s": "0.002122691"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.010190601",
+                "setup_s": "0.005714938",
+                "evolution_s": "0.005955706"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4761615879833698,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008564",
+                "setup_s": "0.000049348",
+                "evolution_s": "0.000019731"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001391352",
+                "setup_s": "0.001047097",
+                "evolution_s": "0.002108826"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.010241008",
+                "setup_s": "0.005718101",
+                "evolution_s": "0.006002248"
+              }
+            ]
+          },
+          {
+            "wall_s": 0.4884500670013949,
+            "profiles": [
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "3",
+                "clusters": "1",
+                "build_s": "0.000008777",
+                "setup_s": "0.000049177",
+                "evolution_s": "0.000019311"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "6",
+                "clusters": "191",
+                "build_s": "0.001347100",
+                "setup_s": "0.001068396",
+                "evolution_s": "0.002092127"
+              },
+              {
+                "rank": "0",
+                "method": "gcce",
+                "backend": "cpu",
+                "dim": "12",
+                "clusters": "370",
+                "build_s": "0.010221009",
+                "setup_s": "0.005707340",
+                "evolution_s": "0.005965400"
+              }
+            ]
+          }
+        ],
+        "speedup": 0.4126654268528397
+      }
+    ]
+  },
+  "note": "The target in cpu_compatibility is the CUDA executable running backend=cpu. These are not CPU-versus-GPU timings.",
+  "future_orders": {
+    "prerequisite_cce2_job": "349",
+    "orders": {
+      "3": {
+        "job": "351",
+        "afterok": "349",
+        "mpi_ranks": 32,
+        "gpus": 1,
+        "exclusive": true,
+        "qos": "gpu-long",
+        "time_limit_hours": 72,
+        "gpu_batch_steps": 4,
+        "repeats": 1
+      },
+      "4": {
+        "job": "352",
+        "afterok": "351",
+        "mpi_ranks": 32,
+        "gpus": 1,
+        "exclusive": true,
+        "qos": "gpu-long",
+        "time_limit_hours": 72,
+        "gpu_batch_steps": 4,
+        "repeats": 1
+      },
+      "5": {
+        "job": "353",
+        "afterok": "352",
+        "mpi_ranks": 32,
+        "gpus": 1,
+        "exclusive": true,
+        "qos": "gpu-long",
+        "time_limit_hours": 72,
+        "gpu_batch_steps": 4,
+        "repeats": 1
+      }
+    }
+  },
+  "progression_status": {
+    "checked_at": {
+      "status": 0,
+      "output": "2026-09-08T14:09:03+09:00"
+    },
+    "queue": {
+      "status": 0,
+      "output": "353 PENDING ccex-order5 (Dependency)\n352 RUNNING ccex-order4 idm4-gpu"
+    },
+    "accounting": {
+      "status": 0,
+      "output": "349|ccex-cce2-measure|COMPLETED|0:0|00:00:54|2026-09-08T13:34:23|2026-09-08T13:35:17|\n349.batch|batch|COMPLETED|0:0|00:00:54|2026-09-08T13:34:23|2026-09-08T13:35:17|808664K\n351|ccex-order3|COMPLETED|0:0|00:03:05|2026-09-08T13:35:17|2026-09-08T13:38:22|\n351.batch|batch|COMPLETED|0:0|00:03:05|2026-09-08T13:35:17|2026-09-08T13:38:22|24723380K\n352|ccex-order4|RUNNING|0:0|00:30:42|2026-09-08T13:38:22|Unknown|\n352.batch|batch|RUNNING|0:0|00:30:42|2026-09-08T13:38:22|Unknown|\n353|ccex-order5|PENDING|0:0|00:00:00|Unknown|Unknown|"
+    },
+    "order4": {
+      "status": "running",
+      "current_case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "current_backend": "cuda"
+    }
+  },
+  "high_order_source_manifest": {
+    "purpose": "Deferred whole-server CCE3, CCE4, CCE5 comparisons after CCE2 succeeds",
+    "files": {
+      "test/gpu/server/run_orders.py": "124bed7dd7d739d46abc1884d910a8973705e224a7e689f82bdfe1d26d244b34",
+      "test/gpu/server/order.sbatch": "9770de9683c711c89122fb46413701e2ff2089370564e47eb799f39dfce70bde",
+      "test/gpu/server/mpi_launch.sh": "e19e2d3a592760bd5c354226a996e491a37e35adc1d8cbcf178abdd7303a6306",
+      "test/gpu/server/test_run_orders.py": "babe7fcdda6d3a2ea267a927f0254f9849ceb6bdad7d727f3891137cccd395ef",
+      "test/gpu/server/README.md": "a4521639aa66d2c2a0abfb707bd0d040bf0b30a152ac0687cac18b601420fe1b"
+    }
+  },
+  "gpu_environment": {
+    "time_utc": "2026-09-08T04:34:23.681499+00:00",
+    "hostname": "idm4-gpu",
+    "python": "3.13.10",
+    "environment": {
+      "SLURM_JOB_ID": "349",
+      "SLURM_JOB_NODELIST": "idm4-gpu",
+      "SLURM_CPUS_PER_TASK": "1",
+      "CUDA_VISIBLE_DEVICES": "0",
+      "OMP_NUM_THREADS": "1",
+      "LOADEDMODULES": "gcc/gcc-11.5.0:gcc/openmpi-4.1.5:cuda/cuda-12.8:python/python3.13.10"
+    },
+    "cpu": "Architecture:        x86_64\nCPU op-mode(s):      32-bit, 64-bit\nByte Order:          Little Endian\nCPU(s):              32\nOn-line CPU(s) list: 0-31\nThread(s) per core:  1\nCore(s) per socket:  32\nSocket(s):           1\nNUMA node(s):        1\nVendor ID:           GenuineIntel\nCPU family:          6\nModel:               173\nModel name:          Intel(R) Xeon(R) 6731P\nStepping:            1\nCPU MHz:             4066.579\nCPU max MHz:         4100.0000\nCPU min MHz:         800.0000\nBogoMIPS:            5000.00\nVirtualization:      VT-x\nL1d cache:           48K\nL1i cache:           64K\nL2 cache:            2048K\nL3 cache:            147456K\nNUMA node0 CPU(s):   0-31\nFlags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cat_l2 cdp_l3 invpcid_single cdp_l2 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect avx_vnni avx512_bf16 wbnoinvd dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req hfi avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid bus_lock_detect cldemote movdiri movdir64b enqcmd fsrm md_clear serialize tsxldtrk pconfig arch_lbr amx_bf16 avx512_fp16 amx_tile amx_int8 flush_l1d arch_capabilities",
+    "memory": "total        used        free      shared  buff/cache   available\nMem:    269586214912  2218704896 222377279488    76066816 44990230528 265017868288\nSwap:   34359734272           0 34359734272",
+    "compiler": "g++ (GCC) 11.5.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "cuda": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0",
+    "mpi": "mpirun (Open MPI) 4.1.5\n\nReport bugs to http://www.open-mpi.org/community/help/",
+    "gpu": "index, name, memory.total [MiB], memory.used [MiB], driver_version, compute_cap\n0, NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, 0 MiB, 595.84, 12.0",
+    "binary_sha256": {
+      "bin/main.cpu.out": "8025aee290dc8c2996fa20f81333e52c037fd2fc39a425d481a5fc47cf7528a3",
+      "bin/main.cuda.out": "bde1946c63cc33114ab8f691b9f35b83f709e9bd058d4d83a8f2df693e555e1d"
+    }
+  },
+  "completed_cce3_report": "test/gpu/validation-server-cce3.json",
+  "local_artifacts": "/tmp/ccex-server-cce2/completed-20260908T050744Z"
+}

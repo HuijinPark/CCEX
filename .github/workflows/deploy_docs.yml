@@ -3,7 +3,7 @@ name: Deploy doxygen to Pages
 
 on:
   push:
-    branches: ["hj_workspace"]
+    branches: ["main"]
 
   workflow_dispatch:
 
@@ -20,23 +20,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - name: Doxygen Action
-        uses: mattnotmitt/doxygen-action@edge
+        uses: mattnotmitt/doxygen-action@v1.9   # Doxygen 1.9.8, the version header.html was written for
         with:
-          doxyfile-path: "./docs/Doxyfile"
-          working-directory: "."
+          doxyfile-path: "./Doxyfile"
+          working-directory: "./docs/doxygen"   # the Doxyfile names include/, src/ and the pages relative to its own folder
 
       - name: Add .nojekyll
-        run: sudo touch ./docs/html/.nojekyll
+        run: sudo touch ./docs/doxygen/html/.nojekyll
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs/html
+          path: ./docs/doxygen/html
 
   # Deployment job
   deploy:
@@ -48,4 +48,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4

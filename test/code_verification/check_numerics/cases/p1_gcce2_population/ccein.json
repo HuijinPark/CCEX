@@ -1,0 +1,142 @@
+{
+  "method": "gCCE",
+  "quantity": "dm",
+  "gyrofile": "../../inputs/p1_10ppm/DiaP1_gyro",
+  "bathfile": [
+    "../../inputs/p1_10ppm/bath_DiaP1_10ppm_1"
+  ],
+  "order": 2,
+  "bfield": 300,
+  "rbath": 250,
+  "rdip": 330,
+  "deltat": 0.01,
+  "nstep": 500,
+  "seed": 19,
+  "Qubit": {
+    "nqubit": 1,
+    "qubit": [
+      {
+        "name": "qubit1",
+        "spin": 1.0,
+        "gyro": -17608.59705,
+        "xyz": [
+          523.336,
+          524.936,
+          521.003
+        ],
+        "alphams": 0,
+        "betams": 0,
+        "detuning": [
+          0.0
+        ]
+      }
+    ],
+    "intmap": [
+      {
+        "between": [
+          "qubit1",
+          "qubit1"
+        ],
+        "tensor": [
+          [
+            -960000,
+            0,
+            0
+          ],
+          [
+            0,
+            -960000,
+            0
+          ],
+          [
+            0,
+            0,
+            1920000
+          ]
+        ]
+      }
+    ]
+  },
+  "addsubclus": 0,
+  "nk": [
+    0,
+    0,
+    0
+  ],
+  "npulse": 0,
+  "hf_readmode": 0,
+  "savemode": "normal",
+  "Defect": [
+    {
+      "dfname": "P1",
+      "apprx": true,
+      "naddspin": 0,
+      "navaax": 12,
+      "detuning": [
+        [
+          1,
+          "e",
+          84.946496
+        ],
+        [
+          2,
+          "e",
+          84.946496
+        ],
+        [
+          3,
+          "e",
+          84.946496
+        ],
+        [
+          4,
+          "e",
+          0.0
+        ],
+        [
+          5,
+          "e",
+          0.0
+        ],
+        [
+          6,
+          "e",
+          0.0
+        ],
+        [
+          7,
+          "e",
+          -84.946496
+        ],
+        [
+          8,
+          "e",
+          -84.946496
+        ],
+        [
+          9,
+          "e",
+          -84.946496
+        ],
+        [
+          10,
+          "e",
+          114.0264
+        ],
+        [
+          11,
+          "e",
+          0.0
+        ],
+        [
+          12,
+          "e",
+          -114.0264
+        ]
+      ]
+    }
+  ],
+  "nstate": 1,
+  "avaaxfile": "../../inputs/p1_10ppm/avaax_nav12",
+  "statefile": "../../inputs/p1_10ppm/state_"
+}

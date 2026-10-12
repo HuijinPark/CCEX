@@ -1,0 +1,115 @@
+# .github/workflows/ci.yml
+# The fast, machine-independent checks on every push and pull request: a CMake build of
+# the CPU binary, the numeric and CPU regression unit tests (with the bundle unit tests), the refinement driver's unit tests, the pCCE
+# partition unit tests and the Python unit tests, the closed-form coherence of one 13C, the
+# coordinate-rotation suite, the refusals and the input-form equivalence. Not here, because they need a particular machine
+# or a long run: check_numerics (exact against references recorded on one machine), the
+# adaptive regression and in-process suites, and anything with CUDA (test/README.md says
+# how to run them).
+# The second job builds with do_compile.sh, the Makefile path the servers use (D30): the generic preset
+# with Open MPI, its unit tests, a rerun that must not rebuild, the closed form and the refusals.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cpu:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
+      CCEX_BUILD_DIR: ${{ github.workspace }}/build
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ libopenmpi-dev openmpi-bin \
+            python3-numpy python3-scipy python3-matplotlib
+
+      - name: Build (CMake, CPU only, portable flags)
+        run: |
+          cmake -B build -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF
+          cmake --build build -j "$(nproc)"
+
+      - name: Warnings that are defects (format, sequence point, misleading indentation) stop a second build
+        run: |
+          cmake -B build-strict -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF -DCCEX_STRICT_WARNINGS=ON
+          cmake --build build-strict --target ccex -j "$(nproc)"
+
+      - name: Numeric unit tests
+        run: cmake --build build --target numeric-test
+
+      - name: CPU regression tests (cluster log, MPI seed, review controls, host lifetimes, bundle partition)
+        run: cmake --build build --target cpu-test -j "$(nproc)"
+
+      - name: Refinement driver unit tests
+        run: sh test/cluster_verification/check_adaptive/verify.sh unit
+
+      - name: pCCE partition unit tests
+        run: |
+          for c in check_partition check_partition_search check_partition_cycle; do
+            python3 test/cluster_verification/check_pcce/$c.py --output "$RUNNER_TEMP/$c"
+          done
+
+      - name: Python unit tests
+        run: |
+          (cd test/cluster_verification/check_pcce && python3 -m unittest test_partition_log test_profile_parser)
+          python3 test/gpu_verification/server/test_run_orders.py   # the server runner's guards, no GPU or Slurm (review b467fe R3)
+          (cd example/tools/AutoConvergence && python3 -m unittest discover -s tests)   # auto_convergence setup driver
+
+      - name: Closed form (one 13C, free induction and Hahn echo)
+        run: bash test/code_verification/check_analytic/run.sh
+
+      - name: Coordinate rotation
+        run: bash test/code_verification/check_rotation/run.sh
+
+      - name: Refusals
+        run: bash test/code_verification/check_refusals/run.sh
+
+      - name: Input forms
+        run: bash test/code_verification/check_input_forms/run.sh
+
+      - name: Vector mean field (same binary, z vs vector curve)
+        run: bash test/code_verification/check_mean_field/run.sh
+
+      - name: rdip ladder (same binary, rungs vs separate runs, refusals)
+        run: bash test/code_verification/check_rdip_ladder/run.sh
+
+  make:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends g++ libopenmpi-dev openmpi-bin python3-numpy
+
+      - name: Build (do_compile.sh generic, Open MPI)
+        run: CXX=mpicxx bash do_compile.sh generic
+
+      - name: Numeric and CPU unit tests (Makefile targets)
+        run: make numeric-test cpu-test MPIRUN=mpirun
+
+      - name: A rerun keeps the build
+        run: |
+          before=$(stat -c %Y bin/main.out)
+          CXX=mpicxx bash do_compile.sh generic
+          [ "$(stat -c %Y bin/main.out)" = "$before" ] || { echo "do_compile.sh rebuilt an unchanged tree"; exit 1; }
+
+      - name: Closed form and refusals on the Makefile build
+        run: |
+          bash test/code_verification/check_analytic/run.sh
+          bash test/code_verification/check_refusals/run.sh

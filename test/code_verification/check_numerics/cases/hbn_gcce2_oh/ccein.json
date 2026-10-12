@@ -1,0 +1,82 @@
+{
+  "method": "gCCE",
+  "quantity": "coherence",
+  "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
+  "bathfile": [
+    "../../inputs/hbn/bath_hBN_VB_flat_1"
+  ],
+  "order": 2,
+  "bfield": 0,
+  "rbath": 14,
+  "rdip": 8,
+  "deltat": 1e-08,
+  "nstep": 50,
+  "nstate": 1,
+  "seed": 19,
+  "Qubit": {
+    "nqubit": 1,
+    "qubit": [
+      {
+        "name": "VB",
+        "spin": 1.0,
+        "gyro": -17608.59705,
+        "xyz": [
+          33.94003,
+          45.72817,
+          7.5
+        ]
+      }
+    ],
+    "intmap": [
+      {
+        "between": [
+          "VB",
+          "VB"
+        ],
+        "tensor": [
+          [
+            -1080,
+            0,
+            0
+          ],
+          [
+            0,
+            -1180,
+            0
+          ],
+          [
+            0,
+            0,
+            2320
+          ]
+        ]
+      }
+    ],
+    "overhaus": true,
+    "psia": [
+      1,
+      0,
+      1
+    ],
+    "psib": [
+      0,
+      1,
+      0
+    ]
+  },
+  "npulse": 1,
+  "hf_readmode": 3,
+  "hf_tensorfile": "../../inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_tag",
+  "hf_ignore_oor": 0,
+  "DefectTotSpin": 1.0,
+  "CorrTotSpin": 0.0,
+  "qd_readmode": 2,
+  "qd_tensorfile": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE",
+  "qd_tensorfile_woqubit": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE",
+  "qd_cellpara": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "statefile": "../../inputs/hbn/state_"
+}

@@ -1,0 +1,150 @@
+{
+ "returncode": 0,
+ "summaries": {
+  "summary.json": {
+   "cached_probe_clusters": 0,
+   "dimension_limits": {
+    "bundle_max_dim": 8
+   },
+   "final_bundles": [
+    [
+     0,
+     1,
+     2
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     5
+    ]
+   ],
+   "final_directory": "<OUT>/0001-run",
+   "input": {
+    "Qubit": {
+     "nqubit": 1,
+     "qubit": [
+      {
+       "alphams": 1,
+       "betams": 0,
+       "gyro": -17608.59705,
+       "name": "NV",
+       "spin": 1,
+       "xyz": [
+        0,
+        0,
+        0
+       ]
+      }
+     ]
+    },
+    "backend": "cpu",
+    "bathfile": [
+     "test/cluster_verification/check_bundle/bath_6"
+    ],
+    "bfield": 300,
+    "bundle_max_dim": 8,
+    "bundle_merge_cutoff": 1.0,
+    "cluster_mode": "adaptive",
+    "deltat": 0.005,
+    "gpu_batch_steps": 4,
+    "gpu_min_dim": 8,
+    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+    "method": "cce",
+    "npulse": 1,
+    "nstate": 0,
+    "nstep": 9,
+    "order": 2,
+    "outfile": "bin/adaptive_ensemble",
+    "profile": true,
+    "quantity": "coherence",
+    "rbath": 15,
+    "rdip": 30,
+    "savemode": "normal",
+    "seed": 19
+   },
+   "input_file_sha256": {
+    "/home/ljw95/bin/code_develop/CCEX-CQML/test/cluster_verification/check_bundle/bath_6": "7860fc92298dc8cc559e0df50fb73070cbadf1bfe0b4a8ae3631d00887273738",
+    "/home/ljw95/bin/code_develop/CCEX-CQML/test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C": "2cc0c11066852f97d67ab00dc004790909ed564b2af9f8305791e5ef1625da4d"
+   },
+   "limitations": [
+    "Physical (every |L| <= 1.01) is not accurate: a physical curve can still be far from the answer.",
+    "Each change is checked against direct solutions of its region and of three neighbouring regions only, never against the whole bath.",
+    "D was designed on twelve-site P1 subsystems with ten stored states; elsewhere it is untested."
+   ],
+   "raw_nonfinite_values": 0,
+   "raw_zero_values": 0,
+   "regroup": {
+    "algorithm": "regroup-D-v1",
+    "changes": 0,
+    "connections": "distance",
+    "epsilon": 0.0001,
+    "ledger": {
+     "max_probe_dimension": 0,
+     "max_total_work": 8000000000000.0,
+     "probes_calculated": 0,
+     "spent": 341640.0,
+     "spent_by": {
+      "candidate": 0.0,
+      "culprit": 0.0,
+      "initial_run": 341640.0,
+      "neighbour_direct": 0.0,
+      "outside": 0.0,
+      "region_direct": 0.0,
+      "rerun": 0.0
+     }
+    },
+    "limit": 1.01,
+    "max_candidates": 256,
+    "max_changes": 8,
+    "max_regions": 64,
+    "neighbours": 3,
+    "regions_examined": 0,
+    "rollbacks": 0,
+    "rounds": [],
+    "states": [
+     0
+    ],
+    "stop": "physical"
+   },
+   "rounds": [],
+   "runs": [
+    {
+     "directory": "<OUT>/0001-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    }
+   ],
+   "settings": {
+    "atol": 1e-07,
+    "binary": "<BINARY>",
+    "cache_mb": 256,
+    "cwd": "<REPO>",
+    "hub_candidates": false,
+    "input": "<INPUTS>/merge-cce-0.json",
+    "max_candidates": 16,
+    "max_patches": 64,
+    "max_probes": 4096,
+    "max_rounds": 8,
+    "max_total_work": 8000000000000.0,
+    "merge_priority": "gain-per-cost",
+    "mpiexec": "mpirun",
+    "neighbors": 8,
+    "output": "<OUT>",
+    "policy": "merge",
+    "prefer_physical": false,
+    "probe_batch_clusters": 0,
+    "ranks": 1,
+    "raw_cache": null,
+    "regroup": true,
+    "regroup_max_candidates": 256,
+    "regroup_max_regions": 64,
+    "rtol": 1e-05,
+    "timeout": 600
+   },
+   "status": "physical"
+  }
+ }
+}

@@ -1,0 +1,902 @@
+{
+ "returncode": 2,
+ "summaries": {
+  "summary.json": {
+   "cached_probe_clusters": 27,
+   "dimension_limits": {
+    "bundle_max_dim": 4
+   },
+   "final_bundles": [
+    [
+     0,
+     5
+    ],
+    [
+     1
+    ],
+    [
+     2
+    ],
+    [
+     3,
+     7
+    ],
+    [
+     4,
+     6
+    ]
+   ],
+   "final_directory": "<OUT>/0009-run",
+   "input": {
+    "Defect": [
+     {
+      "apprx": true,
+      "detuning": {
+       "unit": "MHz",
+       "values": [
+        [
+         1,
+         "e",
+         84.946496
+        ],
+        [
+         2,
+         "e",
+         84.946496
+        ],
+        [
+         3,
+         "e",
+         84.946496
+        ],
+        [
+         4,
+         "e",
+         0.0
+        ],
+        [
+         5,
+         "e",
+         0.0
+        ],
+        [
+         6,
+         "e",
+         0.0
+        ],
+        [
+         7,
+         "e",
+         -84.946496
+        ],
+        [
+         8,
+         "e",
+         -84.946496
+        ],
+        [
+         9,
+         "e",
+         -84.946496
+        ],
+        [
+         10,
+         "e",
+         114.0264
+        ],
+        [
+         11,
+         "e",
+         0.0
+        ],
+        [
+         12,
+         "e",
+         -114.0264
+        ]
+       ]
+      },
+      "dfname": "P1",
+      "naddspin": 0,
+      "navaax": 12
+     }
+    ],
+    "backend": "cpu",
+    "bathfile": [
+     "test/cluster_verification/check_adaptive/regression/inputs/bath_p1_8"
+    ],
+    "bfield": 292,
+    "bundle_max_dim": 4,
+    "bundle_merge_cutoff": 0,
+    "cluster_mode": "adaptive",
+    "deltat": 0.002,
+    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
+    "method": "CCE",
+    "npulse": 1,
+    "nstate": 5,
+    "nstep": 30,
+    "order": 2,
+    "outfile": "bin/adaptive_ensemble",
+    "qalphams": -1,
+    "qbetams": 0,
+    "quantity": "coherence",
+    "qubitfile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect",
+    "rbath": 50,
+    "rdip": 45,
+    "savemode": "normal",
+    "seed": 1
+   },
+   "input_file_sha256": {
+    "/home/ljw95/bin/code_develop/CCEX-CQML/test/cluster_verification/check_adaptive/regression/inputs/bath_p1_8": "ffd1b7dd7d6ba9e014ce364b2901aa11773249126d0cee50a7c48857f27abf2b",
+    "/home/ljw95/bin/code_develop/CCEX-CQML/test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect": "aa5cb80e8459ddd955b9e7a7af19056bd0dc54257b756faf0c8d495be9826da4",
+    "/home/ljw95/bin/code_develop/CCEX-CQML/test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1": "38e3766771b459bd88af71a11bb03066109e6a3b9c57f7e48ccba233bc9909a1"
+   },
+   "limitations": [
+    "Physical (every |L| <= 1.01) is not accurate: a physical curve can still be far from the answer.",
+    "Each change is checked against direct solutions of its region and of three neighbouring regions only, never against the whole bath.",
+    "D was designed on twelve-site P1 subsystems with ten stored states; elsewhere it is untested."
+   ],
+   "raw_nonfinite_values": 0,
+   "raw_zero_values": 0,
+   "regroup": {
+    "algorithm": "regroup-D-v1",
+    "changes": 1,
+    "connections": "distance",
+    "epsilon": 0.0001,
+    "ledger": {
+     "curves_freed": 158,
+     "except_passes": 2,
+     "max_probe_dimension": 128,
+     "max_total_work": 8000000000000.0,
+     "probes_calculated": 184,
+     "spent": 1151878800.0,
+     "spent_by": {
+      "candidate": 29287200.0,
+      "culprit": 3498000.0,
+      "initial_run": 2025600.0,
+      "neighbour_direct": 1022361600.0,
+      "outside": 4129200.0,
+      "region_direct": 88473600.0,
+      "rerun": 2103600.0
+     }
+    },
+    "limit": 1.01,
+    "max_candidates": 256,
+    "max_changes": 8,
+    "max_regions": 64,
+    "neighbours": 3,
+    "regions_examined": 5,
+    "rollbacks": 0,
+    "rounds": [
+     {
+      "U": 1,
+      "accepted": [
+       [
+        0,
+        5
+       ],
+       [
+        1
+       ],
+       [
+        2
+       ],
+       [
+        3,
+        7
+       ],
+       [
+        4,
+        6
+       ]
+      ],
+      "culprits": [
+       [
+        [
+         3,
+         7
+        ],
+        [
+         4,
+         6
+        ]
+       ],
+       [
+        [
+         1,
+         5
+        ],
+        [
+         4,
+         6
+        ]
+       ],
+       [
+        [
+         0
+        ],
+        [
+         3,
+         7
+        ]
+       ]
+      ],
+      "edges": [
+       [
+        0,
+        3
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        3,
+        4
+       ]
+      ],
+      "excess": 0.01727686781788118,
+      "factors": [
+       {
+        "cause": null,
+        "g": 0.06697034301078063
+       },
+       {
+        "cause": null,
+        "g": 0.02035809987923833
+       },
+       {
+        "cause": null,
+        "g": 0.001384774258538078
+       }
+      ],
+      "regions": [
+       {
+        "accepted": null,
+        "before": [
+         0.1209897535972124,
+         0.10816192393937232
+        ],
+        "candidates": 9,
+        "culprit": [
+         [
+          3,
+          7
+         ],
+         [
+          4,
+          6
+         ]
+        ],
+        "e_now": 0.11834224314142427,
+        "neighbours": [
+         [
+          0
+         ],
+         [
+          2
+         ]
+        ],
+        "passed": 0,
+        "region": [
+         [
+          1,
+          5
+         ],
+         [
+          3,
+          7
+         ],
+         [
+          4,
+          6
+         ]
+        ],
+        "rejected": {
+         "a": 9
+        },
+        "skipped": false
+       },
+       {
+        "culprit": [
+         [
+          1,
+          5
+         ],
+         [
+          4,
+          6
+         ]
+        ],
+        "region": [
+         [
+          1,
+          5
+         ],
+         [
+          3,
+          7
+         ],
+         [
+          4,
+          6
+         ]
+        ],
+        "skipped": true
+       },
+       {
+        "U_new": 1,
+        "accepted": [
+         [
+          0,
+          5
+         ],
+         [
+          1
+         ],
+         [
+          3,
+          7
+         ]
+        ],
+        "after": [
+         0.11154023003165708,
+         0.09707738787831613
+        ],
+        "before": [
+         0.1209897535972124,
+         0.13817100889998843
+        ],
+        "candidates": 8,
+        "changed_terms": 12,
+        "culprit": [
+         [
+          0
+         ],
+         [
+          3,
+          7
+         ]
+        ],
+        "e": 0.09962103207145195,
+        "e_now": 0.1374961383274639,
+        "edges_new": [
+         [
+          0,
+          1
+         ],
+         [
+          0,
+          2
+         ],
+         [
+          0,
+          3
+         ],
+         [
+          0,
+          4
+         ],
+         [
+          1,
+          3
+         ],
+         [
+          3,
+          4
+         ]
+        ],
+        "except_check": {
+         "reassembled": 6.895783192704201e-18,
+         "run": 0.0
+        },
+        "except_terms": 8,
+        "excess_new": 0.01563766892229479,
+        "neighbours": [
+         [
+          4,
+          6
+         ],
+         [
+          2
+         ]
+        ],
+        "new_terms": 42,
+        "passed": 2,
+        "region": [
+         [
+          0
+         ],
+         [
+          1,
+          5
+         ],
+         [
+          3,
+          7
+         ]
+        ],
+        "rejected": {
+         "a": 3,
+         "b": 2,
+         "unphysical": 1
+        },
+        "skipped": false
+       }
+      ],
+      "round": 0,
+      "s": 0,
+      "t": 22,
+      "units": [
+       [
+        0
+       ],
+       [
+        1,
+        5
+       ],
+       [
+        2
+       ],
+       [
+        3,
+        7
+       ],
+       [
+        4,
+        6
+       ]
+      ],
+      "verification": {
+       "U_actual": 1,
+       "confirmed": true,
+       "excess_actual": 0.01563766892229479,
+       "max_abs_difference_from_prediction": 0.0,
+       "max_relative_difference_from_prediction": 0.0,
+       "same_nonfinite_points": true
+      }
+     },
+     {
+      "U": 1,
+      "accepted": null,
+      "culprits": [
+       [
+        [
+         3,
+         7
+        ],
+        [
+         4,
+         6
+        ]
+       ],
+       [
+        [
+         0,
+         5
+        ],
+        [
+         4,
+         6
+        ]
+       ],
+       [
+        [
+         0,
+         5
+        ],
+        [
+         3,
+         7
+        ]
+       ],
+       [
+        [
+         0,
+         5
+        ],
+        [
+         1
+        ]
+       ]
+      ],
+      "edges": [
+       [
+        0,
+        1
+       ],
+       [
+        0,
+        2
+       ],
+       [
+        0,
+        3
+       ],
+       [
+        0,
+        4
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        3,
+        4
+       ]
+      ],
+      "excess": 0.01563766892229479,
+      "factors": [
+       {
+        "cause": null,
+        "g": 0.06697034301078063
+       },
+       {
+        "cause": null,
+        "g": 0.01782044830452806
+       },
+       {
+        "cause": null,
+        "g": 0.002075286017559754
+       },
+       {
+        "cause": null,
+        "g": 3.6219199297571776e-07
+       }
+      ],
+      "regions": [
+       {
+        "accepted": null,
+        "before": [
+         0.11154023003165708,
+         0.0060847197184246745
+        ],
+        "candidates": 8,
+        "culprit": [
+         [
+          3,
+          7
+         ],
+         [
+          4,
+          6
+         ]
+        ],
+        "e_now": 0.0022259513239416113,
+        "except_check": {
+         "reassembled": 1.0842021724855044e-19,
+         "run": 0.0
+        },
+        "except_terms": 6,
+        "neighbours": [
+         [
+          0,
+          5
+         ],
+         [
+          2
+         ]
+        ],
+        "new_terms": 14,
+        "passed": 0,
+        "region": [
+         [
+          1
+         ],
+         [
+          3,
+          7
+         ],
+         [
+          4,
+          6
+         ]
+        ],
+        "rejected": {
+         "a": 6,
+         "b": 2
+        },
+        "skipped": false
+       },
+       {
+        "accepted": null,
+        "before": [
+         0.11154023003165708,
+         0.06874598682289386
+        ],
+        "candidates": 9,
+        "culprit": [
+         [
+          0,
+          5
+         ],
+         [
+          4,
+          6
+         ]
+        ],
+        "e_now": 0.07212216529738918,
+        "neighbours": [
+         [
+          1
+         ],
+         [
+          2
+         ]
+        ],
+        "passed": 0,
+        "region": [
+         [
+          0,
+          5
+         ],
+         [
+          3,
+          7
+         ],
+         [
+          4,
+          6
+         ]
+        ],
+        "rejected": {
+         "a": 7,
+         "unphysical": 2
+        },
+        "skipped": false
+       },
+       {
+        "accepted": null,
+        "before": [
+         0.11154023003165708,
+         0.09707738787831613
+        ],
+        "candidates": 8,
+        "culprit": [
+         [
+          0,
+          5
+         ],
+         [
+          3,
+          7
+         ]
+        ],
+        "e_now": 0.09962103207145195,
+        "neighbours": [
+         [
+          4,
+          6
+         ],
+         [
+          2
+         ]
+        ],
+        "passed": 0,
+        "region": [
+         [
+          0,
+          5
+         ],
+         [
+          1
+         ],
+         [
+          3,
+          7
+         ]
+        ],
+        "rejected": {
+         "a": 5,
+         "revisit": 1,
+         "unphysical": 2
+        },
+        "skipped": false
+       },
+       {
+        "culprit": [
+         [
+          0,
+          5
+         ],
+         [
+          1
+         ]
+        ],
+        "region": [
+         [
+          0,
+          5
+         ],
+         [
+          1
+         ],
+         [
+          3,
+          7
+         ]
+        ],
+        "skipped": true
+       }
+      ],
+      "round": 1,
+      "s": 0,
+      "t": 22,
+      "units": [
+       [
+        0,
+        5
+       ],
+       [
+        1
+       ],
+       [
+        2
+       ],
+       [
+        3,
+        7
+       ],
+       [
+        4,
+        6
+       ]
+      ]
+     }
+    ],
+    "states": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "stop": "no_candidate",
+    "whole_curve": "except"
+   },
+   "rounds": [],
+   "runs": [
+    {
+     "directory": "<OUT>/0001-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0002-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0003-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0004-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0005-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0006-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0007-except",
+     "mode": "except",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0008-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0009-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0010-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0011-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0012-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0013-except",
+     "mode": "except",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0014-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0015-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0016-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0017-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    }
+   ],
+   "settings": {
+    "atol": 0.001,
+    "binary": "<BINARY>",
+    "cache_mb": 256,
+    "cwd": "<REPO>",
+    "hub_candidates": false,
+    "input": "<INPUTS>/regroup-p1-sparse-0.json",
+    "max_candidates": 16,
+    "max_patches": 64,
+    "max_probes": 4096,
+    "max_rounds": 8,
+    "max_total_work": 8000000000000.0,
+    "merge_priority": "gain-per-cost",
+    "mpiexec": "mpirun",
+    "neighbors": 8,
+    "output": "<OUT>",
+    "policy": "merge",
+    "prefer_physical": false,
+    "probe_batch_clusters": 0,
+    "ranks": 1,
+    "raw_cache": null,
+    "regroup": true,
+    "regroup_max_candidates": 256,
+    "regroup_max_regions": 64,
+    "regroup_whole": "except",
+    "rtol": 0.0,
+    "timeout": 600
+   },
+   "status": "no_candidate"
+  }
+ }
+}

@@ -1,0 +1,57 @@
+/* CCEX on top of doxygen-awesome: a logo one can read, room for it above the
+   search box, a project name one can read beside it, a tree one can read, and
+   a tree arrow at full size (it still appears only when the row is hovered, as
+   the theme has it; its box must stay 16 px wide, since rows without children
+   get that width inline and the labels would no longer line up). */
+html {
+    --top-height: 150px;
+    --title-font-size: 28px;
+    --navigation-font-size: 16px;
+    --side-nav-fixed-width: 360px;
+    --side-nav-arrow-hover-opacity: 1;
+}
+#projectlogo img { max-height: 72px; }
+#projectalign { padding-left: 0.5em; }
+#projectnumber { font-size: 70%; }
+
+#nav-tree .arrow { font-size: 100%; }
+
+/* the tree always follows the page; the button that would stop it is not offered */
+#nav-sync { display: none; }
+
+/* The sidebar can be dragged wider or narrower at its right edge. The theme
+   pins its width to --side-nav-fixed-width and hides Doxygen's drag handle;
+   the handle is shown again, and ccex.js moves the dragged width into the
+   variable, so that the sidebar, the header, the search box and the page
+   follow together. */
+.ui-resizable-handle { display: block; }
+.ui-resizable-e { width: 8px; right: 0; top: 0; height: 100%; cursor: col-resize; background: none; }
+.ui-resizable-e:hover { background: var(--separator-color); }
+
+/* The sidebar folds to a narrow rail and back with a button (ccex.js). The rail
+   keeps the path of the page being read, written top to bottom, and unfolds
+   when clicked. */
+#ccex-nav-toggle {
+    position: fixed; left: 8px; bottom: 8px; z-index: 1000;
+    width: 30px; height: 30px; padding: 0; line-height: 28px; text-align: center;
+    border: 1px solid var(--separator-color); border-radius: var(--border-radius-medium);
+    background: var(--page-background-color); color: var(--primary-color);
+    font-size: 14px; cursor: pointer;
+}
+#ccex-nav-toggle:hover { background: var(--side-nav-background); }
+#ccex-nav-rail {
+    display: none; position: fixed; left: 0; top: 0; bottom: 0; width: 46px; z-index: 999;
+    box-sizing: border-box; padding: 16px 0 48px 0;
+    background: var(--side-nav-background); border-right: 1px solid var(--separator-color);
+    cursor: pointer; overflow: hidden;
+}
+#ccex-nav-rail:hover { background: var(--page-background-color); }
+#ccex-nav-rail span {
+    display: block; margin: 0 auto; writing-mode: vertical-rl;
+    font-size: var(--navigation-font-size); line-height: 46px; white-space: nowrap;
+    color: var(--primary-color); font-weight: 600;
+}
+html.ccex-nav-hidden #side-nav, html.ccex-nav-hidden #top { display: none; }
+html.ccex-nav-hidden #ccex-nav-rail { display: block; }
+html.ccex-nav-hidden #doc-content { margin-left: 46px !important; }
+html.ccex-nav-hidden #nav-path { left: 46px; }

@@ -1,0 +1,34 @@
+{
+  "method": "gCCE",
+  "quantity": "dm",
+  "qubitfile": "../../inputs/hbn/bath_hBN_VB_flat_Defect",
+  "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
+  "bathfile": [
+    "../../inputs/hbn/bath_hBN_VB_flat_1"
+  ],
+  "order": 2,
+  "bfield": 500,
+  "rbath": 5,
+  "rdip": 3,
+  "deltat": 0.0001,
+  "nstep": 10,
+  "nstate": 1,
+  "qalphams": 1,
+  "qbetams": 0,
+  "npulse": 1,
+  "hf_readmode": 3,
+  "hf_tensorfile": "../../inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_tag",
+  "hf_ignore_oor": 0,
+  "DefectTotSpin": 1.0,
+  "CorrTotSpin": 0.0,
+  "qd_readmode": 2,
+  "qd_tensorfile": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE",
+  "qd_tensorfile_woqubit": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE",
+  "qd_cellpara": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "seed": 19,
+  "statefile": "../../inputs/hbn/state_"
+}

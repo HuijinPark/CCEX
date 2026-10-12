@@ -1,0 +1,720 @@
+[
+ {
+  "name": "merge-cce",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-cce-0.json",
+   "--output",
+   "<WORK>/merge-cce",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-7",
+   "--rtol",
+   "1e-5"
+  ],
+  "env": {}
+ },
+ {
+  "name": "merge-gcce-s2",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-gcce-s2-0.json",
+   "--output",
+   "<WORK>/merge-gcce-s2",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-7",
+   "--rtol",
+   "1e-5"
+  ],
+  "env": {}
+ },
+ {
+  "name": "merge-order1-small",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-order1-small-0.json",
+   "--output",
+   "<WORK>/merge-order1-small",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--neighbors",
+   "8",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6"
+  ],
+  "env": {}
+ },
+ {
+  "name": "merge-order1-wide",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-order1-wide-0.json",
+   "--output",
+   "<WORK>/merge-order1-wide",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--neighbors",
+   "2",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6"
+  ],
+  "env": {}
+ },
+ {
+  "name": "merge-grow",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-grow-0.json",
+   "--output",
+   "<WORK>/merge-grow",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6"
+  ],
+  "env": {}
+ },
+ {
+  "name": "merge-physical",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-physical-0.json",
+   "--output",
+   "<WORK>/merge-physical",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--prefer-physical",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6"
+  ],
+  "env": {}
+ },
+ {
+  "name": "merge-hub",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-hub-0.json",
+   "--output",
+   "<WORK>/merge-hub",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--prefer-physical",
+   "--hub-candidates",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6"
+  ],
+  "env": {}
+ },
+ {
+  "name": "merge-hub-capped",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-hub-capped-0.json",
+   "--output",
+   "<WORK>/merge-hub-capped",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--prefer-physical",
+   "--hub-candidates",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6"
+  ],
+  "env": {}
+ },
+ {
+  "name": "cache-first",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/cache-first-0.json",
+   "--output",
+   "<WORK>/cache-first",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6",
+   "--raw-cache",
+   "<WORK>/cache/grow.sqlite"
+  ],
+  "env": {}
+ },
+ {
+  "name": "cache-second",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/cache-second-0.json",
+   "--output",
+   "<WORK>/cache-second",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6",
+   "--raw-cache",
+   "<WORK>/cache/grow.sqlite"
+  ],
+  "env": {}
+ },
+ {
+  "name": "fault-plan-fail",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/fault-plan-fail-0.json",
+   "--output",
+   "<WORK>/fault-plan-fail",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6",
+   "--mpiexec",
+   "<TOOLS>/fault_mpiexec.py"
+  ],
+  "env": {
+   "CCEX_FAULT": "0004-plan:fail",
+   "CCEX_FAULT_LOG": "<WORK>/fault-plan-fail.fault.jsonl"
+  }
+ },
+ {
+  "name": "fault-probe-drop",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/fault-probe-drop-0.json",
+   "--output",
+   "<WORK>/fault-probe-drop",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-7",
+   "--rtol",
+   "1e-5",
+   "--mpiexec",
+   "<TOOLS>/fault_mpiexec.py"
+  ],
+  "env": {
+   "CCEX_FAULT": "0002-probe:drop-probe",
+   "CCEX_FAULT_LOG": "<WORK>/fault-probe-drop.fault.jsonl"
+  }
+ },
+ {
+  "name": "fault-probe-truncate",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/fault-probe-truncate-0.json",
+   "--output",
+   "<WORK>/fault-probe-truncate",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-7",
+   "--rtol",
+   "1e-5",
+   "--mpiexec",
+   "<TOOLS>/fault_mpiexec.py"
+  ],
+  "env": {
+   "CCEX_FAULT": "0003-probe:truncate-probe",
+   "CCEX_FAULT_LOG": "<WORK>/fault-probe-truncate.fault.jsonl"
+  }
+ },
+ {
+  "name": "fault-probe-timeout",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/fault-probe-timeout-0.json",
+   "--output",
+   "<WORK>/fault-probe-timeout",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--timeout",
+   "15",
+   "--atol",
+   "1e-7",
+   "--rtol",
+   "1e-5",
+   "--mpiexec",
+   "<TOOLS>/fault_mpiexec.py"
+  ],
+  "env": {
+   "CCEX_FAULT": "0002-probe:hang-mpi",
+   "CCEX_FAULT_LOG": "<WORK>/fault-probe-timeout.fault.jsonl"
+  }
+ },
+ {
+  "name": "regroup-p1",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-p1",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-p1-sparse",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-sparse-0.json",
+   "--output",
+   "<WORK>/regroup-p1-sparse",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-p1-limit",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-limit-0.json",
+   "--output",
+   "<WORK>/regroup-p1-limit",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-p1-budget",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-p1-budget",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--max-total-work",
+   "5e6"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-c13-physical",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-cce-0.json",
+   "--output",
+   "<WORK>/regroup-c13-physical",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-7",
+   "--rtol",
+   "1e-5",
+   "--regroup"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-fault-probe-drop",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-fault-probe-drop",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--mpiexec",
+   "<TOOLS>/fault_mpiexec.py"
+  ],
+  "env": {
+   "CCEX_FAULT": "0002-probe:drop-probe",
+   "CCEX_FAULT_LOG": "<WORK>/regroup-fault-probe-drop.fault.jsonl"
+  }
+ },
+ {
+  "name": "regroup-refuse-gcce",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-gcce-s2-0.json",
+   "--output",
+   "<WORK>/regroup-refuse-gcce",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-7",
+   "--rtol",
+   "1e-5",
+   "--regroup"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-refuse-order1",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/merge-order1-small-0.json",
+   "--output",
+   "<WORK>/regroup-refuse-order1",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-8",
+   "--rtol",
+   "2e-6",
+   "--regroup"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-refuse-auto",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-refuse-auto-0.json",
+   "--output",
+   "<WORK>/regroup-refuse-auto",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-refuse-prefer",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-refuse-prefer",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--prefer-physical"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-p1-factors",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-p1-factors",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--regroup-factors",
+   "factors"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-p1-probecap",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-p1-probecap",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--max-probes",
+   "5"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-p1-factors-probecap",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-p1-factors-probecap",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--regroup-factors",
+   "factors",
+   "--max-probes",
+   "5"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-fault-factors-drop",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-fault-factors-drop",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--regroup-factors",
+   "factors",
+   "--mpiexec",
+   "<TOOLS>/fault_mpiexec.py"
+  ],
+  "env": {
+   "CCEX_FAULT": "0002-factors:drop-factors",
+   "CCEX_FAULT_LOG": "<WORK>/regroup-fault-factors-drop.fault.jsonl"
+  }
+ },
+ {
+  "name": "regroup-p1-except",
+  "returncode": 0,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-p1-except",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--regroup-whole",
+   "except"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-p1-sparse-except",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-sparse-0.json",
+   "--output",
+   "<WORK>/regroup-p1-sparse-except",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--regroup-whole",
+   "except"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-fault-except-drop",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-fault-except-drop",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--regroup-whole",
+   "except",
+   "--mpiexec",
+   "<TOOLS>/fault_mpiexec.py"
+  ],
+  "env": {
+   "CCEX_FAULT": "0005-except:drop-probe",
+   "CCEX_FAULT_LOG": "<WORK>/regroup-fault-except-drop.fault.jsonl"
+  }
+ },
+ {
+  "name": "regroup-refuse-factors-alone",
+  "returncode": 2,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-p1-0.json",
+   "--output",
+   "<WORK>/regroup-refuse-factors-alone",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup-factors",
+   "factors"
+  ],
+  "env": {}
+ },
+ {
+  "name": "regroup-refuse-except-contributions",
+  "returncode": 1,
+  "args": [
+   "--input",
+   "<INPUTS>/regroup-refuse-contributions-0.json",
+   "--output",
+   "<WORK>/regroup-refuse-except-contributions",
+   "--binary",
+   "<BINARY>",
+   "--cwd",
+   "<REPO>",
+   "--atol",
+   "1e-3",
+   "--rtol",
+   "0",
+   "--regroup",
+   "--regroup-whole",
+   "except"
+  ],
+  "env": {}
+ }
+]

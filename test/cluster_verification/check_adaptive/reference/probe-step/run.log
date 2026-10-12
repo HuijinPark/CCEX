@@ -1,0 +1,475 @@
+
+
+    ======================================================================
+
+                   ______   ______  _______ ___   ___ 
+                  /      | /      ||   ____|\  \ /  / 
+                 |  ,----'|  ,----'|  |__    \  V  /  
+                 |  |     |  |     |   __|    >   <   
+                 |  `----.|  `----.|  |____  /  .  \  
+                  \______| \______||_______|/__/ \__\ 
+                __   _   _   _  _       _   _     _   _   _ _   
+               / _| / \ | \_/ || |     //  / \   | | / \ | | |  
+              ( (_ ( o )| \_/ || |_   //  | o |n_| |( o )| U |  
+               \__| \_,7|_| |_||___| //   |_n_|\__/  \_/ |___|  
+
+
+            Program CCEX starts on Sun Sep 20 16:14:52 2026
+                The CCEX code has compiled at 'Sep 20 2026' 
+    ======================================================================
+
+        Option filename : '/home/ljw95/bin/code_develop/CCEX-CQML/test/clustering/adaptive/reference/runs/merge-grow/0002-probe/input.json' 
+
+        Read Config Options ...
+
+          - General option-related keys : 
+            [ method, quantity, propagator, evolution, backend, profile, 
+              cluster_contributions, cluster_contribution_max_mb, 
+              gpu_min_dim, gpu_batch_steps, gpu_cache_mb, gpu_batch_clusters, gpu_cluster_batch_mb, 
+              gcce_refinement, gcce_refinement_max_sweeps, pcce_partition, pcce_detail_limit, 
+              pcce_cache_mode, pcce_cache_file, order, bfield, 
+              rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] 
+
+           propagator : use default value .. 
+           evolution : use default value .. 
+           rbathcut : use default value .. 
+           rdipcut : use default value .. 
+
+          - File-related keys :
+            [ qubitfile, gyrofile, bathfile, bathadjust, coordinate_frame_rotation, 
+              defect_axis_reference, avaaxfile, statefile, exstatefile ] 
+
+           qubitfile : use default value .. 
+           bathadjust : use default value .. 
+           avaaxfile : use default value .. 
+           statefile : use default value .. 
+           exstatefile : use default value .. 
+
+          - Tensorfile-related keys :
+            [ DefectTotSpin, CorrTotSpin, 
+              hf_readmode, hf_tensorfile, hf_cutoff, hf_ignore_oor, 
+              qd_readmode, qd_tensorfile, qd_tensorfile_woqubit, qd_cellpara ] 
+
+           DefectTotSpin : use default value .. 
+           CorrTotSpin : use default value .. 
+           hf_readmode : use default value .. 
+           qd_readmode : use default value .. 
+
+          - Additional Hamiltonian-related keys :
+            [ hfmedi, knight ] 
+
+           hfmedi : use default value .. 
+           knight : use default value .. 
+
+        Read Qubit Options ...
+
+          - Read values of main-key 'Qubit'
+            sub-key of 'Qubit' : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] 
+
+          - Read values of sub-key 'qubit'
+            sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ] 
+
+          - Read values of sub-key 'intmap'
+            sub-sub-key : [ between, tensor, unit, tensor_frame ] 
+
+          - Read values of main-key 'qubitfile', 'qzfs', 'qspin', 'qalphams', 'qbetams'
+           qubitfile : use default value .. 
+           detuning : use default value .. 
+           psia : use default value .. 
+           psib : use default value .. 
+           psi0 : use default value .. 
+           overhaus : use default value .. 
+           alphaidx : use default value .. 
+           betaidx : use default value .. 
+
+        Read Defect Options ...
+
+          - Read values of main-key 'Defect' (Array format)
+            sub-key : [ dfname, naddspin, navaax, apprx, coordinate_frame, ( type : single value) 
+                        axis, types, spins, gyros, eqs,    ( type : array ) 
+                        rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) 
+
+
+        Read Cluster Options ...
+          [ order, method, addsubclus, nk ] 
+
+           addsubclus : use default value .. 
+           nk : use default value .. 
+
+        Read Pulse Options ...
+          [ npulse, pulsename, sequence ] 
+
+           pulseiter : use default value .. 
+           pulse_time : use default value .. 
+           detuning_factor : use default value .. 
+           pulsename : use default value .. 
+
+        Read Output Options ...
+          [ savemode, outfile ] 
+
+	>> Read /home/ljw95/bin/code_develop/CCEX-CQML/test/clustering/adaptive/reference/runs/merge-grow/0002-probe/input.json file successfully ..
+
+
+    ======================================================================
+        Report all structures 
+    ======================================================================
+
+    ----------------------------------------------------------------------
+    < Structure Config > 
+
+      method            :   CCE                  
+      quantity          :   coherence            
+      propagator        :   eigen                
+      evolution         :   matrix               
+      backend           :   cpu                  
+      gpu_min_dim       :   8                    
+      gpu_batch_steps   :   4                    
+      gpu_cache_mb      :   64                   
+      gcce_refinement   :   1                    
+      gcce_refinement_max_sweeps:   32                   
+      pcce_detail_limit :   32                   
+      gpu_batch_clusters:   8                    
+      gpu_cluster_batch_mb:   64                   
+      pcce_partition    :   deterministic        
+      pcce_cache_mode   :   off                  
+      pcce_cache_file   :                        
+      cluster_mode      :   adaptive             
+      bundle_max_dim    :   8                    
+      expansion_max_clusters:   200000               
+      expansion_max_work:   20000000             
+      bundle_merge_cutoff:   1e+300               
+      bundle_connections:   distance             
+      order             :   2                    
+      bfield            :   [ 0.00      , 0.00      , 300.00     ]
+      rbath             :   15                   
+      rdip              :   30                   
+      deltat            :   0.2                  
+      nstep             :   9                    
+      rbathcut          :   0                    
+      rdipcut           :   0                    
+      nstate            :   0                    
+      seed              :   19                   
+      qubitfile         :   (null)               
+      gyrofile          :   test/code_verification/regression/+cceHotPath/Diamond_NV_natab_cce/inputfiles/gyro_13C
+      nbathfiles        :   1                    
+      bathfiles         :   test/clustering/bundle/bath_6 
+      bathadjust        :   [ 0.00      , 0.00      , 0.00       ]
+      frame_rotation    :   false                
+      defect_axis_reference:   (none)               
+      avaaxfile         :   (null)               
+      statefile         :   (null)               
+      exstatefile       :   (null)               
+      DefectTotSpin     :   1                    
+      CorrTotSpin       :   0                    
+      hf_readmode       :   0                    
+      qd_readmode       :   0                    
+      hfmedi            :   false                
+      knight            :   false                
+
+
+    ----------------------------------------------------------------------
+    < Structure QubitArray > 
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+    -----------------------------------------------------------------
+
+      qubit name        :   NV                   
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   (+1+0j) | 1 >  
+      beta              :   (+1+0j) | 0 >  
+
+    -----------------------------------------------------------------
+
+    >> Interactions (radkHz)
+
+      intmap[0][0]      :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+
+    ----------------------------------------------------------------------
+    < Structure Cluster > 
+
+    >> General properties
+
+      order             :   2                    
+      method            :   cce                  
+      addsubclus        :   true                 
+    >> The number of clusters for each order
+
+      nk                :   [   0 : 0    ,   1 : 0    ,   2 : 0     ]
+
+
+
+    ----------------------------------------------------------------------
+    < Structure Pulse > 
+
+      pulsename         :   CPMG                 
+      npulse            :   16                   
+      detuning_factor   :   1                    
+      pulse_time        :   0                    
+      pulseiter         :   false                
+                            * true  - pulse is applied to each qubit
+                            * false - pulse is applied to qubit-array
+    >> Sequence
+
+    -----------------------------------------------------------------
+    Start         End        Diff        Axis       Angle       Index
+    0.000       0.031       0.031           X      180.00           0
+    0.031       0.094       0.062           X      180.00           1
+    0.094       0.156       0.062           X      180.00           1
+    0.156       0.219       0.062           X      180.00           1
+    0.219       0.281       0.062           X      180.00           1
+    0.281       0.344       0.062           X      180.00           1
+    0.344       0.406       0.062           X      180.00           1
+    0.406       0.469       0.062           X      180.00           1
+    0.469       0.531       0.062           X      180.00           1
+    0.531       0.594       0.062           X      180.00           1
+    0.594       0.656       0.062           X      180.00           1
+    0.656       0.719       0.062           X      180.00           1
+    0.719       0.781       0.062           X      180.00           1
+    0.781       0.844       0.062           X      180.00           1
+    0.844       0.906       0.062           X      180.00           1
+    0.906       0.969       0.062           X      180.00           1
+    0.969       1.000       0.031           X      180.00           0
+    -----------------------------------------------------------------
+
+
+    ----------------------------------------------------------------------
+    < Structure Output > 
+
+      savemode          :   normal               
+      outfile           :   /home/ljw95/bin/code_develop/CCEX-CQML/test/clustering/adaptive/reference/runs/merge-grow/0002-probe/coherence
+
+
+    ===============================================================
+
+
+
+    ======================================================================
+        Read files 
+    ======================================================================
+
+    >> Qubit file
+
+        QubitArray already set with option ...
+
+    >> Gyromagnetic ratio file
+
+        Read GyroFile : test/code_verification/regression/+cceHotPath/Diamond_NV_natab_cce/inputfiles/gyro_13C
+      nspecies          :   1                    
+      names             :   [ 13C        ]
+      gyros             :   [ 6.73       ]
+      spins             :   [ 0.50       ]
+
+    >> Bath configuration files
+
+    -----------------------------------------------------------------
+        Read BathFile[0] : test/clustering/bundle/bath_6
+
+        - Number of bath spins : 6 (nspin = 6)
+      [  0]   13C   5.000   1.000   2.000 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =   5.477 )
+      [  1]   13C   5.800   1.100   2.000 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =   6.233 )
+      [  2]   13C   5.400   1.700   2.200 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =   6.074 )
+           : 
+
+      [  4]   13C   1.500   8.800   3.300 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =   9.517 )
+      [  5]   13C  -6.000  -4.000   8.000 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =  10.770 )
+    -----------------------------------------------------------------
+
+    >> Read the Hyperfine interaction from DFT inputfile...
+
+      HF Readmode       :      0 ( Point-dipole tensor )
+
+    >> Bath Hyperfine tensors (radkHz) 
+
+      hypf[ib][iq] (ib : bath spin index, iq : qubit index)
+      hypf[0][0]        :   [ 1140.55-0.00j, 380.18-0.00j, 760.37-0.00j, 380.18-0.00j, -684.33-0.00j, 152.07-0.00j, 760.37-0.00j, 152.07-0.00j, -456.22-0.00j ]
+      hypf[1][0]        :   [ 824.35-0.00j, 254.20-0.00j, 462.18-0.00j, 254.20-0.00j, -467.75-0.00j, 87.65-0.00j, 462.18-0.00j, 87.65-0.00j, -356.59-0.00j ]
+      hypf[2][0]        :   [ 764.71-0.00j, 416.29-0.00j, 538.73-0.00j, 416.29-0.00j, -426.57-0.00j, 169.60-0.00j, 538.73-0.00j, 169.60-0.00j, -338.14-0.00j ]
+         :
+
+      hypf[4][0]        :   [ -134.13-0.00j, 63.36-0.00j, 23.76-0.00j, 63.36-0.00j, 226.79-0.00j, 139.39-0.00j, 23.76-0.00j, 139.39-0.00j, -92.66-0.00j ]
+      hypf[5][0]        :   [ -6.90-0.00j, 62.07-0.00j, -124.14-0.00j, 62.07-0.00j, -58.62-0.00j, -82.76-0.00j, -124.14-0.00j, -82.76-0.00j, 65.52-0.00j ]
+
+    >> Read the Quadrupole interaction from DFT inputfile...
+
+      Qd Readmode       :      0 ( No Quadrupole interaction )
+
+
+    >> Bath Quadrupole (or Zero-field splitting) tensors (radkHz)             
+       *Note (For quadrupole) : Q = eQV/(2I(2I-1)h), V = EFG tensor (Hartree/Bohr^2)            
+       *Note (For ZFS) : Q = ZFS tensor (MHz) can be obtained using "Defect tag"            
+                         , and this will be converted to radkHz
+
+      quad[ib][iq] (ib : bath spin index, iq : qubit index)
+      quad[0]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      quad[1]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      quad[2]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+         :
+      quad[4]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      quad[5]           :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+
+    ----------------------------------------------------------------------
+    < QubitArray > 
+
+    < Structure QubitArray > 
+
+    >> General properties
+
+      overhaus          :   false                
+
+    >> Qubit properties
+
+      nqubit (#)        :   1                    
+    -----------------------------------------------------------------
+
+      qubit name        :   NV                   
+      spin              :   1                    
+      gyro (radkHz/G)   :   -1.76e+04            
+      detuning (radkHz) :   0                    
+      overhaus (radkHz) :   0                    
+      xyz (A)           :   [ 0.00      , 0.00      , 0.00       ]
+      alpha             :   (+1+0j) | 1 >  
+      beta              :   (+1+0j) | 0 >  
+
+    -----------------------------------------------------------------
+
+    >> Interactions (radkHz)
+
+      intmap[0][0]      :   [ 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+
+    >>  Qubit total alpha, beta
+
+      psia              :   [  ]
+      psib              :   [  ]
+
+    >> Qubit initial state
+
+      psi0              :   [  ]
+
+    >> Qubit alpha,beta index
+
+      alphaidx          :   NULL                 
+      betaidx           :   NULL                 
+
+    ----------------------------------------------------------------------
+    < BathArray > 
+
+      nspecies          :   1                    
+      names             :   [ 13C        ]
+      gyros             :   [ 6.73       ]
+      spins             :   [ 0.50       ]
+      nspin (#)         :   6                    
+    -----------------------------------------------------------------
+      [  0]   13C   5.000   1.000   2.000 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =   5.477 )
+      [  1]   13C   5.800   1.100   2.000 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =   6.233 )
+      [  2]   13C   5.400   1.700   2.200 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =   6.074 )
+         :
+      [  4]   13C   1.500   8.800   3.300 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =   9.517 )
+      [  5]   13C  -6.000  -4.000   8.000 ( S = 0.5, gyro =      6.728, mainspidx = -1, r_qb =  10.770 )
+
+    -----------------------------------------------------------------
+
+    -----------------------------------------------------------------
+          Wall time = 0.00055 s
+    -----------------------------------------------------------------
+
+
+   ======================================================================
+       Clusterize 
+   ======================================================================
+
+[adaptive] algorithm=coupling-bound-v1 method=CCE bundle_order=2 sites=6 bundles=6 pairs=15 eligible_edges=0 merges=0 blocked_bundle=0 qubit_dim=1 bundle_max_dim=8 merge_cutoff_rad_ms=1.0000000000000001e+300
+[adaptive-bundle] id=0 dim=2 sites=0
+[adaptive-bundle] id=1 dim=2 sites=1
+[adaptive-bundle] id=2 dim=2 sites=2
+[adaptive-bundle] id=3 dim=2 sites=3
+[adaptive-bundle] id=4 dim=2 sites=4
+[adaptive-bundle] id=5 dim=2 sites=5
+[adaptive-expansion] bundle_order=2 max_sites=2 terms=21 bundle1_terms=6 bundle2_terms=15
+      clusinfo          :   
+
+           0-th order ... 
+           Cluster[0][    0] :   1 (Iter)
+
+           Total 0-Cluster # :  1 # 
+
+
+
+           1-th order ... 
+           Cluster[1][    1] :  -4 [0   ]
+           Cluster[1][    2] :  -4 [1   ]
+           Cluster[1][    3] :  -4 [2   ]
+           Cluster[1][    4] :  -4 [3   ]
+           Cluster[1][    5] :  -4 [4   ]
+                : 
+           Cluster[1][    6] :  -4 [5   ]
+
+           Total 1-Cluster # :  6 # 
+
+
+
+           2-th order ... 
+           Cluster[2][    1] :   1 [0  , 1   ]
+           Cluster[2][    2] :   1 [0  , 2   ]
+           Cluster[2][    3] :   1 [0  , 3   ]
+           Cluster[2][    4] :   1 [0  , 4   ]
+                : 
+           Cluster[2][   12] :   1 [2  , 5   ]
+           Cluster[2][   13] :   1 [3  , 4   ]
+           Cluster[2][   14] :   1 [3  , 5   ]
+           Cluster[2][   15] :   1 [4  , 5   ]
+
+           Total 2-Cluster # :  15 # 
+
+
+    -----------------------------------------------------------------
+          Wall time = 0.00017 s
+    -----------------------------------------------------------------
+
+
+   ======================================================================
+       Main calculation 
+   ======================================================================
+
+    < CCE calculation (Ensemble approach) > 
+
+    >> Set psia, psib from qubit alpha, beta...
+
+      psia              :   [ 1.00+0.00j, 0.00+0.00j, 0.00+0.00j ]
+      psib              :   [ 0.00+0.00j, 1.00+0.00j, 0.00+0.00j ]
+    >> Set psi0 from psia, psib...
+
+      psi0              :   [ 0.71+0.00j, 0.71+0.00j, 0.00+0.00j ]
+
+    ===============================================================
+
+        JOB DONE : Wall time = 0.00093 s
+
+    ===============================================================
+
+
+[profile] rank=0 method=cce backend=cpu dim=2 clusters=6 build_s=0.000013333 setup_s=0.000023763 evolution_s=0.000063275

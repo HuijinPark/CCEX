@@ -1,0 +1,44 @@
+{
+  "method": "cce",
+  "quantity": "coherence",
+  "gyrofile": "test/code_verification/regression/+cceHotPath/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+  "bathfile": [
+    "test/clustering/bundle/bath_6"
+  ],
+  "Qubit": {
+    "nqubit": 1,
+    "qubit": [
+      {
+        "name": "NV",
+        "spin": 1,
+        "gyro": -17608.59705,
+        "xyz": [
+          0,
+          0,
+          0
+        ],
+        "alphams": 1,
+        "betams": 0
+      }
+    ]
+  },
+  "order": 2,
+  "rbath": 15,
+  "rdip": 30,
+  "bfield": 300,
+  "npulse": 16,
+  "nstep": 9,
+  "deltat": 0.2,
+  "nstate": 0,
+  "seed": 19,
+  "backend": "cpu",
+  "gpu_batch_steps": 4,
+  "gpu_min_dim": 8,
+  "profile": true,
+  "savemode": "normal",
+  "outfile": "/home/ljw95/bin/code_develop/CCEX-CQML/test/clustering/adaptive/reference/runs/merge-grow/0002-probe/coherence",
+  "cluster_mode": "adaptive",
+  "bundle_max_dim": 8,
+  "bundle_merge_cutoff": 1e+300,
+  "adaptive_work_file": "/home/ljw95/bin/code_develop/CCEX-CQML/test/clustering/adaptive/reference/runs/merge-grow/0002-probe/request.json"
+}

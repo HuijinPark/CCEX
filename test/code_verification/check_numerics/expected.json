@@ -1,0 +1,40 @@
+{
+ "v1.1.0": {
+  "tol": 0.0001,
+  "renames": {
+   "arbitrary_gcce1_dm": {
+    "out_0_1_noDiv": "out_0_0_noDiv",
+    "out_0_1_wiDiv": "out_0_0_wiDiv"
+   }
+  },
+  "cases": {
+   "natab_cce2_ramsey": "ensemble cCCE returned the complex conjugate for an even pulse count until 8185aa31e (imaginary sign)",
+   "natab_cce2_cpmg8": "ensemble cCCE returned the complex conjugate for an even pulse count until 8185aa31e (imaginary sign)",
+   "p1_manual_hahn": "deltat was a float until 39d03aa5c; a 2e-8 shift in time moves the fast P1 phases",
+   "p1_cpmg8_manual": "deltat was a float until 39d03aa5c; a 2e-8 shift in time moves the fast P1 phases",
+   "p1_gcce2_population": "deltat was a float until 39d03aa5c; the population at 5 ms moves by 1e-3; and elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero",
+   "hbn_gcce2_dm": "elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero",
+   "p1_cce4": "float deltat (39d03aa5c) and float tau (8185aa31e); 1e-6 in noDiv, 4e-4 only in wiDiv",
+   "p1_pcce2_sk2": "the pCCE partition search is seeded; the random sequence changed on this branch, so the partitions differ"
+  }
+ },
+ "v1.2.2": {
+  "tol": 0.0001,
+  "renames": {
+   "arbitrary_gcce1_dm": {
+    "out_0_1_noDiv": "out_0_0_noDiv",
+    "out_0_1_wiDiv": "out_0_0_wiDiv"
+   }
+  },
+  "cases": {
+   "natab_cce2_ramsey": "ensemble cCCE returned the complex conjugate for an even pulse count until 8185aa31e (imaginary sign)",
+   "natab_cce2_cpmg8": "ensemble cCCE returned the complex conjugate for an even pulse count until 8185aa31e (imaginary sign)",
+   "p1_manual_hahn": "deltat was a float until 39d03aa5c; a 2e-8 shift in time moves the fast P1 phases",
+   "p1_cpmg8_manual": "deltat was a float until 39d03aa5c; a 2e-8 shift in time moves the fast P1 phases",
+   "p1_gcce2_population": "deltat was a float until 39d03aa5c; the population at 5 ms moves by 1e-3; and elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero",
+   "hbn_gcce2_dm": "elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero",
+   "p1_cce4": "float deltat (39d03aa5c) and float tau (8185aa31e); 1e-6 in noDiv, 4e-4 only in wiDiv",
+   "p1_pcce2_sk2": "the pCCE partition search is seeded; the random sequence changed on this branch, so the partitions differ"
+  }
+ }
+}

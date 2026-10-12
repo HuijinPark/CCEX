@@ -1,0 +1,836 @@
+{
+ "returncode": 0,
+ "summaries": {
+  "summary.json": {
+   "cached_probe_clusters": 64,
+   "dimension_limits": {
+    "bundle_max_dim": 8
+   },
+   "final_bundles": [
+    [
+     0,
+     1,
+     2
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     5
+    ]
+   ],
+   "final_directory": "<OUT>/0010-run",
+   "input": {
+    "Qubit": {
+     "nqubit": 1,
+     "qubit": [
+      {
+       "alphams": 1,
+       "betams": 0,
+       "gyro": -17608.59705,
+       "name": "NV",
+       "spin": 1,
+       "xyz": [
+        0,
+        0,
+        0
+       ]
+      }
+     ]
+    },
+    "backend": "cpu",
+    "bathfile": [
+     "test/cluster_verification/check_bundle/bath_6"
+    ],
+    "bfield": 300,
+    "bundle_max_dim": 8,
+    "bundle_merge_cutoff": 1e+300,
+    "cluster_mode": "adaptive",
+    "deltat": 0.2,
+    "gpu_batch_steps": 4,
+    "gpu_min_dim": 8,
+    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+    "method": "cce",
+    "npulse": 16,
+    "nstate": 0,
+    "nstep": 9,
+    "order": 2,
+    "outfile": "bin/adaptive_ensemble",
+    "profile": true,
+    "quantity": "coherence",
+    "rbath": 15,
+    "rdip": 30,
+    "savemode": "normal",
+    "seed": 19
+   },
+   "input_file_sha256": {
+    "/home/ljw95/bin/code_develop/CCEX-CQML/test/cluster_verification/check_bundle/bath_6": "7860fc92298dc8cc559e0df50fb73070cbadf1bfe0b4a8ae3631d00887273738",
+    "/home/ljw95/bin/code_develop/CCEX-CQML/test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C": "2cc0c11066852f97d67ab00dc004790909ed564b2af9f8305791e5ef1625da4d"
+   },
+   "limitations": [
+    "Local oracle errors and successive curves are checks, not rigorous global error bounds.",
+    "A greedy merge search cannot undo a poor initial partition.",
+    "One fixed partition and all requested time points/states are used per input."
+   ],
+   "raw_nonfinite_values": 0,
+   "raw_zero_values": 0,
+   "rounds": [
+    {
+     "accepted": {
+      "actual_graph_scaled_error": 2960.72335489487,
+      "local_after": 2960.72335489487,
+      "local_before": 2852712.7370369504,
+      "pair": [
+       0,
+       2
+      ],
+      "score": 44527.37521378212,
+      "sites": [
+       0,
+       2
+      ],
+      "verification_merge": false
+     },
+     "bundles": 6,
+     "coverage": {
+      "candidate_patches": 21,
+      "checked_patches": 21,
+      "coverage_limited": false,
+      "max_inverse_log10_amplification": 1.2756812321801025,
+      "whole_bath_oracle": true,
+      "work_blocked": 0
+     },
+     "finite_and_cce_bound": false,
+     "global_change": null,
+     "iteration": 0,
+     "max_local_scaled_error": 2852712.7370369504,
+     "patches": [
+      {
+       "bundles": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "max_abs_error": 2.843526942900202,
+       "scaled_error": 2852712.7370369504,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        2
+       ],
+       "max_abs_error": 3.036537103761174,
+       "scaled_error": 2850697.6483348883,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        3
+       ],
+       "max_abs_error": 0.0003984187671681251,
+       "scaled_error": 828.2431218754153,
+       "worst_state_step": [
+        0,
+        5
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        4
+       ],
+       "max_abs_error": 0.0002794897824297833,
+       "scaled_error": 581.2882570465114,
+       "worst_state_step": [
+        0,
+        5
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        3
+       ],
+       "max_abs_error": 0.0006729631662319458,
+       "scaled_error": 338.50862759002257,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        4
+       ],
+       "max_abs_error": 0.00045514319344509477,
+       "scaled_error": 228.97662643877115,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        3
+       ],
+       "max_abs_error": 0.00021317642763404358,
+       "scaled_error": 176.4627370155101,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        4
+       ],
+       "max_abs_error": 0.0001534567243247764,
+       "scaled_error": 127.05162623509429,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        3,
+        4
+       ],
+       "max_abs_error": 0.00011461353676985702,
+       "scaled_error": 108.41251927987976,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        2,
+        3,
+        4
+       ],
+       "max_abs_error": 5.5235553544179375e-05,
+       "scaled_error": 43.9756794718479,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        3,
+        4
+       ],
+       "max_abs_error": 4.483238158659076e-05,
+       "scaled_error": 38.134485343464036,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        5
+       ],
+       "max_abs_error": 2.7504166198374083e-06,
+       "scaled_error": 5.434285721108018,
+       "worst_state_step": [
+        0,
+        5
+       ]
+      },
+      {
+       "bundles": [
+        3,
+        4,
+        5
+       ],
+       "max_abs_error": 5.679993256320341e-06,
+       "scaled_error": 4.388331097628203,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        5
+       ],
+       "max_abs_error": 4.722200384078261e-06,
+       "scaled_error": 2.375445620046238,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        5
+       ],
+       "max_abs_error": 1.4337394343326917e-06,
+       "scaled_error": 1.1870122812008603,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        3,
+        5
+       ],
+       "max_abs_error": 7.768313226089861e-08,
+       "scaled_error": 0.038877501373873684,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        4,
+        5
+       ],
+       "max_abs_error": 5.346327206532451e-09,
+       "scaled_error": 0.0055146268292024766,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        2,
+        3,
+        5
+       ],
+       "max_abs_error": 9.151594687851355e-09,
+       "scaled_error": 0.004613617874542617,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        4,
+        5
+       ],
+       "max_abs_error": 4.463922742878518e-09,
+       "scaled_error": 0.0035544578389733704,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        3,
+        5
+       ],
+       "max_abs_error": 3.915183884384444e-09,
+       "scaled_error": 0.003116958226934326,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        2,
+        4,
+        5
+       ],
+       "max_abs_error": 2.0856893166371447e-09,
+       "scaled_error": 0.0020651347871565805,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      }
+     ],
+     "whole_bath_error": {
+      "max_abs_error": 2.8435269429002012,
+      "scaled_error": 2852712.7370369495,
+      "worst_state_step": [
+       0,
+       6
+      ]
+     }
+    },
+    {
+     "accepted": {
+      "actual_graph_scaled_error": 2345.1686467663567,
+      "local_after": 2345.1686467663567,
+      "local_before": 2960.72335489487,
+      "pair": [
+       2,
+       3
+      ],
+      "score": 9.618042314508024,
+      "sites": [
+       3,
+       4
+      ],
+      "verification_merge": false
+     },
+     "bundles": 5,
+     "coverage": {
+      "candidate_patches": 11,
+      "checked_patches": 11,
+      "coverage_limited": false,
+      "max_inverse_log10_amplification": 1.13639899729197,
+      "whole_bath_oracle": true,
+      "work_blocked": 0
+     },
+     "finite_and_cce_bound": true,
+     "global_change": {
+      "max_abs_error": 2.8435207753166325,
+      "scaled_error": 1628247.8318140893,
+      "worst_state_step": [
+       0,
+       3
+      ]
+     },
+     "iteration": 1,
+     "max_local_scaled_error": 2960.72335489487,
+     "patches": [
+      {
+       "bundles": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "max_abs_error": 0.0015972850801087585,
+       "scaled_error": 2960.72335489487,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        3
+       ],
+       "max_abs_error": 0.00048393038280053664,
+       "scaled_error": 896.0700062152042,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        2
+       ],
+       "max_abs_error": 0.0004396801092825546,
+       "scaled_error": 282.4098875068967,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        3
+       ],
+       "max_abs_error": 0.00026968530221285915,
+       "scaled_error": 173.24443115771035,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        3
+       ],
+       "max_abs_error": 4.483238158659076e-05,
+       "scaled_error": 38.134485343464036,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        4
+       ],
+       "max_abs_error": 4.2610886254161925e-06,
+       "scaled_error": 5.084616162817769,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        2,
+        3,
+        4
+       ],
+       "max_abs_error": 5.679993256320341e-06,
+       "scaled_error": 4.388331097628203,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        4
+       ],
+       "max_abs_error": 9.935907905201933e-09,
+       "scaled_error": 0.008494974808398505,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        3,
+        4
+       ],
+       "max_abs_error": 4.463922742878518e-09,
+       "scaled_error": 0.0035544578389733704,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        4
+       ],
+       "max_abs_error": 3.915183884384444e-09,
+       "scaled_error": 0.003116958226934326,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        3,
+        4
+       ],
+       "max_abs_error": 2.362420963509908e-09,
+       "scaled_error": 0.002792288256796026,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      }
+     ],
+     "whole_bath_error": {
+      "max_abs_error": 0.0015972850801089806,
+      "scaled_error": 2960.723354895282,
+      "worst_state_step": [
+       0,
+       8
+      ]
+     }
+    },
+    {
+     "accepted": {
+      "actual_graph_scaled_error": 0.11628270921282996,
+      "local_after": 0.11628270921282996,
+      "local_before": 2345.1686467663567,
+      "pair": [
+       0,
+       1
+      ],
+      "score": 4.580180398549109,
+      "sites": [
+       0,
+       1,
+       2
+      ],
+      "verification_merge": false
+     },
+     "bundles": 4,
+     "coverage": {
+      "candidate_patches": 5,
+      "checked_patches": 5,
+      "coverage_limited": false,
+      "max_inverse_log10_amplification": 0.75759933152798,
+      "whole_bath_oracle": true,
+      "work_blocked": 0
+     },
+     "finite_and_cce_bound": true,
+     "global_change": {
+      "max_abs_error": 0.0009041178391901539,
+      "scaled_error": 927.7528168938485,
+      "worst_state_step": [
+       0,
+       7
+      ]
+     },
+     "iteration": 2,
+     "max_local_scaled_error": 2348.635689072944,
+     "patches": [
+      {
+       "bundles": [
+        0,
+        1,
+        2
+       ],
+       "max_abs_error": 0.0012692683601059284,
+       "scaled_error": 2348.635689072944,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "max_abs_error": 0.0012651985480594686,
+       "scaled_error": 2345.1686467663567,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        3
+       ],
+       "max_abs_error": 4.2610886254161925e-06,
+       "scaled_error": 5.084616162817769,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        3
+       ],
+       "max_abs_error": 1.740562139561582e-07,
+       "scaled_error": 0.2305178514906269,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        3
+       ],
+       "max_abs_error": 2.2757022661766212e-08,
+       "scaled_error": 0.017638263659972547,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      }
+     ],
+     "whole_bath_error": {
+      "max_abs_error": 0.0012651985480596351,
+      "scaled_error": 2345.1686467666655,
+      "worst_state_step": [
+       0,
+       8
+      ]
+     }
+    },
+    {
+     "bundles": 3,
+     "coverage": {
+      "candidate_patches": 1,
+      "checked_patches": 1,
+      "coverage_limited": false,
+      "max_inverse_log10_amplification": 0.5567546356591717,
+      "whole_bath_oracle": true,
+      "work_blocked": 0
+     },
+     "finite_and_cce_bound": true,
+     "global_change": {
+      "max_abs_error": 0.001265227868787264,
+      "scaled_error": 2334.280711192236,
+      "worst_state_step": [
+       0,
+       8
+      ]
+     },
+     "iteration": 3,
+     "max_local_scaled_error": 0.11628270921282996,
+     "patches": [
+      {
+       "bundles": [
+        0,
+        1,
+        2
+       ],
+       "max_abs_error": 1.1351295267904243e-07,
+       "scaled_error": 0.11628270921282996,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      }
+     ],
+     "whole_bath_error": {
+      "max_abs_error": 1.1351295262358337e-07,
+      "scaled_error": 0.11628270915601768,
+      "worst_state_step": [
+       0,
+       7
+      ]
+     }
+    }
+   ],
+   "runs": [
+    {
+     "directory": "<OUT>/0001-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0002-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0003-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0004-plan",
+     "mode": "plan",
+     "returncode": 3,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0005-plan",
+     "mode": "plan",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0006-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0007-plan",
+     "mode": "plan",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0008-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0009-plan",
+     "mode": "plan",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0010-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    }
+   ],
+   "settings": {
+    "atol": 1e-08,
+    "binary": "<BINARY>",
+    "cache_mb": 256,
+    "cwd": "<REPO>",
+    "hub_candidates": false,
+    "input": "<INPUTS>/fault-plan-fail-0.json",
+    "max_candidates": 16,
+    "max_patches": 64,
+    "max_probes": 4096,
+    "max_rounds": 8,
+    "max_total_work": 8000000000000.0,
+    "merge_priority": "gain-per-cost",
+    "mpiexec": "<TOOLS>/fault_mpiexec.py",
+    "neighbors": 8,
+    "output": "<OUT>",
+    "policy": "merge",
+    "prefer_physical": false,
+    "probe_batch_clusters": 0,
+    "ranks": 1,
+    "raw_cache": null,
+    "rtol": 2e-06,
+    "timeout": 600
+   },
+   "status": "validated_full_bath_model"
+  }
+ }
+}

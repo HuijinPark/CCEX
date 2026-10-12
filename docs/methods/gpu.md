@@ -1,0 +1,475 @@
+# GPU execution
+
+> The `archive/…` names below are dated records that were taken out of the tree on 2026-09-24. They are in git history up to commit 83fe451d5: `git show 83fe451d5:docs/archive/<name>`.
+
+CCEX has an optional NVIDIA CUDA backend for **conventional CCE (`method=CCE`),
+pCCE (`method=pCCE`) and gCCE with `propagator=eigen`**, both ensemble and single-sample calculations.
+The original CPU backend remains the default. gCCE with `propagator=expm` and
+other method names still run on the CPU.
+
+| Method | Ensemble (`nstate=0`) | Single (`nstate>0`) |
+| --- | --- | --- |
+| Conventional CCE, also called cCCE | GPU normalized bath trace | GPU conditional state vectors |
+| Partitioned CCE, `method=pCCE` | GPU normalized bath trace | GPU conditional state vectors |
+| gCCE, `propagator=eigen` | GPU density-matrix evolution | GPU vector or density-matrix evolution |
+
+For cCCE and pCCE, `propagator` and `evolution` do not select an algorithm: the existing
+cCCE method diagonalizes two conditional Hamiltonians, and its GPU single path
+uses vectors. The `evolution` option belongs to gCCE; use the default or `matrix`
+for a conventional CCE input, as the existing parser rejects an explicit
+`evolution=vector` outside gCCE.
+
+pCCE uses the same conventional coherence kernels after partitioning bath spins.
+Its partition search, cluster construction and Hamiltonian construction stay on
+the CPU. CUDA accelerates the conditional Hamiltonian diagonalization and time
+evolution. pCCE profiles are labelled `method=pcce`.
+
+Coherence products in cCCE, pCCE and gCCE retain a separate exponent through
+local accumulation and MPI reduction. This prevents intermediate overflow when
+the final product is representable; it does not establish CCE convergence.
+An optional adaptive refinement driver (archive/adaptive-feedback-20260912.md) uses the
+same CPU/CUDA engines to test and improve variable-size groups.
+
+## Build
+
+`do_compile.sh gpu` builds two executables with one `make`, from the same sources
+into separate object directories: `bin/main.out` (CPU only, what every other
+preset builds) and `bin/main_gpu.out` (compiled with `-DCCEX_USE_CUDA` and linked
+with the CUDA kernels). MPI and the bundled Eigen headers are used; this build
+does not require Intel MKL. The CUDA half needs a toolkit with nvcc, cuSOLVER,
+cuBLAS and cudart. CUDA 12.8.1 and GCC 13.3 were tested.
+
+```bash
+bash do_compile.sh gpu              # idm4-gpu: loads gcc, OpenMPI and CUDA 12.8 itself
+CCEX_JOBS=4 bash do_compile.sh gpu  # fewer parallel compiles on a shared node
+```
+
+On a machine without those modules, put your MPI wrapper (`mpicxx`) on `PATH` and
+say where the toolkit is and what the card is:
+
+```bash
+CUDA_HOME=/usr/local/cuda CUDA_ARCH=86 bash do_compile.sh gpu
+```
+
+`CUDA_ARCH` is the target CUDA compute capability without a decimal point (`120`
+for the RTX PRO 6000 Blackwell on idm4-gpu, which is the default; `86` for the
+RTX 3050 used in early validation). Both device code and PTX for that
+architecture are embedded. Choose an architecture supported by both your GPU and
+toolkit. Switching preset cleans the objects before building; after changing only
+`CUDA_HOME` or `CUDA_ARCH`, run `make clean` first.
+
+Keep the chosen toolkit's shared libraries available when running the binary. On
+idm4-gpu that means loading the same three modules in the job script
+(`gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-12.8`): without them the binary stops
+at start-up on the system's older libstdc++.
+
+gCCE eigen propagation can refine eigenpairs on both CPU and CUDA to resolve
+small bath energies beside large central-spin energies: `gcce_refinement=true`.
+It is off by default since 2026-10-02 (on the NV–¹³C gCCE4 case it was made for
+it changed the error-corrected final coherence by at most 6.7e-7 — the predeclared bound 1e-6 on every raw `wiDiv`
+point was not met, because `wiDiv` diverges at some points whatever the setting (all-point differences up to 12.7, and
+2.75e11 on P1 gCCE3; (internal notes)) — while it took most of a cluster's setup
+time; `../user/InputFile_Backend.md`). When on, it is strict: nonconvergence within
+`gcce_refinement_max_sweeps` (default 32) stops the run and reports the dimension
+and sweep limit, and it never silently accepts the unrefined eigensystem.
+Compensated phase products and scaled coherence accumulation are active either way. These options
+apply only to gCCE with `propagator=eigen`.
+
+An omitted `seed` is generated on MPI rank 0, broadcast to every rank, and
+printed for replay. pCCE `iter_detail=true` prints at most `pcce_detail_limit`
+trial details from rank 0 per partition search (default 32; 0 suppresses them).
+The global partition summary still aggregates every rank. `pcce_partition=legacy`
+preserves the original asymmetric tie rule: larger silhouette within a rank,
+smaller silhouette between ranks at equal inertia. Deterministic mode uses
+larger silhouette throughout.
+
+The 2026-09-13 seed fix initializes the C RNG once in `main`, from the resolved
+configuration. Earlier executables accidentally called `srand(0)` after parsing
+the requested seed. This affected sampled bath/subspin states, random defect
+axes and legacy pCCE searches. Deterministic pCCE partition trials use their own
+seeded RNG and were not affected. Same-seed replay alone did not detect the bug;
+the new regression checks different seeds and an independently generated C RNG
+state sequence as well as CPU/CUDA and MPI replay.
+
+Consequently, nonzero seeds can produce different sampled-state or legacy
+results after this fix. To replay the old C RNG stream on the same platform,
+use `seed=0`; deterministic pCCE with a nonzero partition seed also requires the
+original explicit bath states to reproduce its old sampled-state calculation.
+Fixed-bath ensemble calculations without random defect axes or legacy partition
+search do not depend on this C RNG correction. Partition cache contents remain
+valid because deterministic partitions do not use the C RNG; raw coherence
+caches must match the executing binary and sampled states.
+
+Cluster batch admission accounts for state vectors versus density matrices.
+The budget remains a conservative estimate, not a guarantee for solver workspace
+or total device memory. Device pointer tables and batch output buffers persist
+with the first work object; unchanged tables are not re-uploaded. With profiling,
+`[gpu-memory] pointer_uploads` counts table uploads. Membership, buffer-address,
+or density time-count changes refresh the corresponding tables.
+
+## Input and execution
+
+Add these keys to an existing CCE, pCCE or gCCE input:
+
+```json
+{
+    "backend": "auto",
+    "propagator": "eigen",
+    "gpu_min_dim": 256,
+    "gpu_batch_steps": 64,
+    "gpu_batch_clusters": 8,
+    "gpu_cluster_batch_mb": 64,
+    "gpu_cache_mb": 64,
+    "profile": true
+}
+```
+
+This fragment is not a complete simulation input. Complete examples for all four
+combinations are available; run them from the repository root:
+
+```bash
+./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/p1_cce5_ensemble.json
+./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/p1_cce5_single.json
+./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/p1_gcce4.json
+./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/p1_gcce4_single.json
+./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/pcce_ensemble.json
+./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/pcce_ensemble.json -N 1 -o bin/pcce_gpu_single
+```
+
+The cCCE examples use five P1 sites (bath dimension 1024); the gCCE examples use
+four (qubit-plus-bath dimension 768). Each is a controlled size experiment, with
+distinct output names under `bin/`. Use the regression suite below to compare
+the same inputs between CPU and GPU.
+
+The complete list of these keys, with their types and defaults, is
+[the backend tags](../user/InputFile_Backend.md) (and, for pCCE,
+[the cluster tags](../user/InputFile_Cluster.md)); the table below is a summary.
+
+| Option | Behavior |
+| --- | --- |
+| `backend=cpu` | Default; no CUDA initialization or GPU computation |
+| `backend=cuda` | Require CUDA for every CCE/pCCE/gCCE cluster calculation; fail if unsupported or unavailable |
+| `backend=auto` | Use CUDA for supported clusters with dimension at least `gpu_min_dim`; otherwise use CPU |
+| `gpu_min_dim` | Positive integer, default 256; applies only to `auto` |
+| `gpu_batch_steps` | Positive integer, default 64; maximum time points processed together |
+| `gpu_batch_clusters` | Positive integer, default 8; maximum consecutive compatible clusters evolved together; 1 uses the sequential cluster path |
+| `gpu_cluster_batch_mb` | Positive integer, default 64 MiB per rank; estimated active evolution-buffer budget used when grouping clusters |
+| `gpu_cache_mb` | Nonnegative integer, default 64 MiB per rank; reusable free GPU allocations; 0 disables the cache |
+| `propagator` | gCCE: `eigen` (default; one eigendecomposition per cluster, required for CUDA) or `expm` (a matrix exponential per step, CPU only) |
+| `evolution` | gCCE: `vector` (pure initial state, `nstate>0`, `propagator=eigen`) or `matrix` (density matrix); default `vector` where it can run, else `matrix` |
+| `gcce_refinement` | Boolean, default false since 2026-10-02 (true before); compensated refinement of the eigensystem, CPU and CUDA (below) |
+| `gcce_refinement_max_sweeps` | Positive integer, default 32; a cluster not converged within it stops the run |
+| `probe_memory_gb` | Nonnegative, default 0 (automatic: 80 % of the job's node memory and, when clusters may go to the GPU, of the smallest GPU); memory the adaptive probes running at once on a node may hold |
+| `iter_detail`, `pcce_detail_limit` | pCCE: rank 0 prints the details of at most `pcce_detail_limit` (default 32) partition trials |
+| `pcce_connections` | pCCE: `centers` (default; distance between partition centroids) or `spins` (any spin pair within `rdip`) |
+| `pcce_partition` | `deterministic` (default) or `legacy`; pCCE partition RNG and trial distribution policy |
+| `pcce_cache_mode` | `off` (default), `readwrite` (reuse or compute/store), `read` (require a matching stored partition); deterministic pCCE only |
+| `pcce_cache_file` | Explicit partition cache path, relative to the working directory or absolute; parent directory must exist |
+| `profile` | Boolean, default false; emit timings grouped by rank, method, backend and Hilbert dimension |
+
+pCCE also accelerates fresh searches by evaluating distances only to centers
+whose groups still have room, retaining spin order, ascending center tie-breaking,
+trial RNG and convergence criteria. This CPU optimization applies to all three
+backends, with cache off or on. It removes the N-by-K distance table from the
+search path; it does not move partitioning to CUDA. See the
+fresh-search validation (archive/pcce-partition-search-20260912.md).
+Fresh searches also detect exact repeated center/assignment states and skip
+whole periods, then execute the remaining iterations to preserve the original
+`max_iter` endpoint. They do not declare a cycle converged or change trial
+selection. This applies to deterministic and legacy pCCE on every backend.
+The root `[partition-search]` log counts converged, cycling and limit-only
+trials, followed by logical, executed and skipped iterations summed over ranks.
+`iter_detail=true` adds each trial's period and counts. See
+cycle-skipping validation (archive/pcce-cycle-optimization-20260912.md).
+The partition cache algorithm identity is now `pcce-deterministic-20260912-v3`:
+`readwrite` recomputes old v1/v2 identities once; `read` rejects them until
+regenerated. The on-disk cache format remains version 1.
+
+`auto` defers CUDA initialization until a rank encounters its first eligible
+cluster. A run containing only smaller clusters does not initialize CUDA. Ranks
+with no eligible clusters do not wait for those that initialize: only node-rank
+metadata discovery is collective. `backend=cuda` still requires initialization
+on every rank at startup.
+
+`auto` also works in a CPU-only executable and falls back to CPU when CUDA
+initialization is unavailable. Once GPU computation starts, allocation, solver or
+execution failures abort the MPI job with an error; they do not silently rerun a
+partially completed cluster. An explicit `cuda` request with gCCE `expm` or an
+unsupported method is rejected after command-line overrides are resolved.
+
+`cluster_mode=adaptive` adds variable-size automatic grouping to `method=cce`
+and `method=gcce` while retaining the selected CPU/CUDA/auto engine. The dimension
+cap is `bundle_max_dim` (required); bundle orders of 3 and more are supported.
+See [adaptive mode](adaptive-cluster-mode.md) for inputs, pair-distance semantics,
+tests and the current limitations.
+
+The dimension threshold is a configurable starting point, **not a guarantee of
+speedup**. Inspect the profile for your spin species, defect spins, state mode,
+time grid and GPU. Matrix dimension includes all attached defect spins and, for
+gCCE, the qubit. It is not just the CCE order. Reduce the time batch size if GPU
+memory is tight. gCCE matrix evolution has two main complex-double buffers of
+`16 * D² * batch_steps` bytes each; cCCE ensemble uses three. The corresponding
+pure-state buffers hold `D * batch_steps` elements each. Eigensystems, solver
+workspace and other buffers add to this. gCCE `allfull` requires additional
+density-matrix storage and host output storage.
+
+For pCCE, `order` counts groups and `sK` is the number of bath sites per group.
+The largest cluster can contain `order * sK` sites plus attached defect spins.
+This grouping is different from enumerating every conventional CCE cluster of
+that spin order. The current partitioner drops the final `nspin % sK` sites;
+this existing behavior is identical for CPU and CUDA. Supply a positive integer
+`sK` no greater than the loaded bath size, and positive `max_trial`/`max_iter`.
+With `pcce_partition=deterministic`, `max_trial` is the exact global trial count.
+Trial `t` has its own RNG stream derived from `(seed,t)` and is assigned to rank
+`t % ranks`. The search does not consume the bath-state C RNG. Equal candidates
+are resolved by inertia, silhouette and then global trial index. With an explicit
+seed and the same executable/input, changing MPI size preserves the candidate
+set and selected partition. Floating-point products can still differ in their
+last bits because MPI reduction order changes; this is not a promise of bitwise
+identity across compilers or architectures.
+
+This default changes the random search and sampled bath states relative to old
+pCCE runs. Set `pcce_partition=legacy` when reproducing an existing result. In
+that mode retain the original seed **and MPI size**; each rank uses the historical
+`max(1, max_trial / ranks)` trials and shared C RNG behavior. Legacy mode preserves
+its MPI dependence and potentially repeated search streams.
+
+## MPI and multiple GPUs
+
+### Reusing a deterministic pCCE partition
+
+Partition search is a CPU stage even with `backend=cuda`. For repeated calculations
+with the same selected bath and partition settings, enable an explicit cache:
+
+```json
+{
+  "method": "pCCE",
+  "pcce_partition": "deterministic",
+  "seed": 73,
+  "pcce_cache_mode": "readwrite",
+  "pcce_cache_file": "/path/to/existing-directory/nv-sk3.partition"
+}
+```
+
+This is a configuration fragment; the usual bath, sK, order and dynamics options
+are still required. In `readwrite`, the first run performs the unchanged search
+and stores the group centers and spin-to-group assignment. Later matching runs
+skip the search. `read` requires an existing, valid, matching file and never
+changes it; missing, stale or corrupt files fail collectively. In `readwrite`,
+those files trigger a new search and atomic replacement. Other I/O failures are
+reported as errors. `off` preserves normal execution and does not access the
+cache, including in legacy mode. Enabling a cache for legacy or another method
+is rejected after command-line overrides, because skipping legacy search would
+change the random stream used for sampled bath states.
+
+Identity is checked against the actual selected, transformed, ordered sites
+(names, spins, binary64 coordinates, including an excluded remainder), effective
+seed, sK, max_trial, max_iter, kmeans_pp, partition algorithm version, host compiler
+and selected arithmetic compatibility markers. It is compared in full, rather
+than accepting a filename or hash as proof of a match. Centers are stored without
+rounding. A file checksum detects accidental corruption, and group indices,
+group sizes and center finiteness are checked before use. The checksum is not
+authentication: these are user-controlled simulation data files.
+
+CPU/CUDA/auto, MPI count, order, rdip, pulses, state mode, time points and output
+options are not partition-search inputs. They may change while reusing the same
+partition. Subsequent connectivity, cluster weights, Hamiltonians, sampled
+states and time evolution are calculated afresh for the current input. Radius
+or rotation changes that alter the selected coordinates invalidate the cache.
+Different compiler/arithmetic markers conservatively invalidate it too. Cache
+hits preserve deterministic sampled-state RNG behavior. They do not restore a
+previous coherence result. Changing the partition algorithm requires bumping its
+version in `src/clustering/pcce_partition_cache.cpp`.
+
+Rank zero reads/writes and broadcasts the validated partition. All ranks first
+verify identical input identities. Writes use a unique temporary file beside the
+destination, flush it and rename it atomically. Concurrent writers cannot expose
+half-written data; using distinct files for different baths/sK/settings avoids
+repeated replacement. A hit reports `[partition-cache] status=hit` and
+`source=cache total_trials=0`. A miss/store reports lookup, search and write times.
+
+First-run timing includes the full search and cache write. Reuse timing includes
+file validation/read plus the full remaining simulation. Compare CPU/CUDA/auto
+under the same cache mode and report cold and reuse timings separately.
+
+### Running with MPI
+
+```bash
+mpirun -n 4 ./bin/main_gpu.out -f input.json
+```
+
+Allocate the GPUs through your site's scheduler before launching the job. One MPI
+rank per GPU is the initial recommended configuration. The existing MPI cluster
+partitioning is retained. Each rank selects `node_local_rank % visible_GPU_count`;
+when a scheduler exposes one GPU per rank, each rank selects its visible device 0.
+The `[backend]` log records this mapping. Multiple ranks can share a visible GPU,
+but that can reduce performance. Check the scheduler's visibility and binding.
+
+The GPU returns scalar cluster coherences (cCCE) or small reduced density matrices
+(gCCE) to the host before the existing cluster products and MPI reductions.
+CUDA-aware MPI is not required.
+Up to eight ranks sharing one RTX 3050 were tested; physical multi-GPU and multi-node
+execution still need validation on the target server.
+
+## Implementation
+
+### Conventional CCE
+
+The CPU constructs `Halpha` and `Hbeta`. cuSOLVER diagonalizes both once per
+cluster. The GPU forms the basis overlap `M = V_alpha^H V_beta`; since the
+eigenvectors are unitary, this represents the CPU's `V_alpha.inverse()*V_beta`
+without a general inverse. Evolution alternates between the two eigenbases,
+with cuBLAS handling many time points as columns of one matrix. A CUDA reduction
+returns the overlap of the conditional states (single) or its normalized
+Frobenius inner product (ensemble).
+
+This retains the existing cCCE semantics: ensemble uses Ramsey/CPMG intervals
+from `npulse`, including the CPU's float half-interval rounding and even-pulse
+complex-conjugation convention. Single follows the configured interval sequence
+and its delay-cache indices. As on the CPU, cCCE toggles conditional Hamiltonians;
+this change does not add general finite-angle or finite-duration pulse physics
+to cCCE. Such qubit-pulse evolution belongs to gCCE.
+
+The GPU single implementation evolves two state vectors instead of constructing
+the full propagators used by the current CPU cCCE implementation. Reported
+speedups therefore include this algorithmic improvement as well as GPU hardware.
+The CPU calculation path has been retained for direct regression comparison.
+
+### Generalized CCE
+
+The CPU constructs each Hamiltonian and pulse operator. cuSOLVER diagonalizes the
+complex-double Hermitian Hamiltonian once per cluster. Eigenvectors, eigenvalues,
+states and pulse data remain on the GPU through the time grid. cuBLAS matrix
+products evolve a batch of time points; CUDA kernels apply phases, qubit pulses
+and bath partial traces. Pulse application uses the qubit operator directly,
+without materializing its tensor product with the bath identity.
+
+The host supplies the same repeated-addition time grid and delay-cache indices as
+the CPU path. Pure-state and mixed-state evolution preserve their original
+meanings. Hamiltonians and evolution buffers use complex double; no
+reduced-precision or fast-math mode is enabled. With `gcce_refinement=true` (off by
+default since 2026-10-02, see the backend tags) both CPU and CUDA eigen paths
+refine the complete eigensystem: compensated residuals are projected into the
+computed basis and small Jacobi rotations correct eigenvectors and energies
+(on the GPU with parallel round-robin Jacobi sweeps).
+The small energy correction and phase-product rounding remainder are retained
+separately. This addresses propagation errors amplified by negative cluster
+powers in the NV–13C order-4 regression. Refinement adds setup work; its cost
+must be included in comparisons with older binaries.
+
+Scalar coherence products in cCCE, pCCE and gCCE keep a normalized complex
+mantissa and separate binary exponent, including during MPI reduction and,
+for gCCE, final normalization. The
+host mantissa uses `long double`. This prevents a finite final result from being
+lost when an intermediate local product underflows or overflows. It applies to
+`quantity=coherence`; gCCE `quantity=dm` and DSJ/ITB variants retain their prior
+product arithmetic. This does not repair a genuinely zero denominator or an
+unconverged CCE approximation. Small-system tests compare against an independent
+general matrix exponential, including complex degenerate eigenspaces,
+noncommuting pulses, full density matrices and trace conservation.
+
+Consecutive clusters of the same dimension, state mode and pulse schedule can
+share batched cuBLAS evolution calls. This applies to cCCE, pCCE and gCCE reduced
+outputs. Hamiltonians and eigensystems are still prepared per cluster; clustering
+and Hamiltonian construction remain on the CPU. Cluster order and product order
+are preserved. `savemode=allfull` uses sequential gCCE cluster evolution.
+
+Grouping uses a conservative buffer estimate and the two cluster-batch limits.
+The budget is **not a hard cap on total device memory**: a single cluster,
+cuSOLVER workspace, retained free buffers and CUDA runtime allocations also use
+memory. Reduce time/cluster batch sizes or cache size if needed. Every rank has
+its own cache and active buffers. The cache reuses allocations on the same CUDA
+stream, frees excess cached buffers, and releases the cache at finalization.
+
+With profiling enabled, `[gpu-memory]` records allocations, reuses and cached
+bytes; `[gpu-batch]` records actual multi-cluster batches. A shared batch's
+evolution time is divided among its clusters for the dimension totals.
+
+`profile` reports Hamiltonian construction (`build_s`), cluster preparation
+(`setup_s`) and time evolution (`evolution_s`). GPU preparation and evolution
+include synchronization and transfers in those stages. These stage totals do not
+include the entire application startup, clustering, MPI communication or output;
+use the benchmark's wall times to judge end-to-end performance.
+
+During full-density output validation, the existing gCCE label-array allocation
+was also corrected: the writer reads qubit-plus-bath labels, so the allocation
+must include the qubit entries.
+
+Library references: [cuSOLVER Hermitian eigensolver](https://docs.nvidia.com/cuda/cusolver/index.html#cusolverdn-t-syevd),
+[cuBLAS](https://developer.nvidia.com/cublas),
+[NVIDIA redistributable installation](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#tarball-and-zip-archive-deliverables).
+
+## Validation and reproduction
+
+For the `ssh gpu` server, [CCE2 Slurm jobs](../../test/gpu_verification/server/README.md) build
+the code on the server and compare all four combinations on the original inputs.
+See the server CCE2–4 measurements and
+한국어 테스트 종합 정리. CCE2 and CCE3 passed; CCE4
+stopped on a numerical comparison failure after six passing cases. The full-bath
+CCE5 server job was cancelled before execution at the user's request.
+The 2026-09-12 improvement record (archive/gpu-optimization-20260912.md) documents
+the subsequent accuracy fix, MPI reproducibility and cluster batching, including
+completed local and server validation (jobs 451–453).
+See test conditions and workload sizes (archive/gpu-test-conditions-20260912.md) for
+bath composition, `rbath`, `rdip`, pulses, propagated cluster counts and matrix dimensions.
+On the tested server, the small NV–¹³C and PL6 matrices favored CPU execution;
+large MoS₂ pCCE matrices favored CUDA/auto with about four MPI ranks per GPU.
+P1 sK2 favored CUDA at two MPI ranks, but CPU at 16 ranks was faster than the
+best CUDA configuration. The dimension-only `auto` threshold is a heuristic;
+use the recorded bath-specific timings to choose the backend and MPI count.
+The pCCE validation report covers the subsequent pCCE
+extension and the supplied PL6 archive comparison.
+
+The Python tools use only the standard library, read the existing regression
+inputs, and require a new output directory so previous results are preserved.
+
+```bash
+# Independent GPU numerical oracle (use your build variables as above).
+make gpu-test        # after: bash do_compile.sh gpu
+
+# gCCE4 accuracy, MPI consistency, cluster batching and deferred initialization.
+python3 test/gpu_verification/check_gpu/check_acceleration.py --cpu bin/main.out --cuda bin/main_gpu.out \
+    --ranks 2 --output /tmp/ccex-acceleration-new
+
+# Deterministic pCCE across MPI 1, 2, 3 and 8; optional old binary checks legacy mode.
+python3 test/cluster_verification/check_pcce/check_reproducibility.py --cpu bin/main.out --cuda bin/main_gpu.out \
+    --output /tmp/ccex-reproducibility-new
+
+# Small pCCE ensemble/single, pulse, partition and backend checks (Open MPI or Intel MPI).
+python3 test/gpu_verification/check_gpu/check_pcce.py --cpu bin/main.out --cuda bin/main_gpu.out \
+    --ranks 2 --output /tmp/ccex-pcce-check-new
+
+# Eight existing cases: CCE/gCCE x ensemble/sampled x NV–13C/NV–P1.
+python3 test/gpu_verification/check_gpu/benchmark.py --binary bin/main_gpu.out \
+    --reference bin/main.out --method all --repeats 3 \
+    --output /tmp/ccex-gpu-regression
+
+# Larger cCCE system; --nearest-sites also sets CCE order to five.
+python3 test/gpu_verification/check_gpu/benchmark.py --binary bin/main_gpu.out \
+    --reference bin/main.out --method cce --case P1 --nearest-sites 5 \
+    --steps 20 --batch 20 --repeats 3 --output /tmp/ccex-cce-gpu-large
+
+# Larger, controlled system: nearest four P1 sites and their attached 15N spins.
+python3 test/gpu_verification/check_gpu/benchmark.py --binary bin/main_gpu.out \
+    --reference bin/main.out --method gcce --case P1 --nearest-sites 4 --steps 20 \
+    --output /tmp/ccex-gpu-large
+
+# Backend errors and CPU fallback with GPUs hidden.
+python3 test/gpu_verification/check_gpu/check_options.py --cpu bin/main.out \
+    --cuda bin/main_gpu.out --output /tmp/ccex-gpu-options
+
+# cCCE Ramsey, odd/even CPMG, manual single intervals and time-batch tails.
+python3 test/gpu_verification/check_gpu/check_cce_pulses.py --cpu bin/main.out \
+    --cuda bin/main_gpu.out --output /tmp/ccex-cce-gpu-pulses
+```
+
+Add `--mpirun /path/to/mpirun --ranks 2 --backend auto --min-dim 16 --batch 7`
+to exercise MPI, mixed CPU/GPU selection and batch tails. `--method gcce --savemode allfull`
+checks exported full density matrices as well as coherence. With `--repeats 3`,
+the benchmark alternates execution order, reports median wall times and the
+largest observed errors, and retains every run's timings and profile. Exit code 77 from
+the standalone CUDA numerical test means GPU initialization was unavailable;
+it is not a numerical pass.
+
+See cCCE measurements and gCCE measurements
+for accuracy, timing and the limits of the tested hardware and inputs.

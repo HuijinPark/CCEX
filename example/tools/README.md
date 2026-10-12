@@ -1,0 +1,45 @@
+# example/tools/
+
+Three tools that make the inputs CCEX reads, and the runner of the automatic convergence, which runs CCEX itself.
+
+| Tool | Makes | Run | Needs |
+|---|---|---|---|
+| `BathGenerator/` | a bath file (site positions and isotopes) from a POSCAR unit cell, drawing isotopes with the probabilities in a `prob` file; options for 2D materials, a defect, an inserted relaxed cell, deformation | `mpirun -n N python3 BathGenerator.py -o OUT -i POSCAR -p PROB --size 30 --Defect B --opt2D` (`-h` lists everything; `do_BathGenerator` has three cases) | numpy, psutil, mpi4py with an MPI |
+| `SpinTensorReader/` | the hyperfine (`Afile`) and quadrupole (`Qfile`) tensor files CCEX reads, from a VASP OUTCAR or a QE output | `python3 main.py VASP\|QE POSCAR DEFECT --A OUT --Q OUT [--version v1\|v2] [--rangeformat vertex] ...` (`-h`); `examples/01..05` each have a `do` | numpy, pandas, psutil |
+| `Runner/` | the job folders of the tutorials: one per value of a variable (order, ppm, rbath, ...) from the templates in `MkCCEJobs/mkjobs.sngapp/`, driven by a tutorial's `domkjobs` and `opt/` files | `./domkjobs MKE` inside a tutorial calculation (`./domkjobs -h`) | idm Slurm |
+| `AutoConvergence/` | the automatic convergence: `main.out -f input.json` with an `auto_convergence` block (no mpirun; the block's `launcher` runs CCEX) finds the time window, rdip, rbath and the configurations and runs the production on the baths you prepare (it says which baths to add when they are too small or too few); `main.out --auto_status -f input.json` shows where it is. `CCEX_PYTHON` picks the interpreter, `CCEX_AUTOCONV_DIR` the tool folder; it may be a shared installation (owned by you, root or the owner of `main.out`), but neither it nor any folder above it may be writable by others (other users, or a group other than the owner's own private group; `chmod go-w`). Also `python -m autoconv analyze` for existing runs (`AutoConvergence/README.md`) | `main.out -f input.json`; tests `python -m unittest discover -s tests` | numpy, scipy, matplotlib |
+
+## BathGenerator
+
+A newer version of this generator lives at
+<https://github.com/CQML-SKKU/BathGeneratorSpinCluster>. This copy is the one the
+tutorials' baths were made with and is kept for that reason.
+
+The isotopes are drawn without a fixed seed, so two runs give the same sites with
+different isotopes. On this WSL the anaconda `mpi4py` aborts at interpreter exit
+("double free or corruption") even for a bare `from mpi4py import MPI`; the bath
+file is complete before that and the tool is not at fault.
+
+## SpinTensorReader
+
+`spHamilReader/` is the package (`base/`, `vasp/`, `qe/`, and the `v2_*` readers),
+`main.py` the command line. `examples/` are five worked cases with their inputs and
+the tensor files they produced; `do` in each reproduces them (`04.Diamond_N2p/do`
+takes two arguments, the JT index and the case, e.g. `bash do 4 1-1`). On
+2026-09-23 the package's internal imports were made package-relative, and every
+example was checked to reproduce its tracked `Afile`/`Qfile` byte for byte.
+Python 3.12 prints SyntaxWarnings for a few regular expressions; they are harmless.
+
+`runningScripts_Exspin/` holds two example runs (N2p, NVHn) with their OUTCARs and
+a `do_summary` written for the author's own machine (absolute paths).
+
+## Runner
+
+Templates in `MkCCEJobs/mkjobs.sngapp/`: `srcjob_ConfigArray`,
+`srcjob{Nstate}_ConfigArray` and `srcjob{Nstate}_VariableArray` are current
+(intel-23.2 modules, the 64core partition); `srcjob` and `srcjob_VariableArray`
+are legacy (icc18, 24core) and say so at their top. The run scripts `srcdo` writes
+call `QosChange -j job -q <qos> -n <nodes> -b` and then `SbatchPath --array=... job`,
+and `domkjobs RunL` calls `SbatchPath largejob`: the wrappers idm uses now (SbatchPath
+records the job path). Until 2026-10-02 they called `shortcut/QosChanger` and `sbatch`
+directly. `shortcut/` still holds the old `QosChanger` and `CdMkDir`.
