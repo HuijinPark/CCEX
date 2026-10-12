@@ -14,7 +14,7 @@ if [ -n "${CCEX_MPI:-}" ]; then
     MPIRUN="$CCEX_MPI"
 else
     MPIRUN=""
-    for __c in "${I_MPI_ROOT:-}/bin/mpirun" "$(command -v mpirun 2>/dev/null)" \
+    for __c in "${I_MPI_ROOT:+$I_MPI_ROOT/bin/mpirun}" "$(command -v mpirun 2>/dev/null)" \
                /opt/intel/oneapi/mpi/2021.18/bin/mpirun; do
         [ -n "$__c" ] && [ -x "$__c" ] && { MPIRUN="$__c"; break; }
     done

@@ -8,7 +8,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from autoconv import window                      # noqa: E402
-from autoconv.runner import converge             # noqa: E402
+from autoconv.runner import converge, unjudged_reason   # noqa: E402
 
 
 def judge(a, b):
@@ -33,6 +33,28 @@ class TestConverge(unittest.TestCase):
         r = self.run_case({1: None, 2: 97, 3: 99, 4: 100}, [1, 2, 3, 4], 100.1)
         self.assertTrue(r["estimate"]["status"].startswith("no trend"))
         self.assertNotEqual(r["chosen"], 1)
+
+
+class TestUnjudgedReason(unittest.TestCase):      # 2026-10-12, job 17163: a fit failure is not "make larger baths"
+    def test_last_comparison_a_fit_failure(self):
+        rec = dict(checks=[dict(lo=1, hi=2, verdict="fail", rel=0.5), dict(lo=2, hi=3, verdict="fit-failure", rel=None)])
+        why = unjudged_reason("rbath", rec, "3_rbath.png")
+        self.assertIn("could not be judged", why)
+        self.assertIn("2 vs 3 (fit-failure)", why)
+        self.assertNotIn("1 vs 2", why)                  # a judged comparison is not listed
+        self.assertNotIn("larger baths", why)
+
+    def test_last_comparison_not_finite(self):
+        rec = dict(checks=[dict(lo=4, hi=5, verdict="nonfinite", rel=None)])
+        self.assertIn("4 vs 5 (nonfinite)", unjudged_reason("rdip", rec, "2_rdip.png"))
+
+    def test_judged_last_comparison_keeps_the_usual_reason(self):
+        rec = dict(checks=[dict(lo=1, hi=2, verdict="fit-failure", rel=None), dict(lo=2, hi=3, verdict="fail", rel=0.1)])
+        self.assertIsNone(unjudged_reason("rbath", rec, "3_rbath.png"))
+
+    def test_nothing_compared(self):
+        self.assertIsNone(unjudged_reason("rbath", None, "3_rbath.png"))
+        self.assertIsNone(unjudged_reason("rbath", dict(checks=[]), "3_rbath.png"))
 
 
 class TestPlateau(unittest.TestCase):

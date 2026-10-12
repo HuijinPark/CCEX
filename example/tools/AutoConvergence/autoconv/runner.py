@@ -164,6 +164,19 @@ def _gname(r):
     return f"{float(np.float32(r)):g}"
 
 
+def unjudged_reason(name, rec, figure):
+    """Why an unresolved rdip or rbath stopped, when its last comparison could not be judged (2026-10-12, job 17163): the T2
+    fit failed or the curves were not finite, so whether more would converge is unknown and larger values are not advised.
+    None when the last comparison was judged (a real "fail": the usual reason stands)."""
+    checks = (rec or {}).get("checks") or []
+    if not checks or checks[-1].get("verdict") not in ("fit-failure", "nonfinite"):
+        return None
+    bad = [c for c in checks if c.get("verdict") in ("fit-failure", "nonfinite")]
+    pairs = ", ".join(f"{c['lo']:g} vs {c['hi']:g} ({c['verdict']})" for c in bad)
+    return (f"{name} could not be judged at its largest values: the T2 fit failed or the curves are not finite for {pairs}; "
+            f"look at {figure} (noisy or unstable curves) before computing more")
+
+
 def converge(values, curve, extend, limit, clip, judge, rel_tol, need=1):
     """One truncation parameter (user decisions 2026-10-07). judge(lo_curves, hi_curves) -> dict(verdict, rel). values: the candidates computed so far (sorted);
     curve(v): configurations x time of state means; extend(v): compute a new largest value; limit: the largest allowed.
@@ -1552,9 +1565,9 @@ class Runner:
                                      "trend + one check, else raise until the last "
                                      f"{'two' if max(need_rdip, need_rbath) == 1 else 'three'} agree", sigma=sigma)
         if R is None:
-            return self.finish(summary, "truncation-unresolved", "rdip", rdip_reason)
+            return self.finish(summary, "truncation-unresolved", "rdip", unjudged_reason("rdip", rd, "2_rdip.png") or rdip_reason)
         if B is None:
-            return self.finish(summary, "truncation-unresolved", "rbath",
+            return self.finish(summary, "truncation-unresolved", "rbath", unjudged_reason("rbath", rb, "3_rbath.png") or
                                f"rbath has not converged up to {Bn:g} A (the bath files cover up to {self.max_rbath:.4g} A): make larger baths, "
                                f"covering at least {round(Bn * 1.25, 3):g} A around the qubit")
         pairs_used = sum(self.pair_count(self.inside(k, B), R) for k in self.pilot)

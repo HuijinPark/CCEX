@@ -46,7 +46,7 @@ CCEX_BIN="${CCEX_BIN:-$REPO/bin/main.out}"   # the binary to test; a CMake build
 # absolute path used to be the only choice, which made the suite WSL-only.
 MPIRUN="${CCEX_MPI:-}"
 if [ -z "$MPIRUN" ] || [ ! -x "$MPIRUN" ]; then
-    for __c in "${I_MPI_ROOT:-}/bin/mpirun" "$(command -v mpirun 2>/dev/null)" \
+    for __c in "${I_MPI_ROOT:+$I_MPI_ROOT/bin/mpirun}" "$(command -v mpirun 2>/dev/null)" \
                /opt/intel/oneapi/mpi/2021.18/bin/mpirun; do
         [ -n "$__c" ] && [ -x "$__c" ] && { MPIRUN="$__c"; break; }
     done
