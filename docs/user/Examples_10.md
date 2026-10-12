@@ -12,7 +12,7 @@ different curve. 10 s.
 
 ## The input
 
-`example/tutorial/10_Coordinate_rotation/HahnEcho_CCE2/ccein_cubic_rotated.js`; the aligned input has no rotation block; the no-rotation input turns it off on the same bath. `run.sh` in the same folder runs it as
+`example/tutorial/10_Coordinate_rotation/HahnEcho_CCE2/ccein_cubic_rotated.json`; the aligned input has no rotation block; the no-rotation input turns it off on the same bath. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

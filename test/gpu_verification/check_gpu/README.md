@@ -2,9 +2,9 @@
 
 | script | checks | run |
 |---|---|---|
-| `test_*.cpp` (twelve) | unit tests of the kernels, the batching, the scaled product, the Hamiltonian check before the CUDA cCCE path, the seed sharing and the host-side lifetimes | `make numeric-test`, `cpu-test`, `gpu-test` (not `bash do_compile.sh gpu`, which builds `bin/main.out` and `bin/main_gpu.out` only): see "Unit tests" below |
+| `test_*.cpp` (14) | unit tests of the kernels, the batching, the scaled product, the Hamiltonian check before the CUDA cCCE path, the seed sharing and the host-side lifetimes | `make numeric-test`, `cpu-test`, `gpu-test` (not `bash do_compile.sh gpu`, which builds `bin/main.out` and `bin/main_gpu.out` only): see "Unit tests" below |
 | `check_cce_pulses.py --cpu BIN --cuda BIN --output DIR` | cCCE with every pulse count, CPU against CUDA | CUDA build |
-| `check_acceleration.py`, `check_pcce.py`, `check_options.py` | gCCE4 accuracy and batching, pCCE, the `backend`/`gpu_*` options, CPU against CUDA | CUDA build |
+| `check_acceleration.py`, `check_pcce.py`, `check_options.py` | gCCE4 accuracy and batching, pCCE, `backend` and the `gpu_options` block, CPU against CUDA | CUDA build |
 | `check_seed_states.py --cpu BIN --output DIR` | seeds and sampled bath states are reproduced across ranks | CPU build is enough |
 | `check_review_controls.py --cpu BIN --output DIR` | the controls the 2026-09-12 review asked for | CPU build is enough |
 | `check_review_supplement.py`, `check_review_baseline.py`, `check_host_leaks.py` | the review's supplement, its baseline, host memory over repeated runs | CUDA build, and a `--baseline` from an earlier run |
@@ -34,8 +34,8 @@ code, and a rerun passed.
 
 `benchmark.py` is the helper the checks and `../gpu_benchmarks/` import: it runs a
 build on the four standard calculations of `code_verification/check_input_forms/inputs`
-and reads what it wrote. `examples/` holds the P1 and pCCE inputs the checks use, `data/` the three
-files of the gCCE accuracy test. The seven `validation-*.json` files are the
+and reads what it wrote. `examples/` holds the P1 and pCCE inputs the checks use, `data/` the gCCE accuracy
+test's files and, in `data/small_cluster/`, the 11 `.bin` dumps of `test_small_cluster_cuda` with `make_dumps.py`. The seven `validation-*.json` files are the
 results recorded on idm4-gpu and the RTX 3050 on 2026-09-08..11 that (internal notes)
 cites; the other records of 2026-09-12 and the probe that led to `scaled_product.h`
 were removed on 2026-09-24 (git history up to 8f2bcbd75).

@@ -58,8 +58,11 @@ The CPU references are rerun inside this same allocation. Thread counts are
 fixed at one; each executable uses one MPI rank.
 
 Automatic selection retains the default dimension threshold of 256. The current
-CCE2 fixtures are smaller than that threshold, so their `auto` profiles are
-expected to show CPU computation. Forced-CUDA profiles must show GPU computation.
+CCE2 fixtures are smaller than that threshold, so gCCE `auto` profiles are expected
+to show CPU computation. Since 2026-10-12 (A26) `auto` with method CCE (coherence)
+sends cCCE clusters of bath dimension 2 and 4 to the packed GPU kernel by default
+(`gpu_options.packed_max_dim` 4, `Config_resolvePackedMaxDim` in `src/input/general.cpp`).
+Forced-CUDA profiles must show GPU computation.
 
 ## Status of these jobs (2026-10-02)
 
@@ -80,6 +83,8 @@ They ran on idm4-gpu on 2026-10-02 from a clean copy of commit 37f841284 and pas
   clusters of dimension 192 at most, forced CUDA takes 11-45 times the CPU time.
 
 Orders 4 and 5 have not been run.
+
+`make gpu-test` (not one of these jobs) passed 84/0 in idm4-gpu job 692 on 2026-10-12.
 
 ## Removed jobs
 

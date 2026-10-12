@@ -12,5 +12,5 @@ NCONF=${NCONF:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein.js -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/gCCE2_hBN_VB_$i > results/process_gCCE2_hBN_VB_$i
+  mpirun -n $NP $CCEX -f ccein.json -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/gCCE2_hBN_VB_$i > results/process_gCCE2_hBN_VB_$i
 done

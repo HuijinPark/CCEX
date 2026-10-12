@@ -11,11 +11,11 @@ ANALYZER=$ROOT/example/analysis/Analyzer/CoherenceAnalyzer.v1/run.py
 NP=${NP:-4}
 mkdir -p results
 
-mpirun -n $NP $CCEX -f ccein_cpu.js -o results/CCE5_P1_cpu_1 > results/process_CCE5_P1_cpu_1
-mpirun -n $NP $CCEX -f ccein_auto.js -o results/CCE5_P1_auto_1 > results/process_CCE5_P1_auto_1
+mpirun -n $NP $CCEX -f ccein_cpu.json -o results/CCE5_P1_cpu_1 > results/process_CCE5_P1_cpu_1
+mpirun -n $NP $CCEX -f ccein_auto.json -o results/CCE5_P1_auto_1 > results/process_CCE5_P1_auto_1
 BACKENDS="cpu auto"
 if [ -x $CCEX_GPU ]; then
-  mpirun -n $NP $CCEX_GPU -f ccein_cuda.js -o results/CCE5_P1_cuda_1 > results/process_CCE5_P1_cuda_1
+  mpirun -n $NP $CCEX_GPU -f ccein_cuda.json -o results/CCE5_P1_cuda_1 > results/process_CCE5_P1_cuda_1
   BACKENDS="cpu auto cuda"
 fi
 

@@ -16,7 +16,7 @@ module load  intel-23.2/icc-23.2  intel-23.2/gsl-2.8  intel-23.2/eigen-3.4.0
 NodeProcess=10
 
 CodePath="$(git rev-parse --show-toplevel)/bin/main.out"
-InputFilePathList=( "./ccein_hf3_qd0.js" "./ccein_hf3_qd2.js" "./ccein_hf0_qd2.js")
+InputFilePathList=( "./ccein_hf3_qd0.json" "./ccein_hf3_qd2.json" "./ccein_hf0_qd2.json")
 OutputFilePrefixList=( "hf3_qd0" "hf3_qd2" "hf0_qd2")
 
 mkdir ./results
@@ -38,7 +38,7 @@ do
     # [1] Method 1 : Using -I, -o options
     mpirun -n ${NodeProcess} ${CodePath} -f ${InputFilePath} -I ${BathFile} -o "${OutputFile}" > ./results/process_${OutputFilePrefix}_${i}
 
-    # [2] Method 2 : Using -I options and outfile tag in ccein.js
+    # [2] Method 2 : Using -I options and outfile tag in ccein.json
     # mpirun -n ${NodeProcess} ${CodePath} -f ${InputFilePath} -I ${BathFile} -v > ./results/process_${i}
 
     # [3] Method 3 : Using input file only 

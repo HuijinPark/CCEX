@@ -12,16 +12,16 @@ NCONF=${NCONF:-1}; NSTATE=${NSTATE:-50}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_sK1.js -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_sK_1_$i > results/process_CCE2_DiaP1_1ppm_sK_1_$i
+  mpirun -n $NP $CCEX -f ccein_sK1.json -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_sK_1_$i > results/process_CCE2_DiaP1_1ppm_sK_1_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_sK2.js -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_sK_2_$i > results/process_CCE2_DiaP1_1ppm_sK_2_$i
+  mpirun -n $NP $CCEX -f ccein_sK2.json -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_sK_2_$i > results/process_CCE2_DiaP1_1ppm_sK_2_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_sK3.js -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_sK_3_$i > results/process_CCE2_DiaP1_1ppm_sK_3_$i
+  mpirun -n $NP $CCEX -f ccein_sK3.json -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_sK_3_$i > results/process_CCE2_DiaP1_1ppm_sK_3_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_sK4.js -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_sK_4_$i > results/process_CCE2_DiaP1_1ppm_sK_4_$i
+  mpirun -n $NP $CCEX -f ccein_sK4.json -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_sK_4_$i > results/process_CCE2_DiaP1_1ppm_sK_4_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

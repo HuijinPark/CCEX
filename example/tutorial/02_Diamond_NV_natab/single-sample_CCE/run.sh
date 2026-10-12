@@ -12,7 +12,7 @@ NCONF=${NCONF:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein.js -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_$i > results/process_CCE2_Diamond_NV_natab_$i
+  mpirun -n $NP $CCEX -f ccein.json -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_$i > results/process_CCE2_Diamond_NV_natab_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

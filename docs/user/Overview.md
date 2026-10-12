@@ -48,7 +48,7 @@ group's machines itself, and its `generic` preset takes `CXX`, `CUDA_HOME` and
 ## Running
 
 ```
-mpirun -n 4 bin/main.out -f ccein.js
+mpirun -n 4 bin/main.out -f ccein.json
 ```
 
 The input file is JSON with `#` and `!` comments; its keys are the reference in

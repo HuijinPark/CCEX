@@ -9,7 +9,7 @@ NP=${NP:-4}
 mkdir -p results
 
 # exit status 0: the curve settled within atol; 2: the policy stopped first (here: no merge left that improves it)
-mpirun -n $NP $CCEX -f ccein.js > results/process_CCE2_adaptive_1 || echo "refinement stopped with status $?"
+mpirun -n $NP $CCEX -f ccein.json > results/process_CCE2_adaptive_1 || echo "refinement stopped with status $?"
 
 # --- post-processing
 # the rounds: bundles before and after, the largest local error seen, and the reason for stopping

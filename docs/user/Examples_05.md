@@ -8,7 +8,7 @@ the configurations. 12 s for the three.
 
 ## The input
 
-`example/tutorial/05_Diamond_NV_VpBath/SpinEcho_CCE2/ccein_10ppm.js`; the 12 and 50 ppm inputs point at the other bath folders. `run.sh` in the same folder runs it as
+`example/tutorial/05_Diamond_NV_VpBath/SpinEcho_CCE2/ccein_10ppm.json`; the 12 and 50 ppm inputs point at the other bath folders. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

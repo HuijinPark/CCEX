@@ -18,10 +18,10 @@ and, without a display, `MPLBACKEND=Agg`.
 coherence by its sub-clusters' and the division blows up near zeros; the
 analyzer repairs the divided curve against the undivided one with a tolerance,
 by a rule that is the group's convention (`Analyzer/README.md` states it). Every
-regression reference and every published curve was made with it, so a
+tutorial result and every published curve was made with it, so a
 re-implementation that differs even slightly changes what "the same result"
 means. Call the function, or the CLI with `-err`, exactly as
-`test/code_verification/check_numerics/*/*/job` does.
+the tutorials' `run.sh` do.
 
 **Reading and writing the files** (`coherence.read_coherence`,
 `coherence.write_coherence`). The format is simple (time in ms, tab, `+re+imj`),
@@ -43,17 +43,17 @@ learning the class.
 the variable as the converged reference, computes for each other value the
 area difference in percent of the reference area, and calls the first value
 under the tolerance the converged point; it then draws the curves and the
-differences. That is twenty lines with `coherence.read_coherence`. Use the
-script when a tutorial's `do_convtest` already drives it (they pass six
-positional arguments: file list, variable values, variable name, unit,
-tolerance, output figure); otherwise re-implement. Its option parser is a custom
+differences. That is twenty lines with `coherence.read_coherence`. The
+tutorials' `do_convtest` scripts that drove it were removed on 2026-09-23; it takes six
+positional arguments (file list, variable values, variable name, unit,
+tolerance, output figure), or re-implement it. Its option parser is a custom
 one (`pyform.py`), so there is no `--help`; the argument table is at the top of
 `do_convTest.py`.
 
 ## How the tutorials use them
 
-A `job` in `example/tutorial/` runs CCEX, then `run.py -err` on each
-configuration, then `run.py -ea` over all of them; a `do_convtest` next to it
-runs `do_convTest.py` over the `ErrCorr` files of several orders or radii. The
-regression suite under `test/code_verification/check_numerics/` does the first two
-steps and is the reference for the exact calls.
+A tutorial's `run.sh` runs CCEX, then `run.py -err` on each
+configuration, then `run.py -ea` over all of them, and is the reference for the
+exact calls. The `do_convtest` scripts that ran `do_convTest.py` were removed on
+2026-09-23; `test/code_verification/check_numerics/` compares raw outputs and does
+not call the analyzer.

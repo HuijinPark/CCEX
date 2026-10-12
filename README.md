@@ -13,17 +13,22 @@ spin Hamiltonian, divides the bath into clusters, solves the dynamics of every
 cluster exactly and combines them into the coherence `L(t)` of the qubit or, with
 gCCE, its density matrix.
 
-- Methods: conventional CCE, generalized CCE (gCCE), partition CCE (pCCE), and
-  the disjoint-cluster and inter-bath variants (`method`).
+- Methods (`method`): conventional CCE (`CCE`), generalized CCE (`gCCE`), partition
+  CCE (`pCCE`), and the disjoint-cluster and inter-bath variants (`dsj`, `itb`,
+  `dsjitb`); the names are read without regard to case.
+- Clustering (`cluster_mode`): `standard` (the default), clusters of spins by order and distance,
+  or `adaptive`: strongly coupled spins tied into bundles and clusters made of
+  bundles (`bundle_max_dim` and the other `bundle_*` keys), with an adaptive
+  refinement that rebuilds the bundles where the error is large (the `Adaptive`
+  block).
 - Sequences: Ramsey, Hahn echo, CPMG, WAHUHA, or any sequence written out pulse
   by pulse (`npulse`, `sequence`).
 - Baths: nuclear spins with point-dipole or DFT tensors (hyperfine, quadrupole),
   electron-spin defects with sampled bath states; one configuration or an
   ensemble.
-- Beyond the standard clustering: bundle clustering and its adaptive refinement
-  (`cluster_mode`, the `Adaptive` block), a CUDA backend for the cluster
-  propagation (`backend`), and a coordinate frame rotation that lets the bath
-  file stay in the crystal frame (`coordinate_frame_rotation`).
+- A CUDA backend for the cluster propagation (`backend`, the `gpu_options`
+  block), and a coordinate frame rotation that lets the bath file stay in the
+  crystal frame (`coordinate_frame_rotation`).
 - Automatic convergence: an `auto_convergence` block chooses rbath, rdip, the time
   window and the number of bath configurations (`example/tools/AutoConvergence/`).
 - `rdip_ladder` writes the curves of smaller rdip values from one order-2 run;
@@ -40,8 +45,7 @@ bash do_compile.sh <preset>                     # the group's machines: wsl-gnu,
 
 `do_compile.sh` gives `bin/main.out`, and, where there is CUDA, `bin/main_gpu.out` for
 `backend` cuda or auto; CMake gives the same two in `build/bin/` (`-DCCEX_BIN_DIR=$PWD/bin`
-puts them in `bin/`; until 2026-10-01 that was the default, and a CMake and a
-`do_compile.sh` build replaced each other's binaries). Needed: a C++17 compiler behind an MPI wrapper
+puts them in `bin/`). Needed: a C++17 compiler behind an MPI wrapper
 (`mpicxx`, `mpic++`, `mpiicpc`) and, for the GPU binary, the CUDA toolkit;
 Eigen, uthash and SQLite are bundled in `external/`, and nothing else is linked
 (MKL is not used). `CMakeLists.txt` takes `-DCCEX_CUDA=OFF`,
@@ -56,8 +60,8 @@ and `CUDA_ARCH` from the environment. `bin/`, `obj/`, `build/` and the
 ## Run
 
 ```
-mpirun -n 4 bin/main.out -f ccein.js           # do_compile.sh build
-mpirun -n 4 build/bin/main.out -f ccein.js     # CMake build
+mpirun -n 4 bin/main.out -f ccein.json           # do_compile.sh build
+mpirun -n 4 build/bin/main.out -f ccein.json     # CMake build
 ```
 
 The input file is JSON with `#` and `!` comments. Its keys are the reference in

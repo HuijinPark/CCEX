@@ -12,7 +12,7 @@ NCONF=${NCONF:-1}; NSTATE=${NSTATE:-50}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein.js -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE4_DiaP1_1ppm_Order_4_$i > results/process_CCE4_DiaP1_1ppm_Order_4_$i
+  mpirun -n $NP $CCEX -f ccein.json -I ../bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE4_DiaP1_1ppm_Order_4_$i > results/process_CCE4_DiaP1_1ppm_Order_4_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

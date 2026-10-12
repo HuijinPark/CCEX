@@ -15,7 +15,10 @@ Manual) and gCCE2 `evolution` = `matrix` (ensemble Hahn, one-state CPMG-8), and 
 `_noDiv`; without the key (A29) single-state and ensemble cCCE2 and gCCE2 vector and matrix give the bytes of an explicit
 `recursive`, and `backend` = `auto` and gCCE `propagator` = `expm` those of an explicit `exact`, not a refusal), `gpu_options` (no
 block, an empty one, every default written out and every key changed give the same bytes on a CPU run of single-state
-cCCE2 and gCCE2, and the log shows the values read; A26, 2026-10-12). The refused key combinations are `../check_refusals/`, the
+cCCE2 and gCCE2, and the log shows the values read; A26, 2026-10-12), `autoconv` (`auto_convergence.enabled`: `false` gives
+the bytes of the input without the block, an enabled block makes `main.out -f` start the runner, once under `mpirun -n 2`,
+a value that is not a boolean and another option beside it are refused, `--auto_status` reads the workdir, and a tool
+file or folder writable by others is refused). The refused key combinations are `../check_refusals/`, the
 rotation `../check_rotation/`; the comparison against v1.1.0 and
 v1.2.2 is `../check_numerics/`. Nothing here needs an old binary.
 
@@ -36,13 +39,14 @@ assembled from comparisons that can each actually be made.
 
 | axis | compares | script | verdict |
 |---|---|---|---|
-| 1 | ~~the same **legacy** input, v1.1.0 binary vs this one~~ — retired 2026-09-24: since the fixes of 2026-09-19 (deltat as a double, the even-pulse conjugate) the numbers are not byte-identical to v1.1.0 on purpose; `../regression/` compares against v1.1.0 and v1.2.2 with a tolerance and names those differences | (`axis1.sh` in git history up to 0ef682b54) | — |
+| 1 | ~~the same **legacy** input, v1.1.0 binary vs this one~~ — retired 2026-09-24: since the fixes of 2026-09-19 (deltat as a double, the even-pulse conjugate) the numbers are not byte-identical to v1.1.0 on purpose; `../check_numerics/` compares against v1.1.0 and v1.2.2 with a tolerance and names those differences | (`axis1.sh` in git history up to 0ef682b54) | — |
 | 2 | **legacy form vs new form** of the same physics, one binary | `axis2.sh` | byte-identical, or a reported deviation where a unit conversion sits between them |
-| 3 | a **hand-transformed** input with the rotation off vs the original with it on | `../rotation/run.sh` `[A/B]` | numeric agreement |
+| 3 | a **hand-transformed** input with the rotation off vs the original with it on | `../check_rotation/run.sh` `[A/B]` | numeric agreement |
 
-Axes 1 and 2 compose: if legacy(v1.1.0) == legacy(dev) and legacy(dev) ==
-new-form(dev), then new-form(dev) == legacy(v1.1.0), which is the claim. Axis 1
-is therefore the load-bearing one, and `run.sh` stops if it fails.
+Axes 1 and 2 composed: if legacy(v1.1.0) == legacy(dev) and legacy(dev) ==
+new-form(dev), then new-form(dev) == legacy(v1.1.0). With axis 1 retired, the
+legacy side is held to v1.1.0 and v1.2.2 by `../check_numerics/` instead, within
+its tolerance and named differences.
 
 ## The systems
 
@@ -103,7 +107,7 @@ decimals.
 
 ## Refusals
 
-`reject.sh` re-checks the refused combinations on the physical fixtures rather
+`../check_refusals/run.sh` re-checks the refused combinations on the physical fixtures rather
 than the toy ones, and requires two things of each: the run stops with the
 expected message, and neither DFT tensor reader announced itself first. The
 second half is what would regress quietly if a guard ever drifted later into the

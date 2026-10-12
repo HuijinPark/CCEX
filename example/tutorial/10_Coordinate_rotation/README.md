@@ -10,7 +10,7 @@ moves and what does not, including the DFT tensor files and the `coordinate_fram
 
 | Calculation | Inputs | What it shows | Recorded run |
 |---|---|---|---|
-| `HahnEcho_CCE2/` | ccein_aligned.js, ccein_cubic_rotated.js, ccein_cubic_norotation.js | CCE2 Hahn echo of the NV of 02: the bath as generated (NV axis along z), the same bath written in the cubic crystal frame with the rotation on (`qubit_axis` [1,1,1]), and that cubic-frame bath with the rotation off; the differences from the first curve and a plot | added 2026-09-23; WSL, 2 ranks |
+| `HahnEcho_CCE2/` | ccein_aligned.json, ccein_cubic_rotated.json, ccein_cubic_norotation.json | CCE2 Hahn echo of the NV of 02: the bath as generated (NV axis along z), the same bath written in the cubic crystal frame with the rotation on (`qubit_axis` [1,1,1]), and that cubic-frame bath with the rotation off; the differences from the first curve and a plot | added 2026-09-23; WSL, 2 ranks |
 
 `bath/` holds a copy of 02's natural-abundance bath, its NV defect file and the ¹³C
 gyromagnetic ratio, and `bath_Diamond_NV_natab_cubic_1`: that bath rotated so that the

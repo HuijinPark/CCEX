@@ -10,7 +10,7 @@ One second.
 
 ## The input
 
-`example/tutorial/01_Arbitrary_system/ccein.js`; the whole folder is one calculation. `run.sh` in the same folder runs it as
+`example/tutorial/01_Arbitrary_system/ccein.json`; the whole folder is one calculation. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

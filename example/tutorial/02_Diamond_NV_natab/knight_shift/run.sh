@@ -1,5 +1,5 @@
 #!/bin/sh
-# 02_Diamond_NV_natab/knight_shift: CCE2 with the Knight shift on (ccein_wi_knight.js) and off (ccein_wo_knight.js) in a tilted field, plotted together
+# 02_Diamond_NV_natab/knight_shift: CCE2 with the Knight shift on (ccein_wi_knight.json) and off (ccein_wo_knight.json) in a tilted field, plotted together
 #
 # Recorded run: 1 bath configuration(s), 20 MPI ranks on idm.
 # Here NCONF configurations on NP ranks. Set them to repeat the recorded run.
@@ -12,10 +12,10 @@ NCONF=${NCONF:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_wi_knight.js -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_wi_knight_$i > results/process_CCE2_Diamond_NV_natab_wi_knight_$i
+  mpirun -n $NP $CCEX -f ccein_wi_knight.json -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_wi_knight_$i > results/process_CCE2_Diamond_NV_natab_wi_knight_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_wo_knight.js -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_wo_knight_$i > results/process_CCE2_Diamond_NV_natab_wo_knight_$i
+  mpirun -n $NP $CCEX -f ccein_wo_knight.json -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_wo_knight_$i > results/process_CCE2_Diamond_NV_natab_wo_knight_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

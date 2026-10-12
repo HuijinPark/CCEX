@@ -24,7 +24,7 @@ run each was recorded with.
 
 ## Inside a calculation folder
 
-- `ccein*.js` — the inputs: JSON with `#` comments. Bath, gyro and tensor files are
+- `ccein*.json` — the inputs: JSON with `#` comments. Bath, gyro and tensor files are
   named relative to this folder (`../bath/`, or another tutorial's `bath/`).
 - `run.sh` — runs every input with `mpirun`, then the post-processing the recorded
   run did (error correction, ensemble average, plot; `example/analysis/README.md`),

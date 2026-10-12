@@ -10,9 +10,9 @@ ANALYZER=$ROOT/example/analysis/Analyzer/CoherenceAnalyzer.v1/run.py
 NP=${NP:-4}
 mkdir -p results
 
-mpirun -n $NP $CCEX -f ccein_aligned.js -o results/CCE2_aligned_1 > results/process_CCE2_aligned_1
-mpirun -n $NP $CCEX -f ccein_cubic_rotated.js -o results/CCE2_cubic_rotated_1 > results/process_CCE2_cubic_rotated_1
-mpirun -n $NP $CCEX -f ccein_cubic_norotation.js -o results/CCE2_cubic_norotation_1 > results/process_CCE2_cubic_norotation_1
+mpirun -n $NP $CCEX -f ccein_aligned.json -o results/CCE2_aligned_1 > results/process_CCE2_aligned_1
+mpirun -n $NP $CCEX -f ccein_cubic_rotated.json -o results/CCE2_cubic_rotated_1 > results/process_CCE2_cubic_rotated_1
+mpirun -n $NP $CCEX -f ccein_cubic_norotation.json -o results/CCE2_cubic_norotation_1 > results/process_CCE2_cubic_norotation_1
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)
 # largest difference from the aligned curve: ~1e-12 with the rotation on, of order 0.1 with it off

@@ -33,7 +33,7 @@ WorkingMainDir="${PwdDir}/${SourceFileName}"
 WorkingSubDir="${PwdDir}/${SourceFileName}/${VariableName}"
 
 FileSrcVars="${MkjobFileDir}/srcvars"         # variable source 
-FileSrcFin="${MkjobFileDir}/srcfin${vsrcfin}" # ccein.js source
+FileSrcFin="${MkjobFileDir}/srcfin${vsrcfin}" # ccein.json source
 FileSrcJob="${MkjobFileDir}/srcjob${vsrcjob}" # job source
 FileSrcDo="${MkjobFileDir}/srcdo${vsrcdo}"    # do source
 
@@ -70,7 +70,7 @@ export varOpt
 
 echo "   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo "   "
-echo "   Make Files \"ccein.js\""
+echo "   Make Files \"ccein.json\""
 echo "   Make Files \"job\"   "
 echo "   "
 echo "   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -91,12 +91,12 @@ do
     fi
     export WorkingSubVarDir
 
-    fccein="${WorkingSubVarDir}/ccein.js"
+    fccein="${WorkingSubVarDir}/ccein.json"
     fjob="${WorkingSubVarDir}/job"
     export fccein
     export fjob
 
-    # Make "ccein.js" 
+    # Make "ccein.json" 
     ${FileSrcFin} 
 
     # Make "small job" 

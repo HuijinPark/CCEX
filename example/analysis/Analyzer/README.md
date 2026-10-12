@@ -35,8 +35,8 @@ tolerance (default 2.0):
 4. If the last point diverges it is first pulled to noDiv + tolerance − 1e-6, so
    that step 3 always finds a next good point.
 
-This is the group's convention, not a physical law. The regression references
-under `test/code_verification/check_numerics/` were made with it, so it must not
+This is the group's convention, not a physical law. The tutorial results were
+made with it (`test/code_verification/check_numerics/` compares raw outputs), so it must not
 change; the one implementation is `coherence.error_correct`.
 
 ## Using it from Python
@@ -56,7 +56,7 @@ t, L_avg, n = ensemble_average(read_coherence(p) for p in files.values())
 
 ## Using the command line
 
-The regression jobs are the reference for how the CLI is called:
+The tutorials' `run.sh` are the reference for how the CLI is called:
 
 ```
 run.py -d DIR -fi PATTERN_wiDiv -err_d DIR -err_fi PATTERN_noDiv -vn CONF -v 1 2 3 \

@@ -13,7 +13,7 @@ put there (4.7e-4 here).
 
 ## The input
 
-`example/tutorial/03_Diamond_multiNV_natab/NV2_13C2/ccein_NV6_13C2_hahnecho.js`; the Ramsey input has `npulse` 0. `run.sh` in the same folder runs it as
+`example/tutorial/03_Diamond_multiNV_natab/NV2_13C2/ccein_NV6_13C2_hahnecho.json`; the Ramsey input has `npulse` 0. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

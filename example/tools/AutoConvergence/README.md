@@ -201,7 +201,9 @@ the SE is an estimate from the configurations computed (with 10 configurations t
 estimate); the CCE order and whether the time step is fine enough are not checked; a curve that stays at a level and
 oscillates (a physical plateau) is not handled. The start estimates (300 spins, the clock constant 51.4 from the NV-¹³C
 example and P1 100 ppm 500 G) are starts only: the steps converge from them. Tested end to end on the NV-¹³C example with
-the candidates given; the automatic starts on real baths and dense baths (P1, h-BN) not yet.
+the candidates given, and since 2026-10-10 from the automatic starts on dense baths: P1 cCCE2 and gCCE2 (ensemble and
+single) and an h-BN gCCE2 ensemble at 3 T converged; P1 pCCE2 stops with an rbath it cannot judge (the T2 fit fails on
+unstable curves), and h-BN at 500 G (collapse and revival, not one stretched exponential) and noisy curves stop at the time window.
 
 ## Other commands (analysis of existing runs)
 

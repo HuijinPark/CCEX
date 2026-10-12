@@ -2,7 +2,7 @@
 
     sh test/cluster_verification/check_adaptive/verify.sh unit        # build the driver (cpp/bin/ccex-adaptive) and its unit tests, run them
     sh test/cluster_verification/check_adaptive/verify.sh regress     # the merge policy against 33 recorded runs and their golden answers
-    sh test/cluster_verification/check_adaptive/verify.sh inprocess   # the driver inside bin/main.out, and from an "Adaptive" block, against the separate one (11 cases)
+    sh test/cluster_verification/check_adaptive/verify.sh inprocess   # the driver inside bin/main.out, and from an "Adaptive" block, against the separate one (11 cases), then probe_rotation.py
     sh test/cluster_verification/check_adaptive/verify.sh sanitize    # unit and regress again, built with ASan and UBSan
     sh test/cluster_verification/check_adaptive/verify.sh fuzz [SEED [COUNT]]   # random JSON through the reader and the writer
 
@@ -17,7 +17,7 @@ exit after a timeout alike, which covers fault-probe-timeout.)
 | `cpp/` | the unit tests and the Makefile that builds them and the driver from `src/clustering/algo_adaptive/`; `regroup_replay` (built, not run by `unit`) is the stored-probe replay of method D below |
 | `regression/` | `cases.json` (14 requests: merge, cache and fault cases; the nine auto-order runs went with the policy on 2026-09-25, and 35 runs of error-gated, budgeted, auto-partition and cost-preserving, among them the three timeout fault cases, on 2026-10-10; fault-probe-timeout, a merge run whose first probe hangs, was added on 2026-10-11; the ten regroup cases below on 2026-10-11 too, and the nine of the factors and except paths later that day), `inputs/`, `golden/` (the answers, compared field by field except the measured times) |
 | `reference/` | the JSON round-trip cases and the number-text boundaries the reader and writer are held to |
-| `regress.py`, `inprocess_compare.py`, `json_expect.py`, `json_roundtrip.py`, `compare_summaries.py`, `config_verdicts.py`, `test_adaptive_tools.py` | the comparisons |
+| `regress.py`, `inprocess_compare.py`, `json_expect.py`, `json_roundtrip.py`, `compare_summaries.py`, `config_verdicts.py`, `test_adaptive_tools.py`, `probe_rotation.py` | the comparisons (`probe_rotation.py`: the probe step across ranks and states, with its memory budget, run by `inprocess`) |
 | `fuzz_json.py`, `fault_mpiexec.py`, `hang.py` | the fuzzer and the fault injector (a fake `mpiexec` that fails, hangs, ignores SIGTERM or drops a response file on a chosen step) |
 
 `cpp/bin*/` and `cpp/out/` are what a run writes; both are ignored.

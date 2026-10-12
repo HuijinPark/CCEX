@@ -16,7 +16,7 @@ states (`NSTATE=10`, 3 minutes).
 
 ## The input
 
-`example/tutorial/06_Pulse_Manual/WAHUHA_natab_single_gcce/ccein.js`; the `sequence` block is the point; the CPMG input has nine entries. `run.sh` in the same folder runs it as
+`example/tutorial/06_Pulse_Manual/WAHUHA_natab_single_gcce/ccein.json`; the `sequence` block is the point; the CPMG input has nine entries. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

@@ -14,7 +14,7 @@ and off in a tilted field). 5 to 60 s each.
 
 ## The input
 
-`example/tutorial/02_Diamond_NV_natab/ensemble_CCE/ccein.js`; the other four calculations change `method`, `nstate`, the `Qubit` block or `knight` on this. `run.sh` in the same folder runs it as
+`example/tutorial/02_Diamond_NV_natab/ensemble_CCE/ccein.json`; the other four calculations change `method`, `nstate`, the `Qubit` block or `knight` on this. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

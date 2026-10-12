@@ -59,7 +59,7 @@ CodePath="${CodePath}"
 
 # inputfiles
 mkdir ${OutFileDir}
-option_input="./ccein.js"
+option_input="./ccein.json"
 BathFile="${BathFile}"
 AvaaxFile="${AvaaxFile}"
 StateFile="${StateFile}"
@@ -166,7 +166,7 @@ do
 
 cd \${var}${unit}
 
-option_input="./ccein.js"
+option_input="./ccein.json"
 # outfiles
 mkdir rawdata
 outFile="${OutFileDir}${OutFileHead}${VariableName}_\${var}${unit}_"
@@ -242,7 +242,7 @@ do
 
 cd \${var}${unit}
 
-option_input="./ccein.js"
+option_input="./ccein.json"
 # outfiles
 mkdir rawdata
 outFile="${OutFileDir}${OutFileHead}${VariableName}_\${var}${unit}_"

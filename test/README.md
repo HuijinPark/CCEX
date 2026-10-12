@@ -19,22 +19,22 @@ the regression references under `code_verification/check_numerics/reference/` ar
 
 ## code_verification/ — does the code still do what it did, and what it says
 
-`bash test/code_verification/run.sh` runs the five in order.
+`bash test/code_verification/run.sh` runs the seven in order.
 
 | Folder | Answers | Run |
 |---|---|---|
 | `check_analytic/` | CCEX gives the closed-form coherence of one 13C beside the NV (free induction and Hahn echo, order 1, ensemble), within the 10 decimals it writes; the only suite here that does not compare CCEX with CCEX, and machine-independent, so the CI runs it. A self-test requires a 1 % wrong gyro to fail; two `hfmedi` runs at zero field check degenerate qubit levels (finite where uncoupled, refused where coupled) | `bash check_analytic/run.sh` |
 | `check_numerics/` | this build gives the numbers earlier builds gave: 25 calculations cut from the tutorials (CCE, gCCE, pCCE, dsj; ensemble and single approaches; Hahn, Ramsey, CPMG, manual sequences; ¹³C, P1, Vp, h-BN baths; coherence and density matrices), compared against outputs recorded on the same machine from this branch (`reference/head-*`, exact) and from the tagged releases v1.1.0 and v1.2.2 (1e-4, the known differences named in `expected.json`). `make_reference.sh` records a reference, `make_cases.py` wrote the cases | `bash check_numerics/run.sh` |
 | `check_rotation/` | the coordinate-frame rotation does what it says: the matrix and its fixed point (a unit test), then real runs against a hand-rotated input, the same transform for every bath file, the DFT tensor files moving with the positions; 149 checks | `bash check_rotation/run.sh` |
-| `check_refusals/` | 16 input combinations that must be refused before anything is read (a tensor file without its frame, a tilted field with the rotation on, `reference_qubit` missing, `zfs` in D/E form without an axis, both rotation keys at once, ...) on the real inputs | `bash check_refusals/run.sh` |
+| `check_refusals/` | 93 input combinations that must be refused, most before anything is read (a tensor file without its frame, a tilted field with the rotation on, `reference_qubit` missing, `zfs` in D/E form without an axis, both rotation keys at once, ...), and three that must run, on the real inputs | `bash check_refusals/run.sh` |
 | `check_mean_field/` | `vector_mean_field` (D45) against the default z mean field where the answer is known: one P1 with its <sup>14</sup>N sub-spin and no other bath spin inside rbath has no mean field, so both modes must give the same curve byte for byte (it failed before review 158861 R1) | `bash check_mean_field/run.sh` |
 | `check_rdip_ladder/` | `rdip_ladder` (auto-truncation-plan.md, improvements.md A23): one order-2 run writes the curve of every smaller rdip; each rung must equal a separate run at that rdip and the main output the run without the ladder (≤ 1e-9; cCCE P1 1 ppm with 2 states and <sup>13</sup>C ensemble; gCCE ensemble, vector and matrix on <sup>13</sup>C, h-BN and P1 10 ppm; pCCE2 centers and spins on <sup>13</sup>C, h-BN and P1 1 ppm), and inputs it does not cover (order 3 of cCCE and pCCE, a rung at or above rdip, unsorted rungs, savemode all, gCCE dm) are refused; about 7 min | `bash check_rdip_ladder/run.sh` |
-| `check_input_forms/` | the new input forms this branch added say the same physics as the legacy forms (19 pairs under one binary, byte-identical or a reported deviation where a unit conversion sits between them), and the analyzer reads the outputs. Its `inputs/` are the four legacy inputs the old regression suite used; `legacy.sh` writes every system's legacy form first | `bash check_input_forms/run.sh` |
-| `bath_data/` | not a check: the frozen baths, DFT tensors and state files the three above and `clustering/pcce/check_baths.py` read (its README says who reads what) | — |
+| `check_input_forms/` | the new input forms this branch added say the same physics as the legacy forms (32 comparisons under one binary: 22 byte-identical, 8 numeric where a unit conversion sits between them, 2 that must differ; then the stages `gyro`, `comments`, `nodiv`, `evolution_update`, `gpu_options` and `autoconv`), and the analyzer reads the outputs. Its `inputs/` are the four legacy inputs the old regression suite used; `legacy.sh` writes every system's legacy form first | `bash check_input_forms/run.sh` |
+| `bath_data/` | not a check: the frozen baths, DFT tensors and state files the checks above and `cluster_verification/check_pcce/check_baths.py` read (its README says who reads what) | — |
 
 ## gpu_verification/ — the CUDA backend
 
-`check_gpu/` holds the checks: twelve `test_*.cpp` unit tests (`make numeric-test`
+`check_gpu/` holds the checks: 14 `test_*.cpp` unit tests (`make numeric-test`
 runs two on a CPU, `make cpu-test` four more on a CPU and on 1 and 4 ranks, `make gpu-test`
 the numeric two and the CUDA ones inside a GPU job, among them `test_small_cluster_cuda`, the packed kernel against
 CPU-dumped clusters (A26); CMake has the same targets; `check_gpu/README.md`
@@ -42,8 +42,8 @@ lists them), and nine `check_*.py` that run CPU and CUDA builds on the same
 inputs and compare (pulses, gCCE4 accuracy and batching, pCCE, seeds and sampled
 states, options, host leaks). Most need a CUDA build; two run on the CPU build.
 `gpu_benchmarks/` times CPU against CUDA, `server/` holds the three standing Slurm
-jobs for idm4-gpu; their last runs and the commits they ran on are in `server/README.md` (it is the record; a
-run on an older commit does not check a later change). The dated `.json`/`.csv` under `check_gpu/` are the recorded
+jobs for idm4-gpu and two measurement jobs (`min_dim`, `gpu_sharing`); their last runs and the commits they ran on are in `server/README.md` (it is the record; a
+run on an older commit does not check a later change). The dated `validation-*.json` under `check_gpu/` are the recorded
 results (internal notes) cites.
 
 ## cluster_verification/ — the clustering methods
@@ -52,9 +52,9 @@ results (internal notes) cites.
 
 | Folder | Method | What is here | Run |
 |---|---|---|---|
-| `check_adaptive/` | **adaptive refinement** (적응형): the partition is rebuilt from measured error by the merge policy in `src/clustering/algo_adaptive/` (the only one since 2026-10-10). The driver is `ccex-adaptive`; the input block is `"Adaptive"` (called `"Refine"` until 2026-09-23) | `cpp/` unit tests, `regression/` 14 recorded runs with their golden answers, `reference/` JSON and number-text cases, fuzz and fault-injection scripts | `sh check_adaptive/verify.sh unit\|regress\|inprocess\|sanitize\|fuzz` |
+| `check_adaptive/` | **adaptive refinement** (적응형): the partition is rebuilt from measured error by the merge policy in `src/clustering/algo_adaptive/` (the only one since 2026-10-10). The driver is `ccex-adaptive`; the input block is `"Adaptive"` (called `"Refine"` until 2026-09-23) | `cpp/` unit tests, `regression/` 33 recorded runs with their golden answers, `reference/` JSON and number-text cases, fuzz and fault-injection scripts | `sh check_adaptive/verify.sh unit\|regress\|inprocess\|sanitize\|fuzz` |
 | `check_bundle/` | **bundle clustering** (가변형): sites tied into bundles once, by coupling strength (`cluster_mode=adaptive`, `src/clustering/bundle/`) | the records of the 2026-09-12..16 experiments and five historical `check_*.py` that no longer run with the current build (its README); what a change here has to pass is the three bundle unit tests of `check_pcce/` and the recorded runs of `check_adaptive/` | `make cpu-test` (CMake: `--target cpu-test`) runs the three unit tests since 2026-10-02 (D31), then `sh check_adaptive/verify.sh regress\|inprocess` |
-| `check_pcce/` | **pCCE**: partition cache, cycle skipping and search, reproducibility across ranks, the PL6 product-convergence diagnostics | nine `check_*.py`, eight `test_*.cpp` built by hand, three benchmarks, and (still) the sweep tools and records of the PL6 work | `python3 check_pcce/check_reproducibility.py --cpu bin/main.out --output DIR` and the others |
+| `check_pcce/` | **pCCE**: partition cache, cycle skipping and search, reproducibility across ranks, the PL6 product-convergence diagnostics | eight `check_*.py`, seven `test_*.cpp` (four built by `make cpu-test`, three by the `check_*.py` through `unit_build.py`), three benchmarks, and (still) the sweep tools and records of the PL6 work | `python3 check_pcce/check_reproducibility.py --cpu bin/main.out --output DIR` and the others |
 
 `check_adaptive/verify.sh` is what a change to `src/clustering/algo_adaptive/` has to pass;
 `code_verification/run.sh` is what any change to the core has to pass.

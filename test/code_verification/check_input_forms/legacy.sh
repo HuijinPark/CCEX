@@ -140,7 +140,7 @@ PY
 import json, re, sys
 work, ex = sys.argv[1:3]
 E=f"{ex}/tutorial/03_Diamond_multiNV_natab/NV2_13C2"
-s=open(f"{E}/ccein_NV6_13C2_hahnecho.js").read()
+s=open(f"{E}/ccein_NV6_13C2_hahnecho.json").read()
 s=re.sub(r'#[^\n]*','',s); s=re.sub(r'!\S*','',s)
 d=json.loads(s)
 # bathfile as a LIST. Given as a bare string it is read as zero bath files and the

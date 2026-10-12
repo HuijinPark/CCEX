@@ -12,10 +12,10 @@ NCONF=${NCONF:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_wi_OH.js -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_wi_OH_$i > results/process_CCE2_hBN_VB_wi_OH_$i
+  mpirun -n $NP $CCEX -f ccein_wi_OH.json -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_wi_OH_$i > results/process_CCE2_hBN_VB_wi_OH_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_wo_OH.js -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_wo_OH_$i > results/process_CCE2_hBN_VB_wo_OH_$i
+  mpirun -n $NP $CCEX -f ccein_wo_OH.json -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_wo_OH_$i > results/process_CCE2_hBN_VB_wo_OH_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

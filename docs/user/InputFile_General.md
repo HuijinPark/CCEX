@@ -52,9 +52,9 @@ You can specify this value via the "-m" command-line option. <br>
 | `CCE`   | Conventional CCE method             |
 | `gCCE`  | Generalized CCE method              |
 | `pCCE`  | Partition CCE method                |
-| `Dsj`   | Disjoint method                     |
-| `Itb`   | Inter bath method                   |
-| `Dsjitb`| Disjoint + Inter bath method        |
+| `dsj`   | Disjoint method                     |
+| `itb`   | Inter bath method                   |
+| `dsjitb`| Disjoint + Inter bath method        |
 
 <b>Default:</b> `CCE`
 

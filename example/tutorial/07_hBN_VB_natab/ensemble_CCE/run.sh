@@ -12,13 +12,13 @@ NCONF=${NCONF:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_hf0_qd2.js -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_hf0_qd2_$i > results/process_CCE2_hBN_VB_hf0_qd2_$i
+  mpirun -n $NP $CCEX -f ccein_hf0_qd2.json -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_hf0_qd2_$i > results/process_CCE2_hBN_VB_hf0_qd2_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_hf3_qd0.js -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_hf3_qd0_$i > results/process_CCE2_hBN_VB_hf3_qd0_$i
+  mpirun -n $NP $CCEX -f ccein_hf3_qd0.json -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_hf3_qd0_$i > results/process_CCE2_hBN_VB_hf3_qd0_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_hf3_qd2.js -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_hf3_qd2_$i > results/process_CCE2_hBN_VB_hf3_qd2_$i
+  mpirun -n $NP $CCEX -f ccein_hf3_qd2.json -I ../bath/flat/bath_hBN_VB_flat_${i} -o results/CCE2_hBN_VB_hf3_qd2_$i > results/process_CCE2_hBN_VB_hf3_qd2_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

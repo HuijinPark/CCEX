@@ -23,7 +23,7 @@ one-state run (100 s); the recorded run averaged more.
 
 ## The input
 
-`example/tutorial/04_Diamond_NV_P1Bath/SpinEcho_CCE2_1ppm/ccein.js`; the other calculations change `order`, `method`, the `zfs` and the sampled states. `run.sh` in the same folder runs it as
+`example/tutorial/04_Diamond_NV_P1Bath/SpinEcho_CCE2_1ppm/ccein.json`; the other calculations change `order`, `method`, the `zfs` and the sampled states. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

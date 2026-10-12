@@ -1,5 +1,5 @@
 #!/bin/sh
-# 02_Diamond_NV_natab/ensemble_Dsj: the same with `method=dsj` (ccein.js) beside plain CCE2 (ccein_cce.js)
+# 02_Diamond_NV_natab/ensemble_Dsj: the same with `method=dsj` (ccein.json) beside plain CCE2 (ccein_cce.json)
 #
 # Recorded run: 1 bath configuration(s), 5 MPI ranks on idm.
 # Here NCONF configurations on NP ranks. Set them to repeat the recorded run.
@@ -12,10 +12,10 @@ NCONF=${NCONF:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein.js -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_$i -v > results/process_CCE2_Diamond_NV_natab_$i
+  mpirun -n $NP $CCEX -f ccein.json -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_$i -v > results/process_CCE2_Diamond_NV_natab_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_cce.js -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_cce_$i -v > results/process_CCE2_Diamond_NV_natab_cce_$i
+  mpirun -n $NP $CCEX -f ccein_cce.json -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_cce_$i -v > results/process_CCE2_Diamond_NV_natab_cce_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

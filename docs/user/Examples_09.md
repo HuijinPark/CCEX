@@ -13,7 +13,7 @@ the two CPU runs.
 
 ## The input
 
-`example/tutorial/09_GPU_backend/CCE5_P1/ccein_auto.js`; the cpu and cuda inputs differ in `backend` only. `run.sh` in the same folder runs it as
+`example/tutorial/09_GPU_backend/CCE5_P1/ccein_auto.json`; the cpu and cuda inputs differ in `backend` only. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

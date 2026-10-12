@@ -6,9 +6,9 @@ you run on the output, `tools/` is what makes the input.
 ## tutorial/ — worked examples
 
 Ten numbered folders, one physical system (or one feature) each; `tutorial/README.md`
-has the table. Inside, a calculation is a folder with `ccein*.js` (the input: JSON
+has the table. Inside, a calculation is a folder with `ccein*.json` (the input: JSON
 with `#` comments), `run.sh` (runs every input with `mpirun` and then the analyzer;
-`NP`, `NCONF`, `NSTATE` set the size) and the idm `job` it was recorded with; the
+`NP`, `NCONF`, `NSTATE` set the size) and, where it was recorded on idm, the `job` it was recorded with; the
 bath files are in the system's `bath/`. A rerun writes `results/`, which git
 ignores; the recorded results are in the archive.
 
@@ -16,7 +16,7 @@ ignores; the recorded results are in the archive.
 
 | Folder | Does |
 |---|---|
-| `Analyzer/` | `CoherenceAnalyzer.v1/run.py` reads the `_noDiv` and `_wiDiv` coherences CCEX writes, corrects the division errors (`_ErrCorr`), averages over configurations (`EnsAvg`), fits and plots. The `do_*.sh` beside it are one-line wrappers; `data/` is the example set its `README.md` describes. `test/code_verification/check_numerics` and `test/code_verification/check_input_forms` call `run.py` |
+| `Analyzer/` | `CoherenceAnalyzer.v1/run.py` reads the `_noDiv` and `_wiDiv` coherences CCEX writes, corrects the division errors (`_ErrCorr`), averages over configurations (`EnsAvg`), fits and plots. The `do_*.sh` beside it are one-line wrappers; `data/` is the example set its `README.md` describes. `test/code_verification/check_input_forms` (`errcorr.sh`) and the tutorials' `run.sh` call `run.py` |
 | `ConvTest/` | `do_convTest.py` and `sort.py`: convergence over order and bath size; the tutorials' `do_convtest` scripts that called it were dropped on 2026-09-23 (git history has them) |
 
 ## tools/ — what makes the input

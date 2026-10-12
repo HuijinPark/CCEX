@@ -11,4 +11,4 @@ NP=${NP:-4}
 NCONF=${NCONF:-1}
 mkdir -p results
 
-mpirun -n $NP $CCEX -f ccein.js -I bath -o results/CCE2_Diamond_NV_natab_1 > results/process_CCE2_Diamond_NV_natab_1
+mpirun -n $NP $CCEX -f ccein.json -I bath -o results/CCE2_Diamond_NV_natab_1 > results/process_CCE2_Diamond_NV_natab_1

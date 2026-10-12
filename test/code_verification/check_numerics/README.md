@@ -1,4 +1,4 @@
-# regression/ — does this build still give the numbers an earlier one gave
+# check_numerics/ — does this build still give the numbers an earlier one gave
 
 Twenty-five calculations, cut from the tutorials so that each runs in seconds
 (`cases/<name>/ccein.json`, the bath, gyro, tensor, state and axis files they
@@ -71,10 +71,11 @@ The density-matrix files of the arbitrary case are indexed `out_0_1` now and
 did not write, fails whatever `expected.json` says.
 
 When a change is meant to move a number, make the new head reference after it
-(`bash make_reference.sh current`, delete the old `head-*`) and say why in the
-commit. `run.sh` writes to `_work/`, which is ignored.
+(`bash make_reference.sh current`) and say why in the commit. `run.sh` prints a table for every
+folder under `reference/`, but only the newest `head-*` by name decides the exit status; the earlier
+`head-*` folders are kept. `run.sh` writes to `_work/`, which is ignored.
 
-**2026-10-02: eight cases re-recorded in all three folders** (`p1_cce2_ensemble`, `p1_cce2_single`,
+**2026-10-02: eight cases re-recorded in the three folders of that date** (`p1_cce2_ensemble`, `p1_cce2_single`,
 `p1_cce2e2n`, `p1_cce4`, `p1_cpmg8_manual`, `p1_manual_hahn`, `p1_pcce2_sk2`, `vp_cce2`). Their inputs
 wrote `"alphams": -1` at the top of the qubitfile form, which reads `qalphams`: every version ran
 them with the NV branch +1. The inputs now say `"qalphams": -1` and the references were run again

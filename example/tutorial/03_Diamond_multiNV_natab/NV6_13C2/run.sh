@@ -11,5 +11,5 @@ NP=${NP:-4}
 NCONF=${NCONF:-1}
 mkdir -p results
 
-mpirun -n $NP $CCEX -f ccein_NV6_13C2_hahnecho.js -I bath -o results/CCE2_Diamond_NV_natab_NV6_13C2_hahnecho_1 > results/process_CCE2_Diamond_NV_natab_NV6_13C2_hahnecho_1
-mpirun -n $NP $CCEX -f ccein_NV6_13C2_ramsey.js -I bath -o results/CCE2_Diamond_NV_natab_NV6_13C2_ramsey_1 > results/process_CCE2_Diamond_NV_natab_NV6_13C2_ramsey_1
+mpirun -n $NP $CCEX -f ccein_NV6_13C2_hahnecho.json -I bath -o results/CCE2_Diamond_NV_natab_NV6_13C2_hahnecho_1 > results/process_CCE2_Diamond_NV_natab_NV6_13C2_hahnecho_1
+mpirun -n $NP $CCEX -f ccein_NV6_13C2_ramsey.json -I bath -o results/CCE2_Diamond_NV_natab_NV6_13C2_ramsey_1 > results/process_CCE2_Diamond_NV_natab_NV6_13C2_ramsey_1

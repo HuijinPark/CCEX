@@ -15,7 +15,7 @@ the `OH` term. 3 to 11 s each.
 
 ## The input
 
-`example/tutorial/07_hBN_VB_natab/ensemble_CCE/ccein_hf3_qd2.js`; the other two inputs set `hf_readmode` and `qd_readmode` to 0. `run.sh` in the same folder runs it as
+`example/tutorial/07_hBN_VB_natab/ensemble_CCE/ccein_hf3_qd2.json`; the other two inputs set `hf_readmode` and `qd_readmode` to 0. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```

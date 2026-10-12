@@ -9,8 +9,8 @@ ANALYZER=$ROOT/example/analysis/Analyzer/CoherenceAnalyzer.v1/run.py
 NP=${NP:-4}
 mkdir -p results
 
-mpirun -n $NP $CCEX -f ccein_standard.js -o results/CCE2_standard_1 > results/process_CCE2_standard_1
-mpirun -n $NP $CCEX -f ccein_bundle.js -o results/CCE2_bundle_1 > results/process_CCE2_bundle_1
+mpirun -n $NP $CCEX -f ccein_standard.json -o results/CCE2_standard_1 > results/process_CCE2_standard_1
+mpirun -n $NP $CCEX -f ccein_bundle.json -o results/CCE2_bundle_1 > results/process_CCE2_bundle_1
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)
 # how the bath was bundled, and how far the two curves are apart

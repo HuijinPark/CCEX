@@ -2,8 +2,8 @@
 
     bash test/code_verification/check_refusals/run.sh     # needs bin/main.out
 
-Sixteen input combinations that make no physical sense together, each run once
-to see that CCEX stops with the expected message before it reads any tensor
+93 inputs that must be refused, and three that must run, each run once to see
+that CCEX stops with the expected message, most of them before it reads any tensor
 file. They are edits of the legacy inputs `../check_input_forms/legacy.sh`
 writes (so it is run first), on the real systems: the h-BN bath with DFT
 tensor files (S4), two NV centres with explicit `intmap` tensors (S5), the P1
@@ -21,6 +21,14 @@ defect bath (S3).
 | a Jahn-Teller axis index out of `1..navaax` | it indexes the per-axis tensors |
 | an unknown `unit` | the conversion would be silent |
 | `coordinate_frame_rotation` and `bath_coordinate_rotation` both present | the same option under two names |
+
+Without a row of their own (`run.sh` has a comment on each): `-N`/`-B` that are not numbers, and the command line
+winning over the file in either order; a missing qubitfile; `nstep` 0; a Manual sequence that does not sum to 1 or
+is malformed (a number fraction and an angle of 90.5 must run); a number outside the float it is stored in;
+`alphaidx`/`betaidx` naming other states than the written `alphams`/`betams` (D43; one that agrees must run);
+`intmap` tensors shorter than 3x3 or not numbers (D28); a qubit array shorter than `nqubit`; malformed entries of
+the indexed form (D28); arrays shorter than the input needs (D42); an `avaax` file axis past `navaax`; a key of the
+wrong type (D18); a misspelt key (D24).
 
 Since 2026-10-01 it also checks failures that used to end with exit status 0 (or, for the second file in info mode, crash):
 

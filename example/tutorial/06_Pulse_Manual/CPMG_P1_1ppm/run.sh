@@ -12,13 +12,13 @@ NCONF=${NCONF:-1}; NSTATE=${NSTATE:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_origin.js -I ../../04_Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_Order_2_origin_$i > results/process_CCE2_DiaP1_1ppm_Order_2_origin_$i
+  mpirun -n $NP $CCEX -f ccein_origin.json -I ../../04_Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_Order_2_origin_$i > results/process_CCE2_DiaP1_1ppm_Order_2_origin_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_test.js -I ../../04_Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_Order_2_test_$i > results/process_CCE2_DiaP1_1ppm_Order_2_test_$i
+  mpirun -n $NP $CCEX -f ccein_test.json -I ../../04_Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_Order_2_test_$i > results/process_CCE2_DiaP1_1ppm_Order_2_test_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_wahuha.js -I ../../04_Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_Order_2_wahuha_$i > results/process_CCE2_DiaP1_1ppm_Order_2_wahuha_$i
+  mpirun -n $NP $CCEX -f ccein_wahuha.json -I ../../04_Diamond_NV_P1Bath/bath/14N_1ppm/bath_DiaP1_1ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/CCE2_DiaP1_1ppm_Order_2_wahuha_$i > results/process_CCE2_DiaP1_1ppm_Order_2_wahuha_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

@@ -13,7 +13,7 @@ minutes.
 
 ## The input
 
-`example/tutorial/08_Bundle_clustering/CCE2_adaptive/ccein.js`; `CCE2_bundle/` has the same clustering keys without the `Adaptive` block, beside a standard input. `run.sh` in the same folder runs it as
+`example/tutorial/08_Bundle_clustering/CCE2_adaptive/ccein.json`; `CCE2_bundle/` has the same clustering keys without the `Adaptive` block, beside a standard input. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```
@@ -33,7 +33,7 @@ minutes.
     # seed : the refinement recomputes the same system round after round, so the seed must be explicit
     "seed"          : 9407,
 
-    # Clustering : bundles as in ../CCE2_bundle/ccein_bundle.js
+    # Clustering : bundles as in ../CCE2_bundle/ccein_bundle.json
     "cluster_mode"    : "adaptive",
     "bundle_max_dim"  : 8,
 

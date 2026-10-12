@@ -1,5 +1,5 @@
 #!/bin/sh
-# 02_Diamond_NV_natab/ensemble_gCCE: gCCE2 on one configuration, single qubit (ccein_single.js) and two qubits (ccein_multi2.js), plotted together
+# 02_Diamond_NV_natab/ensemble_gCCE: gCCE2 on one configuration, single qubit (ccein_single.json) and two qubits (ccein_multi2.json), plotted together
 #
 # Recorded run: 1 bath configuration(s), 20 MPI ranks on idm.
 # Here NCONF configurations on NP ranks. Set them to repeat the recorded run.
@@ -12,10 +12,10 @@ NCONF=${NCONF:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_multi2.js -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_multi2_$i > results/process_CCE2_Diamond_NV_natab_multi2_$i
+  mpirun -n $NP $CCEX -f ccein_multi2.json -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_multi2_$i > results/process_CCE2_Diamond_NV_natab_multi2_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_single.js -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_single_$i > results/process_CCE2_Diamond_NV_natab_single_$i
+  mpirun -n $NP $CCEX -f ccein_single.json -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_single_$i > results/process_CCE2_Diamond_NV_natab_single_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

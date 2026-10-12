@@ -12,7 +12,7 @@ clusters → calculate → write**.
 |---|---|---|
 | Input (`input/`) | `option.cpp`, `reader.cpp`, `json.cpp`, `general.cpp`, `isotope_table.cpp`, `mpi_seed.h` | parse the input JSON, read the bath / gyro / tensor files, hold the settings (`Config`); the built-in isotope table for species without a gyrofile entry (generated) |
 | Physical objects (`physical/`) | `qubit.cpp`, `bath.cpp`, `defect.cpp`, `pulse.cpp` | qubit, bath spins, defects, pulse sequence |
-| Clustering (`clustering/`) | `cluster.cpp`, `cluster_hash.cpp`, `cluster_pairs.cpp`, `cluster_pcce.cpp`, `cluster_dsjitb.cpp`, `pcce_partition_cache.cpp`, `pcce_cycle.h` | standard CCE clusters (order 2 without the hash: `cluster_pairs.cpp`), pCCE, the dsj/itb variants, and the optional on-disk cache of a pCCE partition |
+| Clustering (`clustering/`) | `cluster.cpp`, `cluster_hash.cpp`, `cluster_pairs.cpp`, `cluster_pcce.cpp`, `cluster_dsjitb.cpp`, `pcce_partition_cache.cpp`, `pcce_cycle.h` | standard CCE clusters (order 2 without the hash: `cluster_pairs.cpp`), pCCE, the dsj/itb variants, and the optional on-disk cache of a pCCE partition; bundle clustering and the adaptive refinement (`cluster_mode` = `adaptive`) are in the two subfolders `clustering/bundle/` and `clustering/algo_adaptive/` below |
 | Calculation (`calculation/`) | `simulator.cpp`, `simulator_cce.cpp`, `simulator_cce_recursive.cpp`, `simulator_gcce.cpp`, `simulator_gcce_vector.cpp`, `simulator_gcce_recursive.cpp`, `simulator_hamiltonian.cpp`, `small_hamiltonian.cpp`, `hamiltonian.cpp`, `scaled_product.h` | build Hamiltonians, propagate, form the coherence |
 | Shared tools (`common/`) | `utilities.cpp`, `memory.cpp`, `output.cpp` | maths and string helpers, allocation, result files |
 
@@ -51,7 +51,7 @@ removed once the C++ had its own recorded answers; it is in the history:
 `git show 3ba4cd829:test/cluster_verification/check_adaptive/oracle/<name>`.
 
 `test/cluster_verification/check_adaptive/verify.sh` is what a change to `clustering/algo_adaptive/` has to pass: `unit`,
-`regress` (13 real runs against `test/cluster_verification/check_adaptive/regression/golden/`), `inprocess`
+`regress` (33 recorded runs against `test/cluster_verification/check_adaptive/regression/golden/`), `inprocess`
 and `sanitize`. When a result is meant to change, review the difference and then
 rewrite the golden files with `test/cluster_verification/check_adaptive/regress.py WORKDIR --update`.
 

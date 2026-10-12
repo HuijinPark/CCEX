@@ -12,13 +12,13 @@ NCONF=${NCONF:-1}; NSTATE=${NSTATE:-1}
 mkdir -p results
 
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_with_ZFS.js -I ../bath/14N_10ppm/bath_DiaP1_10ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/gCCE2_DiaP1_10ppm_B0_0G_with_ZFS_$i > results/process_gCCE2_DiaP1_10ppm_B0_0G_with_ZFS_$i
+  mpirun -n $NP $CCEX -f ccein_with_ZFS.json -I ../bath/14N_10ppm/bath_DiaP1_10ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/gCCE2_DiaP1_10ppm_B0_0G_with_ZFS_$i > results/process_gCCE2_DiaP1_10ppm_B0_0G_with_ZFS_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_with_ZFS_v2.js -I ../bath/14N_10ppm/bath_DiaP1_10ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/v2_gCCE2_DiaP1_10ppm_B0_0G_with_ZFS_$i > results/process_v2_gCCE2_DiaP1_10ppm_B0_0G_with_ZFS_$i
+  mpirun -n $NP $CCEX -f ccein_with_ZFS_v2.json -I ../bath/14N_10ppm/bath_DiaP1_10ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/v2_gCCE2_DiaP1_10ppm_B0_0G_with_ZFS_$i > results/process_v2_gCCE2_DiaP1_10ppm_B0_0G_with_ZFS_$i
 done
 for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein_without_ZFS.js -I ../bath/14N_10ppm/bath_DiaP1_10ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/gCCE2_DiaP1_10ppm_B0_0G_without_ZFS_$i > results/process_gCCE2_DiaP1_10ppm_B0_0G_without_ZFS_$i
+  mpirun -n $NP $CCEX -f ccein_without_ZFS.json -I ../bath/14N_10ppm/bath_DiaP1_10ppm_${i} -a Random$i -s Random -S Random -N $NSTATE -o results/gCCE2_DiaP1_10ppm_B0_0G_without_ZFS_$i > results/process_gCCE2_DiaP1_10ppm_B0_0G_without_ZFS_$i
 done
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)
