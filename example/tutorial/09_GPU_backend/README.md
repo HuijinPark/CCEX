@@ -1,7 +1,7 @@
 # 09_GPU_backend
 
 The CUDA backend. `backend` in the input chooses it: `cpu` (the default), `auto`
-(CUDA for every cluster whose Hilbert dimension is at least `gpu_min_dim`, the CPU
+(CUDA for every cluster whose Hilbert dimension is at least `gpu_options.min_dim`, the CPU
 for the rest, and the CPU everywhere in a binary built without CUDA) or `cuda`
 (required; refused when it is not available). `docs/methods/gpu.md` has the details and
 `test/gpu_verification/check_gpu/` the checks and benchmarks.

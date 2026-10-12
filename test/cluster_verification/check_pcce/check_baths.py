@@ -116,7 +116,7 @@ def prepare(output):
             for state in (0, 1):
                 for pulse in ([overrides['npulse']] if 'npulse' in overrides else [1, 4]):
                     c = dict(config, method='pCCE', order=2, max_trial=24, max_iter=40,
-                        kmeans_pp=True, iter_detail=False, gpu_batch_steps=5, gpu_min_dim=16,
+                        kmeans_pp=True, iter_detail=False, gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=5, min_dim=16),
                         profile=True, savemode='normal', npulse=pulse, nstate=state, **{})
                     c.update(overrides)
                     size = c['sK']

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""How gpu_min_dim depends on the number of ranks that share one GPU (A3 of (internal notes)).
+"""How gpu_options.min_dim depends on the number of ranks that share one GPU (A3 of (internal notes)).
 
 benchmark_min_dim.py measured one rank per GPU, and eight ranks on a problem too small to keep them busy. Here the
 same P1 inputs (cut to the S bath sites nearest the NV) run at a fixed order K with R ranks on one GPU, S chosen as

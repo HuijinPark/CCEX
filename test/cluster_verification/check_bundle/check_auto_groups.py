@@ -69,7 +69,7 @@ def main():
     p.add_argument('--skip-drivers', action='store_true')
     a = p.parse_args(); root = a.output.resolve(); root.mkdir(parents=True, exist_ok=False)
     base = json.loads((REPO/'test/cluster_verification/check_bundle/simple_ensemble.json').read_text())
-    base.update(backend=a.backend, gpu_min_dim=1)
+    base.update(backend=a.backend, gpu_options=dict(base.get('gpu_options', {}), min_dim=1))
     report = dict(status='running', backend=a.backend, cases=[], accuracy=[], workflows=[],
                   binary_sha256=hashlib.sha256(a.binary.read_bytes()).hexdigest(),
                   baseline_sha256=hashlib.sha256(a.baseline.read_bytes()).hexdigest(),

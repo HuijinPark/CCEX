@@ -276,7 +276,7 @@ TARGET_GPU := \$(BIN_DIR)/main_gpu.out
 CORE_DIRS := \$(SRC_DIR)/input \$(SRC_DIR)/physical \$(SRC_DIR)/clustering \$(SRC_DIR)/clustering/bundle \$(SRC_DIR)/calculation \$(SRC_DIR)/calculation/gpu \$(SRC_DIR)/common \$(SRC_DIR)/auto_convergence
 NAMES := \$(notdir \$(basename \$(wildcard \$(SRC_DIR)/*.cpp) \$(foreach d,\$(CORE_DIRS),\$(wildcard \$(d)/*.cpp))))
 OBJS     := \$(addprefix \$(OBJ_DIR)/,\$(addsuffix .o,\$(NAMES)))
-OBJS_GPU := \$(addprefix \$(OBJ_GPU_DIR)/,\$(addsuffix .o,\$(NAMES))) \$(OBJ_GPU_DIR)/gpu_backend.o
+OBJS_GPU := \$(addprefix \$(OBJ_GPU_DIR)/,\$(addsuffix .o,\$(NAMES))) \$(OBJ_GPU_DIR)/gpu_backend.o \$(OBJ_GPU_DIR)/small_cluster_gpu.o
 
 # The refinement policies (src/clustering/algo_adaptive) and sqlite do not depend on the backend:
 # compiled once, linked into both binaries. adaptive_main.cpp comes with its own main()
@@ -337,6 +337,11 @@ endef
 	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
+# A26: the batched small-cluster cCCE kernel (one thread per cluster)
+\$(OBJ_GPU_DIR)/small_cluster_gpu.o: \$(SRC_DIR)/calculation/gpu/small_cluster_gpu.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
+	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
+	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
+	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
 
 \$(OBJ_DIR)/adaptive_%.o: \$(ADAPTIVE_DIR)/%.cpp | \$(OBJ_DIR)
 	\$(CXX) -c \$< -o \$@ -std=gnu++17 -O2 -g -DCCEX_ADAPTIVE_NO_MAIN \$(ADAPTIVE_FPFLAGS) \$(SANFLAGS) \$(DEPFLAGS) \$(ADAPTIVE_INCLUDE)
@@ -349,9 +354,11 @@ endef
 
 # The GPU unit tests need the card: run "make gpu-test" inside a job. test_review_memory
 # includes cuda_runtime.h itself, hence the CUDA include folder.
-GPU_TESTS := test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory
+GPU_TESTS := test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory test_small_cluster_cuda
 \$(BIN_DIR)/test_%.out: test/gpu_verification/check_gpu/test_%.cpp \$(OBJ_GPU_DIR)/gpu_backend.o | \$(BIN_DIR)
 	\$(CXX) \$(INCLUDE) -I\$(CUDA_HOME)/include -DCCEX_USE_CUDA \$(CXXFLAGS) \$< \$(OBJ_GPU_DIR)/gpu_backend.o \$(LIBRARY) \$(LIBRARY_GPU) -o \$@
+\$(BIN_DIR)/test_small_cluster_cuda.out: test/gpu_verification/check_gpu/test_small_cluster_cuda.cpp \$(OBJ_GPU_DIR)/small_cluster_gpu.o | \$(BIN_DIR)
+	\$(CXX) \$(INCLUDE) -I\$(CUDA_HOME)/include \$(CXXFLAGS) \$< \$(OBJ_GPU_DIR)/small_cluster_gpu.o \$(LIBRARY) \$(LIBRARY_GPU) -o \$@
 \$(BIN_DIR)/test_scaled_product.out: test/gpu_verification/check_gpu/test_scaled_product.cpp include/calculation/scaled_product.h | \$(BIN_DIR)
 	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) \$< -o \$@
 \$(BIN_DIR)/test_hamiltonian_check.out: test/gpu_verification/check_gpu/test_hamiltonian_check.cpp include/calculation/hamiltonian_check.h | \$(BIN_DIR)
@@ -413,6 +420,7 @@ gpu-test: numeric-test \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(GPU_TESTS)
 	./\$(BIN_DIR)/test_gcce_batch.out
 	./\$(BIN_DIR)/test_review_failure.out
 	./\$(BIN_DIR)/test_review_memory.out
+	./\$(BIN_DIR)/test_small_cluster_cuda.out test/gpu_verification/check_gpu/data/small_cluster/*.bin
 
 info:
 	@echo "CXX      = \$(CXX)"

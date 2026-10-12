@@ -126,6 +126,12 @@ target_compile_definitions(ccex_adaptive PRIVATE CCEX_ADAPTIVE_NO_MAIN)
 target_compile_options(ccex_adaptive PRIVATE
   $<$<COMPILE_LANGUAGE:CXX>:-O2 -g -ffp-contract=off -fmath-errno ${CCEX_ADAPTIVE_FP} ${CCEX_SANITIZE_OPT}>
   $<$<COMPILE_LANGUAGE:C>:-O2 -w ${CCEX_SANITIZE_OPT}>)
+# the strict warnings reach the policies too (review 20261012-194049-af8e42 R2); warnings only, so the flags above stay
+if(CCEX_STRICT_WARNINGS)
+  foreach(_w ${CCEX_CXX_WARN})
+    target_compile_options(ccex_adaptive PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${_w}>)
+  endforeach()
+endif()
 
 # ---- the CPU binary: the core but main.cpp as an object library (ccex_core), which the unit tests link
 #      as well (cpu-test, and the drivers through unit-build.env below; D26)
@@ -185,7 +191,8 @@ CCEX_UNIT_OBJS='$<JOIN:$<TARGET_OBJECTS:ccex_core>, > $<JOIN:$<TARGET_OBJECTS:cc
 
 # ---- the CUDA binary: the same sources with -DCCEX_USE_CUDA, plus the kernels
 if(_ccex_cuda)
-  add_library(ccex_gpu_backend OBJECT ${CMAKE_SOURCE_DIR}/src/calculation/gpu/gpu_backend.cu)
+  add_library(ccex_gpu_backend OBJECT ${CMAKE_SOURCE_DIR}/src/calculation/gpu/gpu_backend.cu
+              ${CMAKE_SOURCE_DIR}/src/calculation/gpu/small_cluster_gpu.cu)
   target_include_directories(ccex_gpu_backend PRIVATE ${CMAKE_SOURCE_DIR}/include)
   target_compile_options(ccex_gpu_backend PRIVATE -O3 -lineinfo)
 
@@ -198,7 +205,9 @@ if(_ccex_cuda)
                         CUDA::cusolver CUDA::cublas CUDA::cudart)
 
   # the GPU unit tests need the card: cmake --build build --target gpu-test, inside a job
-  set(_gpu_tests test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory)
+  set(_gpu_tests test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory
+                 test_small_cluster_cuda)
+  file(GLOB _small_cluster_dumps ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/data/small_cluster/*.bin)
   foreach(t ${_gpu_tests})
     add_executable(${t} EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/${t}.cpp $<TARGET_OBJECTS:ccex_gpu_backend>)
     set_target_properties(${t} PROPERTIES OUTPUT_NAME ${t}.out)
@@ -218,6 +227,7 @@ if(_ccex_cuda)
     COMMAND $<TARGET_FILE:test_gcce_batch>
     COMMAND $<TARGET_FILE:test_review_failure>
     COMMAND $<TARGET_FILE:test_review_memory>
+    COMMAND $<TARGET_FILE:test_small_cluster_cuda> ${_small_cluster_dumps}
     DEPENDS test_scaled_product test_hamiltonian_check ${_gpu_tests}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif()

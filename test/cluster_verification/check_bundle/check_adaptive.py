@@ -75,7 +75,7 @@ def main():
             name=f'singletons-{method}-s{state}'
             ref,_=run(name+'-old',standard(cfg,2),old=True)
             _,rec=run(name+'-mpi4',cfg,4,reference=ref);assert len(rec['groups'])==6
-            if not a.cpu_only:run(name+'-auto',dict(cfg,gpu_min_dim=8),2,'auto',reference=ref)
+            if not a.cpu_only:run(name+'-auto',dict(cfg,gpu_options=dict(cfg.get('gpu_options',{}),min_dim=8)),2,'auto',reference=ref)
         # Independent subset oracle for unequal 3/2/1 groups. Group triplets and
         # pair unions occupy the same site-count bucket; both must be retained.
         bathrows=(REPO/'test/cluster_verification/check_bundle/bath_6').read_text().splitlines()[1:]

@@ -37,8 +37,9 @@ def main():
         ('gcce', 'p1_gcce4_single.json', 3, 192),
     ):
         config = json.loads((REPO/'test/gpu_verification/check_gpu/examples'/fixture).read_text())
-        config.update(order=order, nstep=64, npulse=4, gpu_batch_steps=64,
-                      gpu_batch_clusters=8, gpu_cluster_batch_mb=64)
+        config.update(order=order, nstep=64, npulse=4,
+                      gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=64,
+                                       evolution_batch_size=8, cluster_batch_mb=64))
         entry = dict(method=method, dimension=dimension, order=order,
                      rbath=config['rbath'], rdip=config['rdip'], nstate=1, pulses=4,
                      steps=64, batch_budget_mib=64, executions={})

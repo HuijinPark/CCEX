@@ -58,7 +58,7 @@ def main():
     if args.cuda:
         # Only one rank receives the single six-spin cluster. Lazy initialization
         # must not wait for ranks that never encounter a GPU-eligible cluster.
-        c=dict(config,sK=3,max_trial=1,nstate=2,gpu_min_dim=64)
+        c=dict(config,sK=3,max_trial=1,nstate=2,gpu_options=dict(config.get('gpu_options',{}),min_dim=64))
         ranks=max(args.ranks)
         cpu,_=run_case(dict(c,backend='cpu'),root/'uneven_auto/cpu',args.cpu.resolve(),ranks,120)
         gpu,log=run_case(dict(c,backend='auto'),root/'uneven_auto/auto',args.cuda.resolve(),ranks,120)

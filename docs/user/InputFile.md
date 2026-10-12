@@ -212,12 +212,8 @@ The keys of this group are described in [InputFile_Backend.md](InputFile_Backend
 Where and how the cluster dynamics is computed, and what the run reports about it.
 
 - [backend](InputFile_Backend.md#tag_backend)
-- [gpu_min_dim](InputFile_Backend.md#tag_gpu_min_dim)
-- [gpu_batch_steps](InputFile_Backend.md#tag_gpu_batch_steps)
-- [gpu_batch_clusters](InputFile_Backend.md#tag_gpu_batch_clusters)
-- [gpu_cluster_batch_mb](InputFile_Backend.md#tag_gpu_cluster_batch_mb)
+- [gpu_options](InputFile_Backend.md#tag_gpu_options) (min_dim, packed_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb)
 - [probe_memory_gb](InputFile_Backend.md#tag_probe_memory_gb)
-- [gpu_cache_mb](InputFile_Backend.md#tag_gpu_cache_mb)
 - [propagator](InputFile_Backend.md#tag_propagator)
 - [evolution](InputFile_Backend.md#tag_evolution)
 - [evolution_update](InputFile_Backend.md#tag_evolution_update)

@@ -35,13 +35,52 @@ int main(){
         const bool finite=std::isfinite(a.real)&&std::isfinite(a.imag)&&a.real!=0;
         return sameLD(a.real,b.real)&&sameLD(a.imag,b.imag)&&(!finite || a.exponent==b.exponent);
     };
-    int steps=0,shortcut=0,gcceShortcut=0;
+    int steps=0,shortcut=0,gcceShortcut=0,gatheredSteps=0;
+    // improvements.md A34: calculate() gathers power-1 values (up to gatherMax clusters) and multiplies them in with
+    // assembleRun, one product at a time; any other power flushes the gathered ones first. The gathered products must equal
+    // the step-by-step assembleFactor ones bit for bit (components, exponent) at every flush, for every gather size - except
+    // the sign of a NaN: the x87 result of an operation on two NaNs depends on the compiler's operand order, and the
+    // step-by-step code itself gives the two products of one factor NaNs of different signs under icpx 2026.1.
+    auto identical=[&](const ScaledComplex& a,const ScaledComplex& b){
+        auto sameValue=[&](long double x,long double y){return (std::isnan(x)&&std::isnan(y)) || sameLD(x,y);};
+        return sameValue(a.real,b.real)&&sameValue(a.imag,b.imag)&&a.exponent==b.exponent;
+    };
     auto run=[&](const char* name,const std::vector<std::pair<std::complex<double>,int>>& seq,std::complex<double> zero){
         const ScaledComplex inverseZero=ScaledComplex(zero).inverse();
         const bool unitZero=zero.real()==1.0 && zero.imag()==0.0 && !std::signbit(zero.imag());
         ScaledComplex oldWith,oldWithout,newWith,newWithout;
+        const int gatherSizes[]={1,2,3,32};
+        ScaledComplex gWith[4],gWithout[4];
+        std::vector<std::complex<double>> gathered[4];   // stride 2, as one of two time points
+        auto flush=[&](int g){
+            const int count=int(gathered[g].size()/2);
+            if(g%2){   // as calculate(): one scan for both products
+                const auto scan=assembleScan(gathered[g].data(),2,count,unitZero);
+                assembleRun(gWith[g],gathered[g].data(),2,count,inverseZero,unitZero,scan);
+                assembleRun(gWithout[g],gathered[g].data(),2,count,inverseZero,unitZero,scan);
+            }else{
+                assembleRun(gWith[g],gathered[g].data(),2,count,inverseZero,unitZero);
+                assembleRun(gWithout[g],gathered[g].data(),2,count,inverseZero,unitZero);
+            }
+            gathered[g].clear();gatheredSteps+=count;
+        };
+        auto checkGathered=[&](size_t k){
+            for(int g=0;g<4;++g)if(!identical(gWith[g],newWith)||!identical(gWithout[g],newWithout)){
+                std::cerr<<name<<" step "<<k<<" gather "<<gatherSizes[g]<<"\n";
+                throw std::runtime_error("gathered assembly differs");
+            }
+        };
         for(size_t k=0;k<seq.size();++k){
             const auto [z,p]=seq[k];
+            for(int g=0;g<4;++g){
+                if(p!=1){
+                    if(!gathered[g].empty())flush(g);
+                    assembleFactor(gWith[g],gWithout[g],z,inverseZero,p,unitZero,nullptr);
+                }else{
+                    gathered[g].push_back(z);gathered[g].push_back({NAN,NAN});
+                    if(int(gathered[g].size()/2)==gatherSizes[g])flush(g);
+                }
+            }
             const auto factor=(ScaledComplex(z)*ScaledComplex(zero).inverse()).power(p);   // the old step
             oldWith=oldWith*factor; if(p>0)oldWithout=oldWithout*factor;
             assembleFactor(newWith,newWithout,z,inverseZero,p,unitZero,nullptr);
@@ -57,7 +96,12 @@ int main(){
                 std::cerr<<name<<" step "<<k<<": raw "<<z<<" power "<<p<<" old "<<ow<<" new "<<nw<<"\n";
                 throw std::runtime_error("assembly step differs");
             }
+            bool allFlushed=true;
+            for(int g=0;g<4;++g)allFlushed=allFlushed&&gathered[g].empty();
+            if(allFlushed)checkGathered(k);
         }
+        for(int g=0;g<4;++g)if(!gathered[g].empty())flush(g);
+        checkGathered(seq.size());
     };
     const double dmin=std::numeric_limits<double>::denorm_min(), big=1e308;
     const std::complex<double> one(1,0);
@@ -122,6 +166,8 @@ int main(){
      }}
     std::cout<<"PASS the assembly step equals the old normalized step after every step ("<<steps<<" steps, "<<shortcut
              <<" through the cCCE shortcut, "<<gcceShortcut<<" through the gCCE one; signed zeros, subnormal and huge doubles, guard crossings, non-finite values, L0 != 1)\n";
+    std::cout<<"PASS the gathered assembly (A34, gather sizes 1, 2, 3, 32) equals the step-by-step one bit for bit, NaN signs aside ("<<gatheredSteps
+             <<" gathered values)\n";
     if(ScaledComplex::lazySafe && gcceShortcut<60000)throw std::runtime_error("the gCCE shortcut was hardly exercised");
     if(!ScaledComplex::lazySafe)std::cout<<"note: long double exponent range too narrow here, deferred normalization is off\n";
 }

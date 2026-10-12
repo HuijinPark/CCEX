@@ -639,7 +639,8 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         printMessage("  - General option-related keys : ");
         printMessage("    [ method, quantity, propagator, evolution, evolution_update, backend, profile, ");
         printMessage("      cluster_contributions, cluster_contribution_max_mb, ");
-        printMessage("      gpu_min_dim, gpu_batch_steps, gpu_cache_mb, gpu_batch_clusters, gpu_cluster_batch_mb, probe_memory_gb, ");
+        printMessage("      gpu_options { min_dim, packed_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb }, ");
+        printMessage("      probe_memory_gb, ");
         printMessage("      gcce_refinement, gcce_refinement_max_sweeps, vector_mean_field, pcce_partition, pcce_connections, pcce_detail_limit, ");
         printMessage("      pcce_cache_mode, pcce_cache_file, order, bfield, ");
         printMessage("      rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
@@ -661,7 +662,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     char* evolution = cJSON_ReadString(root,"evolution",true,"vector");
     Config_setEvolution(cnf,evolution); // gCCE only : vector (default) | matrix (legacy)
     cnf->evolution_isdefault = (cJSON_GetObjectItem(root,"evolution") == NULL);
-    // exact (default) | recursive (A16 b); Config_validateEvolutionUpdate checks the paths once every source is in
+    // exact | recursive (A16 b); without the key Config_validateEvolutionUpdate picks the default once every source is in (A29)
     cJSON* evolutionUpdate = cJSON_GetObjectItem(root,"evolution_update");
     if (evolutionUpdate){
         if (!cJSON_IsString(evolutionUpdate) || !evolutionUpdate->valuestring ||
@@ -684,17 +685,49 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         }
         strcpy(cnf->backend,backend->valuestring);
     }
-    const char* gpuKeys[] = {"gpu_min_dim", "gpu_batch_steps", "gpu_cache_mb", "gpu_batch_clusters", "gpu_cluster_batch_mb"};
-    int* gpuValues[] = {&cnf->gpu_min_dim, &cnf->gpu_batch_steps, &cnf->gpu_cache_mb, &cnf->gpu_batch_clusters, &cnf->gpu_cluster_batch_mb};
-    for (int k=0; k<5; ++k){
-        cJSON* item = cJSON_GetObjectItem(root,gpuKeys[k]);
-        if (!item) continue;
-        double value = readFiniteNumber(item,gpuKeys[k]);
-        if (value < (k==2 ? 0 : 1) || value > 2147483647.0 || std::floor(value) != value){
-            fprintf(stderr,"Error: %s must be a %s 32-bit integer\n",gpuKeys[k],k==2 ? "nonnegative" : "positive");
+    // The GPU settings are one block, "gpu_options" (user, 2026-10-12, improvements.md A26); the flat keys before it are
+    // refused with the form that replaces them.
+    const char* oldGpuKeys[] = {"gpu_min_dim", "gpu_batch_steps", "gpu_cache_mb", "gpu_batch_clusters", "gpu_cluster_batch_mb"};
+    const char* gpuKeys[] = {"min_dim", "evolution_batch_steps", "cache_mb", "evolution_batch_size", "cluster_batch_mb", "packed_max_dim"};
+    int* gpuValues[] = {&cnf->gpu_min_dim, &cnf->gpu_batch_steps, &cnf->gpu_cache_mb, &cnf->gpu_batch_clusters, &cnf->gpu_cluster_batch_mb,
+                        &cnf->gpu_packed_max_dim};
+    for (int k=0; k<5; ++k)
+        if (cJSON_GetObjectItem(root,oldGpuKeys[k])){
+            fprintf(stderr,"Error: %s is now gpu_options.%s (\"gpu_options\": {\"%s\": ...})\n",oldGpuKeys[k],gpuKeys[k],gpuKeys[k]);
             exit(EXIT_FAILURE);
         }
-        *gpuValues[k] = (int)value;
+    if (cJSON* block = cJSON_GetObjectItem(root,"gpu_options")){
+        if (!cJSON_IsObject(block)){
+            fprintf(stderr,"Error: gpu_options must be an object, e.g. \"gpu_options\": {\"min_dim\": 256}\n");
+            exit(EXIT_FAILURE);
+        }
+        for (cJSON* item = block->child; item; item = item->next){
+            int k = 0;
+            while (k<6 && strcasecmp(item->string,gpuKeys[k])) ++k;
+            if (k==6){
+                fprintf(stderr,"Error: unknown key gpu_options.%s (min_dim, packed_max_dim, evolution_batch_size, evolution_batch_steps, "
+                               "cluster_batch_mb, cache_mb)\n",item->string);
+                exit(EXIT_FAILURE);
+            }
+        }
+        for (int k=0; k<6; ++k){
+            cJSON* item = cJSON_GetObjectItem(block,gpuKeys[k]);   // recorded as read (cJSON_checkInputKeys)
+            if (!item) continue;
+            char name[64];
+            snprintf(name,sizeof name,"gpu_options.%s",gpuKeys[k]);
+            const double value = readFiniteNumber(item,name);
+            if (k==5){
+                // the packed kernel exists for bath dimension 2 and 4 (small_cluster_math.h); 0 switches it off
+                if (value!=0 && value!=2 && value!=4){
+                    fprintf(stderr,"Error: gpu_options.packed_max_dim must be 0 (off), 2 or 4\n");
+                    exit(EXIT_FAILURE);
+                }
+            } else if (value < (k==2 ? 0 : 1) || value > 2147483647.0 || std::floor(value) != value){
+                fprintf(stderr,"Error: %s must be a %s 32-bit integer\n",name,k==2 ? "nonnegative" : "positive");
+                exit(EXIT_FAILURE);
+            }
+            *gpuValues[k] = (int)value;
+        }
     }
     // A1: the memory the probes of an adaptive probe step may hold at once on a node, in GB (0: automatic)
     if (cJSON* item = cJSON_GetObjectItem(root,"probe_memory_gb")){

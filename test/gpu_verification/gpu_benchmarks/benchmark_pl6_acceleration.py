@@ -26,10 +26,10 @@ def main():
         binary_sha256={k:sha(v) for k,v in binaries.items()},cases=[],
         note='Physical settings, seed and time grid from previous PL6 config-1 inputs. Explicit legacy partition preserves the old 32-rank partition. Compare raw outputs; timings include fresh MPI/CUDA startup.')
     variants=[('cpu','cpu',dict(backend='cpu')),('before_cuda','before_cuda',dict(backend='cuda')),
-        ('before_auto','before_cuda',dict(backend='auto',gpu_min_dim=256)),
-        ('cuda_sequential','cuda',dict(backend='cuda',gpu_batch_clusters=1)),
-        ('cuda_batch','cuda',dict(backend='cuda',gpu_batch_clusters=8)),
-        ('auto','cuda',dict(backend='auto',gpu_min_dim=256))]
+        ('before_auto','before_cuda',dict(backend='auto',gpu_options=dict(min_dim=256))),
+        ('cuda_sequential','cuda',dict(backend='cuda',gpu_options=dict(evolution_batch_size=1))),
+        ('cuda_batch','cuda',dict(backend='cuda',gpu_options=dict(evolution_batch_size=8))),
+        ('auto','cuda',dict(backend='auto',gpu_options=dict(min_dim=256)))]
     try:
         for name in args.cases:
             source=args.baseline_run.resolve()/name/'cpu/input.json'
@@ -46,7 +46,7 @@ def main():
                 order=variants[repeat%len(variants):]+variants[:repeat%len(variants)]
                 for variant,binary,overrides in order:
                     summary.update(current_case=name,current_repeat=repeat,current_variant=variant);save(root/'summary.json',summary)
-                    result,log=run_case(dict(config,**overrides),directory/variant,binaries[binary],args.ranks,600)
+                    result,log=run_case({**config,**overrides,'gpu_options':{**config.get('gpu_options',{}),**overrides.get('gpu_options',{})}},directory/variant,binaries[binary],args.ranks,600)
                     if result['returncode'] or not result['profiles']:raise RuntimeError(f'{name}/{variant} failed')
                     if variant=='cuda_batch' and '[gpu-batch]' not in log:raise RuntimeError('Cluster batching was not exercised')
                     if variant=='auto' and ('[gpu-memory]' in log or '[backend] rank=' in log):raise RuntimeError('Small PL6 auto unnecessarily initialized CUDA')

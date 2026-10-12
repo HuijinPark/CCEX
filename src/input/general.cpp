@@ -14,7 +14,8 @@ Config* Config_init(){
     cnf->propagator[0] = '\0';
     cnf->evolution[0] = '\0';
     cnf->evolution_isdefault = true;
-    strcpy(cnf->evolution_update, "exact");
+    cnf->evolution_update[0] = '\0';           // not given; Config_validateEvolutionUpdate picks the default (A29)
+    cnf->evolution_update_source[0] = '\0';
     strcpy(cnf->backend, "cpu");
     cnf->gpu_min_dim = 256;
     cnf->gpu_batch_steps = 64;
@@ -26,6 +27,8 @@ Config* Config_init(){
     cnf->pcce_detail_limit=ccex::partitionDetailLimit;
     cnf->gpu_batch_clusters = 8;
     cnf->gpu_cluster_batch_mb = 64;
+    cnf->gpu_packed_max_dim = -1;               // not given; Config_resolvePackedMaxDim picks the default (A26)
+    cnf->gpu_packed_source[0] = '\0';
     cnf->profile = false;
     cnf->cluster_contributions = false;
     cnf->cluster_contribution_max_mb = 256;
@@ -496,23 +499,52 @@ void Config_resolveEvolution(Config* cnf){
  * dsjitb: the single state, evolveSingleState, and the ensemble nstate = 0, evolveEnsembleRecursiveCce)
  * and of gCCE with propagator=eigen (evolution=vector, propagateStateGcce, and evolution=matrix,
  * calPropagatorGcceRecursive). On the GPU (backend cuda/auto) the run would compute every phase with sin and cos as
- * with exact, and gCCE with propagator=expm has no phases to carry over, so the input would claim something the run
- * does not do: refuse instead (registration 2026-10-11). Call after Config_resolveEvolution, as before.
+ * with exact, and gCCE with propagator=expm has no phases to carry over. Without the key (A29, 2026-10-12) the run
+ * takes recursive on those paths and exact elsewhere, silently; a given recursive elsewhere is refused (the input
+ * would claim something the run does not do), a given exact keeps the old bits. The one place this is decided.
+ * Call after Config_resolveEvolution, as before.
  */
-void Config_validateEvolutionUpdate(const Config* cnf){
+void Config_validateEvolutionUpdate(Config* cnf){
 
-    if (strcasecmp(cnf->evolution_update,"recursive")!=0){ return; }
     const bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
     char found[96] = "";
     if (strcasecmp(cnf->backend,"cpu")!=0)
         snprintf(found,sizeof(found),"backend=%s",cnf->backend);
     else if (isGCCE && strcasecmp(cnf->propagator,"eigen")!=0)
         snprintf(found,sizeof(found),"method=gCCE with propagator=%s",cnf->propagator);
-    if (found[0] == '\0'){ return; }
+    if (cnf->evolution_update[0] == '\0'){
+        strcpy(cnf->evolution_update, found[0] == '\0' ? "recursive" : "exact");
+        snprintf(cnf->evolution_update_source,sizeof(cnf->evolution_update_source),"default (%s)",
+                 found[0] == '\0' ? "supported path" : found);
+        return;
+    }
+    strcpy(cnf->evolution_update_source,"given");
+    if (strcasecmp(cnf->evolution_update,"recursive")!=0 || found[0] == '\0'){ return; }
     fprintf(stderr,"Error : evolution_update=recursive is implemented on backend=cpu for cCCE (single state and "
                    "ensemble) and for gCCE with propagator=eigen (evolution=vector or matrix); this run has %s. "
-                   "Use evolution_update=exact (the default).\n",found);
+                   "Use evolution_update=exact, or leave the key out.\n",found);
     exit(EXIT_FAILURE);
+}
+
+/**
+ * gpu_options.packed_max_dim without the key (A26, user 2026-10-12): 4 in the GPU build (bin/main_gpu.out) with backend cuda
+ * or auto and method CCE - the packed kernel takes the cCCE clusters of bath dimension 2 and 4 - and 0 otherwise: with
+ * backend cpu, with another method, and always in the CPU build, where nothing goes to the GPU. A value given in the
+ * input is kept as it is (an explicit nonzero one is checked in smallClusterWarmUp). Call once every source is in.
+ */
+void Config_resolvePackedMaxDim(Config* cnf){
+    if (cnf->gpu_packed_max_dim >= 0){ strcpy(cnf->gpu_packed_source,"given"); return; }
+#ifdef CCEX_USE_CUDA
+    const bool gpuBackend = strcasecmp(cnf->backend,"cpu")!=0;
+    const bool on = gpuBackend && strcasecmp(cnf->method,"cce")==0 && strcasecmp(cnf->quantity,"coherence")==0;
+    cnf->gpu_packed_max_dim = on ? 4 : 0;
+    snprintf(cnf->gpu_packed_source,sizeof(cnf->gpu_packed_source),"default (%s)",
+             on ? (strcasecmp(cnf->backend,"cuda") ? "backend=auto, method=CCE" : "backend=cuda, method=CCE")
+                : gpuBackend ? "not method=CCE with quantity=coherence" : "backend=cpu");
+#else
+    cnf->gpu_packed_max_dim = 0;
+    strcpy(cnf->gpu_packed_source,"default (CPU build)");
+#endif
 }
 
 void Config_setOrder(Config* cnf, int order){
@@ -902,17 +934,20 @@ void Config_report(Config* cnf){
     printStructElementChar("propagator",Config_getPropagator(cnf));
     printStructElementChar("evolution",Config_getEvolution(cnf));
     printStructElementChar("evolution_update",cnf->evolution_update);
+    printStructElementChar("  chosen by",cnf->evolution_update_source);
     printStructElementChar("backend",cnf->backend);
-    printStructElementInt("gpu_min_dim",cnf->gpu_min_dim);
-    printStructElementInt("gpu_batch_steps",cnf->gpu_batch_steps);
-    printStructElementInt("gpu_cache_mb",cnf->gpu_cache_mb);
+    printStructElementInt("gpu_options.min_dim",cnf->gpu_min_dim);
+    printStructElementInt("gpu_options.evolution_batch_steps",cnf->gpu_batch_steps);
+    printStructElementInt("gpu_options.cache_mb",cnf->gpu_cache_mb);
     printStructElementDouble("probe_memory_gb",cnf->probe_memory_gb);
     printStructElementInt("gcce_refinement",cnf->gcce_refinement);
     printStructElementInt("gcce_refinement_max_sweeps",cnf->gcce_refinement_max_sweeps);
     printStructElementInt("vector_mean_field",cnf->vector_mean_field);
     printStructElementInt("pcce_detail_limit",cnf->pcce_detail_limit);
-    printStructElementInt("gpu_batch_clusters",cnf->gpu_batch_clusters);
-    printStructElementInt("gpu_cluster_batch_mb",cnf->gpu_cluster_batch_mb);
+    printStructElementInt("gpu_options.evolution_batch_size",cnf->gpu_batch_clusters);
+    printStructElementInt("gpu_options.cluster_batch_mb",cnf->gpu_cluster_batch_mb);
+    printStructElementInt("gpu_options.packed_max_dim",cnf->gpu_packed_max_dim);
+    printStructElementChar("  chosen by",cnf->gpu_packed_source);
     printStructElementChar("pcce_partition",cnf->pcce_partition);
     printStructElementChar("pcce_connections",cnf->pcce_connections);
     printStructElementChar("pcce_cache_mode",cnf->pcce_cache_mode);

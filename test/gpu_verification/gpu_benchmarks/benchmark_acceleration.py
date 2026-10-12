@@ -39,7 +39,7 @@ def main():
             order=variants[repeat%len(variants):]+variants[:repeat%len(variants)]
             directory=root/section/name/f'ranks{ranks}'/f'repeat{repeat}'
             for variant,binary,overrides in order:
-                execution,log=run_case(dict(config,**overrides),directory/variant,binary,ranks,600)
+                execution,log=run_case({**config,**overrides,'gpu_options':{**config.get('gpu_options',{}),**overrides.get('gpu_options',{})}},directory/variant,binary,ranks,600)
                 if execution['returncode'] or not execution['profiles']:raise ValueError(f'{name}/{variant} failed')
                 trial['executions'][variant]=execution
                 save(root/'summary.json',summary)
@@ -55,9 +55,9 @@ def main():
         c=resolve(cases[name]['config'],fixture);c['pcce_partition']='legacy'
         measure(name,c,2,[('cpu',binaries['cpu'],dict(backend='cpu')),
             ('before_cuda',binaries['before_cuda'],dict(backend='cuda')),
-            ('cuda_sequential',binaries['cuda'],dict(backend='cuda',gpu_batch_clusters=1)),
-            ('cuda_batch',binaries['cuda'],dict(backend='cuda',gpu_batch_clusters=8)),
-            ('auto',binaries['cuda'],dict(backend='auto',gpu_min_dim=256))],'stages')
+            ('cuda_sequential',binaries['cuda'],dict(backend='cuda',gpu_options=dict(evolution_batch_size=1))),
+            ('cuda_batch',binaries['cuda'],dict(backend='cuda',gpu_options=dict(evolution_batch_size=8))),
+            ('auto',binaries['cuda'],dict(backend='auto',gpu_options=dict(min_dim=256)))],'stages')
     sweep=[(name,dict(resolve(cases[name]['config'],fixture),pcce_partition='deterministic'))
         for name in ['diamond_13c_sK3_state0_pulse4','diamond_p1_15n_sK2_state0_pulse4']]
     c=config_for('Diamond_NV_natab_gcce',0);c['order']=4;sweep.append(('gcce4_13c',c))
@@ -65,8 +65,8 @@ def main():
         reference=None
         for ranks in args.rank_sweep:
             measure(name,c,ranks,[('cpu',binaries['cpu'],dict(backend='cpu')),
-                ('cuda_batch',binaries['cuda'],dict(backend='cuda',gpu_batch_clusters=8)),
-                ('auto',binaries['cuda'],dict(backend='auto',gpu_min_dim=256))],'rank_sweep')
+                ('cuda_batch',binaries['cuda'],dict(backend='cuda',gpu_options=dict(evolution_batch_size=8))),
+                ('auto',binaries['cuda'],dict(backend='auto',gpu_options=dict(min_dim=256)))],'rank_sweep')
             current=root/'rank_sweep'/name/f'ranks{ranks}'/'repeat0'/'cpu'
             if reference:compare(reference,current,1e-8,2e-6)
             else:reference=current

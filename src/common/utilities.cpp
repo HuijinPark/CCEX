@@ -2,6 +2,7 @@
 #include "../../include/common/memory.h"
 #include <float.h>  // FLT_EPSILON
 #include "mpi.h"
+#include <vector>
 
 /* utils ---------------------------------------------------*/
 MatrixXcd Double1dToMatrixXcd(double* val, int n){
@@ -876,7 +877,36 @@ int min(int x, int y)
 }
 
 
-int*** MPI_getLocalClusters(int order, int*** clusters){
+// A31: the first row of each rank under a cost split. bounds[r] is the number of clusters before rank r: the
+// first k whose running cost reaches r/nprocs of the total (rows 1..k, in the list's order). Every rank computes
+// the same doubles in the same order, so all agree. Empty when the order is uniform (all costs equal) or has
+// no cluster: the equal-count split stays then, so a bath of one kind of spin is distributed as before.
+static std::vector<int> costBounds(int n, int*** clusters, const std::function<double(int,const int*)>& cost){
+    const int m = clusters[n][0][0] - 1;
+    std::vector<int> bounds;
+    if (!cost || m <= 0) return bounds;
+    std::vector<double> c(m);
+    bool uniform = true;
+    double total = 0.0;
+    for (int i=0; i<m; i++){
+        c[i] = cost(n, clusters[n][i+1]);
+        uniform = uniform && c[i] == c[0];
+        total += c[i];
+    }
+    if (uniform) return bounds;
+    bounds.assign(nprocess+1, m);
+    bounds[0] = 0;
+    double running = 0.0;
+    int k = 0;
+    for (int r=1; r<nprocess; r++){
+        const double target = total * r / nprocess;
+        while (k < m && running < target) running += c[k++];
+        bounds[r] = k;
+    }
+    return bounds;
+}
+
+int*** MPI_getLocalClusters(int order, int*** clusters, const std::function<double(int,const int*)>& cost){
 
     MPI_Request req; 
     MPI_Status status;
@@ -901,6 +931,8 @@ int*** MPI_getLocalClusters(int order, int*** clusters){
     int MPI_sendcount[order+1][nprocess];
     int MPI_ista[order+1][nprocess];
     int MPI_iend[order+1][nprocess];
+    std::vector<std::vector<int>> bounds(order+1);
+    for (int n=1; n<order+1; n++) bounds[n] = costBounds(n, clusters, cost);
 
     for (int irank=0; irank<nprocess; irank++){
         for (int n=0; n<order+1; n++){
@@ -908,6 +940,12 @@ int*** MPI_getLocalClusters(int order, int*** clusters){
                 MPI_sendcount[n][irank] = 1;
                 MPI_ista[n][irank] = 0;
                 MPI_iend[n][irank] = 0;
+            }
+            else if (!bounds[n].empty()){
+                // rows bounds[irank]+1 .. bounds[irank+1]; MPI_iend is one past the last row, as below
+                MPI_sendcount[n][irank] = bounds[n][irank+1] - bounds[n][irank];
+                MPI_ista[n][irank] = bounds[n][irank] + 1;
+                MPI_iend[n][irank] = bounds[n][irank+1] + 1;
             }
             else{
                 int ista, iend;

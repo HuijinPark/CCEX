@@ -9,6 +9,7 @@
 #include "../../include/clustering/bundle/bundle_work.h"
 #include "../../include/clustering/bundle/bundle_connection_check.h"
 #include "../../include/clustering/bundle/bundle_contributions.h"
+#include "../../include/calculation/gpu/small_cluster_batch.h"
 #include <cstddef>
 
 static void reduceScaledProduct(void* input,void* output,int* count,MPI_Datatype*){
@@ -93,6 +94,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     std::unique_ptr<MatrixXcd[]> cceResult(new MatrixXcd[Config_getNstep(cnf)]);
     Eigen::RowVectorXcd gcceAlphaRho;                      // A14: psia^dagger rho of the gCCE coherence, reused
     const bool checkDisorder = getenv("CCEX_CHECK_DISORDER") && strcmp(getenv("CCEX_CHECK_DISORDER"),"0");
+    SmallClusterBatch smallGpu(qa,ba,dfa,cnf,pls,isGCCE);   // A26: small cCCE clusters on the GPU (opt-in; off: nothing)
     for (int istate=0; istate<=nstate; istate++){
 
         // wall time
@@ -355,6 +357,23 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     unitZero=unitZero && zero.real()==1.0 && zero.imag()==0.0 && !std::signbit(zero.imag());
                 }
             }
+            // A34: the values of power-1 clusters are gathered, gatherMax clusters at a time (time point by time point:
+            // gathered[istep*gatherMax + k]), and multiplied in with assembleRun - each product sees the same factors in the
+            // same order as before. Off where the per-cluster factors are used elsewhere (savemode all, except, the rdip
+            // ladder, cluster contributions).
+            const bool gather=stableProduct && !saveAll && !exceptMode && !ladder.on && !cnf->cluster_contributions;
+            const int gatherMax=32;
+            std::vector<std::complex<double>> gathered(gather ? size_t(gatherMax)*nstep : 0);
+            int ngathered=0;
+            auto flushGathered=[&](){
+                for(int istep=0;istep<nstep;istep++){
+                    const std::complex<double>* run=&gathered[size_t(istep)*gatherMax];
+                    const auto scan=assembleScan(run,1,ngathered,unitZero);
+                    assembleRun(stableWith[istep],run,1,ngathered,inverseZero[istep],unitZero,scan);
+                    assembleRun(stableWithout[istep],run,1,ngathered,inverseZero[istep],unitZero,scan);
+                }
+                ngathered=0;
+            };
 
             ladder.reset();
             lap(PH_PREP);
@@ -379,6 +398,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 std::vector<BathArray*> batchBaths;
                 std::vector<MatrixXcd*> batchResults;
                 int batchFirst=0;
+                if(smallGpu.on())smallGpu.beginOrder(n,localclusters[n],ncluster);
                 // Create BathArray for the cluster (defect spins can be added)
                 for (int ic=1; ic<=ncluster; ic++){
 
@@ -389,15 +409,19 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     // Get the power
                     int power = localclusters[n][ic][0];
 
+                    // A26: the coherence of this cluster when the small-cluster GPU batch computed it (no bath array then)
+                    int smallDim=0;
+                    const std::complex<double>* small = smallGpu.on() ? smallGpu.get(ic,smallDim) : nullptr;
+
                     // Create the bath array for the cluster
-                    BathArray* ba_cluster = batchResults.empty() ?
+                    BathArray* ba_cluster = small ? nullptr : batchResults.empty() ?
                         createBathArray(cluster,n,ba,dfa,nqubit) : batchBaths[ic-batchFirst];
                     lap(PH_CREATE);
                     // BathArray_report(ba_cluster);
 
 #ifdef CCEX_USE_CUDA
                     const int qubitFactor=isGCCE ? QubitArray_dim(qa) : 1;
-                    if(batchResults.empty() && (!isGCCE || strcasecmp(savemode,"allfull")) &&
+                    if(!smallGpu.on() && batchResults.empty() && (!isGCCE || strcasecmp(savemode,"allfull")) &&
                        cnf->gpu_batch_clusters>1 && computeUseCuda(cnf,qubitFactor*BathArray_dim(ba_cluster))){
                         const int d=qubitFactor*BathArray_dim(ba_cluster);
                         const int timeBatch=std::min(cnf->gpu_batch_steps,std::max(1,nstep));
@@ -425,7 +449,11 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
                     // Calculate the coherence
                     bool ownedResult = true;                  // false: the reused cCCE buffer, not deleted here
-                    if(!batchResults.empty()){
+                    if(small){
+                        for(int istep=0;istep<nstep;istep++){ cceResult[istep].resize(1,1); cceResult[istep](0,0)=small[istep]; }
+                        result_nth = cceResult.get();
+                        ownedResult = false;
+                    }else if(!batchResults.empty()){
                         result_nth=batchResults[ic-batchFirst];
                     }else if (isGCCE){ // gcce: into the reused buffer (A14)
                         calCoherenceGcceInto(qa, ba_cluster, cnf, pls, op, cceResult.get(), &gcceAlphaRho);
@@ -436,6 +464,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                         result_nth = cceResult.get();
                         ownedResult = false;
                     }
+                    if(!small && !isGCCE && batchResults.empty()) smallClusterDump(qa,ba_cluster,cnf,pls,result_nth);
                     lap(PH_CLUSTER);
 
                     int exceptIndex=-1;
@@ -445,13 +474,14 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     }
 
                     if(cnf->cluster_contributions)
-                        contributions.capture(cluster,n,(isGCCE ? QubitArray_dim(qa) : 1)*BathArray_dim(ba_cluster),result_nth);
+                        contributions.capture(cluster,n,(isGCCE ? QubitArray_dim(qa) : 1)*(ba_cluster ? BathArray_dim(ba_cluster) : smallDim),result_nth);
 
                     // Update the total result
                     // zeroth cluster : result_nth = L_C_(k=n) * ( 1 / L_C_(k=0) )
                     // power : result_nth = ( L_C_(k=n) / L_C_(k=0) ) ^ power
                     // total result : result = result * ( L_C_(k=n) / L_C_(k=0) ) ^ power
                     ladder.add(cluster,n,power,result_nth,inverseZero,unitZero);
+                    if(gather && power!=1 && ngathered>0)flushGathered();
                     for (int istep=0; istep<nstep; istep++){
                         if((cnf->cluster_contributions || ladder.on) && power==0)continue;
                         if(stableProduct){
@@ -464,6 +494,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                                     rank,istate,istep,n,ic,power,raw.real(),raw.imag(),zero.real(),zero.imag());
                                 reportedInvalidProduct=true;
                             }
+                            if(gather && power==1){gathered[size_t(istep)*gatherMax+ngathered]=raw;continue;}
                             std::complex<double> saved;
                             assembleFactor(stableWith[istep],stableWithout[istep],raw,inverseZero[istep],power,unitZero,
                                            saveAll ? &saved : nullptr);
@@ -482,6 +513,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
                         result_wD[istep] = mulMatrixXcdElementWise(result_wD[istep], result_nth[istep]);
                     }
+                    if(gather && power==1 && ++ngathered==gatherMax)flushGathered();
 
                     lap(PH_ASSEMBLE);
                     if (strcasecmp(savemode,"all")==0){
@@ -509,7 +541,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     // operator= deep-copies), so ba_cluster aliases nothing in the parent
                     // bath, and result_nth is an independent new[] that has already been
                     // consumed above.
-                    BathArray_freeAll(ba_cluster);
+                    if(ba_cluster)BathArray_freeAll(ba_cluster);
                     if(!batchResults.empty() && ic-batchFirst+1==(int)batchResults.size()){
                         batchResults.clear();batchBaths.clear();
                     }
@@ -527,6 +559,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             }
 
 
+            if(ngathered>0)flushGathered();
             for(auto& x:stableWith)x.normalize();       // the lazy products are normalized before they are combined (A9)
             for(auto& x:stableWithout)x.normalize();
             for(auto& x:keptWith)x.normalize();
@@ -706,6 +739,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             lap(PH_SAVE);
         }
     }
+    smallGpu.report();
     // every rank, after its last probe state: the node budget is freed collectively (A1)
     if(adaptiveWork(cnf).mode=="probe" || adaptiveWork(cnf).mode=="factors") adaptiveProbeFinish();
     if(phases && phaseStates>0){

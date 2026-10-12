@@ -33,8 +33,10 @@
     "bundle_merge_cutoff": 1.0,
     "cluster_mode": "adaptive",
     "deltat": 0.005,
-    "gpu_batch_steps": 4,
-    "gpu_min_dim": 8,
+    "gpu_options": {
+     "evolution_batch_steps": 4,
+     "min_dim": 8
+    },
     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
     "method": "cce",
     "npulse": 1,
@@ -65,7 +67,7 @@
       "candidate_patches": 1,
       "checked_patches": 1,
       "coverage_limited": false,
-      "max_inverse_log10_amplification": 0.18713384283542192,
+      "max_inverse_log10_amplification": 0.18713384283542187,
       "whole_bath_oracle": true,
       "work_blocked": 0
      },

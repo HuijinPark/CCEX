@@ -5,6 +5,7 @@
 #include <iostream>
 #include <mpi.h>
 #include <unistd.h>
+#include <functional>
 
 // Stop the whole run from one rank (D38): a fatal error that only this rank meets - a file it cannot open or
 // write, an eigensolver that fails - used to exit() this rank alone, and the others could wait in the next
@@ -177,7 +178,11 @@ void Swap(int** d_Array, int a, int b);
 /* MPI ---------------------------------------------------------*/
 void para_range(int n1,int n2, int nprocs, int myrank, int*ista, int *iend);
 int min(int x, int y);
-int*** MPI_getLocalClusters(int order, int*** clusters);
+// cost (A31): with a cost per cluster (n, row of clusters[n]: power then n sites), rank r takes the contiguous
+// clusters whose running cost crosses r/nprocess of the order's total; an order whose clusters all cost the
+// same, or no cost, keeps the equal-count split (para_range).
+int*** MPI_getLocalClusters(int order, int*** clusters,
+                            const std::function<double(int,const int*)>& cost = nullptr);
 // Free the owned copy returned by MPI_getLocalClusters, including its headers.
 // The zeroth header is allocated even on ranks whose zeroth weight is zero.
 void MPI_freeLocalClusters(int order, int**** localClusters);

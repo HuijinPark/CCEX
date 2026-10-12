@@ -768,7 +768,12 @@ it supplies the tensors of the spins outside the range of the file with the defe
 ## hfmedi
 <b>Description:</b><br>
 CCE only. Add the hyperfine-mediated interaction between bath spins, the second-order
-coupling through the qubit (N. Zhao et al., Nature Nanotechnology 6, 242 (2011), Supplementary).
+coupling through the qubit (N. Zhao et al., Nature Nanotechnology 6, 242 (2011), Supplementary, Eq. 9).
+CCEX adds the full second-order correction, for each qubit branch α on its own:
+H_med^(α) = Σ_{β≠α} E_αβ E_αβ† / (ω_α − ω_β), E_αβ = Σ_i ⟨α|S|β⟩·A_i·I_i, where α is the eigenstate of the
+qubit Hamiltonian closest to the branch state and β runs over every other eigenstate (every intermediate state).
+Expanded, it holds both orders of every pair (i, j) and the i = j terms of each bath spin; it is Hermitian.
+(Before 2.0.0 it held one pair order and the other qubit level only.)
 `example/tutorial/07_hBN_VB_natab/hyperfine_mediated_term/` runs with and without it. <br>
 
 <b>Data Type:</b> Boolean
@@ -783,7 +788,11 @@ coupling through the qubit (N. Zhao et al., Nature Nanotechnology 6, 242 (2011),
 ## knight
 <b>Description:</b><br>
 CCE only. Add the Knight-field shift of the bath spins that the qubit induces under a
-transverse magnetic field (same reference as [hfmedi](#tag_hfmedi)).
+transverse magnetic field (same reference as [hfmedi](#tag_hfmedi), SI Eq. 14):
+H_K^(α) = −γ_n B·(g − 1)·I = −(3|m_s| − 2) (γ_e/Δ) B·Ã·I for each bath spin, with Δ = 3/2 of the zz entry of `qzfs`,
+Ã the hyperfine tensor with its z row set to zero, and |m_s| = ⟨S_z²⟩ of the branch's eigenstate.
+It is zero when the field is along z. (Before 2.0.0 the term used the bare field B instead of −γ_n B and |m_s| = 1
+for both branches.)
 `example/tutorial/02_Diamond_NV_natab/knight_shift/` runs with and without it in a tilted field. <br>
 
 <b>Data Type:</b> Boolean

@@ -33,8 +33,10 @@
     "bundle_merge_cutoff": 1.0,
     "cluster_mode": "adaptive",
     "deltat": 0.005,
-    "gpu_batch_steps": 4,
-    "gpu_min_dim": 8,
+    "gpu_options": {
+     "evolution_batch_steps": 4,
+     "min_dim": 8
+    },
     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
     "method": "cce",
     "npulse": 1,

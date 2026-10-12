@@ -48,7 +48,13 @@ Since 2026-10-11 it also checks `evolution_update` (`docs/user/InputFile_Backend
 | refused | because |
 |---|---|
 | a value other than `exact` or `recursive` (a string, or a number) | only the two are defined |
-| `recursive` with gCCE `propagator` = `expm` (`p1_manual_hahn`, `evolution` = `matrix`), with `backend` = `cuda` (`p1_cce2_single`) or `auto` (`p1_cce2_ensemble`) | the recurrence exists on the CPU only (on the GPU the run would compute as `exact`), and `expm` forms no phases to carry over. The ensemble cCCE and gCCE `matrix` were refused until A18 (2026-10-11) and run now (`../check_input_forms/`) |
+| `recursive` given with gCCE `propagator` = `expm` (`p1_manual_hahn`, `evolution` = `matrix`), with `backend` = `cuda` (`p1_cce2_single`) or `auto` (`p1_cce2_ensemble`) | the recurrence exists on the CPU only (on the GPU the run would compute as `exact`), and `expm` forms no phases to carry over. Without the key these paths run `exact` (A29, 2026-10-12). The ensemble cCCE and gCCE `matrix` were refused until A18 (2026-10-11) and run now (`../check_input_forms/`) |
+
+Since 2026-10-12 it also checks the `gpu_options` block (`docs/user/InputFile_Backend.md#tag_gpu_options`, A26), on
+`../check_numerics/cases/`: each of the five flat keys it replaced (`gpu_min_dim` ...) is refused with the new form
+named, and so are a block that is not an object, an unknown key in it, `packed_max_dim` 3, 8 or a string, `min_dim` 0,
+`packed_max_dim` in `bin/main.out` (it needs the GPU binary) and with gCCE (it is cCCE only). The accepted forms are
+`../check_input_forms/gpu_options.sh`.
 
 `../check_rotation/run.sh` refuses the same combinations on toy systems; this
 folder shows the guards fire on real inputs and before any file is interpreted.

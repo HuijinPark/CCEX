@@ -23,8 +23,8 @@ class ServerDriverTests(unittest.TestCase):
         source = INPUTS / 'Diamond_NV_P1_10ppm_gcce/inputfiles/ccein_nstate1.json'
         original = json.loads(source.read_text())
         generated = prepare_config(source, self.root, 5, 'auto', 4)
-        allowed = {'order', 'backend', 'profile', 'savemode', 'outfile', 'gpu_batch_steps',
-                   'gpu_min_dim', 'bathfile', 'qubitfile', 'gyrofile', 'avaaxfile', 'statefile', 'exstatefile'}
+        allowed = {'order', 'backend', 'profile', 'savemode', 'outfile', 'gpu_options',
+                   'bathfile', 'qubitfile', 'gyrofile', 'avaaxfile', 'statefile', 'exstatefile'}
         for key, value in original.items():
             if key not in allowed:
                 self.assertEqual(generated[key], value, key)

@@ -14,6 +14,7 @@
 # run - (internal notes)). Then inputs the ladder must refuse. About 7 minutes.
 #
 # Usage:  bash test/code_verification/check_rdip_ladder/run.sh      (bin/main.out; CCEX_BIN, CCEX_MPI as elsewhere)
+#         CCEX_QUICK=1 (CI): at most 30 time points and 20 pCCE partition trials per case - the same cases, rungs and refusals.
 # ---------------------------------------------------------------------------
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$HERE/../../.." && pwd)"
@@ -60,6 +61,9 @@ for name, (case, change, rungs) in plan.items():
     for k, v in change.items():
         if v is None: c.pop(k, None)
         else: c[k] = v
+    if os.environ.get('CCEX_QUICK'):     # CI: what is checked (a rung = the separate run) holds at any size; the same cases, smaller
+        c['nstep'] = min(int(c.get('nstep', 30)), 30)
+        if str(c.get('method', '')).lower() == 'pcce': c['max_trial'] = min(int(c.get('max_trial', 20)), 20)
     d = f'{work}/{name}'; os.makedirs(d)
     jobs = {'base': dict(c), 'ladder': dict(c, rdip_ladder=rungs)}
     jobs.update({f'sep{r:g}': dict(c, rdip=r) for r in rungs})

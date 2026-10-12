@@ -24,7 +24,8 @@ def main():
     for name,want in manifest['fixture_sha256'].items():
         if sha(fixture/name)!=want:raise ValueError(f'Fixture changed: {name}')
     case=next(c for c in manifest['cases'] if c['name']==args.case)
-    config=dict(resolve(case['config'],fixture),pcce_partition='deterministic',gpu_min_dim=256)
+    config=resolve(case['config'],fixture)
+    config=dict(config,pcce_partition='deterministic',gpu_options=dict(config.get('gpu_options',{}),min_dim=256))
     binaries=dict(cpu=REPO/'bin/main.out',cuda=REPO/'bin/main_gpu.out')
     summary=dict(status='running',case=args.case,config=config,repeats=args.repeats,rank_sweep=[],
         fixture_manifest_sha256=sha(fixture/'manifest.json'),binary_sha256={k:sha(v) for k,v in binaries.items()})

@@ -152,6 +152,44 @@ MatrixXcd HamilQubitBath(QubitArray* qa, BathArray* ba, MatrixXcd** qsigmas, Mat
     return Hqb;
 }
 
+// Hyperfine-mediated term of one branch (complete second order in the hyperfine coupling):
+//   H_med^(alpha) = sum_{beta != alpha} E_ab E_ab^dagger / (w_a - w_b),  E_ab = sum_i (S_ab . A_i) . I_i,
+// S_ab = <alpha|S|beta> with the adjoint on the bra; alpha is the eigenstate of Hq closest to psi and beta runs over
+// every other eigenstate. E_ba = E_ab^dagger (A real, I Hermitian), so each term is Hermitian by construction, and
+// expanding E E^dagger gives every ordered pair (i, j) and the i = j terms.
+static MatrixXcd hfmediBranch(const MatrixXcd& psi, const MatrixXcd& eigenVectors, const VectorXcd& eigenValues,
+                              MatrixXcd** qsigmas, BathArray* ba, MatrixXcd** bsigmas, int nspin, int bdim, int iq){
+    const int ai = close_state_index(psi, eigenVectors);
+    const VectorXcd ea = eigenVectors.col(ai);
+    const double w_a = eigenValues[ai].real();
+    const double degenerate = 1e-12 * eigenValues.cwiseAbs().maxCoeff();
+    MatrixXcd H = MatrixXcd::Zero(bdim,bdim);
+    for (int k = 0; k < eigenVectors.cols(); k++){
+        if (k == ai) continue;                                    // beta != alpha
+        const VectorXcd eb = eigenVectors.col(k);
+        const double w_b = eigenValues[k].real();
+        MatrixXcd s_ab(1,3);                                      // <alpha|S|beta>
+        for (int c = 0; c < 3; c++) s_ab(0,c) = (ea.adjoint() * qsigmas[iq][c+1] * eb)(0,0);
+        // beta degenerate with alpha (review 20261012-194049-af8e42 R1): with S_ab = 0 the term is 0 (e.g. +1 and -1 of a
+        // spin-1 at zero field), anything else has no second-order correction
+        if (std::abs(w_a - w_b) <= degenerate){
+            if (s_ab.norm() <= 1e-12) continue;
+            fprintf(stderr,"Error : hfmedi: qubit level %d (energy %.10g) is degenerate with level %d (energy %.10g), "
+                    "which it couples to through S; the second-order hyperfine-mediated term does not exist there "
+                    "(a nonzero field or zero-field splitting lifts the degeneracy)\n", ai, w_a, k, w_b);
+            ccexFatal();
+        }
+        MatrixXcd E_ab = MatrixXcd::Zero(bdim,bdim);
+        for (int ib = 0; ib < nspin; ib++){
+            MatrixXcd A = BathArray_getBath_i_hypf_j(ba,ib,iq);    // 3x3, row = qubit component
+            MatrixXcd Hi = calHamiltonianSingleInt(s_ab * A, bsigmas[ib]);
+            addExpandedHamiltonian(E_ab, bsigmas, Hi, nspin, ib);
+        }
+        H += (E_ab * E_ab.adjoint()) / (w_a - w_b);
+    }
+    return H;
+}
+
 MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** bsigmas, Config* cnf){
 
     int nqubit = QubitArray_getNqubit(qa);
@@ -229,8 +267,10 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
         VectorXcd alpha_eig = eigenVectors.col(ai);
         VectorXcd beta_eig  = eigenVectors.col(bi);
 
-        double alpha_abs = (alpha_eig.adjoint() * alpha_eig)(0,0).real();
-        double beta_abs  = ( beta_eig.adjoint() *  beta_eig)(0,0).real();
+        // |m_s| of each branch as <S_z^2> (the norm of the eigenvector, used before, is always 1)
+        MatrixXcd Sz2 = qsigmas[iq][3] * qsigmas[iq][3];
+        double alpha_abs = (alpha_eig.adjoint() * Sz2 * alpha_eig)(0,0).real();
+        double beta_abs  = ( beta_eig.adjoint() * Sz2 *  beta_eig)(0,0).real();
         ////////////////////////////////////////////
 
         // get gyros
@@ -238,10 +278,6 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
 
         // Bfield
         float* bfield = Config_getBfield(cnf);
-        MatrixXcd bfield_vector = MatrixXcd::Zero(1,3);
-        bfield_vector(0,0) = (double)bfield[0];
-        bfield_vector(0,1) = (double)bfield[1];
-        bfield_vector(0,2) = (double)bfield[2];
 
         // Main part of simulation 
         for (int ib = 0; ib < nspin; ib++){
@@ -254,9 +290,10 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
             MatrixXcd g_tensor_alpha = ((3.0*alpha_abs - 2.0)/Delta) * (qgyro / bgyro) * g_tensor_tmp;
             MatrixXcd g_tensor_beta  = ((3.0*beta_abs - 2.0)/Delta) * (qgyro / bgyro) * g_tensor_tmp;
 
-            // Vector K = B * g_tensor (1x3)
-            MatrixXcd Bvec_gten_alpha = bfield_vector * g_tensor_alpha;
-            MatrixXcd Bvec_gten_beta = bfield_vector * g_tensor_beta;
+            // Vector K = -gamma_n B * g_tensor (1x3): the nuclear Zeeman vector, not the bare field
+            MatrixXcd zeeman_vec = calZeemanVector(bgyro, bfield);
+            MatrixXcd Bvec_gten_alpha = zeeman_vec * g_tensor_alpha;
+            MatrixXcd Bvec_gten_beta = zeeman_vec * g_tensor_beta;
 
             MatrixXcd Hqb_knight_a_tmp = calHamiltonianSingleInt(Bvec_gten_alpha, bsigmas[ib]); 
             MatrixXcd Hqb_knight_b_tmp = calHamiltonianSingleInt(Bvec_gten_beta , bsigmas[ib]); 
@@ -276,14 +313,11 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
 
 
     //////////////////////////////////////////////////////////////////////////////////////
-    // HF mediated term (Pair correlation)
+    // HF mediated term (second order in the hyperfine coupling)
     MatrixXcd Hqb_medi_a;
     MatrixXcd Hqb_medi_b;
 
     if (Config_getHfmedi(cnf)){
-        Hqb_medi_a = MatrixXcd::Zero(bdim,bdim);
-        Hqb_medi_b = MatrixXcd::Zero(bdim,bdim);
-
         // Qubit effective two states
         MatrixXcd psia = QubitArray_getPsia(qa);
         MatrixXcd psib = QubitArray_getPsib(qa);
@@ -291,13 +325,7 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
         // Pauli matrices of Qubit
         MatrixXcd** qsigmas = QubitArray_PauliOperators(qa);
 
-        // Projected qubit operator
-        // sigma_ab = (sab_x, sab_y, sab_z)
-        // sigma_ba = (sba_x, sba_y, sba_z) //sab is not an operator
-        MatrixXcd sigma_ab = projOperators(qsigmas[iq],psia,psib); // <psia|S|psib>
-        MatrixXcd sigma_ba = projOperators(qsigmas[iq],psib,psia); // <psia|S|psib>
-
-        // Eigenvalues for the eigenstates close to alpha and beta
+        // Eigenstates of the qubit Hamiltonian: every one but the branch's own is an intermediate state
         int qdim = QubitArray_dim(qa);
         MatrixXcd Hq = QubitArray_TotalHamil(qa,qsigmas,Config_getBfield(cnf));
 
@@ -307,29 +335,11 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
         MatrixXcd eigenVectors = es.eigenvectors();
         VectorXcd eigenValues = es.eigenvalues();
 
-        // The closest eigen state from the alpha state
-        int ai = close_state_index(psia, eigenVectors); // Find <ei|alpha> > condidence (0.95)
-        int bi = close_state_index(psib, eigenVectors); // Find <ei|alpha> > condidence (0.95)
-
-        double omega_alpha = eigenValues[ai].real();
-        double omega_beta  = eigenValues[bi].real();
-
-        // Main part of HF medi (Virtual flip of the qubit) simulation.
-        // For the equation, see N. Zhao, Nature Nanotechnology, 6, 242-246 (2011)
-        for (int ib=0; ib<nspin; ib++){
-            for (int jb=ib+1; jb<nspin; jb++){
-                MatrixXcd tensor_iq_ib = BathArray_getBath_i_hypf_j(ba,ib,iq);
-                MatrixXcd tensor_iq_jb = BathArray_getBath_i_hypf_j(ba,jb,iq);
-
-                // Main result
-                MatrixXcd* Iib_AiAj_Ijb_ab = calHamiltonianHeteroInt_o2(sigma_ab, sigma_ba, bsigmas, tensor_iq_ib, tensor_iq_jb, nspin, ib, jb);
-
-                Hqb_medi_a += Iib_AiAj_Ijb_ab[0]/(omega_alpha - omega_beta );
-                Hqb_medi_b += Iib_AiAj_Ijb_ab[1]/(omega_beta  - omega_alpha);
-
-                delete[] Iib_AiAj_Ijb_ab;
-            }
-        }
+        // Second-order (virtual flip of the qubit) correction, each branch on its own.
+        // For the equation, see N. Zhao et al., Nat. Nanotechnol. 6, 242 (2011), SI Eq. 9,
+        // summed over every ordered pair and i = j (complete second order, as PyCCE bath_mediated).
+        Hqb_medi_a = hfmediBranch(psia, eigenVectors, eigenValues, qsigmas, ba, bsigmas, nspin, bdim, iq);
+        Hqb_medi_b = hfmediBranch(psib, eigenVectors, eigenValues, qsigmas, ba, bsigmas, nspin, bdim, iq);
 
         // free
         for (int i=0; i<nqubit; i++){

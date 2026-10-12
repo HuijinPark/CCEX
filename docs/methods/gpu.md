@@ -115,11 +115,13 @@ Add these keys to an existing CCE, pCCE or gCCE input:
 {
     "backend": "auto",
     "propagator": "eigen",
-    "gpu_min_dim": 256,
-    "gpu_batch_steps": 64,
-    "gpu_batch_clusters": 8,
-    "gpu_cluster_batch_mb": 64,
-    "gpu_cache_mb": 64,
+    "gpu_options": {
+        "min_dim": 256,
+        "evolution_batch_steps": 64,
+        "evolution_batch_size": 8,
+        "cluster_batch_mb": 64,
+        "cache_mb": 64
+    },
     "profile": true
 }
 ```
@@ -149,12 +151,13 @@ The complete list of these keys, with their types and defaults, is
 | --- | --- |
 | `backend=cpu` | Default; no CUDA initialization or GPU computation |
 | `backend=cuda` | Require CUDA for every CCE/pCCE/gCCE cluster calculation; fail if unsupported or unavailable |
-| `backend=auto` | Use CUDA for supported clusters with dimension at least `gpu_min_dim`; otherwise use CPU |
-| `gpu_min_dim` | Positive integer, default 256; applies only to `auto` |
-| `gpu_batch_steps` | Positive integer, default 64; maximum time points processed together |
-| `gpu_batch_clusters` | Positive integer, default 8; maximum consecutive compatible clusters evolved together; 1 uses the sequential cluster path |
-| `gpu_cluster_batch_mb` | Positive integer, default 64 MiB per rank; estimated active evolution-buffer budget used when grouping clusters |
-| `gpu_cache_mb` | Nonnegative integer, default 64 MiB per rank; reusable free GPU allocations; 0 disables the cache |
+| `backend=auto` | Use CUDA for supported clusters with dimension at least `gpu_options.min_dim`; otherwise use CPU |
+| `gpu_options.min_dim` | Positive integer, default 256; applies only to `auto` (the flat `gpu_min_dim` before 2026-10-12, now refused) |
+| `gpu_options.packed_max_dim` | 0 (off), 2 or 4; default 4 in `main_gpu.out` with `backend` `cuda`/`auto` and CCE, else 0: cCCE clusters of bath dimension up to it go to [the packed kernel](#the-packed-kernel-for-small-ccce-clusters-gpu_optionspacked_max_dim) |
+| `gpu_options.evolution_batch_steps` | Positive integer, default 64; maximum time points processed together (was `gpu_batch_steps`) |
+| `gpu_options.evolution_batch_size` | Positive integer, default 8; maximum consecutive compatible clusters evolved together; 1 uses the sequential cluster path (was `gpu_batch_clusters`) |
+| `gpu_options.cluster_batch_mb` | Positive integer, default 64 MiB per rank; estimated active evolution-buffer budget used when grouping clusters (was `gpu_cluster_batch_mb`) |
+| `gpu_options.cache_mb` | Nonnegative integer, default 64 MiB per rank; reusable free GPU allocations; 0 disables the cache (was `gpu_cache_mb`) |
 | `propagator` | gCCE: `eigen` (default; one eigendecomposition per cluster, required for CUDA) or `expm` (a matrix exponential per step, CPU only) |
 | `evolution` | gCCE: `vector` (pure initial state, `nstate>0`, `propagator=eigen`) or `matrix` (density matrix); default `vector` where it can run, else `matrix` |
 | `gcce_refinement` | Boolean, default false since 2026-10-02 (true before); compensated refinement of the eigensystem, CPU and CUDA (below) |
@@ -233,6 +236,37 @@ pCCE runs. Set `pcce_partition=legacy` when reproducing an existing result. In
 that mode retain the original seed **and MPI size**; each rank uses the historical
 `max(1, max_trial / ranks)` trials and shared C RNG behavior. Legacy mode preserves
 its MPI dependence and potentially repeated search streams.
+
+## The packed kernel for small cCCE clusters (`gpu_options.packed_max_dim`)
+
+The paths above give each cluster its own eigensolver calls, copies and synchronizations. For the bath-dimension 2 and 4
+clusters of a P1 bath (millions per bath state) that fixed cost is about 400 times the CPU's time per cluster
+(A12, A26 step 0, (internal notes)), and batching the time evolution
+(`evolution_batch_size`) does not remove it. `"gpu_options": {"packed_max_dim": 4}` (or 2) takes those clusters off
+that path:
+
+- **one thread per cluster** (`src/calculation/gpu/small_cluster_gpu.cu`, arithmetic in
+  `include/calculation/gpu/small_cluster_math.h`): cyclic complex Jacobi for both conditional Hamiltonians (lower
+  triangle, as Eigen reads it), M = V_up^† V_down, then for every time point the chain of `evolveSingleState` - the
+  ensemble as the average of that chain over the basis states, the Hahn ensemble by the CPU's identity
+  Σ |X_ab|² conj(Du_a) Du_b / D with X = M Dd M^†. Pulse plans with at most four distinct interval lengths; phases
+  `exact` or `recursive`, as the run's `evolution_update`. A cluster whose Jacobi does not converge (off-diagonal above
+  1e-12 of the diagonal), or whose Hamiltonian is not finite and Hermitian, goes back to the CPU path;
+- **one CUDA context per node**: every rank builds its clusters' Hamiltonians with the CPU path's own function and packs
+  them into its part of a node shared-memory window (MPI-3, page-locked once); node rank 0 runs a feeder thread that
+  takes the submitted windows (2048 clusters each, two per rank) of all ranks into combined batches in two lanes and
+  writes the coherences back. The ranks assemble the product as before. With one context per rank, 32 ranks starting
+  CUDA at once took 3.5 s and tearing it down about 2 s (job 683); the context and the shared memory are therefore
+  started in `computeBackendInit`, in a thread, while the bath is read and the clusters are made, and until they are
+  up the ranks compute their clusters on the CPU. A node with several GPUs uses its first one.
+
+Every loop over the matrix indices has a compile-time trip count and is unrolled. The step-0 prototype without that
+unrolling got dimension-4 eigenvalues wrong on the device (up to 3.4e6): after the first rotation the device read the
+diagonal from before it. `-G` and `-Xcicc -O0` gave the host's values and `ptxas -O0` did not, so it is nvcc 12.8's
+NVVM optimizer (cicc -O3) on the dynamically indexed local arrays (job 680,
+(internal notes)). The standing check `test_small_cluster_cuda`
+(`make gpu-test`) runs the kernel on CPU-dumped clusters (11 files: single state and ensemble, Hahn, CPMG, Ramsey,
+`exact` and `recursive`, 128 production P1 clusters) against 1e-8 + 2e-6 |CPU| per point.
 
 ## MPI and multiple GPUs
 

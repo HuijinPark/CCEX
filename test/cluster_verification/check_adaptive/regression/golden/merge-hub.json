@@ -46,8 +46,10 @@
     "bundle_merge_cutoff": 1e+300,
     "cluster_mode": "adaptive",
     "deltat": 0.2,
-    "gpu_batch_steps": 4,
-    "gpu_min_dim": 8,
+    "gpu_options": {
+     "evolution_batch_steps": 4,
+     "min_dim": 8
+    },
     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
     "method": "cce",
     "npulse": 16,
@@ -76,10 +78,10 @@
    "rounds": [
     {
      "accepted": {
-      "actual_graph_scaled_error": 480193.1112674168,
+      "actual_graph_scaled_error": 480193.1112674167,
       "hub": true,
       "local_after": 0.0,
-      "local_before": 6.474735673681784,
+      "local_before": 6.474735674531491,
       "pair": [
        0,
        3,
@@ -100,7 +102,7 @@
       "candidate_patches": 21,
       "checked_patches": 21,
       "coverage_limited": false,
-      "max_inverse_log10_amplification": 1.9165308805423336,
+      "max_inverse_log10_amplification": 1.9165308805409922,
       "whole_bath_oracle": true,
       "work_blocked": 0
      },
@@ -125,7 +127,7 @@
       ]
      },
      "iteration": 0,
-     "max_local_scaled_error": 2762679.5372087187,
+     "max_local_scaled_error": 2762679.5372067546,
      "patches": [
       {
        "bundles": [
@@ -133,8 +135,8 @@
         2,
         3
        ],
-       "max_abs_error": 2.673555638383622,
-       "scaled_error": 2762679.5372087187,
+       "max_abs_error": 2.673555638381835,
+       "scaled_error": 2762679.5372067546,
        "worst_state_step": [
         0,
         8
@@ -146,8 +148,8 @@
         1,
         3
        ],
-       "max_abs_error": 2.89426328272224,
-       "scaled_error": 2562528.3602517196,
+       "max_abs_error": 2.894263282720462,
+       "scaled_error": 2562528.360249831,
        "worst_state_step": [
         0,
         8
@@ -159,8 +161,8 @@
         2,
         3
        ],
-       "max_abs_error": 1.2680556375015832,
-       "scaled_error": 1013955.9785388651,
+       "max_abs_error": 1.268055637501171,
+       "scaled_error": 1013955.9785384703,
        "worst_state_step": [
         0,
         8
@@ -175,8 +177,8 @@
         4,
         5
        ],
-       "max_abs_error": 1.0929480125151392,
-       "scaled_error": 981709.9098196247,
+       "max_abs_error": 1.0929480125130029,
+       "scaled_error": 981709.9098178291,
        "worst_state_step": [
         0,
         8
@@ -188,8 +190,8 @@
         1,
         2
        ],
-       "max_abs_error": 0.224706632270173,
-       "scaled_error": 302670.007372284,
+       "max_abs_error": 0.2247066322702332,
+       "scaled_error": 302670.0073722868,
        "worst_state_step": [
         0,
         6
@@ -201,8 +203,8 @@
         2,
         4
        ],
-       "max_abs_error": 7.747501743408762e-06,
-       "scaled_error": 13.96496547941577,
+       "max_abs_error": 7.747501753999713e-06,
+       "scaled_error": 13.964965498503966,
        "worst_state_step": [
         0,
         8
@@ -214,8 +216,8 @@
         3,
         4
        ],
-       "max_abs_error": 6.283922576073027e-06,
-       "scaled_error": 12.295624603064311,
+       "max_abs_error": 6.283922673549791e-06,
+       "scaled_error": 12.295624566344308,
        "worst_state_step": [
         0,
         5
@@ -227,8 +229,8 @@
         3,
         5
        ],
-       "max_abs_error": 8.7320201576046e-06,
-       "scaled_error": 6.378118849519204,
+       "max_abs_error": 8.732020255640447e-06,
+       "scaled_error": 6.378118798299997,
        "worst_state_step": [
         0,
         5
@@ -240,8 +242,8 @@
         3,
         5
        ],
-       "max_abs_error": 9.295242283312557e-06,
-       "scaled_error": 5.418415602704006,
+       "max_abs_error": 9.295242371841645e-06,
+       "scaled_error": 5.418415654309962,
        "worst_state_step": [
         0,
         8
@@ -253,8 +255,8 @@
         3,
         5
        ],
-       "max_abs_error": 7.5855311725002895e-06,
-       "scaled_error": 4.419578392134174,
+       "max_abs_error": 7.585531276384959e-06,
+       "scaled_error": 4.4195784526607875,
        "worst_state_step": [
         0,
         8
@@ -266,8 +268,8 @@
         1,
         4
        ],
-       "max_abs_error": 1.011738197521496e-06,
-       "scaled_error": 2.8950718579907604,
+       "max_abs_error": 1.0117381921230174e-06,
+       "scaled_error": 2.895071842543116,
        "worst_state_step": [
         0,
         6
@@ -279,8 +281,8 @@
         1,
         5
        ],
-       "max_abs_error": 1.921206659968176e-06,
-       "scaled_error": 2.237662845929809,
+       "max_abs_error": 1.9212066831600377e-06,
+       "scaled_error": 2.2376628729416645,
        "worst_state_step": [
         0,
         5
@@ -292,8 +294,8 @@
         3,
         4
        ],
-       "max_abs_error": 7.170271250728415e-07,
-       "scaled_error": 1.2929576502852704,
+       "max_abs_error": 7.170271259885336e-07,
+       "scaled_error": 1.2929576730465482,
        "worst_state_step": [
         0,
         6
@@ -305,8 +307,8 @@
         2,
         5
        ],
-       "max_abs_error": 2.418568460059801e-06,
-       "scaled_error": 1.2085099120104892,
+       "max_abs_error": 2.4185684779540305e-06,
+       "scaled_error": 1.2085099209518715,
        "worst_state_step": [
         0,
         8
@@ -318,8 +320,8 @@
         2,
         5
        ],
-       "max_abs_error": 1.6320950951226698e-06,
-       "scaled_error": 1.089716271948021,
+       "max_abs_error": 1.6320950942180013e-06,
+       "scaled_error": 1.089716271344003,
        "worst_state_step": [
         0,
         5
@@ -331,8 +333,8 @@
         3,
         4
        ],
-       "max_abs_error": 1.7241720731497558e-06,
-       "scaled_error": 1.0170547669797911,
+       "max_abs_error": 1.7241719916221164e-06,
+       "scaled_error": 1.0170547188883021,
        "worst_state_step": [
         0,
         8
@@ -344,8 +346,8 @@
         4,
         5
        ],
-       "max_abs_error": 5.005041119293618e-07,
-       "scaled_error": 0.7528433719249765,
+       "max_abs_error": 5.005040905020535e-07,
+       "scaled_error": 0.7528433396940574,
        "worst_state_step": [
         0,
         8
@@ -357,8 +359,8 @@
         2,
         4
        ],
-       "max_abs_error": 4.949180826144258e-07,
-       "scaled_error": 0.3625782823099734,
+       "max_abs_error": 4.949180812764391e-07,
+       "scaled_error": 0.36257828132978986,
        "worst_state_step": [
         0,
         7
@@ -370,8 +372,8 @@
         4,
         5
        ],
-       "max_abs_error": 4.652568870012851e-09,
-       "scaled_error": 0.0023490784076744945,
+       "max_abs_error": 4.652614276446325e-09,
+       "scaled_error": 0.0023491013333474605,
        "worst_state_step": [
         0,
         8
@@ -383,8 +385,8 @@
         4,
         5
        ],
-       "max_abs_error": 1.5826309385117166e-09,
-       "scaled_error": 0.0007984290844188126,
+       "max_abs_error": 1.5825867584009437e-09,
+       "scaled_error": 0.0007984067957825049,
        "worst_state_step": [
         0,
         8
@@ -396,8 +398,8 @@
         4,
         5
        ],
-       "max_abs_error": 7.423295326662783e-10,
-       "scaled_error": 0.00037520595775287753,
+       "max_abs_error": 7.422851906534718e-10,
+       "scaled_error": 0.0003751835453515751,
        "worst_state_step": [
         0,
         8
@@ -409,8 +411,8 @@
       "physical": 4
      },
      "whole_bath_error": {
-      "max_abs_error": 1.0929480125151378,
-      "scaled_error": 981709.9098196236,
+      "max_abs_error": 1.0929480125130018,
+      "scaled_error": 981709.9098178281,
       "worst_state_step": [
        0,
        8
@@ -421,13 +423,13 @@
      "accepted": {
       "actual_graph_scaled_error": 0.0,
       "local_after": 0.0,
-      "local_before": 480193.1112674168,
+      "local_before": 480193.1112674167,
       "pair": [
        1,
        2
       ],
       "physical": true,
-      "score": 7503.017363553387,
+      "score": 7503.017363553386,
       "sites": [
        1,
        2
@@ -439,21 +441,21 @@
       "candidate_patches": 1,
       "checked_patches": 1,
       "coverage_limited": false,
-      "max_inverse_log10_amplification": 0.0961059320531098,
+      "max_inverse_log10_amplification": 0.09610593205311808,
       "whole_bath_oracle": true,
       "work_blocked": 0
      },
      "finite_and_cce_bound": true,
      "global_change": {
-      "max_abs_error": 1.5554957996391523,
-      "scaled_error": 2000800.490523444,
+      "max_abs_error": 1.5554957996369136,
+      "scaled_error": 2000800.4905229174,
       "worst_state_step": [
        0,
        6
       ]
      },
      "iteration": 1,
-     "max_local_scaled_error": 480193.1112674168,
+     "max_local_scaled_error": 480193.1112674167,
      "patches": [
       {
        "bundles": [
@@ -462,7 +464,7 @@
         2
        ],
        "max_abs_error": 0.5674815523425718,
-       "scaled_error": 480193.1112674168,
+       "scaled_error": 480193.1112674167,
        "worst_state_step": [
         0,
         5
@@ -471,7 +473,7 @@
      ],
      "whole_bath_error": {
       "max_abs_error": 0.5674815523425718,
-      "scaled_error": 480193.1112674168,
+      "scaled_error": 480193.1112674167,
       "worst_state_step": [
        0,
        5
@@ -491,7 +493,7 @@
      "finite_and_cce_bound": true,
      "global_change": {
       "max_abs_error": 0.5674815523425718,
-      "scaled_error": 11080727.808935419,
+      "scaled_error": 11080727.808935061,
       "worst_state_step": [
        0,
        5

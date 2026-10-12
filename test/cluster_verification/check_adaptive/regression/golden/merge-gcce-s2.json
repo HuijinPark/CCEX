@@ -48,8 +48,10 @@
     "bundle_merge_cutoff": 1.0,
     "cluster_mode": "adaptive",
     "deltat": 0.005,
-    "gpu_batch_steps": 4,
-    "gpu_min_dim": 8,
+    "gpu_options": {
+     "evolution_batch_steps": 4,
+     "min_dim": 8
+    },
     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
     "method": "gcce",
     "npulse": 4,
@@ -89,7 +91,7 @@
      "finite_and_cce_bound": true,
      "global_change": null,
      "iteration": 0,
-     "max_local_scaled_error": 0.12795812646550717,
+     "max_local_scaled_error": 0.12795812683715638,
      "patches": [
       {
        "bundles": [
@@ -97,8 +99,8 @@
         1,
         2
        ],
-       "max_abs_error": 8.352494135364993e-07,
-       "scaled_error": 0.12795812646550717,
+       "max_abs_error": 8.352494159624478e-07,
+       "scaled_error": 0.12795812683715638,
        "worst_state_step": [
         0,
         6
@@ -106,8 +108,8 @@
       }
      ],
      "whole_bath_error": {
-      "max_abs_error": 8.352494135433507e-07,
-      "scaled_error": 0.1279581264665568,
+      "max_abs_error": 8.352494159851481e-07,
+      "scaled_error": 0.127958126840634,
       "worst_state_step": [
        0,
        6

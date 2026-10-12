@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 #
-# evolution_update (docs/user/InputFile_Backend.md, 2026-10-11): an explicit "exact" gives the bytes of the default run;
-# "recursive" (A16 b, the phases of the time grid carried over from the previous step) runs on the paths it covers
-# and stays within 1e-8 of exact in the raw _noDiv. NV + P1 10 ppm (inputs/Diamond_NV_P1_10ppm_{cce,gcce}, nstep 40:
-# the recurrence runs between steps 0, 16 and 32): cCCE2 and gCCE2 (evolution=vector) with one sampled state; since
-# A18 (2026-10-11) also the ensemble cCCE2 (nstate 0: Hahn, CPMG-8, and a Manual sequence of unequal intervals) and
-# gCCE2 evolution=matrix (the ensemble Hahn echo, and CPMG-8 with one state). The refusals ("recursive" elsewhere,
-# other values) are in ../check_refusals/.
+# evolution_update (docs/user/InputFile_Backend.md, 2026-10-11; the default per path since A29, 2026-10-12):
+# E1  an explicit "exact" gives the outputs the check_numerics references were recorded with (exact): its 25 cases
+#     against its newest head-* reference by its compare.py, same tolerance (1e-9 on _noDiv and dm);
+# E2  "recursive" (A16 b, the phases of the time grid carried over from the previous step) runs on the paths it covers
+#     and stays within 1e-8 of exact in the raw _noDiv. NV + P1 10 ppm (inputs/Diamond_NV_P1_10ppm_{cce,gcce}, nstep 40:
+#     the recurrence runs between steps 0, 16 and 32): cCCE2 and gCCE2 (evolution=vector) with one sampled state; since
+#     A18 (2026-10-11) also the ensemble cCCE2 (nstate 0: Hahn, CPMG-8, and a Manual sequence of unequal intervals) and
+#     gCCE2 evolution=matrix (the ensemble Hahn echo, and CPMG-8 with one state);
+# E3  without the key those paths run recursive: the bytes of an explicit "recursive", not those of "exact", and the log
+#     says it was the default. On check_numerics cases where the two differ in the written digits (the NV + P1 10 ppm
+#     inputs of E2 do not): single-state and ensemble cCCE2, gCCE2 vector and matrix;
+# E4  without the key the paths recursive does not cover run exact, silently (not refused): backend auto (all on the
+#     CPU in a CPU-only binary) and gCCE propagator expm give the bytes of an explicit "exact".
+# The refusals ("recursive" given elsewhere, other values) are in ../check_refusals/.
 #
 # Usage:  bash test/code_verification/check_input_forms/evolution_update.sh
 # ---------------------------------------------------------------------------
@@ -16,6 +23,66 @@ source "$HERE/lib.sh"
 
 W="$WORK/evolution_update"
 rm -rf "$W"; mkdir -p "$W"
+NUM="$REPO/test/code_verification/check_numerics"
+
+# run_case <case> <name> <json changes>: a check_numerics case with the changes, 2 ranks as its run.sh,
+# into $W/<name>/out*; relative paths in the case's input are read from the case's folder
+run_case(){
+    local d="$NUM/cases/$1" o="$W/$2"; mkdir -p "$o"
+    python3 -c 'import json,sys; j=json.load(open(sys.argv[1])); j.update(json.loads(sys.argv[3])); json.dump(j,open(sys.argv[2],"w"),indent=1)' \
+        "$d/ccein.json" "$o.json" "$3"
+    ( cd "$d" && "$MPIRUN" -n 2 "$BIN_DEV" -f "$o.json" -o "$o/out" > "$o.log" 2>&1 < /dev/null ) || { echo "    $2 exited $?"; return 1; }
+}
+# same_bytes <dirA> <dirB>: the same output files, byte for byte
+same_bytes(){ [ -n "$(ls "$1")" ] && [ "$(ls "$1")" = "$(ls "$2")" ] && diff -rq "$1" "$2" >/dev/null; }
+
+# E1: an explicit exact on the check_numerics cases against the reference recorded with exact
+mkdir -p "$W/numerics"
+for d in "$NUM"/cases/*/; do run_case "$(basename "$d")" "numerics/$(basename "$d")" '{"evolution_update":"exact"}'; done
+REF=""; for r in "$NUM"/reference/head-*/; do [ -d "$r" ] && REF="$r"; done
+if python3 "$NUM/compare.py" "$W/numerics" "$REF" --expected "$NUM/expected.json" > "$W/numerics.txt"; then
+    echo "  PASS  E1 evolution_update exact gives the check_numerics reference $(basename "$REF") ($(tail -1 "$W/numerics.txt"))"
+    PASS=$((PASS+1))
+else echo "  FAIL  E1 (see $W/numerics.txt)"; FAIL=$((FAIL+1)); fi
+
+# E3: without the key, recursive where it exists
+# name  case  changes
+SUPPORTED="cce_single p1_cce2_single {}
+cce_ensemble hbn_cce2_hf3_qd0 {}
+gcce_vector hbn_gcce2_oh {}
+gcce_matrix hbn_gcce2_oh {\"evolution\":\"matrix\"}"
+while read -r name case change; do
+    ok=1
+    run_case "$case" "e3_$name/default" "$change" || ok=0
+    for v in exact recursive; do
+        run_case "$case" "e3_$name/$v" "$(python3 -c 'import json,sys; print(json.dumps(dict(json.loads(sys.argv[1]), evolution_update=sys.argv[2])))' "$change" $v)" || ok=0
+    done
+    d="$W/e3_$name"
+    same_bytes "$d/default" "$d/recursive" || { echo "    $name: the default run is not an explicit recursive's bytes"; ok=0; }
+    same_bytes "$d/default" "$d/exact" && { echo "    $name: exact and recursive write the same bytes here, so this case cannot tell them apart"; ok=0; }
+    grep -Eq '^ +evolution_update +: +recursive' "$d/default.log" &&
+        grep -Eq '^ +chosen by +: +default \(supported path\)' "$d/default.log" || { echo "    $name: the log does not say recursive by default"; ok=0; }
+    if [ $ok -eq 1 ]; then echo "  PASS  E3 $name ($case): without the key the run is recursive"; PASS=$((PASS+1))
+    else echo "  FAIL  E3 $name (see $d)"; FAIL=$((FAIL+1)); fi
+done <<< "$SUPPORTED"
+
+# E4: without the key, exact where recursive does not exist (A29: silently, not refused)
+# name  case  changes  what the log names
+UNSUPPORTED="auto p1_cce2_single {\"backend\":\"auto\"} backend=auto
+expm hbn_gcce2_oh {\"propagator\":\"expm\"} method=gCCE with propagator=expm"
+while read -r name case change why; do
+    ok=1
+    run_case "$case" "e4_$name/default" "$change" || ok=0
+    run_case "$case" "e4_$name/exact" "$(python3 -c 'import json,sys; print(json.dumps(dict(json.loads(sys.argv[1]), evolution_update="exact")))' "$change")" || ok=0
+    d="$W/e4_$name"
+    same_bytes "$d/default" "$d/exact" || { echo "    $name: the default run is not an explicit exact's bytes"; ok=0; }
+    grep -Eq '^ +evolution_update +: +exact' "$d/default.log" && grep -Fq "default ($why)" "$d/default.log" ||
+        { echo "    $name: the log does not say exact by default ($why)"; ok=0; }
+    if [ $ok -eq 1 ]; then echo "  PASS  E4 $name ($case): without the key, $why runs exact"; PASS=$((PASS+1))
+    else echo "  FAIL  E4 $name (see $d)"; FAIL=$((FAIL+1)); fi
+done <<< "$UNSUPPORTED"
+
+# E2: recursive against exact on the NV + P1 10 ppm variants
 # name  input folder  input file  changes
 VARIANTS="cce cce ccein_nstate1.json {}
 gcce gcce ccein_nstate1.json {}
@@ -32,21 +99,14 @@ import json, re, sys
 d, file, change = sys.argv[1], sys.argv[2], json.loads(sys.argv[3])
 j = json.loads(re.sub(r"(?m)^\s*#.*$", "", open(f"{d}/inputfiles/{file}").read()))
 j.update(change)
-json.dump(dict(j, outfile="./out/default"), open(f"{d}/default.json", "w"), indent=1)
 for value in ("exact", "recursive"):
     json.dump(dict(j, outfile=f"./out/{value}", evolution_update=value), open(f"{d}/{value}.json", "w"), indent=1)
 PY2
 done <<< "$VARIANTS"
 for sys in $NAMES; do
     cd "$W/$sys"; ok=1
-    for v in default exact recursive; do run_ccex "$BIN_DEV" $v.json $v.log || { echo "    $sys $v exited $?"; ok=0; }; done
-    ls out/default*_noDiv >/dev/null 2>&1 || ok=0
-    for f in out/default*_noDiv out/default*_wiDiv; do
-        cmp -s "$f" "${f/default/exact}" || { echo "    DIFF $sys $f ${f/default/exact}"; ok=0; }
-    done
-    if [ $ok -eq 1 ]; then echo "  PASS  E1 $sys: evolution_update exact gives the default run's bytes"; PASS=$((PASS+1))
-    else echo "  FAIL  E1 $sys"; FAIL=$((FAIL+1)); fi
-    if grep -Eq '^ +evolution_update +: +recursive' recursive.log && python3 - <<'PY'
+    for v in exact recursive; do run_ccex "$BIN_DEV" $v.json $v.log || { echo "    $sys $v exited $?"; ok=0; }; done
+    if [ $ok -eq 1 ] && grep -Eq '^ +evolution_update +: +recursive' recursive.log && python3 - <<'PY'
 import cmath, glob, math, sys
 def read(p): return [complex(l.split()[1].replace("+-", "-")) for l in open(p) if l.strip()]
 def same(x, y):    # nan in both is the same; nan on one side only, or nan vs inf, is not (|nan - y| would be skipped by max)

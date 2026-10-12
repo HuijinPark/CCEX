@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <cstring>
 #include <limits>
 
 // Keep a product's binary exponent separate until the final observable is
@@ -111,5 +112,168 @@ inline void assembleFactor(ScaledComplex& with,ScaledComplex& without,std::compl
     with.multiplyLazy(factor);
     if(power>0)without.multiplyLazy(factor);
     if(saved)*saved=factor.value();
+}
+
+// improvements.md A34: count power-1 cluster values raw[0], raw[stride], ... of one time point multiplied, in that order,
+// into one product - the same operations as count calls of assembleFactor(product, other, raw[k*stride], inverseZero, 1,
+// unitZero, nullptr) for this product, so the same bits. calculate() gathers a block of clusters first so that the run is
+// long, and the product is held in local variables over the run instead of being stored and reloaded at every factor
+// (x87 long double stores are slow). In the rare cases (a normalization, a value off assembleFactor's shortcuts) the
+// product goes back to `product`, is handled there out of line, and is taken up again; the locals' addresses never
+// escape, so the compiler can keep them in registers. The cCCE and gCCE runs are separate functions because x87 register
+// allocation is fragile: in one function, a change to one loop slowed the other twofold (icpx).
+//
+// Guard-free runs: multiplyLazy normalizes when the larger component of the product leaves [2^-1000, 2^1000]. Before a
+// run, a scan of the doubles bounds every factor's size by powers of two; when those bounds keep the product (and every
+// partial product of the run) at least 2^10 inside that window, the guard cannot fire, and the loop leaves it out - the
+// same operations as with it. Sizes: for a component maximum a = f 2^e (frexp, f in [1/2, 1)) a complex number lies in
+// [2^(e-1), 2^(e+1/2)); a product's larger component M and modulus |p| satisfy M <= |p| < 2 M; each multiplication
+// changes |p| by |factor| times (1 +- 2^-60) at most (x87 rounding, 64-bit significands, all values normal).
+namespace scaled_run {
+__attribute__((noinline,cold)) inline void normalize(ScaledComplex& product){product.normalize();}
+__attribute__((noinline,cold)) inline void other(ScaledComplex& product,std::complex<double> raw,
+                                                  const ScaledComplex& inverseZero,bool unitZero){
+    ScaledComplex unused;
+    assembleFactor(product,unused,raw,inverseZero,1,unitZero,nullptr);
+}
+// both components finite and nonzero: assembleFactor's condition for its shortcuts
+inline bool regular(std::complex<double> z){
+    return z.real()!=0 && z.imag()!=0 && std::isfinite(z.real()) && std::isfinite(z.imag());
+}
+// e with |x| = f 2^e, f in [1/2, 1) (as frexp) for a finite nonzero double, read from its bits; a subnormal (and zero, not
+// used) gives -1100, below every subnormal's e, which only makes the bounds below wider
+inline int sizeExponent(double x){
+    unsigned long long bits;std::memcpy(&bits,&x,sizeof bits);
+    const int biased=int((bits>>52)&0x7ff);
+    return biased==0 ? -1100 : biased-1022;
+}
+// the binary exponent e of max(|re|, |im|) = f 2^e, f in [1/2, 1); false if that is zero or not finite
+inline bool scaleExponent(long double re,long double im,int& e){
+    const long double m=std::max(std::abs(re),std::abs(im));
+    if(!(m>0 && m<=std::numeric_limits<long double>::max()))return false;
+    std::frexp(m,&e);return true;
+}
+// the guard cannot fire when the product starts at M0 = f 2^m and the factors' size exponents add up, over any prefix of
+// the run, to no less than low and no more than high: then 2^(m-2+low) <= M <= 2^(m+2+high), with 2^10 to spare
+inline bool guardFree(int m,long long low,long long high){return m-2+low>=-990 && m+2+high<=990;}
+// multiplyLazy by (fr, fi, fe) of the product held in re, im, exponent
+#define CCEX_SCALED_RUN_LAZY(FR,FI,FE) do{ \
+        const long double r_=re*(FR)-im*(FI), i_=re*(FI)+im*(FR); \
+        re=r_;im=i_;exponent+=(FE); \
+        const long double scale_=std::max(std::abs(r_),std::abs(i_)); \
+        if(__builtin_expect(!(scale_>=0x1p-1000L && scale_<=0x1p1000L),0)){ \
+            product.real=re;product.imag=im;product.exponent=exponent;normalize(product); \
+            re=product.real;im=product.imag;exponent=product.exponent; \
+        } \
+    }while(0)
+#define CCEX_SCALED_RUN_OTHER(Z,UNIT) do{ \
+        product.real=re;product.imag=im;product.exponent=exponent;other(product,Z,inverseZero,UNIT); \
+        re=product.real;im=product.imag;exponent=product.exponent; \
+    }while(0)
+// The scan of a run, once for the two products of a time point: whether every value is regular (the usual case) and
+// bounds on the factors' sizes, as sums of size exponents that hold over any prefix of the run.
+// L0 = 1 (cCCE): the factor is ScaledComplex::raw(z), exponent 0; |z| in [2^(e-1), 2^(e+1/2)), so the size exponents add up
+// to at least the sum of min(e-1, 0) and at most the sum of max(e+1, 0).
+// L0 != 1 (gCCE), see runGeneral: |factor| in [2^(e-2), 2^(e+1)), the sums of min(e-2, 0) and max(e+2, 0).
+struct Scan { bool allRegular=true; long long low=0,high=0; };
+inline Scan scan(const std::complex<double>* raw,size_t stride,int count,bool unitZero){
+    Scan out;
+    const int margin=unitZero ? 1 : 2;
+    for(int k=0;k<count;++k){
+        const std::complex<double> z=raw[size_t(k)*stride];
+        out.allRegular&=regular(z);
+        const int e=std::max(sizeExponent(z.real()),sizeExponent(z.imag()));
+        out.low+=std::min(e-margin,0);out.high+=std::max(e+margin,0);
+    }
+    return out;
+}
+// L0 = 1 (cCCE)
+__attribute__((noinline)) inline void runUnit(ScaledComplex& product,const std::complex<double>* raw,size_t stride,int count,
+                                              const ScaledComplex& inverseZero,const Scan& sc){
+    const bool allRegular=sc.allRegular;
+    const long long low=sc.low,high=sc.high;
+    long double re=product.real,im=product.imag;
+    long long exponent=product.exponent;
+    int m=0;
+    if(allRegular && count<=4096 && scaleExponent(re,im,m) && guardFree(m,low,high)){
+        for(int k=0;k<count;++k){
+            const std::complex<double> z=raw[size_t(k)*stride];
+            const long double fr=z.real(),fi=z.imag();
+            const long double r=re*fr-im*fi, i=re*fi+im*fr;
+            re=r;im=i;
+        }
+    }else if(allRegular){
+        for(int k=0;k<count;++k){
+            const std::complex<double> z=raw[size_t(k)*stride];
+            const long double fr=z.real(),fi=z.imag();
+            CCEX_SCALED_RUN_LAZY(fr,fi,0);
+        }
+    }else for(int k=0;k<count;++k){
+        const std::complex<double> z=raw[size_t(k)*stride];
+        if(regular(z)){const long double fr=z.real(),fi=z.imag();CCEX_SCALED_RUN_LAZY(fr,fi,0);}
+        else CCEX_SCALED_RUN_OTHER(z,true);
+    }
+    product.real=re;product.imag=im;product.exponent=exponent;
+}
+// L0 != 1 (gCCE): the factor is z * inverse(L0), formed without normalization (A24). inverse(L0) is normalized: where its
+// components are at most 1 in size, z * inverse(L0) of a finite double z is at most 2 * DBL_MAX and so finite, and
+// assembleFactor's isfinite test of the factor can be left out (an x87 isfinite goes through memory). Where in addition
+// its larger component is at least 1/2, |inverse(L0)| is in [1/2, 2^(1/2)) and |factor| in [2^(e-2), 2^(e+1)) (the scan's
+// bounds). A factor with a zero component still goes through assembleFactor, and the run then continues with the guard.
+__attribute__((noinline)) inline void runGeneral(ScaledComplex& product,const std::complex<double>* raw,size_t stride,int count,
+                                                 const ScaledComplex& inverseZero,const Scan& sc){
+    const long double zr=inverseZero.real,zi=inverseZero.imag;
+    const long long ze=inverseZero.exponent;
+    long double re=product.real,im=product.imag;
+    long long exponent=product.exponent;
+    int k=0;
+    if(std::abs(zr)<=1 && std::abs(zi)<=1){
+        const bool allRegular=sc.allRegular && std::max(std::abs(zr),std::abs(zi))>=0.5L;
+        const long long low=sc.low,high=sc.high;
+        int m=0;
+        if(allRegular && count<=4096 && scaleExponent(re,im,m) && guardFree(m,low,high)){
+            for(;k<count;++k){
+                const std::complex<double> z=raw[size_t(k)*stride];
+                const long double fr=z.real()*zr-z.imag()*zi, fi=z.real()*zi+z.imag()*zr;
+                if(__builtin_expect(!(fr!=0 && fi!=0),0))break;
+                const long double r=re*fr-im*fi, i=re*fi+im*fr;
+                re=r;im=i;exponent+=ze;
+            }
+        }
+        for(;k<count;++k){
+            const std::complex<double> z=raw[size_t(k)*stride];
+            if(__builtin_expect(regular(z),1)){
+                const long double fr=z.real()*zr-z.imag()*zi, fi=z.real()*zi+z.imag()*zr;
+                if(__builtin_expect(fr!=0 && fi!=0,1)){CCEX_SCALED_RUN_LAZY(fr,fi,ze);continue;}
+            }
+            CCEX_SCALED_RUN_OTHER(z,false);
+        }
+    }else for(;k<count;++k){
+        const std::complex<double> z=raw[size_t(k)*stride];
+        if(regular(z)){
+            const long double fr=z.real()*zr-z.imag()*zi, fi=z.real()*zi+z.imag()*zr;
+            if(fr!=0 && fi!=0 && std::isfinite(fr) && std::isfinite(fi)){CCEX_SCALED_RUN_LAZY(fr,fi,ze);continue;}
+        }
+        CCEX_SCALED_RUN_OTHER(z,false);
+    }
+    product.real=re;product.imag=im;product.exponent=exponent;
+}
+#undef CCEX_SCALED_RUN_LAZY
+#undef CCEX_SCALED_RUN_OTHER
+}
+// the run's scan, computed once for both products of a time point
+inline scaled_run::Scan assembleScan(const std::complex<double>* raw,size_t stride,int count,bool unitZero){
+    return scaled_run::scan(raw,stride,count,unitZero);
+}
+inline void assembleRun(ScaledComplex& product,const std::complex<double>* raw,size_t stride,int count,
+                        const ScaledComplex& inverseZero,bool unitZero,const scaled_run::Scan& scan){
+    if(!ScaledComplex::lazySafe){
+        for(int k=0;k<count;++k)scaled_run::other(product,raw[size_t(k)*stride],inverseZero,unitZero);
+    }else if(unitZero)scaled_run::runUnit(product,raw,stride,count,inverseZero,scan);
+    else scaled_run::runGeneral(product,raw,stride,count,inverseZero,scan);
+}
+inline void assembleRun(ScaledComplex& product,const std::complex<double>* raw,size_t stride,int count,
+                        const ScaledComplex& inverseZero,bool unitZero){
+    assembleRun(product,raw,stride,count,inverseZero,unitZero,assembleScan(raw,stride,count,unitZero));
 }
 #endif

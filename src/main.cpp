@@ -120,7 +120,24 @@ void runOneCalculation(Config* cnf, QubitArray* qa, BathArray* ba, DefectArray* 
     // MPI distribution for the clusters
     int order = Cluster_getOrder(cls);
     int*** clusters = Cluster_getClusinfo(cls);
-    int*** localclusters = MPI_getLocalClusters(order,clusters);
+    // A31: a cluster's cost is D^2 (D + nstep), D its dimension (the qubit's too in gCCE): one D^3 eigensolve and
+    // nstep steps of D^2 work; measured on h-BN (dimensions 3..49) it follows the time per cluster within about 20 %.
+    std::vector<double> siteDim(ba->nspin, 1.0);
+    for (int i=0; i<ba->nspin; i++){
+        siteDim[i] = BathSpin_dim(BathArray_getBath_i(ba,i));
+        const int idf = DefectArray_findDefectIndex(dfa,BathArray_getBath_i_name(ba,i));
+        for (int isp=0; idf>=0 && isp<DefectArray_getDefect_idf_naddspin(dfa,idf); isp++)
+            siteDim[i] *= BathSpin_dim(DefectArray_getSubbath_i_isp(dfa,i,isp));
+    }
+    const double qubitDim = strcasecmp(cnf->method,"gcce") ? 1.0 : QubitArray_dim(qa);
+    const double nstep = Config_getNstep(cnf);
+    // An order whose clusters all cost the same (P1, 13C: one kind of spin) keeps the equal-count split byte for byte.
+    const std::function<double(int,const int*)> clusterCost = [&](int n, const int* row){
+        double d = qubitDim;
+        for (int j=1; j<=n; j++) d *= siteDim[row[j]];
+        return d*d*(d+nstep);
+    };
+    int*** localclusters = MPI_getLocalClusters(order,clusters,clusterCost);
     // int*** localclusters = clusters; // No MPI
     // reportClusinfo(localclusters,order);
     MPI_Barrier(MPI_COMM_WORLD);
@@ -704,9 +721,9 @@ int main(int argc, char* argv[]){
                 printf("  --auto_status -f FILE\t\t\tWhere that automatic convergence is (running, interrupted, stopped, ended), no calculation\n");
                 printf("JSON execution options (in the -f input):\n");
                 printf("  backend: cpu (default), cuda, auto; profile: true for per-dimension counts/timing\n");
-                printf("  gpu_min_dim, gpu_batch_steps, gpu_cache_mb, gpu_batch_clusters, gpu_cluster_batch_mb\n");
+                printf("  gpu_options: {min_dim, packed_max_dim (0, 2, 4), evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb}\n");
                 printf("  propagator, evolution, gcce_refinement, gcce_refinement_max_sweeps (gCCE)\n");
-                printf("  evolution_update: exact (default) or recursive (cCCE, and gCCE with propagator=eigen; CPU)\n");
+                printf("  evolution_update: exact or recursive (cCCE, and gCCE with propagator=eigen; CPU); default recursive there, exact elsewhere\n");
                 printf("  probe_memory_gb (memory of the adaptive probes running at once on a node)\n");
                 printf("  seed: shared RNG seed; omit to generate and report a seed on MPI rank 0\n");
                 printf("  vector_mean_field: true for the static mean field as the vector J.m_j (nstate > 0)\n");
@@ -733,6 +750,7 @@ int main(int argc, char* argv[]){
     // against an nstate that -N had not yet supplied.
     Config_resolveEvolution(cnf);
     Config_validateEvolutionUpdate(cnf);
+    Config_resolvePackedMaxDim(cnf);
     validatePulsesForMethod(cnf,pls);
     validateAdaptiveConfig(cnf,cls);
     Config_validatePcceCache(cnf);

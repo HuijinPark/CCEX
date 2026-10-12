@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Where backend=auto should switch to the GPU (gpu_min_dim, A3 of (internal notes)).
+"""Where backend=auto should switch to the GPU (gpu_options.min_dim, A3 of (internal notes)).
 
 The P1 inputs of check_input_forms (NV + P1 10 ppm, 15N), cut to the S bath sites nearest the NV with
 order S-1, so that every cluster size appears with C(S,k) clusters (with order S the expansion is exact

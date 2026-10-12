@@ -11,7 +11,7 @@
 #SBATCH --time=2-00:00:00
 #SBATCH --output=server-results/min-dim-%j.log
 
-# A3: per-dimension CPU vs CUDA time for gpu_min_dim; both backends from bin/main_gpu.out.
+# A3: per-dimension CPU vs CUDA time for gpu_options.min_dim; both backends from bin/main_gpu.out.
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:?}"
 source test/gpu_verification/server/environment.sh

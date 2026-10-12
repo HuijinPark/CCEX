@@ -1,4 +1,5 @@
 #include "../../../include/calculation/gpu/compute_backend.h"
+#include "../../../include/calculation/gpu/small_cluster_batch.h"
 #include <cstdarg>
 #include <map>
 #include <string>
@@ -32,6 +33,7 @@ void fail(const char* message){
 
 void computeBackendInit(const Config* config){
     cudaReady=false; cudaAttempted=false; cudaSupported=false;
+    smallClusterWarmUp(config);          // A26: the small-cluster batch's CUDA context, early (nothing unless asked for)
     if (!strcasecmp(config->backend,"cpu")) return;
     const bool required = !strcasecmp(config->backend,"cuda");
     // pCCE changes the cluster partition, then uses the same conditional-bath
@@ -155,6 +157,7 @@ void computeProfileFlush(){
 
 void computeBackendFinish(){
     computeProfileFlush();
+    smallClusterWarmDown();
 #ifdef CCEX_USE_CUDA
     gpuFinalize();
 #endif

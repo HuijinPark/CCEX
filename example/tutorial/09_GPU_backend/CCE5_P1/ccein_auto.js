@@ -18,11 +18,10 @@
     "seed"          : 1,
 
     # Backend : "cpu" (default), "auto" (CUDA for every cluster whose dimension is at least
-    #           gpu_min_dim, CPU for the rest; CPU everywhere in a CPU-only binary) or "cuda"
+    #           gpu_options.min_dim, CPU for the rest; CPU everywhere in a CPU-only binary) or "cuda"
     #           (CUDA required, refused if it is not available)
     "backend"        : "auto",
-    "gpu_min_dim"    : 256,
-    "gpu_batch_steps": 20,
+    "gpu_options"    : {{"min_dim": 256, "evolution_batch_steps": 20}},
     # profile : timings per rank, method, backend and Hilbert dimension in the process file
     "profile"        : true,
 

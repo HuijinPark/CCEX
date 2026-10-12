@@ -11,7 +11,7 @@
 #SBATCH --time=1-00:00:00
 #SBATCH --output=server-results/sharing-%j.log
 
-# A3: gpu_min_dim against the number of ranks sharing the GPU (1, 4, 8, 16, 32); benchmark_gpu_sharing.py.
+# A3: gpu_options.min_dim against the number of ranks sharing the GPU (1, 4, 8, 16, 32); benchmark_gpu_sharing.py.
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:?}"
 source test/gpu_verification/server/environment.sh

@@ -114,9 +114,9 @@ def run(binary, source, directory, backend, args):
     if args.steps is not None:
         config['nstep'] = args.steps
     if args.batch is not None:
-        config['gpu_batch_steps'] = args.batch
+        config.setdefault('gpu_options', {})['evolution_batch_steps'] = args.batch
     if args.min_dim is not None:
-        config['gpu_min_dim'] = args.min_dim
+        config.setdefault('gpu_options', {})['min_dim'] = args.min_dim
     if args.evolution is not None:
         config['evolution'] = args.evolution
     path = directory/'input.json'

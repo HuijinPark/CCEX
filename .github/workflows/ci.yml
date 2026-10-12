@@ -2,7 +2,8 @@
 # The fast, machine-independent checks on every push and pull request: a CMake build of
 # the CPU binary, the numeric and CPU regression unit tests (with the bundle unit tests), the refinement driver's unit tests, the pCCE
 # partition unit tests and the Python unit tests, the closed-form coherence of one 13C, the
-# coordinate-rotation suite, the refusals and the input-form equivalence. Not here, because they need a particular machine
+# coordinate-rotation suite, the refusals and the input-form equivalence; the rdip ladder check is a job of its own (it is long). Not
+# here, because they need a particular machine
 # or a long run: check_numerics (exact against references recorded on one machine), the
 # adaptive regression and in-process suites, and anything with CUDA (test/README.md says
 # how to run them).
@@ -33,7 +34,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends cmake g++ libopenmpi-dev openmpi-bin \
-            python3-numpy python3-scipy python3-matplotlib
+            python3-numpy python3-scipy python3-matplotlib python3-pytest python3-pytest-xdist
 
       - name: Build (CMake, CPU only, portable flags)
         run: |
@@ -64,7 +65,7 @@ jobs:
         run: |
           (cd test/cluster_verification/check_pcce && python3 -m unittest test_partition_log test_profile_parser)
           python3 test/gpu_verification/server/test_run_orders.py   # the server runner's guards, no GPU or Slurm (review b467fe R3)
-          (cd example/tools/AutoConvergence && python3 -m unittest discover -s tests)   # auto_convergence setup driver
+          (cd example/tools/AutoConvergence && python3 -m pytest -q -n auto tests)   # auto_convergence setup driver
 
       - name: Closed form (one 13C, free induction and Hahn echo)
         run: bash test/code_verification/check_analytic/run.sh
@@ -81,8 +82,30 @@ jobs:
       - name: Vector mean field (same binary, z vs vector curve)
         run: bash test/code_verification/check_mean_field/run.sh
 
-      - name: rdip ladder (same binary, rungs vs separate runs, refusals)
-        run: bash test/code_verification/check_rdip_ladder/run.sh
+  # The rdip ladder check runs many order-2 cases (cCCE, gCCE by three paths, pCCE2) - about 30 minutes on a runner with
+  # the portable build - so it is a job of its own, in parallel with the others and with its own time limit.
+  ladder:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
+      CCEX_BUILD_DIR: ${{ github.workspace }}/build
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ libopenmpi-dev openmpi-bin python3-numpy
+
+      - name: Build (CMake, CPU only, portable flags)
+        run: |
+          cmake -B build -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF
+          cmake --build build --target ccex -j "$(nproc)"
+
+      - name: rdip ladder (same binary, rungs vs separate runs, refusals; quick sizes)
+        run: CCEX_QUICK=1 bash test/code_verification/check_rdip_ladder/run.sh
 
   make:
     runs-on: ubuntu-24.04

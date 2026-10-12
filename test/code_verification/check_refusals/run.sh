@@ -396,8 +396,9 @@ echo
 echo "=== evolution_update"
 # exact | recursive (2026-10-11): recursive (A16 b, A18) exists on the CPU for cCCE (single state and ensemble) and for
 # gCCE with propagator=eigen (evolution vector and matrix); on the GPU the run would compute as exact and gCCE expm has no
-# phases to carry over, so those are refused. On check_numerics cases, refused at the start. (The ensemble cCCE and gCCE
-# matrix were refused until A18; they run now, ../check_input_forms/evolution_update.sh.)
+# phases to carry over, so a given recursive there is refused (without the key those run exact, A29). On check_numerics
+# cases, refused at the start. (The ensemble cCCE and gCCE matrix were refused until A18; they run now,
+# ../check_input_forms/evolution_update.sh.)
 reject_case(){
     local case="$1" name="$2" want="$3" edit="$4"
     local w="$WORK/evolution_update_refusals"; mkdir -p "$w"
@@ -428,6 +429,26 @@ reject_case p1_cce2_ensemble rj_update_ensemble_backend "this run has backend=au
   "d['evolution_update'] = 'recursive'; d['backend'] = 'auto'"
 reject_case p1_cce2_single rj_update_backend "this run has backend=cuda" \
   "d['evolution_update'] = 'recursive'; d['backend'] = 'cuda'"
+
+echo "=== gpu_options"
+# The GPU settings are one block since 2026-10-12 (A26, docs/user/InputFile_Backend.md#tag_gpu_options): the flat keys
+# before it are refused with the new form named, and so are an unknown key of the block, a block that is not an object,
+# and a packed_max_dim other than 0, 2 or 4. packed_max_dim needs method=CCE and the GPU binary (this check runs
+# bin/main.out), both refused before the bath is read. The accepted forms are in ../check_input_forms/gpu_options.sh.
+reject_case p1_cce2_single rj_gpu_min_dim "gpu_min_dim is now gpu_options.min_dim" "d['gpu_min_dim'] = 256"
+reject_case p1_cce2_single rj_gpu_batch_steps "gpu_batch_steps is now gpu_options.evolution_batch_steps" "d['gpu_batch_steps'] = 64"
+reject_case p1_cce2_single rj_gpu_batch_clusters "gpu_batch_clusters is now gpu_options.evolution_batch_size" "d['gpu_batch_clusters'] = 8"
+reject_case p1_cce2_single rj_gpu_cluster_batch_mb "gpu_cluster_batch_mb is now gpu_options.cluster_batch_mb" "d['gpu_cluster_batch_mb'] = 64"
+reject_case p1_cce2_single rj_gpu_cache_mb "gpu_cache_mb is now gpu_options.cache_mb" "d['gpu_cache_mb'] = 64"
+reject_case p1_cce2_single rj_gpu_options_type "gpu_options must be an object" "d['gpu_options'] = 256"
+reject_case p1_cce2_single rj_gpu_options_key "unknown key gpu_options.packed_dim" "d['gpu_options'] = {'packed_dim': 4}"
+reject_case p1_cce2_single rj_packed_3 "gpu_options.packed_max_dim must be 0 (off), 2 or 4" "d['gpu_options'] = {'packed_max_dim': 3}"
+reject_case p1_cce2_single rj_packed_8 "gpu_options.packed_max_dim must be 0 (off), 2 or 4" "d['gpu_options'] = {'packed_max_dim': 8}"
+reject_case p1_cce2_single rj_packed_string "finite JSON number" "d['gpu_options'] = {'packed_max_dim': '4'}"
+reject_case p1_cce2_single rj_min_dim_zero "gpu_options.min_dim must be a positive 32-bit integer" "d['gpu_options'] = {'min_dim': 0}"
+reject_case p1_cce2_single rj_packed_cpu_binary "gpu_options.packed_max_dim needs the GPU binary" "d['gpu_options'] = {'packed_max_dim': 4}"
+reject_case p1_manual_hahn rj_packed_gcce "gpu_options.packed_max_dim works with method=CCE" \
+  "d['gpu_options'] = {'packed_max_dim': 4}; d['method'] = 'gCCE'"
 
 echo
 echo "==========================================="

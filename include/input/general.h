@@ -48,7 +48,8 @@ typedef struct {
     char propagator[MAX_CHARARRAY_LENGTH];/**< gCCE free-evolution propagator : eigen | expm */
     char evolution[MAX_CHARARRAY_LENGTH]; /**< gCCE state representation : matrix | vector   */
     bool evolution_isdefault;             /**< true until an "evolution" key is actually read */
-    char evolution_update[16];            /**< exact (default) | recursive: the phases of the time grid by sin/cos at every point, or by the previous point's times one step's factor (A16 b) */
+    char evolution_update[16];            /**< exact | recursive: the phases of the time grid by sin/cos at every point, or by the previous point's times one step's factor (A16 b); empty until given or resolved (A29: recursive where supported, else exact) */
+    char evolution_update_source[64];     /**< why evolution_update has its value (given, or the default and the path), for the run log */
     char backend[8];                      /**< cpu (default) | cuda | auto */
     int gpu_min_dim;                       /**< auto uses CUDA at/above this Hilbert dimension */
     int gpu_batch_steps;                   /**< maximum time points per CUDA batch */
@@ -60,6 +61,8 @@ typedef struct {
     double probe_memory_gb;                /**< node budget for the probes running at once; 0: 80 % of RAM (and of the GPU) */
     int gpu_batch_clusters;                /**< maximum same-dimension clusters per batch */
     int gpu_cluster_batch_mb;              /**< estimated live buffer budget for bundleing clusters */
+    int gpu_packed_max_dim;                /**< gpu_options.packed_max_dim: cCCE clusters of this bath dimension or less (2, 4) to the packed kernel; 0 off; -1 until Config_resolvePackedMaxDim */
+    char gpu_packed_source[64];            /**< "given", or the default and why (Config_resolvePackedMaxDim) */
     bool profile;                         /**< print per-rank, per-dimension timing totals */
     bool cluster_contributions;           /**< record irreducible cluster log importance over all input times */
     int cluster_contribution_max_mb;      /**< diagnostic raw-table budget per MPI rank */
@@ -287,7 +290,8 @@ void Config_setQuantity(Config* cnf, char* quantity);
 void Config_setPropagator(Config* cnf, char* propagator);
 void Config_setEvolution(Config* cnf, char* evolution);
 void Config_resolveEvolution(Config* cnf);
-void Config_validateEvolutionUpdate(const Config* cnf);
+void Config_validateEvolutionUpdate(Config* cnf);
+void Config_resolvePackedMaxDim(Config* cnf);   /**< gpu_options.packed_max_dim without the key (A26) */
 void Config_setOrder(Config* cnf, int order);
 void Config_setBfield(Config* cnf, float* bfield);
 void Config_setBfield_z(Config* cnf, float bz);

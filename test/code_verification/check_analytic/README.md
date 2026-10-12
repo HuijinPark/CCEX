@@ -22,4 +22,8 @@ read or does not hold the requested grid (400 points, k * 0.0005 ms); the self-t
 only a clean CCEX run that `analytic.py` rejects with 1. The qubit file form takes the branch
 keys as `qalphams`/`qbetams`.
 
-Exit status 0 only if all three pass. Everything written goes to `_work/`.
+Two more runs, not closed forms, cover `hfmedi` at zero field (review 20261012-194049-af8e42 R1): with an axial
+ZFS the levels +1 and -1 are degenerate but not coupled by S, and the run has to finish with finite values (it wrote NaN);
+without ZFS the levels 0 and +1 are degenerate and coupled, and the run has to be refused.
+
+Exit status 0 only if all five pass. Everything written goes to `_work/`.

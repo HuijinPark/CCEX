@@ -17,7 +17,7 @@ from check_pcce import run_case
 def cases():
     for method, fixture in [('cce', 'p1_cce5_single.json'), ('gcce', 'p1_gcce4_single.json')]:
         config = json.loads((REPO/'test/gpu_verification/check_gpu/examples'/fixture).read_text())
-        config.update(order=2, nstep=9, npulse=4, gpu_batch_steps=4)
+        config.update(order=2, nstep=9, npulse=4, gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=4))
         for state in (0, 1, 3):
             yield f'p1-{method}-state{state}', dict(config, nstate=state)
         if method == 'gcce':
@@ -57,8 +57,8 @@ def main():
             variants = [('baseline', args.baseline, dict(backend='cpu')),
                         ('cpu', args.binary, dict(backend='cpu'))]
             if args.cuda:
-                variants += [('cuda-single', args.cuda, dict(backend='cuda', gpu_batch_clusters=1)),
-                             ('cuda-batch', args.cuda, dict(backend='cuda', gpu_batch_clusters=8))]
+                variants += [('cuda-single', args.cuda, dict(backend='cuda', gpu_options=dict(config.get('gpu_options', {}), evolution_batch_size=1))),
+                             ('cuda-batch', args.cuda, dict(backend='cuda', gpu_options=dict(config.get('gpu_options', {}), evolution_batch_size=8)))]
             for variant, binary, overrides in variants:
                 directory = args.output/name/variant
                 execution, log = run_case(dict(config, **overrides), directory,

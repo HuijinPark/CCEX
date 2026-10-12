@@ -23,7 +23,7 @@ the regression references under `code_verification/check_numerics/reference/` ar
 
 | Folder | Answers | Run |
 |---|---|---|
-| `check_analytic/` | CCEX gives the closed-form coherence of one 13C beside the NV (free induction and Hahn echo, order 1, ensemble), within the 10 decimals it writes; the only suite here that does not compare CCEX with CCEX, and machine-independent, so the CI runs it. A self-test requires a 1 % wrong gyro to fail | `bash check_analytic/run.sh` |
+| `check_analytic/` | CCEX gives the closed-form coherence of one 13C beside the NV (free induction and Hahn echo, order 1, ensemble), within the 10 decimals it writes; the only suite here that does not compare CCEX with CCEX, and machine-independent, so the CI runs it. A self-test requires a 1 % wrong gyro to fail; two `hfmedi` runs at zero field check degenerate qubit levels (finite where uncoupled, refused where coupled) | `bash check_analytic/run.sh` |
 | `check_numerics/` | this build gives the numbers earlier builds gave: 25 calculations cut from the tutorials (CCE, gCCE, pCCE, dsj; ensemble and single approaches; Hahn, Ramsey, CPMG, manual sequences; ¹³C, P1, Vp, h-BN baths; coherence and density matrices), compared against outputs recorded on the same machine from this branch (`reference/head-*`, exact) and from the tagged releases v1.1.0 and v1.2.2 (1e-4, the known differences named in `expected.json`). `make_reference.sh` records a reference, `make_cases.py` wrote the cases | `bash check_numerics/run.sh` |
 | `check_rotation/` | the coordinate-frame rotation does what it says: the matrix and its fixed point (a unit test), then real runs against a hand-rotated input, the same transform for every bath file, the DFT tensor files moving with the positions; 149 checks | `bash check_rotation/run.sh` |
 | `check_refusals/` | 16 input combinations that must be refused before anything is read (a tensor file without its frame, a tilted field with the rotation on, `reference_qubit` missing, `zfs` in D/E form without an axis, both rotation keys at once, ...) on the real inputs | `bash check_refusals/run.sh` |
@@ -36,7 +36,8 @@ the regression references under `code_verification/check_numerics/reference/` ar
 
 `check_gpu/` holds the checks: twelve `test_*.cpp` unit tests (`make numeric-test`
 runs two on a CPU, `make cpu-test` four more on a CPU and on 1 and 4 ranks, `make gpu-test`
-the numeric two and six CUDA ones inside a GPU job; CMake has the same targets; `check_gpu/README.md`
+the numeric two and the CUDA ones inside a GPU job, among them `test_small_cluster_cuda`, the packed kernel against
+CPU-dumped clusters (A26); CMake has the same targets; `check_gpu/README.md`
 lists them), and nine `check_*.py` that run CPU and CUDA builds on the same
 inputs and compare (pulses, gCCE4 accuracy and batching, pCCE, seeds and sampled
 states, options, host leaks). Most need a CUDA build; two run on the CPU build.

@@ -106,7 +106,7 @@ Job output remains under the isolated source directory:
 - `server-results/measure-JOB/cuda/summary.json`: CPU versus forced CUDA.
 - `server-results/measure-JOB/auto/summary.json`: CPU versus automatic selection.
 
-Two measurement jobs for `gpu_min_dim` (A3 of (internal notes)) build with `do_compile.sh gpu` themselves:
+Two measurement jobs for `gpu_options.min_dim` (A3 of (internal notes)) build with `do_compile.sh gpu` themselves:
 
 - `min_dim.sbatch` (8 ranks, gpu-long): `gpu_benchmarks/benchmark_min_dim.py`, CPU against forced CUDA per cluster dimension for ten
   conditions; `server-results/min-dim-JOB.log` and `min-dim-JOB/conditions/summary.json` (jobs 648, 659).

@@ -14,7 +14,7 @@ def config_for(family,state):
     for key in ('gyrofile','qubitfile'):
         if c.get(key):c[key]=str(root/c[key])
     c['bathfile']=[str(root/p) for p in c['bathfile']]
-    c.update(profile=True,savemode='normal',propagator='eigen',gpu_batch_steps=4)
+    c.update(profile=True,savemode='normal',propagator='eigen',gpu_options=dict(c.get('gpu_options',{}),evolution_batch_steps=4))
     return c
 
 
@@ -37,8 +37,8 @@ def main():
             cases.append((f'p1_{method}_state{state}',c))
     for name,c in cases:
         record=dict(case=name,executions={},comparisons={})
-        for variant,overrides in [('cpu',dict(backend='cpu')),('cuda_sequential',dict(backend='cuda',gpu_batch_clusters=1)),
-                ('cuda_batch',dict(backend='cuda',gpu_batch_clusters=8)),('auto',dict(backend='auto'))]:
+        for variant,overrides in [('cpu',dict(backend='cpu')),('cuda_sequential',dict(backend='cuda',gpu_options=dict(c['gpu_options'],evolution_batch_size=1))),
+                ('cuda_batch',dict(backend='cuda',gpu_options=dict(c['gpu_options'],evolution_batch_size=8))),('auto',dict(backend='auto'))]:
             binary=args.cpu if variant=='cpu' else args.cuda
             execution,log=run_case(dict(c,**overrides),root/name/variant,binary.resolve(),args.ranks,300)
             if execution['returncode'] or not execution['profiles']:raise ValueError(f'{name}/{variant} failed')
@@ -48,7 +48,7 @@ def main():
                     if execution[key]!=record['executions']['cpu'][key]:raise ValueError(f'{name}/{variant}: {key} differs')
             record['executions'][variant]=execution;record['comparisons'][variant]=error
             if variant=='cuda_batch' and '[gpu-batch]' not in log:raise ValueError(f'Batch path not exercised: {name}')
-            if variant=='auto' and max(map(int,execution['cluster_counts_by_dimension']))<c.get('gpu_min_dim',256):
+            if variant=='auto' and max(map(int,execution['cluster_counts_by_dimension']))<c['gpu_options'].get('min_dim',256):
                 if re.search(r'\[backend\].*CUDA device=',log) or '[gpu-memory]' in log:
                     raise ValueError('Small auto run unnecessarily initialized CUDA')
             print('PASS',name,variant,error,flush=True)
