@@ -2,7 +2,8 @@
 #
 # evolution_update (docs/user/InputFile_Backend.md, 2026-10-11; the default per path since A29, 2026-10-12):
 # E1  an explicit "exact" gives the outputs the check_numerics references were recorded with (exact): its 25 cases
-#     against its newest head-* reference by its compare.py, same tolerance (1e-9 on _noDiv and dm);
+#     against its newest head-* reference by its compare.py, same tolerance (1e-9 on _noDiv and dm); skipped on a CI
+#     runner (the reference is one machine's digits);
 # E2  "recursive" (A16 b, the phases of the time grid carried over from the previous step) runs on the paths it covers
 #     and stays within 1e-8 of exact in the raw _noDiv. NV + P1 10 ppm (inputs/Diamond_NV_P1_10ppm_{cce,gcce}, nstep 40:
 #     the recurrence runs between steps 0, 16 and 32): cCCE2 and gCCE2 (evolution=vector) with one sampled state; since
@@ -11,8 +12,12 @@
 # E3  without the key those paths run recursive: the bytes of an explicit "recursive", not those of "exact", and the log
 #     says it was the default. On check_numerics cases where the two differ in the written digits (the NV + P1 10 ppm
 #     inputs of E2 do not): single-state and ensemble cCCE2, gCCE2 vector and matrix;
-# E4  without the key the paths recursive does not cover run exact, silently (not refused): backend auto (all on the
-#     CPU in a CPU-only binary) and gCCE propagator expm give the bytes of an explicit "exact".
+# E4  without the key the paths recursive does not cover run exact, silently (not refused): gCCE propagator expm gives
+#     the bytes of an explicit "exact";
+# E5  backend auto in this CPU-only binary computes every cluster on the CPU, so it takes the CPU default (A36,
+#     2026-10-12; exact until then): without the key the bytes of backend cpu (recursive), and a given "recursive" runs
+#     (refused until A36) with the same bytes. Single-state and ensemble cCCE2, gCCE2 vector. The per-path default of the
+#     GPU build (bin/main_gpu.out) is checked in test/gpu_verification/check_gpu/check_options.py.
 # The refusals ("recursive" given elsewhere, other values) are in ../check_refusals/.
 #
 # Usage:  bash test/code_verification/check_input_forms/evolution_update.sh
@@ -36,7 +41,12 @@ run_case(){
 # same_bytes <dirA> <dirB>: the same output files, byte for byte
 same_bytes(){ [ -n "$(ls "$1")" ] && [ "$(ls "$1")" = "$(ls "$2")" ] && diff -rq "$1" "$2" >/dev/null; }
 
-# E1: an explicit exact on the check_numerics cases against the reference recorded with exact
+# E1: an explicit exact on the check_numerics cases against the reference recorded with exact. The reference is one
+# machine's digits (like check_numerics itself, which the CI does not run), so on a CI runner (CI set, as GitHub
+# Actions sets it) E1 is skipped and says so; another compiler moves the last digits past 1e-9 (CI run 38243036431)
+if [ -n "${CI:-}" ]; then
+    echo "  SKIP  E1 on a CI runner: the check_numerics reference holds one machine's digits (run it where it was recorded)"
+else
 mkdir -p "$W/numerics"
 for d in "$NUM"/cases/*/; do run_case "$(basename "$d")" "numerics/$(basename "$d")" '{"evolution_update":"exact"}'; done
 REF=""; for r in "$NUM"/reference/head-*/; do [ -d "$r" ] && REF="$r"; done
@@ -44,6 +54,7 @@ if python3 "$NUM/compare.py" "$W/numerics" "$REF" --expected "$NUM/expected.json
     echo "  PASS  E1 evolution_update exact gives the check_numerics reference $(basename "$REF") ($(tail -1 "$W/numerics.txt"))"
     PASS=$((PASS+1))
 else echo "  FAIL  E1 (see $W/numerics.txt)"; FAIL=$((FAIL+1)); fi
+fi
 
 # E3: without the key, recursive where it exists
 # name  case  changes
@@ -68,8 +79,7 @@ done <<< "$SUPPORTED"
 
 # E4: without the key, exact where recursive does not exist (A29: silently, not refused)
 # name  case  changes  what the log names
-UNSUPPORTED="auto p1_cce2_single {\"backend\":\"auto\"} backend=auto
-expm hbn_gcce2_oh {\"propagator\":\"expm\"} method=gCCE with propagator=expm"
+UNSUPPORTED="expm hbn_gcce2_oh {\"propagator\":\"expm\"} method=gCCE with propagator=expm"
 while read -r name case change why; do
     ok=1
     run_case "$case" "e4_$name/default" "$change" || ok=0
@@ -81,6 +91,23 @@ while read -r name case change why; do
     if [ $ok -eq 1 ]; then echo "  PASS  E4 $name ($case): without the key, $why runs exact"; PASS=$((PASS+1))
     else echo "  FAIL  E4 $name (see $d)"; FAIL=$((FAIL+1)); fi
 done <<< "$UNSUPPORTED"
+
+# E5: backend auto in the CPU build is the CPU default (A36): against the backend cpu runs of E3
+AUTO="cce_single p1_cce2_single
+cce_ensemble hbn_cce2_hf3_qd0
+gcce_vector hbn_gcce2_oh"
+while read -r name case; do
+    ok=1
+    run_case "$case" "e5_$name/default" '{"backend":"auto"}' || ok=0
+    run_case "$case" "e5_$name/recursive" '{"backend":"auto","evolution_update":"recursive"}' || ok=0
+    d="$W/e5_$name"
+    same_bytes "$W/e3_$name/default" "$d/default" || { echo "    $name: backend auto is not backend cpu's bytes"; ok=0; }
+    same_bytes "$d/default" "$d/recursive" || { echo "    $name: a given recursive with backend auto is not the default's bytes"; ok=0; }
+    grep -Eq '^ +evolution_update +: +recursive' "$d/default.log" &&
+        grep -Eq '^ +chosen by +: +default \(supported path\)' "$d/default.log" || { echo "    $name: the log does not say recursive by default"; ok=0; }
+    if [ $ok -eq 1 ]; then echo "  PASS  E5 $name ($case): backend auto in the CPU build runs recursive, as backend cpu"; PASS=$((PASS+1))
+    else echo "  FAIL  E5 $name (see $d)"; FAIL=$((FAIL+1)); fi
+done <<< "$AUTO"
 
 # E2: recursive against exact on the NV + P1 10 ppm variants
 # name  input folder  input file  changes

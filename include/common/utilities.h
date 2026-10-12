@@ -6,6 +6,7 @@
 #include <mpi.h>
 #include <unistd.h>
 #include <functional>
+#include <vector>
 
 // Stop the whole run from one rank (D38): a fatal error that only this rank meets - a file it cannot open or
 // write, an eigensolver that fails - used to exit() this rank alone, and the others could wait in the next
@@ -181,8 +182,16 @@ int min(int x, int y);
 // cost (A31): with a cost per cluster (n, row of clusters[n]: power then n sites), rank r takes the contiguous
 // clusters whose running cost crosses r/nprocess of the order's total; an order whose clusters all cost the
 // same, or no cost, keeps the equal-count split (para_range).
+// givenOrder (A38): that order's split is givenBounds (costBounds of the full list, made before its rows were dropped;
+// empty = equal count) instead of one computed from the rows.
 int*** MPI_getLocalClusters(int order, int*** clusters,
-                            const std::function<double(int,const int*)>& cost = nullptr);
+                            const std::function<double(int,const int*)>& cost = nullptr,
+                            int givenOrder = 0, const std::vector<int>* givenBounds = nullptr);
+// A31 split of m clusters with costs rowCost(0..m-1) in list order: bounds[r] = clusters before rank r (nprocess+1
+// entries), or empty for the equal-count split (all costs equal, no cost, or none).
+std::vector<int> costBounds(int m, const std::function<double(int)>& rowCost);
+// The rows [*first, *end) (1-based) of an order of count clusters that rank irank takes under bounds.
+void clusterRowRange(int count, const std::vector<int>& bounds, int irank, int* first, int* end);
 // Free the owned copy returned by MPI_getLocalClusters, including its headers.
 // The zeroth header is allocated even on ranks whose zeroth weight is zero.
 void MPI_freeLocalClusters(int order, int**** localClusters);

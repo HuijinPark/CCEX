@@ -15,6 +15,7 @@
 #
 # Usage:  bash test/code_verification/check_rdip_ladder/run.sh      (bin/main.out; CCEX_BIN, CCEX_MPI as elsewhere)
 #         CCEX_QUICK=1 (CI): at most 30 time points and 20 pCCE partition trials per case - the same cases, rungs and refusals.
+#         CCEX_JOBS=n: n runs at a time (default 1); CI uses 2 on its 4-core runner.
 # ---------------------------------------------------------------------------
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$HERE/../../.." && pwd)"
@@ -84,9 +85,13 @@ for name, (case, change, rungs) in plan.items():
 open(f'{work}/runs', 'w').write('\n'.join(runs) + '\n')
 PY
 fail=0
-while read -r d name; do
-    (cd "$d" && timeout 600 "$MPIRUN" -n 2 "$BIN" -f "$name.json" > "$name.log" 2>&1 < /dev/null) || { echo "  FAIL  $d/$name run: see $d/$name.log"; fail=1; }
-done < "$WORK/runs"
+# CCEX_JOBS runs (each on 2 ranks) at a time; the runs are independent, so this changes the time only. With Open MPI and
+# more than one at a time, set OMPI_MCA_hwloc_base_binding_policy=none, or every mpirun binds its ranks to cores 0 and 1.
+run_one() {
+    (cd "$1" && timeout 600 "$MPIRUN" -n 2 "$BIN" -f "$2.json" > "$2.log" 2>&1 < /dev/null) || { echo "  FAIL  $1/$2 run: see $1/$2.log"; return 1; }
+}
+export -f run_one; export MPIRUN BIN
+xargs -P "${CCEX_JOBS:-1}" -L 1 bash -c 'run_one "$0" "$1"' < "$WORK/runs" || fail=1
 for f in "$WORK"/*/bad_*.json; do
     d="$(dirname "$f")"; b="$(basename "$f" .json)"
     if (cd "$d" && timeout 300 "$MPIRUN" -n 2 "$BIN" -f "$b.json" > "$b.log" 2>&1 < /dev/null); then

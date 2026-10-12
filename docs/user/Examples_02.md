@@ -2,11 +2,14 @@
 
 The basic case: an NV⁻ centre in diamond with 1.1% ¹³C, `bath/` holding one
 configuration of a 150 Å cell, the NV defect file and the ¹³C gyromagnetic
-ratio. Five calculations: `ensemble_CCE/` (CCE2 Hahn echo, one run per bath
+ratio. Six calculations: `ensemble_CCE/` (CCE2 Hahn echo, one run per bath
 configuration, then the ensemble average), `single-sample_CCE/` (20 sampled
 bath states per configuration, `nstate`), `ensemble_gCCE/` (one and two
-qubits), `ensemble_Dsj/` (`method` = `dsj`) and `knight_shift/` (`knight` on
-and off in a tilted field). 5 to 60 s each.
+qubits), `ensemble_Dsj/` (`method` = `dsj`), `knight_shift/` (`knight` on
+and off in a tilted field) and `builtin_isotopes/` (the `ensemble_CCE` input
+without `gyrofile`: ¹³C from the built-in isotope table, γ 6.72828544 against
+the file's 6.728284 rad/ms/G; the curves differ by 1.1e-4 at most, and with the
+table's value in a gyro file they are byte-identical). 4 to 60 s each.
 
 ![02: CCE2 Hahn echo of the NV, one configuration](../images/tutorials/02_ensemble_CCE.png)
 

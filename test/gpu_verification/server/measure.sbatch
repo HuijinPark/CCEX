@@ -12,6 +12,7 @@
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:?}"
 source test/gpu_verification/server/environment.sh
+source test/gpu_verification/server/mps.sh
 run_dir="server-results/measure-${SLURM_JOB_ID}"
 mkdir "$run_dir"
 python3 test/gpu_verification/server/validate_inputs.py > "$run_dir/inputs.json"

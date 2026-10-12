@@ -5,7 +5,8 @@
 #     (min_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb, packed_max_dim 0) give the same
 #     output bytes on a CPU run (backend cpu: none of them is used) - single-state cCCE2 and gCCE2;
 # G2  the log reports the block's values (gpu_options.min_dim ... gpu_options.packed_max_dim), so a run shows what it read;
-# G3  without the key packed_max_dim is 0 in the CPU build, with backend cpu and auto (the default 4 is for the GPU build).
+# G3  without the key packed_max_dim is 0 in the CPU build, with backend cpu and auto (the default 4 is for the GPU build),
+#     and backend auto gives the bytes of backend cpu there (A36: all on the CPU, so the CPU default evolution_update).
 # The refused forms (the old flat keys, unknown keys, packed_max_dim other than 0, 2, 4, packed in bin/main.out) are in
 # ../check_refusals/. The packed kernel itself needs the GPU: test/gpu_verification/check_gpu/test_small_cluster_cuda.
 #
@@ -54,13 +55,13 @@ done
 # backend cuda or auto and method CCE; A26, user 2026-10-12), and backend auto runs (no refusal of the default)
 ok=1
 run_case p1_cce2_single auto_default '{"backend":"auto"}' || ok=0
-run_case p1_cce2_single auto_exact '{"backend":"cpu","evolution_update":"exact"}' || ok=0
 for log in "$W/p1_cce2_single/none.log" "$W/auto_default.log"; do
     grep -A1 -E "^ +gpu_options.packed_max_dim: +0( |$)" "$log" | grep -Eq "chosen by +: +default \(CPU build\)" ||
         { echo "    $log: packed_max_dim is not 0 by default (CPU build)"; ok=0; }
 done
-# backend auto runs exact (A29) and, in this build, everything on the CPU: the bytes of backend cpu with exact
-same_bytes "$W/auto_exact" "$W/auto_default" || { echo "    backend auto (all on the CPU here) is not backend cpu exact"; ok=0; }
+# backend auto computes everything on the CPU in this build and so takes the CPU default (A36; exact under A29 until
+# then): the bytes of backend cpu
+same_bytes "$W/p1_cce2_single/none" "$W/auto_default" || { echo "    backend auto (all on the CPU here) is not backend cpu"; ok=0; }
 if [ $ok -eq 1 ]; then echo "  PASS  G3 without the key, packed_max_dim is 0 in the CPU build (backend cpu and auto)"; PASS=$((PASS+1))
 else echo "  FAIL  G3 (see $W)"; FAIL=$((FAIL+1)); fi
 echo "gpu_options: $PASS passed, $FAIL failed"

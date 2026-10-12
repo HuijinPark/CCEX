@@ -1,0 +1,64 @@
+{
+    # Config (General) : the NV in six P1 electron spins (10 ppm), five sampled bath states; the adaptive check's
+    #                    regroup-p1 case (test/cluster_verification/check_adaptive/regression)
+    "method"        : "CCE",
+    "quantity"      : "coherence",
+    "qubitfile"     : "../../09_GPU_backend/bath/qubit_p1",
+    "gyrofile"      : "../../09_GPU_backend/bath/gyro_P1",
+    "bathfile"      : ["../bath/bath_p1_6"],
+    "order"         : 2,
+    "bfield"        : 292,
+    "rbath"         : 38,
+    "rdip"          : 100,
+    "deltat"        : 0.0005,
+    "nstep"         : 30,
+    "nstate"        : 5,
+    # seed : the refinement recomputes the same system round after round, so the seed must be explicit
+    "seed"          : 1,
+
+    # Qubit : ms = -1 / 0 of the NV, one pi pulse (Hahn echo)
+    "qalphams"      : -1,
+    "qbetams"       : 0,
+    "npulse"        : 1,
+
+    # Defect : the P1 electron with one of twelve detunings (the 14N hyperfine and Jahn-Teller axis), drawn per P1 from the seed
+    "Defect" : [
+        {
+            "dfname"   : "P1",
+            "apprx"    : true,
+            "naddspin" : 0,
+            "navaax"   : 12,
+            "detuning" : {
+                "values" : [
+                    [1, "e", 84.946496], [2, "e", 84.946496], [3, "e", 84.946496],
+                    [4, "e", 0.0], [5, "e", 0.0], [6, "e", 0.0],
+                    [7, "e", -84.946496], [8, "e", -84.946496], [9, "e", -84.946496],
+                    [10, "e", 114.0264], [11, "e", 0.0], [12, "e", -114.0264]
+                ],
+                "unit" : "MHz"
+            }
+        }
+    ],
+
+    # Clustering : bundles of up to two P1 (bundle_max_dim 4); bundle_merge_cutoff 0 keeps the bundles the
+    #              coupling strengths give, with no extra merging before the first run
+    "cluster_mode"        : "adaptive",
+    "bundle_max_dim"      : 4,
+    "bundle_merge_cutoff" : 0,
+
+    # Adaptive : "regroup": true replaces the merge choice by regrouping where the expansion is unphysical
+    #            (docs/methods/adaptive-input-block.md, "regroup"): while some state has |L| > 1.01, the bundle pairs
+    #            whose correlation g = log|L_ij / (L_i L_j)| is positive at the worst point are the culprits, and one
+    #            move (merge, split, move or swap a site) around them is accepted when it lowers the local error
+    #            against a direct solution of the region and does not raise the number of unphysical states.
+    #            Ends with "physical" (exit 0) when every |L| <= 1.01 - which is not "accurate".
+    #            atol and rtol are required but not used by regroup.
+    "Adaptive" : {
+        "output"  : "./results/adaptive",
+        "atol"    : 1e-3,
+        "rtol"    : 0,
+        "regroup" : true
+    },
+
+    "outfile"       : "./results/CCE2_regroup_1"
+}

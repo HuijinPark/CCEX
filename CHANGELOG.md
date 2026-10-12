@@ -13,7 +13,8 @@
   `pcce_connections` (`centers`, `spins`).
 - **Automatic convergence**: an `auto_convergence` block in the input (`main.out -f input.json`; `"enabled": false` runs
   the ordinary calculation; command line `--auto_conv`) chooses rbath, rdip, the time window and the number of bath
-  configurations and states (`example/tools/AutoConvergence/README.md`).
+  configurations and states (`example/tools/AutoConvergence/README.md`). Neighbouring candidates are compared on the
+  area under a T2 fit of |L|; where the fit fails, on the area under |L| itself (same 2 %), and the summary says so.
 - **`rdip_ladder`**: one order-2 run (cCCE, gCCE or pCCE) also writes the curves of smaller rdip values.
 - **`evolution_update`**: `exact` or `recursive` (the phases by a recurrence; 1.0–1.6x faster on the tested systems,
   where the curves stay within 1e-9 of `exact`; not bit-identical). The default is `recursive` where it exists (see Changed).
@@ -35,7 +36,7 @@
   Hamiltonians, and the pCCE partition search (up to 9x faster on large baths). See Performance below.
 - **Repository layout**: `src/` and `include/` in five parts (input, physical, clustering, calculation, common);
   `example/{tutorial,analysis,tools}`; `external/`; `test/{code_verification,cluster_verification,gpu_verification}`.
-  The tutorials were rewritten as ten numbered folders with `run.sh`.
+  The tutorials were rewritten as numbered folders (twelve; 11 and 12 added on 2026-10-12) with `run.sh`.
 - In input files, `#` and `!` start a comment only outside JSON strings.
 - **GPU settings moved into one block, `gpu_options`**: `min_dim` (was `gpu_min_dim`), `evolution_batch_size`
   (`gpu_batch_clusters`), `evolution_batch_steps` (`gpu_batch_steps`), `cluster_batch_mb` (`gpu_cluster_batch_mb`),
@@ -45,24 +46,30 @@
   kernel by default** (`gpu_options.packed_max_dim` 4; `"packed_max_dim": 0` gives the earlier path). Its results agree with
   the CPU within 1e-8 + 2e-6 |CPU| and are not bit-identical to those of the earlier GPU path. `backend` `cpu` and
   `bin/main.out` are unchanged.
-- **The default of `evolution_update` is `recursive` where it exists** (the CPU cCCE, single state and ensemble, and the CPU
-  gCCE with `propagator` = `eigen`, `evolution` `vector` or `matrix`), and `exact` elsewhere (GPU backends, gCCE `expm`),
-  without a message; the run log says which and why. The outputs are therefore not bit-identical to earlier runs (within
+- **The default of `evolution_update` is `recursive` where it exists** (the CPU cCCE, single state and ensemble, the packed
+  kernel, and the CPU gCCE with `propagator` = `eigen`, `evolution` `vector` or `matrix`), and `exact` elsewhere (the GPU
+  large-cluster path, gCCE `expm`), without a message, per path: in `bin/main_gpu.out` with `backend` `auto` the clusters
+  on the CPU and the packed kernel run `recursive` and the clusters on the GPU `exact`, with `cuda` the packed kernel
+  `recursive` and the rest `exact`; `backend` `auto` in `bin/main.out` computes everything on the CPU and so runs
+  `recursive`. The run log says which and why. The outputs are therefore not bit-identical to earlier runs (within
   1e-9 on the tested curves at |L| ≤ 1). `"evolution_update": "exact"` gives the earlier bits.
 - **Clusters of an order are split over the ranks by cost when their sizes differ** (dimension D, cost D²(D + nstep); each
   rank takes a contiguous run of the list): mixed baths such as h-BN run 1.6–3x faster on 64 ranks (cCCE2 1.6x, gCCE2 2.3x,
   cCCE3 3.1x). Orders whose clusters all have one size (P1, ¹³C) keep the equal-count split, byte for byte; in a mixed bath
   the product of each rank's clusters is grouped differently, so the last printed digit can change (h-BN gCCE2 dm: 5 of
   36,000 numbers, 1e-10). Data (internal notes).
+- **Each rank keeps only its own order-2 cluster rows** (cCCE/gCCE order 2; `-P`, `cluster_contributions` and adaptive
+  work keep the full list): peak memory per rank on the P1 production CR60 σ4 bath 334 → 181 MiB, output byte-identical,
+  same speed. Data (internal notes).
 
 ### Compared with v1.2.2 (same inputs and node, idm Xeon Gold 6530, 64 ranks, median of 3)
 
 | Case | v1.2.2 | 2.0.0 (`exact`) | 2.0.0 (`recursive`) |
 |---|---|---|---|
-| P1 production cCCE2, CR0 | 73.2 s | 16.7 s (4.4x) | 10.7 s (6.8x) |
-| P1 production cCCE2, CR60 sigma 4 | 452.1 s | 84.7 s (5.3x) | 53.3 s (8.5x) |
-| P1 production gCCE2, CR0 | 91.0 s | 41.4 s (2.2x) | 31.1 s (2.9x) |
-| P1 production gCCE2, CR60 sigma 4 | 546.4 s | 224.9 s (2.4x) | 168.0 s (3.3x) |
+| P1 production cCCE2, CR0 | 76.0 s | 15.2 s (5.0x) | 9.3 s (8.1x) |
+| P1 production cCCE2, CR60 sigma 4 | 463.5 s | 79.0 s (5.9x) | 45.4 s (10.2x) |
+| P1 production gCCE2, CR0 | 90.0 s | 39.6 s (2.3x) | 30.0 s (3.0x) |
+| P1 production gCCE2, CR60 sigma 4 | 544.9 s | 216.4 s (2.5x) | 161.6 s (3.4x) |
 
 The coherence differs from v1.2.2 only where a fix in this release changes it (deltat read as a float in v1.2.2,
 the sampled states and `seed`, the ensemble half interval in double, the density-matrix `nan`, the pCCE partition).
@@ -92,6 +99,7 @@ the results are byte-identical, or within the stated bound for `recursive`. For 
 - Density-matrix output: a component that divides noise by zero is set to 0 and reported, instead of `nan`.
 - `seed` had no effect on sampled states when `nstate` > 0.
 - Builds with Intel `icpx`: the adaptive code is compiled without fast floating point, which had folded `isnan`/`isinf`.
+- The analyzer's plots of several curves (`-pl_m`) failed with matplotlib 3.11 (`cm.get_cmap` removed); the numbers it writes are unchanged.
 - **`hfmedi` (hyperfine-mediated interaction)**: the term is now the complete second-order correction of each branch,
   H_med^(α) = Σ_{β≠α} E_αβ E_αβ† / (ω_α − ω_β) with E_αβ = Σ_i ⟨α|S|β⟩·A_i·I_i: every intermediate eigenstate β of the
   qubit Hamiltonian (it used only the other qubit level, missing for example the |+1⟩ path of the NV |0⟩ branch), every

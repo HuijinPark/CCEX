@@ -85,7 +85,7 @@ The tutorials run `bin/main.out`; after a CMake build give them the binary with
 | Folder | What | Read |
 |---|---|---|
 | `src/`, `include/` | the code: five core groups (input, physical, clustering, calculation, common) plus `clustering/bundle/`, `clustering/algo_adaptive/` and `calculation/gpu/`; `src/main.cpp` is the entry point | `src/README.md` |
-| `example/` | `tutorial/` (ten worked examples, one system or feature each, with `run.sh`), `analysis/` (the coherence analyzer and the convergence test), `tools/` (automatic convergence, bath generator, isotope table, job runner, DFT tensor reader) | `example/README.md` |
+| `example/` | `tutorial/` (twelve worked examples, one system or feature each, with `run.sh`), `analysis/` (the coherence analyzer and the convergence test), `tools/` (automatic convergence, bath generator, isotope table, job runner, DFT tensor reader) | `example/README.md` |
 | `test/` | `code_verification/` (a closed form, numerics against recorded references, the frame rotation, refusals, input forms, the mean field, the rdip ladder), `cluster_verification/` (adaptive, bundle, pCCE), `gpu_verification/` (the CUDA backend, benchmarks, server jobs) | `test/README.md` |
 | `docs/` | `user/` (the manual pages), `methods/` (the added methods in detail), `doxygen/` (the site) | `docs/README.md` |
 | `external/` | Eigen 3.4.1, uthash and SQLite, kept in the tree so every server builds without packages | `external/README.md` |

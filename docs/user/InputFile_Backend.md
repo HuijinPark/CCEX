@@ -137,16 +137,28 @@ How the phases exp(-i E τ) of the eigenvalues are formed at each time point of 
 computes them with sin and cos at every point. `recursive` does so at points 0, 16, 32, … and in between multiplies the
 previous point's phases by one step's factor exp(-i E f `deltat`) (f the interval's fraction of the sequence), so the
 rounding of at most 15 products accumulates before the next exact point (A16 (b), 2026-10-11). <br>
-`recursive` exists with `backend` = `cpu` on the cCCE time evolution (`method` CCE, pCCE, dsj, itb or dsjitb; one
-sampled state, `nstate` > 0, and the ensemble, `nstate` = 0, since 2026-10-11 (A18)) and on gCCE with `propagator` =
-`eigen` (`evolution` = `vector`, and `matrix` since A18). Every pulse sequence these paths run is covered: the ensemble
-cCCE carries over the phases of its τ = t/2 (Hahn), t (Ramsey), t/(2 `npulse`) and 2τ (CPMG) or of each `Manual`
-interval, the others those of each interval of the sequence. A given `recursive` with `backend` = `cuda` or `auto`, or
-gCCE with `propagator` = `expm` (no phases to carry over), is refused rather than run as `exact`. <br>
-Without the key (since 2026-10-12, A29) the run takes `recursive` on the paths above and `exact` everywhere else (GPU
-backends, gCCE `expm`), without a message; the run log prints the value and why (`chosen by : default (supported path)`,
-`default (backend=cuda)`, … or `given`). Before A29 the default was `exact` everywhere: `"evolution_update": "exact"`
-gives the outputs of those earlier runs bit for bit. <br>
+`recursive` exists on the CPU time evolution of cCCE (`method` CCE, pCCE, dsj, itb or dsjitb; one
+sampled state, `nstate` > 0, and the ensemble, `nstate` = 0, since 2026-10-11 (A18)), in the packed kernel of
+`bin/main_gpu.out` (`gpu_options.packed_max_dim`, cCCE clusters of bath dimension 2 and 4) and on the CPU time evolution
+of gCCE with `propagator` = `eigen` (`evolution` = `vector`, and `matrix` since A18). Every pulse sequence these paths
+run is covered: the ensemble cCCE carries over the phases of its τ = t/2 (Hahn), t (Ramsey), t/(2 `npulse`) and 2τ
+(CPMG) or of each `Manual` interval, the others those of each interval of the sequence. The GPU large-cluster path
+(`bin/main_gpu.out`: every other cluster with `backend` = `cuda`, the clusters of `gpu_options.min_dim` and above with
+`auto`) computes every phase with sin and cos, as `exact`. <br>
+Without the key (since 2026-10-12, A29; per path in the GPU build since A36) each path takes `recursive` where it has
+it and `exact` elsewhere, without a message: with `backend` = `cpu`, and in the CPU build `bin/main.out` with `cpu` or
+`auto` (all on the CPU there), the value is `recursive` (gCCE `expm`: `exact`); in `bin/main_gpu.out` with `auto` the
+clusters on the CPU (below `min_dim`) and the packed kernel run `recursive` and the clusters on the GPU `exact`; with
+`cuda` the packed kernel runs `recursive` and every other cluster `exact` on the GPU (with the packed kernel off, as for
+gCCE and pCCE, the value is `exact`). The run log prints the value and why, per path in the GPU build
+(`chosen by : default (supported path)`, `default (clusters on the CPU and packed kernel: recursive; clusters on the GPU
+(backend=auto): exact)`, `default (backend=cuda: every cluster on the GPU, exact there)`, … or `given`). Until A36
+(2026-10-12) `backend` `cuda` or `auto` made the whole run `exact`; `"evolution_update": "exact"` gives those runs, and
+the runs before A29, bit for bit. <br>
+A given `recursive` is refused rather than run as `exact` where a cluster may reach a path without it: gCCE with
+`propagator` = `expm` (no phases to carry over), and in `bin/main_gpu.out` `backend` = `cuda` or `auto` with a method
+the GPU takes (CCE, pCCE, gCCE `eigen`) — leave the key out there to get `recursive` on the CPU clusters and the packed
+kernel. `backend` = `cuda` in the CPU build is refused in any case. <br>
 Measured on the production P1 inputs (CR0 and CR60 σ4, cCCE2 and gCCE2, 30 states; idm job 17217, 64 ranks): the run
 took 0.63–0.76 of the time of the build before A16 (geometric mean 0.70; this includes the byte-identical A16 (a)
 changes, and against those alone the same job gives about 0.73–0.76 for cCCE2 and 0.82–0.84 for gCCE2). The `wiDiv`
@@ -162,7 +174,7 @@ series should not switch between the two. Must be a JSON string. <br>
 | `exact` | sin and cos at every time point |
 | `recursive` | sin and cos every 16th time point, the previous point's phases times one step's factor in between |
 
-<b>Default:</b> `recursive` where it exists (CPU cCCE, CPU gCCE with `propagator` = `eigen`), else `exact` (`exact` everywhere until 2026-10-12)
+<b>Default:</b> `recursive` where it exists (CPU cCCE, the packed kernel, CPU gCCE with `propagator` = `eigen`), `exact` elsewhere (the GPU large-cluster path, gCCE `expm`); per path in `bin/main_gpu.out` since A36 (the whole run `exact` with `backend` `cuda`/`auto` until then; `exact` everywhere until A29, 2026-10-12)
 
 <b>Example:</b> ``` "evolution_update" : "exact" ```
 

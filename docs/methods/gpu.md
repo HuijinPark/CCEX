@@ -338,6 +338,9 @@ partitioning is retained. Each rank selects `node_local_rank % visible_GPU_count
 when a scheduler exposes one GPU per rank, each rank selects its visible device 0.
 The `[backend]` log records this mapping. Multiple ranks can share a visible GPU,
 but that can reduce performance. Check the scheduler's visibility and binding.
+When many ranks share one GPU, run the job under CUDA MPS (`nvidia-cuda-mps-control -d` in the job, `echo quit |
+nvidia-cuda-mps-control` at its end; `test/gpu_verification/server/mps.sh` does both): on idm4-gpu, 32 ranks on one
+GPU took 0.49-0.62 of the time without it (gCCE4 and cCCE4, `auto` and `cuda`), with byte-identical curves.
 
 The GPU returns scalar cluster coherences (cCCE) or small reduced density matrices
 (gCCE) to the host before the existing cluster products and MPI reductions.

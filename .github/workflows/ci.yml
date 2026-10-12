@@ -82,8 +82,9 @@ jobs:
       - name: Vector mean field (same binary, z vs vector curve)
         run: bash test/code_verification/check_mean_field/run.sh
 
-  # The rdip ladder check runs many order-2 cases (cCCE, gCCE by three paths, pCCE2) - about 30 minutes on a runner with
-  # the portable build - so it is a job of its own, in parallel with the others and with its own time limit.
+  # The rdip ladder check runs many order-2 cases (cCCE, gCCE by three paths, pCCE2) - 27 minutes one run at a time on a runner with
+  # the portable build (run 38243036431; in a local timing 96 % of it was the four h-BN gCCE2 ensemble/matrix and pCCE2 cases), about half with two
+  # at a time - so it is a job of its own, in parallel with the others and with its own time limit.
   ladder:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
@@ -91,6 +92,7 @@ jobs:
       CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
       CCEX_BUILD_DIR: ${{ github.workspace }}/build
       OMPI_MCA_rmaps_base_oversubscribe: "1"
+      OMPI_MCA_hwloc_base_binding_policy: none   # two mpiruns at a time: unbound, or both bind to cores 0 and 1
     steps:
       - uses: actions/checkout@v4
 
@@ -105,7 +107,7 @@ jobs:
           cmake --build build --target ccex -j "$(nproc)"
 
       - name: rdip ladder (same binary, rungs vs separate runs, refusals; quick sizes)
-        run: CCEX_QUICK=1 bash test/code_verification/check_rdip_ladder/run.sh
+        run: CCEX_QUICK=1 CCEX_JOBS=2 bash test/code_verification/check_rdip_ladder/run.sh   # 2 runs x 2 ranks on the 4-core runner
 
   make:
     runs-on: ubuntu-24.04

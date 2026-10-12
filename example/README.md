@@ -5,7 +5,7 @@ you run on the output, `tools/` is what makes the input.
 
 ## tutorial/ — worked examples
 
-Ten numbered folders, one physical system (or one feature) each; `tutorial/README.md`
+Twelve numbered folders, one physical system (or one feature) each; `tutorial/README.md`
 has the table. Inside, a calculation is a folder with `ccein*.json` (the input: JSON
 with `#` comments), `run.sh` (runs every input with `mpirun` and then the analyzer;
 `NP`, `NCONF`, `NSTATE` set the size) and, where it was recorded on idm, a `job` that submits `run.sh` there; the

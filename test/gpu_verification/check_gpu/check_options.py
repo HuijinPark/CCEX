@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 
@@ -76,6 +77,25 @@ def main():
     run('cce-cpu',args.cpu,{'backend':'cpu','method':'CCE'},reference=None)
     run('cce-cuda-cli',args.cuda,{'backend':'cuda'},extra=('-m','CCE'),reference='cce-cpu',actual_backend='cuda')
     run('cce-auto-cpu',args.cuda,{'backend':'auto','method':'CCE','gpu_options':{'min_dim':256}},reference='cce-cpu')
+
+    # evolution_update per path in the GPU build (A36, 2026-10-12): without the key the clusters on the CPU and the packed
+    # kernel run recursive and the GPU large-cluster path exact, and the log says which; a given recursive is refused
+    # where a cluster may reach the GPU large-cluster path (backend cuda, or auto), as before A36
+    def chosen(name,value,why):
+        output=(args.output/name/'run.log').read_text()
+        assert re.search(r'^ +evolution_update +: +'+value+r'\b',output,re.M), (name,value)
+        assert re.search(r'^ +chosen by +: +default \('+re.escape(why)+r'\)',output,re.M), (name,why)
+        print('PASS '+name+' log: '+value+' ('+why+')',flush=True)
+    chosen('cuda-refinement-off','exact','backend=cuda: every cluster on the GPU, exact there')
+    chosen('cuda-hidden-auto','recursive','clusters on the CPU: recursive; clusters on the GPU (backend=auto): exact')
+    chosen('cce-cuda-cli','recursive','packed kernel: recursive; clusters on the GPU (backend=cuda): exact')
+    chosen('cce-auto-cpu','recursive','clusters on the CPU and packed kernel: recursive; clusters on the GPU (backend=auto): exact')
+    chosen('baseline','recursive','supported path')
+    run('gpu-build-cpu-recursive',args.cuda,{'backend':'cpu','evolution_update':'recursive'})
+    run('auto-reject-recursive',args.cuda,{'backend':'auto','evolution_update':'recursive'},'this run has backend=auto')
+    run('cuda-reject-recursive',args.cuda,{'backend':'cuda','evolution_update':'recursive'},'this run has backend=cuda')
+    run('cce-cuda-reject-recursive',args.cuda,{'backend':'cuda','evolution_update':'recursive'},'this run has backend=cuda',
+        extra=('-m','CCE'))
 
 
 if __name__=='__main__':

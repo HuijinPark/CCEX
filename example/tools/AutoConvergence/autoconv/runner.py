@@ -165,9 +165,10 @@ def _gname(r):
 
 
 def unjudged_reason(name, rec, figure):
-    """Why an unresolved rdip or rbath stopped, when its last comparison could not be judged (2026-10-12, job 17163): the T2
-    fit failed or the curves were not finite, so whether more would converge is unknown and larger values are not advised.
-    None when the last comparison was judged (a real "fail": the usual reason stands)."""
+    """Why an unresolved rdip or rbath stopped, when its last comparison could not be judged (2026-10-12, job 17163): the
+    curves were not finite (or a failed T2 fit left no usable raw area), so whether more would converge is unknown and larger
+    values are not advised. None when the last comparison was judged (a real "fail", the raw-area fallback of a failed fit
+    included: the usual reason stands)."""
     checks = (rec or {}).get("checks") or []
     if not checks or checks[-1].get("verdict") not in ("fit-failure", "nonfinite"):
         return None
@@ -175,6 +176,17 @@ def unjudged_reason(name, rec, figure):
     pairs = ", ".join(f"{c['lo']:g} vs {c['hi']:g} ({c['verdict']})" for c in bad)
     return (f"{name} could not be judged at its largest values: the T2 fit failed or the curves are not finite for {pairs}; "
             f"look at {figure} (noisy or unstable curves) before computing more")
+
+
+def raw_area_pairs(rec):
+    """(lo, hi, verdict) of every comparison in a converge record judged on the raw area because a T2 fit failed (user
+    2026-10-12)."""
+    rec = rec or {}
+    est = rec.get("estimate") or {}
+    ref = rec.get("reference")
+    rows = [(x["lo"], x["hi"], x) for x in rec.get("checks", []) + (est.get("neighbours") or []) + ([est["check"]] if est.get("check") else [])]
+    rows += [(x["value"], ref, x) for x in rec.get("vs_reference", [])]
+    return {(lo, hi, x["verdict"]) for lo, hi, x in rows if x.get("basis") == "raw-area"}
 
 
 def converge(values, curve, extend, limit, clip, judge, rel_tol, need=1):
@@ -200,8 +212,11 @@ def converge(values, curve, extend, limit, clip, judge, rel_tol, need=1):
     if len(values) >= 3:
         nb = [pair(lo, hi) for lo, hi in zip(values, values[1:])]
         est = dict(neighbours=nb, status="no trend")
-        if any(x["rel"] is None for x in nb):          # review 10-07 A2: a failed comparison gives no trend
-            est["status"] = "no trend (a comparison failed: " + ", ".join(sorted({x["verdict"] for x in nb if x["rel"] is None})) + ")"
+        # review 10-07 A2: a failed comparison gives no trend; nor does one judged on the raw area (a fit failed: not the
+        # quantity the trend extrapolates, user 2026-10-12 changed only the verdict)
+        if any(x["rel"] is None or x.get("basis") == "raw-area" for x in nb):
+            est["status"] = "no trend (a comparison failed: " + ", ".join(sorted(
+                {"raw area" if x.get("basis") == "raw-area" else x["verdict"] for x in nb if x["rel"] is None or x.get("basis") == "raw-area"})) + ")"
         elif nb[-2]["rel"] > 0 and nb[-1]["rel"] / nb[-2]["rel"] <= 0.8:
             q = nb[-1]["rel"] / nb[-2]["rel"]
             tail = nb[-1]["rel"] * q / (1 - q)
@@ -1447,6 +1462,8 @@ class Runner:
                 lo_curves, hi_curves = lo_curves[ok], hi_curves[ok]
                 try:
                     j = truncation.judge(t, lo_curves, hi_curves, td, rel_tol=rel_tol, **opts)
+                    if j["route"] == "raw-area":              # a fit failed: judged on the raw area (user 2026-10-12)
+                        return dict(verdict=j["verdict"], rel=abs(j["raw_area_rel"]), basis="raw-area")
                     return dict(verdict=j["verdict"], rel=None if j["area_rel"] is None else abs(j["area_rel"]))
                 except (ValueError, RuntimeError):
                     return dict(verdict="fit-failure", rel=None)
@@ -1571,7 +1588,12 @@ class Runner:
                                f"rbath has not converged up to {Bn:g} A (the bath files cover up to {self.max_rbath:.4g} A): make larger baths, "
                                f"covering at least {round(Bn * 1.25, 3):g} A around the qubit")
         pairs_used = sum(self.pair_count(self.inside(k, B), R) for k in self.pilot)
-        self.decide("truncation", rbath=B, rdip=R)
+        # the comparisons judged on the raw area because a T2 fit failed (user 2026-10-12), recorded only when there are any
+        raw = sorted({("rdip", *x) for x in raw_area_pairs(rd)} | {("rbath", *x) for x in raw_area_pairs(rb)}
+                     | {("rdip", *x) for f in summary.get("rdip_at_final_rbath", [])
+                        for x in raw_area_pairs(f) | raw_area_pairs(f.get("reconverged"))})
+        self.decide("truncation", rbath=B, rdip=R, **({} if not raw else dict(
+            raw_area=[dict(parameter=n, lo=lo, hi=hi, verdict=v) for n, lo, hi, v in raw])))
         summary["truncation"].update(chosen=dict(rbath=B, rdip=R, pairs=pairs_used))
         if self.fixed_config is not None:      # configurations.converge false: the number (and states) given
             C, S = self.fixed_config
@@ -1712,10 +1734,12 @@ class Runner:
             summary["recheck"] = dict(jr, recheck_ids=ck)
             if jr["verdict"] != "pass":     # a warning, not a stop (user 2026-10-07): the rdip and rbath errors add, and the
                 # difference is reported next to the sampling SE it is compared with
-                rel = jr.get("area_rel")
+                raw = jr.get("route") == "raw-area"
+                rel = jr.get("raw_area_rel") if raw else jr.get("area_rel")
                 summary.setdefault("warnings", []).append(
                     f"combination recheck {jr['verdict']}: rbath {B:g}, rdip {R:g} vs rbath {Bn:g}, rdip {Rm:g} on configurations {ck}"
-                    + (f": area differs by {100 * abs(rel):.2f} %" if rel is not None else ""))
+                    + (f": {'raw area of |L| on [0, T_d] (a T2 fit failed)' if raw else 'area'} differs by {100 * abs(rel):.2f} %"
+                       if rel is not None else ""))
         if res["status"] == "se":
             return self.finish(summary, "sampling-unresolved", "production", res["reason"])
         return self.finish(summary, "converged", None, None)
@@ -2030,11 +2054,14 @@ class Runner:
             vs = r.get("vs_reference", [])
             L += table((name, "|ΔA/A|"), [x["value"] for x in vs], [x["rel"] for x in vs])
             L.append(f"  chosen {r['chosen']:g} (threshold {100 * tol:g} %)" if r.get("chosen") is not None else f"  not converged (threshold {100 * tol:g} %)")
+            raw = sorted({(lo, hi) for lo, hi, _ in raw_area_pairs(r)})
+            if raw:                              # user 2026-10-12: a failed T2 fit is judged on the raw area
+                L.append("  judged on the raw area of |L| on [0, T_d] (a T2 fit failed): " + ", ".join(f"{a:g} vs {b:g}" for a, b in raw))
             if name == "rbath":
                 for x in summary.get("rdip_at_final_rbath", []):
                     R = (tr or {}).get("rdip", x.get("chosen"))
                     own = next((v for v in x.get("vs_reference", []) if v["value"] == R), None)
-                    L.append(f"  rdip rechecked at rbath {x['rbath']:g}: " + (f"{R:g} still passes ({pct(own['rel'])})" if own and own["verdict"] == "pass"
+                    L.append(f"  rdip rechecked at rbath {x['rbath']:g}: " + (f"{R:g} still passes ({pct(own['rel'])}" + (", raw area" if own.get("basis") == "raw-area" else "") + ")" if own and own["verdict"] == "pass"
                                                                             else f"chosen {x.get('chosen')}"))
         # 4. states
         st = summary.get("states")
@@ -2064,6 +2091,10 @@ class Runner:
             if p.get("se") is not None:
                 L.append((f"  chosen {p.get('n_used', len(p['configurations']))}" if p.get("status") == "ok" else "  not enough")
                          + f" (threshold {100 * o['threshold_config']:g} %)")
+        rc = summary.get("recheck") or {}
+        if rc.get("route") == "raw-area":        # user 2026-10-12
+            L += ["", f"combination recheck {rc['verdict']} on the raw area of |L| on [0, T_d] (a T2 fit failed): "
+                      f"differs by {100 * abs(rc['raw_area_rel']):.2f} %"]
         # 6. converged coherence
         if p.get("T2") is not None:
             L += ["", head_fig("6. converged coherence", "6_converged_coherence.png"),

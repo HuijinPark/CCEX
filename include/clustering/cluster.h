@@ -71,7 +71,22 @@ typedef struct {
      *  and give the more robust result.
      *  (default : off)
     */
-    bool addsubclus; 
+    bool addsubclus;
+
+    /**
+     * @brief A38 (improvements.md): each rank keeps only its own pair rows
+     * @details
+     *  localRequest: set by runOneCalculation when nothing after the split reads every pair row (no -P, no
+     *  cluster_contributions, no adaptive work request); clusterizePairs may then keep only this rank's rows.
+     *  pairsLocal: it did. clusinfo[2] still has every row slot and the count, but a row is allocated only for
+     *  this rank's share and the first and last four (Cluster_reportClusinfo); the other slots are NULL.
+     *  pairBounds (npairBounds = nprocess+1 entries, or 0 for the equal-count split): the A31 cost split of
+     *  order 2 it decided, which MPI_getLocalClusters then uses instead of the rows.
+    */
+    bool localRequest;
+    bool pairsLocal;
+    int* pairBounds;
+    int npairBounds;
 
     /**
      * @brief The clusters for each order "k"
@@ -109,6 +124,10 @@ typedef struct {
 Cluster* Cluster_init();
 void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config,
                        QubitArray* qa=nullptr, DefectArray* dfa=nullptr);
+
+// A31: a cluster's cost D^2 (D + nstep), D its dimension (the qubit's too in gCCE), for MPI_getLocalClusters.
+// Built from the bath as it is now: pCCE cuts the bath in clusterize, so call it after the bath is final.
+std::function<double(int,const int*)> Cluster_costFunction(Config* cnf, QubitArray* qa, BathArray* ba, DefectArray* dfa);
 
 // free
 void Cluster_freeAll(Cluster* cls);

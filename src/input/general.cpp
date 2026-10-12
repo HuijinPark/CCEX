@@ -498,31 +498,57 @@ void Config_resolveEvolution(Config* cnf){
  * evolution_update = recursive (A16 b, A18) exists on the CPU time evolutions of cCCE (method CCE, pCCE, dsj, itb or
  * dsjitb: the single state, evolveSingleState, and the ensemble nstate = 0, evolveEnsembleRecursiveCce)
  * and of gCCE with propagator=eigen (evolution=vector, propagateStateGcce, and evolution=matrix,
- * calPropagatorGcceRecursive). On the GPU (backend cuda/auto) the run would compute every phase with sin and cos as
- * with exact, and gCCE with propagator=expm has no phases to carry over. Without the key (A29, 2026-10-12) the run
- * takes recursive on those paths and exact elsewhere, silently; a given recursive elsewhere is refused (the input
- * would claim something the run does not do), a given exact keeps the old bits. The one place this is decided.
- * Call after Config_resolveEvolution, as before.
+ * calPropagatorGcceRecursive), and in the packed kernel (A26, small_cluster_batch.cpp). The GPU large-cluster path
+ * (gpu_backend.cu: every cluster with backend cuda, those of gpu_options.min_dim and above with auto) computes every
+ * phase with sin and cos as with exact, and gCCE with propagator=expm has no phases to carry over. Without the key
+ * (A29, 2026-10-12) the run takes recursive where it exists and exact elsewhere, silently - per path since A36
+ * (2026-10-12): in the GPU build with backend auto the clusters on the CPU (below min_dim) and the packed kernel run
+ * recursive and the clusters on the GPU exact; with backend cuda the value is recursive when the packed kernel is on
+ * (the other clusters exact on the GPU), else exact. In the CPU build backend auto computes every cluster on the CPU.
+ * A given recursive is refused where a cluster may reach a path without it (the input would claim something the run
+ * does not do): gCCE expm, and a method the GPU takes with backend cuda, or auto in the GPU build (as before A36).
+ * A given exact keeps the old bits. The one place this is decided. Call after Config_resolveEvolution and
+ * Config_resolvePackedMaxDim (whether the packed kernel is on is part of the decision).
  */
 void Config_validateEvolutionUpdate(Config* cnf){
 
     const bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
-    char found[96] = "";
-    if (strcasecmp(cnf->backend,"cpu")!=0)
-        snprintf(found,sizeof(found),"backend=%s",cnf->backend);
-    else if (isGCCE && strcasecmp(cnf->propagator,"eigen")!=0)
+    const bool eigen = (strcasecmp(cnf->propagator,"eigen")==0);
+    char found[96] = "";                    // a CPU path without recursive
+    if (isGCCE && !eigen)
         snprintf(found,sizeof(found),"method=gCCE with propagator=%s",cnf->propagator);
+    // A36: may a cluster reach the GPU large-cluster path? The methods computeBackendInit sends to the GPU, with backend
+    // cuda (refused there in the CPU build) or with auto in the GPU build
+    const bool cuda = (strcasecmp(cnf->backend,"cuda")==0);
+    const bool gpuMethod = !strcasecmp(cnf->method,"cce") || !strcasecmp(cnf->method,"pcce") || (isGCCE && eigen);
+#ifdef CCEX_USE_CUDA
+    const bool gpuLarge = gpuMethod && (cuda || !strcasecmp(cnf->backend,"auto"));
+#else
+    const bool gpuLarge = gpuMethod && cuda;
+#endif
+    const bool packed = cnf->gpu_packed_max_dim > 0;
     if (cnf->evolution_update[0] == '\0'){
-        strcpy(cnf->evolution_update, found[0] == '\0' ? "recursive" : "exact");
-        snprintf(cnf->evolution_update_source,sizeof(cnf->evolution_update_source),"default (%s)",
-                 found[0] == '\0' ? "supported path" : found);
+        const bool allOnGpu = gpuLarge && cuda && !packed;      // nothing on a path with recursive
+        char path[128] = "supported path";
+        if (found[0] != '\0') snprintf(path,sizeof(path),"%s",found);
+        else if (allOnGpu) snprintf(path,sizeof(path),"backend=cuda: every cluster on the GPU, exact there");
+        else if (gpuLarge)
+            snprintf(path,sizeof(path),"%s: recursive; clusters on the GPU (backend=%s): exact",
+                     cuda ? "packed kernel" : packed ? "clusters on the CPU and packed kernel" : "clusters on the CPU",
+                     cnf->backend);
+        strcpy(cnf->evolution_update, found[0] == '\0' && !allOnGpu ? "recursive" : "exact");
+        snprintf(cnf->evolution_update_source,sizeof(cnf->evolution_update_source),"default (%s)",path);
         return;
     }
     strcpy(cnf->evolution_update_source,"given");
-    if (strcasecmp(cnf->evolution_update,"recursive")!=0 || found[0] == '\0'){ return; }
-    fprintf(stderr,"Error : evolution_update=recursive is implemented on backend=cpu for cCCE (single state and "
-                   "ensemble) and for gCCE with propagator=eigen (evolution=vector or matrix); this run has %s. "
-                   "Use evolution_update=exact, or leave the key out.\n",found);
+    if (strcasecmp(cnf->evolution_update,"recursive")!=0) return;
+    if (found[0] == '\0' && gpuLarge)
+        snprintf(found,sizeof(found),"backend=%s, whose clusters on the GPU are computed exact",cnf->backend);
+    if (found[0] == '\0') return;
+    fprintf(stderr,"Error : evolution_update=recursive is implemented on the CPU and in the packed kernel for cCCE "
+                   "(single state and ensemble) and on the CPU for gCCE with propagator=eigen (evolution=vector or "
+                   "matrix); this run has %s. Use evolution_update=exact, or leave the key out (then each path takes "
+                   "recursive where it has it).\n",found);
     exit(EXIT_FAILURE);
 }
 

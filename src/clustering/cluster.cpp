@@ -17,8 +17,31 @@ Cluster* Cluster_init(){
     cls->nk = NULL;
     cls->method[0] = '\0';
     cls->clusinfo = NULL;
+    cls->localRequest = false;
+    cls->pairsLocal = false;
+    cls->pairBounds = NULL;
+    cls->npairBounds = 0;
     
     return cls;
+}
+
+std::function<double(int,const int*)> Cluster_costFunction(Config* cnf, QubitArray* qa, BathArray* ba, DefectArray* dfa){
+    // A31: one D^3 eigensolve and nstep steps of D^2 work; measured on h-BN (dimensions 3..49) it follows the time per
+    // cluster within about 20 %. (Moved here from main.cpp by A38, which also needs it inside clusterizePairs.)
+    std::vector<double> siteDim(ba->nspin, 1.0);
+    for (int i=0; i<ba->nspin; i++){
+        siteDim[i] = BathSpin_dim(BathArray_getBath_i(ba,i));
+        const int idf = DefectArray_findDefectIndex(dfa,BathArray_getBath_i_name(ba,i));
+        for (int isp=0; idf>=0 && isp<DefectArray_getDefect_idf_naddspin(dfa,idf); isp++)
+            siteDim[i] *= BathSpin_dim(DefectArray_getSubbath_i_isp(dfa,i,isp));
+    }
+    const double qubitDim = strcasecmp(cnf->method,"gcce") ? 1.0 : QubitArray_dim(qa);
+    const double nstep = Config_getNstep(cnf);
+    return [siteDim, qubitDim, nstep](int n, const int* row){
+        double d = qubitDim;
+        for (int j=1; j<=n; j++) d *= siteDim[row[j]];
+        return d*d*(d+nstep);
+    };
 }
 
 void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config,QubitArray* qa,DefectArray* dfa){
@@ -85,7 +108,9 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config,QubitArray* 
         if (order == 2 && !Cluster_getAddsubclus(cls) && !verbosity){
             // The same list without the hash and the dense maps, the pair search shared
             // between the ranks (A21); higher orders still need the maps below.
-            clusterizePairs(cls, ba, rdip, rdipcut);
+            // A38: with localRequest, only this rank's rows (and the cost split, decided from all of them first).
+            clusterizePairs(cls, ba, rdip, rdipcut,
+                            cls->localRequest && qa && dfa ? Cluster_costFunction(config,qa,ba,dfa) : nullptr);
         }
         else if (order > 1){             // if order >= 2
             // Get connectivity map 
@@ -501,4 +526,8 @@ void Cluster_freeClusinfo(Cluster* cls){
         free(cls->clusinfo);
         cls->clusinfo = NULL;
     }
+    free(cls->pairBounds);
+    cls->pairBounds = NULL;
+    cls->npairBounds = 0;
+    cls->pairsLocal = false;
 }

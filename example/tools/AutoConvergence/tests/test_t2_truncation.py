@@ -133,8 +133,41 @@ class TestTruncation(unittest.TestCase):
         flat = np.full_like(s, 0.01)                     # nothing above the fit floor: no fit is possible
         j = truncation.judge(T, flat, flat.copy(), 12.6e-3, fit_only=False)
         self.assertEqual((j["route"], j["verdict"], j["fit_max"]), ("smoothed", "pass", None))
-        self.assertEqual(truncation.judge(T, flat, flat.copy(), 12.6e-3)["verdict"], "fit-failure")   # fit lines only (default)
+        # fit lines only (default): a failed fit is judged on the raw area since 2026-10-12 (equal flat curves pass)
+        self.assertEqual(truncation.judge(T, flat, flat.copy(), 12.6e-3)["route"], "raw-area")
         self.assertIn("fit_error", j)
+
+    def test_a_failed_fit_on_one_side_is_judged_on_the_raw_area(self):     # user 2026-10-12, plan 2.1
+        _, r = self.pair()
+        A_ref = 3e-3 * truncation.gamma(1 + 1 / 1.2)
+        same = np.array([t2.model(T, A_ref / truncation.gamma(1 + 1 / 6), 6.0)] * len(r), complex)   # n 6: outside 0.3-4
+        j = truncation.judge(T, same, r, 12.6e-3)
+        m = T <= 12.6e-3
+        raw = np.trapezoid(np.abs(same.mean(0))[m], T[m]) / np.trapezoid(np.abs(r.mean(0))[m], T[m]) - 1
+        self.assertEqual((j["route"], j["verdict"], j["area_rel"]), ("raw-area", "pass", None))
+        self.assertAlmostEqual(j["raw_area_rel"], raw, places=12)
+        self.assertLessEqual(abs(raw), 0.02)
+        j = truncation.judge(T, same * 1.05, r, 12.6e-3)                  # 5 % more raw area: fails with the same 2 %
+        self.assertEqual((j["route"], j["verdict"]), ("raw-area", "fail"))
+        j = truncation.judge(T, r, same * 1.05, 12.6e-3)                  # the reference side failing: the same
+        self.assertEqual((j["route"], j["verdict"]), ("raw-area", "fail"))
+        self.assertEqual(truncation.judge(T, same * 1.05, r, 12.6e-3, rel_tol=0.1)["verdict"], "pass")
+
+    def test_fitted_comparisons_keep_the_fit_verdict(self):
+        for f, verdict in ((1.005, "pass"), (1.10, "fail")):
+            s, r = self.pair(f)
+            j = truncation.judge(T, s, r, 12.6e-3)
+            self.assertEqual((j["route"], j["verdict"]), ("fit", verdict))
+            self.assertAlmostEqual(abs(j["area_rel"]), abs(truncation.fit_area(j["T2"], j["n"]) / truncation.fit_area(j["T2_ref"], j["n_ref"]) - 1))
+            self.assertNotIn("raw_area_rel", j)
+
+    def test_a_non_finite_curve_stays_unjudged(self):    # (the runner leaves such configurations out before judging)
+        s, r = self.pair()
+        s[:, 20:] = np.nan                                # no fit, and no finite raw area
+        with np.errstate(invalid="ignore"):
+            j = truncation.judge(T, s, r, 12.6e-3)
+        self.assertEqual((j["route"], j["verdict"]), ("fit", "fit-failure"))
+        self.assertNotIn("raw_area_rel", j)
 
     def test_modulation_that_differs_goes_to_the_smoothed_route(self):
         s, r = self.pair(1.0, 1 + 0.08 * np.cos(2 * np.pi * T / 4e-3), 1 + 0.08 * np.cos(2 * np.pi * T / 4e-3 + 1.5))

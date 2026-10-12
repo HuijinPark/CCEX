@@ -88,7 +88,10 @@ void runOneCalculation(Config* cnf, QubitArray* qa, BathArray* ba, DefectArray* 
     }
 
     const int loadedSites = ba->nspin;
+    // A38: nothing below reads every pair row unless one of these is on (data/a38-local-cluster-list-20261012/01-analysis.md)
+    cls->localRequest = !clusterPlanOnly && !cnf->cluster_contributions && !adaptiveWork(cnf).active;
     Cluster_clusterize(cls,ba,cnf,qa,dfa);
+    cls->localRequest = false;
     checkAdaptiveConnections(qa,ba,dfa,cnf,pls,cls,op);
     prepareContributionClusters(cnf,cls,ba);
     rdipladder::prepare(cnf,cls,ba,op);
@@ -120,24 +123,11 @@ void runOneCalculation(Config* cnf, QubitArray* qa, BathArray* ba, DefectArray* 
     // MPI distribution for the clusters
     int order = Cluster_getOrder(cls);
     int*** clusters = Cluster_getClusinfo(cls);
-    // A31: a cluster's cost is D^2 (D + nstep), D its dimension (the qubit's too in gCCE): one D^3 eigensolve and
-    // nstep steps of D^2 work; measured on h-BN (dimensions 3..49) it follows the time per cluster within about 20 %.
-    std::vector<double> siteDim(ba->nspin, 1.0);
-    for (int i=0; i<ba->nspin; i++){
-        siteDim[i] = BathSpin_dim(BathArray_getBath_i(ba,i));
-        const int idf = DefectArray_findDefectIndex(dfa,BathArray_getBath_i_name(ba,i));
-        for (int isp=0; idf>=0 && isp<DefectArray_getDefect_idf_naddspin(dfa,idf); isp++)
-            siteDim[i] *= BathSpin_dim(DefectArray_getSubbath_i_isp(dfa,i,isp));
-    }
-    const double qubitDim = strcasecmp(cnf->method,"gcce") ? 1.0 : QubitArray_dim(qa);
-    const double nstep = Config_getNstep(cnf);
-    // An order whose clusters all cost the same (P1, 13C: one kind of spin) keeps the equal-count split byte for byte.
-    const std::function<double(int,const int*)> clusterCost = [&](int n, const int* row){
-        double d = qubitDim;
-        for (int j=1; j<=n; j++) d *= siteDim[row[j]];
-        return d*d*(d+nstep);
-    };
-    int*** localclusters = MPI_getLocalClusters(order,clusters,clusterCost);
+    // A31: the cost split (Cluster_costFunction); after clusterize, which can cut the bath (pCCE).
+    const std::function<double(int,const int*)> clusterCost = Cluster_costFunction(cnf,qa,ba,dfa);
+    // A38: when clusterizePairs kept only this rank's pair rows, it decided their split first.
+    const std::vector<int> pairBounds(cls->pairBounds, cls->pairBounds + cls->npairBounds);
+    int*** localclusters = MPI_getLocalClusters(order,clusters,clusterCost,cls->pairsLocal ? 2 : 0,&pairBounds);
     // int*** localclusters = clusters; // No MPI
     // reportClusinfo(localclusters,order);
     MPI_Barrier(MPI_COMM_WORLD);
@@ -723,7 +713,7 @@ int main(int argc, char* argv[]){
                 printf("  backend: cpu (default), cuda, auto; profile: true for per-dimension counts/timing\n");
                 printf("  gpu_options: {min_dim, packed_max_dim (0, 2, 4), evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb}\n");
                 printf("  propagator, evolution, gcce_refinement, gcce_refinement_max_sweeps (gCCE)\n");
-                printf("  evolution_update: exact or recursive (cCCE, and gCCE with propagator=eigen; CPU); default recursive there, exact elsewhere\n");
+                printf("  evolution_update: exact or recursive (cCCE on the CPU and in the packed kernel, gCCE with propagator=eigen on the CPU); default recursive there, exact elsewhere (GPU clusters)\n");
                 printf("  probe_memory_gb (memory of the adaptive probes running at once on a node)\n");
                 printf("  seed: shared RNG seed; omit to generate and report a seed on MPI rank 0\n");
                 printf("  vector_mean_field: true for the static mean field as the vector J.m_j (nstate > 0)\n");
@@ -749,8 +739,8 @@ int main(int argc, char* argv[]){
     // the defaulted evolution be settled; doing it during the file parse would decide it
     // against an nstate that -N had not yet supplied.
     Config_resolveEvolution(cnf);
-    Config_validateEvolutionUpdate(cnf);
     Config_resolvePackedMaxDim(cnf);
+    Config_validateEvolutionUpdate(cnf);       // after the packed kernel's value (A36)
     validatePulsesForMethod(cnf,pls);
     validateAdaptiveConfig(cnf,cls);
     Config_validatePcceCache(cnf);

@@ -15,6 +15,7 @@
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:?}"
 source test/gpu_verification/server/environment.sh
+source test/gpu_verification/server/mps.sh
 run_dir="server-results/min-dim-${SLURM_JOB_ID}"
 mkdir "$run_dir"
 bash do_compile.sh gpu > "$run_dir/build.log" 2>&1

@@ -7,7 +7,11 @@ bundles, and the two curves differ by 1.7e-2 at most. `CCE2_adaptive/` adds the
 `Adaptive` block (merge policy, `atol` 1e-3, an explicit `seed`): three rounds
 took the bundles from 28 to 26 and stopped at "no feasible improving merge";
 `results/adaptive/` holds one folder per step and `summary.json`. 14 s and 6
-minutes.
+minutes. `CCE2_regroup/` sets `"regroup": true` in the `Adaptive` block on the
+NV in six P1 electron spins (five sampled states): the bundles [0,3] [1,5] [2,4]
+give three states with |L| > 1.01, the culprit pair with the largest g is
+[0,3]–[1,5], and one accepted change, splitting [2,4] into [2] and [4], leaves
+no unphysical state (status `physical`; physical is not accurate). 1 s.
 
 ![08: CCE2 with ordinary clusters and with bundles](../images/tutorials/08_bundle.png)
 

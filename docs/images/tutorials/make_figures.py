@@ -8,7 +8,11 @@ docs/user/Examples.md for which ones and with what NP/NCONF/NSTATE), then
 from the repository root. A figure whose results are missing is skipped and
 named. Coherence figures show |L(t)|; density-matrix figures show the diagonal
 of rho(t) and the largest off-diagonal element. The time column of a CCEX output is in ms; the unit of each figure
-is the one the tutorial's own post-processing uses."""
+is the one the tutorial's own post-processing uses.
+
+11_auto_converged.png and 12_ladder.png are not made here: they are copies of the figures the tutorials
+write themselves (11: results/auto/result/6_converged_coherence.png of the runner; 12: results/CCE2_ladder_rungs.png
+of its run.sh)."""
 import glob, os, sys
 import numpy as np
 import matplotlib

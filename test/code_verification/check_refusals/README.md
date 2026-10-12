@@ -56,7 +56,7 @@ Since 2026-10-11 it also checks `evolution_update` (`docs/user/InputFile_Backend
 | refused | because |
 |---|---|
 | a value other than `exact` or `recursive` (a string, or a number) | only the two are defined |
-| `recursive` given with gCCE `propagator` = `expm` (`p1_manual_hahn`, `evolution` = `matrix`), with `backend` = `cuda` (`p1_cce2_single`) or `auto` (`p1_cce2_ensemble`) | the recurrence exists on the CPU only (on the GPU the run would compute as `exact`), and `expm` forms no phases to carry over. Without the key these paths run `exact` (A29, 2026-10-12). The ensemble cCCE and gCCE `matrix` were refused until A18 (2026-10-11) and run now (`../check_input_forms/`) |
+| `recursive` given with gCCE `propagator` = `expm` (`p1_manual_hahn`, `evolution` = `matrix`), or with `backend` = `cuda` (`p1_cce2_single`) | the recurrence exists on the CPU and in the packed kernel only (the GPU large-cluster path computes as `exact`), and `expm` forms no phases to carry over. Without the key these paths run `exact` (A29, 2026-10-12). The ensemble cCCE and gCCE `matrix` were refused until A18 (2026-10-11) and run now (`../check_input_forms/`); `backend` = `auto` in this CPU-only binary computes every cluster on the CPU and was refused until A36 (2026-10-12), it runs now (`../check_input_forms/` E5). With `backend` `auto` or `cuda` in `bin/main_gpu.out` a given `recursive` is refused: `test/gpu_verification/check_gpu/check_options.py` |
 
 Since 2026-10-12 it also checks the `gpu_options` block (`docs/user/InputFile_Backend.md#tag_gpu_options`, A26), on
 `../check_numerics/cases/`: each of the five flat keys it replaced (`gpu_min_dim` ...) is refused with the new form

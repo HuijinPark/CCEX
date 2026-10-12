@@ -1,6 +1,6 @@
 # Examples
 
-Ten worked examples live in `example/tutorial/`, numbered in the order to read
+Twelve worked examples live in `example/tutorial/`, numbered in the order to read
 them: from the smallest hand-written input to the features this branch added.
 Each folder is one physical system (or one feature on a system above), and each
 calculation inside it is a folder with its inputs (`ccein*.json`, JSON with `#`
@@ -27,7 +27,8 @@ the analyzer, and `.png` plots.
 
 The figures below were made on 2026-09-24 on a laptop (WSL, 4 ranks) from the
 results of each `run.sh` with one bath configuration, by
-`docs/images/tutorials/make_figures.py`; the recorded runs on the cluster used
+`docs/images/tutorials/make_figures.py` (those of 11 and 12, on 2026-10-12, are the figures
+the two tutorials write themselves); the recorded runs on the cluster used
 up to 50 configurations, so these curves are the shape, not the converged
 number. A coherence figure shows `|L(t)|`; a density-matrix figure shows the
 diagonal of `rho(t)` and its largest off-diagonal element. The time is the one
@@ -63,17 +64,19 @@ python3 $ANALYZER -d results/ -fi CCE2_Diamond_NV_natab_CONF_wiDiv -err_d result
 python3 $ANALYZER -d results/ -fi CCE2_Diamond_NV_natab_CONF_ErrCorr -vn "CONF" -v $(seq -s ' ' 1 $NCONF) -uc "ms" -ea -ntn -fo results/CCE2_Diamond_NV_natab_EnsAvg -pl -fit -fit_initp 2 -fit_space 5
 ```
 
-## The ten
+## The twelve
 
 | Page | What it shows |
 |---|---|
 | [01 Arbitrary system](Examples_01.md) | the three input file formats on a hand-written system; gCCE1, density matrix |
-| [02 Diamond NV, natural-abundance ¹³C](Examples_02.md) | the basic NV case: ensemble CCE2, sampled bath states, gCCE, dsj, the Knight shift |
+| [02 Diamond NV, natural-abundance ¹³C](Examples_02.md) | the basic NV case: ensemble CCE2, sampled bath states, gCCE, dsj, the Knight shift, the built-in isotope table |
 | [03 Diamond, several NV centres](Examples_03.md) | several NV centres: the gCCE density matrix, Ramsey and Hahn echo |
 | [04 Diamond NV in a P1 bath](Examples_04.md) | an electron-spin bath: CCE2, CCE4 and CCE2e2n, pCCE, gCCE2 with the zero-field splitting, the population |
 | [05 Diamond NV in a Vp bath](Examples_05.md) | the same spin echo over Vp concentrations |
 | [06 Pulse sequences written out](Examples_06.md) | pulse sequences written out: Hahn echo, CPMG, WAHUHA |
 | [07 h-BN V_B⁻](Examples_07.md) | DFT hyperfine and quadrupole tensors, the hyperfine-mediated term, the OH term |
-| [08 Bundle clustering](Examples_08.md) | bundle clustering and its adaptive refinement |
-| [09 GPU backend](Examples_09.md) | the CUDA backend: cpu, auto and cuda compared |
+| [08 Bundle clustering](Examples_08.md) | bundle clustering and its adaptive refinement: merge and regroup |
+| [09 GPU backend](Examples_09.md) | the CUDA backend: cpu, auto and cuda compared for CCE5, gCCE4 and pCCE2 |
 | [10 Coordinate frame rotation](Examples_10.md) | the coordinate frame rotation: a bath in the crystal frame |
+| [11 Automatic convergence](Examples_11.md) | the `auto_convergence` block: the time window, rdip, rbath and the configurations found by the run itself |
+| [12 rdip ladder](Examples_12.md) | `rdip_ladder`: the curves of smaller rdip from one run; `evolution_update` exact against recursive |

@@ -145,7 +145,9 @@ def truncation(out_dir, name, times, j, label_setting="setting", label_reference
     fig.tight_layout(); fig.savefig(out / f"truncation_{name}.png", dpi=130); plt.close(fig)
     fitlines = ([f"T2 {j['T2'] * US:.4f} vs {j['T2_ref'] * US:.4f} us: dT2/T2 {j['dT2_rel']:+.3%} ± {j['dT2_rel_se']:.3%}; n {j['n']:.4f} vs {j['n_ref']:.4f}",
                  f"fit-line difference: max {j['fit_max']:.3e} (tolerance {o['max_tol']:g}), area {j['fit_area']:.3e} (tolerance {o['area_tol']:g})"]
-                if j["fit_max"] is not None else [f"fit failed: {j.get('fit_error')}"])
+                if j["fit_max"] is not None else [f"fit failed: {j.get('fit_error')}"]
+                + ([f"raw area of |L| on [0, T_d]: {j['raw_area'] * US:.4g} vs {j['raw_area_ref'] * US:.4g} us, {j['raw_area_rel']:+.3%}"]
+                   if j.get("route") == "raw-area" else []))
     (out / f"truncation_{name}.txt").write_text("\n".join([
         f"{label_setting} vs {label_reference}: {j['configurations']} paired configurations, [0, T_d = {td:.3f} us] ({j['points']} points)",
         *fitlines,
@@ -261,12 +263,17 @@ def trend_step(out_dir, number, name, times, curves, rec, chosen, window_end, re
     pts = [e for e in rec["vs_reference"] if e["rel"] is not None]
     ax[1].plot([e["value"] for e in pts], [100 * e["rel"] for e in pts], "s:", color="C0", ms=13, lw=2,
                label=f"|A({name})/A({rec['reference']:g}) - 1|")
+    raw = [e for e in pts if e.get("basis") == "raw-area"]
+    if raw:                                    # a T2 fit failed: judged on the raw area (user 2026-10-12)
+        ax[1].plot([e["value"] for e in raw], [100 * e["rel"] for e in raw], "o", mfc="white", mec="C3", mew=2.5, ms=17, ls="none",
+                   label="raw area of |L| on [0, T_d] (a T2 fit failed)")
     ax[1].axhline(100 * rel_tol, color="C1", ls="--", lw=2, label=f"tolerance {100 * rel_tol:g} %")
     if chosen is not None:
         ax[1].axvline(chosen, color="0.35", ls=":", lw=2, label=f"chosen {name} {chosen:g}")
     e = rec.get("estimate") or {}
     c = rec["checks"][-1] if rec["checks"] else e.get("check")   # the comparison that decided
-    check = (f"check |A({c['lo']:g})/A({c['hi']:g}) - 1| = {100 * c['rel']:.2f} %: {c['verdict']}" if c and c["rel"] is not None
+    check = (f"check |A({c['lo']:g})/A({c['hi']:g}) - 1| = {100 * c['rel']:.2f} %: {c['verdict']}"
+             + (" (raw area, a T2 fit failed)" if c.get("basis") == "raw-area" else "") if c and c["rel"] is not None
              else f"check {c['lo']:g} vs {c['hi']:g}: {c['verdict']}" if c else "no check")
     # x and y from the points and the tolerance line, with room so no marker sits on the frame (user 2026-10-10)
     ys = [100 * e["rel"] for e in pts] + [100 * rel_tol]

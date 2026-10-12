@@ -234,6 +234,22 @@ class TestRunner(unittest.TestCase):
         self.assertEqual((code, summary(inp)["status"]), (3, "window-unresolved"), out)
         self.assertIn("the last: T2 fit", summary(inp)["reason"])      # the last window's own reason, not "not decayed"
 
+    def test_a_failed_fit_is_judged_on_the_raw_area(self):     # user 2026-10-12, plan 2.1
+        # n 1.3 below rbath 30 is outside n_range [1.4, 4]: rbath 10 has no fit and is judged on the raw area (fails),
+        # rbath 30 and 40 (n 1.6, area kept) on the fit as before
+        inp, fake = make_case(self.tmp, fit_n_range=[1.4, 4.0])
+        code, out = call(inp, fake, dict(FAKE_SHAPE="30:1.6"))
+        self.assertEqual(code, 0, out)
+        s = summary(inp)
+        v = {x["value"]: (x["verdict"], x.get("basis")) for x in s["rbath"]["vs_reference"]}
+        self.assertEqual(v, {10.0: ("fail", "raw-area"), 30.0: ("pass", None)})
+        self.assertEqual(s["truncation"]["chosen"]["rbath"], 30.0)
+        dec = [json.loads(x) for x in (inp.parent / "auto/decisions.jsonl").read_text().splitlines() if '"truncation"' in x][0]
+        self.assertIn(dict(parameter="rbath", lo=10.0, hi=40.0, verdict="fail"), dec["raw_area"])
+        self.assertIn("judged on the raw area of |L| on [0, T_d] (a T2 fit failed): 10 vs 30, 10 vs 40",
+                      (inp.parent / "auto/result/summary.txt").read_text())
+        self.assertNotIn("basis", json.dumps(s["rdip"]))                 # every rdip fit succeeded: unchanged
+
     def test_progress_interruption_status_and_fresh(self):   # plan "끊김 대비·진행 보기" R1-R4 (2026-10-08)
         inp, fake = make_case(self.tmp)
         cnt = Path(self.tmp) / "count"

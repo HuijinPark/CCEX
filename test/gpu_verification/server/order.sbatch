@@ -14,6 +14,7 @@
 set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:?}"
 source test/gpu_verification/server/environment.sh
+source test/gpu_verification/server/mps.sh
 order="${1:?Supply order 3, 4 or 5}"
 case "$order" in 3|4|5) ;; *) exit 2 ;; esac
 run_dir="server-results/order${order}-${SLURM_JOB_ID}"

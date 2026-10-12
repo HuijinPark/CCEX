@@ -398,7 +398,9 @@ echo "=== evolution_update"
 # gCCE with propagator=eigen (evolution vector and matrix); on the GPU the run would compute as exact and gCCE expm has no
 # phases to carry over, so a given recursive there is refused (without the key those run exact, A29). On check_numerics
 # cases, refused at the start. (The ensemble cCCE and gCCE matrix were refused until A18; they run now,
-# ../check_input_forms/evolution_update.sh.)
+# ../check_input_forms/evolution_update.sh.) Since A36 (2026-10-12) backend auto in this CPU-only binary computes every
+# cluster on the CPU and a given recursive runs (check_input_forms E5); backend cuda stays refused here, and recursive
+# with backend auto or cuda in bin/main_gpu.out is refused in test/gpu_verification/check_gpu/check_options.py.
 reject_case(){
     local case="$1" name="$2" want="$3" edit="$4"
     local w="$WORK/evolution_update_refusals"; mkdir -p "$w"
@@ -425,8 +427,6 @@ reject_case p1_cce2_single rj_update_value "evolution_update must be exact or re
 reject_case p1_cce2_single rj_update_type "evolution_update must be exact or recursive" "d['evolution_update'] = 1"
 reject_case p1_manual_hahn rj_update_gcce_expm "this run has method=gCCE with propagator=expm" \
   "d['evolution_update'] = 'recursive'; d['evolution'] = 'matrix'; d['propagator'] = 'expm'"
-reject_case p1_cce2_ensemble rj_update_ensemble_backend "this run has backend=auto" \
-  "d['evolution_update'] = 'recursive'; d['backend'] = 'auto'"
 reject_case p1_cce2_single rj_update_backend "this run has backend=cuda" \
   "d['evolution_update'] = 'recursive'; d['backend'] = 'cuda'"
 

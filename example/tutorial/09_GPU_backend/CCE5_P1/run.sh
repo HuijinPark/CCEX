@@ -12,11 +12,14 @@ NP=${NP:-4}
 mkdir -p results
 
 mpirun -n $NP $CCEX -f ccein_cpu.json -o results/CCE5_P1_cpu_1 > results/process_CCE5_P1_cpu_1
-mpirun -n $NP $CCEX -f ccein_auto.json -o results/CCE5_P1_auto_1 > results/process_CCE5_P1_auto_1
-BACKENDS="cpu auto"
+BACKENDS="cpu"
 if [ -x $CCEX_GPU ]; then
+  mpirun -n $NP $CCEX_GPU -f ccein_auto.json -o results/CCE5_P1_auto_1 > results/process_CCE5_P1_auto_1
   mpirun -n $NP $CCEX_GPU -f ccein_cuda.json -o results/CCE5_P1_cuda_1 > results/process_CCE5_P1_cuda_1
   BACKENDS="cpu auto cuda"
+else
+  mpirun -n $NP $CCEX -f ccein_auto.json -o results/CCE5_P1_auto_1 > results/process_CCE5_P1_auto_1
+  BACKENDS="cpu auto"
 fi
 
 # --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)

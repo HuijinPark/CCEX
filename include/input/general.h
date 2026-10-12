@@ -49,7 +49,7 @@ typedef struct {
     char evolution[MAX_CHARARRAY_LENGTH]; /**< gCCE state representation : matrix | vector   */
     bool evolution_isdefault;             /**< true until an "evolution" key is actually read */
     char evolution_update[16];            /**< exact | recursive: the phases of the time grid by sin/cos at every point, or by the previous point's times one step's factor (A16 b); empty until given or resolved (A29: recursive where supported, else exact) */
-    char evolution_update_source[64];     /**< why evolution_update has its value (given, or the default and the path), for the run log */
+    char evolution_update_source[160];    /**< why evolution_update has its value (given, or the default and the path; per path in the GPU build, A36), for the run log */
     char backend[8];                      /**< cpu (default) | cuda | auto */
     int gpu_min_dim;                       /**< auto uses CUDA at/above this Hilbert dimension */
     int gpu_batch_steps;                   /**< maximum time points per CUDA batch */

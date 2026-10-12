@@ -8,7 +8,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from autoconv import window                      # noqa: E402
-from autoconv.runner import converge, unjudged_reason   # noqa: E402
+from autoconv.runner import converge, raw_area_pairs, unjudged_reason   # noqa: E402
 
 
 def judge(a, b):
@@ -33,6 +33,23 @@ class TestConverge(unittest.TestCase):
         r = self.run_case({1: None, 2: 97, 3: 99, 4: 100}, [1, 2, 3, 4], 100.1)
         self.assertTrue(r["estimate"]["status"].startswith("no trend"))
         self.assertNotEqual(r["chosen"], 1)
+
+
+class TestRawArea(unittest.TestCase):           # user 2026-10-12: a failed T2 fit is judged on the raw area
+    def test_a_raw_area_comparison_gives_no_trend_but_counts_as_judged(self):
+        def judge_raw(a, b):
+            rel = abs(a / b - 1)
+            out = dict(verdict="pass" if rel <= 0.02 else "fail", rel=rel)
+            return dict(out, basis="raw-area") if a == 97 else out
+        r = converge([1, 2, 3, 4], lambda v: {1: 97, 2: 99, 3: 99.9, 4: 100}.get(v, 100.05), lambda v: None, 10, False,
+                     judge_raw, 0.02)
+        self.assertEqual(r["estimate"]["status"], "no trend (a comparison failed: raw area)")
+        self.assertEqual(r["chosen"], 2)                             # the verdicts, raw area or not, choose as before
+        self.assertEqual(raw_area_pairs(r), {(1, 2, "fail"), (1, 4, "fail")})
+
+    def test_a_raw_area_fail_is_an_actual_fail(self):
+        rec = dict(checks=[dict(lo=2, hi=3, verdict="fail", rel=0.3, basis="raw-area")])
+        self.assertIsNone(unjudged_reason("rbath", rec, "3_rbath.png"))
 
 
 class TestUnjudgedReason(unittest.TestCase):      # 2026-10-12, job 17163: a fit failure is not "make larger baths"

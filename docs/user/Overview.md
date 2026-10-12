@@ -63,8 +63,9 @@ matrix) per bath configuration into text files, which the analyzer in
   files (bath, gyromagnetic ratios, qubit, states, axes) and the order in which
   a run reads them.
 - [Input file](InputFile.md): every key, by group.
-- [Examples](Examples.md): ten worked examples in `example/tutorial/`, from a
-  hand-written bath to the GPU backend and the frame rotation.
+- [Examples](Examples.md): twelve worked examples in `example/tutorial/`, from a
+  hand-written bath to the GPU backend, the frame rotation, the automatic
+  convergence and the rdip ladder.
 - [Analysis](Analysis.md) and [Tools](Tools.md): what runs on the output, and what
   makes the inputs (`example/analysis/`, `example/tools/`).
 - Data structures and Source files: the code itself, for developers.

@@ -881,17 +881,18 @@ int min(int x, int y)
 // first k whose running cost reaches r/nprocs of the total (rows 1..k, in the list's order). Every rank computes
 // the same doubles in the same order, so all agree. Empty when the order is uniform (all costs equal) or has
 // no cluster: the equal-count split stays then, so a bath of one kind of spin is distributed as before.
-static std::vector<int> costBounds(int n, int*** clusters, const std::function<double(int,const int*)>& cost){
-    const int m = clusters[n][0][0] - 1;
+// A38: two passes over rowCost(0..m-1) instead of an array of m costs (8 B a cluster at the peak of clusterizePairs);
+// the same calls in the same order give the same doubles, so the same bounds.
+std::vector<int> costBounds(int m, const std::function<double(int)>& rowCost){
     std::vector<int> bounds;
-    if (!cost || m <= 0) return bounds;
-    std::vector<double> c(m);
+    if (!rowCost || m <= 0) return bounds;
     bool uniform = true;
     double total = 0.0;
+    const double c0 = rowCost(0);
     for (int i=0; i<m; i++){
-        c[i] = cost(n, clusters[n][i+1]);
-        uniform = uniform && c[i] == c[0];
-        total += c[i];
+        const double c = i == 0 ? c0 : rowCost(i);
+        uniform = uniform && c == c0;
+        total += c;
     }
     if (uniform) return bounds;
     bounds.assign(nprocess+1, m);
@@ -900,13 +901,34 @@ static std::vector<int> costBounds(int n, int*** clusters, const std::function<d
     int k = 0;
     for (int r=1; r<nprocess; r++){
         const double target = total * r / nprocess;
-        while (k < m && running < target) running += c[k++];
+        while (k < m && running < target) running += rowCost(k++);
         bounds[r] = k;
     }
     return bounds;
 }
 
-int*** MPI_getLocalClusters(int order, int*** clusters, const std::function<double(int,const int*)>& cost){
+void clusterRowRange(int count, const std::vector<int>& bounds, int irank, int* first, int* end){
+    if (!bounds.empty()){
+        // rows bounds[irank]+1 .. bounds[irank+1]; end is one past the last row
+        *first = bounds[irank] + 1;
+        *end = bounds[irank+1] + 1;
+        return;
+    }
+    int ista, iend;
+    para_range(2, count+1, nprocess, irank, &(ista) ,&(iend));
+    // cluster : ista - 1 <= i < iend
+    // 9# , 0 , 1 ... , 8 , rank = 0 .. 7
+    // rank==0~7 then, sendcount = 1 ista=2, iend=1
+    // else, sendcount = 0
+    *first = ista - 1;
+    *end = iend;
+    // case : ista - 1 = iend
+    // case : ista - 1 > iend
+    if (ista-1 >= iend) *end = *first;
+}
+
+int*** MPI_getLocalClusters(int order, int*** clusters, const std::function<double(int,const int*)>& cost,
+                            int givenOrder, const std::vector<int>* givenBounds){
 
     MPI_Request req; 
     MPI_Status status;
@@ -932,7 +954,10 @@ int*** MPI_getLocalClusters(int order, int*** clusters, const std::function<doub
     int MPI_ista[order+1][nprocess];
     int MPI_iend[order+1][nprocess];
     std::vector<std::vector<int>> bounds(order+1);
-    for (int n=1; n<order+1; n++) bounds[n] = costBounds(n, clusters, cost);
+    for (int n=1; n<order+1; n++){
+        if (n == givenOrder){ bounds[n] = *givenBounds; continue; }   // A38: decided before the rows were dropped
+        if (cost) bounds[n] = costBounds(clusters[n][0][0]-1, [&](int i){ return cost(n, clusters[n][i+1]); });
+    }
 
     for (int irank=0; irank<nprocess; irank++){
         for (int n=0; n<order+1; n++){
@@ -941,35 +966,12 @@ int*** MPI_getLocalClusters(int order, int*** clusters, const std::function<doub
                 MPI_ista[n][irank] = 0;
                 MPI_iend[n][irank] = 0;
             }
-            else if (!bounds[n].empty()){
-                // rows bounds[irank]+1 .. bounds[irank+1]; MPI_iend is one past the last row, as below
-                MPI_sendcount[n][irank] = bounds[n][irank+1] - bounds[n][irank];
-                MPI_ista[n][irank] = bounds[n][irank] + 1;
-                MPI_iend[n][irank] = bounds[n][irank+1] + 1;
-            }
             else{
-                int ista, iend;
-                para_range(2, MPI_size[n], nprocess, irank, &(ista) ,&(iend));
-                MPI_Barrier(MPI_COMM_WORLD);
-                //if (rank==0){
-                //    printf("rank%d, size(ncluster)=%d, ista=%d , iend=%d\n",irank,MPI_size[n],ista,iend);
-                //    printf("rank%d, sendcount%d \n",irank,iend-ista+1);
-                //}
-                // cluster : ista - 1 <= i < iend
-                // 9# , 0 , 1 ... , 8 , rank = 0 .. 7
-                // rank==0~7 then, sendcount = 1 ista=2, iend=1
-                // else, sendcount = 0
-                MPI_sendcount[n][irank] = iend - ista + 1;
-                MPI_ista[n][irank] = ista - 1;
-                MPI_iend[n][irank] = iend;
-                
-                // case : ista - 1 = iend
-                // case : ista - 1 > iend
-                if (ista-1 >= iend){
-                    MPI_iend[n][irank] = MPI_ista[n][irank];
-                    MPI_sendcount[n][irank] = 0;
-                }
-                MPI_Barrier(MPI_COMM_WORLD);
+                int first, end;
+                clusterRowRange(MPI_size[n]-1, bounds[n], irank, &first, &end);
+                MPI_sendcount[n][irank] = end - first;
+                MPI_ista[n][irank] = first;
+                MPI_iend[n][irank] = end;
             }
         }
     }

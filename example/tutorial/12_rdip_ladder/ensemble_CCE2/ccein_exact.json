@@ -1,0 +1,28 @@
+{
+    # Config (General) : ccein_ladder.json at rdip 12 without the ladder
+    "method"        : "CCE",
+    "quantity"      : "coherence",
+    "qubitfile"     : "../../02_Diamond_NV_natab/bath/bath_Diamond_NV_natab_defect",
+    "gyrofile"      : "../../02_Diamond_NV_natab/bath/gyro_13C",
+    "bathfile"      : ["../../02_Diamond_NV_natab/bath/bath_Diamond_NV_natab_1"],
+    "order"         : 2,
+    "bfield"        : 500,
+    "rbath"         : 50,
+    "rdip"          : 12,
+    "deltat"        : 0.0002,
+    "nstep"         : 10000,
+    "seed"          : 1,
+
+    # evolution_update : how the phases exp(-i E t) of each cluster are formed at every time point.
+    #                    "exact" : sin and cos at every point (the only way before 2026-10-11).
+    #                    "recursive" : sin and cos at every 16th point, the previous point times one step's factor
+    #                    in between (the default on the CPU since 2026-10-12). The curves agree to rounding, not bit for bit.
+    "evolution_update" : "exact",
+
+    # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
+    "qalphams"      : 1,
+    "qbetams"       : 0,
+    "npulse"        : 1,
+
+    "outfile"       : "./results/CCE2_exact_1"
+}

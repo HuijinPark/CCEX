@@ -10,10 +10,11 @@ bytes of a gyrofile holding the table's value, a species missing from the gyrofi
 table, a species in neither is refused), `comments` ('#' and '!' are comments only outside JSON
 strings: a "#note" key and an outfile with '#' give the plain input's curves), `nodiv` (`save_nodiv` false writes the
 default run's `_wiDiv` and no `_noDiv`; a string value is refused), `evolution_update` (an explicit `exact` gives the
-`../check_numerics` references, which were recorded with `exact`, within that suite's 1e-9; `recursive` runs on single-state cCCE2 and gCCE2 vector, P1 10 ppm, on the ensemble cCCE2 (Hahn, CPMG-8,
+`../check_numerics` references, which were recorded with `exact`, within that suite's 1e-9 — skipped on a CI runner, since the references are one machine's digits; `recursive` runs on single-state cCCE2 and gCCE2 vector, P1 10 ppm, on the ensemble cCCE2 (Hahn, CPMG-8,
 Manual) and gCCE2 `evolution` = `matrix` (ensemble Hahn, one-state CPMG-8), and stays within 1e-8 of `exact` in the raw
 `_noDiv`; without the key (A29) single-state and ensemble cCCE2 and gCCE2 vector and matrix give the bytes of an explicit
-`recursive`, and `backend` = `auto` and gCCE `propagator` = `expm` those of an explicit `exact`, not a refusal), `gpu_options` (no
+`recursive`, and gCCE `propagator` = `expm` those of an explicit `exact`, not a refusal; `backend` = `auto`, all on the CPU in
+this binary, gives the bytes of `backend` = `cpu`, with or without a given `recursive`, A36), `gpu_options` (no
 block, an empty one, every default written out and every key changed give the same bytes on a CPU run of single-state
 cCCE2 and gCCE2, and the log shows the values read; A26, 2026-10-12), `autoconv` (`auto_convergence.enabled`: `false` gives
 the bytes of the input without the block, an enabled block makes `main.out -f` start the runner, once under `mpirun -n 2`,

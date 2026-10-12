@@ -9,8 +9,10 @@ paired by configuration).
   2. fit-quality check: s = Gaussian-smoothed (width sigma) |mu_r| - |mu_ref| must stay within 2 jackknife SE + quality_floor
      of df at every point; modulation common to both settings passes, a fit that misses a real difference does not;
   With fit_only (the default since 2026-10-07, user decisions) the fit lines decide by the relative difference of the area
-  under them, |A_setting / A_reference - 1| <= rel_tol (2 %), A = T2 Gamma(1 + 1/n); a fit that fails is "fit-failure"; the
-  max/area of rule 1, the smoothed difference and the check are reported for information. Without it:
+  under them, |A_setting / A_reference - 1| <= rel_tol (2 %), A = T2 Gamma(1 + 1/n); when either fit fails, both curves are
+  judged on the raw area int_0^T_d |mu| dt (trapezoid) with the same rel_tol, route "raw-area" (user 2026-10-12; "fit-failure"
+  only when that area is not usable); the max/area of rule 1, the smoothed difference and the check are reported for
+  information. Without it:
   3. when the check fails: the area of s alone (a strong modulation makes the maximum follow local spikes): > area_tol fails,
      otherwise sampling-unresolved when its jackknife SE exceeds area_tol, else pass.
 
@@ -95,7 +97,15 @@ def judge(times, setting, reference, decay_time, **opts):
     if o["fit_only"]:        # 2026-10-07 user decisions: the T2 fit lines decide (a strong modulation spoils raw differences),
         # by the relative difference of the area under them, T2 Gamma(1 + 1/n) (T2 and n together, no blow-up near zero)
         if out["fit_max"] is None:
-            out.update(route="fit", verdict="fit-failure")
+            # a fit failed on either side (user 2026-10-12, plan 2.1 "맞춤이 실패한 비교는 원곡선 넓이로"): both curves are judged
+            # on the raw area, the trapezoid of |mean| over [0, T_d], with the same rel_tol; not judged when that is not finite
+            ra, rb = float(np.trapezoid(a[m], times[m])), float(np.trapezoid(b[m], times[m]))
+            rel = ra / rb - 1 if rb > 0 else float("nan")
+            if np.isfinite(rel):
+                out.update(route="raw-area", verdict="pass" if abs(rel) <= o["rel_tol"] else "fail",
+                           raw_area=ra, raw_area_ref=rb, raw_area_rel=rel)
+            else:
+                out.update(route="fit", verdict="fit-failure")
         else:
             out.update(route="fit", verdict="pass" if abs(out["area_rel"]) <= o["rel_tol"] else "fail")
     elif out["quality_ok"]:

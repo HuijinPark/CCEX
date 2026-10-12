@@ -48,7 +48,10 @@ installed, `CUDA_ARCH=120`) and the two CUDA unit tests the measurement job runs
 then compares both executables with `backend=cpu` on the eight cases. These are
 CPU compatibility checks, not GPU measurements. `environment.sh` loads the
 modules and, when oneAPI is installed, its runtime libraries, with Open MPI kept
-first on `PATH`.
+first on `PATH`. `mps.sh`, sourced after it by the measurement, order and `min_dim` jobs, starts CUDA MPS for the job
+(the ranks then share the GPU at once instead of taking turns: GPU runs of 32 ranks took 0.49-0.62 of the time in
+job 698, curves byte-identical) and stops it when the job ends; `CCEX_MPS=0` leaves it off. `gpu_sharing.sbatch`
+measures the sharing itself and does not use it.
 
 The measurement job requests one CPU, one GPU, 8 GiB RAM and ten minutes. It runs
 the independent cCCE and gCCE CUDA tests and compares CPU with forced CUDA and

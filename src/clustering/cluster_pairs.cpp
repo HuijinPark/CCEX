@@ -60,7 +60,8 @@ void reportNk(const int* nk, int order){
 
 } // namespace
 
-void clusterizePairs(Cluster* cls, BathArray* ba, float rdip, float rdipcut){
+void clusterizePairs(Cluster* cls, BathArray* ba, float rdip, float rdipcut,
+                     const std::function<double(int,const int*)>& cost){
 
     const int order = Cluster_getOrder(cls);
     const int nspin = BathArray_getNspin(ba);
@@ -131,6 +132,27 @@ void clusterizePairs(Cluster* cls, BathArray* ba, float rdip, float rdipcut){
     reportNk(nks,order);
     reportNk(nks,order);             // after makeHashClusterOn, which has nothing to do at order 2
 
+    // A38: with a cost, this rank allocates only the rows it will calculate - the rows of
+    // MPI_getLocalClusters (heldFirst..heldEnd-1), decided here from every pair with the same cost function, in the same
+    // order (costBounds), so the split is the one it would make from the full list - and the first
+    // and last four, which rank 0 prints (Cluster_reportClusinfo). The other slots stay NULL.
+    std::vector<float>().swap(strength);   // not read again; freed before the rows (peak memory)
+    int heldFirst = 1, heldEnd = npair+1;
+    if (cost){
+        int row[3] = {1,0,0};
+        const std::vector<int> bounds = costBounds(npair,[&](int i){
+            row[1] = pairRow[sorted[i]];
+            row[2] = pairCol[sorted[i]];
+            return cost(2,row);
+        });
+        clusterRowRange(npair,bounds,rank,&heldFirst,&heldEnd);
+        free(cls->pairBounds);
+        cls->npairBounds = (int)bounds.size();
+        cls->pairBounds = bounds.empty() ? NULL : (int*)malloc(bounds.size()*sizeof(int));
+        for (size_t r = 0; r < bounds.size(); r++) cls->pairBounds[r] = bounds[r];
+        cls->pairsLocal = true;
+    }
+
     // solveTilde at order 2: every pair is a row with count 1, in the sorted order; a single's
     // count is 1 minus the pairs it is in, and the singles with count 0 are left out, the rest
     // kept in spin order.
@@ -138,11 +160,15 @@ void clusterizePairs(Cluster* cls, BathArray* ba, float rdip, float rdipcut){
     std::vector<int> single(nspin,1);
     for (int i = 0; i < npair; i++){
         const int p = sorted[i];
-        int* row = (int*)calloc(3,sizeof(int));
-        row[0] = 1;
-        row[1] = pairRow[p];
-        row[2] = pairCol[p];
-        cls->clusinfo[2][i+1] = row;
+        const int index = i+1;
+        int* row = NULL;
+        if (!cost || (index >= heldFirst && index < heldEnd) || index < 5 || index > npair-4){
+            row = (int*)calloc(3,sizeof(int));
+            row[0] = 1;
+            row[1] = pairRow[p];
+            row[2] = pairCol[p];
+        }
+        cls->clusinfo[2][index] = row;
         single[pairRow[p]]--;
         single[pairCol[p]]--;
     }

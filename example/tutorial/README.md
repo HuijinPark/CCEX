@@ -1,6 +1,6 @@
 # example/tutorial/
 
-Ten worked examples, numbered in the order to read them: from the smallest
+Twelve worked examples, numbered in the order to read them: from the smallest
 hand-written input to the features this branch added. Each folder is one physical
 system (or one feature on a system above) and holds the calculations that were run
 on it, with their inputs and the `run.sh` that reproduces them; the results the
@@ -9,15 +9,17 @@ first seven were recorded with are in the archive.
 | Folder | System | What it shows |
 |---|---|---|
 | `01_Arbitrary_system/` | a bath, a gyromagnetic-ratio file and a qubit file written by hand | the input file formats. gCCE order 1, density matrix (`quantity=dm`), one bath state |
-| `02_Diamond_NV_natab/` | NV⁻ in diamond with natural-abundance ¹³C, rbath 50 Å | the basic case: `ensemble_CCE` over bath configurations, `single-sample_CCE` (nstate 20), `ensemble_gCCE`, `ensemble_Dsj` (`method=dsj`), `knight_shift` (with and without, tilted field) |
+| `02_Diamond_NV_natab/` | NV⁻ in diamond with natural-abundance ¹³C, rbath 50 Å | the basic case: `ensemble_CCE` over bath configurations, `single-sample_CCE` (nstate 20), `ensemble_gCCE`, `ensemble_Dsj` (`method=dsj`), `knight_shift` (with and without, tilted field), `builtin_isotopes` (no `gyrofile`: ¹³C from the built-in isotope table) |
 | `03_Diamond_multiNV_natab/` | two and six NV centres with ¹³C pairs (`NV2_13C2`, `NV6_13C2`) | several qubits: gCCE density matrix, Ramsey (`npulse=0`) and Hahn echo |
 | `04_Diamond_NV_P1Bath/` | NV⁻ in a P1 electron-spin bath, 1 and 10 ppm, rbath 850 Å | an electron bath with sampled bath states (`-N`): `SpinEcho_CCE2_1ppm`, `_CCE4_1ppm`, `_CCE2e2n_1ppm`, `_pCCE2_1ppm` (sK 1..4), `_gCCE2_10ppm_ZFS` (with and without the zero-field splitting), `Population_gCCE2_10ppm`; `bath/` holds 100 configurations per ppm |
 | `05_Diamond_NV_VpBath/` | NV⁻ in a Vp defect bath at 10, 12 and 50 ppm | the same calculation over concentrations |
 | `06_Pulse_Manual/` | the natab and P1 systems above | pulse sequences written out (`sequence`): Hahn echo, WAHUHA (`npulse=4`), CPMG (`npulse=8`), in CCE and gCCE |
 | `07_hBN_VB_natab/` | V_B⁻ in hexagonal BN with natural-abundance ¹⁰B/¹¹B/¹⁴N, DFT hyperfine and quadrupole tensors | `ensemble_CCE` (hyperfine and quadrupole orders), `single-sample_gCCE`, `single-sample_gCCE_DPS` (with and without `OH`), `hyperfine_mediated_term` (with and without). `bath/flat/` is what the inputs read; the tensors came from `tools/SpinTensorReader` |
-| `08_Bundle_clustering/` | 02's NV | the clustering this branch added: bundles (`cluster_mode=adaptive`, `bundle_max_dim`) beside standard CCE2, and the adaptive refinement of a partition (`Adaptive` block) |
-| `09_GPU_backend/` | the NV in a five-spin P1 bath (one 1024-dimensional cluster) | `backend` cpu / auto / cuda: the same CCE5 run per backend, compared |
+| `08_Bundle_clustering/` | 02's NV | the clustering this branch added: bundles (`cluster_mode=adaptive`, `bundle_max_dim`) beside standard CCE2, and the adaptive refinement of a partition (`Adaptive` block): `CCE2_adaptive` (merge) and `CCE2_regroup` (`regroup`, on six P1 spins) |
+| `09_GPU_backend/` | the NV in a five-spin P1 bath (one 1024-dimensional cluster) | `backend` cpu / auto / cuda: the same run per backend, compared: `CCE5_P1`, `gCCE_P1` (gCCE4, one 768-dimensional cluster), `pCCE_P1` (pCCE2) |
 | `10_Coordinate_rotation/` | 02's NV, the bath rewritten in the cubic frame | `coordinate_frame_rotation`: the rotated bath with the rotation on reproduces the original; with it off the field is off the NV axis |
+| `11_Auto_convergence/` | 02's NV, 40 baths made by `run.sh` | the automatic convergence (`auto_convergence` block): the time window, rdip, rbath and the number of configurations found, then the production; `results/auto/result/` holds the summary and the figures |
+| `12_rdip_ladder/` | 02's NV | `rdip_ladder` (one order-2 run writes the curves of smaller rdip too, each equal to its separate run) and `evolution_update` `exact` against `recursive` |
 
 Each system folder has a `README.md` with a table of its calculations and the
 run each was recorded with.
@@ -45,7 +47,8 @@ run each was recorded with.
 - `bath/` at the system level — the bath configurations and the defect, gyro and
   tensor files the calculations share. 02 and 06 hold one configuration each (the
   recorded ensembles used 20, made with `bath/genbath/`); 04 holds 100 per ppm,
-  07 fifty.
+  07 fifty. 11 and 12 have none: 12 reads 02's, and 11's `run.sh` makes its 40
+  configurations from 02's `bath/genbath/` into `results/bath/`.
 
 ## Running one
 
@@ -55,5 +58,6 @@ cd example/tutorial/02_Diamond_NV_natab/ensemble_CCE
 NP=4 NCONF=1 bash run.sh                      # results/ ; needs numpy and matplotlib for the post-processing
 ```
 
-Every `run.sh` was run on WSL on 2026-09-23 with `NP=2 NCONF=1 NSTATE=1`; the
-per-system README tables give the times.
+Every `run.sh` was run on WSL on 2026-09-23 with `NP=2 NCONF=1 NSTATE=1`, and those added
+on 2026-10-12 (11, 12, `02/builtin_isotopes`, `08/CCE2_regroup`, `09/gCCE_P1`, `09/pCCE_P1`)
+with `NP=4`; the per-system README tables give the times.
