@@ -24,6 +24,12 @@ gCCE, its density matrix.
   (`cluster_mode`, the `Adaptive` block), a CUDA backend for the cluster
   propagation (`backend`), and a coordinate frame rotation that lets the bath
   file stay in the crystal frame (`coordinate_frame_rotation`).
+- Automatic convergence: an `auto_convergence` block chooses rbath, rdip, the time
+  window and the number of bath configurations (`example/tools/AutoConvergence/`).
+- `rdip_ladder` writes the curves of smaller rdip values from one order-2 run;
+  `evolution_update` (`recursive` by default where it exists, or `exact`) sets how
+  the cluster phases are updated in time; `gyrofile` is optional (a built-in
+  isotope table).
 
 ## Build
 
@@ -75,8 +81,8 @@ The tutorials run `bin/main.out`; after a CMake build give them the binary with
 | Folder | What | Read |
 |---|---|---|
 | `src/`, `include/` | the code: five core groups (input, physical, clustering, calculation, common) plus `clustering/bundle/`, `clustering/algo_adaptive/` and `calculation/gpu/`; `src/main.cpp` is the entry point | `src/README.md` |
-| `example/` | `tutorial/` (ten worked examples, one system or feature each, with `run.sh`), `analysis/` (the coherence analyzer and the convergence test), `tools/` (bath generator, DFT tensor reader, job runner) | `example/README.md` |
-| `test/` | `code_verification/` (numerics against recorded references, the frame rotation, refusals, input forms), `cluster_verification/` (adaptive, bundle, pCCE), `gpu_verification/` (the CUDA backend, benchmarks, server jobs) | `test/README.md` |
+| `example/` | `tutorial/` (ten worked examples, one system or feature each, with `run.sh`), `analysis/` (the coherence analyzer and the convergence test), `tools/` (automatic convergence, bath generator, isotope table, job runner, DFT tensor reader) | `example/README.md` |
+| `test/` | `code_verification/` (a closed form, numerics against recorded references, the frame rotation, refusals, input forms, the mean field, the rdip ladder), `cluster_verification/` (adaptive, bundle, pCCE), `gpu_verification/` (the CUDA backend, benchmarks, server jobs) | `test/README.md` |
 | `docs/` | `user/` (the manual pages), `methods/` (the added methods in detail), `doxygen/` (the site) | `docs/README.md` |
 | `external/` | Eigen 3.4.1, uthash and SQLite, kept in the tree so every server builds without packages | `external/README.md` |
 
@@ -97,12 +103,17 @@ The tutorials run `bin/main.out`; after a CMake build give them the binary with
 bash test/code_verification/run.sh          # needs bin/main.out, mpirun, and test/requirements.txt (numpy, scipy, matplotlib)
 ```
 
-runs the four code checks in order; the cluster and GPU checks and what each
+runs the seven code checks in order; the cluster and GPU checks and what each
 needs are in `test/README.md`. To check a CMake build, give the checks its binary
 and its build folder: `CCEX_BIN=$PWD/build/bin/main.out CCEX_BUILD_DIR=$PWD/build` (the unit-test drivers take
 the compiler, flags and objects from the `unit-build.env` the build writes, any generator; `test/unit_build_env.sh`).
 `.github/workflows/ci.yml` builds with CMake and runs the fast checks on every push
 and pull request.
+
+## Changes
+
+What changed since v1.2.2, with the measured speed-ups and the results that move, is in
+[CHANGELOG.md](CHANGELOG.md).
 
 ## Citing
 
