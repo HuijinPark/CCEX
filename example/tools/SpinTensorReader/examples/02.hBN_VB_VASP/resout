@@ -1,28 +1,25 @@
-
-    ============================================================
-
-    <\Summary> make AQ tensor file for CCE calculation
-
-
-    Latest update :  13 July 2022
-
-    Current time  :  Thu Oct 27 17:30:00 2022
-
-    ____________________________________________________________
-
-
+example/tools/SpinTensorReader/examples/02.hBN_VB_VASP/./../../main.py:108: SyntaxWarning: invalid escape sequence '\.'
+  p = re.compile('[0-9\.]+')
 	Input argument : 
 
 	 [1] tool    : VASP
 	 [2] fposcar : ./VASP_CONTCAR_flat
 	 [3] dfname  : VB
-	 [4] HF      : on
-	 [5] Q       : on
-	 [6] foutcar : ./VASP_OUTCAR_flat
 
 
-	 opt. --foutcar2 : []
+	 opt. --A       : ./VASP_OUTCAR_flat
+	 opt. --Q       : ./VASP_OUTCAR_flat
+	 opt. --D       : []
+	 opt. --dfpos   : []
 	 opt. --ignoreatm : []
+	 opt. --spin    : []
+	 opt. --addhfcore : True
+	 opt. --version : v2
+	 opt. --rangeformat : vertex
+	 opt. --ccein   : []
+	 opt. --JT      : []
+	 opt. --addspins : []
+	 opt. --cceindiag : []
 
 
 	=========================================
@@ -125,16 +122,17 @@
 	Hyperfine tensor 
 
 	*Aiso : Fermi contact term (MHz) 
+	        (addhfcore - True) 
 	*Adip : Dipolar coupling term (MHz) 
 
 	    idx      Aiso       Axx       Axy       Axz       Ayx       Ayy       Ayz       Azx       Azy       Azz
 
-	    (1)    -0.000     0.004     0.000     0.000     0.000    -0.001     0.000     0.000     0.000    -0.003
+	    (1)     0.000     0.004     0.000     0.000     0.000    -0.001     0.000     0.000     0.000    -0.003
 	    (2)     0.001     0.006    -0.000    -0.000    -0.000    -0.003    -0.000    -0.000    -0.000    -0.003
 	    (3)     0.000     0.004    -0.000    -0.000    -0.000    -0.001     0.000    -0.000     0.000    -0.003
 	      :
-	  (106)    20.209     5.636     6.077     0.000     6.077    -1.242     0.000     0.000     0.000    -4.393
-	  (107)    20.238    -4.786     0.000    -0.000     0.000     9.178     0.000    -0.000     0.000    -4.392
+	  (106)    15.867     5.636     6.077     0.000     6.077    -1.242     0.000     0.000     0.000    -4.393
+	  (107)    15.893    -4.786     0.000    -0.000     0.000     9.178     0.000    -0.000     0.000    -4.392
 
 	*Adiag : Diagonalized total Hyperfine tensor (MHz) 
 
@@ -219,10 +217,11 @@
 	 Relative positions from central defect (KEY : relativepos)
 	------------------------------
 
-	 *MinDif[A] : [-11.31487845, -6.523696333189624, 0.0]
-	 *MaxDif[A] : [10.059153276625947, 6.51522065967543, 0.0]
+	 *MinDif[A] : [-11.315  -6.524   0.   ]
+	 *MaxDif[A] : [10.059  6.515  0.   ]
 	 *farthest_atoms_idx : [26, 79]
-	 *farthest_atom_info : [['B', -11.31487845, 6.5113760890327335, 0.0], ['N', -11.31487845, -5.081543312070149, 0.0]]
+	 *farthest_atoms_info : B , [-11.315   6.511   0.   ]
+	                      : B , [-11.315   6.511   0.   ]
 	 *r_1i (cart) :  
 
 	    idx      atom     r_1ix     r_1iy     r_1iz
@@ -245,11 +244,11 @@
 
     ____________________________________________________________
 
-    memory_usage_percent  :    13.700 %
+    memory_usage_percent  :    12.400 %
 
-    Current memory KB     :    62.473 KB
+    Current memory KB     :   125.809 KB
 
-    Wall clock time       : 0:00:01.113574(s)
+    Wall clock time       : 0:00:00.064459(s)
 
     ============================================================
         JOB DONE    

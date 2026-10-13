@@ -14,8 +14,15 @@ case('natab_cce2_hahn',        '02_Diamond_NV_natab/ensemble_CCE/ccein.json',   
 case('natab_cce2_ramsey',      '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', dict(nat, npulse=0))
 case('natab_cce2_cpmg8',       '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', dict(nat, npulse=8))
 case('natab_cce2_single',      '02_Diamond_NV_natab/single-sample_CCE/ccein.json',      'natab', dict(nat, nstate=2), ('state',))
-case('natab_gcce2_hahn',       '02_Diamond_NV_natab/ensemble_gCCE/ccein_single.json',   'natab', dict(rbath=20, nstep=300, seed=19))
-case('natab_gcce2_two_qubits', '02_Diamond_NV_natab/ensemble_gCCE/ccein_multi2.json',   'natab', dict(rbath=20, nstep=300, seed=19))
+# The two gCCE2 cases were cut from ensemble_gCCE/ccein_single.json and ccein_multi2.json, whose qubitfile won over an
+# unread Qubit block (one NV in both). Those inputs changed on 2026-10-13 (a qubitfile with a Qubit block is refused;
+# multi2 is a real two-qubit input, single has the ZFS), so the cases are cut from ensemble_CCE's input with the same
+# values: the same inputs as recorded, without the Qubit block. natab_gcce2_bathadjust (natab_gcce2_two_qubits until
+# 2026-10-13) is the one NV with the bath file given twice, the second copy shifted 50 A along z.
+gc = dict(method='gCCE', rbath=20, nstep=300, seed=19)
+case('natab_gcce2_hahn',       '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', gc)
+case('natab_gcce2_bathadjust', '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab',
+     dict(gc, bathfile=['../bath/bath_Diamond_NV_natab_1', '../bath/bath_Diamond_NV_natab_1'], bathadjust=[[0, 0, 0], [0, 0, 50]]))
 case('natab_dsj2',             '02_Diamond_NV_natab/ensemble_Dsj/ccein.json',           'natab', nat)
 case('natab_knight_shift',     '02_Diamond_NV_natab/knight_shift/ccein_wi_knight.json', 'natab', nat)
 case('natab_manual_hahn',      '06_Pulse_Manual/HahnEcho_natab_ensemble_origin/ccein.json', 'natab_pulse', nat)

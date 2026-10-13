@@ -17,6 +17,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein); // cluster.h
 // void cJSON_readOptionBathArray(BathArray* ba, char* fccein); // bath.h
 void cJSON_readOptionPulse(Pulse* pulse, char* fccein); // pulse.h
 void cJSON_readOptionOutput(Output* output, char* fccein); // output.h
+void cJSON_readSavemode(cJSON* item, Output* op, bool readNodiv); // savemode as a string or {"mode", "nodiv"}; readNodiv false takes the mode alone
 void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein); // defect.h
 
 char* cJSON_ReadFccein(char* fccein);

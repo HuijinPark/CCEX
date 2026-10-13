@@ -21,6 +21,7 @@ Defaults: max_tol 0.01, area_tol 0.005, sigma 0.5 us, quality_floor 0.001, fit f
 from math import gamma
 
 import numpy as np
+from scipy.integrate import trapezoid
 
 from . import t2 as t2mod
 
@@ -47,6 +48,18 @@ def _smooth(times, sigma, x, rows=1024):
 def _fitline(times, y, floor, points, n_range=(t2mod.N_MIN, t2mod.N_MAX), span=None):
     T, n, _ = t2mod.fit(times, y, floor=floor, points=points, n_range=n_range, span=span)
     return T, n, t2mod.model(times, T, n)
+
+
+def raw_area(times, y, decay_time):
+    """The area under y over exactly [0, T_d]: the samples before T_d and y(T_d) interpolated linearly, so the last partial
+    interval counts (review 20261012-233058-452278 P4-02). NaN when T_d lies beyond the last time (no extrapolation).
+    scipy's trapezoid, which NumPy 1.x lacks under that name (P4-01: the CI runs NumPy 1.26)."""
+    times, y = np.asarray(times, float), np.asarray(y, float)
+    if not decay_time <= times[-1] * (1 + 1e-9):
+        return float("nan")
+    inside = times < decay_time
+    u = np.r_[times[inside], decay_time]
+    return float(trapezoid(np.r_[y[inside], np.interp(decay_time, times, y)], u))
 
 
 def judge(times, setting, reference, decay_time, **opts):
@@ -99,7 +112,7 @@ def judge(times, setting, reference, decay_time, **opts):
         if out["fit_max"] is None:
             # a fit failed on either side (user 2026-10-12, plan 2.1 "맞춤이 실패한 비교는 원곡선 넓이로"): both curves are judged
             # on the raw area, the trapezoid of |mean| over [0, T_d], with the same rel_tol; not judged when that is not finite
-            ra, rb = float(np.trapezoid(a[m], times[m])), float(np.trapezoid(b[m], times[m]))
+            ra, rb = raw_area(times, a, decay_time), raw_area(times, b, decay_time)
             rel = ra / rb - 1 if rb > 0 else float("nan")
             if np.isfinite(rel):
                 out.update(route="raw-area", verdict="pass" if abs(rel) <= o["rel_tol"] else "fail",

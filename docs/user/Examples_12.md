@@ -35,7 +35,7 @@ of the last decimal written, and the runs took 5.5 s and 4.6 s. The ladder run t
     # rdip_ladder : rungs below rdip (strictly increasing). The same run also writes, for every rung r, the curve a
     #               separate run at rdip = r gives: <outfile>_rdip<r>_wiDiv / _noDiv beside the main <outfile>_wiDiv,
     #               which stays the run at rdip 12. Order 2 only (CCE, gCCE, pCCE), quantity coherence, standard
-    #               clusters, savemode normal; anything else is refused with "Error: rdip_ladder ...".
+    #               clusters, savemode coherence; anything else is refused with "Error: rdip_ladder ...".
     "rdip_ladder"   : [4, 6, 8, 10],
 
     # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)

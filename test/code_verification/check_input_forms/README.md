@@ -1,6 +1,6 @@
 # check_input_forms/ — the new input forms give the physics of the legacy ones
 
-    bash test/code_verification/check_input_forms/run.sh        # needs bin/main.out (bash do_compile.sh wsl-gnu), a python3 with numpy
+    bash test/code_verification/check_input_forms/run.sh        # needs bin/main.out (bash do_compile.sh wsl-gnu), a python3 with numpy, scipy and matplotlib (test/requirements.txt)
 
 Stages, in order: `legacy` (writes the legacy-form input of every system to
 `_work/`, from `inputs/`, `../bath_data/` and tutorial 03), `axis2`
@@ -8,15 +8,23 @@ Stages, in order: `legacy` (writes the legacy-form input of every system to
 outputs), `gyro` (the built-in isotope table: no gyrofile gives the
 bytes of a gyrofile holding the table's value, a species missing from the gyrofile comes from the
 table, a species in neither is refused), `comments` ('#' and '!' are comments only outside JSON
-strings: a "#note" key and an outfile with '#' give the plain input's curves), `nodiv` (`save_nodiv` false writes the
-default run's `_wiDiv` and no `_noDiv`; a string value is refused), `evolution_update` (an explicit `exact` gives the
+strings: a "#note" key and an outfile with '#' give the plain input's curves), `nodiv` (`savemode` `{"mode": "coherence", "nodiv": false}` writes the
+default run's `_wiDiv` and no `_noDiv`, as `save_nodiv` false did; `nodiv` true writes the default's files byte for byte; a string nodiv is refused), `allfull` (`savemode` cluster_density_matrix writes every file cluster_coherence writes, byte for byte, and with gCCE one
+full density-matrix file per cluster named after it, no two alike; cCCE and gCCE, 1 and 3 ranks the same files), `evolution_update` (an explicit `exact` gives the
 `../check_numerics` references, which were recorded with `exact`, within that suite's 1e-9 — skipped on a CI runner, since the references are one machine's digits; `recursive` runs on single-state cCCE2 and gCCE2 vector, P1 10 ppm, on the ensemble cCCE2 (Hahn, CPMG-8,
 Manual) and gCCE2 `evolution` = `matrix` (ensemble Hahn, one-state CPMG-8), and stays within 1e-8 of `exact` in the raw
 `_noDiv`; without the key (A29) single-state and ensemble cCCE2 and gCCE2 vector and matrix give the bytes of an explicit
 `recursive`, and gCCE `propagator` = `expm` those of an explicit `exact`, not a refusal; `backend` = `auto`, all on the CPU in
 this binary, gives the bytes of `backend` = `cpu`, with or without a given `recursive`, A36), `gpu_options` (no
 block, an empty one, every default written out and every key changed give the same bytes on a CPU run of single-state
-cCCE2 and gCCE2, and the log shows the values read; A26, 2026-10-12), `autoconv` (`auto_convergence.enabled`: `false` gives
+cCCE2 and gCCE2, and the log shows the values read; A26, 2026-10-12), `propagator` (A2: `"eigen"` and `{"method": "eigen"}` give the default run's bytes, `"sparse"` and `{"method": "sparse",
+"min_dim": 4096}` those of an explicit `exact` on cCCE2 and gCCE2 inputs whose clusters are all below 4096 (sparse runs
+`exact` without the key); `{"method": "sparse", "min_dim": 1}` runs every cluster through the Krylov expansion and stays
+within 1e-8 of eigen `exact` in the raw `_noDiv` and in `_wiDiv` at |L| <= 1 (P1 and NV-13C cCCE2, P1 gCCE2 with zero-field
+splitting); malformed values are refused), `tensor_format` (2026-10-13: on the five h-BN cases of `../check_numerics`, the hyperfine
+file of format v3 - tag line and provenance line, read x 1 - gives the bytes of the old untagged v1 file read x 0.5; the
+VASP-tagged v1 file of the tutorial until then is read as before, x 1, and gives the bytes of `head-20261012-aa883d0d4`, recorded
+with it; old files warn in the log), `autoconv` (`auto_convergence.enabled`: `false` gives
 the bytes of the input without the block, an enabled block makes `main.out -f` start the runner, once under `mpirun -n 2`,
 a value that is not a boolean and another option beside it are refused, `--auto_status` reads the workdir, and a tool
 file or folder writable by others is refused). The refused key combinations are `../check_refusals/`, the
@@ -91,7 +99,7 @@ ensemble average: both smooth, and a real difference could hide under them.
 `errcorr.sh` is the other half of that decision. It runs the analyzer on each
 baseline and reports `max|L|` before and after correction, so the suite says out
 loud whether the systems it compared are numerically sound. They mostly are;
-`S2a` is not -- CCE-2 on that 13C bath produces `max|L| = 4.2` at two points,
+`S2a` is not -- gCCE-2 on that 13C bath produces `max|L| = 4.2` at two points,
 which the correction takes back to 1. That is the ordinary CCE division
 divergence, it is present in v1.1.0 exactly as it is here, and it does not
 disqualify the system as an equivalence fixture. It does mean the raw file is

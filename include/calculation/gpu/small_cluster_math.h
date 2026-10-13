@@ -35,9 +35,9 @@ namespace smallcluster {
 constexpr int maxIntervals = 65;   // npulse + 1
 constexpr int phaseAnchor = 16;    // evolution_update = recursive: sin and cos every 16 steps (simulator_cce.cpp)
 constexpr int jacobiSweeps = 20;
-// status of a cluster: 0 computed; 1 the Jacobi iteration did not bring the off-diagonal down (the host then computes
-// the cluster on the CPU)
-enum { statusOk = 0, statusNotConverged = 1 };
+// status of a cluster: 0 computed; 1 the Jacobi iteration did not bring the off-diagonal down, or an eigenvalue or
+// eigenvector is not finite; 2 a coherence is not finite (the host then computes the cluster on the CPU in both cases)
+enum { statusOk = 0, statusNotConverged = 1, statusNotFinite = 2 };
 
 struct C { double re, im; };
 SC_HD C cmake(double re, double im){ C z; z.re=re; z.im=im; return z; }
@@ -71,18 +71,37 @@ SC_HD C phase(double angle){
 }
 
 // Eigen-decomposition of the Hermitian D x D matrix h (column-major, the lower triangle read): h = V diag(E) V^dagger.
-// Returns false when the off-diagonal did not come down to 1e-12 of the largest diagonal entry (or is not finite).
+// The rotations run on h scaled by a power of two (exact) so that its largest component is in [0.5, 1): a finite h of any
+// size - 1e200 or 1e-200 - neither overflows nor underflows in them (review 20261012-233058-452278 P1-01/P3-02; the
+// magnitudes squared of the unscaled h did both and returned wrong eigenvalues as converged); magnitudes are hypot.
+// Returns false when the off-diagonal did not come down to 1e-12 of the largest eigenvalue, or when h, an eigenvalue
+// (after scaling back) or an eigenvector component is not finite.
 template<int D> SC_HD bool jacobi(const C* h, C (&V)[D][D], double (&E)[D]){
     C A[D][D];
-    SC_UNROLL for(int j=0;j<D;++j) SC_UNROLL for(int i=0;i<D;++i)
+    double largest = 0;
+    bool finite = true;
+    SC_UNROLL for(int j=0;j<D;++j) SC_UNROLL for(int i=0;i<D;++i){
         A[i][j] = i>=j ? h[i+j*D] : cconj(h[j+i*D]);
+        finite = finite && std::isfinite(A[i][j].re) && std::isfinite(A[i][j].im);
+        largest = std::fmax(largest, std::fmax(std::fabs(A[i][j].re), std::fabs(A[i][j].im)));
+    }
     SC_UNROLL for(int i=0;i<D;++i) A[i][i].im = 0;
     SC_UNROLL for(int i=0;i<D;++i) SC_UNROLL for(int j=0;j<D;++j) V[i][j] = cmake(i==j ? 1.0 : 0.0, 0.0);
+    if(!finite){
+        SC_UNROLL for(int i=0;i<D;++i) E[i] = 0;
+        return false;
+    }
+    int exponent = 0;
+    if(largest > 0){
+        std::frexp(largest, &exponent);               // largest = f 2^exponent, f in [0.5, 1)
+        SC_UNROLL for(int i=0;i<D;++i) SC_UNROLL for(int j=0;j<D;++j)
+            A[i][j] = cmake(std::ldexp(A[i][j].re, -exponent), std::ldexp(A[i][j].im, -exponent));
+    }
     for(int sweep=0; sweep<jacobiSweeps; ++sweep){
         bool rotated = false;
         SC_UNROLL for(int p=0;p<D-1;++p) SC_UNROLL for(int q=p+1;q<D;++q){
             const C off = A[p][q];
-            const double m = std::sqrt(cabs2(off));
+            const double m = std::hypot(off.re, off.im);
             const double ap = A[p][p].re, aq = A[q][q].re;
             if(m > 1e-17*(std::fabs(ap)+std::fabs(aq)) && m > 0){
                 rotated = true;
@@ -106,13 +125,25 @@ template<int D> SC_HD bool jacobi(const C* h, C (&V)[D][D], double (&E)[D]){
         }
         if(!rotated) break;
     }
+    // the test on the scaled matrix; "!(x <= y)" and the explicit checks so that a NaN fails it (fmax drops a NaN)
     double off = 0, diag = 0;
     SC_UNROLL for(int i=0;i<D;++i){
-        E[i] = A[i][i].re;
-        diag = std::fmax(diag, std::fabs(E[i]));
-        SC_UNROLL for(int j=0;j<D;++j) if(i!=j) off = std::fmax(off, std::sqrt(cabs2(A[i][j])));
+        finite = finite && std::isfinite(A[i][i].re);
+        diag = std::fmax(diag, std::fabs(A[i][i].re));
+        SC_UNROLL for(int j=0;j<D;++j){
+            finite = finite && std::isfinite(V[i][j].re) && std::isfinite(V[i][j].im);
+            if(i!=j){
+                const double a = std::hypot(A[i][j].re, A[i][j].im);
+                finite = finite && std::isfinite(a);
+                off = std::fmax(off, a);
+            }
+        }
     }
-    return off <= 1e-12*diag && std::isfinite(diag) && std::isfinite(off);
+    SC_UNROLL for(int i=0;i<D;++i){
+        E[i] = std::ldexp(A[i][i].re, exponent);
+        finite = finite && std::isfinite(E[i]);
+    }
+    return finite && off <= 1e-12*diag;
 }
 
 // Phases of the distinct slots at step i (tfree = the step's time, as the CPU sums it)
@@ -214,6 +245,10 @@ template<int D,bool ENS,int NF,bool REC> SC_HD int cluster(const Plan& plan, con
                 L = cadd(L, chain<D,NF>(plan, M, rk, ck, up, down));
             }
             L = cscale(L, 1.0/D);
+        }
+        if(!std::isfinite(L.re) || !std::isfinite(L.im)){
+            for(int t=0;t<plan.nstep;++t) out[t] = cmake(0,0);
+            return statusNotFinite;
         }
         out[i] = L;
         tfree += plan.deltat;

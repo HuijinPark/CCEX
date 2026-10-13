@@ -2,7 +2,7 @@
 
     bash test/code_verification/check_refusals/run.sh     # needs bin/main.out
 
-93 inputs that must be refused, and three that must run, each run once to see
+126 inputs that must be refused (4 of them outputs that cannot be written), three that must run, and `--help` (the same as `-h`), each run once to see
 that CCEX stops with the expected message, most of them before it reads any tensor
 file. They are edits of the legacy inputs `../check_input_forms/legacy.sh`
 writes (so it is run first), on the real systems: the h-BN bath with DFT
@@ -28,7 +28,7 @@ is malformed (a number fraction and an angle of 90.5 must run); a number outside
 `alphaidx`/`betaidx` naming other states than the written `alphams`/`betams` (D43; one that agrees must run);
 `intmap` tensors shorter than 3x3 or not numbers (D28); a qubit array shorter than `nqubit`; malformed entries of
 the indexed form (D28); arrays shorter than the input needs (D42); an `avaax` file axis past `navaax`; a key of the
-wrong type (D18); a misspelt key (D24).
+wrong type (D18); a misspelt key (D24); `quantity` `noise`, in the file and as `-q noise` (nothing computes it; review 20261013-doxygen D22); `qubitfile` together with a `Qubit` block (the block was ignored; review 20261013-readme R01).
 
 Since 2026-10-01 it also checks failures that used to end with exit status 0 (or, for the second file in info mode, crash):
 
@@ -63,6 +63,25 @@ Since 2026-10-12 it also checks the `gpu_options` block (`docs/user/InputFile_Ba
 named, and so are a block that is not an object, an unknown key in it, `packed_max_dim` 3, 8 or a string, `min_dim` 0,
 `packed_max_dim` in `bin/main.out` (it needs the GPU binary) and with gCCE (it is cCCE only). The accepted forms are
 `../check_input_forms/gpu_options.sh`.
+
+Since 2026-10-12 it also checks `propagator` (A2, `docs/user/InputFile_Backend.md`), on inputs of `../check_numerics/cases/`,
+refused before the calculation starts (the malformed values are in `../check_input_forms/propagator.sh`):
+
+| refused | because |
+|---|---|
+| `expm` with cCCE (`p1_cce2_single`) | the matrix exponential path exists in gCCE only |
+| `sparse` with the ensemble (`p1_cce2_ensemble`), gCCE `evolution` = `matrix` (`p1_manual_hahn`), `backend` = `cuda` or `auto`, `evolution_update` = `recursive` (cCCE and gCCE), `knight` (`natab_knight_shift`), `hfmedi` (`hbn_hfmedi`), two qubits (`natab_gcce2_two_qubits`) | the Krylov path propagates one state vector on the CPU with the phases of `exact`, from the Hamiltonian terms it assembles itself |
+
+Since 2026-10-13 it also checks hyperfine tensor files of format v3 (`docs/user/InputFile_General.md#tag_hf_tensorfile`), on
+`hbn_cce2_hf3_qd0` with the h-BN v3 file edited once each: a first line that is not the tag of the provenance line's source
+(both ways), the provenance line not on line 2 or twice, an unknown format version or source, no S or an S that is not a
+half-integer, and S other than `DefectTotSpin` (both ways). What such files are read as is `../check_input_forms/tensor_format.sh`.
+
+Since 2026-10-13 it also checks the `savemode` block (`docs/user/InputFile_Output.md#tag_savemode`), on
+`p1_cce2_single`: the old names `normal`, `info`, `all`, `allfull` (also as `{"mode": "all"}`) and the top-level
+`save_nodiv` are refused with the new form named (`savemode "all" is now "cluster_coherence"`, `save_nodiv is now
+savemode.nodiv`), and so are an unknown key of the block, a `savemode`, `mode` or `nodiv` of the wrong type and an unknown
+mode. The accepted block is `../check_input_forms/nodiv.sh`.
 
 `../check_rotation/run.sh` refuses the same combinations on toy systems; this
 folder shows the guards fire on real inputs and before any file is interpreted.

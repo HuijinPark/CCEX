@@ -24,7 +24,8 @@ typedef struct {
      * pulsename = HahnEcho | Ramsey | CPMG | WAHUHA | Manual
      * above pulsename option without Maunal  doesn't need a sequence 
      * "Manual" option must need a sequence
-     * If you want "Manual" option, then you have to choose the "gCCE" method!!!
+     * "Manual" with rotations other than X or Y 180 degrees needs the "gCCE" method;
+     * cCCE (and pCCE) calculate every pulse as an ideal pi flip and refuse anything else
     */
 
     /**
@@ -34,7 +35,7 @@ typedef struct {
     double*  pulse_angles; 
     /**<
      * puulse angles: Array of rotation angle of pulse.
-     * Input file unit: Degree  ==> In code, radian.
+     * Unit: degree, in the input file and in this array; converted to radian where applied.
      *   len(sequence) = len(pulse_angles)
      */
     char*    pulse_axes;
@@ -155,17 +156,17 @@ typedef struct {
      *         sequence[2]     = 0.75 , 1.0 , 0.25 
      *         pulse_angles    = {180.0,  180.0}
      *         pulse_axes      = {"X", "X"}
-     *         sequence_indices = {0, 1, 1, 0}
+     *         sequence_indices = {0, 1, 0}
      *
-     * e.g. sequence parameter : WAHUHA
-     *         sequence[0]     = 0.0 , 0.25 , 0.25 
-     *         sequence[1]     = 0.25 , 0.75 , 0.5 
-     *         sequence[2]     = 0.75 , 1.0 , 0.25 
-     *         sequence[3]     = 0.75 , 1.0 , 0.25 
-     *         sequence[4]     = 0.75 , 1.0 , 0.25 
-     *         pulse_angles    = {180.0,  180.0}
-     *         pulse_axes      = {"X", "X"}
-     *         sequence_indices = {0, 1, 1, 0}
+     * e.g. sequence parameter : WAHUHA (generateSequenceWAHUHA)
+     *         sequence[0]     = 0   , 1/6 , 1/6
+     *         sequence[1]     = 1/6 , 2/6 , 1/6
+     *         sequence[2]     = 2/6 , 4/6 , 2/6
+     *         sequence[3]     = 4/6 , 5/6 , 1/6
+     *         sequence[4]     = 5/6 , 1   , 1/6
+     *         pulse_angles    = {90.0, 270.0, 90.0, 270.0, 0.0}
+     *         pulse_axes      = {"X", "Y", "Y", "X", "I"}
+     *         sequence_indices = {0, 0, 2, 0, 0}
     */
 } Pulse;
 

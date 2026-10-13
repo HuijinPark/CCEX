@@ -1,7 +1,7 @@
 # example/analysis/
 
-Two Python tools that post-process the coherence files CCEX writes. Neither runs
-CCEX. This page is written so that a person or an AI can decide quickly what to
+Two Python tools that post-process the coherence files CCEX writes (neither
+runs CCEX). This page is written so that a person or an AI can decide quickly what to
 call and what to write themselves.
 
 | Tool | Answers | Entry point | Needs |
@@ -9,7 +9,7 @@ call and what to write themselves.
 | `Analyzer/` | make the raw `_noDiv`/`_wiDiv` files usable: correct the division errors, average over bath configurations and states, fit T2, plot | `Analyzer/CoherenceAnalyzer.v1/coherence.py` (library) and `run.py` (CLI) | numpy; the CLI and plots also scipy and matplotlib |
 | `ConvTest/` | from which value of a variable (order, rbath, number of configurations, ...) the coherence stops changing | `ConvTest/ConvTest/do_convTest.py` (CLI, positional arguments) | numpy, matplotlib, psutil |
 
-On WSL both need `PATH=~/anaconda3/bin:$PATH` (the system python3 has no numpy)
+On WSL the first two need `PATH=~/anaconda3/bin:$PATH` (the system python3 has no numpy)
 and, without a display, `MPLBACKEND=Agg`.
 
 ## Use as-is, do not rewrite
@@ -46,9 +46,8 @@ under the tolerance the converged point; it then draws the curves and the
 differences. That is twenty lines with `coherence.read_coherence`. The
 tutorials' `do_convtest` scripts that drove it were removed on 2026-09-23; it takes six
 positional arguments (file list, variable values, variable name, unit,
-tolerance, output figure), or re-implement it. Its option parser is a custom
-one (`pyform.py`), so there is no `--help`; the argument table is at the top of
-`do_convTest.py`.
+tolerance, output figure), or re-implement it. `python3 ConvTest/ConvTest/do_convTest.py --help`
+lists the arguments and the options `--add` and `--findconv` (the parser in `pyform.py` wraps `argparse`).
 
 ## How the tutorials use them
 

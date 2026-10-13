@@ -29,11 +29,11 @@ blows up where a sub-cluster coherence passes through zero. So the divided curve
 tolerance (default 2.0):
 
 1. A point where |wiDiv − noDiv| ≥ tolerance is a divergence.
-2. A divergent first or last point becomes 0.
-3. Any other divergent point becomes the mean of the previous corrected value and
+2. Before the loop, a divergent last point is pulled to noDiv + tolerance − 1e-6,
+   so that step 4 always finds a next good point; it then stays at that value.
+3. A divergent first point becomes 0.
+4. Any other divergent point becomes the mean of the previous corrected value and
    the next non-divergent wiDiv value.
-4. If the last point diverges it is first pulled to noDiv + tolerance − 1e-6, so
-   that step 3 always finds a next good point.
 
 This is the group's convention, not a physical law. The tutorial results were
 made with it (`test/code_verification/check_numerics/` compares raw outputs), so it must not

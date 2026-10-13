@@ -67,14 +67,7 @@ void readQubitfile(QubitArray* qa, Config* cnf){
 }
 
 /**
- * @brief Index of the qubit the rotation is taken about
- * @details "reference_qubit" names it; without the key the first qubit is used, which
- *          is unambiguous for as long as nqubit is restricted to 1. The lookup is by
- *          exact name, so duplicate names are refused first -- otherwise a name would
- *          silently resolve to whichever qubit happened to be listed earlier.
- *
- *          Written to survive the nqubit=1 restriction being lifted: nothing here
- *          assumes there is only one qubit.
+ * @brief Stops when two qubits share a name, since reference_qubit resolves by exact name
 */
 static void checkQubitNamesUnique(QubitArray* qa){
 
@@ -91,6 +84,16 @@ static void checkQubitNamesUnique(QubitArray* qa){
     }
 }
 
+/**
+ * @brief Index of the qubit the rotation is taken about
+ * @details "reference_qubit" names it; without the key the first qubit is used, which
+ *          is unambiguous for as long as nqubit is restricted to 1. The lookup is by
+ *          exact name, so duplicate names are refused first -- otherwise a name would
+ *          silently resolve to whichever qubit happened to be listed earlier.
+ *
+ *          Written to survive the nqubit=1 restriction being lifted: nothing here
+ *          assumes there is only one qubit.
+*/
 static int resolveReferenceQubit(QubitArray* qa, Config* cnf){
 
     int nqubit = QubitArray_getNqubit(qa);
@@ -375,8 +378,17 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
  * @details Wraps the pure-geometry report in utilities.cpp and adds what only the
  *          QubitArray can say: which qubit the rotation was taken about, where every
  *          qubit sits in each frame, and how the interaction tensors were handled.
+ * @param qa   the qubits, already transformed to the computational frame
+ * @param cnf  the run's settings (axes, frames, field)
+ * @param R    the rotation, original frame -> computational frame
+ * @param r0   the point held fixed, in the original frame
+ * @param iref index of the reference qubit the rotation was taken about
  * @param qsrc qubit positions BEFORE the rotation; the QubitArray already holds the
  *             transformed ones by the time this runs
+ * @param defect_axis_reference name of the recorded reference axis, or NULL if none
+ * @param nint_rotated number of qubit intmap tensors that were transformed
+ * @param nint_kept    number of qubit intmap tensors left as they were
+ * @param nprov        count of intmap tensors by IntmapProvenance (five kinds)
 */
 static void reportCoordinateFrame(QubitArray* qa, Config* cnf, const double R[3][3],
                                   const double r0[3], int iref, double** qsrc,
@@ -1114,10 +1126,31 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
         // Read the tensor files
         ////////////////////////////////////////////////////////////
     
-        int version = READ_Tensor_ver(hf_tensorfile,&SpinFactor ,DefectTotSpin, &CorrTotSpin);
+        int version = 0;
+        double fileS = 0.0;
+        if (READ_Tensor_provenance(hf_tensorfile, DefectTotSpin, &version, &fileS)){
+            // format v3: the values are the hyperfine of the spin-S defect; DefectTotSpin and CorrTotSpin do not scale them
+            SpinFactor = 1.0;
+            if (rank==0){
+                printf("\n\t\tTensor file format v3 (provenance line): the hyperfine of the spin-%g defect, from %s\n",
+                       fileS, version == 1 ? "VASP" : "Quantum ESPRESSO");
+                printf("\t\t-->SpinFactor = 1 (read as written); DefectTotSpin (%g) is only checked against S,"
+                       " CorrTotSpin (%g) is not used\n\n", DefectTotSpin, CorrTotSpin);
+            }
+        }else{
+            // an older file: the rule before format v3, unchanged
+            version = READ_Tensor_ver(hf_tensorfile,&SpinFactor ,DefectTotSpin, &CorrTotSpin);
 
-        if (rank==0){
-            printHfInfo_version(version, DefectTotSpin, CorrTotSpin, SpinFactor);
+            if (rank==0){
+                printHfInfo_version(version, DefectTotSpin, CorrTotSpin, SpinFactor);
+                printf("\t\t!!! WARNING: this tensor file has no provenance line (a file before format v3).\n"
+                       "\t\t!!! Its factor %g comes from the first line alone: VASP -> x 1 (or CorrTotSpin/DefectTotSpin),\n"
+                       "\t\t!!! anything else -> x 0.5/DefectTotSpin. A SpinTensorReader v1 file (OUTCAR x 2) with a\n"
+                       "\t\t!!! VASP line is read 2x. Remake the file with example/tools/SpinTensorReader (format v3).\n\n",
+                       SpinFactor);
+                fprintf(stderr, "Warning: hyperfine tensor file %s has no provenance line (format before v3); "
+                        "read x %g by the first-line rule - remake it with SpinTensorReader\n", hf_tensorfile, SpinFactor);
+            }
         }
 
         //the information to checking BD (in A-&Q-tensor)
@@ -2242,6 +2275,100 @@ bool READ_Tensor_array(const char* inputfile, double(*Array)[3],char* condition,
     //printf("\tThe Tensor Condition (%s) can not read from tensor file (%s)\n",condition,inputfile);
     //printf("\tPlz, Check the Tensor file !!!\n");
     //exit(0);
+}
+
+// The provenance line of tensor file format v3 (2026-10-13, (internal notes) "텐서 파일 형식 정리").
+// Before it the factor came from the first line alone (VASP -> x 1, anything else -> x 0.5/DefectTotSpin), and
+// nothing in the file said which of SpinTensorReader's v1 (OUTCAR x 2) or v2 (OUTCAR) it held: the h-BN tutorial
+// file was v1 data with a VASP line, read 2x. A v3 file says what its numbers are, and CCEX reads them x 1.
+[[noreturn]] static void refuseTensorFile(const char* inputfile, const char* why){
+    if (rank == 0){
+        fprintf(stderr, "Error: hyperfine tensor file %s: %s\n", inputfile, why);
+    }
+    exit(EXIT_FAILURE);
+}
+
+bool READ_Tensor_provenance(const char* inputfile, double DefectTotSpin, int* version, double* fileS){
+    FILE* data = fopen(inputfile, "r");
+    if (data == NULL){printf("\tThere is no interaction-file, %s!!\n",inputfile);exit(1);}
+
+    const char* prefix = "# CCEX-tensor";
+    const char* v3 = "# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = ";
+    char first[1000] = "";
+    char line[1000];
+    char prov[1000] = "";
+    int lineno = 0, provline = 0;
+    while (fgets(line, sizeof line, data) != NULL){
+        lineno++;
+        if (lineno == 1){ strncpy(first, line, sizeof first - 1); }
+        if (strncmp(line, prefix, strlen(prefix)) == 0){
+            if (provline != 0){ fclose(data); refuseTensorFile(inputfile, "more than one '# CCEX-tensor' line"); }
+            provline = lineno;
+            strncpy(prov, line, sizeof prov - 1);
+        }
+    }
+    fclose(data);
+    if (provline == 0){ return false; }
+
+    char why[1400];
+    // strip the line end
+    prov[strcspn(prov, "\r\n")] = '\0';
+    if (provline != 2){
+        snprintf(why, sizeof why, "the '# CCEX-tensor' line is line %d; it must be line 2, under the VASP or "
+                 "QUANTUMESPRESSO line", provline);
+        refuseTensorFile(inputfile, why);
+    }
+    if (strncmp(prov, v3, strlen(v3)) != 0){
+        snprintf(why, sizeof why, "'%s' is not a tensor format this version reads (expected \"%s<VASP OUTCAR|QE "
+                 "hyperfine.out>, S = <S>\")", prov, v3);
+        refuseTensorFile(inputfile, why);
+    }
+    // source = <...>, S = <number>
+    const char* src = prov + strlen(v3);
+    const char* sep = strstr(src, ", S = ");
+    if (sep == NULL){
+        snprintf(why, sizeof why, "the provenance line '%s' has no \", S = <S>\"", prov);
+        refuseTensorFile(inputfile, why);
+    }
+    std::string source(src, sep - src);
+    const char* snum = sep + strlen(", S = ");
+    char* end = NULL;
+    double S = strtod(snum, &end);
+    while (end != NULL && *end != '\0' && isspace((unsigned char)*end)){ end++; }
+    if (end == snum || end == NULL || *end != '\0' || !(S > 0) || std::fabs(2*S - std::round(2*S)) > 1e-9){
+        snprintf(why, sizeof why, "the provenance line '%s': S must be a positive half-integer", prov);
+        refuseTensorFile(inputfile, why);
+    }
+
+    // the tag of line 1, first word
+    char tag[1000] = "";
+    sscanf(first, "%999s", tag);
+    int fromSource;
+    if (source == "VASP OUTCAR"){ fromSource = 1; }
+    else if (source == "QE hyperfine.out"){ fromSource = 0; }
+    else{
+        snprintf(why, sizeof why, "the provenance line names source '%s'; known: 'VASP OUTCAR', 'QE hyperfine.out'",
+                 source.c_str());
+        refuseTensorFile(inputfile, why);
+    }
+    int fromTag = -1;
+    if (strcmp(tag, "VASP") == 0){ fromTag = 1; }
+    else if (strcmp(tag, "QUANTUMESPRESSO") == 0){ fromTag = 0; }
+    if (fromTag != fromSource){
+        snprintf(why, sizeof why, "line 1 is '%s' but the provenance line says source = %s (expected line 1 %s); "
+                 "the file contradicts itself, remake it with SpinTensorReader", tag, source.c_str(),
+                 fromSource == 1 ? "VASP" : "QUANTUMESPRESSO");
+        refuseTensorFile(inputfile, why);
+    }
+    if (std::fabs(S - DefectTotSpin) > 1e-9){
+        snprintf(why, sizeof why, "the file holds the hyperfine of a spin S = %g defect (provenance line) but "
+                 "DefectTotSpin is %g; the file and the input describe different defects (DefectTotSpin must be the "
+                 "defect's spin, the qubit spin)", S, DefectTotSpin);
+        refuseTensorFile(inputfile, why);
+    }
+    *version = fromSource;
+    *fileS = S;
+    return true;
 }
 
 //Read the version tag of A-tensor of Q-tensor file (Q.E or VASP)

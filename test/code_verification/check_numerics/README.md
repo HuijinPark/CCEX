@@ -22,7 +22,7 @@ which the table reports as "expected" instead of FAIL.
 |---|---|---|---|---|---|
 | natab_cce2_hahn / _ramsey / _cpmg8 | NV + natural-abundance ¹³C, rbath 30 | CCE2 | ensemble (nstate 0) | Hahn / Ramsey (npulse 0) / CPMG-8 | coherence |
 | natab_cce2_single | same | CCE2 | single (nstate 2, state files) | Hahn | coherence |
-| natab_gcce2_hahn, natab_gcce2_two_qubits | same; the second's `Qubit` block names two NV, but its `qubitfile` wins and the block is never read (one NV, as in every version; found 2026-10-02) | gCCE2 | ensemble | Hahn | coherence |
+| natab_gcce2_hahn, natab_gcce2_bathadjust | same, one NV from the `qubitfile`; the second with the bath file given twice, the copy shifted 50 Å along z (`bathadjust`). The second was `natab_gcce2_two_qubits` until 2026-10-13: both inputs also had a `Qubit` block (two NV in the second) that the `qubitfile` overrode and nothing read (found 2026-10-02). Since then a `qubitfile` with a `Qubit` block is refused, the unread blocks are gone (outputs byte-identical to the recorded ones) and the case is named for what it computes; `make_cases.py` cuts both from tutorial 02's `ensemble_CCE` input now that `ensemble_gCCE`'s are a real two-qubit run and a single NV with its ZFS | gCCE2 | ensemble | Hahn | coherence |
 | natab_dsj2 | same | dsj | ensemble | Hahn | coherence |
 | natab_knight_shift | same, tilted field | CCE2 | ensemble | Hahn | coherence |
 | natab_manual_hahn | same, the Hahn echo written as a `sequence` | CCE2 | ensemble | manual | coherence |
@@ -51,6 +51,27 @@ since 64f0a1a41 they are finite, and the case can join the pool once the tags'
 06, whose gCCE coherence grows past 1e4 under every version. Both are
 calculations to look at, not references.
 
+## The fixed-size path, bit for bit
+
+`test_fixed_size.cpp` (built and run by `make cpu-test`, CMake `--target cpu-test`) calls the single-state cCCE
+evolution of `simulator_cce.cpp` with the fixed-size types it uses for bath dimension 2 and 4 and with the dynamic ones,
+`evolution_update: exact`, and requires every output to have the same bits, the sign of a zero included (review
+20261012-233058-452278 P1-04: the fixed size gave (1, +0) where the dynamic path gives (1, -0), and without -march=native
+other last bits too): the review's case and 2,000 random Hermitian pairs, Hahn and CPMG-2. `recursive` is not held to
+this: its fixed size keeps Eigen's unrolled products and may differ from the dynamic path in the last bits.
+
+## The batched small clusters, bit for bit
+
+`test_cce_batch.cpp` (also in `make cpu-test` and CMake `--target cpu-test`) holds the batched CPU evolution of
+bath dimension 2 and 4 (A30, `include/calculation/cce_batch.h`) to the scalar path's bits: on the dumped clusters of
+`test/gpu_verification/check_gpu/data/small_cluster/*.bin` (the A26 fixtures, 128 production P1 CR60 sigma4 clusters and 51 pCCE2 clusters of check_rdip_ladder's p1_pcce2_spins)
+each file runs as dumped and with the other `evolution_update`, and a one-state file also as the ensemble Hahn echo;
+both sides start from the dumped Hamiltonians (`cceSetup` + `cceEvolve` against `cceSetup` + the kernel). The kernel
+reproduces the arithmetic of the builds it was checked on (g++ 13 AVX2, icpx 2026.1 AVX2, icpx 2023.2 AVX-512); in any
+other build it is off and the check reports every output as "scalar only". Run it in every build the batch is to be
+used in: a compiler change can move where the scalar path fuses its products. `CCEX_CPU_BATCH=0` turns the batch off in a
+run (for A/B comparisons).
+
 ## The references
 
 | folder | what | how it was made |
@@ -65,9 +86,11 @@ as each other. Against them this branch differs, on purpose, in seven cases
 pulse count until 8185aa31e (Ramsey and CPMG change the sign of the imaginary
 part), deltat was a float until 39d03aa5c (the fast P1 phases and the population
 at 5 ms move), and the seeded pCCE partition search draws a different partition.
-The density-matrix files of the arbitrary case are indexed `out_0_1` now and
-`out_0_0` then; `expected.json` maps the names (`renames`) and `compare.py` compares the values
-(1.6e-8 against both tags on 2026-10-02). A case with no output, or with a reference file the run
+The full density-matrix files of the arbitrary case (`savemode` cluster_density_matrix, `allfull` until 2026-10-13) are named after the cluster since
+2026-10-13, `out_0_full_state1` (the bath spin 0) and `out_full_state1` (the zeroth cluster); they were `out_0_1`
+and `out_0` in the head references and `out_0_0` and `out_0` in the tags. `expected.json` maps the names
+(`renames`) for every reference and `compare.py` compares the values (1.6e-8 against both tags on 2026-10-02).
+The result and the per-cluster files it writes since then (`out_state1`, `out_0_state1`) have no reference. A case with no output, or with a reference file the run
 did not write, fails whatever `expected.json` says.
 
 When a change is meant to move a number, make the new head reference after it
@@ -82,4 +105,16 @@ them with the NV branch +1. The inputs now say `"qalphams": -1` and the referenc
 with the same command (NP 2; the tags built from the tag), so they hold the branch the inputs
 meant. The change against the old references was up to 1.26 (`p1_cce2_single`), 8e-6 for the
 ensemble case. Since then CCEX refuses such a key (D24).
+
+**2026-10-13: the five h-BN cases re-recorded in `head-20261013-8a775921f`** (`hbn_cce2_hf3_qd0`, `hbn_cce2_hf3_qd2`,
+`hbn_gcce2_dm`, `hbn_gcce2_oh`, `hbn_hfmedi`). Their hyperfine file was `hBN_VB_flat_ATensor_HSE_CellPBE_tag`:
+SpinTensorReader v1 data (the OUTCAR hyperfine x 2) with a `VASP` first line, which CCEX reads x 1 - every tensor 2x
+(nearest ¹⁴N A_zz 97.3 MHz against 47 measured; hfmedi 4x; (internal notes)).
+It is now `inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3`, tensor format v3 (tag and provenance line, read x 1) with the
+v1 numbers / 2. The change against `head-20261012-aa883d0d4` (noDiv/dm, wiDiv): `hbn_cce2_hf3_qd0` 5.37e-2 / 5.37e-2,
+`hbn_cce2_hf3_qd2` 0.694 / 3.46e-2, `hbn_gcce2_dm` 0.544 / 0.619, `hbn_gcce2_oh` 0.614 / 0.117, `hbn_hfmedi` 0.880 /
+0.775; the other twenty cases are byte-identical (the arbitrary case under its renamed files). `expected.json` names the
+reason for the earlier references and the tags. The new outputs are the bytes of the old untagged v1 file read by the old
+rule (x 0.5), `../check_input_forms/tensor_format.sh`, which also needs `head-20261012-aa883d0d4` (recorded with the
+`_tag` file) to show that an old file is read as before - keep that folder.
 

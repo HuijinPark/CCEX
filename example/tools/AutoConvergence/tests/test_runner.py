@@ -185,9 +185,9 @@ class TestRunner(unittest.TestCase):
         pd = np.linalg.norm(kept[:, None] - kept[None], axis=2)[np.triu_indices(len(kept), 1)]
         self.assertEqual(r.pair_count(kept, 20), int(((pd < 20) & (pd > 8)).sum()))
 
-    def test_save_nodiv_false_runs_on_wiDiv_alone(self):
+    def test_nodiv_false_runs_on_wiDiv_alone(self):
         inp, fake = make_case(self.tmp)
-        j = json.loads(inp.read_text()); j["save_nodiv"] = False; inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["savemode"] = {"mode": "coherence", "nodiv": False}; inp.write_text(json.dumps(j))
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
         run = next((inp.parent / "auto/runs/production").iterdir())
@@ -453,6 +453,15 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(code, 2, out)
         self.assertIn("pcce_cache_file", out)
         self.assertEqual(summary(inp)["status"], "refused")       # an earlier result is not left as the present one
+
+    def test_old_savemode_forms_are_refused(self):           # 2026-10-13: save_nodiv is savemode.nodiv, "normal" is "coherence"
+        inp, fake = make_case(self.tmp)
+        base = json.loads(inp.read_text())
+        for edit, want in ((dict(save_nodiv=False), "save_nodiv is now savemode.nodiv"), (dict(savemode="normal"), "savemode")):
+            inp.write_text(json.dumps(dict(base, **edit)))
+            code, out = call(inp, fake)
+            self.assertEqual(code, 2, out)
+            self.assertIn(want, out)
 
     def test_coherence_above_one_is_reported(self):
         inp, fake = make_case(self.tmp)
@@ -904,7 +913,7 @@ class TestRunner(unittest.TestCase):
 
     def test_a_divergent_point_without_nodiv_leaves_the_configuration_out(self):
         inp, fake = make_case(self.tmp, threshold_config=0.5)
-        j = json.loads(inp.read_text()); j["save_nodiv"] = False; inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["savemode"] = {"mode": "coherence", "nodiv": False}; inp.write_text(json.dumps(j))
         code, out = call(inp, fake, dict(FAKE_BIG_IDS="10"))
         self.assertEqual(code, 0, out)
         self.assertEqual([r["configuration"] for r in summary(inp)["unstable"]], [10])

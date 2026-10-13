@@ -51,16 +51,13 @@ static cJSON* trackedGetObjectItem(const cJSON* object, const char* key){
 
 /**
  * @brief Read a 3-vector axis, which must be exactly three JSON numbers
- * @details Deliberately NOT cJSON_ReadDouble1d. That helper checks the array length but
- *          then takes valuedouble unconditionally, and valuedouble is 0 for a string, a
- *          null or a boolean -- so "qubit_axis": [1,"1",1] would quietly become [1,0,1],
- *          a different but perfectly valid-looking axis, and the whole run would be
- *          silently wrong. An axis is not a place to guess.
- *
- *          File-local on purpose: this is stricter than the shared cJSON_Read* family,
- *          and tightening those would change how every other key is parsed.
+ * @details A string, null or boolean element (valuedouble 0) is refused rather than read,
+ *          so "qubit_axis": [1,"1",1] cannot quietly become [1,0,1].
+ * @param section      the enclosing JSON object
  * @param section_name name of the enclosing section, for the error message
- * @param out [in,out] left at its default value if the key is absent and not required
+ * @param key          the key looked up in section
+ * @param[in,out] out  left at its default value if the key is absent and not required
+ * @param required     whether a missing key is an error
 */
 static void readAxis3(cJSON* section, const char* section_name, const char* key,
                      double out[3], bool required){
@@ -639,7 +636,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         printMessage("  - General option-related keys : ");
         printMessage("    [ method, quantity, propagator, evolution, evolution_update, backend, profile, ");
         printMessage("      cluster_contributions, cluster_contribution_max_mb, ");
-        printMessage("      gpu_options { min_dim, packed_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb }, ");
+        printMessage("      gpu_options { min_dim, packed_max_dim, warp_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb }, ");
         printMessage("      probe_memory_gb, ");
         printMessage("      gcce_refinement, gcce_refinement_max_sweeps, vector_mean_field, pcce_partition, pcce_connections, pcce_detail_limit, ");
         printMessage("      pcce_cache_mode, pcce_cache_file, order, bfield, ");
@@ -651,8 +648,52 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     char* quantity = cJSON_ReadString(root,"quantity",true,"coherence");
     Config_setQuantity(cnf,quantity); // Current possible options : coherence, noise, dm
 
-    char* propagator = cJSON_ReadString(root,"propagator",true,"eigen");
-    Config_setPropagator(cnf,propagator); // gCCE only : eigen (default) | expm (legacy)
+    // eigen (default) | expm (gCCE, legacy) | sparse (A2), as a string or as {"method": ..., "min_dim": ..., "tol": ...};
+    // min_dim and tol belong to sparse. Config_validatePropagator checks the paths once every source is in.
+    cJSON* propagatorItem = cJSON_GetObjectItem(root,"propagator");
+    if (cJSON_IsObject(propagatorItem)){
+        for (cJSON* key = propagatorItem->child; key; key = key->next)
+            if (strcmp(key->string,"method") && strcmp(key->string,"min_dim") && strcmp(key->string,"tol")){
+                fprintf(stderr,"Error: propagator has no key \"%s\" (method, min_dim, tol)\n",key->string);
+                exit(EXIT_FAILURE);
+            }
+        cJSON* method = cJSON_GetObjectItem(propagatorItem,"method");
+        if (!cJSON_IsString(method) || !method->valuestring){
+            fprintf(stderr,"Error: propagator.method must be a string (eigen, expm or sparse)\n");
+            exit(EXIT_FAILURE);
+        }
+        Config_setPropagator(cnf,method->valuestring);
+        cJSON* minDim = cJSON_GetObjectItem(propagatorItem,"min_dim");
+        cJSON* tol = cJSON_GetObjectItem(propagatorItem,"tol");
+        if ((minDim || tol) && strcasecmp(cnf->propagator,"sparse")){
+            fprintf(stderr,"Error: propagator.min_dim and propagator.tol belong to method sparse (this has %s)\n",cnf->propagator);
+            exit(EXIT_FAILURE);
+        }
+        if (minDim){
+            const double value = readFiniteNumber(minDim,"propagator.min_dim");
+            if (value < 1 || value > 2147483647.0 || std::floor(value) != value){
+                fprintf(stderr,"Error: propagator.min_dim must be a positive 32-bit integer\n");
+                exit(EXIT_FAILURE);
+            }
+            cnf->sparse_min_dim = (long)value;
+        }
+        if (tol){
+            const double value = readFiniteNumber(tol,"propagator.tol");
+            if (!(value > 0.0 && value < 1.0)){
+                fprintf(stderr,"Error: propagator.tol must be a number between 0 and 1 (exclusive)\n");
+                exit(EXIT_FAILURE);
+            }
+            cnf->sparse_tol = value;
+        }
+    }else{
+        if (propagatorItem && !cJSON_IsString(propagatorItem)){
+            fprintf(stderr,"Error: propagator must be a string (eigen, expm or sparse) or an object {\"method\": ..., "
+                           "\"min_dim\": ..., \"tol\": ...}\n");
+            exit(EXIT_FAILURE);
+        }
+        char* propagator = cJSON_ReadString(root,"propagator",true,"eigen");
+        Config_setPropagator(cnf,propagator);
+    }
 
     // vector is the DEFAULT, but it only exists where its preconditions hold: gCCE, a pure
     // rho0 (nstate > 0) and propagator=eigen. Do NOT decide that here -- this function
@@ -688,9 +729,10 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     // The GPU settings are one block, "gpu_options" (user, 2026-10-12, improvements.md A26); the flat keys before it are
     // refused with the form that replaces them.
     const char* oldGpuKeys[] = {"gpu_min_dim", "gpu_batch_steps", "gpu_cache_mb", "gpu_batch_clusters", "gpu_cluster_batch_mb"};
-    const char* gpuKeys[] = {"min_dim", "evolution_batch_steps", "cache_mb", "evolution_batch_size", "cluster_batch_mb", "packed_max_dim"};
+    const char* gpuKeys[] = {"min_dim", "evolution_batch_steps", "cache_mb", "evolution_batch_size", "cluster_batch_mb", "packed_max_dim",
+                             "warp_max_dim"};
     int* gpuValues[] = {&cnf->gpu_min_dim, &cnf->gpu_batch_steps, &cnf->gpu_cache_mb, &cnf->gpu_batch_clusters, &cnf->gpu_cluster_batch_mb,
-                        &cnf->gpu_packed_max_dim};
+                        &cnf->gpu_packed_max_dim, &cnf->gpu_warp_max_dim};
     for (int k=0; k<5; ++k)
         if (cJSON_GetObjectItem(root,oldGpuKeys[k])){
             fprintf(stderr,"Error: %s is now gpu_options.%s (\"gpu_options\": {\"%s\": ...})\n",oldGpuKeys[k],gpuKeys[k],gpuKeys[k]);
@@ -703,20 +745,26 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         }
         for (cJSON* item = block->child; item; item = item->next){
             int k = 0;
-            while (k<6 && strcasecmp(item->string,gpuKeys[k])) ++k;
-            if (k==6){
-                fprintf(stderr,"Error: unknown key gpu_options.%s (min_dim, packed_max_dim, evolution_batch_size, evolution_batch_steps, "
-                               "cluster_batch_mb, cache_mb)\n",item->string);
+            while (k<7 && strcasecmp(item->string,gpuKeys[k])) ++k;
+            if (k==7){
+                fprintf(stderr,"Error: unknown key gpu_options.%s (min_dim, packed_max_dim, warp_max_dim, evolution_batch_size, "
+                               "evolution_batch_steps, cluster_batch_mb, cache_mb)\n",item->string);
                 exit(EXIT_FAILURE);
             }
         }
-        for (int k=0; k<6; ++k){
+        for (int k=0; k<7; ++k){
             cJSON* item = cJSON_GetObjectItem(block,gpuKeys[k]);   // recorded as read (cJSON_checkInputKeys)
             if (!item) continue;
             char name[64];
             snprintf(name,sizeof name,"gpu_options.%s",gpuKeys[k]);
             const double value = readFiniteNumber(item,name);
-            if (k==5){
+            if (k==6){
+                // the warp kernel (A40): clusters of a compiled total dimension up to this value; 0 switches it off
+                if (value < 0 || value > 32 || std::floor(value) != value){
+                    fprintf(stderr,"Error: gpu_options.warp_max_dim must be 0 (off) or an integer up to 32\n");
+                    exit(EXIT_FAILURE);
+                }
+            } else if (k==5){
                 // the packed kernel exists for bath dimension 2 and 4 (small_cluster_math.h); 0 switches it off
                 if (value!=0 && value!=2 && value!=4){
                     fprintf(stderr,"Error: gpu_options.packed_max_dim must be 0 (off), 2 or 4\n");
@@ -1338,7 +1386,17 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
     int* betaidxDefault = NULL;
     bool overhausDefault = false;
     
-    // read qubitfile (priority)
+    // qubitfile and a Qubit block are two descriptions of the qubits; the block used to be ignored without a word
+    // when both were given (review 20261013-readme R01: a "two-qubit" tutorial ran one qubit)
+    if (cJSON_GetObjectItem(root,"qubitfile") != NULL && cJSON_GetObjectItem(root,"Qubit") != NULL){
+        if (rank==0){
+            fprintf(stderr,"Error: the input has both \"qubitfile\" and a \"Qubit\" block; keep one "
+                           "(\"qubitfile\" for one qubit from a defect file, \"Qubit\" for one or more qubits written out)\n");
+        }
+        exit(EXIT_FAILURE);
+    }
+
+    // read qubitfile
     char* _qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
     
     if (_qubitfile != NULL) {
@@ -1857,12 +1915,46 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     freeChar1d(&data);
 }
 
+// savemode as a string (the mode) or as {"mode": ..., "nodiv": true|false} (2026-10-13). nodiv (default true) writes
+// _noDiv beside _wiDiv: the group analyzer's error correction, the standing checks and the paper scripts read it; false
+// writes the coherence (_wiDiv) alone (improvements.md C, user decision (b), 2026-10-08). With readNodiv false only the
+// mode is taken (a refinement step input, whose nodiv the run keeps from the user's input).
+void cJSON_readSavemode(cJSON* item, Output* op, bool readNodiv){
+    if (cJSON_IsString(item) && item->valuestring){
+        Output_setSavemode(op,item->valuestring);
+        if (readNodiv) op->save_nodiv = true;
+        return;
+    }
+    if (!cJSON_IsObject(item)){
+        fprintf(stderr,"Error: savemode must be a string (coherence, coherence_tagged, cluster_coherence, cluster_density_matrix) "
+                       "or an object {\"mode\": ..., \"nodiv\": true|false}\n");
+        exit(EXIT_FAILURE);
+    }
+    for (cJSON* key = item->child; key; key = key->next)
+        if (strcmp(key->string,"mode") && strcmp(key->string,"nodiv")){
+            fprintf(stderr,"Error: savemode has no key \"%s\" (mode, nodiv)\n",key->string);
+            exit(EXIT_FAILURE);
+        }
+    cJSON* mode = cJSON_GetObjectItem(item,"mode");
+    if (mode && (!cJSON_IsString(mode) || !mode->valuestring)){
+        fprintf(stderr,"Error: savemode.mode must be a string (coherence, coherence_tagged, cluster_coherence, cluster_density_matrix)\n");
+        exit(EXIT_FAILURE);
+    }
+    Output_setSavemode(op,mode ? mode->valuestring : (char*)"coherence");
+    cJSON* nodiv = cJSON_GetObjectItem(item,"nodiv");
+    if (nodiv && !cJSON_IsBool(nodiv)){
+        fprintf(stderr,"Error: savemode.nodiv must be a boolean (true or false)\n");
+        exit(EXIT_FAILURE);
+    }
+    if (readNodiv) op->save_nodiv = nodiv ? (bool)nodiv->valueint : true;
+}
+
 void cJSON_readOptionOutput(Output* op, char* fccein){
 
     if (rank==0){
         printf("\n");
         printMessage("Read Output Options ...");
-        printMessage("  [ savemode, outfile, save_nodiv ] ");
+        printMessage("  [ savemode { mode, nodiv }, outfile ] ");
     }
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
@@ -1875,13 +1967,14 @@ void cJSON_readOptionOutput(Output* op, char* fccein){
         freeChar1d(&data);
     }
 
-    char savemodeDefault[MAX_CHARARRAY_LENGTH] = "normal";
-    char* savemode = cJSON_ReadString(root,"savemode",true,savemodeDefault);
-    Output_setSavemode(op,savemode);
-;
-    // _noDiv beside _wiDiv: on by default (the group analyzer's error correction, the standing checks and the paper scripts
-    // read it); false writes the coherence (_wiDiv) alone ((internal notes) C, user decision (b), 2026-10-08)
-    op->save_nodiv = readStrictBool(root,"input","save_nodiv",true);
+    // save_nodiv is savemode.nodiv since 2026-10-13 (refused with the new form, as the flat gpu_* keys)
+    if (cJSON_GetObjectItem(root,"save_nodiv")){
+        fprintf(stderr,"Error: save_nodiv is now savemode.nodiv (\"savemode\": {\"mode\": \"coherence\", \"nodiv\": false})\n");
+        exit(EXIT_FAILURE);
+    }
+    Output_setSavemode(op,(char*)"coherence");
+    op->save_nodiv = true;
+    if (cJSON* item = cJSON_GetObjectItem(root,"savemode")) cJSON_readSavemode(item,op,true);
 
     char* outfileDefault = NULL;
     char* outfile = cJSON_ReadString(root,"outfile",true,outfileDefault);

@@ -11,7 +11,18 @@ if [ "${CCEX_MPS:-1}" != 0 ] && command -v nvidia-cuda-mps-control > /dev/null 2
     export CUDA_MPS_LOG_DIRECTORY="$ccex_mps_dir/log"
     mkdir -m 700 "$CUDA_MPS_PIPE_DIRECTORY" "$CUDA_MPS_LOG_DIRECTORY"
     if nvidia-cuda-mps-control -d; then
-        trap 'echo quit | nvidia-cuda-mps-control > /dev/null 2>&1; sleep 1; case "$ccex_mps_dir" in /tmp/ccex-mps-*) rm -rf -- "$ccex_mps_dir";; esac' EXIT
+        # at the end: stop the daemon and remove the directory, keeping the job's exit status. A quit that fails (the
+        # daemon already gone) neither skips the removal under set -e nor changes the status (review 20261012-233058-452278
+        # R1/P3-07); test_mps.sh checks it with a stand-in control command.
+        ccex_mps_stop() {
+            local status=$?
+            set +e
+            echo quit | nvidia-cuda-mps-control > /dev/null 2>&1 || echo "[mps] quit failed; removing its directory anyway"
+            sleep 1
+            case "$ccex_mps_dir" in /tmp/ccex-mps-*) rm -rf -- "$ccex_mps_dir";; esac
+            exit "$status"
+        }
+        trap ccex_mps_stop EXIT
         echo "[mps] on (pipe $CUDA_MPS_PIPE_DIRECTORY)"
     else
         unset CUDA_MPS_PIPE_DIRECTORY CUDA_MPS_LOG_DIRECTORY

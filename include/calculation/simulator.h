@@ -42,6 +42,11 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
                                 Eigen::RowVectorXcd* alphaRho, GcceBatch* batch=nullptr);
 /** calCoherenceCce writing into result[0..nstep) (1 x 1 each, reused when already so) with the storage of ws; the same arithmetic. */
 void calCoherenceCceInto(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, MatrixXcd* result, CceWorkspace& ws);
+/** The two halves of calCoherenceCceInto after the Hamiltonians (A30): cceSetup takes ws.Halpha and ws.Hbeta to the
+ *  eigensystems, M, the eigenvalues and, for one state (psi, d x 1, else nullptr), rowStart, colStart and Madj; cceEvolve
+ *  is the time evolution from these into result[0..nstep). The batched small-cluster path (cce_batch.h) shares cceSetup. */
+void cceSetup(CceWorkspace& ws, const MatrixXcd* psi);
+void cceEvolve(Config* cnf, Pulse* pls, MatrixXcd* result, CceWorkspace& ws);
 /** The ensemble (nstate 0) time evolution of calCoherenceCceInto with evolution_update = recursive (A18,
  *  simulator_cce_recursive.cpp): M = M_up^dagger M_down, the eigenvalues of the two conditional Hamiltonians. */
 void evolveEnsembleRecursiveCce(const MatrixXcd& M, const MatrixXcd& M_up, const MatrixXcd& M_down,
@@ -98,12 +103,14 @@ MatrixXcd calPropagatorGcce(QubitArray* qa, const MatrixXcd& Htot, Pulse* pls, d
  *  tfree = istep deltat (accumulated), and the phases between every 16th step are carried over by one step's factor. */
 MatrixXcd calPropagatorGcceRecursive(Pulse* pls, double tfree, GcceWork* w, int istep, double deltat);
 
+/** Caches kron(Upulses[i], I_bdim), the pulses expanded to the qubit+bath space, in w->UpulsesExpanded once per
+ *  cluster (it does not depend on the step), and resets the kept M^dag psi0 for the new cluster. */
+void prepareGccePulses(GcceWork* w, MatrixXcd* Upulses, int npulse, int bdim);
 /** evolution=vector: applies the same pulse sequence as calPropagatorGcce, but to the
  *  state vector psi0 instead of assembling the propagator. Result in w->psi.
  *  prepareGccePulses must have been called for this cluster first, and psi0 is the same in every call for the cluster
  *  (M^dag psi0 is formed on the first call and kept, A16). istep >= 0 (evolution_update = recursive): the calls come for istep = 0, 1, 2, ... with
  *  tfree = istep deltat (accumulated), and the phases between every 16th step are carried over by one step's factor (A16 b). */
-void prepareGccePulses(GcceWork* w, MatrixXcd* Upulses, int npulse, int bdim);
 const Eigen::VectorXcd& propagateStateGcce(const Eigen::VectorXcd& psi0, Pulse* pls, double tfree, GcceWork* w,
                                            int istep=-1, double deltat=0.0);
 

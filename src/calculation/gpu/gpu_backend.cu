@@ -17,14 +17,24 @@
 
 namespace {
 using Z = cuDoubleComplex;
+// an allocation that failed is GpuOutOfMemory (gpu_backend.h): not sticky, the context goes on
 void check(cudaError_t s, const char* op){
+    if (s == cudaErrorMemoryAllocation){ cudaGetLastError(); throw GpuOutOfMemory(std::string(op)+": "+cudaGetErrorString(s)); }
     if (s != cudaSuccess) throw std::runtime_error(std::string(op)+": "+cudaGetErrorString(s));
 }
 void check(cublasStatus_t s, const char* op){
+    if (s == CUBLAS_STATUS_ALLOC_FAILED) throw GpuOutOfMemory(std::string(op)+": cuBLAS status "+std::to_string(s)+" (allocation failed)");
     if (s != CUBLAS_STATUS_SUCCESS) throw std::runtime_error(std::string(op)+": cuBLAS status "+std::to_string(s));
 }
 void check(cusolverStatus_t s, const char* op){
+    if (s == CUSOLVER_STATUS_ALLOC_FAILED) throw GpuOutOfMemory(std::string(op)+": cuSOLVER status "+std::to_string(s)+" (allocation failed)");
     if (s != CUSOLVER_STATUS_SUCCESS) throw std::runtime_error(std::string(op)+": cuSOLVER status "+std::to_string(s));
+}
+// CCEX_TEST_GPU_OOM_BYTES (gpu_backend.h): the size from which every allocation fails as if the card were full
+size_t testOutOfMemoryBytes(){
+    static const size_t bytes = std::getenv("CCEX_TEST_GPU_OOM_BYTES") ?
+        std::strtoull(std::getenv("CCEX_TEST_GPU_OOM_BYTES"),nullptr,10) : std::numeric_limits<size_t>::max();
+    return bytes;
 }
 #define GPU_CHECK(op) check((op),#op)
 
@@ -89,10 +99,10 @@ void* allocateDevice(size_t bytes){
         c.memory.cachedBytes-=bestSize; ++c.memory.reuses; return p;
     }
     void* p=nullptr;
-    cudaError_t status=cudaMalloc(&p,bytes);
+    cudaError_t status=bytes>=testOutOfMemoryBytes() ? cudaErrorMemoryAllocation : cudaMalloc(&p,bytes);
     if(status==cudaErrorMemoryAllocation && !c.cached.empty()){
         // Cached buffers must not prevent a larger, otherwise feasible request.
-        cudaGetLastError(); c.trim(); status=cudaMalloc(&p,bytes);
+        cudaGetLastError(); c.trim(); status=bytes>=testOutOfMemoryBytes() ? cudaErrorMemoryAllocation : cudaMalloc(&p,bytes);
     }
     GPU_CHECK(status);
     try { c.sizes.emplace(p,bytes); } catch(...){cudaFree(p);throw;}

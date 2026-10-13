@@ -50,7 +50,7 @@ the configurations. 12 s for the three.
 #  "qd_readmode"   : 0,
 
     # Output
-    "savemode"    : "normal"
+    "savemode"    : "coherence"
 
 }
 ```

@@ -10,11 +10,11 @@ typedef struct {
     // Intermediate Save
     // char* InterSaveClusterFile; /**< File name to save clusters' information */
     // char* InterSaveCoherenceFile; /**< File name to save coherence functions of clusters */
-    char savemode[20]; /**< Save mode : all |  | averaged */
-    // all : coherence function for each cluster and each state : output = output_{cluster}_{state}_wD/nD
-    // normal : coherence function for each state (default) : output = output_{state}_wD/nD
-    // avg : averaged coherence function for all states : ouput = output_avg_wD/nD
-    // info : normal save mode + deep learning information (Azx, Azz, bathfile) : output = output_{state}_wD/nD
+    char savemode[32]; /**< savemode.mode (until 2026-10-13: normal, info, all, allfull) */
+    // coherence : coherence function for each state (default) : output = output_{state}_wD/nD
+    // coherence_tagged : coherence + deep learning information (Azx, Azz, bathfile) : output = output_{state}_wD/nD
+    // cluster_coherence : coherence function for each cluster and each state : output = output_{cluster}_{state}_wD/nD
+    // cluster_density_matrix : cluster_coherence + each cluster's full density matrix (gCCE)
 
     //////////////////////////////////////////////
     // Final Save (Main result)
@@ -25,12 +25,16 @@ typedef struct {
     // char* OutputFileHeadDisjoint; /**< File name to save final result */
     // char* OutputFileTailDisjoint; /**< File name to save final result */
     char* outfile; // output file name with mode (auto generated)
-    bool save_nodiv; // write <outfile>_..._noDiv beside _wiDiv (input "save_nodiv", default true; 2026-10-08)
+    bool save_nodiv; // write <outfile>_..._noDiv beside _wiDiv (input savemode.nodiv, default true; 2026-10-08)
 } Output;
 
 Output* Output_init();
 void Output_save(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, double deltat, int istate);
 void Output_save_all(Output* op, MatrixXcd* result, int nstep, double deltat,int* cluster, int nspin, int istate);
+/** savemode cluster_density_matrix: op with the outfile "{outfile}_{bath indices}_full[_state{istate}]" written into name (MAX_FILEPATH
+ *  characters), the name savemode cluster_coherence gives the cluster with "_full" ("{outfile}_full..." for the zeroth cluster, n = 0).
+ *  calCoherenceGcce writes the cluster's full density matrices to the Output it is given. */
+Output Output_fullOutput(const Output* op, char* name, const int* cluster, int n, int istate);
 void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, double deltat, int istate, double Azx, double Azz, char* bathfile);
 
 void Output_setSavemode(Output* op, char* savemode);

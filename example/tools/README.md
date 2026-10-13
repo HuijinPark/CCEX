@@ -4,10 +4,10 @@ Four tools that make what CCEX reads (`IsotopeTable/` its built-in isotope table
 
 | Tool | Makes | Run | Needs |
 |---|---|---|---|
-| `BathGenerator/` | a bath file (site positions and isotopes) from a POSCAR unit cell, drawing isotopes with the probabilities in a `prob` file; options for 2D materials, a defect, an inserted relaxed cell, deformation | `mpirun -n N python3 BathGenerator.py -o OUT -i POSCAR -p PROB --size 30 --Defect B --opt2D` (`-h` lists everything; `do_BathGenerator` has three cases) | numpy, psutil, mpi4py with an MPI |
-| `SpinTensorReader/` | the hyperfine (`Afile`) and quadrupole (`Qfile`) tensor files CCEX reads, from a VASP OUTCAR or a QE output | `python3 main.py VASP\|QE POSCAR DEFECT --A OUT --Q OUT [--version v1\|v2] [--rangeformat vertex] ...` (`-h`); `examples/01..05` each have a `do` | numpy, pandas, psutil |
+| `BathGenerator/` | a bath file (site positions and isotopes) from a POSCAR unit cell, drawing isotopes with the probabilities in a `prob` file; options for 2D materials, a defect, an inserted relaxed cell, deformation | `mpirun -n N python3 BathGenerator.py -o OUT -i POSCAR -p PROB --size 30 --Defect B --opt2D` (`-h` lists everything; `do_BathGenerator` has four cases: three that make a bath and one that converts a configuration to POSCAR) | numpy, psutil, mpi4py with an MPI |
+| `SpinTensorReader/` | the hyperfine (`Afile`) and quadrupole (`Qfile`) tensor files CCEX reads, from a VASP OUTCAR or a QE output | `python3 main.py VASP\|QE POSCAR DEFECT --A OUT --Q OUT [--spin S] [--rangeformat vertex] ...` (`-h`; `--spin` required for QE `--A`); `examples/01..05` each have a `do` | numpy, pandas, psutil |
 | `IsotopeTable/` | `src/input/isotope_table.cpp`, the 154 nuclear isotopes (spin, gyromagnetic ratio) CCEX uses for a species no gyrofile names, from the EasySpin database in `SpinTensorReader/` | `python3 example/tools/IsotopeTable/make_isotope_table.py` from the repository root | python3 |
-| `Runner/` | the job folders of the tutorials: one per value of a variable (order, ppm, rbath, ...) from the templates in `MkCCEJobs/mkjobs.sngapp/`, which were driven by a tutorial's `domkjobs` and `opt/` files (removed on 2026-09-23) | `./domkjobs MKE` inside a tutorial calculation (`./domkjobs -h`) | idm Slurm |
+| `Runner/` | the job folders of the tutorials: one per value of a variable (order, ppm, rbath, ...) from the templates in `MkCCEJobs/mkjobs.sngapp/`, which were driven by a tutorial's `domkjobs` and `opt/` files (removed on 2026-09-23) | `example/tools/Runner/domkjobs MKE` (`-h` lists the options), with `SourceFileName` and `SourceFileDir` set in the environment to the input template; until 2026-09-23 a copy sat in each tutorial calculation and was run there as `./domkjobs MKE` | idm Slurm |
 | `AutoConvergence/` | the automatic convergence: `main.out -f input.json` with an `auto_convergence` block (or `mpirun -n N main.out -f input.json` since 2026-10-10: rank 0 runs the runner and every CCEX run gets `mpirun -n N`; the block's `launcher`, when given, comes first) finds the time window, rdip, rbath and the configurations and runs the production on the baths you prepare (it says which baths to add when they are too small or too few); `main.out --auto_status -f input.json` shows where it is. `CCEX_PYTHON` picks the interpreter, `CCEX_AUTOCONV_DIR` the tool folder; it may be a shared installation (owned by you, root or the owner of `main.out`), but neither it nor any folder above it may be writable by others (other users, or a group other than the owner's own private group; `chmod go-w`). Also `python -m autoconv analyze` for existing runs (`AutoConvergence/README.md`) | `main.out -f input.json`; tests `python -m unittest discover -s tests` | numpy, scipy, matplotlib |
 
 ## BathGenerator
@@ -26,9 +26,23 @@ file is complete before that and the tool is not at fault.
 `spHamilReader/` is the package (`base/`, `vasp/`, `qe/`, and the `v2_*` readers),
 `main.py` the command line. `examples/` are five worked cases with their inputs and
 the tensor files they produced; `do` in each reproduces them (`04.Diamond_N2p/do`
-takes two arguments, the JT index and the case, e.g. `bash do 4 1-1`). On
+takes two arguments, the JT index and the case, e.g. `bash do 4 1-2`). On
 2026-09-23 the package's internal imports were made package-relative, and every
 example was checked to reproduce its tracked `Afile`/`Qfile` byte for byte.
+
+**Tensor format v3 (2026-10-13).** Every `Afile` starts with the tag (`VASP` / `QUANTUMESPRESSO`) and the provenance
+line `# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = <VASP OUTCAR|QE hyperfine.out>, S = <S>`,
+and holds the hyperfine of the spin-S defect, which CCEX reads x 1 (`docs/user/InputFile_General.md#tag_hf_tensorfile`).
+VASP: the OUTCAR numbers (VASP divides by the total spin), S from the OUTCAR magnetization (`--spin`, if given, must
+agree). QE: GIPAW's `hyperfine.f90` uses the bare spin density with the S = 1/2 prefactor, so `--spin S` is required
+and the file holds `hyperfine.out` x 1/(2S). `--version v1` is refused: it wrote the OUTCAR x 2, which is the defect's
+value only for S = 1 and only when CCEX then divides by 2S; with a `VASP` line CCEX read it 2x (the h-BN tutorial file,
+and example 03's MoS2 `Afile`). `--fidentify` is gone (the lines are always written). `Qfile`s (EFG, independent of the
+spin) are unchanged. The examples were re-run that day: 01 (QE, S = 1) nearest ¹⁴N A_zz 50.4 MHz (PBEsol); 02 (VASP)
+48.8 MHz without the core term (`Afile_nocore`, = the removed `Afile_v1` / 2) and 35.4 MHz with it (the default
+`--addhfcore True`); 03 and 05 S = 1/2; 04 v2 only (the v1 outputs removed). Every `Qfile`, and every v2 `Afile` apart
+from its two new lines, is byte-identical. The `v2_vasp/`, `v2_qe/` copies are not imported by `main.py` and were not
+changed.
 Python 3.12 prints SyntaxWarnings for a few regular expressions; they are harmless.
 
 `runningScripts_Exspin/` holds two example runs (N2p, NVHn) with their OUTCARs and

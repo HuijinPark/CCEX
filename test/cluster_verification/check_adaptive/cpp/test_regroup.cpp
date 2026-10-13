@@ -1457,6 +1457,60 @@ void test_second_review() {
         CHECK_EQ(source.kept_calls, 2LL);
     }
 }
+// Review 20261012-233058-452278: P4-04, a factor whose parts are finite but whose modulus
+// overflows is ranked by its log, not tied at +inf; P4-03, the probes a disk cache holds
+// cost the budget nothing, so a round chooses as it does with the same probes in RAM.
+void test_review_20261012() {
+    const long double want[2] = {709.80514649691353L, 709.87925446906726L};
+    const double p[2] = {0.65, 0.70};
+    for (int k = 0; k < 2; ++k) {
+        const Factor f = culprit_factor({p[k], p[k]}, {1e-308, 0.}, {0.5, 0.});
+        CHECK(std::isfinite(f.g)); CHECK_EQ(f.cause, std::string());
+        CHECK(std::fabs(static_cast<long double>(f.g)-want[k]) < 1e-9L);
+    }
+    {
+        const PointValues v{{{0}, {1e-308, 0.}}, {{1}, {0.5, 0.}}, {{2}, {0.5, 0.}},
+                            {{0, 1}, {0.65, 0.65}}, {{0, 2}, {0.70, 0.70}}};
+        const std::vector<Culprit> got = culprits({{0}, {1}, {2}}, {{0, 1}, {0, 2}}, v);
+        CHECK_EQ(got.size(), static_cast<std::size_t>(2));
+        if (got.size() == 2) {
+            CHECK_EQ(got[0].a, 0); CHECK_EQ(got[0].b, 2);
+            CHECK_EQ(got[1].a, 0); CHECK_EQ(got[1].b, 1);
+        }
+    }
+    const Bath b = triad();
+    const Geometry g = b.geometry();
+    const Adjacency links = complete_adjacency(4);
+    const Partition start{{0}, {1}, {2}, {3}};
+    const Curves curves = expansion(start, links, source_of(b).store, ExpansionLimits());
+    // 1168 is the review's total (the accepted partition's rerun, nothing else); the sweep
+    // around it covers both sides of every threshold the round has.
+    for (int except = 0; except < 2; ++except)
+        for (int total = 0; total <= 3000; ++total) {
+            Settings s = settings_for(b, 4);
+            s.whole_except = except == 1;
+            Warm warm;
+            static_cast<Fake&>(warm) = source_of(b);
+            warm.links = &links;
+            warm.disk = warm.store;
+            Fake ram = source_of(b);
+            ram.links = &links;
+            ram.visible = ram.store;
+            Ledger lw, lr;
+            lw.total = lr.total = total;
+            const Outcome ow = Search(s, &g, &links, &warm, &lw).round(start, curves, {start}, {});
+            const Outcome orr = Search(s, &g, &links, &ram, &lr).round(start, curves, {start}, {});
+            CHECK_EQ(ow.stop, orr.stop);
+            CHECK_EQ(ow.accepted, orr.accepted);
+            CHECK_EQ(lw.spent, lr.spent);
+            CHECK_EQ(warm.fetches, ram.fetches);
+            if (total == 1168 && except == 0) {
+                CHECK(ow.stop.empty());
+                CHECK_EQ(ow.accepted, (Partition{{0}, {1, 2}, {3}}));
+                CHECK_EQ(lw.spent, 0.);
+            }
+        }
+}
 }   // namespace
 
 int main() {
@@ -1482,5 +1536,6 @@ int main() {
     test_paths_agree();
     test_except_checks();
     test_second_review();
+    test_review_20261012();
     return check::report("test_regroup");
 }

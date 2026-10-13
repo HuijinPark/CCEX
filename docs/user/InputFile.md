@@ -1,7 +1,7 @@
 # Input File
 <a id="InputFile"></a>
 
-Every key of the input file, in seven groups. Each group is a page of its own, and
+Every key of the input file, in eight groups. Each group is a page of its own, and
 every key in the lists below links to its entry there.
 
 <a id="HowToWrite"></a>
@@ -42,8 +42,8 @@ A key that no part of the run reads is reported (`Warning: input key ... is not 
 when it is one or two letters away from a key that was looked up and is absent from the same
 block, the run stops: `"nstates"` would leave `nstate` at its default. In the `qubitfile` form
 the branch keys are `qalphams`/`qbetams`; a top-level `alphams` there was ignored until
-2026-10-02 and is now refused. When both `qubitfile` and a `Qubit` block are given, the
-`qubitfile` is used and the block is not read (reported as unread).
+2026-10-02 and is now refused. An input that gives both `qubitfile` and a `Qubit` block is
+refused (until 2026-10-13 the `qubitfile` was used and the block silently not read).
 
 <a id="GeneralTag"></a>
 ## General tags
@@ -95,7 +95,7 @@ The format is the following:
 
 <b>Case1.</b> [qubitfile](InputFile_General.md#tag_qubitfile) tag <br>
   : Only single-qubit systems are supported. <br>
-    Note that this tag takes priority over the [Qubit](InputFile_Qubit.md#tag_Qubit) tag. <br>
+    An input that has both `qubitfile` and a [Qubit](InputFile_Qubit.md#tag_Qubit) block is refused: give one or the other. <br>
 
 <b>Example:</b> ``` "qubitfile"  : "file-path" ```
 
@@ -115,8 +115,8 @@ The format is the following:
                                 "gyro" : -17608.597050,
                                 "xyz"  : [1.0, 2.0, 3.0],
                                 "detuning" : 0.0,
-                                "alphams" : 0,
-                                "betams"  : 1,
+                                "alphams" : 0.5,
+                                "betams"  : -0.5
                             },
                             {
                                 "name" : "Q2",
@@ -125,31 +125,36 @@ The format is the following:
                                 "xyz"  : [4.0, 5.0, 6.0],
                                 "detuning" : 0.0,
                                 "alphams" : 0,
-                                "betams"  : 1,
+                                "betams"  : 1
                             }
                 ],
                 "intmap" : [
                             {
-                                # Zero field splitting
-                                "between" : ["Q1", "Q1"], 
+                                # zero-field splitting of Q2
+                                "between" : ["Q2", "Q2"],
                                 "tensor"  : [[1.0, 2.0, 3.0],
                                             [4.0, 5.0, 6.0], 
-                                            [7.0, 8.0, 9.0]],
+                                            [7.0, 8.0, 9.0]]
                             },
                             {
                                 "between" : ["Q1", "Q2"],
                                 "tensor"  : [[1.0, 2.0, 3.0],
                                             [4.0, 5.0, 6.0], 
-                                            [7.0, 8.0, 9.0]],
+                                            [7.0, 8.0, 9.0]]
                             }
-                ]
-              },
-    "psia" : [1.0, 2.0, 3.0],
-    "psib" : [4.0, 5.0, 6.0],
-    "psi0" : [7.0, 8.0, 9.0],
-    "overhaus" : true,
+                ],
+                "psia" : [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                "psib" : [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                "psi0" : [0.0, 0.70710678, 0.0, 0.70710678, 0.0, 0.0],
+                "overhaus" : true
+              }
 }
 ```
+The first `intmap` entry is the zero-field splitting of Q2 (`between` names the same qubit twice); the
+second is the Q1–Q2 coupling. `psia`, `psib` and `psi0` sit inside the `Qubit` block and have the length
+of the whole qubit space, here 2 × 3 = 6, ordered as kron(Q1, Q2) with the last qubit varying fastest:
+`psia` is |m<sub>1</sub> = +1/2, m<sub>2</sub> = 0⟩ and `psib` is |−1/2, +1⟩, the same states that
+`alphams`/`betams` name.
 </details>
 
 - [qubitfile](InputFile_General.md#tag_qubitfile)
@@ -212,7 +217,7 @@ The keys of this group are described in [InputFile_Backend.md](InputFile_Backend
 Where and how the cluster dynamics is computed, and what the run reports about it.
 
 - [backend](InputFile_Backend.md#tag_backend)
-- [gpu_options](InputFile_Backend.md#tag_gpu_options) (min_dim, packed_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb)
+- [gpu_options](InputFile_Backend.md#tag_gpu_options) (min_dim, packed_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb, warp_max_dim)
 - [probe_memory_gb](InputFile_Backend.md#tag_probe_memory_gb)
 - [propagator](InputFile_Backend.md#tag_propagator)
 - [evolution](InputFile_Backend.md#tag_evolution)
@@ -290,6 +295,10 @@ The format is the following:
 ## Output tags
 The keys of this group are described in [InputFile_Output.md](InputFile_Output.md).
 
-- [savemode](InputFile_Output.md#tag_savemode)
+- [savemode](InputFile_Output.md#tag_savemode) (`mode`, `nodiv`; the old names and `save_nodiv` are refused)
 - [outfile](InputFile_Output.md#tag_outfile)
-- [save_nodiv](InputFile_Output.md#tag_save_nodiv)
+
+<a id="AutoConvergenceTags"></a>
+## Automatic convergence tags
+The `auto_convergence` block (its sections `time_window`, `rdip`, `rbath`, `t2_fit` and
+`configurations`) is described in [InputFile_AutoConvergence.md](InputFile_AutoConvergence.md).

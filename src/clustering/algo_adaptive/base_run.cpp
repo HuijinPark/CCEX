@@ -2,6 +2,7 @@
 // the input manifest that identifies a run, and the on-disk cache of raw probe curves.
 #include "base_run.h"
 
+#include <algorithm>
 #include <cerrno>
 #include <cmath>
 #include <chrono>
@@ -284,6 +285,31 @@ NativeResult run_native(const std::vector<std::string>& command, const std::stri
     for (const std::string& entry : env)
         envp.push_back(const_cast<char*>(entry.c_str()));
     envp.push_back(nullptr);
+    // execvpe is GNU only (macOS has none: review 20261012-233058-452278 R2), so the PATH
+    // search is done here as glibc's execvpe does it: a name with a slash is run as given,
+    // otherwise each PATH entry in turn (an empty entry is the working directory; no PATH:
+    // /bin:/usr/bin), going past an entry that does not hold it or may not run it. A file
+    // the kernel will not execute (ENOEXEC) is handed to /bin/sh. Everything is built
+    // before fork; the child only calls execve, so relative entries resolve after its
+    // chdir, as before.
+    std::vector<std::string> candidates;
+    if (command.empty() || command[0].find('/') != std::string::npos) {
+        candidates.push_back(command.empty() ? std::string() : command[0]);
+    } else {
+        const char* path = std::getenv("PATH");
+        const std::string dirs = path != nullptr ? path : "/bin:/usr/bin";
+        for (std::size_t at = 0; at <= dirs.size(); ) {
+            const std::size_t colon = std::min(dirs.find(':', at), dirs.size());
+            const std::string dir = dirs.substr(at, colon-at);
+            candidates.push_back(dir.empty() ? command[0] : dir+"/"+command[0]);
+            at = colon+1;
+        }
+    }
+    std::vector<char*> shell_argv;
+    shell_argv.push_back(const_cast<char*>("/bin/sh"));
+    shell_argv.push_back(nullptr);                       // the file, set in the child
+    for (std::size_t k = 1; k < argv.size(); ++k)
+        shell_argv.push_back(argv[k]);                   // ends with argv's nullptr
 
     const pid_t child = fork();
     if (child < 0)
@@ -300,7 +326,17 @@ NativeResult run_native(const std::vector<std::string>& command, const std::stri
         dup2(log, STDERR_FILENO);          // stderr joins stdout, as Python asks
         if (log > STDERR_FILENO)
             close(log);
-        execvpe(argv[0], argv.data(), envp.data());
+        for (const std::string& file : candidates) {
+            execve(file.c_str(), argv.data(), envp.data());
+            if (errno == ENOEXEC) {
+                shell_argv[1] = const_cast<char*>(file.c_str());
+                execve("/bin/sh", shell_argv.data(), envp.data());
+                break;
+            }
+            if (errno != EACCES && errno != ENOENT && errno != ENOTDIR && errno != ESTALE &&
+                errno != ENODEV && errno != ETIMEDOUT)
+                break;
+        }
         _exit(127);
     }
 

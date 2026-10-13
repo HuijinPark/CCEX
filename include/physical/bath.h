@@ -7,8 +7,8 @@
 #include "input/general.h"
 
 /**
- * @struct BathSpin structure
- * @brief BathSpin structure contains each BathSpin's information 
+ * @struct BathSpin
+ * @brief BathSpin structure contains each BathSpin's information
  * @note When you make this structure, 
  *       the following action would be done automatically.
  *       (1) state value would be allocated
@@ -21,21 +21,21 @@ typedef struct {
 
     /**
      * @brief the name of spin
-     * @details Value can be obtained from &Bath -> bathfile (no default value)
-     * @todo Add documentation for cce.in : &Bath -> bathfile 
+     * @details Read from the bath file(s) given by "bathfile" (or -I) (no default value)
     */ 
     char name[MAX_CHARARRAY_LENGTH]; 
 
     /**
      * @brief Spin quantum number
-     * @details Value can be obtained from &Bath -> gyrofile (no default value)
+     * @details From the optional "gyrofile" when it lists the species, otherwise from the
+     *          built-in isotope table (src/input/isotope_table.cpp); an unknown species is an error
     */
     float spin;    
 
     /**
      * @brief Gyromagnetic ratio (Unit : radkHz/Gauss)
-     * @details Value can be obtained from &Bath -> gyrofile (no default value)
-     * @todo Add documentation for cce.in : &Bath -> gyrofile 
+     * @details From the optional "gyrofile" when it lists the species, otherwise from the
+     *          built-in isotope table; the file value wins when both exist
     */
     double gyro;   
 
@@ -55,9 +55,8 @@ typedef struct {
   
     /**
      * @brief Spin position (Unit : Angstrom)
-     * @details Value can be obtained from &Bath -> bathfile (no default value)
-     * @note The x,y,z position can be adjusted by &Bath -> bathadjust for each bath file
-     * @todo Add documentation for cce.in : &Bath -> bathfile 
+     * @details Read from the bath file(s) given by "bathfile" (no default value)
+     * @note The x,y,z position can be shifted per bath file by "bathadjust"
     */
     double xyz[3]; 
 
@@ -65,16 +64,8 @@ typedef struct {
     /* Spin state (Optional)*/
 
     /**
-     * @brief Spin sub-level in z-basis (if &General -> nstate != 0, i.e. single-sample approach)
-     * @details Value can be obtained from the following : (no default value)
-     *          - &Bath -> statefile (fixed)  // old version
-
-     *          - &General -> nstate (randomly generated) 
-     *          - &General -> seed (fixed) // new version to fix
-     * @note The state would be normalized and The length of state = 2*spin+1
-     * @todo Add documentation for cce.in : &Bath -> "statefile" -> "substatefile" tag
-     * @todo Add documentation for cce.in : &General -> "nstate" and &General -> "seed" tag
-     * @todo Replace the way to get fixed state from reading "file" to using "seed" 
+     * @brief Spin sub-level m in the z-basis, a single number (used when "nstate" != 0, the sampled-state approach)
+     * @details Read from "statefile" when given, otherwise drawn at random ("nstate" states, "seed" fixes them)
     */
     float state; 
 
@@ -83,10 +74,8 @@ typedef struct {
 
     /**
      * @brief The detuning value of a bath spin (Unit : radkHz)
-     * @details The artifitial effect to shift energy level of a qubit.
-     *          Value can be obtained from &Bath -> "bdetuning" (default : 0.0)
-     * @note Unit in input file (cce.in) : MHz
-     * @todo Add documentation for cce.in : &Bath -> "bdetuning" tag
+     * @details An artificial shift of the bath spin's energy levels. There is no bath-level input key:
+     *          it is 0 unless the spin is a Defect main spin, whose Defect "detuning" (MHz) is added
     */
     double detuning; 
 
@@ -106,22 +95,15 @@ typedef struct {
 
     /**
      * @brief The hyperfine interaction between qubits and a bath spin (Unit : radkHz)
-     * @details Value is obtained from &Bath -> "Atensorfile" (default : 0.0)
-     *       - hypf[i] : the hyperfine interaction with i-th qubit
-     * @note Unit in input file (cce.in) : MHz
-     * @todo Add documentation for cce.in : &Bath -> "Atensorfile" tag
-     * @todo IMPORTANT : The hyperfine interaction to be deleted if QubitArray include the one of the bath spin in A tensor file
+     * @details hypf[i] : the hyperfine tensor with the i-th qubit. Point dipole by default
+     *          ("hf_readmode" 0); "hf_readmode" 1-3 read "hf_tensorfile" (MHz), and a Defect's "hypf" sets its spins
     */
     MatrixXcd* hypf; // 2024.01.26 change naming due to &Defect.defect.hypf : hypf to intqb 보류
 
     /**
      * @brief The quadrupole interaction a bath spin (Unit : radkHz)
-     * @details Value is obtained from &Bath -> "qtensorfile" (default : 0.0)
-     * @note - Unit in input file (cce.in) &Defect -> "dquad" : MHz
-     *       - Unit in input file (cce.in) &Bath -> "qtensorfile" : Hatree/Bohr_radius^2
-     * @todo Above @note have to be unified with one unit (MHz seems better.. but the problem is how to get Qtensorfile..)
-     * @todo Add documentation for cce.in : &Bath -> "qtensorfile" tag
-     * @todo IMPORTANT : The quadrupole interaction to be deleted if QubitArray include the one of the bath spin in Q tensor file
+     * @details Zero by default ("qd_readmode" 0); "qd_readmode" 2-4 read "qd_tensorfile" (EFG), and for an
+     *          electron main spin of a Defect the Defect "zfs" (MHz) is stored here
     */
     MatrixXcd quad; // 2024.01.26 change naming due to &Defect.defect.quad : quad to intself 보류
 
@@ -133,8 +115,8 @@ typedef struct {
 } BathSpin;
 
 /*!
- * @struct BathSpinArray
- * @brief BathSpinArray include all Bath spins' information
+ * @struct BathArray
+ * @brief BathArray include all Bath spins' information
  */
 typedef struct {
 

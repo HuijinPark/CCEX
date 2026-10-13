@@ -76,6 +76,8 @@ You can specify this value via the "-q" command-line option. <br>
 | `coherence` | Coherence function             |
 | `dm`        | Density matrix                 |
 
+Any other value is refused, `noise` included: the parser used to accept it, but there is no noise calculation.
+
 With `dm` (gCCE), the reduced density matrix of the qubits is written as blocks of rows, one
 block per time step, and the cluster expansion is applied element by element. An element the
 free evolution keeps at zero (a level the initial state does not touch) is left at zero; when
@@ -106,12 +108,14 @@ Order of the CCE method.
 <b>Description:</b><br>
 Magnetic field.
 
-You can specify a magnetic field along the z-axis via the "-B" command-line option. <br>
+You can override the z component with the "-B" command-line option, but the key itself must be
+in the input file: `-B` is applied after the file is read and does not stand in for a missing
+`bfield`. For no field, write `"bfield": 0`. <br>
 <b>Data Type:</b> Float or Float List
 
 <b>Unit:</b> gauss (G)
 
-<b>Default:</b> 0.0
+<b>Default:</b> none (required)
 
 <b>Example:</b>
 
@@ -219,7 +223,7 @@ printed with `%g`). The main output is the run at `rdip` as before. The automati
 
 Order 2 only, of `method` CCE, gCCE (every path: ensemble, `evolution` vector and matrix) or pCCE (both
 [pcce_connections](InputFile_Cluster.md#tag_pcce_connections) rules; the partition does not depend on `rdip`, only which
-partition pairs are connected), with `quantity` coherence, `cluster_mode` standard, `savemode` normal, every pair within
+partition pairs are connected), with `quantity` coherence, `cluster_mode` standard, `savemode` coherence, every pair within
 `rdip` as a cluster (no `nk` cut) and without `cluster_contributions`. Anything else is refused with
 `Error: rdip_ladder ...`. Each rung is its separate run up to the rounding of the order of the products
 (`test/code_verification/check_rdip_ladder`: equal to within 1e-9; on a curve that diverges far above 1, a difference
@@ -303,6 +307,7 @@ If you want to generate the same state templates, you should set the same seed v
 File path of the qubit spatial configuration. <br>
 This tag is required when you use the qubit configuration file. <br>
 Also, this only supports for a single qubit system. <br>
+It cannot be combined with a [Qubit](InputFile_Qubit.md#tag_Qubit) block: an input that has both is refused. <br>
 
 <pre>
     File format is the following :
@@ -369,15 +374,16 @@ You can specify this value via the "-I" command-line option. <br>
     example)
     1.0 0.0 0.0 0.0   - Total line number 
     1.0 2.0 3.0 13C   - x,y,z in cartesian, angstrom
-    4.0 5.0 6.0  P1   - Spin name should be the same to the name in [gyrofile](#tag_gyrofile)
+    4.0 5.0 6.0  P1   - Spin name should be the same to the name in gyrofile
 </pre>
 
-<b>Data Type:</b> String (File path) or String List
+<b>Data Type:</b> String List (file paths). In the input file it is always an array, also for one
+file; a bare string is refused. The `-I filepath` command-line option takes a single path.
 
 <b>Default:</b> -
 
 <b>Example:</b> 
-    ``` bathfile : "filepath" ```
+    ``` bathfile : ["filepath"] ```
 
 ``` bathfile : ["filepath1", "filepath2", ... ] ```
 
@@ -390,12 +396,13 @@ Adjust the bath configuration. <br>
 If you want to adjust the bath configuration, you can set the bathadjust value. <br>
 Usually, this tag is required for multiple qubit calculation that wouldb have different bath configuration <br>
 
-<b>Data Type:</b> Double List
+<b>Data Type:</b> List of Double Lists: one `[x, y, z]` shift per bath file, so exactly as many rows
+as `bathfile` has entries, each with three numbers. A flat `[1.0, 2.0, 3.0]` is refused.
 
-<b>Default:</b> -
+<b>Default:</b> `[0, 0, 0]` for every bath file
 
 <b>Example:</b> 
-    ``` bathadjust : [1.0, 2.0, 3.0] ```
+    ``` bathadjust : [[1.0, 2.0, 3.0]] ```
 
 ``` bathadjust : [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], ... [7.0, 8.0, 9.0]] ```
 
@@ -409,10 +416,10 @@ symmetry axis. <br>
 Use it when the bath file is written in the crystal frame (e.g. diamond [001]) but the
 qubit is quantized along another direction (e.g. an NV along [111]). <br>
 More than one qubit is supported: every Qubit.xyz and every bath-spin position receives
-the same $R$ and the same $r_0$. <br>
+the same R and the same r<sub>0</sub>. <br>
 The keys of the block are "enabled", "bath_axis", "qubit_axis", "reference_qubit",
 "qubit_position_frame", "hf_tensor_frame" and "qd_tensor_frame". What is transformed,
-what is refused and what each key means are in `docs/methods/coordinate-frame-rotation.md`. <br>
+what is refused and what each key means are in [The coordinate frame rotation](../methods/coordinate-frame-rotation.md). <br>
 
 <b>Data Type:</b> Object { Boolean, Double List(3), Double List(3), String x4 }
 
@@ -568,8 +575,9 @@ You can specify this value via the "-S" command-line option. <br>
 <a id="tag_DefectTotSpin"></a>
 ## DefectTotSpin
 <b>Description:</b><br>
-Total spin number of the qubit. <br>
-(Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <br>
+Total spin S of the defect (the qubit). It must be the qubit's spin. With a hyperfine tensor file of format v3 (a
+provenance line, see [hf_tensorfile](#tag_hf_tensorfile)) it is only checked: a file whose S differs is refused. It
+scales the hyperfine only for an older file without that line (x 0.5/DefectTotSpin unless the first line is `VASP`). <br>
 
 <b>Data Type:</b> Double
 
@@ -584,8 +592,8 @@ Total spin number of the qubit. <br>
 <a id="tag_CorrTotSpin"></a>
 ## CorrTotSpin
 <b>Description:</b><br>
-Spin number correction <br>
-(Required when you use Hyperfine tensor file obtained by QUANTUM ESPRESSO) <br>
+For an older hyperfine tensor file only (no provenance line) whose first line is `VASP`: when not 0, the hyperfine is
+scaled by CorrTotSpin/DefectTotSpin. Not used with a file of format v3 (the log says so). <br>
 
 <b>Data Type:</b> Double
 
@@ -632,26 +640,39 @@ written by `example/tools/SpinTensorReader` from a DFT run and holds, after a he
 line per species with its g-factor and its default tensor (`etc____`, used for atoms outside
 the range), the range of relative positions the file covers (`MinDif[A]`, `MaxDif[A]`), and one
 row per atom: species, position relative to the defect (Å), the isotropic part (MHz) and the
-nine tensor components (MHz). <br>
+nine tensor components (MHz), each per unit nuclear g-factor (CCEX multiplies by the species' g-factor). <br>
+<b>Format v3 (2026-10-13):</b> line 1 is the tag of the DFT code (`VASP` or `QUANTUMESPRESSO`) and line 2 the provenance
+line `# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = <VASP OUTCAR|QE hyperfine.out>, S = <S>`.
+The numbers are then the hyperfine of the spin-S defect whichever code made them (SpinTensorReader divides Quantum
+ESPRESSO's S = 1/2 coupling by 2S; VASP's OUTCAR is already per S), and CCEX reads them as written;
+[DefectTotSpin](#tag_DefectTotSpin) and [CorrTotSpin](#tag_CorrTotSpin) do not scale them. Refused: a first line that
+is not the tag of the source, the provenance line elsewhere than line 2 or twice, an unknown format or source, and an S
+other than DefectTotSpin. <br>
+A file without the provenance line (written before format v3) is read by the earlier rule, with a warning in the log:
+first line `VASP` -> x 1 (x CorrTotSpin/DefectTotSpin when CorrTotSpin is not 0), anything else -> x 0.5/DefectTotSpin.
+A SpinTensorReader `--version v1` file (OUTCAR x 2) is right only untagged and for S = 1; with a `VASP` line it is read 2x
+(the h-BN tutorial file until 2026-10-13). Remake old files with SpinTensorReader. <br>
 A bath spin is matched to a row by its position relative to the qubit. (`hf_cutoff`, read
 beside these keys until 2026-09-24, never had an effect and is ignored if present.) A spin outside the
 range gets a point-dipole tensor; a spin inside the range with no row is decided by
 [hf_ignore_oor](#tag_hf_ignore_oor). The positions are in the bath frame; the frame of the
 components is `hf_tensor_frame` of [coordinate_frame_rotation](#tag_coordinate_frame_rotation). <br>
 <pre>
+VASP                                         the DFT code (format v3)
+# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = VASP OUTCAR, S = 1
 AtomName   r_1i_X  r_1i_Y  r_1i_Z  iso[MHz]  Axx Axy Axz Ayx Ayy Ayz Azx Azy Azz
 10B  g-factor___:  0.600215 [No-unit]       one line per species
 10B  etc____:      ---  ---  ---  0.00000    the tensor used outside the range
 MinDif[A]:  -11.31  -6.53  0.00              the range of relative positions the file covers
 MaxDif[A]:   10.06   6.53  0.00
-B   -10.05626  -4.36351  0.00000  0.00000  0.06098 ... -0.04   one row per atom
+B   -10.05626  -4.36351  0.00000  0.000000  0.030490 ... -0.022870   one row per atom
 </pre>
 
 <b>Data Type:</b> String (file path)
 
 <b>Default:</b> - (required when `hf_readmode` is not 0)
 
-<b>Example:</b> ``` "hf_tensorfile" : "../bath/flat/hBN_VB_flat_ATensor_HSE_CellPBE_tag" ```
+<b>Example:</b> ``` "hf_tensorfile" : "../bath/flat/hBN_VB_flat_ATensor_HSE_CellPBE_v3" ```
 
 <b>Related Tags:</b> [hf_readmode](#tag_hf_readmode) [hf_ignore_oor](#tag_hf_ignore_oor)
 

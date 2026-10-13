@@ -1,53 +1,5 @@
-
-    ============================================================
-
-    <\Summary> make AQ tensor file for CCE calculation
-
-
-    Latest update :  Sun May  7 14:34:50 2023
-
-    Current time  :  Sun May  7 14:34:58 2023
-
-    ____________________________________________________________
-
-
-
-    Author        : Huijin Park
-
-    note1         : For VASP, you will find error 
-    		    if your INCAR file include NGYROMAG
-    		    This case need to be considered
-
-    note2         : POSCAR files should include defect information.
-    		    Also, Atomic name need to be consistant
-
-    update1       : (2023.02.15) Added key : [33m--addhfcore[0m 
-    		    In the case of VASP, 
-    		    We should add the core electronic contributions to fermi contact term 
-    		    (A_tot = A_1c + A_tot)
-
-    update2       : (2023.03.21) Added key : [33m--fidentify[0m 
-    		    The first line of the A file include VASP/QUANTUMESSPRESSO.
-
-    update3       : (2023.03.21) Added key : [33m--version[0m 
-    		    You can choose version : v1 or v2 
-    		    Previous version : Afile of VASP and QE was the same (The central spin factor was treated) 
-    		    New version : Afile of VASP/QE would be the same to the OUTCAR/hyperfine.out result
-
-    update4       : (2023.03.21) Added key : [33m--rangeformat[0m 
-    		    You can convert the format of cell' range from relativepos coordinate to vertex or xyz coordinate
-
-    update5       : (2023.05.05) Added key : [33m--ccein[0m 
-    		    You can get interaction tensors of &Exspin in cce.in file. 
-    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
-
-    update6       : (2023.05.06) Added key : [33m--cceindiag[0m 
-    		    If you want to check diagonalized value, use this option. 
-    		    [33m--JT[0m and [33m--addspins[0m option should be used too.
-
-    ____________________________________________________________
-
-
+example/tools/SpinTensorReader/main.py:108: SyntaxWarning: invalid escape sequence '\.'
+  p = re.compile('[0-9\.]+')
 	Input argument : 
 
 	 [1] tool    : VASP
@@ -60,7 +12,7 @@
 	 opt. --D       : []
 	 opt. --dfpos   : []
 	 opt. --ignoreatm : []
-	 opt. --fidentify : False
+	 opt. --spin    : []
 	 opt. --addhfcore : True
 	 opt. --version : v2
 	 opt. --rangeformat : coord
@@ -95,7 +47,6 @@
 	atm: N
 	isotopeData {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
 	iso N {'14N': (1.0, 1.9338, 0.02044, 0.9963), '15N': (0.5, -2.7126, 0.00000, 0.0037)}
-[['13C', 1.4048236], ['14N', 0.403761], ['15N', -0.56637768]]
 
 
 
@@ -238,10 +189,12 @@
 	 Relative positions from central defect (KEY : relativepos)
 	------------------------------
 
-	 *MinDif[A] : [-7.5662999153, -8.737301827667288, -5.940230936455169]
-	 *MaxDif[A] : [6.306077898014738, 8.00897242693898, 5.912452905631326]
+	 *MinDif[A] : [-7.566 -8.737 -5.94 ]
+	 *MaxDif[A] : [6.306 8.009 5.912]
 	 *farthest_atoms_idx : [0, 569, 570]
-	 *farthest_atom_info : [['C', -7.5662999153, -8.737060202721128, -5.938889099081623], ['N', 0.0, -0.00037200945753212977, 2.022186083235515], ['C', 0.0, -1.4466928977273907, 2.3480555851418075]]
+	 *farthest_atoms_info : C , [-7.566 -8.737 -5.939]
+	                      : C , [-7.566 -8.737 -5.939]
+	                      : C , [-7.566 -8.737 -5.939]
 	 *r_1i (cart) :  
 
 	    idx      atom     r_1ix     r_1iy     r_1iz
@@ -261,18 +214,14 @@
 	=========================================
 	                 DONE                     
 	=========================================
-dataDiag===============================
-{'eq': [['14N', 2.044], ['14N', 2.044]], 'rxyz': [[4, '14N', 0.0, 0.0, 0.0], [4, '14N', 0.0, -0.00037200945753212977, 2.022186083235515]], 'Adiag': [[4, '14N', 128.69735086464834, 54.838557546860415, 54.84471757542821], [4, '14N', 128.69735086464834, 54.838557546860415, 54.84471757542821]], 'Qdiag': [[4, '14N', -0.6877375675537949, 0.34502138611245425, 0.34271618144134075], [4, '14N', -0.6877375675537949, 0.34502138611245425, 0.34271618144134075]], 'Ddiag': []}
-rdataDiag===============================
-{'eq': [], 'rxyz': [[1, '14N', 0.0, 0.0, 0.0], [1, '14N', 1.6541, -0.95643, -0.67778], [2, '14N', 0.0, 0.0, 0.0], [2, '14N', -1.6541, -0.95643, -0.67778], [3, '14N', 0.0, 0.0, 0.0], [3, '14N', 0.0, 1.91055, -0.6775]], 'Adiag': [[1, '14N', 125.72882, 53.57702, 53.58724], [1, '14N', 125.72882, 53.57702, 53.58724], [2, '14N', 125.72882, 53.57702, 53.58724], [2, '14N', 125.72882, 53.57702, 53.58724], [3, '14N', 53.04747, 125.61027, 53.04734], [3, '14N', 53.04747, 125.61027, 53.04734]], 'Qdiag': [[1, '14N', -0.70578, 0.35178, 0.354], [1, '14N', -0.70578, 0.35178, 0.35399], [2, '14N', -0.70578, 0.35178, 0.354], [2, '14N', -0.70577, 0.35179, 0.35399], [3, '14N', 0.35349, -0.7032, 0.34971], [3, '14N', 0.35349, -0.70321, 0.34971]], 'Ddiag': []}
 
     ____________________________________________________________
 
-    memory_usage_percent  :     6.500 %
+    memory_usage_percent  :    19.800 %
 
-    Current memory KB     :    69.043 KB
+    Current memory KB     :   129.602 KB
 
-    Wall clock time       : 0:00:00.326336(s)
+    Wall clock time       : 0:00:00.090104(s)
 
     ============================================================
         JOB DONE    

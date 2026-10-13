@@ -14,7 +14,7 @@ def config_for(family,state):
     for key in ('gyrofile','qubitfile'):
         if c.get(key):c[key]=str(root/c[key])
     c['bathfile']=[str(root/p) for p in c['bathfile']]
-    c.update(profile=True,savemode='normal',propagator='eigen',gpu_options=dict(c.get('gpu_options',{}),evolution_batch_steps=4))
+    c.update(profile=True,savemode='coherence',propagator='eigen',gpu_options=dict(c.get('gpu_options',{}),evolution_batch_steps=4))
     return c
 
 
@@ -48,7 +48,7 @@ def main():
                     if execution[key]!=record['executions']['cpu'][key]:raise ValueError(f'{name}/{variant}: {key} differs')
             record['executions'][variant]=execution;record['comparisons'][variant]=error
             if variant=='cuda_batch' and '[gpu-batch]' not in log:raise ValueError(f'Batch path not exercised: {name}')
-            if variant=='auto' and max(map(int,execution['cluster_counts_by_dimension']))<c['gpu_options'].get('min_dim',256):
+            if variant=='auto' and max(map(int,execution['cluster_counts_by_dimension']))<c['gpu_options'].get('min_dim',768):
                 if re.search(r'\[backend\].*CUDA device=',log) or '[gpu-memory]' in log:
                     raise ValueError('Small auto run unnecessarily initialized CUDA')
             print('PASS',name,variant,error,flush=True)

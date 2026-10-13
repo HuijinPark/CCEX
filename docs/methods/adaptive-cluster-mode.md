@@ -6,7 +6,8 @@
 연결된 bundle `order`개의 합집합이 **cluster**, 전체 배정이 **partition**이다.
 2026-09-18 이전 문서의 "그룹"이 bundle이다.
 
-현재 입력 설명은 2026-09-18 구현 기준이다. bundle order 3 이상과 제한된 자동 차수 증가 (archive/adaptive-high-order-20260912.md)도 지원한다.
+현재 입력 설명은 2026-09-18 구현 기준이다. bundle order 3 이상도 지원한다 (archive/adaptive-high-order-20260912.md). 그 기록의 제한된 자동 차수 증가는
+지금 없다: `order`는 입력 값 그대로이며, 차수를 올리던 auto-partition은 2026-10-10에 뺐다.
 아래의 초기 예제·검증 기록은 각 검사 당시 조건을 유지하며, 옛 옵션 이름을 그대로 둔다.
 일반 입력은 `rdip` 유무로 연결 방식을 선택한다. 생략하면 제한된 coherence 검사 후 약한 연결을 생략한다.
 차원 상한은 **`bundle_max_dim` 하나**이며 필수다. cluster 차원은 이 상한과
@@ -88,11 +89,11 @@ rdip 생략 모드의 내부 상수(`include/adaptive_defaults.h`, `1e-7`/`1e-5`
 }
 ```
 
-두 예의 실행 가능한 전체 입력은 [거리 방식](../../test/cluster_verification/check_bundle/simple_ensemble.json),
-[rdip 생략 방식](../../test/cluster_verification/check_bundle/checked_ensemble.json)이다. 다음처럼 직접 실행한다.
+두 예의 실행 가능한 전체 입력은 거리 방식 `test/cluster_verification/check_bundle/simple_ensemble.json`,
+rdip 생략 방식 `test/cluster_verification/check_bundle/checked_ensemble.json`이다(저장소 최상위 기준). 다음처럼 직접 실행한다.
 
 ```bash
-bash do_compile.sh wsl-gnu        # 또는 cmake -B build && cmake --build build; 둘 다 bin/main.out을 만든다
+bash do_compile.sh wsl-gnu        # bin/main.out을 만든다; cmake -B build && cmake --build build는 build/bin/main.out을 만든다
 mpirun -n 2 bin/main.out -f test/cluster_verification/check_bundle/simple_ensemble.json -v
 mpirun -n 2 bin/main.out -f test/cluster_verification/check_bundle/checked_ensemble.json -v
 ```
@@ -141,7 +142,7 @@ cluster 차원은 bundle 차원의 곱(gCCE는 중심스핀 차원도 포함)으
 | `pruning_failed_links_restored` | 생략 때문에 오차가 커져 전체 후보 복구 |
 | `base_unconverged_links_restored` | 생략 전 차수/분할부터 부분계 기준에 미달, 후보 복구 |
 | `*_budget_unverified_links_kept` | 검사 예산 부족, 생략하지 않고 원래 연결로 실행 |
-| `single_group_no_links` | 한 그룹으로 직접 계산하므로 그룹 간 연결 선택 불필요 |
+| `single_bundle_no_links` | 한 bundle로 직접 계산하므로 bundle 간 연결 선택 불필요 (2026-09-18 전 기록의 `single_group_no_links`) |
 | `order_one_no_link_expansion_unchecked` | order 1의 여러 그룹은 그룹 간 전개가 없어 연결 검사 미실시 |
 
 보고서의 `accuracy_certified`는 항상 false다. `order`는 여전히 필수이며 자동 차수 결정은 없다
@@ -249,8 +250,8 @@ omitted_score <= bundle_connection_budget
 예산 0은 양의 결합을 제외하지 않는 엄격한 비교 기준이다. 차원이나 거리 제한으로
 이를 만족할 수 없으면 오류다. `tmax=0`인 계산에서는 제외 점수도 0이다.
 group order 1은 모든 잔여 그룹 간 연결을 제외하므로, 하나의 그룹으로 합쳐지지
-않으면 작은 예산에서 거절될 수 있다. `order`, 전체 계산 차원 상한과 제외 예산은
-이 기존 방식에서 사용자가 지정한다. 그룹 상한과 병합 cutoff는 생략할 수 있다. 어떤 bath에도 적합한 예산 기본값을 넣지는 않았다.
+않으면 작은 예산에서 거절될 수 있다. `order`, 차원 상한 `bundle_max_dim`(필수, 별도 cluster 상한은 없다)과
+제외 예산은 사용자가 지정한다. 병합 cutoff `bundle_merge_cutoff`는 생략할 수 있다. 어떤 bath에도 적합한 예산 기본값을 넣지는 않았다.
 
 예제의 6스핀, pulse 1, 0–0.04 ms 조건은 3/2/1스핀 그룹을 만든다. 예산 0이면
 그룹 간 연결 3개를 유지하고, 예산 0.01이면 가장 강한 연결 1개를 유지한다.
@@ -270,8 +271,8 @@ group order 절단 오차와 곱·나눗셈의 수치 불안정성은 별개다.
 
 ## 출력과 제한
 
-`[adaptive]`는 알고리즘/방법, 그룹 order, site/그룹/pair 수, 병합 수, 상한으로
-차단된 연결 수와 차원 제한을 출력한다. `[adaptive-group]`는 모든 그룹의 차원과
+`[adaptive]`는 알고리즘/방법, bundle order(`bundle_order=`), site/bundle/pair 수, 병합 수, 상한으로
+차단된 연결 수와 차원 제한을 출력한다. `[adaptive-bundle]`는 모든 bundle의 차원과
 0부터 시작하는 원본 bath site IDs를 기록한다. `[adaptive-expansion]`은 실제로
 전파하는 비영 지수 항 수와 최대 site 수를 출력한다. `[profile]`의 차원은 defect
 및 gCCE qubit까지 반영한 실제 행렬 차원이다.
@@ -286,8 +287,8 @@ group order 절단 오차와 곱·나눗셈의 수치 불안정성은 별개다.
 분할 중요도에 반영하지 않는다. 해당 항들의 기존 동역학 계산은 그대로 수행하며,
 새 오차 기반 드라이버는 그 계산 결과로 제한된 병합·재배치 후보를 평가한다.
 새 rdip 생략 방식은 제한된 연결 생략을 coherence로 검사한다.
-반복 분할 개선과 연결 선택을 함께 최적화하는 전역 탐색은 구현하지 않았다. 고차 전개와
-제한된 자동 차수 증가는 별도 설명 (archive/adaptive-high-order-20260912.md)을 참조한다.
+반복 분할 개선과 연결 선택을 함께 최적화하는 전역 탐색은 구현하지 않았다. 고차 전개는
+별도 설명 (archive/adaptive-high-order-20260912.md)을 참조한다(그 기록의 제한된 자동 차수 증가는 지금 없다).
 차원 제한만으로 동시에 실행하는 모든 MPI
 프로세스의 전체 메모리 사용량을 보장하지는 않는다.
 

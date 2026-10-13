@@ -122,5 +122,14 @@ int main(int argc,char** argv) {
         std::vector<Point> spins(24,Point{extreme,0,0}),centers(8,Point{0,0,0});
         check(spins,centers,false);
     }
+    // P2-01 of review 20261012-233058-452278: extent > 0 but extent/side rounds to a cell width of 0 (the grid path
+    // converted Inf to int); 64 centers, 128 spins, x alternating 0 and the smallest subnormal
+    {
+        const double tiny=std::numeric_limits<double>::denorm_min();
+        std::vector<Point> spins(128),centers(64);
+        for(int i=0;i<128;++i)spins[i]={i%2?tiny:0.0,0,0};
+        for(int c=0;c<64;++c)centers[c]={c%2?tiny:0.0,0,0};
+        check(spins,centers,false);
+    }
     printf("PASS %d assignment/iteration comparisons; exact centers, inertia and capacity\n",comparisons);
 }

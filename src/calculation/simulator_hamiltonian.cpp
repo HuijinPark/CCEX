@@ -162,7 +162,19 @@ static MatrixXcd hfmediBranch(const MatrixXcd& psi, const MatrixXcd& eigenVector
     const int ai = close_state_index(psi, eigenVectors);
     const VectorXcd ea = eigenVectors.col(ai);
     const double w_a = eigenValues[ai].real();
-    const double degenerate = 1e-12 * eigenValues.cwiseAbs().maxCoeff();
+    // degenerate: within 1e-12 of the spread of the levels, which an energy shift (c I added to the ZFS) leaves as it is
+    // (P1-03 of review 20261012-233058-452278; it was 1e-12 of the largest |level|)
+    const double degenerate = 1e-12 * (eigenValues.real().maxCoeff() - eigenValues.real().minCoeff());
+    // E = sum_i (s . A_i) . I_i
+    auto coupling = [&](const MatrixXcd& s){
+        MatrixXcd E = MatrixXcd::Zero(bdim,bdim);
+        for (int ib = 0; ib < nspin; ib++){
+            MatrixXcd A = BathArray_getBath_i_hypf_j(ba,ib,iq);    // 3x3, row = qubit component
+            MatrixXcd Hi = calHamiltonianSingleInt(s * A, bsigmas[ib]);
+            addExpandedHamiltonian(E, bsigmas, Hi, nspin, ib);
+        }
+        return E;
+    };
     MatrixXcd H = MatrixXcd::Zero(bdim,bdim);
     for (int k = 0; k < eigenVectors.cols(); k++){
         if (k == ai) continue;                                    // beta != alpha
@@ -170,20 +182,23 @@ static MatrixXcd hfmediBranch(const MatrixXcd& psi, const MatrixXcd& eigenVector
         const double w_b = eigenValues[k].real();
         MatrixXcd s_ab(1,3);                                      // <alpha|S|beta>
         for (int c = 0; c < 3; c++) s_ab(0,c) = (ea.adjoint() * qsigmas[iq][c+1] * eb)(0,0);
-        // beta degenerate with alpha (review 20261012-194049-af8e42 R1): with S_ab = 0 the term is 0 (e.g. +1 and -1 of a
-        // spin-1 at zero field), anything else has no second-order correction
+        const MatrixXcd E_ab = coupling(s_ab);
+        // beta degenerate with alpha (review 20261012-194049-af8e42 R1): decided on the coupling itself (P1-02 of review
+        // 20261012-233058-452278) - with E_ab = 0 the term is 0 (S_ab = 0, e.g. +1 and -1 of a spin-1 at zero field, or a
+        // hyperfine that vanishes), anything else has no second-order correction. Zero: below 1e-12 of the coupling a
+        // unit S would have along each axis
         if (std::abs(w_a - w_b) <= degenerate){
-            if (s_ab.norm() <= 1e-12) continue;
+            double scale = 0;
+            for (int c = 0; c < 3; c++){
+                MatrixXcd unit = MatrixXcd::Zero(1,3);
+                unit(0,c) = 1.0;
+                scale += coupling(unit).norm();
+            }
+            if (E_ab.norm() <= 1e-12 * scale) continue;
             fprintf(stderr,"Error : hfmedi: qubit level %d (energy %.10g) is degenerate with level %d (energy %.10g), "
-                    "which it couples to through S; the second-order hyperfine-mediated term does not exist there "
-                    "(a nonzero field or zero-field splitting lifts the degeneracy)\n", ai, w_a, k, w_b);
+                    "which it couples to through the hyperfine interaction; the second-order hyperfine-mediated term does "
+                    "not exist there (a nonzero field or zero-field splitting lifts the degeneracy)\n", ai, w_a, k, w_b);
             ccexFatal();
-        }
-        MatrixXcd E_ab = MatrixXcd::Zero(bdim,bdim);
-        for (int ib = 0; ib < nspin; ib++){
-            MatrixXcd A = BathArray_getBath_i_hypf_j(ba,ib,iq);    // 3x3, row = qubit component
-            MatrixXcd Hi = calHamiltonianSingleInt(s_ab * A, bsigmas[ib]);
-            addExpandedHamiltonian(E_ab, bsigmas, Hi, nspin, ib);
         }
         H += (E_ab * E_ab.adjoint()) / (w_a - w_b);
     }

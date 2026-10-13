@@ -71,11 +71,11 @@ for name, (case, change, rungs) in plan.items():
     for job, cfg in jobs.items():
         cfg['outfile'] = f'{d}/{job}'
         json.dump(cfg, open(f'{d}/{job}.json', 'w'), indent=1); runs.append(f'{d} {job}')
-    # refusals: order 3, rung >= rdip, decreasing rungs, savemode all (cCCE); quantity dm (gCCE); pCCE order 3
+    # refusals: order 3, rung >= rdip, decreasing rungs, savemode cluster_coherence (cCCE); quantity dm (gCCE); pCCE order 3
     bad = {}
     if case == name:
         bad = {'bad_order3': dict(c, order=3, nk=[0, 0, 0, 0], rdip_ladder=rungs[:1]), 'bad_above': dict(c, rdip_ladder=[c['rdip']]),
-               'bad_order': dict(c, rdip_ladder=rungs[::-1]), 'bad_saveall': dict(c, savemode='all', rdip_ladder=rungs[:1])}
+               'bad_order': dict(c, rdip_ladder=rungs[::-1]), 'bad_saveall': dict(c, savemode='cluster_coherence', rdip_ladder=rungs[:1])}
     elif name == 'natab_gcce2_vector':
         bad = {'bad_dm': dict(c, quantity='dm', rdip_ladder=rungs[:1])}
     elif name == 'natab_pcce2_centers':

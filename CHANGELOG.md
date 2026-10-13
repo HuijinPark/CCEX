@@ -18,8 +18,14 @@
 - **`rdip_ladder`**: one order-2 run (cCCE, gCCE or pCCE) also writes the curves of smaller rdip values.
 - **`evolution_update`**: `exact` or `recursive` (the phases by a recurrence; 1.0–1.6x faster on the tested systems,
   where the curves stay within 1e-9 of `exact`; not bit-identical). The default is `recursive` where it exists (see Changed).
+- **`propagator: "sparse"`** (opt-in; also `{"method": "sparse", "min_dim": 4096, "tol": 1e-12}`): one sampled state of
+  cCCE and gCCE `vector` without diagonalizing the cluster Hamiltonian (Krylov action on the state, H sparse), for
+  clusters of dimension ≥ `min_dim`. It pays only where the dense eigendecomposition does not fit in memory (dim 16384:
+  about 36 GB dense against about 0.2 GB sparse). It is much slower at high field or with a wide spectrum and long times:
+  the cost grows with spectral width × time and with the square of the number of time points (P1 at 500 G, dim 4096,
+  151 points: about 18 h against 5 min dense, extrapolated from the first 11 points). `propagator` is accepted by cCCE now (`eigen`, `sparse`; `expm` stays gCCE).
 - **Built-in isotope table**: `gyrofile` is optional; species it does not name come from the table.
-- **`save_nodiv`**: `false` writes `_wiDiv` alone.
+- **`savemode.nodiv`**: `false` writes `_wiDiv` alone (see the `savemode` block under Changed).
 - **Packed GPU kernel for small cCCE clusters** (`gpu_options.packed_max_dim`: 4 by default in `bin/main_gpu.out` with
   `backend` `cuda` or `auto` and method CCE, 0 with `backend` `cpu` and in `bin/main.out`; 2 or 4 may be given): every cCCE
   cluster of bath dimension 2 and 4 is computed by one GPU thread, thousands per kernel, for the whole node through one CUDA
@@ -28,12 +34,25 @@
   bit-identical. On idm4-gpu (32 ranks, one GPU) the production P1 cCCE2 runs took 0.59–0.84 of the CPU's time; a run of a
   few seconds gains nothing (CR0 ensemble, 1.8 s: 0.95). See `docs/user/InputFile_Backend.md#tag_gpu_options` and
   (internal notes).
+- **Warp GPU kernel for gCCE and cCCE clusters up to dimension 27** (`gpu_options.warp_max_dim`: 27 by default in
+  `bin/main_gpu.out` with `backend` `cuda` or `auto` and method CCE or gCCE, 0 with `backend` `cpu` and in `bin/main.out`;
+  0–32 may be given): one cluster per GPU warp (shared-memory Jacobi, the lanes over the time points, exact phases), through
+  the packed kernel's node feeder; gCCE with a qubit of dimension 3 (total dimension 6, 9, 12, 18, 21, 24, 27), single state
+  and ensemble, coherence and dm; cCCE bath dimension 8 and 16. Runs it does not take (`gcce_refinement`, `pulseiter`,
+  savemode `cluster_density_matrix`, ...) switch it off by themselves. On idm4-gpu (32 ranks + MPS, one GPU) P1 gCCE2 took 0.60–0.69 and
+  h-BN gCCE2 0.86 of the earlier GPU build's time. See `docs/user/InputFile_Backend.md#tag_gpu_options` and
+  (internal notes).
 - **Builds**: `do_compile.sh` presets (`wsl-gnu`, `wsl-icpx`, `idm4`, `gpu`, `nurion`, `mac`, `generic`) and a CMake build.
 
 ### Changed
 - **Faster CPU paths with unchanged results** (byte-identical output): the cCCE and gCCE product assembly, the state preparation,
   fixed-size paths for small clusters, the order-2 cluster list built without duplicated work, the small-cluster
   Hamiltonians, and the pCCE partition search (up to 9x faster on large baths). See Performance below.
+- **Small cCCE clusters batched on the CPU** (byte-identical output): clusters of bath dimension 2 and 4 are evolved
+  4 (AVX2) or 8 (AVX-512) at a time, in the builds whose arithmetic the batched kernel reproduces (g++ 13 AVX2,
+  icpx 2026.1 AVX2, icpx 2023.2 AVX-512; any other build keeps the one-by-one path). One state with any pulse plan and the
+  ensemble Hahn echo, `exact` and `recursive`. Production P1 cCCE2 on idm (64 ranks): 0.60–0.64 of the time with
+  `recursive`, 0.74–0.77 with `exact`. See (internal notes).
 - **Repository layout**: `src/` and `include/` in five parts (input, physical, clustering, calculation, common);
   `example/{tutorial,analysis,tools}`; `external/`; `test/{code_verification,cluster_verification,gpu_verification}`.
   The tutorials were rewritten as numbered folders (twelve; 11 and 12 added on 2026-10-12) with `run.sh`.
@@ -42,10 +61,18 @@
   (`gpu_batch_clusters`), `evolution_batch_steps` (`gpu_batch_steps`), `cluster_batch_mb` (`gpu_cluster_batch_mb`),
   `cache_mb` (`gpu_cache_mb`), and the new `packed_max_dim`. The old flat keys are refused with a message naming the new
   form (e.g. `gpu_min_dim is now gpu_options.min_dim`); `backend` keeps `cpu`, `cuda`, `auto`.
+- **`savemode` is a string or a block `{"mode": ..., "nodiv": true|false}`, with new names**: `coherence` (was `normal`,
+  the default), `coherence_tagged` (was `info`), `cluster_coherence` (was `all`), `cluster_density_matrix` (was
+  `allfull`); `nodiv` (default `true`) replaces the top-level `save_nodiv`. The files written are the same as before for
+  the same setting. See `docs/user/InputFile_Output.md#tag_savemode`.
 - **`bin/main_gpu.out` with `backend` `cuda` or `auto` runs the cCCE clusters of bath dimension 2 and 4 in the packed
   kernel by default** (`gpu_options.packed_max_dim` 4; `"packed_max_dim": 0` gives the earlier path). Its results agree with
   the CPU within 1e-8 + 2e-6 |CPU| and are not bit-identical to those of the earlier GPU path. `backend` `cpu` and
   `bin/main.out` are unchanged.
+- **`bin/main_gpu.out` with `backend` `cuda` or `auto` runs the gCCE and cCCE clusters of dimension up to 27 in the warp
+  kernel by default** (`gpu_options.warp_max_dim` 27; `"warp_max_dim": 0` gives the earlier path). Its results agree with
+  the CPU within 1e-8 + 2e-6 |CPU| outside the stretch where a product diverges (|L| > 1 and between) and are not
+  bit-identical to those of the earlier GPU path; `backend` `cpu` and `bin/main.out` are unchanged.
 - **The default of `evolution_update` is `recursive` where it exists** (the CPU cCCE, single state and ensemble, the packed
   kernel, and the CPU gCCE with `propagator` = `eigen`, `evolution` `vector` or `matrix`), and `exact` elsewhere (the GPU
   large-cluster path, gCCE `expm`), without a message, per path: in `bin/main_gpu.out` with `backend` `auto` the clusters
@@ -58,9 +85,26 @@
   cCCE3 3.1x). Orders whose clusters all have one size (P1, ¹³C) keep the equal-count split, byte for byte; in a mixed bath
   the product of each rank's clusters is grouped differently, so the last printed digit can change (h-BN gCCE2 dm: 5 of
   36,000 numbers, 1e-10). Data (internal notes).
+- **`gpu_options.min_dim` defaults to 768 (was 256)**: on idm4-gpu (RTX PRO 6000, 32 ranks; A37, job 699) the GPU was
+  faster than the CPU from a cluster dimension of about 670–750 on, on every path (cCCE and gCCE, single state and
+  ensemble), and slower at 648 and below. So in `bin/main_gpu.out` with `backend` `auto` and no `min_dim` given, clusters
+  of dimension 256–767 now run on the CPU: their last digits can change (within the GPU tolerance 1e-8 + 2e-6 |CPU|),
+  and the A35 cCCE4 ensemble case ran 22.3 → 9.6 s (measured at `min_dim` 512, which routes it as 768 does). An explicit `min_dim` keeps its value. Data
+  (internal notes).
+- **`backend` `auto` no longer stops on a GPU that cannot be opened or that runs out of memory**: the packed kernel is
+  turned off when the GPU cannot be opened, and a cluster that runs out of GPU memory is computed on the CPU, with every
+  later cluster of its dimension or larger on that rank (`[gpu-memory-fallback]` in the log). `backend` `cuda` still
+  stops in both cases.
 - **Each rank keeps only its own order-2 cluster rows** (cCCE/gCCE order 2; `-P`, `cluster_contributions` and adaptive
   work keep the full list): peak memory per rank on the P1 production CR60 σ4 bath 334 → 181 MiB, output byte-identical,
   same speed. Data (internal notes).
+- **Hyperfine tensor files, format v3**: SpinTensorReader writes line 1 `VASP` / `QUANTUMESPRESSO` and line 2
+  `# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = <VASP OUTCAR|QE hyperfine.out>, S = <S>`,
+  and the numbers are the hyperfine of the spin-S defect for both codes (QE's S = 1/2 coupling x 1/(2S), `--spin S`
+  required; VASP's OUTCAR as it is, S from its magnetization). CCEX reads such a file x 1: `DefectTotSpin` is only
+  checked against S and `CorrTotSpin` is not used. A file without the line is read by the earlier rule (first line `VASP`
+  -> x 1, otherwise x 0.5/`DefectTotSpin`), with a warning in the log; its results are unchanged.
+  `--fidentify` is removed (the lines are always written). See `docs/user/InputFile_General.md#tag_hf_tensorfile`.
 
 ### Compared with v1.2.2 (same inputs and node, idm Xeon Gold 6530, 64 ranks, median of 3)
 
@@ -98,6 +142,10 @@ the results are byte-identical, or within the stated bound for `recursive`. For 
 - Ensemble cCCE: the conjugation of the coherence and the half interval computed in double precision.
 - Density-matrix output: a component that divides noise by zero is set to 0 and reported, instead of `nan`.
 - `seed` had no effect on sampled states when `nstate` > 0.
+- `savemode: "allfull"` (now `cluster_density_matrix`) wrote no result of the expansion (the save step knew only `normal`, `all` and `info`), named
+  each cluster's full density matrix by positions 0, 1, … so that clusters of the same size overwrote one another (and
+  every rank wrote the zeroth cluster), and with cCCE wrote nothing. It now writes what `all` writes and, with gCCE,
+  each cluster's full density matrix to `<outfile>_<bath indices>_full[_state<n>]_wiDiv/noDiv`. Other savemodes unchanged.
 - Builds with Intel `icpx`: the adaptive code is compiled without fast floating point, which had folded `isnan`/`isinf`.
 - The analyzer's plots of several curves (`-pl_m`) failed with matplotlib 3.11 (`cm.get_cmap` removed); the numbers it writes are unchanged.
 - **`hfmedi` (hyperfine-mediated interaction)**: the term is now the complete second-order correction of each branch,
@@ -105,18 +153,38 @@ the results are byte-identical, or within the stated bound for `recursive`. For 
   qubit Hamiltonian (it used only the other qubit level, missing for example the |+1⟩ path of the NV |0⟩ branch), every
   ordered pair (i, j) (it summed i < j only, which was not Hermitian for a spin-1 qubit: the CPU used one triangle of it
   and the GPU refused it), and the i = j terms. Hermitian by construction. Results with `hfmedi: true` change.
-  An intermediate level degenerate with the branch is skipped when S does not couple them (spin-1 at zero field: +1 and
-  -1, which gave `nan`) and refused when it does.
+  An intermediate level degenerate with the branch (within 1e-12 of the spread of the levels, so an energy shift does not
+  change the decision) is skipped when the coupling E_αβ vanishes (spin-1 at zero field: +1 and -1, which gave `nan`;
+  or a zero hyperfine) and refused when it does not.
   The h-BN inputs that use it (tutorial 07 `hyperfine_mediated_term`) had an asymmetric `qzfs` typo, now
   `[[-1080000,0,0],[0,-1180000,0],[0,0,2320000]]`; with both, the `check_numerics` case `hbn_hfmedi` moves by up to 0.95.
 - **`knight` (Knight shift)**: the term multiplies by the nuclear Zeeman vector −γ_n B instead of the bare field B, and
   the (3|m_s| − 2) factor takes |m_s| of each branch as ⟨S_z²⟩ (it was always 1). Zero for a field along the qubit axis,
   as before; in a tilted field results with `knight: true` change (`natab_knight_shift`: up to 0.98).
+- **The h-BN tutorial and test hyperfine tensors were read 2x**: `hBN_VB_flat_ATensor_HSE_CellPBE_tag` (tutorial 07 and
+  the `check_numerics` copy) was SpinTensorReader v1 data (the OUTCAR x 2) with a `VASP` first line, which CCEX reads x 1,
+  so every hyperfine tensor was twice the DFT value (nearest ¹⁴N A_zz 97.3 MHz against 47 measured) and the
+  hyperfine-mediated term 4x. They are replaced by `hBN_VB_flat_ATensor_HSE_CellPBE_v3` (format v3, the numbers / 2,
+  A_zz 48.6 MHz); the `check_numerics` h-BN cases change by up to 0.88 and were re-recorded, and tutorial 07 and its
+  figures were rerun. SpinTensorReader example 03 (MoS2) had the same mistake. Studies run on the old file
+  ((internal notes)…`, `a20-…`, `a27-…`, `a33-…`) used the doubled hyperfine.
+  (internal notes).
+- SpinTensorReader's QE writer used names it never defined (`sys`, `defectposition`, `fout_Afile`/`fout_Qfile` in its
+  summary), so its error paths crashed instead of stopping with their message; and its tag was misspelt
+  `QUANTUMESSPRESSO`.
 
 ### Refused now (inputs that used to be accepted)
 - `alphams` at the top of a `qubitfile` (it had been ignored since v1.1.0).
 - Arrays shorter than needed (Defect types shorter than `naddspin`, `bathadjust` rows with fewer than 3 numbers).
 - An `avaax` axis beyond the defect's `navaax`.
+- The `savemode` names `normal`, `info`, `all`, `allfull` and the top-level key `save_nodiv`, each with a message naming
+  the new form (e.g. `savemode "all" is now "cluster_coherence"`, `save_nodiv is now savemode.nodiv`); also an unknown key
+  of the `savemode` block and a value of the wrong type.
+- A hyperfine tensor file of format v3 that contradicts itself or the input: a first line that is not the tag of the
+  provenance line's source, the provenance line elsewhere than line 2 or twice, an unknown format version or source, an S
+  that is missing or not a half-integer, or an S other than `DefectTotSpin`.
+- SpinTensorReader `--version v1` (it wrote the OUTCAR x 2, right only untagged and for S = 1), and QE `--A` without
+  `--spin S`.
 - Combinations a method does not support; `test/code_verification/check_refusals` lists them.
 
 ### Removed

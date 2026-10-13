@@ -1,5 +1,6 @@
 #include "../../include/calculation/small_hamiltonian.h"
 #include "../../include/calculation/hamiltonian.h"
+#include "../../include/calculation/sparse_propagator.h"
 #include <cstring>
 #include <memory>
 
@@ -339,6 +340,108 @@ void cachedUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse){
         pulsesKept = true;
     }
     for (int i=0; i<npulse; i++) Upulses[i] = pulseKept[i];
+}
+
+// A2, propagator = sparse: the same Hamiltonians as local terms (one- and two-spin operators), never a dense matrix of
+// the cluster. Each operator is formed from the pieces the dense functions above add (singleInt, selfInt, disorderInto,
+// the pair tensors); the sparse assembly sums them in another order, so the matrix agrees with the dense one to rounding,
+// not bit for bit.
+namespace {
+// sum_ab T_ab S_i^a (x) S_j^b: the operator addPair / addHamiltonianHeteroInt add for a pair
+MatrixXcd pairOperator(const MatrixXcd* Si, const MatrixXcd* Sj, const MatrixXcd& T){
+    MatrixXcd op = MatrixXcd::Zero(Si[0].rows()*Sj[0].rows(), Si[0].cols()*Sj[0].cols());
+    for (int a=0; a<3; a++)
+        for (int b=0; b<3; b++)
+            if (!zero(T(a,b))) op += T(a,b) * kron(Si[a+1], Sj[b+1]);
+    return op;
+}
+// zeeman + detuning + quad + disorder of bath spin ib (bathInto)
+MatrixXcd bathSingle(BathArray* ba, MatrixXcd** sigmas, Config* cnf, int ib){
+    float* bfield = Config_getBfield(cnf);
+    const double gyro = BathArray_getBath_i_gyro(ba,ib);
+    MatrixXcd zee, det, qd, dis;
+    const doublec vz[3] = {doublec(-1.0 * gyro * bfield[0]), doublec(-1.0 * gyro * bfield[1]), doublec(-1.0 * gyro * bfield[2])};
+    singleInt(zee, vz, sigmas[ib]);
+    const doublec vd[3] = {doublec(0.0), doublec(0.0), doublec(BathArray_getBath_i_detuning(ba,ib))};
+    singleInt(det, vd, sigmas[ib]);
+    selfInt(qd, sigmas[ib], ba->bath[ib]->quad);
+    const int d = BathArray_dimBath_i(ba,ib);
+    if (Config_getNstate(cnf) > 0) disorderInto(dis, ba, sigmas, ib);
+    else                           dis = MatrixXcd::Zero(d,d);
+    return zee + det + qd + dis;
+}
+void addTerm(LocalHamiltonian& H, int s0, int s1, MatrixXcd op){
+    LocalTerm t; t.nsite = s1 < 0 ? 1 : 2; t.site[0] = s0; t.site[1] = s1; t.op = std::move(op);
+    H.terms.push_back(std::move(t));
+}
+}
+
+void cceClusterTerms(QubitArray* qa, BathArray* ba, Config* cnf, LocalHamiltonian& Halpha, LocalHamiltonian& Hbeta){
+    if (Config_getKnight(cnf) || Config_getHfmedi(cnf) || QubitArray_getNqubit(qa) > 1){
+        fprintf(stderr,"Error : propagator=sparse : knight, hfmedi and nqubit > 1 are not covered\n");
+        ccexFatal();
+    }
+    MatrixXcd** sigmas = spinOperators(ba);
+    pairTensors(ba);
+    const int nspin = BathArray_getNspin(ba);
+    float msa, msb;
+    qubitLevels(qa, msa, msb);
+    for (LocalHamiltonian* H: {&Halpha, &Hbeta}){
+        H->dims.resize(nspin); H->terms.clear();
+        for (int ib=0; ib<nspin; ib++) H->dims[ib] = BathArray_dimBath_i(ba,ib);
+    }
+    for (int ib=0; ib<nspin; ib++){
+        const MatrixXcd single = bathSingle(ba, sigmas, cnf, ib);
+        const MatrixXcd& tensor = ba->bath[ib]->hypf[0];
+        const doublec v[3] = {doublec(tensor(2,0).real()), doublec(tensor(2,1).real()), doublec(tensor(2,2).real())};
+        MatrixXcd hqb;
+        singleInt(hqb, v, sigmas[ib]);
+        addTerm(Halpha, ib, -1, single + double(msa) * hqb);
+        addTerm(Hbeta,  ib, -1, single + double(msb) * hqb);
+    }
+    for (int i=0; i<nspin; i++)
+        for (int j=i+1; j<nspin; j++){
+            const MatrixXcd& tensor = tensorOf(nspin,i,j);
+            if (tensor.isZero(FLT_EPSILON)) continue;
+            MatrixXcd op = pairOperator(sigmas[i], sigmas[j], tensor);
+            addTerm(Halpha, i, j, op);
+            addTerm(Hbeta,  i, j, std::move(op));
+        }
+}
+
+void gcceClusterTerms(QubitArray* qa, BathArray* ba, Config* cnf, LocalHamiltonian& Htot, MatrixXcd& Hq){
+    if (QubitArray_getNqubit(qa) != 1 || BathArray_getNspin(ba) == 0){
+        fprintf(stderr,"Error : propagator=sparse : gCCE terms need one qubit and bath spins\n");
+        ccexFatal();
+    }
+    const int nspin = BathArray_getNspin(ba);
+    const int qdim = QubitArray_dim(qa);
+    qubitSigmas.resize(1);
+    qubitSigmas[0] = pauli(QubitArray_dimQubit_i(qa,0));
+    MatrixXcd** qsigmas = qubitSigmas.data();
+    // gcceClusterHamiltonian: the qubit Hamiltonian less the Overhauser field of the cluster's spins
+    Hq = qubitTotal(qa, qsigmas, Config_getBfield(cnf));
+    double overhaus = 0.0;
+    for (int ib=0; ib<nspin; ib++)
+        overhaus += product(ba->bath[ib]->hypf[0](2,2).real(), BathArray_getBath_i_state(ba,ib));
+    const doublec v[3] = {doublec(0.0), doublec(0.0), doublec(overhaus)};
+    MatrixXcd shift;
+    singleInt(shift, v, qsigmas[0]);
+    Hq -= shift;
+
+    MatrixXcd** bsigmas = spinOperators(ba);
+    pairTensors(ba);
+    Htot.dims.resize(nspin+1); Htot.terms.clear();
+    Htot.dims[0] = qdim;
+    for (int ib=0; ib<nspin; ib++) Htot.dims[ib+1] = BathArray_dimBath_i(ba,ib);
+    addTerm(Htot, 0, -1, Hq);
+    for (int ib=0; ib<nspin; ib++) addTerm(Htot, ib+1, -1, bathSingle(ba, bsigmas, cnf, ib));
+    for (int i=0; i<nspin; i++)
+        for (int j=i+1; j<nspin; j++){
+            const MatrixXcd& tensor = tensorOf(nspin,i,j);
+            if (!tensor.isZero(FLT_EPSILON)) addTerm(Htot, i+1, j+1, pairOperator(bsigmas[i], bsigmas[j], tensor));
+        }
+    for (int ib=0; ib<nspin; ib++) addTerm(Htot, 0, ib+1, pairOperator(qsigmas[0], bsigmas[ib], ba->bath[ib]->hypf[0]));
 }
 
 bool gcceHamiltonianFinite(const MatrixXcd& H){ return H.allFinite(); }

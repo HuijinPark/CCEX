@@ -53,13 +53,13 @@ void writeValue(std::ostream& f,int id,int step,std::complex<double> z) {
 }
 MatrixXcd* gcceProbe(QubitArray* qa,BathArray* ba,Config* c,Pulse* pulse,Output* op,
                     const std::string& probe,int state) {
-    if(strcasecmp(op->savemode,"allfull"))return calCoherenceGcce(qa,ba,c,pulse,op);
+    if(strcasecmp(op->savemode,"cluster_density_matrix"))return calCoherenceGcce(qa,ba,c,pulse,op);
     const std::string name=std::string(op->outfile)+".probe-"+probe+".rank-"+
         std::to_string(rank)+".state-"+std::to_string(state);
     size_t tail=7; // Output_save appends _wiDiv or _noDiv, including terminator.
     const int labels=qa->nqubit+(ba ? ba->nspin : 0);
     for(int i=0;i<labels;++i)tail+=1+std::to_string(i).size();
-    require(name.size()+tail<=MAX_FILEPATH,"probe allfull output path exceeds MAX_FILEPATH");
+    require(name.size()+tail<=MAX_FILEPATH,"probe cluster_density_matrix output path exceeds MAX_FILEPATH");
     std::vector<char> path(MAX_FILEPATH,0);
     std::copy(name.begin(),name.end(),path.begin());
     Output unique=*op;unique.outfile=path.data();
@@ -308,7 +308,7 @@ public:
     // What one probe holds, on the path it will take (review 5f7834 R1, 4dd5fd R2, 0ef89c R1). The CPU: 6 dense
     // dim x dim complex matrices (the measured setup peak); for gCCE one more per pulse (prepareGccePulses expands them
     // to the whole space) and, with evolution=matrix, the npulse+1 free propagators calPropagatorGcce keeps (Ufrees).
-    // The GPU: what the device allocates for the run's time batch, pulses and vector/matrix evolution. savemode allfull
+    // The GPU: what the device allocates for the run's time batch, pulses and vector/matrix evolution. savemode cluster_density_matrix
     // keeps every time's full gCCE density matrix on the host (result_tot), and on the GPU also a host read-back buffer
     // of one time batch and, with evolution=vector, a device one. One counter serves both, so the larger.
     static long long estimate(const Config* c, const char* savemode, long long dim, int qubitDim, bool gcce, int pulses,
@@ -316,7 +316,7 @@ public:
         const long double square=16.0L*(long double)dim*(long double)dim;
         const int batch=std::max(1,std::min(c->gpu_batch_steps,c->nstep));
         const bool matrix=gcce && strcasecmp(Config_getEvolution(const_cast<Config*>(c)),"vector");
-        const bool allfull=gcce && savemode && !strcasecmp(savemode,"allfull");
+        const bool allfull=gcce && savemode && !strcasecmp(savemode,"cluster_density_matrix");
         const long double npulse=std::max(0,pulses);
         long double host=6.0L*square;
         if (gcce && !onGpu) host+=(npulse+(matrix ? npulse+1 : 0))*square;

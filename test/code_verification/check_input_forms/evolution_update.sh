@@ -56,12 +56,13 @@ if python3 "$NUM/compare.py" "$W/numerics" "$REF" --expected "$NUM/expected.json
 else echo "  FAIL  E1 (see $W/numerics.txt)"; FAIL=$((FAIL+1)); fi
 fi
 
-# E3: without the key, recursive where it exists
+# E3: without the key, recursive where it exists. The gCCE rows use hbn_gcce2_dm: since the h-BN hyperfine was halved
+# (tensor format v3, 2026-10-13) exact and recursive write the same bytes on hbn_gcce2_oh, which then cannot tell them apart
 # name  case  changes
 SUPPORTED="cce_single p1_cce2_single {}
 cce_ensemble hbn_cce2_hf3_qd0 {}
-gcce_vector hbn_gcce2_oh {}
-gcce_matrix hbn_gcce2_oh {\"evolution\":\"matrix\"}"
+gcce_vector hbn_gcce2_dm {}
+gcce_matrix hbn_gcce2_dm {\"evolution\":\"matrix\"}"
 while read -r name case change; do
     ok=1
     run_case "$case" "e3_$name/default" "$change" || ok=0
@@ -95,7 +96,7 @@ done <<< "$UNSUPPORTED"
 # E5: backend auto in the CPU build is the CPU default (A36): against the backend cpu runs of E3
 AUTO="cce_single p1_cce2_single
 cce_ensemble hbn_cce2_hf3_qd0
-gcce_vector hbn_gcce2_oh"
+gcce_vector hbn_gcce2_dm"
 while read -r name case; do
     ok=1
     run_case "$case" "e5_$name/default" '{"backend":"auto"}' || ok=0

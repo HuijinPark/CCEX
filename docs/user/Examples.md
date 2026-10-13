@@ -21,14 +21,18 @@ correction, the ensemble average and the plot the recorded run did
 (`example/analysis/README.md`). `NCONF` is the number of bath configurations,
 and the electron-bath runs also take `NSTATE`, the sampled bath states per
 configuration. Into `results/` go `<name>_<conf>[_state<s>]_noDiv` and
-`_wiDiv` from CCEX (the coherence without and with the free-evolution
-normalisation, or the density matrix), `_ErrCorr` and `EnsAvg_conv<N>` from
+`_wiDiv` from CCEX (the coherence, or the density matrix, without and with the
+division of each cluster's term by its sub-clusters' terms; see
+[outfile](InputFile_Output.md#tag_outfile)), `_ErrCorr` and `EnsAvg_conv<N>` from
 the analyzer, and `.png` plots.
 
 The figures below were made on 2026-09-24 on a laptop (WSL, 4 ranks) from the
 results of each `run.sh` with one bath configuration, by
 `docs/images/tutorials/make_figures.py` (those of 11 and 12, on 2026-10-12, are the figures
-the two tutorials write themselves); the recorded runs on the cluster used
+the two tutorials write themselves; the three of 07 were redone on 2026-10-13 with 4 ranks, after its hyperfine file
+was corrected (it was read 2x, `Examples_07.md`); 02's Knight-shift and 07's hfmedi figures were redone on 2026-10-13, the same way,
+with the corrected `knight` and `hfmedi` code of 2026-10-12, the Knight-shift one from the error-corrected curves the
+analyzer makes, since one raw `_wiDiv` curve diverges); the recorded runs on the cluster used
 up to 50 configurations, so these curves are the shape, not the converged
 number. A coherence figure shows `|L(t)|`; a density-matrix figure shows the
 diagonal of `rho(t)` and its largest off-diagonal element. The time is the one

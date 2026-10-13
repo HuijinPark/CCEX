@@ -11,6 +11,8 @@ dimension 2 and 4 (55 + 95) with CCEX_SMALL_CLUSTER_DUMP (small_cluster_batch.h)
 the production P1 CR60 sigma4 cCCE2 input (rank 0, state 1; idm4-gpu job 674,
 ~/tmp/ccex-a26-20261012/prod/CR060_sigma04_cCCE2_dump/clusters.bin): its first 32 clusters of dimension 2 and 96 of
 dimension 4 are rewritten in the format of the dump hook (single state, Hahn, exact, 151 points).
+p1_pcce2_spins_single_hahn_recursive.bin (A30, 2026-10-13) was written by the hook directly: check_rdip_ladder's
+p1_pcce2_spins base input (check_numerics p1_pcce2_sk2 with pcce_connections spins), 1 rank, CCEX_SMALL_CLUSTER_DUMP_N=150.
 """
 import json, os, shutil, struct, subprocess, sys, tempfile
 

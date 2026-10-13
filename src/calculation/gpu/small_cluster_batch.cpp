@@ -51,7 +51,8 @@ bool smallClusterPlan(Config* cnf, Pulse* pls, Plan& plan, bool& ensemble, bool&
 
 void smallClusterDump(QubitArray* qa, BathArray* cluster, Config* cnf, Pulse* pls, const MatrixXcd* result){
     static const char* path = getenv("CCEX_SMALL_CLUSTER_DUMP");
-    if (!path || rank != 0 || strcasecmp(cnf->method,"cce")) return;
+    // cCCE and pCCE (the same cluster calculation; pCCE since A30's check, 2026-10-13)
+    if (!path || rank != 0 || (strcasecmp(cnf->method,"cce") && strcasecmp(cnf->method,"pcce"))) return;
     static long left = getenv("CCEX_SMALL_CLUSTER_DUMP_N") ? atol(getenv("CCEX_SMALL_CLUSTER_DUMP_N")) : 400;
     if (left <= 0) return;
     const int d = BathArray_dim(cluster);
@@ -75,37 +76,202 @@ void smallClusterDump(QubitArray* qa, BathArray* cluster, Config* cnf, Pulse* pl
     if (--left == 0){ fclose(fp); fp = nullptr; }
 }
 
+bool warpClusterRun(QubitArray* qa, Config* cnf, Pulse* pls, warpcluster::Plan& plan, const char*& why){
+    plan = warpcluster::Plan{};
+    const bool gcce = !strcasecmp(cnf->method,"gcce");
+    plan.mode = gcce ? warpcluster::modeGcce : warpcluster::modeCce;
+    plan.ensemble = Config_getNstate(cnf)==0;
+    plan.qdim = 1;
+    if (!gcce){
+        if (strcasecmp(cnf->method,"cce")){ why = "the method is not CCE or gCCE"; return false; }
+        if (QubitArray_getNqubit(qa)!=1 || strcasecmp(cnf->quantity,"coherence")){ why = "cCCE with one qubit and quantity=coherence only"; return false; }
+        bool ensemble, recursive;
+        if (!smallClusterPlan(cnf,pls,plan.time,ensemble,recursive)){ why = "more than 4 distinct pulse intervals"; return false; }
+        return true;
+    }
+    // gCCE: what calCoherenceGcceInto does with the cluster, the warp kernel does only for these runs
+    if (QubitArray_getNqubit(qa)!=1){ why = "gCCE with more than one qubit"; return false; }
+    plan.qdim = QubitArray_dim(qa);
+    if (plan.qdim > warpcluster::maxQubitDim){ why = "a qubit of dimension above 4"; return false; }
+    if (strcasecmp(cnf->quantity,"coherence") && strcasecmp(cnf->quantity,"dm")){ why = "quantity is not coherence or dm"; return false; }
+    plan.dm = !strcasecmp(cnf->quantity,"dm");
+    if (strcasecmp(cnf->propagator,"eigen")){ why = "propagator is not eigen"; return false; }
+    if (cnf->gcce_refinement){ why = "gcce_refinement"; return false; }
+    if (plan.ensemble && strcasecmp(cnf->evolution,"matrix")){ why = "an ensemble with evolution=vector"; return false; }
+    if (Pulse_getPulseiter(pls) || pls->detuning_factor != 1.0){ why = "pulseiter or a pulse detuning"; return false; }
+    const int npulse = Pulse_getNpulse(pls);
+    if (npulse+1 > warpcluster::maxIntervals){ why = "too many pulses"; return false; }
+    // the fractions as propagateStateGcce reads them (sequence[p][2]; equal ones share their phases)
+    double** sequence = Pulse_getSequence(pls);
+    smallcluster::Plan& t = plan.time;
+    t.intervals = npulse+1; t.nstep = Config_getNstep(cnf); t.deltat = (double)Config_getDeltat(cnf);
+    for (int p=0; p<=npulse; ++p){
+        const double f = sequence[p][2];
+        int slot = -1;
+        for (int k=0; k<t.distinct; ++k) if (t.fraction[k]==f){ slot = k; break; }
+        if (slot < 0){
+            if (t.distinct == 4){ why = "more than 4 distinct pulse intervals"; return false; }
+            slot = t.distinct++;
+            t.fraction[slot] = f;
+        }
+        t.same[p] = slot;
+    }
+    return true;
+}
+
+void warpClusterQubit(QubitArray* qa, Pulse* pls, warpcluster::Plan& plan){
+    const int npulse = Pulse_getNpulse(pls), q = plan.qdim;
+    std::vector<MatrixXcd> pulses(std::max(1,npulse));
+    cachedUpulses(pulses.data(),qa,pls);
+    for (int p=0; p<npulse; ++p) std::memcpy(plan.pulse[p],pulses[p].data(),sizeof(C)*q*q);
+    const MatrixXcd psia = QubitArray_getPsia(qa), psib = QubitArray_getPsib(qa), psi0 = QubitArray_getPsi0(qa);
+    std::memcpy(plan.psia,psia.data(),sizeof(C)*q);
+    std::memcpy(plan.psib,psib.data(),sizeof(C)*q);
+    std::memcpy(plan.qpsi0,psi0.data(),sizeof(C)*q);
+}
+
+void warpClusterDump(QubitArray* qa, BathArray* cluster, Config* cnf, Pulse* pls, const MatrixXcd* result){
+    static const char* path = getenv("CCEX_WARP_CLUSTER_DUMP");
+    if (!path || rank != 0) return;
+    static const long most = getenv("CCEX_WARP_CLUSTER_DUMP_N") ? atol(getenv("CCEX_WARP_CLUSTER_DUMP_N")) : 400;
+    static long taken[warpcluster::maxDim+1] = {};
+    warpcluster::Plan plan; const char* why = nullptr;
+    if (!warpClusterRun(qa,cnf,pls,plan,why)) return;
+    const int d = (plan.mode==warpcluster::modeGcce ? plan.qdim : 1)*BathArray_dim(cluster);
+    if (!warpcluster::compiled(plan.mode,plan.qdim,d) || taken[d] >= most) return;
+    ++taken[d];
+    static FILE* fp = fopen(path,"ab");
+    if (!fp){ perror(path); ccexFatal(); }
+    std::vector<C> in(warpcluster::inputSize(plan,d));
+    if (plan.mode==warpcluster::modeGcce){
+        warpClusterQubit(qa,pls,plan);
+        MatrixXcd H, Hq;
+        gcceClusterHamiltonian(qa,cluster,cnf,H,Hq);
+        std::memcpy(in.data(),H.data(),sizeof(C)*d*d);
+        if (!plan.ensemble){
+            const MatrixXcd psi = kron(QubitArray_getPsi0(qa),BathArray_Psi0(cluster));
+            std::memcpy(in.data()+d*d,psi.data(),sizeof(C)*d);
+        }
+    } else {
+        MatrixXcd Ha, Hb;
+        cceClusterHamiltonians(qa,cluster,cnf,Ha,Hb);
+        std::memcpy(in.data(),Ha.data(),sizeof(C)*d*d);
+        std::memcpy(in.data()+d*d,Hb.data(),sizeof(C)*d*d);
+        if (!plan.ensemble){ const MatrixXcd psi = BathArray_Psi0(cluster); std::memcpy(in.data()+2*d*d,psi.data(),sizeof(C)*d); }
+    }
+    const smallcluster::Plan& t = plan.time;
+    const int head[8] = {plan.mode, d, plan.qdim, plan.ensemble, plan.dm, t.intervals, t.distinct, t.nstep};
+    fwrite(head,sizeof(int),8,fp);
+    fwrite(&t.deltat,sizeof(double),1,fp);
+    fwrite(t.fraction,sizeof(double),t.distinct,fp);
+    fwrite(t.same,sizeof(int),t.intervals,fp);
+    if (plan.mode==warpcluster::modeGcce){
+        for (int p=0; p<t.intervals-1; ++p) fwrite(plan.pulse[p],sizeof(C),plan.qdim*plan.qdim,fp);
+        fwrite(plan.psia,sizeof(C),plan.qdim,fp); fwrite(plan.psib,sizeof(C),plan.qdim,fp); fwrite(plan.qpsi0,sizeof(C),plan.qdim,fp);
+    }
+    fwrite(in.data(),sizeof(C),in.size(),fp);
+    const int per = warpcluster::outputPer(plan);
+    for (int i=0; i<t.nstep; ++i){
+        if (per==1){ const doublec v = result[i](0,0); fwrite(&v,sizeof(doublec),1,fp); }
+        else fwrite(result[i].data(),sizeof(doublec),per,fp);
+    }
+    fflush(fp);
+}
+
+// A40: the total dimensions the warp kernel takes under gpu_options.warp_max_dim: the compiled ones up to the bound, for
+// the run's method and qubit dimension (3 before the qubit is read: the only one compiled for gCCE)
+static unsigned long long warpMask(const Config* cnf, int qdim = 3){
+    const int mode = strcasecmp(cnf->method,"gcce") ? warpcluster::modeCce : warpcluster::modeGcce;
+    unsigned long long mask = 0;
+    for (int d=2; d<=warpcluster::maxDim && d<=cnf->gpu_warp_max_dim; ++d)
+        if (warpcluster::compiled(mode,qdim,d)) mask |= 1ULL << d;
+    return mask;
+}
+
+// A40: the input checks of a given gpu_options.warp_max_dim that need no qubit (smallClusterWarmUp; the rest in the
+// constructor). The default (Config_resolveWarpMaxDim) is nonzero only where these hold.
+static void warpInputCheck(const Config* cnf){
+    const bool gcce = !strcasecmp(cnf->method,"gcce");
+    if (!gcce && strcasecmp(cnf->method,"cce")){
+        if (rank==0) fprintf(stderr,"Error: gpu_options.warp_max_dim works with method=CCE or gCCE (this run: %s); 0 switches it off\n",cnf->method);
+        ccexFatal();
+    }
+    if (!strcasecmp(cnf->backend,"cpu")){
+        if (rank==0) fprintf(stderr,"Error: gpu_options.warp_max_dim works with backend auto or cuda (this run: backend cpu); 0 switches it off\n");
+        ccexFatal();
+    }
+    if (!warpMask(cnf)){
+        if (rank==0) fprintf(stderr,"Error: gpu_options.warp_max_dim %d: the warp kernel has no dimension up to it for method=%s (it has %s)\n",
+                             cnf->gpu_warp_max_dim,cnf->method,gcce ? "6, 9, 12, 18, 21, 24 and 27 with a qubit of dimension 3" : "8 and 16");
+        ccexFatal();
+    }
+}
+
 #if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
 namespace {
 // The state of one slot of one rank, in the node's shared memory: the rank packs and submits, the feeder runs it, the rank
 // reads it back. std::atomic<int> is lock-free here, so it works between the processes of the node.
 enum SlotState { slotIdle = 0, slotSubmitted = 1, slotRunning = 2, slotDone = 3 };
-struct alignas(64) SlotHeader { std::atomic<int> state; long count[2]; };
-struct alignas(64) FeederHeader { std::atomic<int> state; char message[248]; };   // in node rank 0's part: 0 starting, 1 ready, -1 failed
+struct alignas(64) SlotHeader { std::atomic<int> state; long count[3]; };   // dimension 2, 4 (packed), warp kernel
+struct alignas(64) FeederHeader { std::atomic<int> state; char message[248]; };   // in node rank 0's part: a FeederState
+// -2: the card could not be opened and backend is auto - the batch is off and every cluster goes to the CPU (the auto
+// contract, docs/methods/gpu.md; review 20261012-233058-452278 P3-01); -1: any other failure, which stops the run
+enum FeederState { feederUnavailable = -2, feederFailed = -1, feederStarting = 0, feederReady = 1 };
 static_assert(std::atomic<int>::is_always_lock_free, "the slot flags need lock-free atomics");
 constexpr size_t headerBytes = 2*sizeof(SlotHeader)+sizeof(FeederHeader);
 size_t roundUp(size_t n, size_t to){ return (n+to-1)/to*to; }
 
-// Window: 2048 clusters, fewer when the coherences of a slot would pass 6 MiB. The shared memory is allocated, page-locked
+// Window: 2048 clusters, fewer when the outputs of a slot would pass 6 MiB - a budget that is kept (until review
+// 20261012-233058-452278 P3-04 a floor of 256 raised it again above nstep 1536); 0 when the outputs of one cluster
+// alone pass it, and the batch is then off. The shared memory is allocated, page-locked
 // and freed once per run, about 0.25 s per GB each on idm4-gpu; windows of 2048, 4096 and 8192 ran P1 CR60 cCCE2 (2 states)
 // in about the same time and 16384 and 32768 slower (A26 step 1, jobs 684-688).
-int windowFor(int nstep){
-    return int(std::max<long>(256,std::min<long>(2048,(6L<<20)/(16L*std::max(1,nstep)))));
+int windowFor(int values){
+    return int(std::min<long>(2048,(6L<<20)/(16L*std::max(1,values))));
 }
 
-// The node's shared memory: every rank's part is the headers, then two slots of (in2, in4, out, status).
+// What a slot holds; the same on every rank (it depends on the input only). A40: the warp clusters' inputs go into an area
+// of their own (arena values; a window closes early when it is full), their outputs (outPer values per point) after the
+// packed ones.
+struct Layout {
+    int nstep = 0, windowSize = 0, per2 = 0, per4 = 0, outPer = 1;
+    long arena = 0;
+    bool operator==(const Layout& o) const {
+        return nstep==o.nstep && windowSize==o.windowSize && per2==o.per2 && per4==o.per4 && outPer==o.outPer && arena==o.arena;
+    }
+};
+// packed: the packed kernel runs; warpMask: the dimensions of the warp kernel (0: off). gCCE dm assumes the compiled qubit
+// dimension 3 (a run with another one has no warp dimension and no warp kernel).
+// cap: no window larger than this many clusters (the largest local cluster count of one order, review P3-04).
+Layout layoutFor(const Config* cnf, bool packed, unsigned long long warpMask, long cap = 1L<<30){
+    Layout l;
+    const bool ensemble = cnf->nstate==0, gcce = !strcasecmp(cnf->method,"gcce");
+    l.nstep = cnf->nstep;
+    l.outPer = warpMask && gcce && !strcasecmp(cnf->quantity,"dm") ? 9 : 1;
+    l.windowSize = int(std::min<long>(windowFor(l.nstep*l.outPer),cap));
+    if (packed){ const int extra = ensemble ? 0 : 1; l.per2 = 8+2*extra; l.per4 = 32+4*extra; }
+    if (warpMask){
+        long most = 0;
+        for (int d=2; d<=warpcluster::maxDim; ++d)
+            if (warpMask>>d & 1ULL) most = std::max(most,(gcce ? 1L : 2L)*d*d + (ensemble ? 0 : d));
+        l.arena = std::max(most,std::min(long(l.windowSize)*most,(6L<<20)/16));
+    }
+    return l;
+}
+
+// The node's shared memory: every rank's part is the headers, then two slots of (in2, in4, inW, out, status, dimW).
 struct NodeMemory {
     MPI_Comm node = MPI_COMM_NULL; MPI_Win win = MPI_WIN_NULL;
-    int nodeRank = 0, nodeSize = 1, windowSize = 0, per2 = 0, per4 = 0, nstep = 0;
+    int nodeRank = 0, nodeSize = 1;
+    Layout layout;
     size_t slotBytes = 0, partBytes = 0;
     std::vector<char*> parts;                  // every rank's part (as this process sees it)
     bool allocated() const { return win != MPI_WIN_NULL; }
-    bool matches(int n, bool ensemble, int window) const { return allocated() && nstep==n && per2==(ensemble ? 8 : 10) && windowSize==window; }
-    void allocate(int n, bool ensemble, int window){       // collective
-        nstep = n; windowSize = window;
-        const int extra = ensemble ? 0 : 1;
-        per2 = 8+2*extra; per4 = 32+4*extra;
-        slotBytes = roundUp(sizeof(C)*size_t(windowSize)*(per2+per4+nstep)+size_t(windowSize),64);
+    bool matches(const Layout& l) const { return allocated() && layout==l; }
+    void allocate(const Layout& l){            // collective
+        layout = l;
+        const size_t w = size_t(l.windowSize);
+        slotBytes = roundUp(sizeof(C)*(w*(l.per2+l.per4+size_t(l.nstep)*l.outPer)+size_t(l.arena))+2*w,64);
         partBytes = roundUp(headerBytes+2*slotBytes,4096);
         MPI_Comm_split_type(MPI_COMM_WORLD,MPI_COMM_TYPE_SHARED,rank,MPI_INFO_NULL,&node);
         MPI_Comm_rank(node,&nodeRank);
@@ -119,7 +285,7 @@ struct NodeMemory {
             parts[r] = p;
         }
         char* own = parts[nodeRank];
-        for (int s=0; s<2; ++s){ SlotHeader* h = new (own+s*sizeof(SlotHeader)) SlotHeader; h->state.store(slotIdle); h->count[0] = h->count[1] = 0; }
+        for (int s=0; s<2; ++s){ SlotHeader* h = new (own+s*sizeof(SlotHeader)) SlotHeader; h->state.store(slotIdle); h->count[0] = h->count[1] = h->count[2] = 0; }
         if (nodeRank==0){ FeederHeader* fh = new (own+2*sizeof(SlotHeader)) FeederHeader; fh->state.store(0); fh->message[0] = 0; }
         MPI_Barrier(node);
         // one contiguous range (MPI_Win_allocate_shared without alloc_shared_noncontig), page-locked in one call
@@ -155,49 +321,64 @@ struct SmallClusterBatch::Impl {
     QubitArray* qa; BathArray* ba; DefectArray* dfa; Config* cnf;
     Plan plan{};
     bool ensemble = false, recursive = false;
-    int maxDim = 4;                            // gpu_options.packed_max_dim
+    int maxDim = 0;                            // gpu_options.packed_max_dim (0: the packed kernel is off)
+    bool packed = false;
+    bool optional = false;                     // backend auto: a card that cannot be opened turns the batch off
+    bool off = false;                          // it could not (feederUnavailable seen): every cluster on the CPU
+    // A40: the warp kernel
+    bool warp = false, gcce = false;
+    unsigned long long warpMask = 0;
+    int qdim = 1;
+    warpcluster::Plan wplan{};
+    std::atomic<int> warpReady{0};             // wplan complete (cCCE: from the start; gCCE: after the first beginState)
     NodeMemory mem;
     bool fromWarm = false;                     // mem is the one smallClusterWarmUp made
+    double allocateSeconds = 0;
     char* own = nullptr;
-    // this rank's windows
-    struct Window { int first = 0, last = 0; bool submitted = false, waited = false; std::vector<int> where; std::vector<char> dim; long count[2] = {0,0}; };
+    // this rank's windows; kind of a cluster: 0 the CPU, 2 or 4 the packed kernel, 1 the warp kernel
+    struct Window { int first = 0, last = 0; bool submitted = false, waited = false; std::vector<int> where; std::vector<char> dim, kind; long count[3] = {0,0,0}; };
     Window window[2];
     int order = 0, ncluster = 0; int** clusters = nullptr;
-    MatrixXcd Ha, Hb;
-    long long gpuClusters = 0, fallback = 0, cpuStarting = 0;
+    MatrixXcd Ha, Hb, Ht, Hq;
+    long long gpuClusters = 0, warpClusters = 0, fallback = 0, cpuStarting = 0;
     double prepareSeconds = 0, waitSeconds = 0;
     // the feeder (node rank 0)
     std::thread feeder;
     std::atomic<bool> stop{false};
     double feederOpen = 0, feederLock = 0, feederWaited = 0; long long feederBatches = 0, feederItems = 0; bool locked = false, early = false;
 
+    const Layout& L() const { return mem.layout; }
     SlotHeader* header(char* part, int slot){ return reinterpret_cast<SlotHeader*>(part)+slot; }
     FeederHeader* feederHeader(){ return reinterpret_cast<FeederHeader*>(mem.parts[0]+2*sizeof(SlotHeader)); }
     C* in2(char* part, int slot){ return reinterpret_cast<C*>(part+headerBytes+slot*mem.slotBytes); }
-    C* in4(char* part, int slot){ return in2(part,slot)+size_t(mem.windowSize)*mem.per2; }
-    C* out(char* part, int slot){ return in4(part,slot)+size_t(mem.windowSize)*mem.per4; }
-    unsigned char* status(char* part, int slot){ return reinterpret_cast<unsigned char*>(out(part,slot)+size_t(mem.windowSize)*plan.nstep); }
+    C* in4(char* part, int slot){ return in2(part,slot)+size_t(L().windowSize)*L().per2; }
+    C* inW(char* part, int slot){ return in4(part,slot)+size_t(L().windowSize)*L().per4; }
+    C* out(char* part, int slot){ return inW(part,slot)+size_t(L().arena); }
+    unsigned char* status(char* part, int slot){ return reinterpret_cast<unsigned char*>(out(part,slot)+size_t(L().windowSize)*L().nstep*L().outPer); }
+    unsigned char* dimW(char* part, int slot){ return status(part,slot)+L().windowSize; }
 
     void feed();
     void prepare(int slot, int first);
     void wait(int slot);
-    // whether the feeder is up (its context opened, the memory page-locked); stops the run if it failed
+    // whether the feeder is up (its context opened, the memory page-locked); stops the run if it failed, sets off if the
+    // card could not be opened under backend auto
     bool ready(){
         FeederHeader* fh = feederHeader();
         const int state = fh->state.load(std::memory_order_acquire);
-        if (state < 0){
+        if (state == feederFailed){
             fprintf(stderr,"Error: the packed GPU kernel (feeder on node rank 0): %s\n",fh->message);
             ccexFatal();
         }
-        return state == 1;
+        if (state == feederUnavailable) off = true;
+        return state == feederReady;
     }
     // While the feeder is starting, the next cpuWhileStarting clusters go to the CPU: a window that is never submitted
     void cpuWindow(int slot, int first){
         constexpr int cpuWhileStarting = 256;
         Window& w = window[slot];
         w.first = first; w.last = std::min(first+cpuWhileStarting, ncluster+1);
-        w.where.assign(w.last-w.first,-1); w.dim.assign(w.last-w.first,0);
-        w.count[0] = w.count[1] = 0;
+        w.where.assign(w.last-w.first,-1); w.dim.assign(w.last-w.first,0); w.kind.assign(w.last-w.first,0);
+        w.count[0] = w.count[1] = w.count[2] = 0;
         w.submitted = w.waited = true;
         cpuStarting += w.last-w.first;
     }
@@ -218,15 +399,21 @@ void SmallClusterBatch::Impl::feed(){
         if (!gpu){
             char description[200] = {};
             gpu = gpuSmallOpen(0,description,sizeof description);
+            if (!gpu && optional){
+                snprintf(fh->message,sizeof fh->message,"%s",*warm.description ? warm.description : description);
+                fh->state.store(feederUnavailable,std::memory_order_release);
+                return;
+            }
             if (!gpu) throw std::runtime_error(*warm.description ? warm.description : description);
         }
         const auto t1 = std::chrono::steady_clock::now();
         if (!locked){ locked = gpuSmallRegister(mem.parts[0],mem.bytes()); feederLock = std::chrono::duration<double>(std::chrono::steady_clock::now()-t1).count(); }
         feederWaited = std::chrono::duration<double>(std::chrono::steady_clock::now()-t0).count();
-        fh->state.store(1,std::memory_order_release);
+        fh->state.store(feederReady,std::memory_order_release);
         const long maxClusters = 1L<<19;
         std::vector<std::pair<int,int>> inLane[2];           // (rank, slot) of each lane's batch
         std::vector<GpuSmallItem> items;
+        bool uploaded = !warp;
         int idle = 0;
         while (true){
             bool progress = false;
@@ -237,18 +424,21 @@ void SmallClusterBatch::Impl::feed(){
                     progress = true;
                 }
             }
-            for (int lane=0; lane<2; ++lane){
+            // A40: nothing is submitted before the warp plan is on the card (gCCE: node rank 0's first beginState)
+            if (!uploaded && warpReady.load(std::memory_order_acquire)){ gpuSmallWarpPlan(gpu,wplan); uploaded = true; }
+            for (int lane=0; lane<2 && uploaded; ++lane){
                 if (!inLane[lane].empty()) continue;
                 items.clear();
                 long total = 0;
                 for (int r=0; r<mem.nodeSize; ++r) for (int s=0; s<2; ++s){
                     SlotHeader* h = header(mem.parts[r],s);
                     if (h->state.load(std::memory_order_acquire) != slotSubmitted) continue;
-                    const long n = h->count[0]+h->count[1];
+                    const long n = h->count[0]+h->count[1]+h->count[2];
                     if (!items.empty() && total+n > maxClusters) continue;
                     h->state.store(slotRunning,std::memory_order_relaxed);
                     items.push_back(GpuSmallItem{in2(mem.parts[r],s),in4(mem.parts[r],s),h->count[0],h->count[1],
-                                                 out(mem.parts[r],s),status(mem.parts[r],s)});
+                                                 out(mem.parts[r],s),status(mem.parts[r],s),
+                                                 inW(mem.parts[r],s),dimW(mem.parts[r],s),h->count[2]});
                     inLane[lane].push_back({r,s});
                     total += n;
                 }
@@ -267,7 +457,7 @@ void SmallClusterBatch::Impl::feed(){
         gpuSmallClose(gpu);
     } catch (const std::exception& e){
         snprintf(fh->message,sizeof fh->message,"%s",e.what());
-        fh->state.store(-1,std::memory_order_release);
+        fh->state.store(feederFailed,std::memory_order_release);
         if (gpu) gpuSmallClose(gpu);
     }
 }
@@ -275,34 +465,76 @@ void SmallClusterBatch::Impl::feed(){
 void SmallClusterBatch::Impl::prepare(int slot, int first){
     const double start = MPI_Wtime();
     Window& w = window[slot];
-    w.first = first; w.last = std::min(first+mem.windowSize, ncluster+1);
-    w.where.assign(w.last-w.first,-1); w.dim.assign(w.last-w.first,0);
-    w.count[0] = w.count[1] = 0;
+    w.first = first; w.last = std::min(first+L().windowSize, ncluster+1);
+    w.where.assign(w.last-w.first,-1); w.dim.assign(w.last-w.first,0); w.kind.assign(w.last-w.first,0);
+    w.count[0] = w.count[1] = w.count[2] = 0;
     // the slot was waited for (or never used): the feeder is done with it
     C* dst[2] = {in2(own,slot), in4(own,slot)};
+    C* arena = inW(own,slot);
+    unsigned char* dims = dimW(own,slot);
+    long arenaUsed = 0;
     const int nqubit = QubitArray_getNqubit(qa);
     for (int ic=w.first; ic<w.last; ++ic){
         BathArray* b = createBathArray(clusters[ic]+1,order,ba,dfa,nqubit);
         const int d = BathArray_dim(b);
-        if ((d == 2 || d == 4) && d <= maxDim){
+        const int dw = (gcce ? qdim : 1)*d;   // the warp kernel's total dimension
+        if (packed && (d == 2 || d == 4) && d <= maxDim){
             cceClusterHamiltonians(qa,b,cnf,Ha,Hb);
             if (finiteAndHermitian(Ha) && finiteAndHermitian(Hb)){
-                const int k = d==4, per = k ? mem.per4 : mem.per2;
+                const int k = d==4, per = k ? L().per4 : L().per2;
                 C* p = dst[k]+w.count[k]*per;
                 std::memcpy(p,Ha.data(),sizeof(C)*d*d);
                 std::memcpy(p+d*d,Hb.data(),sizeof(C)*d*d);
                 if (!ensemble){ const MatrixXcd psi = BathArray_Psi0(b); std::memcpy(p+2*d*d,psi.data(),sizeof(C)*d); }
                 w.where[ic-w.first] = int(w.count[k]++);
                 w.dim[ic-w.first] = char(d);
+                w.kind[ic-w.first] = char(d);
+            } else ++fallback;
+        } else if (warp && dw <= warpcluster::maxDim && (warpMask>>dw & 1ULL)){
+            const long need = warpcluster::inputSize(wplan,dw);
+            if (arenaUsed+need > L().arena){       // the area is full: the window ends before this cluster
+                BathArray_freeAll(b);
+                w.last = ic;
+                break;
+            }
+            C* p = arena+arenaUsed;
+            bool fine;
+            if (gcce){
+                gcceClusterHamiltonian(qa,b,cnf,Ht,Hq);
+                double asym = 0, scale = 0;
+                // otherwise calCoherenceGcceInto refuses it, with its message
+                fine = gcceHamiltonianFinite(Ht) && gcceHamiltonianHermitian(Ht,asym,scale);
+                if (fine){
+                    std::memcpy(p,Ht.data(),sizeof(C)*dw*dw);
+                    if (!ensemble){ const MatrixXcd psi = kron(QubitArray_getPsi0(qa),BathArray_Psi0(b)); std::memcpy(p+dw*dw,psi.data(),sizeof(C)*dw); }
+                }
+            } else {
+                cceClusterHamiltonians(qa,b,cnf,Ha,Hb);
+                fine = finiteAndHermitian(Ha) && finiteAndHermitian(Hb);
+                if (fine){
+                    std::memcpy(p,Ha.data(),sizeof(C)*d*d);
+                    std::memcpy(p+d*d,Hb.data(),sizeof(C)*d*d);
+                    if (!ensemble){ const MatrixXcd psi = BathArray_Psi0(b); std::memcpy(p+2*d*d,psi.data(),sizeof(C)*d); }
+                }
+            }
+            if (fine){
+                dims[w.count[2]] = (unsigned char)dw;
+                w.where[ic-w.first] = int(w.count[2]++);
+                w.dim[ic-w.first] = char(d);
+                w.kind[ic-w.first] = 1;
+                arenaUsed += need;
+                ++warpClusters;
             } else ++fallback;
         } else ++fallback;
         BathArray_freeAll(b);
     }
+    w.where.resize(w.last-w.first); w.dim.resize(w.last-w.first); w.kind.resize(w.last-w.first);
     SlotHeader* h = header(own,slot);
-    h->count[0] = w.count[0]; h->count[1] = w.count[1];
+    h->count[0] = w.count[0]; h->count[1] = w.count[1]; h->count[2] = w.count[2];
     w.submitted = true; w.waited = false;
-    h->state.store(w.count[0]+w.count[1] > 0 ? slotSubmitted : slotDone,std::memory_order_release);
-    gpuClusters += w.count[0]+w.count[1];
+    const long n = w.count[0]+w.count[1]+w.count[2];
+    h->state.store(n > 0 ? slotSubmitted : slotDone,std::memory_order_release);
+    gpuClusters += n;
     prepareSeconds += MPI_Wtime()-start;
 }
 
@@ -312,7 +544,7 @@ void SmallClusterBatch::Impl::wait(int slot){
     FeederHeader* fh = feederHeader();
     long spins = 0;
     while (h->state.load(std::memory_order_acquire) != slotDone){
-        if (fh->state.load(std::memory_order_acquire) < 0){
+        if (fh->state.load(std::memory_order_acquire) == feederFailed){
             fprintf(stderr,"Error: the packed GPU kernel (feeder on node rank 0): %s\n",fh->message);
             ccexFatal();
         }
@@ -326,16 +558,29 @@ struct SmallClusterBatch::Impl {};
 #endif
 
 void smallClusterWarmUp(const Config* cnf){
-    if (cnf->gpu_packed_max_dim <= 0) return;
+    const bool packed = cnf->gpu_packed_max_dim > 0, warp = cnf->gpu_warp_max_dim > 0;
+    if (!packed && !warp) return;
     // refused here, before the bath is read: the packed kernel is cCCE, and it is in the GPU binary only
-    if (strcasecmp(cnf->method,"cce")){
+    if (packed && strcasecmp(cnf->method,"cce")){
         if (rank==0) fprintf(stderr,"Error: gpu_options.packed_max_dim works with method=CCE (this run: %s)\n",cnf->method);
         ccexFatal();
     }
+    if (warp && !strcmp(cnf->gpu_warp_source,"given")) warpInputCheck(cnf);
 #if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
-    if (warm.memory.allocated()) return;
+    // the batch runs threads beside the main one (this warm-up, the feeder), which MPI allows from MPI_THREAD_FUNNELED on
+    // (main.cpp asks for it); every MPI call stays on the main thread (review 20261012-233058-452278 P3-03)
+    int provided = MPI_THREAD_SINGLE;
+    MPI_Query_thread(&provided);
+    if (provided < MPI_THREAD_FUNNELED){
+        if (rank==0) fprintf(stderr,"Error: gpu_options.%s runs a thread beside MPI and needs MPI_THREAD_FUNNELED; "
+                                    "this MPI provides level %d. Set gpu_options.packed_max_dim to 0%s.\n",
+                             packed ? "packed_max_dim" : "warp_max_dim",provided,warp ? " and warp_max_dim to 0" : "");
+        ccexFatal();
+    }
+    const unsigned long long mask = warp ? warpMask(cnf) : 0;
+    if (warm.memory.allocated() || layoutFor(cnf,packed,mask).windowSize == 0) return;
     const double start = MPI_Wtime();
-    warm.memory.allocate(cnf->nstep,cnf->nstate==0,windowFor(cnf->nstep));
+    warm.memory.allocate(layoutFor(cnf,packed,mask));
     warm.allocateSeconds = MPI_Wtime()-start;
     if (warm.memory.nodeRank != 0) return;
     // the range by value: SmallClusterBatch takes warm.memory over (and clears it) while this thread may still run
@@ -350,10 +595,12 @@ void smallClusterWarmUp(const Config* cnf){
         warm.lockSeconds = std::chrono::duration<double>(std::chrono::steady_clock::now()-t1).count();
     });
 #else
-    if (rank==0) fprintf(stderr,"Error: gpu_options.packed_max_dim needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n");
+    if (rank==0) fprintf(stderr,"Error: gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
+                         packed ? "packed_max_dim" : "warp_max_dim");
     ccexFatal();
 #endif
 }
+
 
 void smallClusterWarmDown(){
 #if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
@@ -365,41 +612,111 @@ void smallClusterWarmDown(){
 #endif
 }
 
-SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pulse* pls, bool isGCCE){
-    if (cnf->gpu_packed_max_dim <= 0) return;
-    if (isGCCE || strcasecmp(cnf->method,"cce") || QubitArray_getNqubit(qa)!=1 || strcasecmp(cnf->quantity,"coherence")){
-        // given in the input: refused; the default (Config_resolvePackedMaxDim) is simply off here
-        if (strcmp(cnf->gpu_packed_source,"given")){
-            if (rank==0) printf("[gpu-packed] off: the packed kernel is for method=CCE with one qubit and quantity=coherence\n");
-            return;
-        }
-        if (rank==0) fprintf(stderr,"Error: gpu_options.packed_max_dim supports method=CCE with one qubit and quantity=coherence\n");
-        ccexFatal();
+SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pulse* pls, bool isGCCE,
+                                     int*** localclusters, int order, const char* savemode){
+    if (cnf->gpu_packed_max_dim <= 0 && cnf->gpu_warp_max_dim <= 0) return;
+    // the packed kernel (A26), as before
+    bool packedOn = false;
+    Plan plan{}; bool ensemble = false, recursive = false;
+    if (cnf->gpu_packed_max_dim > 0){
+        if (isGCCE || strcasecmp(cnf->method,"cce") || QubitArray_getNqubit(qa)!=1 || strcasecmp(cnf->quantity,"coherence")){
+            // given in the input: refused; the default (Config_resolvePackedMaxDim) is simply off here
+            if (strcmp(cnf->gpu_packed_source,"given")){
+                if (rank==0) printf("[gpu-packed] off: the packed kernel is for method=CCE with one qubit and quantity=coherence\n");
+            } else {
+                if (rank==0) fprintf(stderr,"Error: gpu_options.packed_max_dim supports method=CCE with one qubit and quantity=coherence\n");
+                ccexFatal();
+            }
+        } else if (!smallClusterPlan(cnf,pls,plan,ensemble,recursive)){
+            if (rank==0) printf("[gpu-packed] more than 4 distinct pulse intervals (or %d pulses): every cluster on the CPU\n",
+                                smallcluster::maxIntervals-1);
+        } else packedOn = true;
     }
-    Plan plan; bool ensemble, recursive;
-    if (!smallClusterPlan(cnf,pls,plan,ensemble,recursive)){
-        if (rank==0) printf("[gpu-packed] more than 4 distinct pulse intervals (or %d pulses): every cluster on the CPU\n",
-                            smallcluster::maxIntervals-1);
+    // A40: the warp kernel (opt-in); what it cannot take stays on its usual path
+    bool warpOn = false;
+    warpcluster::Plan wp{};
+    unsigned long long mask = 0;
+    if (cnf->gpu_warp_max_dim > 0){
+        const char* why = nullptr;
+        if (!warpClusterRun(qa,cnf,pls,wp,why)){
+            if (rank==0) printf("[gpu-warp] off: %s - every cluster on its usual path\n",why);
+        } else if (isGCCE && savemode && !strcasecmp(savemode,"cluster_density_matrix")){
+            if (rank==0) printf("[gpu-warp] off: savemode cluster_density_matrix - every cluster on its usual path\n");
+        } else {
+            mask = warpMask(cnf,wp.qdim);
+            if (!mask){
+                if (rank==0) printf("[gpu-warp] off: no warp dimension for a qubit of dimension %d - every cluster on its usual path\n",wp.qdim);
+            } else warpOn = true;
+        }
+    }
+    if (!packedOn && !warpOn) return;            // the early memory, if any, is freed at the end (smallClusterWarmDown)
+    const char* tag = packedOn ? "[gpu-packed]" : "[gpu-warp]";
+#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
+    // review 20261012-233058-452278 P3-04: no window (and no memory) without clusters, none beyond the 6 MiB budget;
+    // GPU 다음 셋 (1): and no feeder (the early start released) when no rank has a cluster of a dimension the batch takes.
+    // A rank looks at its clusters in order (order 1 first) until it finds one (bath dimension: the cluster's bath array,
+    // as calculate() makes it); a run that uses the batch finds one at once.
+    long most = 0, eligible = 0;
+    const int nqubit = QubitArray_getNqubit(qa), qubitFactor = isGCCE ? wp.qdim : 1;
+    for (int n=1; n<=order; n++) most = std::max<long>(most, localclusters[n][0][0]-1);
+    for (int n=1; n<=order && !eligible; n++)
+        for (int ic=1; ic<=localclusters[n][0][0]-1 && !eligible; ic++){
+            BathArray* b = createBathArray(localclusters[n][ic]+1,n,ba,dfa,nqubit);
+            const int d = BathArray_dim(b), dw = qubitFactor*d;
+            BathArray_freeAll(b);
+            eligible = (packedOn && (d == 2 || d == 4) && d <= cnf->gpu_packed_max_dim) ||
+                       (warpOn && dw <= warpcluster::maxDim && (mask>>dw & 1ULL));
+        }
+    long counts[2] = {most, eligible};
+    MPI_Allreduce(MPI_IN_PLACE,counts,2,MPI_LONG,MPI_MAX,MPI_COMM_WORLD);
+    most = counts[0]; eligible = counts[1];
+    const Layout full = layoutFor(cnf,packedOn,mask);
+    if (most <= 0 || !eligible || full.windowSize == 0){
+        if (rank==0){
+            if (most <= 0) printf("%s off: no clusters to compute\n",tag);
+            else if (!eligible) printf("%s off: no cluster of a dimension it takes (%s): every cluster on its usual path\n",
+                                       tag,packedOn && warpOn ? "packed and warp kernel" : packedOn ? "packed kernel" : "warp kernel");
+            else printf("%s off: the %d values of one cluster pass the 6 MiB of a window: every cluster on the CPU\n",
+                        tag,full.nstep*full.outPer);
+        }
+        smallClusterWarmDown();                // collective: the early memory and context (if any) released now, not at the end
         return;
     }
-#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
     Impl* m = new Impl;
-    m->qa = qa; m->ba = ba; m->dfa = dfa; m->cnf = cnf; m->plan = plan; m->ensemble = ensemble; m->recursive = recursive;
-    m->maxDim = cnf->gpu_packed_max_dim;
-    const int window = windowFor(plan.nstep);
+    m->qa = qa; m->ba = ba; m->dfa = dfa; m->cnf = cnf;
+    m->plan = packedOn ? plan : wp.time; m->ensemble = packedOn ? ensemble : bool(wp.ensemble); m->recursive = recursive;
+    m->packed = packedOn; m->maxDim = packedOn ? cnf->gpu_packed_max_dim : 0;
+    m->optional = !strcasecmp(cnf->backend,"auto");
+    m->warp = warpOn; m->warpMask = mask; m->gcce = isGCCE; m->qdim = wp.qdim; m->wplan = wp;
+    if (warpOn && !isGCCE) m->warpReady.store(1,std::memory_order_release);   // the cCCE plan needs no qubit state
     // the memory of smallClusterWarmUp when it fits (the same on every rank: it depends on the input only), else a new one
-    if (warm.memory.matches(plan.nstep,ensemble,window)){ m->mem = warm.memory; warm.memory = NodeMemory{}; m->fromWarm = true; }
-    else m->mem.allocate(plan.nstep,ensemble,window);
+    // whose window is no larger than any rank's largest number of clusters in one order
+    if (warm.memory.matches(full)){ m->mem = warm.memory; warm.memory = NodeMemory{}; m->fromWarm = true; m->allocateSeconds = warm.allocateSeconds; }
+    else {
+        if (warm.memory.allocated()) smallClusterWarmDown();   // collective, as the test above is the same on every rank
+        const double start = MPI_Wtime();
+        m->mem.allocate(layoutFor(cnf,packedOn,mask,most));
+        m->allocateSeconds = MPI_Wtime()-start;
+    }
     m->own = m->mem.parts[m->mem.nodeRank];
     if (m->mem.nodeRank==0) m->feeder = std::thread([m]{ m->feed(); });
     impl = m;
-    if (rank==0) printf("[gpu-packed] on: cCCE clusters of bath dimension %s on the GPU (%s, %s, %d intervals, %d distinct), "
+    if (rank==0 && packedOn) printf("[gpu-packed] on: cCCE clusters of bath dimension %s on the GPU (%s, %s, %d intervals, %d distinct), "
                         "window %d, %.1f MiB shared memory per rank; one feeder per node\n", m->maxDim==4 ? "2 and 4" : "2",
                         ensemble ? "ensemble" : "single state", recursive ? "recursive" : "exact", plan.intervals, plan.distinct,
-                        m->mem.windowSize, m->mem.partBytes/1048576.0);
+                        m->mem.layout.windowSize, m->mem.partBytes/1048576.0);
+    if (rank==0 && warpOn){
+        char dims[160] = ""; size_t at = 0;
+        for (int d=2; d<=warpcluster::maxDim; ++d) if (mask>>d & 1ULL) at += snprintf(dims+at,sizeof(dims)-at,"%s%d",at ? ", " : "",d);
+        printf("[gpu-warp] on (gpu_options.warp_max_dim %d, %s): %s clusters of total dimension %s in the warp kernel (%s%s, exact, "
+               "%d intervals, %d distinct), window %d, %.1f MiB of inputs per window, %.1f MiB shared memory per rank\n",
+               cnf->gpu_warp_max_dim, cnf->gpu_warp_source, isGCCE ? "gCCE" : "cCCE", dims, wp.ensemble ? "ensemble" : "single state", wp.dm ? ", dm" : "",
+               wp.time.intervals, wp.time.distinct, m->mem.layout.windowSize, m->mem.layout.arena*16.0/1048576.0, m->mem.partBytes/1048576.0);
+    }
 #else
-    (void)ba; (void)dfa;
-    if (rank==0) fprintf(stderr,"Error: gpu_options.packed_max_dim needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n");
+    (void)ba; (void)dfa; (void)localclusters; (void)order; (void)tag;
+    if (rank==0) fprintf(stderr,"Error: gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
+                         packedOn ? "packed_max_dim" : "warp_max_dim");
     ccexFatal();
 #endif
 }
@@ -409,6 +726,40 @@ SmallClusterBatch::~SmallClusterBatch(){
     if (impl && impl->feeder.joinable()){ impl->stop.store(true); impl->feeder.join(); }
 #endif
     delete impl;
+}
+
+void SmallClusterBatch::beginState(QubitArray* qa, Pulse* pls){
+#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
+    if (!impl || !impl->warp || !impl->gcce) return;
+    Impl& m = *impl;
+    warpcluster::Plan p = m.wplan;
+    warpClusterQubit(qa,pls,p);
+    if (!m.warpReady.load(std::memory_order_acquire)){
+        m.wplan = p;
+        m.warpReady.store(1,std::memory_order_release);
+        return;
+    }
+    if (std::memcmp(p.pulse,m.wplan.pulse,sizeof p.pulse) || std::memcmp(p.psia,m.wplan.psia,sizeof p.psia) ||
+        std::memcmp(p.psib,m.wplan.psib,sizeof p.psib) || std::memcmp(p.qpsi0,m.wplan.qpsi0,sizeof p.qpsi0)){
+        fprintf(stderr,"Error: the warp kernel (gpu_options.warp_max_dim): the pulses or the qubit states changed between states\n");
+        ccexFatal();
+    }
+#else
+    (void)qa; (void)pls;
+#endif
+}
+
+// the batch's clusters (packed: bath dimension 2 and 4 up to packed_max_dim; warp: the compiled total dimensions up to warp_max_dim - dim
+// is the total dimension, qubit x bath for gCCE): the others keep the ordinary CUDA cluster batching (review P1-05)
+bool SmallClusterBatch::packs(int dim) const {
+#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
+    if (!impl || impl->off) return false;
+    return (impl->packed && (dim == 2 || dim == 4) && dim <= impl->maxDim) ||
+           (impl->warp && dim >= 0 && dim <= warpcluster::maxDim && (impl->warpMask>>dim & 1ULL));
+#else
+    (void)dim;
+    return false;
+#endif
 }
 
 void SmallClusterBatch::beginOrder(int n, int** list, int count){
@@ -424,9 +775,9 @@ void SmallClusterBatch::beginOrder(int n, int** list, int count){
 #endif
 }
 
-const std::complex<double>* SmallClusterBatch::get(int ic, int& dim){
+const std::complex<double>* SmallClusterBatch::get(int ic, int& dim, int& per){
 #if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
-    if (!impl) return nullptr;
+    if (!impl || impl->off) return nullptr;
     Impl& m = *impl;
     int s = -1;
     for (int k=0; k<2; ++k) if (m.window[k].submitted && ic >= m.window[k].first && ic < m.window[k].last) s = k;
@@ -435,6 +786,7 @@ const std::complex<double>* SmallClusterBatch::get(int ic, int& dim){
         s = !m.window[0].submitted ? 0 : !m.window[1].submitted ? 1 : m.window[0].first < m.window[1].first ? 0 : 1;
         if (m.window[s].submitted && !m.window[s].waited) m.wait(s);
         if (m.ready()) m.prepare(s,ic);
+        else if (m.off) return nullptr;   // the card could not be opened (backend auto): from here on all on the CPU
         else m.cpuWindow(s,ic);           // the card is not up yet (the start of the run): these on the CPU meanwhile
     }
     Impl::Window& w = m.window[s];
@@ -449,11 +801,16 @@ const std::complex<double>* SmallClusterBatch::get(int ic, int& dim){
     const int where = w.where[ic-w.first];
     if (where < 0) return nullptr;
     dim = w.dim[ic-w.first];
-    const long index = dim==2 ? where : w.count[0]+where;
-    if (m.status(m.own,s)[index] != smallcluster::statusOk){ ++m.fallback; --m.gpuClusters; return nullptr; }
-    return reinterpret_cast<const std::complex<double>*>(m.out(m.own,s)+size_t(index)*m.plan.nstep);
+    const int kind = w.kind[ic-w.first];
+    const long packedCount = w.count[0]+w.count[1];
+    const long index = kind==2 ? where : kind==4 ? w.count[0]+where : packedCount+where;
+    if (m.status(m.own,s)[index] != smallcluster::statusOk){ ++m.fallback; --m.gpuClusters; if (kind==1) --m.warpClusters; return nullptr; }
+    const size_t nstep = size_t(m.plan.nstep);
+    per = kind==1 ? warpcluster::outputPer(m.wplan) : 1;
+    const size_t offset = kind==1 ? size_t(packedCount)*nstep + size_t(where)*nstep*per : size_t(index)*nstep;
+    return reinterpret_cast<const std::complex<double>*>(m.out(m.own,s)+offset);
 #else
-    (void)ic; (void)dim;
+    (void)ic; (void)dim; (void)per;
     return nullptr;
 #endif
 }
@@ -464,35 +821,50 @@ void SmallClusterBatch::report(){
     Impl& m = *impl;
     const double releaseStart = MPI_Wtime();
     MPI_Barrier(m.mem.node);                   // every rank has its last window back
-    double feeder[4] = {0,0,0,0}; long long feederCounts[2] = {0,0}; int flags[2] = {0,0};
+    double feeder[4] = {0,0,0,0}; long long feederCounts[2] = {0,0}; int flags[3] = {0,0,0};
+    char unavailable[sizeof(FeederHeader::message)] = {};
     if (m.mem.nodeRank==0){
         const double start = MPI_Wtime();
         m.stop.store(true,std::memory_order_release);
         m.feeder.join();
+        // the feeder's last word, whatever the ranks saw while they computed (they may have finished before it failed):
+        // a failure stops the run here too, so that it does not depend on the timing (review 20261012-233058-452278 P3-01)
+        const FeederHeader* fh = m.feederHeader();
+        const int state = fh->state.load(std::memory_order_acquire);
+        if (state == feederFailed){
+            fprintf(stderr,"Error: the packed GPU kernel (feeder on node rank 0): %s\n",fh->message);
+            ccexFatal();
+        }
+        if (state == feederUnavailable){ flags[2] = 1; snprintf(unavailable,sizeof unavailable,"%s",fh->message); }
         feeder[0] = m.feederOpen; feeder[1] = m.feederLock; feeder[2] = m.feederWaited; feeder[3] = MPI_Wtime()-start;
         feederCounts[0] = m.feederBatches; feederCounts[1] = m.feederItems;
         flags[0] = m.locked; flags[1] = m.early;
     }
     const double freeStart = MPI_Wtime();
     m.mem.release();
-    const double released[3] = {MPI_Wtime()-releaseStart, MPI_Wtime()-freeStart, warm.allocateSeconds};
-    long long counts[3] = {m.gpuClusters, m.fallback, m.cpuStarting}, total[3] = {0,0,0}, batches[2] = {0,0};
+    const double released[3] = {MPI_Wtime()-releaseStart, MPI_Wtime()-freeStart, m.allocateSeconds};
+    long long counts[4] = {m.gpuClusters, m.fallback, m.cpuStarting, m.warpClusters}, total[4] = {0,0,0,0}, batches[2] = {0,0};
     double seconds[2] = {m.prepareSeconds, m.waitSeconds}, most[2] = {0,0}, sum[2] = {0,0}, slowest[4] = {0,0,0,0};
-    int anyFlags[2] = {0,0};
-    MPI_Reduce(counts,total,3,MPI_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
+    int anyFlags[3] = {0,0,0};
+    MPI_Reduce(counts,total,4,MPI_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
     MPI_Reduce(feederCounts,batches,2,MPI_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
     MPI_Reduce(seconds,most,2,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
     MPI_Reduce(seconds,sum,2,MPI_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
     MPI_Reduce(feeder,slowest,4,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-    MPI_Reduce(flags,anyFlags,2,MPI_INT,MPI_MAX,0,MPI_COMM_WORLD);
+    MPI_Reduce(flags,anyFlags,3,MPI_INT,MPI_MAX,0,MPI_COMM_WORLD);
     double releasedMost[3] = {0,0,0};
     MPI_Reduce(released,releasedMost,3,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-    if (rank==0) printf("[gpu-packed] clusters on the GPU %lld, on the CPU while the GPU started %lld, back to the CPU %lld; "
+    if (rank==0 && anyFlags[2])
+        printf("%s off: the GPU could not be opened (%s); backend=auto, so every cluster was computed on the CPU\n",
+               m.packed ? "[gpu-packed]" : "[gpu-warp]", *unavailable ? unavailable : "on another node");
+    if (rank==0) printf("%s clusters on the GPU %lld, on the CPU while the GPU started %lld, back to the CPU %lld; "
                         "per rank: prepare %.3f s (max %.3f), "
                         "wait for the GPU %.3f s (max %.3f); feeder: CUDA start %.3f s, page-lock %.3f s (%s)%s, first batch "
-                        "after %.3f s, %lld batches of %lld windows, stop %.3f s; shared memory allocated early in %.3f s, release %.3f s (of which freeing it %.3f s)\n", total[0], total[2], total[1], sum[0]/nprocess,
+                        "after %.3f s, %lld batches of %lld windows, stop %.3f s; shared memory allocated in %.3f s, release %.3f s (of which freeing it %.3f s)\n",
+                        m.packed ? "[gpu-packed]" : "[gpu-warp]", total[0], total[2], total[1], sum[0]/nprocess,
                         most[0], sum[1]/nprocess, most[1], slowest[0], slowest[1], anyFlags[0] ? "done" : "refused, pageable copies",
                         anyFlags[1] ? " early" : "", slowest[2], batches[0], batches[1], slowest[3], releasedMost[2], releasedMost[0], releasedMost[1]);
+    if (rank==0 && m.warp) printf("[gpu-warp] of these in the warp kernel %lld\n", total[3]);
     delete impl;
     impl = nullptr;
 #endif

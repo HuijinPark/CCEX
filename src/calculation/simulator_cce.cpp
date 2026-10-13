@@ -7,6 +7,7 @@
 #include "../../include/calculation/gpu/compute_backend.h"
 #include "../../include/calculation/hamiltonian_check.h"
 #include "../../include/calculation/small_hamiltonian.h"
+#include "../../include/calculation/sparse_propagator.h"
 namespace {
 std::pair<MatrixXcd,MatrixXcd> cceHamiltonians(QubitArray* qa,BathArray* ba,Config* cnf) {
     const int nspin=BathArray_getNspin(ba);
@@ -75,6 +76,12 @@ static MatrixXcd* calCoherenceCceCuda(const MatrixXcd& ha, const MatrixXcd& hb,
         }
         if (cnf->profile) computeProfile(cnf,"cce","cuda",d,buildEnd-start,setupEnd-buildEnd,MPI_Wtime()-setupEnd);
         return result.release();
+    } catch (const GpuOutOfMemory& e){
+        // backend auto: nullptr, and the caller computes this cluster on the CPU (what the card had is freed)
+        if (computeCudaOutOfMemory(cnf,int(ha.rows()),e.what())) return nullptr;
+        fprintf(stderr,"Error: CUDA cCCE: %s\n",e.what());
+        MPI_Abort(MPI_COMM_WORLD,1);
+        return nullptr;
     } catch (const std::exception& e){
         fprintf(stderr,"Error: CUDA cCCE: %s\n",e.what());
         MPI_Abort(MPI_COMM_WORLD,1);
@@ -113,6 +120,35 @@ inline void rowTimes(const Row& in,const Mat& A,Row& out){
         out.setZero();
         Eigen::internal::general_matrix_vector_product<Eigen::Index,doublec,Lhs,Eigen::RowMajor,false,doublec,Rhs,false>::run(
             n, n, Lhs(A.data(),n), Rhs(in.data(),1), out.data(), 1, doublec(1.0,0.0));
+    }
+}
+// out = A * in for evolution_update = exact, the same way (P1-04 of review 20261012-233058-452278): Eigen's unrolled
+// fixed-size product sums and signs zeros otherwise than the general kernel (dynamic (1, -0), fixed (1, +0); last bits
+// without -march=native), so a fixed size calls the column-major kernel with the arguments of Eigen's dispatch - out starts
+// from the dispatch's setZero. recursive keeps the unrolled product (faster; its fixed size differs from the dynamic path
+// in the last bits anyway: g++ -march=native vectorizes the phase step for a run-time size only).
+template<class Mat,class Col>
+inline void colTimes(const Mat& A,const Col& in,Col& out){
+    if constexpr (Mat::RowsAtCompileTime == Eigen::Dynamic){
+        out.noalias() = A * in;
+    } else {
+        typedef Eigen::internal::const_blas_data_mapper<doublec,Eigen::Index,Eigen::ColMajor> Lhs;
+        typedef Eigen::internal::const_blas_data_mapper<doublec,Eigen::Index,Eigen::RowMajor> Rhs;
+        const Eigen::Index n = A.rows();
+        out.setZero();
+        Eigen::internal::general_matrix_vector_product<Eigen::Index,doublec,Lhs,Eigen::ColMajor,false,doublec,Rhs,false>::run(
+            n, n, Lhs(A.data(),n), Rhs(in.data(),1), out.data(), 1, doublec(1.0,0.0));
+    }
+}
+// row * col for exact: for a fixed size the run-time-sized reduction of the dynamic path through maps (same order)
+template<class Row,class Col>
+inline doublec rowDotCol(const Row& row,const Col& col){
+    if constexpr (Row::SizeAtCompileTime == Eigen::Dynamic){
+        return (row * col)(0,0);
+    } else {
+        const Eigen::Map<const Eigen::RowVectorXcd> r(row.data(),row.size());
+        const Eigen::Map<const Eigen::VectorXcd> c(col.data(),col.size());
+        return (r * c)(0,0);
     }
 }
 // Recursive: evolution_update = recursive (A16 b); exact: sin and cos at every step. A template argument, not a run-time
@@ -161,19 +197,25 @@ void evolveSingleState(const SingleStateRun& r,const Mat& M,const Mat& Madj,cons
             if (ipulse==0){
                 row = rowStart.array() * Ud.adjoint().array();              // psi^dagger M_down D_d^*
                 scaled = (Uu.array() * colStart.array()).matrix();
-                col.noalias() = Madj * scaled;                                    // M^dagger D_u M_up^dagger psi
+                if constexpr (Recursive) col.noalias() = Madj * scaled;           // M^dagger D_u M_up^dagger psi
+                else colTimes(Madj,scaled,col);
             } else if (ipulse%2==1){
                 rowTimes(row,Madj,rowNext); row = rowNext.array() * Uu.adjoint().array();   // * M^dagger D_u^*
                 scaled = (Ud.array() * col.array()).matrix();
-                colNext.noalias() = M * scaled; col.swap(colNext);                // M D_d *
+                if constexpr (Recursive) colNext.noalias() = M * scaled;          // M D_d *
+                else colTimes(M,scaled,colNext);
+                col.swap(colNext);
             } else {
                 rowTimes(row,M,rowNext);    row = rowNext.array() * Ud.adjoint().array();   // * M D_d^*
                 scaled = (Uu.array() * col.array()).matrix();
-                colNext.noalias() = Madj * scaled; col.swap(colNext);             // M^dagger D_u *
+                if constexpr (Recursive) colNext.noalias() = Madj * scaled;       // M^dagger D_u *
+                else colTimes(Madj,scaled,colNext);
+                col.swap(colNext);
             }
         }
         r.result[i].resize(1,1);                         // no allocation when the caller's buffer already holds 1 x 1
-        r.result[i](0,0) = (row * col)(0,0);
+        if constexpr (Recursive) r.result[i](0,0) = (row * col)(0,0);
+        else r.result[i](0,0) = rowDotCol(row,col);
         tfree += r.deltat;
     }
 }
@@ -199,38 +241,63 @@ void calCoherenceCceInto(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* puls
         exit(1);
     }
 
+    // A2: propagator = sparse from sparse_min_dim on (one state; main.cpp refuses the rest) - no dense Hamiltonian
+    if (sparsePropagatorFor(cnf,bdim)){
+        calCoherenceCceSparse(qa,ba,cnf,pulse,result,stime);
+        return;
+    }
+
     ////////////////////////////////
     // Hamiltonian
     ////////////////////////////////
 
     // A25: the two Hamiltonians in ws, without the general functions' allocations (small_hamiltonian.cpp; the same bits)
     cceClusterHamiltonians(qa,ba,cnf,ws.Halpha,ws.Hbeta);
-    const MatrixXcd& Halpha=ws.Halpha;
-    const MatrixXcd& Hbeta=ws.Hbeta;
 
 #ifdef CCEX_USE_CUDA
     if (computeUseCuda(cnf,bdim)){
         const double buildEnd=cnf->profile ? MPI_Wtime() : 0.0;
-        MatrixXcd* cuda=calCoherenceCceCuda(Halpha,Hbeta,ba,cnf,pulse,stime,buildEnd);
-        for (int i=0; i<Config_getNstep(cnf); i++) result[i] = cuda[i];
-        delete[] cuda;
-        return;
+        MatrixXcd* cuda=calCoherenceCceCuda(ws.Halpha,ws.Hbeta,ba,cnf,pulse,stime,buildEnd);
+        if (cuda){                     // nullptr: out of GPU memory under backend auto, on the CPU below
+            for (int i=0; i<Config_getNstep(cnf); i++) result[i] = cuda[i];
+            delete[] cuda;
+            return;
+        }
     }
 #endif
 
-    //printInlineMatrixXcd("Halpha", Halpha);
-    //printInlineMatrixXcd("Hbeta", Hbeta  );
+    const double profileBuildEnd = cnf->profile ? MPI_Wtime() : 0.0;
 
-    //etime = MPI_Wtime();
-    //printf("          Wall time step1 = %.5f s\n", stime - etime);
+    // Check if this is the ensemble calculation; one state: the initial state of the bath
+    const bool isEnsemble = Config_getNstate(cnf) == 0;
+    MatrixXcd psi0;
+    if (!isEnsemble){
+        psi0 = BathArray_Psi0(ba);
+    }
+    cceSetup(ws, isEnsemble ? nullptr : &psi0);
 
+    // Quantity
+    char* quantity = Config_getQuantity(cnf);
+    if (strcasecmp(quantity,"coherence")!=0){
+        fprintf(stderr,"Error : calCoherenceCce : quantity is not coherence\n");
+        exit(1);
+    }
+    const double profileSetupEnd = cnf->profile ? MPI_Wtime() : 0.0;
+
+    cceEvolve(cnf, pulse, result, ws);
+
+    // free
+    if (cnf->profile) computeProfile(cnf,"cce","cpu",bdim,
+        profileBuildEnd-stime,profileSetupEnd-profileBuildEnd,MPI_Wtime()-profileSetupEnd);
+}
+
+void cceSetup(CceWorkspace& ws, const MatrixXcd* psi){
     ////////////////////////////////
     // Diagonalize the Hamiltonian
     ////////////////////////////////
-    const double profileBuildEnd = cnf->profile ? MPI_Wtime() : 0.0;
     // the solvers, M and the eigenvalues live in ws (A14: no allocation once the dimension has been seen)
-    ws.up.compute(Halpha);
-    ws.down.compute(Hbeta);
+    ws.up.compute(ws.Halpha);
+    ws.down.compute(ws.Hbeta);
     const MatrixXcd& M_up   = ws.up.eigenvectors();
     const MatrixXcd& M_down = ws.down.eigenvectors();
     // M_up is the eigenvector matrix of a Hermitian matrix, so its inverse is its
@@ -239,58 +306,38 @@ void calCoherenceCceInto(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* puls
     M.noalias() = M_up.adjoint()*M_down;
     ws.valUp = ws.up.eigenvalues();
     ws.valDown = ws.down.eigenvalues();
+    if (psi){
+        // One state: the two ends of the chain (evolveSingleState)
+        const MatrixXcd& psi0 = *psi;
+        ws.rowStart.noalias() = psi0.adjoint() * M_down;                        // psi^dagger M_down
+        ws.colStart.noalias() = M_up.adjoint() * psi0;                          // M_up^dagger psi
+        ws.Madj = M.adjoint();
+    }
+}
+
+void cceEvolve(Config* cnf, Pulse* pulse, MatrixXcd* result, CceWorkspace& ws){
+    const int bdim = int(ws.M.rows());
+    const MatrixXcd& M_up   = ws.up.eigenvectors();
+    const MatrixXcd& M_down = ws.down.eigenvectors();
+    const MatrixXcd& M = ws.M;
     const Eigen::VectorXcd& es_up_Val = ws.valUp;
     const Eigen::VectorXcd& es_down_Val = ws.valDown;
-
-    //std::cout << "es_up" << es_up_Val  << std::endl;
-    //std::cout << "\n\nes_down" << es_down_Val << std::endl;
-    //etime = MPI_Wtime();
-    //printf("          Wall time step2 = %.5f s\n", stime - etime);
-
-
-    ////////////////////////////////
-    // Initial state of bath
-    ////////////////////////////////
-
-    // Check if this is the ensemble calculation
-    int nstate = Config_getNstate(cnf);
-    bool isEnsemble = false;
-    if (nstate == 0){isEnsemble = true;}
-
-    MatrixXcd psi0;
-    if (!isEnsemble){
-        psi0 = BathArray_Psi0(ba);
-    }
+    const bool isEnsemble = Config_getNstate(cnf) == 0;
 
     ////////////////////////////////
     // Propagation
     ////////////////////////////////
 
-    // Quantity
-    char* quantity = Config_getQuantity(cnf);
-    if (strcasecmp(quantity,"coherence")!=0){
-        fprintf(stderr,"Error : calCoherenceCce : quantity is not coherence\n");
-        exit(1);
-    }
-
     // Npulse
     int npulse = Pulse_getNpulse(pulse);
-    //double* tau_fractions    = Pulse_getTauFractions(pulse);
     double** sequence        = Pulse_getSequence(pulse);
-    double* pulse_angles     = Pulse_getPulseAngles(pulse);
-    char*   pulse_axes       = Pulse_getPulseAxes(pulse);
     int*    sequence_indices = Pulse_getSequenceIndices(pulse);
 
     // Alloc the result variable
     int nstep = Config_getNstep(cnf);
     double deltat = (double)Config_getDeltat(cnf);
 
-    //etime = MPI_Wtime();
-    //printf("          Wall time step3 = %.5f s\n", stime - etime);
-
-
     double tfree = 0.0;
-    const double profileSetupEnd = cnf->profile ? MPI_Wtime() : 0.0;
 
     // The ensemble block below is written for CPMG: it takes tau = t/(2*npulse) and
     // never reads the sequence. A Manual sequence has its own intervals, so it goes
@@ -468,18 +515,16 @@ void calCoherenceCceInto(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* puls
     //////////////////////////////////////////////////////////////
     }else if (!isEnsemble){
 
-        // One state: matrix-vector products from both ends (evolveSingleState)
-        Eigen::RowVectorXcd& rowStart = ws.rowStart;
-        Eigen::VectorXcd&    colStart = ws.colStart;
-        rowStart.noalias() = psi0.adjoint() * M_down;                          // psi^dagger M_down
-        colStart.noalias() = M_up.adjoint() * psi0;                            // M_up^dagger psi
-        ws.Madj = M.adjoint();
+        // One state: matrix-vector products from both ends (evolveSingleState); the start vectors and M^dagger from cceSetup
+        const Eigen::RowVectorXcd& rowStart = ws.rowStart;
+        const Eigen::VectorXcd&    colStart = ws.colStart;
         const MatrixXcd& Madj = ws.Madj;
         const SingleStateRun run{es_up_Val,es_down_Val,sequence,sequence_indices,npulse,nstep,deltat,result,ws};
         const bool recursive = strcasecmp(cnf->evolution_update,"recursive")==0;
-        // A16: bath dimension 2 or 4 (every P1 cluster) with fixed-size types - Eigen unrolls the matrix-column products
-        // instead of calling its general kernel, in the same order (byte-identical with g++/AVX2 and icpx/AVX-512);
-        // the row products in rowTimes; any other dimension as before.
+        // A16: bath dimension 2 or 4 (every P1 cluster) with fixed-size types. exact: the bits of the dynamic path, zeros'
+        // signs included - the products and the final sum through Eigen's general kernels (rowTimes, colTimes, rowDotCol);
+        // recursive: the unrolled column products, last bits may differ from the dynamic path (P1-04 of review
+        // 20261012-233058-452278). Any other dimension as before.
         if (bdim==4){
             const Eigen::Matrix4cd M4=M, Madj4=Madj;
             Eigen::RowVector4cd r0=rowStart, r, rn; Eigen::Vector4cd c0=colStart, c, cn, sc;
@@ -647,10 +692,6 @@ void calCoherenceCceInto(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* puls
 
     //etime = MPI_Wtime();
     //printf("          Wall time step done = %.5f s\n",stime - etime);
-
-    // free
-    if (cnf->profile) computeProfile(cnf,"cce","cpu",bdim,
-        profileBuildEnd-stime,profileSetupEnd-profileBuildEnd,MPI_Wtime()-profileSetupEnd);
 }
 
 #ifdef CCEX_USE_CUDA
@@ -701,6 +742,11 @@ std::vector<MatrixXcd*> calCoherenceCceCudaBatch(QubitArray* qa,
         }
         computeClusterBatch(cnf,d,n);
         return out;
+    }catch(const GpuOutOfMemory& error){
+        // backend auto: nothing (what the card had is freed), and the caller computes the clusters one by one, here on the CPU
+        if(computeCudaOutOfMemory(cnf,BathArray_dim(baths[0]),error.what()))return {};
+        fprintf(stderr,"Error: CUDA cCCE cluster batch: %s\n",error.what());
+        MPI_Abort(MPI_COMM_WORLD,1);return {};
     }catch(const std::exception& error){
         fprintf(stderr,"Error: CUDA cCCE cluster batch: %s\n",error.what());
         MPI_Abort(MPI_COMM_WORLD,1);return {};

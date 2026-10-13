@@ -60,6 +60,12 @@ void READ_Tensor_etc(const char* inputfile, char** names, int nspecies, double**
 void READ_Tensor_const(const char* inputfile, char** names, int nspecies, double** Array,char* condition);
 bool READ_Tensor_array(const char* inputfile, double(*Array)[3],char* condition,int numCol);
 int READ_Tensor_ver(const char* inputfile,double* SpinFactor, double DefectTotSpin, double* CorrTotSpin);
+// Tensor file format v3 (2026-10-13): line 1 the tag (VASP / QUANTUMESPRESSO), line 2
+// "# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = <VASP OUTCAR|QE hyperfine.out>, S = <S>".
+// Returns false when the file has no such line (an older file: READ_Tensor_ver decides the factor). Returns true with
+// *version (1 VASP, 0 QE) and *fileS when it has one; refuses (exits) a malformed line, a tag that contradicts the
+// source, or an S other than DefectTotSpin. A v3 file is read x 1.
+bool READ_Tensor_provenance(const char* inputfile, double DefectTotSpin, int* version, double* fileS);
 
 void printHfInfo_version(int version, double DefectTotSpin, double CorrTotSpin, double SpinFactor);
 void printHfInfo_BD(double** vertex, double** center, double** normal, double MinDif[3], double MaxDif[3], bool Usingvertex);

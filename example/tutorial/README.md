@@ -31,9 +31,11 @@ run each was recorded with.
 - `run.sh` — runs every input with `mpirun`, then the post-processing the recorded
   run did (error correction, ensemble average, plot; `example/analysis/README.md`),
   all into `results/`. `NP` sets the ranks and `NCONF` the number of bath
-  configurations (defaults 4 and 1); the electron-bath runs of 04, 05 and 06 also
+  configurations (defaults 4 and 1; 01, 03 and `04/Population_gCCE2_10ppm` compute
+  one fixed configuration and ignore `NCONF`); the electron-bath runs of 04, 05 and 06 also
   take `NSTATE`, the sampled bath states per configuration (`-N`), which the
-  recorded runs set to 50. The header of each `run.sh` says what the recorded run
+  recorded runs set to 50 (the 1 ppm runs of 04 except ZFS) or 1 (the others; each
+  `job` says which). The header of each `run.sh` says what the recorded run
   used.
 - `job` — the idm Slurm script: it runs `run.sh` with the job's ranks and the
   recorded `NCONF` (and `NSTATE`), so a submitted run is the same calculation as one
@@ -55,7 +57,7 @@ run each was recorded with.
 ```
 bash do_compile.sh wsl-gnu                        # once; makes bin/main.out
 cd example/tutorial/02_Diamond_NV_natab/ensemble_CCE
-NP=4 NCONF=1 bash run.sh                      # results/ ; needs numpy and matplotlib for the post-processing
+NP=4 NCONF=1 bash run.sh                      # results/ ; needs numpy, scipy and matplotlib for the post-processing
 ```
 
 Every `run.sh` was run on WSL on 2026-09-23 with `NP=2 NCONF=1 NSTATE=1`, and those added

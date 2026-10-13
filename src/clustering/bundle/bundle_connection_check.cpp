@@ -250,7 +250,7 @@ bool adaptiveCheckState(QubitArray* qa,BathArray* ba,DefectArray* dfa,Config* c,
         const bool gcce=!strcasecmp(c->method,"gcce");
         const size_t count=(check.probes.size()+1)*c->nstep;
         std::vector<std::complex<double>> raw(count),combined(rank==0 ? count : 0);
-        Output quiet=*op;strcpy(quiet.savemode,"normal");
+        Output quiet=*op;strcpy(quiet.savemode,"coherence");
         if(rank==0) {
             std::unique_ptr<MatrixXcd[]> zero(gcce ? calCoherenceGcce(qa,nullptr,c,pulse,&quiet) : nullptr);
             for(int t=0;t<c->nstep;++t)raw[t]=gcce ? zero[t](0,0) : std::complex<double>(1,0);

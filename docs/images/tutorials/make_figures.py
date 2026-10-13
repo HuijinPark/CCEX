@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, os.path.join(ROOT, 'example', 'analysis', 'Analyzer', 'CoherenceAnalyzer.v1'))
-from coherence import read_coherence
+from coherence import read_coherence, error_correct
 T = os.path.join(ROOT, 'example', 'tutorial')
 OUT = os.path.dirname(os.path.abspath(__file__))
 SCALE = {'ms': 1.0, 'us': 1e3, 'ns': 1e6}
@@ -54,7 +54,9 @@ FIGURES = [
      [('rho_ii(t)', '01_Arbitrary_system/results/CCE2_Diamond_NV_natab_1_0_wiDiv')]),
     ('02_ensemble_CCE', 'L', 'ms', '02 NV in natural-abundance diamond, CCE2 Hahn echo',
      [('CCE2, 1 configuration', '02_Diamond_NV_natab/ensemble_CCE/results/CCE2_Diamond_NV_natab_EnsAvg_conv1')]),
-    ('02_knight_shift', 'L', 'us', '02 Knight shift in a tilted field',
+    # error-corrected as the analyzer does (wiDiv against noDiv, tolerance 2.0): the raw wiDiv without knight
+    # diverges to 5e5 near 1.4 ms and swamped the axis (2026-10-13)
+    ('02_knight_shift', 'LEC', 'us', '02 Knight shift in a tilted field (error-corrected)',
      [('without knight', '02_Diamond_NV_natab/knight_shift/results/CCE2_Diamond_NV_natab_wo_knight_1_wiDiv'),
       ('with knight', '02_Diamond_NV_natab/knight_shift/results/CCE2_Diamond_NV_natab_wi_knight_1_wiDiv')]),
     ('03_NV2_dm', 'dm', 'ns', '03 two NV centres with a 13C pair, gCCE density matrix, Hahn echo',
@@ -116,8 +118,11 @@ def main():
             continue
         fig, ax = plt.subplots(figsize=(6.4, 4.0))
         for label, path in paths:
-            if kind == 'L':
+            if kind in ('L', 'LEC'):
                 t, L = read_coherence(path, time_scale=SCALE[unit])
+                if kind == 'LEC':
+                    _, L_nD = read_coherence(path[:-len('wiDiv')] + 'noDiv', time_scale=SCALE[unit])
+                    L = np.asarray(error_correct(L, L_nD, tolerance=2.0))
                 ax.plot(t, np.abs(L), label=label, lw=1.4)
             else:
                 t, rho = read_dm(path)
@@ -130,7 +135,7 @@ def main():
                     ax.plot(t * SCALE[unit], np.abs(rho[:, i, j]), '--', label=f'|rho_{i}{j}|', lw=1.2)
                 ax.set_ylim(-0.05, 1.05)
         ax.set_xlabel(f'time ({UNIT[unit]})')
-        ax.set_ylabel('|L(t)|' if kind == 'L' else 'population')
+        ax.set_ylabel('|L(t)|' if kind in ('L', 'LEC') else 'population')
         ax.set_title(title, fontsize=10)
         ax.grid(alpha=0.3)
         ax.legend(fontsize=8)

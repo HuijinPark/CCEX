@@ -17,7 +17,7 @@ def main():
     root=parsed.output.resolve()
     root.mkdir(parents=True,exist_ok=False)
     args=SimpleNamespace(nearest_sites=3,steps=9,batch=4,min_dim=None,evolution=None,
-                         mpirun=None,ranks=1,timeout=120,savemode='normal',pulses=None)
+                         mpirun=None,ranks=1,timeout=120,savemode='coherence',pulses=None)
     source_root=INPUTS/'Diamond_NV_P1_10ppm_cce'
     records=[]
 

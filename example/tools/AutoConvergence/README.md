@@ -1,7 +1,7 @@
 # AutoConvergence — automatic convergence of a CCEX calculation
 
 An ordinary CCEX input with an `auto_convergence` block makes `main.out -f input.json` choose the time window, rdip, rbath
-and the number of configurations (and states) of a coherence calculation by itself - CCE (any order), gCCE or pCCE, fixed
+and the number of configurations (and states) of a coherence calculation by itself - CCE and pCCE (order ≥ 2) or gCCE (order ≥ 1), fixed
 bundles (`cluster_mode` adaptive without an `Adaptive` block), CPU or GPU backends, DFT tensor files - then run the
 production (the order is the input's; Adaptive refinement is excluded). The rdip ladder (one run gives every smaller rdip)
 exists for order 2 of CCE, gCCE and pCCE with standard clusters; otherwise (order 3 and above, fixed bundles) each rdip
@@ -68,8 +68,9 @@ The runner does not make baths (user 2026-10-09; the `bath_generation` section o
 ```
 
 Divergent points (2026-10-10): wherever a curve is read, a point with |wiDiv − noDiv| ≥ 2 or a nan/inf wiDiv takes the noDiv
-value (the rule of the group's analyzer, `error_correct`); a configuration that still has |L| > 10 or nan/inf (noDiv bad too,
-or no noDiv with `save_nodiv: false`) is left out of every average and judgement, and more than 5 % of the production left out
+value (not the rule of the group's analyzer: its `error_correct` replaces such a point by the mean of the previous corrected
+point and the next good wiDiv, which gives other numbers); a configuration that still has |L| > 10 or nan/inf (noDiv bad too,
+or no noDiv with `"savemode": {"mode": "coherence", "nodiv": false}`) is left out of every average and judgement, and more than 5 % of the production left out
 is a numerical failure. `summary.txt` lists the corrected points and the configurations left out, with the nearest bath spin.
 
 `nstate` chooses the approach: **0** = ensemble, one curve per configuration, only the number of configurations is chosen;
@@ -79,7 +80,7 @@ configurations, and `configurations.test_states`, default 5 states, do), and `co
 configuration are counted (every configuration needs at least `test_states` of them; the state test below uses more
 when the test configurations hold them); when left out, the runner makes them for each run in the run folder and removes them after (no stored state
 files; m_s drawn evenly from each species' sublevels with `default_rng([seed, k, s])`, one draw per bath-file line, so a spin
-keeps its state at every rbath and rdip and the paired comparisons hold; up to 30 states; `seed` of the input, else 1).
+keeps its state at every rbath and rdip and the paired comparisons hold; up to `configurations.max_states` states, default 30; `seed` of the input, else 1).
 CCEX's own random states are not used: they change with rbath. `rbath`, `rdip`, `nstep` and `deltat` of the
 input are not needed: they are found. `nstep` of the input is the number of time points of every run (150 when absent); a
 `deltat` given only sets the first window ((nstep − 1) × deltat): nstep stays fixed and the time step follows the window (2026-10-10).
@@ -94,7 +95,7 @@ input are not needed: they are found. `nstep` of the input is the number of time
 | 2. rdip | One run at the largest rdip gives every smaller one (`rdip_ladder`; order 2 of CCE, gCCE, pCCE, otherwise one run per value). Two values agree when the area under their T2 fits, A = T2 Γ(1+1/n), differs by at most `rdip.threshold`. **When either T2 fit fails (2026-10-12)**, that comparison (here, in rbath and in the combination check) judges both curves on the raw area ∫\|L̄\|dt over [0, T_d] (trapezoid on the configuration mean) with the same threshold - a fail there is an actual fail; `summary.txt`, the figure (open circles) and the `truncation` decision in `decisions.jsonl` (`raw_area`) say which comparisons were; such a comparison gives no trend estimate. Fitted comparisons are unchanged. The largest is raised by 1.25 (up to 2 × rbath) until the last comparisons agree — two in a row when the candidates were found — and the smallest rdip from which every larger one agrees with the largest is chosen | `2_rdip.png` |
 | 3. rbath | The same rule with `rbath.threshold`, one run per value, up to the radius the bath files cover. Then rdip is judged again at the final rbath (the same consecutive passes at its top); when it does not hold there, rdip is converged again at that rbath (raised if needed) and rbath once more | `3_rbath.png`, `summary.txt` sections 2 and 3 |
 | 3b. window again | When the final reference (largest rbath, rdip) is 1.25 × or more above the one the window was found at, T_d is measured there; outside 0.8–1.25 × the earlier T_d, steps 1–3 run again from it (at most 3 rounds). The fitted area cannot see a shape change: a smaller rbath may still be chosen whose production curve then does not decay in the new window, and the run stops there as `window-unresolved` | `summary.txt` section 1 ("found again") |
-| 4. sampling | From the test configurations at the chosen rbath and rdip. **States (a check, 2026-10-10):** the states' share of the sampling error of A (the test configurations kept, only their states drawn again) at 2, 3, ..., `test_states`; above `configurations.states_threshold` (default 0.05) at `test_states`, 5 more states (each new block computed alone, at most 30 or the state files the test configurations hold) and measured again; an S above `test_states` or none within the threshold is a warning only (`4_states.png`: the mean curves at 1, 2, ... states, the errors and the threshold). **Configurations:** the states stay `test_states`; the variance of A between configurations and between states gives the configurations needed for SE(A)/A ≤ `configurations.threshold`, never fewer than `min_configurations` | `4_states.png`, `summary.txt` sections 4 and 5 |
+| 4. sampling | From the test configurations at the chosen rbath and rdip. **States (a check, 2026-10-10):** the states' share of the sampling error of A (the test configurations kept, only their states drawn again) at 2, 3, ..., `test_states`; above `configurations.states_threshold` (default 0.05) at `test_states`, 5 more states (each new block computed alone, at most `max_states` (default 30) or the state files the test configurations hold) and measured again; an S above `test_states` or none within the threshold is a warning only (`4_states.png`: the mean curves at 1, 2, ... states, the errors and the threshold). **Configurations:** the states stay `test_states`; the variance of A between configurations and between states gives the configurations needed for SE(A)/A ≤ `configurations.threshold`, never fewer than `min_configurations` | `4_states.png`, `summary.txt` sections 4 and 5 |
 | 5. production | The chosen setting on `production` configurations, on the same number of points over `production_factor` × T_d; generously first (plan "넉넉하게 먼저, 나눠 보기, 모자라면 추가", 2026-10-09): 1.5 × the pilot's estimate of the configurations needed, at least max(20, `min_configurations`), rounded up to a multiple of 5, at most the production holds; judged on everything computed; when short, 1.5 × the shortage the measured SE implies (at least 20) more, until the SE meets the target or the files are used up (then reported with how many to add); `5_configurations.png` (2026-10-10): the production's configurations growing (2, 5, 10, ..., all; 2, 3, ... up to 10), left their mean curves, right the SE(A)/A measured at each count and the threshold; the production curve must decay inside the window; the chosen setting is compared once with the largest rbath and rdip on the first 3 production configurations (a warning when it differs by more than the larger threshold); **Production window (2026-10-10):** when the production curve has not decayed inside its window, the production is computed again on a longer window (production_factor × its T_d, at least 1.5 ×), the same configurations first, at most 3 times; `summary.txt` lists the windows. | `5_configurations.png`, `6_converged_coherence.png`, `summary.txt`, `coherence_mean.txt` |
 
 ## The `auto_convergence` block
@@ -220,7 +221,8 @@ python -m unittest discover -s tests -v   # the same one at a time, about 13 min
 ```
 
 `--report-dir DIR` writes figures and text summaries (`autoconv/report.py`): `sampling.png`/`.txt` (\|mean\| with its fit and
-T_d; SE(T2)/T2 against C with the target, the bootstrap point and the allocation) and `truncation_<name>.png`/`.txt` (the two
+T_d; SE(A)/A, the relative standard error of the fitted area A = T2 Γ(1+1/n), against C with the target, the bootstrap point and
+the allocation) and `truncation_<name>.png`/`.txt` (the two
 \|mean\| with their fits; fit-line and smoothed differences with the tolerance and the jackknife band; the residuals). With an
 `rdip_ladder` run (CCEX writes `out_rdip<r>_state<s>_wiDiv` beside `out_state<s>_wiDiv`) each rung is judged against the
 main output of the same runs with `--setting-prefix out_rdip<r>`. The setting and reference runs are paired by order but must be the same configuration: each run folder's
@@ -246,8 +248,11 @@ states, the unphysical states (non-finite or |L| > 1.01, U) and the largest |L|.
 
 Status words: `numerical-failure` (a non-finite state, or a pooled mean, variance or bootstrap that overflows; the report
 names the failed stage; nothing is estimated and no configuration is dropped), `resolved`, `needs-extension` (decay found but the window is shorter than
-`window_margin × T_d`), `window-unresolved` (no decay inside the window), `proxy-met` / `sampling-unresolved`
-(`sampling_rms_proxy` of the present sample against `sampling_tolerance`). `total` is always `unresolved` in this version
+`window_margin × T_d`), `window-unresolved` (no decay inside the window). The sampling verdict `sampling.status` is
+`t2-met` or `sampling-unresolved`: the larger of the linearised and bootstrap SE(A)/A against `t2_se_target` (default 0.06;
+the names say t2, the quantity is the area A); `sampling-unresolved` also when the T2 fit fails. Beside it,
+`sampling.proxy_status` (`proxy-met` / `sampling-unresolved`, `sampling_rms_proxy` of the present sample against
+`sampling_tolerance`) is a diagnostic only. `total` is always `unresolved` in this version
 and lists what is not measured (rdip, rbath, and sampling when it is off). None of them certifies accuracy: the envelope only sees the
 computed window, the proxy is an expected-error scale and not a confidence limit (the bootstrap quantile is reported
 next to it), and a few configurations give rough variance estimates. The allocation starts at S = 2 (the analysis needs two

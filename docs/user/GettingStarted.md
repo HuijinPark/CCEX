@@ -24,7 +24,7 @@ $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
 ```
 
 **Possble** **command-line** **options**
-- -h : Help option  
+- -h, --help : Print the options and exit  
 - -f : [Input file](InputFile.md) option (Required) (See [Input file](InputFile.md))  
 - -m : Method (See [method](InputFile_General.md#tag_method))  
 - -q : Quantity (See [quantity](InputFile_General.md#tag_quantity))   
@@ -35,6 +35,13 @@ $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
 - -N : The number of state configuration to do time ensemble average (See [nstate](InputFile_General.md#tag_nstate))  
 - -B : Magnetic field in z direction (Unit : G) (See [bfield](InputFile_General.md#tag_bfield))  
 - -o : Result file path (See [outfile](InputFile_Output.md#tag_outfile))  
+- -v : Verbose output (longer log)  
+- -P : Write the cluster plan to `<outfile>.clusters.json` and stop before the dynamics (CCE, gCCE and pCCE with explicit connections)  
+
+Three run modes take the input file and replace the ordinary calculation:
+- --auto_conv -f FILE : The automatic convergence; the same as `-f FILE` with an `auto_convergence` block (See [Automatic convergence tags](InputFile_AutoConvergence.md)). It takes no other option.  
+- --auto_status -f FILE : Where that automatic convergence is (running, interrupted, stopped or how it ended); nothing is computed.  
+- --adaptive ... : The adaptive refinement; every word after `--adaptive` goes to it (e.g. `--adaptive --input in.json --output DIR ...`). An `Adaptive` block in the input asks for the same; giving both is refused (See [the `Adaptive` block](../methods/adaptive-input-block.md)).  
 
 **About** **options**
 

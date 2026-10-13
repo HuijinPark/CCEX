@@ -6,6 +6,11 @@
 // Called after all JSON/CLI overrides, before reading bath/tensor files.
 void computeBackendInit(const Config* config);
 bool computeUseCuda(const Config* config, int dimension);
+// A cluster of this dimension ran out of GPU memory (GpuOutOfMemory, gpu_backend.h; what = its message). backend auto
+// (user 2026-10-13, A37 job 699): true - the caller computes the cluster on the CPU, and from now on this rank sends no
+// cluster of this dimension or larger to the GPU (computeUseCuda says no); one line on stdout. Otherwise (cuda) false: the
+// caller stops the run as for any other GPU error.
+bool computeCudaOutOfMemory(const Config* config, int dimension, const char* what);
 void computeBackendFinish();
 // the memory of the node's smallest GPU when this run may put clusters on the GPU (backend cuda or auto, a CUDA build
 // and a supported method), else 0; for the probe memory budget (A1). One counter serves the node, and the ranks of a

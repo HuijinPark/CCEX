@@ -84,6 +84,8 @@ foreach(d ${CCEX_CORE_DIRS})
   list(APPEND CCEX_CORE_SRCS ${_srcs})
 endforeach()
 file(GLOB CCEX_ADAPTIVE_SRCS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/src/clustering/algo_adaptive/*.cpp)
+# A30: the batched small-cluster kernel writes out every fused multiply-add it needs; the compiler adds none
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/calculation/cce_batch_kernel.cpp PROPERTIES COMPILE_OPTIONS -ffp-contract=off)
 
 set(CCEX_INCLUDE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/external/eigen ${CMAKE_SOURCE_DIR}/external/uthash/include)
 # the warnings the code trips on every compiler; -fpermissive is for the C idioms in src/
@@ -192,7 +194,8 @@ CCEX_UNIT_OBJS='$<JOIN:$<TARGET_OBJECTS:ccex_core>, > $<JOIN:$<TARGET_OBJECTS:cc
 # ---- the CUDA binary: the same sources with -DCCEX_USE_CUDA, plus the kernels
 if(_ccex_cuda)
   add_library(ccex_gpu_backend OBJECT ${CMAKE_SOURCE_DIR}/src/calculation/gpu/gpu_backend.cu
-              ${CMAKE_SOURCE_DIR}/src/calculation/gpu/small_cluster_gpu.cu)
+              ${CMAKE_SOURCE_DIR}/src/calculation/gpu/small_cluster_gpu.cu
+              ${CMAKE_SOURCE_DIR}/src/calculation/gpu/warp_cluster_gpu.cu)
   target_include_directories(ccex_gpu_backend PRIVATE ${CMAKE_SOURCE_DIR}/include)
   target_compile_options(ccex_gpu_backend PRIVATE -O3 -lineinfo)
 
@@ -206,8 +209,9 @@ if(_ccex_cuda)
 
   # the GPU unit tests need the card: cmake --build build --target gpu-test, inside a job
   set(_gpu_tests test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory
-                 test_small_cluster_cuda)
+                 test_small_cluster_cuda test_warp_cluster_cuda)
   file(GLOB _small_cluster_dumps ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/data/small_cluster/*.bin)
+  file(GLOB _warp_cluster_dumps ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/data/warp_cluster/*.bin)
   foreach(t ${_gpu_tests})
     add_executable(${t} EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/${t}.cpp $<TARGET_OBJECTS:ccex_gpu_backend>)
     set_target_properties(${t} PROPERTIES OUTPUT_NAME ${t}.out)
@@ -228,6 +232,7 @@ if(_ccex_cuda)
     COMMAND $<TARGET_FILE:test_review_failure>
     COMMAND $<TARGET_FILE:test_review_memory>
     COMMAND $<TARGET_FILE:test_small_cluster_cuda> ${_small_cluster_dumps}
+    COMMAND $<TARGET_FILE:test_warp_cluster_cuda> ${_warp_cluster_dumps}
     DEPENDS test_scaled_product test_hamiltonian_check ${_gpu_tests}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif()
@@ -241,10 +246,18 @@ foreach(t test_scaled_product test_hamiltonian_check)
   target_compile_options(${t} PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN})
   target_link_libraries(${t} PRIVATE MPI::MPI_CXX)
 endforeach()
+# the packed kernel's arithmetic on the host (test_small_cluster_cuda without the card): dumps, dump reader, Jacobi scaling
+add_executable(test_small_cluster_host EXCLUDE_FROM_ALL ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/test_small_cluster_cuda.cpp)
+set_target_properties(test_small_cluster_host PROPERTIES OUTPUT_NAME test_small_cluster_host.out)
+target_include_directories(test_small_cluster_host PRIVATE ${CCEX_INCLUDE})
+target_compile_definitions(test_small_cluster_host PRIVATE SMALL_CLUSTER_HOST_ONLY)
+target_compile_options(test_small_cluster_host PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN})
+file(GLOB _small_cluster_host_dumps ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/data/small_cluster/*.bin)
 add_custom_target(numeric-test
   COMMAND $<TARGET_FILE:test_scaled_product>
   COMMAND $<TARGET_FILE:test_hamiltonian_check>
-  DEPENDS test_scaled_product test_hamiltonian_check)
+  COMMAND $<TARGET_FILE:test_small_cluster_host> ${_small_cluster_host_dumps}
+  DEPENDS test_scaled_product test_hamiltonian_check test_small_cluster_host)
 
 # ---- the CPU regression tests of check_gpu (D17): cmake --build build --target cpu-test.
 #      The flags of the CPU binary and -UNDEBUG for their asserts; test_host_lifetimes links the
@@ -283,6 +296,23 @@ set_target_properties(test_partition_cache_format PROPERTIES OUTPUT_NAME test_pa
 target_include_directories(test_partition_cache_format PRIVATE ${CCEX_INCLUDE})
 target_compile_options(test_partition_cache_format PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} -UNDEBUG)
 target_link_libraries(test_partition_cache_format PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS})
+# the fixed-size single-state evolution against the dynamic one, bit for bit (P1-04 of review 20261012-233058-452278):
+# the test includes simulator_cce.cpp, so it links the other objects of ccex_core
+add_executable(test_fixed_size EXCLUDE_FROM_ALL
+  ${CMAKE_SOURCE_DIR}/test/code_verification/check_numerics/test_fixed_size.cpp
+  $<FILTER:$<TARGET_OBJECTS:ccex_core>,EXCLUDE,simulator_cce\\.>)
+set_target_properties(test_fixed_size PROPERTIES OUTPUT_NAME test_fixed_size.out)
+target_include_directories(test_fixed_size PRIVATE ${CCEX_INCLUDE})
+target_compile_options(test_fixed_size PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} -UNDEBUG)
+target_link_libraries(test_fixed_size PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS})
+# A30: the batched small-cluster cCCE kernel against the scalar path, bit for bit, on dumped clusters
+add_executable(test_cce_batch EXCLUDE_FROM_ALL
+  ${CMAKE_SOURCE_DIR}/test/code_verification/check_numerics/test_cce_batch.cpp $<TARGET_OBJECTS:ccex_core>)
+set_target_properties(test_cce_batch PROPERTIES OUTPUT_NAME test_cce_batch.out)
+target_include_directories(test_cce_batch PRIVATE ${CCEX_INCLUDE})
+target_compile_options(test_cce_batch PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} -UNDEBUG)
+target_link_libraries(test_cce_batch PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS})
+file(GLOB _small_cluster_dumps ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/data/small_cluster/*.bin)
 add_custom_target(cpu-test
   COMMAND $<TARGET_FILE:test_cluster_log>
   COMMAND $<TARGET_FILE:test_review_controls>
@@ -294,4 +324,6 @@ add_custom_target(cpu-test
   COMMAND $<TARGET_FILE:test_adaptive_connections>
   COMMAND $<TARGET_FILE:test_adaptive_high_order>
   COMMAND $<TARGET_FILE:test_partition_cache_format> ${CMAKE_BINARY_DIR}/test_partition_cache.bin
-  DEPENDS ${_cpu_tests} ${_bundle_tests} test_partition_cache_format)
+  COMMAND $<TARGET_FILE:test_fixed_size>
+  COMMAND $<TARGET_FILE:test_cce_batch> ${_small_cluster_dumps}
+  DEPENDS ${_cpu_tests} ${_bundle_tests} test_partition_cache_format test_fixed_size test_cce_batch)

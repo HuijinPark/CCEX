@@ -36,8 +36,9 @@ cmake -B build && cmake --build build -j 8      # any machine: finds the MPI wra
 bash do_compile.sh <preset>                     # the group's machines: wsl-gnu, wsl-icpx, idm4, gpu, nurion, mac (or generic)
 ```
 
-Both write `bin/main.out` and, where there is CUDA, `bin/main_gpu.out` for
-`backend` cuda or auto. The build needs a C++17 compiler behind an MPI wrapper
+`do_compile.sh` writes `bin/main.out` and, where there is CUDA, `bin/main_gpu.out` for
+`backend` cuda or auto; the CMake line writes the same two files under `build/bin/`
+(pass `-DCCEX_BIN_DIR=$PWD/bin` to put them in `bin/` instead). The build needs a C++17 compiler behind an MPI wrapper
 and, for the GPU binary, the CUDA toolkit. Eigen, uthash and SQLite are
 bundled in `external/`, and nothing else is linked. `CMakeLists.txt` takes
 `-DCCEX_CUDA=OFF`, `-DCMAKE_CUDA_ARCHITECTURES=<cc>` and
@@ -69,8 +70,10 @@ matrix) per bath configuration into text files, which the analyzer in
 - [Analysis](Analysis.md) and [Tools](Tools.md): what runs on the output, and what
   makes the inputs (`example/analysis/`, `example/tools/`).
 - Data structures and Source files: the code itself, for developers.
-- `docs/methods/` in the repository: bundle and adaptive clustering, the GPU
-  backend and the frame rotation in detail.
+- Methods: [clustering terminology](../methods/clustering-terminology.md),
+  [adaptive cluster mode](../methods/adaptive-cluster-mode.md), [the `Adaptive` block](../methods/adaptive-input-block.md),
+  [GPU execution](../methods/gpu.md) and [the coordinate frame rotation](../methods/coordinate-frame-rotation.md),
+  in detail (`docs/methods/` in the repository; partly in Korean).
 
 ## Citing
 

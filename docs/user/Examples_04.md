@@ -6,7 +6,8 @@ the DFT tensor sets. The bath states are sampled (`-N`, `nstate`), and the
 figures average over them. `SpinEcho_CCE2_1ppm/`, `SpinEcho_CCE4_1ppm/` and
 `SpinEcho_CCE2e2n_1ppm/` are the order check (CCE2 against CCE4, and the
 electron-electron-nuclear clusters); `SpinEcho_gCCE2_10ppm_ZFS/` is gCCE2 at
-zero field with and without the NV zero-field splitting (`zfs`);
+zero field with and without the NV zero-field splitting (a self entry of `Qubit.intmap` in
+`ccein_with_ZFS.json`, the top-level `qzfs` of the `qubitfile` form in `ccein_with_ZFS_v2.json`);
 `Population_gCCE2_10ppm/` is the population (density matrix, `npulse` 0);
 `SpinEcho_pCCE2_1ppm/` runs pCCE2 with `sK` 1 to 4 spins per partition (heavy;
 not in the figures). With 50 states, CCE2 took 2 minutes and CCE4 7 minutes;
@@ -23,7 +24,7 @@ one-state run (100 s); the recorded run averaged more.
 
 ## The input
 
-`example/tutorial/04_Diamond_NV_P1Bath/SpinEcho_CCE2_1ppm/ccein.json`; the other calculations change `order`, `method`, the `zfs` and the sampled states. `run.sh` in the same folder runs it as
+`example/tutorial/04_Diamond_NV_P1Bath/SpinEcho_CCE2_1ppm/ccein.json`; the other calculations change `order`, `method`, the zero-field splitting (`intmap`/`qzfs`) and the sampled states. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```
@@ -65,7 +66,7 @@ one-state run (100 s); the recorded run averaged more.
 #  "qd_readmode"   : 0,
 
     # Output
-    "savemode"    : "normal"
+    "savemode"    : "coherence"
 
 ,  "Defect"         : [
 		{   

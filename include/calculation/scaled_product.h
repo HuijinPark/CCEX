@@ -78,7 +78,7 @@ struct ScaledComplex {
 // negative exponents. unitZero says that L0 is exactly (1, +0) at every time point of the state. The shortcut takes the
 // cluster value as the factor only for power 1 and finite components that are both nonzero: there the old
 // (raw * inverse(L0)).power(1) is exact and equal to raw, signed zeros included; zeros, non-finite values and every
-// other case keep the old expression. Returns the factor's value when saved is requested (savemode all).
+// other case keep the old expression. Returns the factor's value when saved is requested (savemode cluster_coherence).
 // L0 != 1 (gCCE, improvements.md A24), power 1, where lazySafe: the factor is raw * inverse(L0) formed from the raw value
 // as it is, not normalized. The old expression normalizes raw first (an exact power-of-two scaling), multiplies, normalizes
 // and multiplies by 1 in power(1). With finite raw and inverse(L0) every product here is a normal long double or zero

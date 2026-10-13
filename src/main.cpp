@@ -238,7 +238,7 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
 
 // The settings a refinement step can change, and nothing else: merge writes the
 // user's input with outfile and adaptive_work_file set per step and savemode forced
-// to normal. Nothing the bath depends on ever moves, which is why the bath can be
+// to coherence. Nothing the bath depends on ever moves, which is why the bath can be
 // read once and kept (plan stage 8). (order, bundle_merge_cutoff, npulse and the
 // connection pair were changed only by the policies removed on 2026-10-10; a step
 // that changes them now is refused like any other.)
@@ -286,8 +286,8 @@ void applyStepConfig(const std::string& stepInput, const std::string& firstInput
         if(!Output_getOutfile(op)) Output_allocOutfile(op);
         Output_setOutfile(op,v->valuestring);
     }
-    if((v=cJSON_GetObjectItem(b.get(),"savemode")) && cJSON_IsString(v))
-        Output_setSavemode(op,v->valuestring);
+    if((v=cJSON_GetObjectItem(b.get(),"savemode")))   // the mode; nodiv stays the user input's
+        cJSON_readSavemode(v,op,false);
 }
 }   // namespace
 
@@ -496,8 +496,11 @@ int main(int argc, char* argv[]){
     for (int i = 1; i < argc; ++i) if (!strcmp(argv[i], "--auto_conv")) return autoConvEntry(argc, argv);
     if (inputAsksAutoConv(argc, argv)) return autoConvEntry(argc, argv);
 
-    //Set up MPI
-    MPI_Init(&argc, &argv);
+    //Set up MPI. FUNNELED: the packed GPU batch (gpu_options.packed_max_dim) runs threads beside the main one, which alone
+    //calls MPI; smallClusterWarmUp refuses that batch, before any thread starts, if the MPI provides less (review
+    //20261012-233058-452278 P3-03). Nothing else depends on the level provided.
+    int threadLevel = MPI_THREAD_SINGLE;
+    MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &threadLevel);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Get process id
     MPI_Comm_size(MPI_COMM_WORLD, &nprocess); // Get number of processes
 
@@ -586,6 +589,8 @@ int main(int argc, char* argv[]){
     // Two passes over the options: the input file (-f) first, then every other option over it, so that the
     // command line wins whatever the order (review b9eb09 R1: "-N 2 -f in.json" used to take nstate from the file,
     // "-f in.json -N 2" from the command line). The first pass reads -f only and stays quiet about the rest.
+    // --help is -h (review 20261013-doxygen D21); getopt reads short options only
+    for (int i = 1; i < argc; ++i) if (!strcmp(argv[i], "--help")) argv[i] = const_cast<char*>("-h");
     for (int pass = 0; pass < 2; ++pass) {
     optind = 1; opterr = pass;
     while ((c = getopt(argc, argv, "hPvf:m:q:I:s:N:S:a:B:o:")) != -1) {
@@ -697,12 +702,12 @@ int main(int argc, char* argv[]){
             case 'h':
                 printf("Usage: %s [options]\n", argv[0]);
                 printf("Options (short only; given with -f they override the input file, whatever their order):\n");
-                printf("  -h\t\t\t\t\tPrint this message\n");
+                printf("  -h, --help\t\t\t\tPrint this message\n");
                 printf("  -f FILE\t\t\t\tInput file (cce.in)\n");
                 printf("  -I FILE\t\t\t\tInput file name (it can be more than one)\n");
                 printf("  -N N\t\t\t\t\tNumber of bath states\n");
                 printf("  -m METHOD\t\t\t\tMethod (cce | gcce | pcce | dsj | dsjitb | itb)\n");
-                printf("  -q QUANTITY\t\t\t\tQuantity (coherence | noise | dm)\n");
+                printf("  -q QUANTITY\t\t\t\tQuantity (coherence | dm)\n");
                 printf("  -B BZ\t\t\t\t\tMagnetic field\n");
                 printf("  -v\t\t\t\t\tLong or short print\n");
                 printf("  -P\t\t\t\t\tSave <outfile>.clusters.json and stop before dynamics\n");
@@ -711,8 +716,8 @@ int main(int argc, char* argv[]){
                 printf("  --auto_status -f FILE\t\t\tWhere that automatic convergence is (running, interrupted, stopped, ended), no calculation\n");
                 printf("JSON execution options (in the -f input):\n");
                 printf("  backend: cpu (default), cuda, auto; profile: true for per-dimension counts/timing\n");
-                printf("  gpu_options: {min_dim, packed_max_dim (0, 2, 4), evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb}\n");
-                printf("  propagator, evolution, gcce_refinement, gcce_refinement_max_sweeps (gCCE)\n");
+                printf("  gpu_options: {min_dim, packed_max_dim (0, 2, 4), warp_max_dim (0-32), evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb}\n");
+                printf("  propagator: eigen (default), sparse (one state; cCCE, gCCE vector), expm (gCCE)\n  evolution, gcce_refinement, gcce_refinement_max_sweeps (gCCE)\n");
                 printf("  evolution_update: exact or recursive (cCCE on the CPU and in the packed kernel, gCCE with propagator=eigen on the CPU); default recursive there, exact elsewhere (GPU clusters)\n");
                 printf("  probe_memory_gb (memory of the adaptive probes running at once on a node)\n");
                 printf("  seed: shared RNG seed; omit to generate and report a seed on MPI rank 0\n");
@@ -740,6 +745,8 @@ int main(int argc, char* argv[]){
     // against an nstate that -N had not yet supplied.
     Config_resolveEvolution(cnf);
     Config_resolvePackedMaxDim(cnf);
+    Config_resolveWarpMaxDim(cnf);             // A40, before the evolution_update check (its log names the warp kernel)
+    Config_validatePropagator(cnf,QubitArray_getNqubit(qa));   // A2: before the evolution_update check, so sparse is named
     Config_validateEvolutionUpdate(cnf);       // after the packed kernel's value (A36)
     validatePulsesForMethod(cnf,pls);
     validateAdaptiveConfig(cnf,cls);

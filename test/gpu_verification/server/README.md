@@ -15,7 +15,7 @@ The inputs are the eight existing files under
 
 Both families retain `npulse=1` and `seed=1`. The original qubit, gyro, bath and
 defect data are copied with the source snapshot. The benchmark changes backend,
-profiling, output paths and `savemode=normal`; it does not select fewer bath sites
+profiling, output paths and `savemode=coherence`; it does not select fewer bath sites
 or raise the order. `validate_inputs.py` checks the expected order, radii, time
 point count, state count, pulse count, seed and method before execution.
 `test_run_orders.py` checks the runner itself (the physics is passed through unchanged, failures and limits are
@@ -50,7 +50,8 @@ CPU compatibility checks, not GPU measurements. `environment.sh` loads the
 modules and, when oneAPI is installed, its runtime libraries, with Open MPI kept
 first on `PATH`. `mps.sh`, sourced after it by the measurement, order and `min_dim` jobs, starts CUDA MPS for the job
 (the ranks then share the GPU at once instead of taking turns: GPU runs of 32 ranks took 0.49-0.62 of the time in
-job 698, curves byte-identical) and stops it when the job ends; `CCEX_MPS=0` leaves it off. `gpu_sharing.sbatch`
+job 698, curves byte-identical) and stops it when the job ends, keeping the job's exit status even when the stop
+fails (`bash test_mps.sh` checks it without a GPU, with a stand-in control command); `CCEX_MPS=0` leaves it off. `gpu_sharing.sbatch`
 measures the sharing itself and does not use it.
 
 The measurement job requests one CPU, one GPU, 8 GiB RAM and ten minutes. It runs

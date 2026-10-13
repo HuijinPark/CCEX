@@ -142,6 +142,12 @@ def _sha(path):
     return h.hexdigest()
 
 
+def _nodiv(cin):
+    """savemode.nodiv of a CCEX input (default true): false, CCEX writes _wiDiv alone (docs/user/InputFile_Output.md)."""
+    sm = cin.get("savemode")
+    return not (isinstance(sm, dict) and sm.get("nodiv", True) is False)
+
+
 def _canon(x):
     return json.dumps(x, sort_keys=True, separators=(",", ":"))
 
@@ -463,7 +469,10 @@ class Runner:
         order = base.get("order")
         if not (isinstance(order, int) and not isinstance(order, bool) and order >= (1 if method == "gcce" else 2)):
             raise Refused(f"order must be an integer >= {1 if method == 'gcce' else 2} for {method}")
-        for k, bad in (("savemode", lambda v: str(v).lower() != "normal"), ("cluster_contributions", bool),
+        if "save_nodiv" in base:            # CCEX refuses it too (2026-10-13)
+            raise Refused('save_nodiv is now savemode.nodiv ("savemode": {"mode": "coherence", "nodiv": false})')
+        for k, bad in (("savemode", lambda v: str(v.get("mode", "coherence") if isinstance(v, dict) else v).lower() != "coherence"),
+                       ("cluster_contributions", bool),
                        ("nk", lambda v: any(v)), ("rdip_ladder", lambda v: True), ("Adaptive", lambda v: True),
                        ("adaptive_work_file", lambda v: True), ("pcce_cache_file", lambda v: True), ("pcce_cache_mode", lambda v: True),
                        ("pcce_partition", lambda v: str(v).lower() == "legacy"),   # legacy partitions depend on the MPI size
@@ -975,7 +984,7 @@ class Runner:
                                          binary=self.binary_sha, launcher=self.o["launcher"])).encode()).hexdigest()
         d = self.work / "runs" / step / f"{k}-{key[:12]}"
         tags = [f"_state{s}" for s in range(1, nstate + 1)] if nstate else [""]       # nstate 0: out_wiDiv (ensemble)
-        kinds = ("wiDiv", "noDiv") if cin.get("save_nodiv", True) is not False else ("wiDiv",)   # save_nodiv false: wiDiv only
+        kinds = ("wiDiv", "noDiv") if _nodiv(cin) else ("wiDiv",)   # savemode.nodiv false: wiDiv only
         expected = [f"out{g}_{w}" for g in tags for w in kinds]
         expected += [f"out_rdip{_gname(r)}{g}_{w}" for r in ladder for g in tags for w in kinds]
         done = d / "done.json"
@@ -1112,10 +1121,10 @@ class Runner:
     def curves(self, d, prefix, nstate):
         """configurations' states x time (nstate 0, the ensemble: one row from <prefix>_wiDiv). A point where
         |wiDiv - noDiv| >= POINT_JUMP or wiDiv is nan/inf takes the noDiv value (plan "발산한 점 보정", user 2026-10-10: the
-        rule of the group's analyzer, error_correct, plus nan/inf); without noDiv files (save_nodiv false) nothing is changed.
+        rule of the group's analyzer, error_correct, plus nan/inf); without noDiv files (savemode.nodiv false) nothing is changed.
         Corrections are recorded per configuration (the largest count of one read)."""
         t = None; x = []
-        nodiv = self.base.get("save_nodiv", True) is not False
+        nodiv = _nodiv(self.base)
         fixed, worst = 0, 0.0
         for g in ([f"_state{s}" for s in range(1, nstate + 1)] if nstate else [""]):
             ti, v = read_curve(d / f"{prefix}{g}_wiDiv")

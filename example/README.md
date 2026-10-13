@@ -23,6 +23,7 @@ ignores; the recorded results are in the archive.
 
 | Folder | Does |
 |---|---|
+| `AutoConvergence/` | the automatic convergence: `main.out -f input.json` with an `auto_convergence` block runs it (time window, rdip, rbath, configurations, then the production); `main.out --auto_status -f input.json` shows where a run is. Its `README.md` has the keys and outputs |
 | `BathGenerator/` | `BathGenerator.py` with `do_BathGenerator`: a bath file from a POSCAR unit cell (`example/` holds h-BN cells and a hexagonal shape) |
 | `IsotopeTable/` | `make_isotope_table.py`: writes `src/input/isotope_table.cpp` (spins and gyromagnetic ratios of the nuclear isotopes CCEX knows without a gyrofile) from the EasySpin database in `SpinTensorReader/` |
 | `SpinTensorReader/` | `main.py` with the `spHamilReader/` package: hyperfine and quadrupole tensors from VASP or QE output. `examples/` has five cases, `runningScripts_Exspin/` example runs with their OUTCARs |

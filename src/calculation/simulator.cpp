@@ -10,6 +10,7 @@
 #include "../../include/clustering/bundle/bundle_connection_check.h"
 #include "../../include/clustering/bundle/bundle_contributions.h"
 #include "../../include/calculation/gpu/small_cluster_batch.h"
+#include "../../include/calculation/cce_batch_window.h"
 #include <cstddef>
 
 static void reduceScaledProduct(void* input,void* output,int* count,MPI_Datatype*){
@@ -94,7 +95,8 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     std::unique_ptr<MatrixXcd[]> cceResult(new MatrixXcd[Config_getNstep(cnf)]);
     Eigen::RowVectorXcd gcceAlphaRho;                      // A14: psia^dagger rho of the gCCE coherence, reused
     const bool checkDisorder = getenv("CCEX_CHECK_DISORDER") && strcmp(getenv("CCEX_CHECK_DISORDER"),"0");
-    SmallClusterBatch smallGpu(qa,ba,dfa,cnf,pls,isGCCE);   // A26: small cCCE clusters on the GPU (opt-in; off: nothing)
+    SmallClusterBatch smallGpu(qa,ba,dfa,cnf,pls,isGCCE,localclusters,order,savemode);   // A26: small cCCE clusters on the GPU; A40: the warp kernel (off: nothing)
+    CceBatchWindow cpuBatch(qa,ba,dfa,cnf,pls,isGCCE,smallGpu.on());           // A30: small cCCE clusters batched on the CPU
     for (int istate=0; istate<=nstate; istate++){
 
         // wall time
@@ -323,13 +325,24 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             double steptime_sta = MPI_Wtime();
             double steptime_end = 0.0;
 
+            // savemode cluster_density_matrix, gCCE: the Output calCoherenceGcce writes a cluster's full density matrices to, its outfile
+            // named after the cluster and the state (Output_fullOutput). Every rank computes the zeroth cluster; rank 0
+            // alone writes it.
+            const bool allFull=isGCCE && !strcasecmp(savemode,"cluster_density_matrix");
+            std::vector<char> fullName(allFull ? MAX_FILEPATH : 0);
+            Output fullOp=*op;
+            if(allFull){
+                if(rank==0)fullOp=Output_fullOutput(op,fullName.data(),nullptr,0,istate);
+                else strcpy(fullOp.savemode,"coherence");
+            }
+
             if (isGCCE){ // gcce
                 // Zero-th order
                 if (rank==0){
                     printf("\n");
                     printSubTitle("Calculate 0-th cluster...");
                 }
-                result_0th = calCoherenceGcce(qa,NULL,cnf,pls,op);
+                result_0th = calCoherenceGcce(qa,NULL,cnf,pls,allFull ? &fullOp : op);
                 if (rank==0){
                     steptime_end = MPI_Wtime();
                     // make message
@@ -346,7 +359,8 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
             // Product assembly (improvements.md A9): the savemode test and the inverse of the zeroth cluster are taken
             // once per state, not per cluster and time point.
-            const bool saveAll=!strcasecmp(savemode,"all");
+            // cluster_density_matrix writes the per-cluster files of cluster_coherence as well (2026-10-13)
+            const bool saveAll=!strcasecmp(savemode,"cluster_coherence") || !strcasecmp(savemode,"cluster_density_matrix");
             std::vector<ScaledComplex> inverseZero;
             bool unitZero=false;
             if(stableProduct){
@@ -359,9 +373,11 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             }
             // A34: the values of power-1 clusters are gathered, gatherMax clusters at a time (time point by time point:
             // gathered[istep*gatherMax + k]), and multiplied in with assembleRun - each product sees the same factors in the
-            // same order as before. Off where the per-cluster factors are used elsewhere (savemode all, except, the rdip
+            // same order as before. Off where the per-cluster factors are used elsewhere (savemode cluster_coherence, except, the rdip
             // ladder, cluster contributions).
             const bool gather=stableProduct && !saveAll && !exceptMode && !ladder.on && !cnf->cluster_contributions;
+            // A30: the batched small clusters only where nothing but the product uses a cluster's factors
+            const bool cpuBatchUse=!saveAll && !exceptMode && !ladder.on && !cnf->cluster_contributions;
             const int gatherMax=32;
             std::vector<std::complex<double>> gathered(gather ? size_t(gatherMax)*nstep : 0);
             int ngathered=0;
@@ -376,6 +392,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             };
 
             ladder.reset();
+            smallGpu.beginState(qa,pls);       // A40: the gCCE warp plan (pulses, qubit states); nothing otherwise
             lap(PH_PREP);
             MPI_Barrier(MPI_COMM_WORLD);
             lap(PH_WAIT);
@@ -399,6 +416,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 std::vector<MatrixXcd*> batchResults;
                 int batchFirst=0;
                 if(smallGpu.on())smallGpu.beginOrder(n,localclusters[n],ncluster);
+                if(cpuBatch.on())cpuBatch.beginOrder(n,localclusters[n],ncluster,cpuBatchUse);
                 // Create BathArray for the cluster (defect spins can be added)
                 for (int ic=1; ic<=ncluster; ic++){
 
@@ -410,18 +428,25 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     int power = localclusters[n][ic][0];
 
                     // A26: the coherence of this cluster when the small-cluster GPU batch computed it (no bath array then)
-                    int smallDim=0;
-                    const std::complex<double>* small = smallGpu.on() ? smallGpu.get(ic,smallDim) : nullptr;
+                    int smallDim=0,smallPer=1;
+                    const std::complex<double>* small = smallGpu.on() ? smallGpu.get(ic,smallDim,smallPer) : nullptr;
+                    // A30: or when the CPU batch did (then no bath array either; one value per time point); one it left
+                    // to the scalar path may come with its bath array already made
+                    BathArray* made = nullptr;
+                    if(!small && cpuBatch.on()) small = cpuBatch.get(ic,smallDim,&made);
 
                     // Create the bath array for the cluster
-                    BathArray* ba_cluster = small ? nullptr : batchResults.empty() ?
+                    BathArray* ba_cluster = small ? nullptr : made ? made : batchResults.empty() ?
                         createBathArray(cluster,n,ba,dfa,nqubit) : batchBaths[ic-batchFirst];
                     lap(PH_CREATE);
                     // BathArray_report(ba_cluster);
 
 #ifdef CCEX_USE_CUDA
                     const int qubitFactor=isGCCE ? QubitArray_dim(qa) : 1;
-                    if(!smallGpu.on() && batchResults.empty() && (!isGCCE || strcasecmp(savemode,"allfull")) &&
+                    // P1-05: a dimension the packed batch does not take keeps this batching (its look-ahead takes only clusters
+                    // of the same dimension, so none of them is the packed batch's)
+                    if(!small && !smallGpu.packs(qubitFactor*BathArray_dim(ba_cluster)) && batchResults.empty() &&
+                       (!isGCCE || strcasecmp(savemode,"cluster_density_matrix")) &&
                        cnf->gpu_batch_clusters>1 && computeUseCuda(cnf,qubitFactor*BathArray_dim(ba_cluster))){
                         const int d=qubitFactor*BathArray_dim(ba_cluster);
                         const int timeBatch=std::min(cnf->gpu_batch_steps,std::max(1,nstep));
@@ -443,20 +468,31 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                             batchFirst=ic;
                             batchResults=isGCCE ? calCoherenceGcceCudaBatch(qa,batchBaths,cnf,pls,op) :
                                                   calCoherenceCceCudaBatch(qa,batchBaths,cnf,pls);
+                            // empty: out of GPU memory under backend auto - the clusters one by one, on the CPU
+                            if(batchResults.empty()){
+                                for(size_t k=1;k<batchBaths.size();++k)BathArray_freeAll(batchBaths[k]);
+                                batchBaths.clear();
+                            }
                         }else batchBaths.clear();
                     }
 #endif
 
                     // Calculate the coherence
                     bool ownedResult = true;                  // false: the reused cCCE buffer, not deleted here
-                    if(small){
+                    if(small && smallPer>1){         // A40: gCCE quantity dm, qdim x qdim per point (column-major)
+                        const int q=QubitArray_dim(qa);
+                        for(int istep=0;istep<nstep;istep++) cceResult[istep]=Eigen::Map<const MatrixXcd>(small+size_t(istep)*smallPer,q,q);
+                        result_nth = cceResult.get();
+                        ownedResult = false;
+                    }else if(small){
                         for(int istep=0;istep<nstep;istep++){ cceResult[istep].resize(1,1); cceResult[istep](0,0)=small[istep]; }
                         result_nth = cceResult.get();
                         ownedResult = false;
                     }else if(!batchResults.empty()){
                         result_nth=batchResults[ic-batchFirst];
                     }else if (isGCCE){ // gcce: into the reused buffer (A14)
-                        calCoherenceGcceInto(qa, ba_cluster, cnf, pls, op, cceResult.get(), &gcceAlphaRho);
+                        if(allFull)fullOp=Output_fullOutput(op,fullName.data(),cluster,n,istate);
+                        calCoherenceGcceInto(qa, ba_cluster, cnf, pls, allFull ? &fullOp : op, cceResult.get(), &gcceAlphaRho);
                         result_nth = cceResult.get();
                         ownedResult = false;
                     }else{ // cce: into this calculation's buffer and workspace, reused from cluster to cluster (A14)
@@ -465,6 +501,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                         ownedResult = false;
                     }
                     if(!small && !isGCCE && batchResults.empty()) smallClusterDump(qa,ba_cluster,cnf,pls,result_nth);
+                    if(!small && batchResults.empty()) warpClusterDump(qa,ba_cluster,cnf,pls,result_nth);   // A40 test data (env)
                     lap(PH_CLUSTER);
 
                     int exceptIndex=-1;
@@ -516,7 +553,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     if(gather && power==1 && ++ngathered==gatherMax)flushGathered();
 
                     lap(PH_ASSEMBLE);
-                    if (strcasecmp(savemode,"all")==0){
+                    if (saveAll){
                         Output_save_all(op,result_nth,nstep,deltat,cluster,n,istate);
                     }
 
@@ -709,11 +746,11 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 printSubTitle("Save the results...");
                 adaptiveWriteCurve(cnf,result_wD_all,istate);
                 
-                if (strcasecmp(savemode,"normal")==0){
+                if (strcasecmp(savemode,"coherence")==0){
                     Output_save(op,result_wD_all,result_nD_all,nstep,deltat,istate);
-                }else if (strcasecmp(savemode,"all")==0){
+                }else if (strcasecmp(savemode,"cluster_coherence")==0 || strcasecmp(savemode,"cluster_density_matrix")==0){
                     Output_save(op,result_wD_all,result_nD_all,nstep,deltat,istate);
-                }else if (strcasecmp(savemode,"info")==0){
+                }else if (strcasecmp(savemode,"coherence_tagged")==0){
                     char* bathfile = Config_getBathfiles_i(cnf,0);
                     MatrixXcd Atensor = BathArray_getBath_i_hypf_j(ba,0,0);
                     double Azx = Atensor(2,0).real();

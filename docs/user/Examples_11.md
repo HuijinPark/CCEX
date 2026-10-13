@@ -1,7 +1,7 @@
 # 11 Automatic convergence
 
 The `auto_convergence` block: with it, `mpirun -n $NP bin/main.out -f ccein.json` runs the
-automatic convergence (`example/tools/AutoConvergence/README.md`) instead of one
+automatic convergence (keys in [InputFile_AutoConvergence.md](InputFile_AutoConvergence.md), the steps in `example/tools/AutoConvergence/README.md`) instead of one
 calculation. `ensemble_CCE2/` takes 02's NV (CCE2 Hahn echo, ensemble) on 40 bath
 configurations that `run.sh` makes first (a 110 Å cell each, configuration k from the random
 seed k, into `results/bath/`), with the rdip candidates 4–12 Å and the rbath candidates

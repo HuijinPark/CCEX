@@ -87,7 +87,7 @@ def main():
             seed = int(re.search(r'^\s*seed\s*:\s*(\d+)', old_log, re.M)[1])
             config['gyrofile'] = str((source.parent/config['gyrofile']).resolve())
             config['bathfile'] = [str((source.parent/p).resolve()) for p in config['bathfile']]
-            config.update(seed=seed, profile=True, savemode='normal', gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=64))
+            config.update(seed=seed, profile=True, savemode='coherence', gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=64))
             directory = args.output/source.stem
             old = directory/'archived'
             old.mkdir(parents=True)

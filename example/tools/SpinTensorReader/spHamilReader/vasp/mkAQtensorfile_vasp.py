@@ -7,6 +7,8 @@ from spHamilReader.base.Calgeometry import distance
 from spHamilReader.vasp.extract_spinHamils_vasp import printform, extSpinHamilTensors
 from spHamilReader.base.ioPoscar import read_POSCAR
 from spHamilReader.base.dictproc import print_dict
+from spHamilReader.base.rwfiles import provenanceline, check_spin
+from spHamilReader.base import pyform
 
 ###############################################################
 #
@@ -257,7 +259,7 @@ def relativeDistance(latt_constant,unit_cell_parameter,frac_unitCellInfo,frac_ce
 #
 ###############################################################
 
-def Afile(relativepos,doutcar_Adata,doutcar_isodata,fout,_fidentify=True,_version='v2',_rangeformat='vertex'):
+def Afile(relativepos,doutcar_Adata,doutcar_isodata,fout,_spin,_rangeformat='vertex'):
 
     """
         Args:
@@ -317,8 +319,10 @@ def Afile(relativepos,doutcar_Adata,doutcar_isodata,fout,_fidentify=True,_versio
     Dict = Afileinfo()
     # Make A tensor file
     with open(fout, 'w') as f:
-        # HEAD
-        if _fidentify : f.write("VASP\n")
+        # HEAD: the tag and the provenance line CCEX reads (format v3, 2026-10-13).
+        # VASP divides the hyperfine by <S_z> of the total spin already, so the values are those of the spin-S defect.
+        f.write("VASP\n")
+        f.write(provenanceline("VASP OUTCAR",_spin))
         f.write(divline())
         f.write(Afilehead())
         # ISOTOPE DATA
@@ -346,28 +350,16 @@ def Afile(relativepos,doutcar_Adata,doutcar_isodata,fout,_fidentify=True,_versio
         doutcar_Adata['cAdiag']=[]
         f.write(divline())
         for i,atm in enumerate(relativepos['r_1i']):
-            if _version == 'v1':
-                # NOTE : In VASP, to make the same result to the QE case,
-                #         We should multipy them by 2*γ_N/g_N (If inputted γ_N=1.0)
-                #         in which the value would be "2*μ_N/h" = "2*7.62259 MHz/T"
-                #         In Summary:
-                #            1) γ_N   = 1.0 case is considred in this code
-                #            input γ_N  =1.0 , then New_Aiso = Aiso * 2 * 7.62259
-                #            2) γ_N  != 1.0 case is NOT considred in this code
-                #            input γ_N !=1.0 , then New_Aiso = Aiso * 2 * 7.62259 / γ_N 
-                corrected_Aiso = np.asarray(doutcar_Adata['Aiso'][i]) * 2 * NUCLEAR_MAGNETON_DIV_PLANKCONST
-                corrected_Adip = np.asarray(doutcar_Adata['Adip'][i]) * 2 * NUCLEAR_MAGNETON_DIV_PLANKCONST
-            if _version == 'v2':
-                # NOTE : We extract the A tensor into MHz unit.
-                #         We should multipy them by γ_N/g_N (If inputted γ_N=1.0)
-                #         in which the value would be "μ_N/h" = "7.62259 MHz/T"
-                #         In Summary:
-                #            1) γ_N   = 1.0 case is considred in this code
-                #            input γ_N  =1.0 , then New_Aiso = Aiso * 7.62259
-                #            2) γ_N  != 1.0 case is NOT considred in this code
-                #            input γ_N !=1.0 , then New_Aiso = Aiso * 7.62259 / γ_N 
-                corrected_Aiso = np.asarray(doutcar_Adata['Aiso'][i])/doutcar_Adata['givenr'][atm[0]] * NUCLEAR_MAGNETON_DIV_PLANKCONST
-                corrected_Adip = np.asarray(doutcar_Adata['Adip'][i])/doutcar_Adata['givenr'][atm[0]] * NUCLEAR_MAGNETON_DIV_PLANKCONST
+            # NOTE : We extract the A tensor into MHz unit.
+            #         We should multipy them by γ_N/g_N (If inputted γ_N=1.0)
+            #         in which the value would be "μ_N/h" = "7.62259 MHz/T"
+            #         In Summary:
+            #            1) γ_N   = 1.0 case is considred in this code
+            #            input γ_N  =1.0 , then New_Aiso = Aiso * 7.62259
+            #            2) γ_N  != 1.0 case is NOT considred in this code
+            #            input γ_N !=1.0 , then New_Aiso = Aiso * 7.62259 / γ_N 
+            corrected_Aiso = np.asarray(doutcar_Adata['Aiso'][i])/doutcar_Adata['givenr'][atm[0]] * NUCLEAR_MAGNETON_DIV_PLANKCONST
+            corrected_Adip = np.asarray(doutcar_Adata['Adip'][i])/doutcar_Adata['givenr'][atm[0]] * NUCLEAR_MAGNETON_DIV_PLANKCONST
             f.write(Atensorform().format(*atm,corrected_Aiso,*corrected_Adip))
 
             doutcar_Adata['cAiso'].append(corrected_Aiso)
@@ -508,16 +500,33 @@ def _Qdata(relativepos,doutcar_Qdata,doutcar_isodata):
     return Qdata
 
 
+def spin_from_outcar(foutcar):
+    """S = |total magnetization| / 2 from the last 'number of electron ... magnetization' line of the OUTCAR."""
+    mag = None
+    with open(foutcar) as f:
+        for line in f:
+            if line.startswith(" number of electron") and "magnetization" in line:
+                mag = float(line.split("magnetization")[1].split()[0])
+    if mag is None:
+        pyform._error(f"{foutcar}: no 'magnetization' line, the defect spin cannot be read; is it a spin-polarized run?")
+    S = round(abs(mag)) / 2
+    if S == 0 or abs(abs(mag) - 2*S) > 0.05:
+        pyform._error(f"{foutcar}: total magnetization {mag} is not 2S for a half-integer S > 0")
+    return S
+
 class do_mkAQDdata:
 
-    def __init__(self,foutcar,fposcar,dfname,dfposition_frac=None,_ignoreatm=None,_fidentify=True,_addhfcore=True,_version='v2',_rangeformat='vertex'):
-        self.foutcar = foutcar    
+    def __init__(self,foutcar,fposcar,dfname,dfposition_frac=None,_ignoreatm=None,_addhfcore=True,_spin=None,_rangeformat='vertex'):
+        self.foutcar = foutcar
         self.fposcar = fposcar
         self.dfname = dfname
         self._ignoreatm = _ignoreatm
         self.dfposition_frac = dfposition_frac
-        self._fidentify = _fidentify
-        self._version = _version 
+        # The defect spin S, written in the provenance line of the A file: from the OUTCAR's total magnetization;
+        # a --spin given on the command line must agree with it (the values themselves do not depend on it).
+        self._spin = spin_from_outcar(foutcar)
+        if _spin is not None and abs(check_spin(_spin) - self._spin) > 1e-9:
+            pyform._error(f"--spin {_spin:g} contradicts the OUTCAR {foutcar}: its total magnetization gives S = {self._spin:g}")
         self._addhfcore = _addhfcore
         self._rangeformat = _rangeformat
         print("\n\n\t=========================================\n")
@@ -575,7 +584,7 @@ class do_mkAQDdata:
         self.fout_Afile = fout_Afile
         if 'T' not in self.readA : 
             sys.exit("\t Error, outcar doesn't include A tensor information")
-        self.outcar_spHam.Adata = Afile(self.relativepos, self.outcar_spHam.Adata, self.outcar_spHam.isodata,fout_Afile,_fidentify=self._fidentify,_version=self._version,_rangeformat=self._rangeformat)
+        self.outcar_spHam.Adata = Afile(self.relativepos, self.outcar_spHam.Adata, self.outcar_spHam.isodata,fout_Afile,self._spin,_rangeformat=self._rangeformat)
     def mkQdata(self,fout_Qfile):
         self.fout_Qfile = fout_Qfile
         if 'T' not in self.readQ : 

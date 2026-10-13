@@ -77,7 +77,9 @@ double sinPhi(double spin1[], double spin2[]){
  * @details Fatal if v is not three finite numbers, or has (numerically) zero length --
  *          both leave the direction undefined, and a silently wrong axis here would
  *          show up only as a wrong Hamiltonian much later.
- * @param what name of the input, used in the error message
+ * @param[in]  v    the input 3-vector (a direction, any length)
+ * @param[out] out  v divided by its length, a unit vector
+ * @param[in]  what name of the input, used in the error message
 */
 void normalizeAxisOrDie(const double v[3], double out[3], const char* what){
 
@@ -279,6 +281,10 @@ MatrixXcd rotateTensor(const MatrixXcd T, const double R[3][3]){
  *          a reader can reconstruct every frame the run used from this block alone: the
  *          two input axes, where each computational axis lies in the source frame, R and
  *          its self-checks, and the magnetic field written both ways round.
+ * @param bath_axis              reference axis of the bath file frame, in that frame (as given to buildQubitAlignedRotation)
+ * @param qubit_axis             qubit symmetry axis, in the bath file frame
+ * @param R                      the rotation, original (bath file) frame -> computational frame
+ * @param r0                     the point held fixed (the reference qubit), in the original frame
  * @param bfield                 Config.bfield, i.e. the field in the COMPUTATIONAL frame
  * @param defect_axis_reference  name of the recorded reference axis, or NULL if none
 */

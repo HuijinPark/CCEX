@@ -12,12 +12,14 @@ Config* Config_init(){
     cnf->method[0] = '\0';
     cnf->quantity[0] = '\0';
     cnf->propagator[0] = '\0';
+    cnf->sparse_min_dim = 4096;   // A2: propagator = sparse from this cluster dimension on
+    cnf->sparse_tol = 1e-12;
     cnf->evolution[0] = '\0';
     cnf->evolution_isdefault = true;
     cnf->evolution_update[0] = '\0';           // not given; Config_validateEvolutionUpdate picks the default (A29)
     cnf->evolution_update_source[0] = '\0';
     strcpy(cnf->backend, "cpu");
-    cnf->gpu_min_dim = 256;
+    cnf->gpu_min_dim = 768;                    // A37 (idm4-gpu 699): the card wins from ~670-750 on every path; 256 until 2026-10-13
     cnf->gpu_batch_steps = 64;
     cnf->gpu_cache_mb = ccex::gpuCacheMiB;
     cnf->probe_memory_gb = 0;
@@ -29,6 +31,8 @@ Config* Config_init(){
     cnf->gpu_cluster_batch_mb = 64;
     cnf->gpu_packed_max_dim = -1;               // not given; Config_resolvePackedMaxDim picks the default (A26)
     cnf->gpu_packed_source[0] = '\0';
+    cnf->gpu_warp_max_dim = -1;                 // not given; Config_resolveWarpMaxDim picks the default (A40)
+    cnf->gpu_warp_source[0] = '\0';
     cnf->profile = false;
     cnf->cluster_contributions = false;
     cnf->cluster_contribution_max_mb = 256;
@@ -386,8 +390,14 @@ void Config_setMethod(Config* cnf, char* method){
 
 void Config_setQuantity(Config* cnf, char* quantity){
 
-    const int opsize = 3;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"coherence","dm","noise"};
+    // "noise" used to be accepted, but nothing computes it: the run gave the coherence under that name (review 20261013-doxygen D22)
+    if (strcasecmp(quantity,"noise") == 0) {
+        fprintf(stderr, "Error: quantity \"noise\" is not supported (no noise calculation exists); use coherence or dm\n");
+        exit(EXIT_FAILURE);
+    }
+
+    const int opsize = 2;
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"coherence","dm"};
     int idx = findIndexCharFix(options,0,opsize-1,quantity);
     if (idx == -1) {
         fprintf(stderr, "Error: current quantity options (%s) is not available\n",quantity);
@@ -405,11 +415,13 @@ void Config_setQuantity(Config* cnf, char* quantity){
 
 void Config_setPropagator(Config* cnf, char* propagator){
 
-    // gCCE free-evolution propagator.
-    //   eigen : one SelfAdjointEigenSolver per cluster, exp(-i*H*tau) = M*diag(exp(-i*l*tau))*M^dag
-    //   expm  : Eigen's general matrix exponential per step, the original CCEX path
-    const int opsize = 2;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"eigen","expm"};
+    // Free-evolution propagator.
+    //   eigen  : one SelfAdjointEigenSolver per cluster, exp(-i*H*tau) = M*diag(exp(-i*l*tau))*M^dag
+    //   expm   : Eigen's general matrix exponential per step, the original CCEX path (gCCE only)
+    //   sparse : A2, exp(-i*H*tau) applied to the state by a Krylov expansion, H in compressed rows, for clusters of
+    //            dimension sparse_min_dim and above (Config_validatePropagator says where)
+    const int opsize = 3;
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"eigen","expm","sparse"};
     int idx = findIndexCharFix(options,0,opsize-1,propagator);
     if (idx == -1) {
         fprintf(stderr, "Error: current propagator options (%s) is not available\n",propagator);
@@ -490,7 +502,7 @@ void Config_resolveEvolution(Config* cnf){
 
     bool vectorFits = isGCCE
                    && (cnf->nstate > 0)
-                   && (strcasecmp(cnf->propagator,"eigen")==0);
+                   && (strcasecmp(cnf->propagator,"expm")!=0);   // eigen, or sparse (A2)
     strcpy(cnf->evolution, vectorFits ? "vector" : "matrix");
 }
 
@@ -517,6 +529,8 @@ void Config_validateEvolutionUpdate(Config* cnf){
     char found[96] = "";                    // a CPU path without recursive
     if (isGCCE && !eigen)
         snprintf(found,sizeof(found),"method=gCCE with propagator=%s",cnf->propagator);
+    else if (strcasecmp(cnf->propagator,"sparse")==0)   // A2: the Krylov path has no phases to carry over; its clusters
+        snprintf(found,sizeof(found),"propagator=sparse");   // below min_dim run exact with it
     // A36: may a cluster reach the GPU large-cluster path? The methods computeBackendInit sends to the GPU, with backend
     // cuda (refused there in the CPU build) or with auto in the GPU build
     const bool cuda = (strcasecmp(cnf->backend,"cuda")==0);
@@ -533,9 +547,9 @@ void Config_validateEvolutionUpdate(Config* cnf){
         if (found[0] != '\0') snprintf(path,sizeof(path),"%s",found);
         else if (allOnGpu) snprintf(path,sizeof(path),"backend=cuda: every cluster on the GPU, exact there");
         else if (gpuLarge)
-            snprintf(path,sizeof(path),"%s: recursive; clusters on the GPU (backend=%s): exact",
+            snprintf(path,sizeof(path),"%s: recursive; clusters on the GPU (backend=%s%s): exact",
                      cuda ? "packed kernel" : packed ? "clusters on the CPU and packed kernel" : "clusters on the CPU",
-                     cnf->backend);
+                     cnf->backend, cnf->gpu_warp_max_dim > 0 ? ", warp kernel included" : "");
         strcpy(cnf->evolution_update, found[0] == '\0' && !allOnGpu ? "recursive" : "exact");
         snprintf(cnf->evolution_update_source,sizeof(cnf->evolution_update_source),"default (%s)",path);
         return;
@@ -549,6 +563,43 @@ void Config_validateEvolutionUpdate(Config* cnf){
                    "(single state and ensemble) and on the CPU for gCCE with propagator=eigen (evolution=vector or "
                    "matrix); this run has %s. Use evolution_update=exact, or leave the key out (then each path takes "
                    "recursive where it has it).\n",found);
+    exit(EXIT_FAILURE);
+}
+
+/**
+ * propagator (A2, registration 2026-10-12): expm exists for gCCE only; sparse for the single-state cCCE (method CCE,
+ * pCCE, dsj, itb or dsjitb with nstate > 0) and gCCE with evolution = vector and one qubit, on backend = cpu with
+ * evolution_update = exact, without the knight and hfmedi terms. Everything else would run another path than the one
+ * asked for, so it is refused. Call after Config_resolveEvolution (main.cpp), when -m and -N have been applied.
+ */
+void Config_validatePropagator(const Config* cnf, int nqubit){
+
+    const bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
+    if (!isGCCE && strcasecmp(cnf->propagator,"expm")==0){
+        fprintf(stderr,"Error : propagator=expm is implemented for method=gCCE only (this run has method=%s); "
+                       "cCCE takes eigen or sparse.\n",cnf->method);
+        exit(EXIT_FAILURE);
+    }
+    if (strcasecmp(cnf->propagator,"sparse")!=0){ return; }
+    char found[128] = "";
+    if (cnf->nstate == 0)
+        snprintf(found,sizeof(found),"nstate=0 (the ensemble)");
+    else if (isGCCE && strcasecmp(cnf->evolution,"vector")!=0)
+        snprintf(found,sizeof(found),"method=gCCE with evolution=%s",cnf->evolution);
+    else if (strcasecmp(cnf->backend,"cpu")!=0)
+        snprintf(found,sizeof(found),"backend=%s",cnf->backend);
+    else if (strcasecmp(cnf->evolution_update,"recursive")==0)   // given; without the key sparse takes exact (A29)
+        snprintf(found,sizeof(found),"evolution_update=%s",cnf->evolution_update);
+    else if (Config_getKnight((Config*)cnf) || Config_getHfmedi((Config*)cnf))
+        snprintf(found,sizeof(found),"the %s term",Config_getKnight((Config*)cnf) ? "knight" : "hfmedi");
+    else if (nqubit != 1)
+        snprintf(found,sizeof(found),"nqubit=%d",nqubit);
+    else if (!isGCCE && strcasecmp(cnf->quantity,"coherence")!=0)
+        snprintf(found,sizeof(found),"quantity=%s",cnf->quantity);
+    if (found[0] == '\0'){ return; }
+    fprintf(stderr,"Error : propagator=sparse is implemented on backend=cpu with evolution_update=exact for one sampled "
+                   "state (nstate > 0) of the cCCE and of gCCE with evolution=vector, one qubit, without knight and "
+                   "hfmedi; this run has %s. Use propagator=eigen.\n",found);
     exit(EXIT_FAILURE);
 }
 
@@ -570,6 +621,31 @@ void Config_resolvePackedMaxDim(Config* cnf){
 #else
     cnf->gpu_packed_max_dim = 0;
     strcpy(cnf->gpu_packed_source,"default (CPU build)");
+#endif
+}
+
+/**
+ * gpu_options.warp_max_dim without the key (A40, user 2026-10-13): 27, the largest total dimension the warp kernel has, in
+ * the GPU build with backend cuda or auto and method CCE (quantity coherence) or gCCE; 0 otherwise - backend cpu, another
+ * method, and always in the CPU build. Where the run is one the kernel does not take (warpClusterRun: gcce_refinement,
+ * pulseiter, savemode allfull, ...), the default switches itself off in the run ([gpu-warp] off). A value given in the
+ * input is kept (an explicit nonzero one is checked in smallClusterWarmUp). Call once every source is in.
+ */
+void Config_resolveWarpMaxDim(Config* cnf){
+    if (cnf->gpu_warp_max_dim >= 0){ strcpy(cnf->gpu_warp_source,"given"); return; }
+#ifdef CCEX_USE_CUDA
+    const bool gpuBackend = strcasecmp(cnf->backend,"cpu")!=0;
+    const bool cce = strcasecmp(cnf->method,"cce")==0 && strcasecmp(cnf->quantity,"coherence")==0;
+    const bool gcce = strcasecmp(cnf->method,"gcce")==0;
+    const bool on = gpuBackend && (cce || gcce);
+    cnf->gpu_warp_max_dim = on ? 27 : 0;
+    snprintf(cnf->gpu_warp_source,sizeof(cnf->gpu_warp_source),"default (%s)",
+             on ? (cce ? (strcasecmp(cnf->backend,"cuda") ? "backend=auto, method=CCE" : "backend=cuda, method=CCE")
+                       : (strcasecmp(cnf->backend,"cuda") ? "backend=auto, method=gCCE" : "backend=cuda, method=gCCE"))
+                : gpuBackend ? "not method=CCE (coherence) or gCCE" : "backend=cpu");
+#else
+    cnf->gpu_warp_max_dim = 0;
+    strcpy(cnf->gpu_warp_source,"default (CPU build)");
 #endif
 }
 
@@ -958,6 +1034,10 @@ void Config_report(Config* cnf){
     printStructElementChar("method",Config_getMethod(cnf));
     printStructElementChar("quantity",Config_getQuantity(cnf));
     printStructElementChar("propagator",Config_getPropagator(cnf));
+    if (strcasecmp(cnf->propagator,"sparse")==0){
+        printStructElementInt("sparse_min_dim",int(cnf->sparse_min_dim));
+        printStructElementDouble("sparse_tol",cnf->sparse_tol);
+    }
     printStructElementChar("evolution",Config_getEvolution(cnf));
     printStructElementChar("evolution_update",cnf->evolution_update);
     printStructElementChar("  chosen by",cnf->evolution_update_source);
@@ -974,6 +1054,8 @@ void Config_report(Config* cnf){
     printStructElementInt("gpu_options.cluster_batch_mb",cnf->gpu_cluster_batch_mb);
     printStructElementInt("gpu_options.packed_max_dim",cnf->gpu_packed_max_dim);
     printStructElementChar("  chosen by",cnf->gpu_packed_source);
+    printStructElementInt("gpu_options.warp_max_dim",cnf->gpu_warp_max_dim);
+    printStructElementChar("  chosen by",cnf->gpu_warp_source);
     printStructElementChar("pcce_partition",cnf->pcce_partition);
     printStructElementChar("pcce_connections",cnf->pcce_connections);
     printStructElementChar("pcce_cache_mode",cnf->pcce_cache_mode);

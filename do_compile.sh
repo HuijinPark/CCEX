@@ -276,7 +276,7 @@ TARGET_GPU := \$(BIN_DIR)/main_gpu.out
 CORE_DIRS := \$(SRC_DIR)/input \$(SRC_DIR)/physical \$(SRC_DIR)/clustering \$(SRC_DIR)/clustering/bundle \$(SRC_DIR)/calculation \$(SRC_DIR)/calculation/gpu \$(SRC_DIR)/common \$(SRC_DIR)/auto_convergence
 NAMES := \$(notdir \$(basename \$(wildcard \$(SRC_DIR)/*.cpp) \$(foreach d,\$(CORE_DIRS),\$(wildcard \$(d)/*.cpp))))
 OBJS     := \$(addprefix \$(OBJ_DIR)/,\$(addsuffix .o,\$(NAMES)))
-OBJS_GPU := \$(addprefix \$(OBJ_GPU_DIR)/,\$(addsuffix .o,\$(NAMES))) \$(OBJ_GPU_DIR)/gpu_backend.o \$(OBJ_GPU_DIR)/small_cluster_gpu.o
+OBJS_GPU := \$(addprefix \$(OBJ_GPU_DIR)/,\$(addsuffix .o,\$(NAMES))) \$(OBJ_GPU_DIR)/gpu_backend.o \$(OBJ_GPU_DIR)/small_cluster_gpu.o \$(OBJ_GPU_DIR)/warp_cluster_gpu.o
 
 # The refinement policies (src/clustering/algo_adaptive) and sqlite do not depend on the backend:
 # compiled once, linked into both binaries. adaptive_main.cpp comes with its own main()
@@ -332,6 +332,8 @@ define COMPILE_RULES
 endef
 \$(eval \$(call COMPILE_RULES,\$(OBJ_DIR),))
 \$(eval \$(call COMPILE_RULES,\$(OBJ_GPU_DIR),-DCCEX_USE_CUDA))
+# A30: the batched small-cluster kernel writes out every fused multiply-add it needs; the compiler adds none
+\$(OBJ_DIR)/cce_batch_kernel.o \$(OBJ_GPU_DIR)/cce_batch_kernel.o: CXXFLAGS += -ffp-contract=off
 
 \$(OBJ_GPU_DIR)/gpu_backend.o: \$(SRC_DIR)/calculation/gpu/gpu_backend.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
 	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
@@ -339,6 +341,12 @@ endef
 	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
 # A26: the batched small-cluster cCCE kernel (one thread per cluster)
 \$(OBJ_GPU_DIR)/small_cluster_gpu.o: \$(SRC_DIR)/calculation/gpu/small_cluster_gpu.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
+	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
+	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
+	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
+
+# A40: the warp kernel (one cluster per warp; about 3.5 minutes of nvcc, the longest object of the build)
+\$(OBJ_GPU_DIR)/warp_cluster_gpu.o: \$(SRC_DIR)/calculation/gpu/warp_cluster_gpu.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
 	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
@@ -354,15 +362,20 @@ endef
 
 # The GPU unit tests need the card: run "make gpu-test" inside a job. test_review_memory
 # includes cuda_runtime.h itself, hence the CUDA include folder.
-GPU_TESTS := test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory test_small_cluster_cuda
+GPU_TESTS := test_gcce_cuda test_cce_cuda test_gcce_accuracy test_gcce_refinement test_gcce_batch test_review_failure test_review_memory test_small_cluster_cuda test_warp_cluster_cuda
 \$(BIN_DIR)/test_%.out: test/gpu_verification/check_gpu/test_%.cpp \$(OBJ_GPU_DIR)/gpu_backend.o | \$(BIN_DIR)
 	\$(CXX) \$(INCLUDE) -I\$(CUDA_HOME)/include -DCCEX_USE_CUDA \$(CXXFLAGS) \$< \$(OBJ_GPU_DIR)/gpu_backend.o \$(LIBRARY) \$(LIBRARY_GPU) -o \$@
-\$(BIN_DIR)/test_small_cluster_cuda.out: test/gpu_verification/check_gpu/test_small_cluster_cuda.cpp \$(OBJ_GPU_DIR)/small_cluster_gpu.o | \$(BIN_DIR)
-	\$(CXX) \$(INCLUDE) -I\$(CUDA_HOME)/include \$(CXXFLAGS) \$< \$(OBJ_GPU_DIR)/small_cluster_gpu.o \$(LIBRARY) \$(LIBRARY_GPU) -o \$@
+\$(BIN_DIR)/test_small_cluster_cuda.out: test/gpu_verification/check_gpu/test_small_cluster_cuda.cpp \$(OBJ_GPU_DIR)/small_cluster_gpu.o \$(OBJ_GPU_DIR)/warp_cluster_gpu.o | \$(BIN_DIR)
+	\$(CXX) \$(INCLUDE) -I\$(CUDA_HOME)/include \$(CXXFLAGS) \$< \$(OBJ_GPU_DIR)/small_cluster_gpu.o \$(OBJ_GPU_DIR)/warp_cluster_gpu.o \$(LIBRARY) \$(LIBRARY_GPU) -o \$@
+\$(BIN_DIR)/test_warp_cluster_cuda.out: test/gpu_verification/check_gpu/test_warp_cluster_cuda.cpp \$(OBJ_GPU_DIR)/small_cluster_gpu.o \$(OBJ_GPU_DIR)/warp_cluster_gpu.o | \$(BIN_DIR)
+	\$(CXX) \$(INCLUDE) -I\$(CUDA_HOME)/include \$(CXXFLAGS) \$< \$(OBJ_GPU_DIR)/small_cluster_gpu.o \$(OBJ_GPU_DIR)/warp_cluster_gpu.o \$(LIBRARY) \$(LIBRARY_GPU) -o \$@
 \$(BIN_DIR)/test_scaled_product.out: test/gpu_verification/check_gpu/test_scaled_product.cpp include/calculation/scaled_product.h | \$(BIN_DIR)
 	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) \$< -o \$@
 \$(BIN_DIR)/test_hamiltonian_check.out: test/gpu_verification/check_gpu/test_hamiltonian_check.cpp include/calculation/hamiltonian_check.h | \$(BIN_DIR)
 	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) \$< -o \$@
+# the packed kernel's arithmetic on the host (test_small_cluster_cuda without the card): dumps, dump reader, Jacobi scaling
+\$(BIN_DIR)/test_small_cluster_host.out: test/gpu_verification/check_gpu/test_small_cluster_cuda.cpp include/calculation/gpu/small_cluster_math.h | \$(BIN_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -DSMALL_CLUSTER_HOST_ONLY \$< -o \$@
 # The CPU regression tests of check_gpu (D17): the build's own flags, -UNDEBUG for their asserts;
 # test_host_lifetimes links the objects of bin/main.out but main.o. MPIRUN=... picks the launcher.
 CPU_TESTS := test_cluster_log test_mpi_seed test_review_controls test_host_lifetimes
@@ -374,6 +387,15 @@ BUNDLE_TESTS := test_adaptive_partition test_adaptive_connections test_adaptive_
 CACHE_TEST_OBJS := \$(filter-out \$(OBJ_DIR)/main.o \$(OBJ_DIR)/pcce_partition_cache.o,\$(OBJS))
 \$(BIN_DIR)/test_partition_cache_format.out: test/cluster_verification/check_pcce/test_partition_cache_format.cpp \$(CACHE_TEST_OBJS) | \$(BIN_DIR) \$(OBJ_DIR)
 	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/test_partition_cache_format.test.d -MT \$@ \$< \$(CACHE_TEST_OBJS) \$(LIBRARY) -o \$@
+# The fixed-size single-state evolution against the dynamic one, bit for bit (P1-04 of review 20261012-233058-452278):
+# the test includes simulator_cce.cpp itself, so it links the other objects of main.out.
+FIXED_TEST_OBJS := \$(filter-out \$(OBJ_DIR)/main.o \$(OBJ_DIR)/simulator_cce.o,\$(OBJS))
+\$(BIN_DIR)/test_fixed_size.out: test/code_verification/check_numerics/test_fixed_size.cpp \$(FIXED_TEST_OBJS) | \$(BIN_DIR) \$(OBJ_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/test_fixed_size.test.d -MT \$@ \$< \$(FIXED_TEST_OBJS) \$(LIBRARY) -o \$@
+# A30: the batched small-cluster cCCE kernel against the scalar path, bit for bit, on the dumped clusters of
+# check_gpu/data/small_cluster; it links the objects of main.out but main.o.
+\$(BIN_DIR)/test_cce_batch.out: test/code_verification/check_numerics/test_cce_batch.cpp \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) | \$(BIN_DIR) \$(OBJ_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/test_cce_batch.test.d -MT \$@ \$< \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) \$(LIBRARY) -o \$@
 BUNDLE_SRCS := src/clustering/bundle/bundle_partition.cpp src/clustering/bundle/bundle_expansion.cpp src/clustering/bundle/bundle_powers.cpp
 \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(BUNDLE_TESTS))): \$(BIN_DIR)/%.out: test/cluster_verification/check_pcce/%.cpp \$(BUNDLE_SRCS) | \$(BIN_DIR) \$(OBJ_DIR)
 	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/\$*.test.d -MT \$@ \$< \$(BUNDLE_SRCS) -o \$@
@@ -397,10 +419,11 @@ unit-env: \$(TARGET)
 	@echo "CCEX_UNIT_OBJS='\$(abspath \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) \$(ADAPTIVE_OBJS))'"
 
 .PHONY: all clean info gpu-test numeric-test cpu-test unit-env
-numeric-test: \$(BIN_DIR)/test_scaled_product.out \$(BIN_DIR)/test_hamiltonian_check.out
+numeric-test: \$(BIN_DIR)/test_scaled_product.out \$(BIN_DIR)/test_hamiltonian_check.out \$(BIN_DIR)/test_small_cluster_host.out
 	./\$(BIN_DIR)/test_scaled_product.out
 	./\$(BIN_DIR)/test_hamiltonian_check.out
-cpu-test: \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(CPU_TESTS) \$(BUNDLE_TESTS) test_partition_cache_format))
+	./\$(BIN_DIR)/test_small_cluster_host.out test/gpu_verification/check_gpu/data/small_cluster/*.bin
+cpu-test: \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(CPU_TESTS) \$(BUNDLE_TESTS) test_partition_cache_format test_fixed_size test_cce_batch))
 	./\$(BIN_DIR)/test_cluster_log.out
 	./\$(BIN_DIR)/test_review_controls.out
 	\$(MPIRUN) -n 1 ./\$(BIN_DIR)/test_mpi_seed.out
@@ -411,6 +434,8 @@ cpu-test: \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(CPU_TESTS) \$(BUNDLE_TE
 	./\$(BIN_DIR)/test_adaptive_connections.out
 	./\$(BIN_DIR)/test_adaptive_high_order.out
 	./\$(BIN_DIR)/test_partition_cache_format.out \$(OBJ_DIR)/test_partition_cache.bin
+	./\$(BIN_DIR)/test_fixed_size.out
+	./\$(BIN_DIR)/test_cce_batch.out test/gpu_verification/check_gpu/data/small_cluster/*.bin
 gpu-test: numeric-test \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(GPU_TESTS)))
 	./\$(BIN_DIR)/test_gcce_cuda.out
 	./\$(BIN_DIR)/test_cce_cuda.out
@@ -421,6 +446,7 @@ gpu-test: numeric-test \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(GPU_TESTS)
 	./\$(BIN_DIR)/test_review_failure.out
 	./\$(BIN_DIR)/test_review_memory.out
 	./\$(BIN_DIR)/test_small_cluster_cuda.out test/gpu_verification/check_gpu/data/small_cluster/*.bin
+	./\$(BIN_DIR)/test_warp_cluster_cuda.out test/gpu_verification/check_gpu/data/warp_cluster/*.bin
 
 info:
 	@echo "CXX      = \$(CXX)"

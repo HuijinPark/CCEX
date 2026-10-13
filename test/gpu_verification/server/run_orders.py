@@ -19,7 +19,7 @@ def prepare_config(source, directory, order, backend, batch):
         if config.get(key):
             config[key] = str((source.parent.parent / config[key]).resolve())
     config['bathfile'] = [str((source.parent.parent / p).resolve()) for p in config['bathfile']]
-    config.update(order=order, backend=backend, profile=True, savemode='normal',
+    config.update(order=order, backend=backend, profile=True, savemode='coherence',
                   outfile=str(directory / 'coherence'),
                   gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=batch, min_dim=256))
     return config

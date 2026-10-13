@@ -69,7 +69,16 @@ Prepared prepare_config(const adaptive::Value& given) {
     const double delta = out.cfg.has("deltat") ? out.cfg.at("deltat").as_double() : 0.;
     if (steps < 2 || !(delta > 0.))
         throw adaptive::ValueError("refinement needs at least two time points and positive deltat");
-    out.cfg.set("savemode", adaptive::Value::text("normal"));
+    // the step inputs save the coherence; a savemode block keeps its nodiv (until 2026-10-13 the top-level save_nodiv,
+    // which was copied through)
+    adaptive::Value savemode = adaptive::Value::text("coherence");
+    if (const adaptive::Value* given = out.cfg.find("savemode"))
+        if (given->kind() == adaptive::Value::Kind::Object && given->has("nodiv")) {
+            savemode = adaptive::Value::object();
+            savemode.set("mode", adaptive::Value::text("coherence"));
+            savemode.set("nodiv", given->at("nodiv"));
+        }
+    out.cfg.set("savemode", savemode);
     out.states.push_back(0);
     if (out.cfg.has("nstate") && out.cfg.at("nstate").as_int() != 0) {
         out.states.clear();

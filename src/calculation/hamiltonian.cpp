@@ -2,26 +2,15 @@
 #include "../../include/common/memory.h"
 #include <iostream>
 
-/*! @brief point-dipole interaction tensor
- * @param[in] xyz1 position of spin 1
- * @param[in] xyz2 position of spin 2
- * @param[in] gamma1 gyromagnetic ratio of spin 1
- * @param[in] gamma2 gyromagnetic ratio of spin 2
- * @return point-dipole interaction tensor
- * @details The point-dipole interaction tensor is given by
- * Hdd = (1/r^3) * (mu_0 / (4 * pi * hbar) ) * (gamma1 * gamma2 * mu_B^2) * (S1 dot S2 - 3(S1 dot r)(S2 dot r)/r^2
- * unit : (1/r^3) * (mu_0 / (4 * pi * hbar) ) * (gamma1 * gamma2 * mu_B^2)
- * 1/r^3 : A^-3
- * mu_0 : N/A^2
- * hbar : J*s
- * gamma1 : radkHz/G -> radkHz/T
- * gamma2 : radkHz/G -> radkHz/T
- * mu_B : J/T
- * 
+/**
+ * @brief Zeeman Hamiltonian of one spin [rad kHz]
+ * @details H = -gamma B0 . S = -gamma (B0x Sx + B0y Sy + B0z Sz)
+ * @param[in] gamma gyromagnetic ratio [radkHz/G]
+ * @param[in] B0 magnetic field, 3 components [G]
+ * @param[in] Pmat spin operators of the spin: Pmat[0] = I, Pmat[1..3] = Sx, Sy, Sz
+ * @param[in] m dimension of the spin space (2S+1)
+ * @return m x m Zeeman Hamiltonian [rad kHz]
  */
-
-
-// Zeeman Interaction [rad kHz]
 MatrixXcd ZeemanInt(double gamma, float* B0, MatrixXcd* Pmat, int m){
     MatrixXcd H(m,m);
     H = MatrixXcd::Zero(m,m);
@@ -81,7 +70,19 @@ MatrixXcd calOverhauserVector(double overhaus){
     return vector;
 }
 
-// Interaction tensor by asumming Point-dipole approximation [rad kHz]
+/**
+ * @brief Point-dipole interaction tensor [rad kHz], H = S1 . Adip . S2
+ * @param[in] xyz1 position of spin 1 [angstrom]
+ * @param[in] xyz2 position of spin 2 [angstrom]
+ * @param[in] gamma1 gyromagnetic ratio of spin 1 [radkHz/G]
+ * @param[in] gamma2 gyromagnetic ratio of spin 2 [radkHz/G]
+ * @return 3x3 point-dipole tensor [rad kHz]
+ * @details Adip = (mu_0 / 4 pi) * hbar * gamma1 * gamma2 / r^3 * (I - 3 n n^T), n = (xyz2 - xyz1)/r,
+ *          an angular frequency (the energy divided by hbar). With gamma in radkHz/G and r in angstrom
+ *          the prefactor (mu_0 / 4 pi) hbar = 1e-7 * 1.0546e-34 J s, times 1e14 from the two gammas
+ *          (radkHz/G = 1e7 rad/(s T)) and 1e30 from 1/r^3, is 1.0546e3 rad/s = 1.0546 rad kHz:
+ *          the code's DS = H_BAR * gamma1 * gamma2 / r^3 with H_BAR = 1.054571729.
+ */
 MatrixXcd calPointDipoleTensor(double xyz1[3], double xyz2[3], double gamma1, double gamma2){
 
     MatrixXcd Adip = MatrixXcd::Zero(3,3);
@@ -134,23 +135,16 @@ MatrixXcd calPointDipoleTensor(double xyz1[3], double xyz2[3], double gamma1, do
 
 
 /**
- * @brief Hamiltonian for interacting two spins
- * @details The Hamiltonian is given by (S1 * Tensor * S2)
- * @param[in] Pmat1 Spin operator vector for first spin
- * @param[in] Tensor 3x3 interaction tensor
- * @param[in] Pmat2 Spin operator vector for second spin
- * @return Hamiltonian interacting two spins 
- *         (Pmat1[0,1,2] * Tensor * Pmat2[0,1,2])
- * @note Pmat format is the following :
- *       Pmat[0] = Pauli matrix X
- *       Pmat[1] = Pauli matrix Y
- *       Pmat[2] = Pauli matrix Z
- * @note The dimension of Returned Hamiltonian is 
- *       expanded based on two spins
+ * @brief A (d_i d_j)-sized operator on spins i and j, identities on the rest
+ * @details Row r of the register keeps every other spin's state, so it only reaches the
+ *          d_i*d_j columns that differ from r in spins i and j.
+ * @param[in] Pmats spin operators of every site; Pmats[k][0] = I fixes the dimension of site k
+ * @param[in] nSpin number of sites in the register
+ * @param[in] iSpin first site (0-based)
+ * @param[in] jSpin second site (0-based)
+ * @param[in] small the operator on the space of sites i and j, (d_i d_j) x (d_i d_j)
+ * @return the full-register operator
 */
-// A (d_i d_j)-sized operator on spins i and j, identities on the rest: row r of the
-// register keeps every other spin's state, so it only reaches the d_i*d_j columns
-// that differ from r in spins i and j.
 static MatrixXcd embedTwoSites(MatrixXcd** Pmats, int nSpin, int iSpin, int jSpin, const MatrixXcd& small){
     long long dim = 1, si = 1, sj = 1;
     for (int k=0; k<nSpin; k++) dim *= Pmats[k][0].rows();
@@ -193,6 +187,16 @@ static MatrixXcd twoSiteOperator(MatrixXcd** Pmats, const MatrixXcd& Tensor, int
     return small;
 }
 
+/**
+ * @brief Hamiltonian for interacting two spins
+ * @details The Hamiltonian is given by S_i . Tensor . S_j = sum_ab Tensor_ab S_i^a S_j^b
+ * @param[in] Pmats spin operators of every site: Pmats[k][0] = I, Pmats[k][1..3] = Sx, Sy, Sz
+ * @param[in] Tensor 3x3 interaction tensor
+ * @param[in] nSpin number of sites in the register
+ * @param[in] iSpin first spin (0-based)
+ * @param[in] jSpin second spin (0-based)
+ * @return the two-spin Hamiltonian on the whole register (dimension: product of all site dimensions)
+*/
 MatrixXcd calHamiltonianHeteroInt(MatrixXcd** Pmats, MatrixXcd Tensor, int nSpin, int iSpin, int jSpin){
 
     // sum_ab T_ab S_i^a S_j^b on the whole register. Every other spin contributes an
@@ -397,15 +401,15 @@ void addExpandedHamiltonian(MatrixXcd& H, MatrixXcd** Pmats, const MatrixXcd& Hi
 
 /**
  * @brief Hamiltonian for single spin
- * @details The Hamiltonian is given by (Vector * Pmat)
- * @param[in] Vector 1x3 matrix
- * @param[in] Pmat Pauli matrix for single spin
- * @note Pmat format is the following :
- *       Pmat[0] = Pauli matrix I
- *       Pmat[1] = Pauli matrix X
- *       Pmat[2] = Pauli matrix Y
- *       Pmat[3] = Pauli matrix Z
- * @return Hamiltonian for single spin  (Vector * Pmat)
+ * @details The Hamiltonian is given by (Vector * Pmat1)
+ * @param[in] Vector 1x3 or 3x1 matrix
+ * @param[in] Pmat1 spin operators of the single spin (any spin S, not only Pauli matrices)
+ * @note Pmat1 format is the following :
+ *       Pmat1[0] = I
+ *       Pmat1[1] = Sx
+ *       Pmat1[2] = Sy
+ *       Pmat1[3] = Sz
+ * @return Hamiltonian for single spin  (Vector * Pmat1)
  * @note The dimension of Returned Hamiltonian is 
  *       the same dimension as the single spin
 */

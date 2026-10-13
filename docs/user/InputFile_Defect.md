@@ -105,10 +105,11 @@ Name of the paramagnetic defect. <br>
 <a id="tag_df_apprx"></a>
 ## apprx
 <b>Description:</b><br>
-If `apprx` is set to `false,` the electron and nuclear spins of the paramagnetic defect are clusterized separately. <br>
-This corresponds to a conventional CCE simulation for all spins. <br>
-If `apprx` is set to `true,` the electron and nuclear spins are treated as one set, <br>
-resulting in a simulation based on the CCE-NeNn method. <br>
+Intended to choose how the electron and nuclear spins of a paramagnetic defect are clustered: `false` would cluster them
+separately (a conventional CCE over all spins), `true` treats them as one set (the CCE-NeNn method). <br>
+<b>Today the key has no effect on the calculation.</b> It is read, stored and printed with the defect, but no part of the
+clustering or the Hamiltonian looks at it: the electron and nuclear spins of a defect are always treated as one set,
+whatever the value. <br>
 <b>Data Type:</b> Bool
 
 <b>Default:</b> true
@@ -138,7 +139,7 @@ Number of on-site nuclear spins of the paramagnetic defect. <br>
 <b>Description:</b><br>
 Number of indexed configurations available for the paramagnetic defect. The historical
 name is retained for compatibility, but an index can represent a frozen nuclear state
-(for example three $m_I$ detunings) rather than a different physical axis. A shared
+(for example three m<sub>I</sub> detunings) rather than a different physical axis. A shared
 object-form zfs is broadcast to indices 1 through navaax. <br>
 
 The indexed entries of [rxyzs](#tag_df_rxyzs), [hypf](#tag_df_hypf),
@@ -239,7 +240,7 @@ Gyromagnetic ratio of the on-site nuclear spins of the paramagnetic defect. <br>
 The number of gyros should be the same as [naddspin](#tag_df_naddspin). <br>
 The unit-aware form is
 ``` "gyros" : {"values" : [3.0777051853], "unit" : "MHz/T"} ```
-Plain frequency units such as MHz/T and kHz/G mean $\gamma/2\pi$; units beginning
+Plain frequency units such as MHz/T and kHz/G mean γ/2π; units beginning
 with <tt>rad</tt> are angular gyromagnetic ratios. Values are normalized internally to
 rad kHz/G, numerically the same as rad/ms/G. The original bare list remains supported
 in that internal unit. <br>
@@ -262,10 +263,10 @@ radMHz/T, rad/us/T, or rad/s/T
 Quadrupole moment \(eQ\) values of the on-site nuclear spins of the paramagnetic defect. <br>
 The number of eQ values should be the same as [naddspin](#tag_df_naddspin). <br>
 The stored quantity follows the existing area convention: one internal unit is
-$10^{-30}\,\mathrm{m^2}=1\,\mathrm{fm^2}=10\,\mathrm{mbarn}$. The unit-aware form is
+10<sup>−30</sup> m² = 1 fm² = 10 mbarn. The unit-aware form is
 ``` "eqs" : {"values" : [20.44], "unit" : "mbarn"} ```
 and is normalized to that internal unit. The original bare list remains supported in
-$10^{-30}\,\mathrm{m^2}$. <br>
+10<sup>−30</sup> m². <br>
 <b>Data Type:</b> Object {values, unit}, or legacy Double List
 
 <b>Units:</b> 1e-30 m^2 (default), fm^2, m^2, cm^2, barn, or mbarn
@@ -282,7 +283,7 @@ $10^{-30}\,\mathrm{m^2}$. <br>
 ## rxyzs
 <b>Description:</b><br>
 Relative x,y,z position of on-site nuclear spins of the paramagnetic defect over the electron spin position. <br>
-The number of `rxyzs` should be the same as \" [naddspin](#tag_df_naddspin) x [navaax](#tag_df_navaax) \" <br>
+The number of `rxyzs` should be the same as [naddspin](#tag_df_naddspin) × [navaax](#tag_df_navaax) <br>
 <b>Data Type:</b> 2D List
 
 <b>Unit:</b> angstrom
@@ -300,7 +301,7 @@ The number of `rxyzs` should be the same as \" [naddspin](#tag_df_naddspin) x [n
 ## hypf
 <b>Description:</b><br>
 The hyperfine interaction between on-site nuclear spins and the electron spin associated with a paramagnetic defect. <br>
-The number of `hypf` should be the same as \" [naddspin](#tag_df_naddspin) x [navaax](#tag_df_navaax) \" <br>
+The number of `hypf` should be the same as [naddspin](#tag_df_naddspin) × [navaax](#tag_df_navaax) <br>
 The unit-aware form wraps the same indexed entries in <tt>values</tt>. Each tensor may
 be a flat row-major 9-number array or a nested 3x3 array:
 ```
@@ -329,7 +330,7 @@ original bare indexed list remains supported and is interpreted as MHz. <br>
 ## efg
 <b>Description:</b><br>
 The electric field gradient tensors of the paramagnetic defect. <br>
-The number of `efg` should be the same as \" [naddspin](#tag_df_naddspin) x [navaax](#tag_df_navaax) \" <br>
+The number of `efg` should be the same as [naddspin](#tag_df_naddspin) × [navaax](#tag_df_navaax) <br>
 The unit-aware form follows the same indexed tensor syntax as hypf:
 ```
 "efg" : {
@@ -361,7 +362,7 @@ The zero-field splitting of the electron spin associated with a paramagnetic def
 Three input forms are accepted. <br>
 
 The compact axial form constructs one Cartesian tensor from the normalized Defect axis:
-$$T = D\left(\hat n\hat n^T-I/3\right).$$
+<p align="center">T = D (n̂ n̂<sup>T</sup> − I/3).</p>
 It is broadcast to every indexed configuration. E may be omitted or set to zero. A
 non-zero E is refused because one axis fixes z but not the transverse x/y basis; use an
 explicit tensor in that case.
@@ -406,9 +407,9 @@ stored MHz values to angular kHz (rad/ms).
 ## detuning
 <b>Description:</b><br>
 Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. <br>
-The number of `detuning` should be the same as \" [navaax](#tag_df_navaax) \" <br>
+The number of `detuning` should be the same as [navaax](#tag_df_navaax) <br>
 This tag is used to approximate the spin interaction tensors related to the paramagnetic defect, <br>
-e.g., $$\vec{S} \cdot \mathbf{A} \cdot \vec{I} \approx \Delta m_I S_z$$. <br>
+e.g., <b>S</b> · <b>A</b> · <b>I</b> ≈ Δ m<sub>I</sub> S<sub>z</sub>. <br>
 The unit-aware form wraps the same indexed values in an object:
 ```
 "detuning" : {

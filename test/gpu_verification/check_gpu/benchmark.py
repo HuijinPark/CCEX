@@ -150,7 +150,7 @@ def main():
     parser.add_argument('--nearest-sites', type=int, help='Controlled size experiment: keep N nearest bath sites and use order N')
     parser.add_argument('--output', type=Path, required=True, help='New directory; existing results are never overwritten')
     parser.add_argument('--steps', type=int)
-    parser.add_argument('--savemode', choices=['normal','allfull'], default='normal')
+    parser.add_argument('--savemode', choices=['coherence','cluster_density_matrix'], default='coherence')
     parser.add_argument('--pulses', type=int)
     parser.add_argument('--batch', type=int)
     parser.add_argument('--min-dim', type=int)
@@ -170,8 +170,8 @@ def main():
         parser.error('--repeats must be positive')
     if args.nearest_sites is not None and args.nearest_sites<1:
         parser.error('--nearest-sites must be positive')
-    if args.backend=='cuda' and args.savemode=='allfull' and args.method!='gcce':
-        parser.error('cCCE does not export full density matrices; use --method gcce for --savemode allfull')
+    if args.backend=='cuda' and args.savemode=='cluster_density_matrix' and args.method!='gcce':
+        parser.error('cCCE does not export full density matrices; use --method gcce for --savemode cluster_density_matrix')
     args.binary, args.reference, args.output = (p.resolve() for p in (args.binary,args.reference,args.output))
     args.output.mkdir(parents=True, exist_ok=False)
     summary = []

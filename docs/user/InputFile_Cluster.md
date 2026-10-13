@@ -41,12 +41,14 @@ This leads to more stable and robust results, and may also reduce computation ti
 <b>Description:</b><br>
 Number of clusters for each CCE order. <br>
 This is useful for CCE simulations with order ≥ 3, leading tons of clusters <br>
-If the value is [0,0,0], it means that all clusters are included. <br>
-<b>Data Type:</b> Int List
+The list has exactly `order + 1` entries and the index is the cluster order: `nk[n]` limits the clusters of order n
+(entry 0 is the order-0 slot and is kept, usually 0). A 0 means no limit for that order, so all zeros include every
+cluster. A list of another length is refused. <br>
+<b>Data Type:</b> Int List (length `order + 1`)
 
-<b>Default:</b> -
+<b>Default:</b> all entries 0 (no limit)
 
-<b>Example:</b> ``` nk : [10000, 20000, 30000] ```
+<b>Example:</b> ``` nk : [0, 0, 0, 30000] ``` (order 3: at most 30000 clusters of three spins)
 
 <b>Related variable:</b> [Cluster](#Cluster)::nk
 
@@ -133,7 +135,7 @@ connections are chosen by a coherence check and the weak ones are dropped. The f
 search keys `sK`, `max_trial`, `max_iter`, `kmeans_pp`, `iter_detail`, `pcce_partition` and
 `pcce_cache_file` are refused in this mode. Adding the [Adaptive](#tag_Adaptive) block turns
 the adaptive refinement on top of it. The words are defined in
-`docs/methods/clustering-terminology.md`, the method in `docs/methods/adaptive-cluster-mode.md`. <br>
+[Clustering terminology](../methods/clustering-terminology.md), the method in [Adaptive cluster mode](../methods/adaptive-cluster-mode.md). <br>
 
 <b>Data Type:</b> String
 
@@ -263,7 +265,7 @@ measuring the error and correcting the bundles until `atol` and `rtol` are met o
 is reached. Needs `cluster_mode` = `adaptive`, `bundle_max_dim` and an explicit
 [seed](InputFile_General.md#tag_seed). The keys are the driver's options with `_` for `-`;
 `output`, `atol` and `rtol` are required, and every step goes into `output` (one folder per
-step and `summary.json`). The full key table with defaults is `docs/methods/adaptive-input-block.md`.
+step and `summary.json`). The full key table with defaults is in [the `Adaptive` block](../methods/adaptive-input-block.md).
 The block was called `Refine` until 2026-09-23; that name is refused. <br>
 
 <b>Data Type:</b> Object

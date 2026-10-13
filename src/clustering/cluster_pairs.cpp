@@ -124,6 +124,8 @@ void clusterizePairs(Cluster* cls, BathArray* ba, float rdip, float rdipcut,
     MPI_Allgatherv(localRow.data(),localCount,MPI_INT,pairRow.data(),counts.data(),displs.data(),MPI_INT,MPI_COMM_WORLD);
     MPI_Allgatherv(localCol.data(),localCount,MPI_INT,pairCol.data(),counts.data(),displs.data(),MPI_INT,MPI_COMM_WORLD);
     MPI_Allgatherv(localStrength.data(),localCount,MPI_FLOAT,strength.data(),counts.data(),displs.data(),MPI_FLOAT,MPI_COMM_WORLD);
+    // not read again; their storage freed now, not at the end of the function (peak memory; P2-02 of review 20261012-233058-452278)
+    std::vector<int>().swap(localRow); std::vector<int>().swap(localCol); std::vector<float>().swap(localStrength);
 
     std::vector<int> sorted(npair);
     for (int i = 0; i < npair; i++) sorted[i] = i;

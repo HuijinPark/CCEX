@@ -779,12 +779,15 @@ void assignCentroidsGrid(int* assigned, const Point* spins, const Point* centers
         ext=std::max(ext,hi[a]-lo[a]);
         maxabs=std::max(maxabs,std::max(std::fabs(lo[a]),std::fabs(hi[a])));
     }
-    if (!usable || !(ext>0)) {
+    const int side=std::max(1,int(std::ceil(std::cbrt(double(ncenter)))));
+    const double h=usable ? ext/side : 0;
+    // a cell width that is not positive and finite (ext 0, or a subnormal ext/side rounded to 0: P2-01 of review
+    // 20261012-233058-452278) has no grid; checked before any conversion to int
+    if (!usable || !(h>0 && std::isfinite(h))) {
         assignCentroidsFromPoints(assigned,spins,centers,pcce_nspin,ncenter,w.counts.data(),w.active.data());
         return;
     }
-    const int side=std::max(1,int(std::ceil(std::cbrt(double(ncenter)))));
-    const double h=ext/side, slack=1e-9*(maxabs+ext);
+    const double slack=1e-9*(maxabs+ext);
     int g[3];
     for (int a=0; a<3; ++a) g[a]=std::min(side,int((hi[a]-lo[a])/h)+1);
     auto cellIndex=[&](double v,int a) {

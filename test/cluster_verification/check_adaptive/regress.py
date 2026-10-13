@@ -40,8 +40,8 @@ MEASURED = {'wall_s', 'search_s', 'seconds_used', 'timing', 'measured_local_seco
 
 
 def normalized(x, swaps):
-    if isinstance(x, dict):
-        return {k: normalized(v, swaps) for k, v in x.items()
+    if isinstance(x, dict):              # keys too: input_file_sha256 is keyed by the input's path (from a worktree the
+        return {normalized(k, swaps): normalized(v, swaps) for k, v in x.items()      # golden's absolute path differed)
                 if k not in MEASURED and not k.endswith('_wall_s')}
     if isinstance(x, list):
         return [normalized(v, swaps) for v in x]

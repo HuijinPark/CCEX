@@ -26,8 +26,10 @@ goes to `results/auto/`:
 - `runs/` one folder per CCEX run, `decisions.jsonl` the decisions, `result/progress.txt` while it runs.
 
 Calling `run.sh` again continues: the baths are kept, finished runs and decisions are reused.
-Exit status 0 is `converged`; 3 `unresolved` (the summary says what is missing, e.g. "make
-larger baths").
+The automatic convergence (`main.out`) exits with 0 when `converged` and 3 when `unresolved`
+(the summary says what is missing, e.g. "make larger baths"). `run.sh` only prints that status
+("automatic convergence ended with status N") and itself ends with the status of its last
+command, so read the status line or `summary.txt`, not the exit status of `run.sh`.
 
 What the recorded result does not say: the combination check (rbath 35, rdip 8 against the
 largest computed, rbath 45, rdip 15, on three production configurations) differs by 9 % in the

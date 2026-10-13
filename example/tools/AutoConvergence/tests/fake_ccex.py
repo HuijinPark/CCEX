@@ -142,7 +142,8 @@ def main():
             if jump and s in (0, 1):               # wiDiv jumps at one point, noDiv does not (a divergent point to correct)
                 wi = v.copy(); wi[nstep // 3] = 5.0
             files += [(Path(f"{prefix}{g}_wiDiv"), wi)]
-            if inp.get("save_nodiv", True) is not False:       # like CCEX: save_nodiv false writes _wiDiv alone
+            sm = inp.get("savemode")                          # like CCEX: savemode.nodiv false writes _wiDiv alone
+            if not (isinstance(sm, dict) and sm.get("nodiv", True) is False):
                 files += [(Path(f"{prefix}{g}_noDiv"), v)]
     marker = os.environ.get("FAKE_FAIL_ONCE")
     if marker and not Path(marker).exists():

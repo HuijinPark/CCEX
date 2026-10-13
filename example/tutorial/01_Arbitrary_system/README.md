@@ -13,5 +13,7 @@ run did, all into `results/`:
 
     cd <calculation> && NP=4 NCONF=1 bash run.sh
 
+Here `run.sh` computes the one fixed `bath` and ignores `NCONF`.
+
 `example/tutorial/README.md` explains the layout; the recorded results are in
 the archive.

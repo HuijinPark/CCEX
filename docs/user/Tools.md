@@ -36,8 +36,18 @@ the range the file covers and one row per atom with its position relative to
 the defect and the nine components.
 
 ```
-python3 main.py VASP POSCAR DEFECT --A Afile --Q Qfile [--version v1|v2] [--rangeformat vertex]
+python3 main.py VASP POSCAR DEFECT --A OUTCAR --Q OUTCAR [--spin S] [--rangeformat vertex]
+python3 main.py QE   POSCAR DEFECT --A hyperfine.out --spin S --Q efg.out [--rangeformat vertex]
 ```
+
+Since 2026-10-13 every hyperfine file (`Afile`) is in tensor format v3: line 1 `VASP` or
+`QUANTUMESPRESSO`, line 2 `# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = ..., S = ...`,
+and the numbers are the hyperfine of the spin-S defect, which CCEX reads as written. VASP's OUTCAR is already per
+S (VASP divides by the total spin), so the numbers are the OUTCAR's and S comes from the OUTCAR's total magnetization
+(a `--spin` given must agree). Quantum ESPRESSO's GIPAW `hyperfine.out` is the S = 1/2 coupling, so `--spin S` is
+required and the file holds it x 1/(2S). `--version v1` (the OUTCAR x 2, which CCEX read right only untagged and
+for S = 1) is refused and `--fidentify` is gone. The quadrupole file (`Qfile`) does not depend on the spin and is
+unchanged.
 
 `spHamilReader/` is the package (`base/`, `vasp/`, `qe/`), `main.py` the
 command line (`-h`). `examples/01..05` are five worked cases with their inputs

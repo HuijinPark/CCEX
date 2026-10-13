@@ -2,7 +2,8 @@
 // at submit time), so that the host side of the small-cluster batch - the node shared memory, the feeder thread, the
 // window protocol of small_cluster_batch.cpp - can be run end to end on a machine without CUDA:
 //   compile small_cluster_batch.cpp with -DCCEX_SMALL_CLUSTER_EMULATE, link this file instead of small_cluster_gpu.o,
-//   and run main.out with CCEX_A26_SMALL=1 on several ranks; the curves must match the CPU run within the GPU tolerance.
+//   and run main.out with gpu_options.packed_max_dim on several ranks; the curves must match the CPU run within the GPU
+//   tolerance. check_packed_emulation.py builds it that way and runs its regression cases.
 #include "calculation/gpu/small_cluster_gpu.h"
 #include <chrono>
 #include <cstdio>
@@ -32,6 +33,11 @@ GpuSmallDevice* gpuSmallOpen(int, char* description, int capacity){
     // CCEX_SMALL_EMULATE_OPEN_MS: an opening as slow as a real context (0.2-0.5 s on idm4-gpu), so that the early start
     // overlaps the calculation's own start as it does on the card
     if (getenv("CCEX_SMALL_EMULATE_OPEN_MS")) std::this_thread::sleep_for(std::chrono::milliseconds(atoi(getenv("CCEX_SMALL_EMULATE_OPEN_MS"))));
+    // CCEX_SMALL_EMULATE_OPEN_FAIL=1: a card that cannot be opened, as gpuSmallOpen answers with CUDA_VISIBLE_DEVICES=-1
+    if (getenv("CCEX_SMALL_EMULATE_OPEN_FAIL") && atoi(getenv("CCEX_SMALL_EMULATE_OPEN_FAIL"))){
+        snprintf(description,capacity,"host emulation: no card (CCEX_SMALL_EMULATE_OPEN_FAIL)");
+        return nullptr;
+    }
     snprintf(description,capacity,"host emulation");
     return new GpuSmallDevice{0};
 }
@@ -50,6 +56,11 @@ void gpuSmallSubmit(GpuSmallDevice*, int, const Plan& plan, bool ensemble, bool 
         for (long c=0; c<it.count4; ++c)
             it.status[it.count2+c] = (unsigned char)dispatch<4>(plan,ensemble,recursive,it.in4+c*per4,it.out+(it.count2+c)*plan.nstep);
     }
+}
+// A40: the warp kernel is not emulated (its arithmetic is warp-parallel CUDA); a run with gpu_options.warp_max_dim stops here
+void gpuSmallWarpPlan(GpuSmallDevice*, const warpcluster::Plan&){
+    fprintf(stderr,"Error: the host emulation has no warp kernel (gpu_options.warp_max_dim)\n");
+    exit(1);
 }
 bool gpuSmallReady(GpuSmallDevice*, int){ return true; }
 void gpuSmallFinish(GpuSmallDevice*, int){}

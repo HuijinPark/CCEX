@@ -24,7 +24,7 @@ if [ "${CCEX_RUN_LOCK:-}" != "$LOCKDIR" ]; then
     fi
     CCEX_RUN_LOCK="$LOCKDIR"; export CCEX_RUN_LOCK
 fi
-STAGES=(legacy axis2 errcorr gyro comments nodiv evolution_update gpu_options autoconv)
+STAGES=(legacy axis2 errcorr gyro comments nodiv allfull evolution_update gpu_options propagator tensor_format autoconv)
 WANT=("${@:-${STAGES[@]}}")
 rc_all=0
 
@@ -40,8 +40,11 @@ for stage in "${WANT[@]}"; do
         gyro)     bash "$HERE/gyro.sh" ;;
         comments) bash "$HERE/comments.sh" ;;
         nodiv)    bash "$HERE/nodiv.sh" ;;
+        allfull)  bash "$HERE/allfull.sh" ;;
         evolution_update) bash "$HERE/evolution_update.sh" ;;
         gpu_options) bash "$HERE/gpu_options.sh" ;;
+        propagator) bash "$HERE/propagator.sh" ;;
+        tensor_format) bash "$HERE/tensor_format.sh" ;;
         autoconv) bash "$HERE/autoconv.sh" ;;
         *) echo "unknown stage: $stage"; rc_all=1; continue ;;
     esac

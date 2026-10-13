@@ -4,7 +4,7 @@ The format is the following:
 
 <b>Case1.</b> [qubitfile](InputFile_General.md#tag_qubitfile) tag <br>
   : Only single-qubit systems are supported. <br>
-    Note that this tag takes priority over the [Qubit](#tag_Qubit) tag. <br>
+    An input that has both `qubitfile` and a [Qubit](#tag_Qubit) block is refused: give one or the other. <br>
 
 <b>Example:</b> ``` "qubitfile"  : "file-path" ```
 
@@ -24,8 +24,8 @@ The format is the following:
                                 "gyro" : -17608.597050,
                                 "xyz"  : [1.0, 2.0, 3.0],
                                 "detuning" : 0.0,
-                                "alphams" : 0,
-                                "betams"  : 1,
+                                "alphams" : 0.5,
+                                "betams"  : -0.5
                             },
                             {
                                 "name" : "Q2",
@@ -34,31 +34,36 @@ The format is the following:
                                 "xyz"  : [4.0, 5.0, 6.0],
                                 "detuning" : 0.0,
                                 "alphams" : 0,
-                                "betams"  : 1,
+                                "betams"  : 1
                             }
                 ],
                 "intmap" : [
                             {
-                                # Zero field splitting
-                                "between" : ["Q1", "Q1"], 
+                                # zero-field splitting of Q2
+                                "between" : ["Q2", "Q2"],
                                 "tensor"  : [[1.0, 2.0, 3.0],
                                             [4.0, 5.0, 6.0], 
-                                            [7.0, 8.0, 9.0]],
+                                            [7.0, 8.0, 9.0]]
                             },
                             {
                                 "between" : ["Q1", "Q2"],
                                 "tensor"  : [[1.0, 2.0, 3.0],
                                             [4.0, 5.0, 6.0], 
-                                            [7.0, 8.0, 9.0]],
+                                            [7.0, 8.0, 9.0]]
                             }
-                ]
-              },
-    "psia" : [1.0, 2.0, 3.0],
-    "psib" : [4.0, 5.0, 6.0],
-    "psi0" : [7.0, 8.0, 9.0],
-    "overhaus" : true,
+                ],
+                "psia" : [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                "psib" : [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+                "psi0" : [0.0, 0.70710678, 0.0, 0.70710678, 0.0, 0.0],
+                "overhaus" : true
+              }
 }
 ```
+The first `intmap` entry is the zero-field splitting of Q2 (`between` names the same qubit twice); the
+second is the Q1–Q2 coupling. `psia`, `psib` and `psi0` sit inside the `Qubit` block and have the length
+of the whole qubit space, here 2 × 3 = 6, ordered as kron(Q1, Q2) with the last qubit varying fastest:
+`psia` is |m<sub>1</sub> = +1/2, m<sub>2</sub> = 0⟩ and `psib` is |−1/2, +1⟩, the same states that
+`alphams`/`betams` name.
 </details>
 
 - [qubitfile](InputFile_General.md#tag_qubitfile)
@@ -98,10 +103,10 @@ This tag is required to give the details of qubit information. <br>
 
 <b>Example:</b> 
     ``` Qubit : { "nqubit" : 2, 
-                    "qubit" : [ { "name" : "Q1", "spin" : 0.5, "gyro" : -17608.597050, "xyz" : [1.0, 2.0, 3.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 }, 
+                    "qubit" : [ { "name" : "Q1", "spin" : 0.5, "gyro" : -17608.597050, "xyz" : [1.0, 2.0, 3.0], "detuning" : 0.0, "alphams" : 0.5, "betams" : -0.5 }, 
                                  { "name" : "Q2", "spin" : 1.0, "gyro" : -17608.597050, "xyz" : [4.0, 5.0, 6.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 } ] } ```
 
-<Related variable:</b> [QubitArray struct](#QubitArray), [Qubit struct](#Qubit)
+<b>Related variable:</b> [QubitArray struct](#QubitArray), [Qubit struct](#Qubit)
 
 <b>Sub-tags:</b>
 
@@ -178,7 +183,7 @@ Number of qubits in the system. <br>
 The number of qubit information in tag [Qubit](#tag_Qubit) should be the same as this value. <br>
 <b>Data Type:</b> Integer
 
-<b>Default:</b> -
+<b>Default:</b> 1
 
 <b>Example:</b> ``` nqubit : 2 ```
 
@@ -195,7 +200,7 @@ This tag is required to give the details of qubit information. <br>
 <b>Default:</b> -
 
 <b>Example:</b> 
-    ``` qubit : [ { "name" : "Q1", "spin" : 0.5, "gyro" : -17608.597050, "xyz" : [1.0, 2.0, 3.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 }, 
+    ``` qubit : [ { "name" : "Q1", "spin" : 0.5, "gyro" : -17608.597050, "xyz" : [1.0, 2.0, 3.0], "detuning" : 0.0, "alphams" : 0.5, "betams" : -0.5 }, 
                     { "name" : "Q2", "spin" : 1.0, "gyro" : -17608.597050, "xyz" : [4.0, 5.0, 6.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 } ] ```
 
 <b>Related variable:</b> [Qubit struct](#Qubit)
@@ -216,7 +221,7 @@ This tag is required to give the details of qubit information. <br>
 Name of the qubit. <br>
 <b>Data Type:</b> String
 
-<b>Default:</b> "q%d" e.g. "q1", "q2", "q3", ...
+<b>Default:</b> "q%d" with the 0-based position in the list, e.g. "q0", "q1", "q2", ...
 
 <b>Example:</b> ``` name : "Q1" ```
 
@@ -291,7 +296,7 @@ Detuning frequency of the qubit. <br>
 <b>Description:</b><br>
 Alpha state of the qubit. <br>
 Represents one of the effective spin states of the qubit. <br>
-Priority: [psia](#tag_psia) > [alphaidx](#tag_alphaidx) > [alphams](#tag_alphams). <br>
+Priority: [psia](#tag_psia) > [alphaidx](#tag_alphaidx) > [alphams](#tag_alphams), with two conditions: [psia](#tag_psia) is used only when [psib](#tag_psib) is given too (one of the two alone is ignored and both states come from the next source), and [alphaidx](#tag_alphaidx) needs [betaidx](#tag_betaidx) (one without the other is an error). When the indices are used and pick a state that disagrees with an alphams/betams written in the input, the run stops instead of overriding it. <br>
 This tag is ultimately applied to set [QubitArray](#QubitArray)::psia \(i.e. [psia](#tag_psia)\), unless it is overridden by a higher-priority tag <br>
 <b>Data Type:</b> Float
 
@@ -310,7 +315,7 @@ This tag is ultimately applied to set [QubitArray](#QubitArray)::psia \(i.e. [ps
 <b>Description:</b><br>
 Beta state of the qubit. <br>
 One of the effective spin states of the qubit. <br>
-Priority: [psib](#tag_psib) > [betaidx](#tag_betaidx) > [betams](#tag_betams). <br>
+Priority: [psib](#tag_psib) > [betaidx](#tag_betaidx) > [betams](#tag_betams), with two conditions: [psib](#tag_psib) is used only when [psia](#tag_psia) is given too (one of the two alone is ignored and both states come from the next source), and [betaidx](#tag_betaidx) needs [alphaidx](#tag_alphaidx) (one without the other is an error). When the indices are used and pick a state that disagrees with an alphams/betams written in the input, the run stops instead of overriding it. <br>
 This tag is ultimately applied to set [QubitArray](#QubitArray)::psib \(i.e. [psib](#tag_psib)\), unless it is overridden by a higher-priority tag <br>
 <b>Data Type:</b> Float
 
@@ -328,13 +333,15 @@ This tag is ultimately applied to set [QubitArray](#QubitArray)::psib \(i.e. [ps
 ## intmap
 <b>Description:</b><br>
 Interaction map between qubits. <br>
-This tag is required to define the interaction map between qubits, including its self interaction \(e.g. Zero-field splitting\). <br>
+Defines the interaction map between qubits, including the self interaction of a qubit \(e.g. zero-field splitting\). <br>
+It is optional: a self entry that is not given is the zero tensor, and a pair of different qubits that is not given gets the
+point-dipole tensor CCEX computes from their `xyz` and `gyro`. <br>
 <b>Data Type:</b> Dictionary List
 
 <b>Unit:</b> Selected independently for each entry by its optional
 [unit](#tag_intmap_unit); kHz when omitted.
 
-<b>Default:</b> -
+<b>Default:</b> zero self terms; point-dipole tensors between different qubits
 
 <b>Example:</b> 
     ``` intmap : [ { "between" : ["q1","q1"],
@@ -397,10 +404,10 @@ This tensor is used to calculate the interaction between qubits. <br>
 <b>Description:</b><br>
 Alpha state of the qubit in matrix representation.<br>
 One of the effective spin states of the qubit in matrix representation, simbol : |alpha⟩ . <br>
-Priority: [psia](#tag_psia) > [alphaidx](#tag_alphaidx) > [alphams](#tag_alphams). <br>
+Priority: [psia](#tag_psia) > [alphaidx](#tag_alphaidx) > [alphams](#tag_alphams), with two conditions: [psia](#tag_psia) is used only when [psib](#tag_psib) is given too (one of the two alone is ignored and both states come from the next source), and [alphaidx](#tag_alphaidx) needs [betaidx](#tag_betaidx) (one without the other is an error). When the indices are used and pick a state that disagrees with an alphams/betams written in the input, the run stops instead of overriding it. <br>
 <b>Data Type:</b> Double List
 
-<b>Default:</b> - \(If not entered, alphams state would be the \)
+<b>Default:</b> - \(if psia and psib are not both given, the state comes from alphaidx/betaidx, or else from alphams\)
 
 <b>Example:</b> ``` psia : [1.0, 0.0, 0.0] ```
 
@@ -415,7 +422,7 @@ Priority: [psia](#tag_psia) > [alphaidx](#tag_alphaidx) > [alphams](#tag_alphams
 <b>Description:</b><br>
 Beta state of the qubit in matrix representation. <br>
 One of the effective spin states of the qubit in matrix representation, simbol : |beta⟩ . <br>
-Priority: [psib](#tag_psib) > [betaidx](#tag_betaidx) > [betams](#tag_betams). <br>
+Priority: [psib](#tag_psib) > [betaidx](#tag_betaidx) > [betams](#tag_betams), with two conditions: [psib](#tag_psib) is used only when [psia](#tag_psia) is given too (one of the two alone is ignored and both states come from the next source), and [betaidx](#tag_betaidx) needs [alphaidx](#tag_alphaidx) (one without the other is an error). When the indices are used and pick a state that disagrees with an alphams/betams written in the input, the run stops instead of overriding it. <br>
 <b>Data Type:</b> Double List
 
 <b>Default:</b> -
@@ -433,7 +440,7 @@ Priority: [psib](#tag_psib) > [betaidx](#tag_betaidx) > [betams](#tag_betams). <
 <b>Description:</b><br>
 Initial state of the qubit in matrix representation, symbol:  |psi0⟩ <br>
 This tag is used to define a specific initial state of the qubit. <br>
-If this tag is not provided, the initial state defaults to  |psi0⟩ =  |alpha⟩ +  |beta⟩ . <br>
+If this tag is not provided, the initial state defaults to the normalized sum |psi0⟩ = (|alpha⟩ + |beta⟩) / ‖|alpha⟩ + |beta⟩‖. <br>
 <b>Data Type:</b> Double List
 
 <b>Default:</b> -
@@ -464,7 +471,7 @@ This tag is required to compute spin dynamics including the Overhauser field of 
 <b>Description:</b><br>
 Alpha state of the qubit. (Adiabatic state of the qubit system) <br>
 Use this tag to assign the eigenvector of the diagonalized qubit Hamiltonian as the initial qubit state. <br>
-Priority: [psia](#tag_psia) > [alphaidx](#tag_alphaidx) > [alphams](#tag_alphams). <br>
+Priority: [psia](#tag_psia) > [alphaidx](#tag_alphaidx) > [alphams](#tag_alphams), with two conditions: [psia](#tag_psia) is used only when [psib](#tag_psib) is given too (one of the two alone is ignored and both states come from the next source), and [alphaidx](#tag_alphaidx) needs [betaidx](#tag_betaidx) (one without the other is an error). When the indices are used and pick a state that disagrees with an alphams/betams written in the input, the run stops instead of overriding it. <br>
 The index counts the eigenstates of the qubit Hamiltonian (zero-field splitting, Zeeman, intmap) sorted by **descending** energy, starting at 0. That order changes with the field: an NV at 500 G along its axis orders m<sub>s</sub> = +1, −1, 0, so `alphaidx: 2, betaidx: 1` is the 0 ↔ −1 transition, not +1 ↔ 0. To name a sublevel, write [alphams](#tag_alphams)/[betams](#tag_betams) instead. The run log prints which m<sub>s</sub> state psia and psib mostly are, and the run stops when alphaidx/betaidx and an explicitly written alphams/betams name different states (since 2026-10-03; until then the indices silently won). <br>
 This tag is ultimately applied to set [QubitArray](#QubitArray)::psia \(i.e. [psia](#tag_psia)\), unless it is overridden by a higher-priority tag <br>
 <b>Data Type:</b> Int
@@ -484,7 +491,7 @@ This tag is ultimately applied to set [QubitArray](#QubitArray)::psia \(i.e. [ps
 <b>Description:</b><br>
 Beta state of the qubit. (Adiabatic state of the qubit system) <br>
 Use this tag to assign the eigenvector of the diagonalized qubit Hamiltonian as the initial qubit state. <br>
-Priority: [psib](#tag_psib) > [betaidx](#tag_betaidx) > [betams](#tag_betams). <br>
+Priority: [psib](#tag_psib) > [betaidx](#tag_betaidx) > [betams](#tag_betams), with two conditions: [psib](#tag_psib) is used only when [psia](#tag_psia) is given too (one of the two alone is ignored and both states come from the next source), and [betaidx](#tag_betaidx) needs [alphaidx](#tag_alphaidx) (one without the other is an error). When the indices are used and pick a state that disagrees with an alphams/betams written in the input, the run stops instead of overriding it. <br>
 The index counts the eigenstates of the qubit Hamiltonian (zero-field splitting, Zeeman, intmap) sorted by **descending** energy, starting at 0. That order changes with the field: an NV at 500 G along its axis orders m<sub>s</sub> = +1, −1, 0, so `alphaidx: 2, betaidx: 1` is the 0 ↔ −1 transition, not +1 ↔ 0. To name a sublevel, write [alphams](#tag_alphams)/[betams](#tag_betams) instead. The run log prints which m<sub>s</sub> state psia and psib mostly are, and the run stops when alphaidx/betaidx and an explicitly written alphams/betams name different states (since 2026-10-03; until then the indices silently won). <br>
 This tag is ultimately applied to set [QubitArray](#QubitArray)::psib \(i.e. [psib](#tag_psib)\), unless it is overridden by a higher-priority tag <br>
 <b>Data Type:</b> Int
@@ -507,7 +514,7 @@ may choose its own unit. Supported values are <tt>"Hz"</tt>, <tt>"kHz"</tt>,
 <tt>"MHz"</tt>, and <tt>"GHz"</tt>, matched case-insensitively. The tensor is converted
 to the internal rad*kHz representation while parsing. <br>
 Omitting this key preserves the legacy behavior: the tensor numbers are interpreted as
-kHz. The code, not the input author, supplies the factor of $2\pi$. <br>
+kHz. The code, not the input author, supplies the factor of 2π. <br>
 This key belongs to Qubit.intmap entries only. The legacy top-level [qzfs](#tag_qzfs), which is read by the single-qubit [qubitfile](InputFile_General.md#tag_qubitfile) path, has no
 unit sub-key and is always kHz. <br>
 
@@ -527,14 +534,14 @@ in. Only meaningful together with
 [coordinate_frame_rotation](InputFile_General.md#tag_coordinate_frame_rotation). <br>
 
 - <tt>"bath"</tt>  : the original bath Cartesian basis. The tensor is transformed as
-      $ T \rightarrow R\,T\,R^{T} $ along with the positions.
+      T → R T R<sup>T</sup> along with the positions.
     - <tt>"qubit"</tt> : the common computational basis, the one in which the reference
       qubit's axis is +z. The tensor is left exactly as written.
 
 <b><tt>"qubit"</tt> does not mean an individual qubit's local frame.</b> There is one
 computational frame for the whole run, fixed by `reference_qubit.` A qubit whose
 crystallographic orientation differs from the reference one is described by ITS OWN ZFS
-tensor expressed in that common frame; with <tt>"bath"</tt> the same global $R$
+tensor expressed in that common frame; with <tt>"bath"</tt> the same global R
 transforms it, and the off-diagonal elements that appear are correct and must not be
 diagonalized away. <br>
 

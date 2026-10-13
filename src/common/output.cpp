@@ -49,7 +49,7 @@ void Output_save(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nst
     strcat(outfile_nD, "_noDiv");
 
     FILE* fp_wD = fopen(outfile_wD, "w");
-    FILE* fp_nD = op->save_nodiv ? fopen(outfile_nD, "w") : NULL;   // save_nodiv false: no _noDiv file (2026-10-08)
+    FILE* fp_nD = op->save_nodiv ? fopen(outfile_nD, "w") : NULL;   // savemode.nodiv false: no _noDiv file (2026-10-08)
     
     if (fp_wD == NULL || (op->save_nodiv && fp_nD == NULL)){
         printf("Error: cannot open file %s\n", outfile_wD);
@@ -123,7 +123,7 @@ void Output_save_all(Output* op, MatrixXcd* result, int nstep, double deltat, in
         cluster_str += "_" + std::to_string(cluster[i]);
     }
     if (strlen(op->outfile) + cluster_str.size() + 64 >= MAX_FILEPATH){
-        fprintf(stderr, "Error: savemode all: the file name of cluster %s is longer than %d characters; use a shorter outfile\n",
+        fprintf(stderr, "Error: savemode cluster_coherence: the file name of cluster %s is longer than %d characters; use a shorter outfile\n",
                 cluster_str.c_str(), MAX_FILEPATH - 1);
         ccexFatal(1);
     }
@@ -144,12 +144,30 @@ void Output_save_all(Output* op, MatrixXcd* result, int nstep, double deltat, in
     return;
 }
 
+Output Output_fullOutput(const Output* op, char* name, const int* cluster, int n, int istate){
+    std::string full(op->outfile);
+    for (int i=0; i<n; i++){
+        full += "_" + std::to_string(cluster[i]);
+    }
+    full += "_full";
+    if (istate!=0) full += "_state" + std::to_string(istate);
+    if (full.size() + 16 >= MAX_FILEPATH){   // Output_save appends _wiDiv / _noDiv
+        fprintf(stderr, "Error: savemode cluster_density_matrix: the file name %s is longer than %d characters; use a shorter outfile\n",
+                full.c_str(), MAX_FILEPATH - 17);
+        ccexFatal(1);
+    }
+    strcpy(name, full.c_str());
+    Output out = *op;
+    out.outfile = name;
+    return out;
+}
+
 void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, int nstep, double deltat, int istate, double Azx, double Azz, char* bathfile){
 
     char* savemode = Output_getSavemode(op);
 
-    if (strcasecmp(savemode, "info") != 0){
-        printf("Error: savemode is not info\n");
+    if (strcasecmp(savemode, "coherence_tagged") != 0){
+        printf("Error: savemode is not coherence_tagged\n");
         ccexFatal(1);
     }
 
@@ -180,7 +198,7 @@ void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, in
     strcat(outfile_nD, "_noDiv");
 
     FILE* fp_wD = fopen(outfile_wD, "w");
-    FILE* fp_nD = op->save_nodiv ? fopen(outfile_nD, "w") : NULL;   // save_nodiv false: no _noDiv file (2026-10-08)
+    FILE* fp_nD = op->save_nodiv ? fopen(outfile_nD, "w") : NULL;   // savemode.nodiv false: no _noDiv file (2026-10-08)
     
     if (fp_wD == NULL || (op->save_nodiv && fp_nD == NULL)){
         printf("Error: cannot open file %s\n", outfile_wD);
@@ -236,14 +254,22 @@ void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, in
 
 void Output_setSavemode(Output* op, char* savemode){
 
-    const int opsize = 5;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"all", "normal", "info","allfull"};
-    int idx = findIndexCharFix(options,0,opsize-1,savemode);
-    if (idx == -1) {
-        fprintf(stderr, "Error: current savemode options (%s) is not available\n",savemode);
+    // the names before 2026-10-13 are refused with the name that replaced them (docs/user/InputFile_Output.md)
+    const char* oldNames[] = {"normal", "info", "all", "allfull"};
+    const char* names[] = {"coherence", "coherence_tagged", "cluster_coherence", "cluster_density_matrix"};
+    for (int k=0; k<4; ++k)
+        if (strcasecmp(savemode, oldNames[k]) == 0){
+            fprintf(stderr, "Error: savemode \"%s\" is now \"%s\"\n", oldNames[k], names[k]);
+            exit(EXIT_FAILURE);
+        }
+    int k = 0;
+    while (k<4 && strcasecmp(savemode, names[k])) ++k;
+    if (k == 4) {
+        fprintf(stderr, "Error: savemode \"%s\" is not one of coherence, coherence_tagged, cluster_coherence, "
+                        "cluster_density_matrix\n", savemode);
         exit(EXIT_FAILURE);
     }
-    strcpy(op->savemode, savemode);
+    strcpy(op->savemode, savemode);   // one of the names above (any case), which fits
 }
 
 char* Output_getSavemode(Output* op){
@@ -280,6 +306,6 @@ void Output_report(Output* op){
 
     printStructElementChar("savemode", op->savemode);
     printStructElementChar("outfile", op->outfile);
-    printStructElementBool("save_nodiv", op->save_nodiv);
+    printStructElementBool("savemode.nodiv", op->save_nodiv);
 
 }

@@ -30,13 +30,15 @@ code_info = \
     \t\t    We should add the core electronic contributions to fermi contact term \n\
     \t\t    (A_tot = A_1c + A_tot)",
 
-    'update2' : f"(2023.03.21) Added key : {C.Y}--fidentify{C.Z} \n\
-    \t\t    The first line of the A file include VASP/QUANTUMESSPRESSO.",
+    'update2' : f"(2026-10-13) A file format v3: the first line is the tag (VASP / QUANTUMESPRESSO), the second \n\
+    \t\t    the provenance line '# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = ..., S = ...'. \n\
+    \t\t    The values are the hyperfine of the spin-S defect for both codes (CCEX reads them x 1). \n\
+    \t\t    VASP: the OUTCAR values (VASP divides by <S_z>), S from the OUTCAR magnetization. \n\
+    \t\t    QE: hyperfine.out is the S = 1/2 coupling, so {C.Y}--spin S{C.Z} is required and the file holds it x 1/(2S). \n\
+    \t\t    --fidentify is gone (always written).",
 
-    'update3' : f"(2023.03.21) Added key : {C.Y}--version{C.Z} \n\
-    \t\t    You can choose version : v1 or v2 \n\
-    \t\t    Previous version : Afile of VASP and QE was the same (The central spin factor was treated) \n\
-    \t\t    New version : Afile of VASP/QE would be the same to the OUTCAR/hyperfine.out result",
+    'update3' : f"(2026-10-13) {C.Y}--version v1{C.Z} is refused: it wrote OUTCAR x 2 (right only for S = 1, and \n\
+    \t\t    only if CCEX scaled it by 1/(2S)); with a VASP tag it was read 2x. Only v2 (the default) remains.",
 
     'update4' : f"(2023.03.21) Added key : {C.Y}--rangeformat{C.Z} \n\
     \t\t    You can convert the format of cell' range from relativepos coordinate to vertex or xyz coordinate",
@@ -77,9 +79,9 @@ argv_info = \
 (If you only use {C.Y}--D{C.Z} option, put random value in [2]second, [3]third argument)',
 '[7]' : '(s,key)dfpos      = (list)defect position x y z (fractional)',
 '[8]' : '(s,key)ignoreatm  = (s)ignoring atom (available only for VASP)',
-'[9]' : '(s,key)fidentify  = (bool)Add first line or not - VASP orQE [ Opt. True{default} / False ] ',
+'[9]' : '(f,key)spin       = (f)defect total spin S (0.5, 1, ...) - required for QE; VASP reads it from the OUTCAR and checks a given one',
 '[10]': '(s,key)addhfcore  = (bool)Add HF core (A1c) - VASP only [ Opt. True{default} / False ] ',
-'[11]': '(s,key)version    = (s)Choose version, default is latest version [ Opt. v1 / v2{default} ] ',
+'[11]': '(s,key)version    = (s)Choose version; v1 is refused (it wrote OUTCAR x 2) [ Opt. v2{default} ] ',
 '[12]': '(s,key)rangeformat= (s)The format of defective cell range [ Opt. coord / vertex{default} ]',
 '[13]': '(s,key)ccein      = (s)put outfile name - get \"Exspin\" data in cce.in file, electron spin bath case only',
 '[14]': f'(i,key)JT         = (int)(IF {C.Y}--ccein(diag){C.Z} is used) Jahn-teller axis ',
@@ -110,8 +112,17 @@ def argcontrol(var):
     if var.Q==[]: var.Q=False
     if var.D==[]: var.D=False
     if var.ignoreatm==[]: var.ignoreatm=None
-    if var.fidentify=='True' : var.fidentify=True
-    if var.fidentify=='False': var.fidentify=False
+    if var.spin==[] : var.spin=None
+    if var.version==[] : var.version='v2'
+    if var.version=='v1':
+        cal_form._end(meg_error="--version v1 is refused (2026-10-13): it wrote the OUTCAR hyperfine x 2, which is the\n\
+        defect's value only for S = 1 and only when CCEX divides it by 2S; with the VASP tag CCEX read it 2x.\n\
+        Use v2 (the default, no --version): the file then holds the hyperfine of the spin-S defect.")
+    if var.version!='v2':
+        cal_form._end(meg_error=f"--version {var.version}: only v2 exists")
+    if var.tool=="QE" and var.A and var.spin is None:
+        cal_form._end(meg_error="QE: --spin S (the defect total spin) is required for the A file: hyperfine.out is the\n\
+        coupling of S = 1/2, and the file holds it x 1/(2S)")
     if var.addhfcore=='True' : var.addhfcore=True
     if var.addhfcore=='False': var.addhfcore=False
     if var.ccein==[] : var.ccein=False
@@ -175,7 +186,7 @@ else:
 # Main part : Obtain A,Q,D files
 ########################################################################
 do =  mk.do_mkAQDdata(*args["main"],dfposition_frac=None,_ignoreatm=var.ignoreatm,\
-                     _fidentify=var.fidentify, _addhfcore=var.addhfcore,_version=var.version,\
+                     _addhfcore=var.addhfcore,_spin=var.spin,\
                      _rangeformat=var.rangeformat)
 
 if var.A : do.mkAdata(*args["A"])

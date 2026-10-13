@@ -87,6 +87,23 @@ order_check(){
 order_check
 # a qubitfile the input names but that is not there ran the qubit at (0,0,0) (review 4dd5fd R1)
 reject S1a rj_qubitfile_missing "cannot open the qubit file" "d['qubitfile'] = d['qubitfile'] + '.missing'"
+# qubitfile and a Qubit block together: the block was ignored without a word, so a "two-qubit" tutorial ran one qubit
+# (review 20261013-readme R01)
+reject S1a rj_qubitfile_and_qubit_block "has both \"qubitfile\" and a \"Qubit\" block; keep one" \
+  "d['Qubit'] = {'nqubit': 1, 'qubit': [{'name': 'q1', 'spin': 1.0, 'gyro': -17608.59705, 'xyz': [0.0, 0.0, 0.0]}]}"
+# quantity noise was accepted and computed the coherence (review 20261013-doxygen D22), in the file and on the command line
+reject S1a rj_quantity_noise "quantity \"noise\" is not supported" "d['quantity'] = 'noise'"
+reject_cli S1a rj_cli_quantity_noise "quantity \"noise\" is not supported" -q noise
+# --help is -h (review 20261013-doxygen D21): the same text, exit 0
+help_alias(){
+    local w="$WORK/S1a" a b ra rb
+    # from "Usage:" on: the banner above it carries the start time
+    a="$(cd "$w" && "$MPIRUN" -n 1 "$BIN_DEV" -h < /dev/null 2>&1)"; ra=$?; a="$(sed -n '/^Usage:/,$p' <<< "$a")"
+    b="$(cd "$w" && "$MPIRUN" -n 1 "$BIN_DEV" --help < /dev/null 2>&1)"; rb=$?; b="$(sed -n '/^Usage:/,$p' <<< "$b")"
+    if [ $ra -eq 0 ] && [ $rb -eq 0 ] && [ "$a" = "$b" ] && grep -q "^Usage:" <<< "$a"; then echo "  PASS  help_alias (--help = -h, exit 0)"; PASS=$((PASS+1))
+    else echo "  FAIL  help_alias : -h exit $ra, --help exit $rb, same text: $([ "$a" = "$b" ] && echo yes || echo no)"; FAIL=$((FAIL+1)); fi
+}
+help_alias
 # nstep 0 left the result arrays empty and the output read result[0] (review 7eed38 R1)
 reject S1a rj_nstep_zero "nstep (0 < 1)" "d['nstep'] = 0"
 # A Manual sequence (review 5f7834 R2): a sum of fractions short of 1, a fraction that is not a/b or a number all
@@ -330,10 +347,10 @@ PY
         echo "  PASS  $name (exit=$rc)"; PASS=$((PASS+1))
     fi
 }
-write_fail write_full_normal  normal full  "cannot write file"
-write_fail write_full_info    info   full  "cannot write file"
-write_fail open_nodiv_normal  normal nodiv "cannot open file"
-write_fail open_nodiv_info    info   nodiv "cannot open file"
+write_fail write_full_normal  coherence        full  "cannot write file"
+write_fail write_full_info    coherence_tagged full  "cannot write file"
+write_fail open_nodiv_normal  coherence        nodiv "cannot open file"
+write_fail open_nodiv_info    coherence_tagged nodiv "cannot open file"
 
 echo
 echo "=== the factors and except work modes of method D's regroup"
@@ -449,6 +466,72 @@ reject_case p1_cce2_single rj_min_dim_zero "gpu_options.min_dim must be a positi
 reject_case p1_cce2_single rj_packed_cpu_binary "gpu_options.packed_max_dim needs the GPU binary" "d['gpu_options'] = {'packed_max_dim': 4}"
 reject_case p1_manual_hahn rj_packed_gcce "gpu_options.packed_max_dim works with method=CCE" \
   "d['gpu_options'] = {'packed_max_dim': 4}; d['method'] = 'gCCE'"
+
+echo "=== savemode"
+# savemode is a string or {"mode": ..., "nodiv": ...} since 2026-10-13 (docs/user/InputFile_Output.md#tag_savemode): the
+# names before it and the top-level save_nodiv are refused with the new form named, and so are an unknown key of the block,
+# a block value of the wrong type and an unknown mode. The accepted block is in ../check_input_forms/nodiv.sh.
+reject_case p1_cce2_single rj_savemode_normal 'savemode "normal" is now "coherence"' "d['savemode'] = 'normal'"
+reject_case p1_cce2_single rj_savemode_info 'savemode "info" is now "coherence_tagged"' "d['savemode'] = 'info'"
+reject_case p1_cce2_single rj_savemode_all 'savemode "all" is now "cluster_coherence"' "d['savemode'] = 'all'"
+reject_case p1_cce2_single rj_savemode_allfull 'savemode "allfull" is now "cluster_density_matrix"' "d['savemode'] = 'allfull'"
+reject_case p1_cce2_single rj_savemode_old_in_block 'savemode "all" is now "cluster_coherence"' "d['savemode'] = {'mode': 'all'}"
+reject_case p1_cce2_single rj_save_nodiv "save_nodiv is now savemode.nodiv" "d['save_nodiv'] = False"
+reject_case p1_cce2_single rj_savemode_key 'savemode has no key "nodvi" (mode, nodiv)' "d['savemode'] = {'mode': 'coherence', 'nodvi': False}"
+reject_case p1_cce2_single rj_savemode_type "savemode must be a string" "d['savemode'] = 1"
+reject_case p1_cce2_single rj_savemode_mode_type "savemode.mode must be a string" "d['savemode'] = {'mode': 1}"
+reject_case p1_cce2_single rj_savemode_nodiv_type "savemode.nodiv must be a boolean" "d['savemode'] = {'mode': 'coherence', 'nodiv': 0}"
+reject_case p1_cce2_single rj_savemode_unknown 'savemode "averaged" is not one of' "d['savemode'] = 'averaged'"
+
+echo
+echo "=== propagator"
+# propagator (A2, 2026-10-12): expm is gCCE only; sparse runs for one sampled state of the cCCE and gCCE evolution=vector
+# with one qubit, backend=cpu, evolution_update=exact, without knight and hfmedi - everything else is refused at the
+# start (the paths that run, and the malformed values, are in ../check_input_forms/propagator.sh).
+SP="d['propagator'] = {'method': 'sparse', 'min_dim': 1}"
+reject_case p1_cce2_single rj_prop_expm_cce "propagator=expm is implemented for method=gCCE only" "d['propagator'] = 'expm'"
+reject_case p1_cce2_ensemble rj_prop_sparse_ensemble "this run has nstate=0 (the ensemble)" "$SP"
+reject_case p1_manual_hahn rj_prop_sparse_matrix "this run has method=gCCE with evolution=matrix" "$SP; d['evolution'] = 'matrix'"
+reject_case p1_cce2_single rj_prop_sparse_cuda "this run has backend=cuda" "$SP; d['backend'] = 'cuda'"
+reject_case p1_manual_hahn rj_prop_sparse_auto "this run has backend=auto" "$SP; d['backend'] = 'auto'"
+reject_case p1_cce2_single rj_prop_sparse_recursive "this run has evolution_update=recursive" "$SP; d['evolution_update'] = 'recursive'"
+reject_case p1_manual_hahn rj_prop_sparse_recursive_gcce "this run has evolution_update=recursive" "$SP; d['evolution_update'] = 'recursive'"
+reject_case natab_knight_shift rj_prop_sparse_knight "this run has the knight term" "$SP; d['nstate'] = 1"
+reject_case hbn_hfmedi rj_prop_sparse_hfmedi "this run has the hfmedi term" "$SP; d['nstate'] = 1"
+# a second NV 20 A away added to the one-qubit Qubit block (the check_numerics cases hold one qubit each; the old
+# natab_gcce2_two_qubits held one too, through its qubitfile, and is natab_gcce2_bathadjust since 2026-10-13)
+TWO="q = d['Qubit']; q2 = dict(q['qubit'][0], name='qubit2', xyz=[x + 20.0 for x in q['qubit'][0]['xyz']]); q['qubit'].append(q2); q['nqubit'] = 2; q['intmap'].append(dict(q['intmap'][0], between=['qubit2', 'qubit2']))"
+reject_case p1_gcce2_zfs rj_prop_sparse_two_qubits "this run has nqubit=2" "$SP; $TWO"
+
+echo
+echo "=== hyperfine tensor file format v3"
+# (2026-10-13) A file with the provenance line "# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz),
+# source = ..., S = ..." is read x 1, so it must not contradict itself or the input: line 1 has to be the tag of its
+# source, the line has to be line 2 and well formed, and S has to be DefectTotSpin. Each file is the h-BN v3 file of
+# check_numerics with one edit; what such files are read as is ../check_input_forms/tensor_format.sh.
+TF="$WORK/tensor_format_refusals"; mkdir -p "$TF"
+V3="$REPO/test/code_verification/check_numerics/inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3"
+mk_tensor(){ sed -e "$2" "$V3" > "$TF/$1"; }    # mk_tensor <name> <sed script>
+mk_tensor qe_tag       '1s/^VASP$/QUANTUMESPRESSO/'
+mk_tensor qe_source    '2s/source = VASP OUTCAR/source = QE hyperfine.out/'
+mk_tensor no_tag       '1d'
+mk_tensor spin_half    '2s/S = 1$/S = 0.5/'
+mk_tensor spin_fraction '2s/S = 1$/S = 0.7/'
+mk_tensor no_spin      '2s/, S = 1$//'
+mk_tensor version4     '2s/CCEX-tensor v3/CCEX-tensor v4/'
+mk_tensor bad_source   '2s/VASP OUTCAR/VASP vasprun.xml/'
+mk_tensor twice        '2p'
+HB=hbn_cce2_hf3_qd0
+reject_case $HB rj_tensor_tag_vs_source_qe "line 1 is 'QUANTUMESPRESSO' but the provenance line says source = VASP OUTCAR" "d['hf_tensorfile'] = '$TF/qe_tag'"
+reject_case $HB rj_tensor_source_vs_tag_vasp "line 1 is 'VASP' but the provenance line says source = QE hyperfine.out" "d['hf_tensorfile'] = '$TF/qe_source'"
+reject_case $HB rj_tensor_no_tag "it must be line 2" "d['hf_tensorfile'] = '$TF/no_tag'"
+reject_case $HB rj_tensor_spin_vs_defect "spin S = 0.5 defect (provenance line) but DefectTotSpin is 1" "d['hf_tensorfile'] = '$TF/spin_half'"
+reject_case $HB rj_tensor_defect_vs_spin "spin S = 1 defect (provenance line) but DefectTotSpin is 1.5" "d['hf_tensorfile'] = '$V3'; d['DefectTotSpin'] = 1.5"
+reject_case $HB rj_tensor_spin_fraction "S must be a positive half-integer" "d['hf_tensorfile'] = '$TF/spin_fraction'"
+reject_case $HB rj_tensor_no_spin "has no \", S = <S>\"" "d['hf_tensorfile'] = '$TF/no_spin'"
+reject_case $HB rj_tensor_version4 "is not a tensor format this version reads" "d['hf_tensorfile'] = '$TF/version4'"
+reject_case $HB rj_tensor_unknown_source "names source 'VASP vasprun.xml'" "d['hf_tensorfile'] = '$TF/bad_source'"
+reject_case $HB rj_tensor_two_lines "more than one '# CCEX-tensor' line" "d['hf_tensorfile'] = '$TF/twice'"
 
 echo
 echo "==========================================="

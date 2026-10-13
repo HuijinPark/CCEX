@@ -51,6 +51,6 @@ One second.
 
     # Output
     "outfile"     : "./results/CCE2_Diamond_NV_natab_1",
-    "savemode"      : "allfull"
+    "savemode"      : "cluster_density_matrix"
 }
 ```

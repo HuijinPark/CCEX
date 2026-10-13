@@ -14,5 +14,7 @@ run did, all into `results/`:
 
     cd <calculation> && NP=4 NCONF=1 bash run.sh
 
+Here both `run.sh` compute the one fixed `bath` of their folder and ignore `NCONF`.
+
 `example/tutorial/README.md` explains the layout; the recorded results are in
 the archive.

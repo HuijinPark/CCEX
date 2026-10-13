@@ -4,6 +4,7 @@
 #include "../../include/calculation/gpu/compute_backend.h"
 #include "../../include/calculation/gpu/eigen_refinement.h"
 #include "../../include/calculation/small_hamiltonian.h"
+#include "../../include/calculation/sparse_propagator.h"
 #ifdef CCEX_USE_CUDA
 #include "../../include/calculation/gpu/gpu_backend.h"
 #include <memory>
@@ -14,6 +15,7 @@ struct GcceBatch {
     std::vector<std::unique_ptr<MatrixXcd[]>> results;
     std::vector<MatrixXcd> alpha,beta;
     std::vector<double> build,setup;
+    bool outOfMemory=false;          // a cluster's setup ran out of GPU memory (backend auto): the batch is given up
 };
 #endif
 
@@ -115,7 +117,15 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
     MatrixXcd HtotOwn, HqOwn;
     MatrixXcd** qsigmas = nullptr;
     const bool kept = nspin > 0 && nqubit == 1;
-    if (kept){
+    // A2: propagator = sparse from sparse_min_dim on (evolution = vector; main.cpp refuses the rest): the Hamiltonian in
+    // compressed rows from its local terms, no dense Htot (HtotKept is not written and not read on this path)
+    const bool sparse = sparsePropagatorFor(cnf,totdim);
+    GcceSparseWork sw;
+    if (kept && sparse){
+        LocalHamiltonian terms;
+        gcceClusterTerms(qa,ba,cnf,terms,HqKept);
+        csrFromLocal(terms,sw.H);
+    }else if (kept){
         gcceClusterHamiltonian(qa,ba,cnf,HtotKept,HqKept);
     }else{
         // Declare the total Hamiltonian
@@ -151,6 +161,7 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
     }
     MatrixXcd& Htot = kept ? HtotKept : HtotOwn;
     MatrixXcd& Hq = kept ? HqKept : HqOwn;
+    if (sparse && !kept) csrFromDense(HtotOwn,sw.H);   // no bath spins: Htot is the qubit's
 
     ////////////////////////////////
     // Density matrix
@@ -175,7 +186,7 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
                            "Use nstate > 0, or evolution=matrix.\n");
             exit(1);
         }
-        if (strcasecmp(Config_getPropagator(cnf),"eigen")!=0){
+        if (strcasecmp(Config_getPropagator(cnf),"expm")==0){
             fprintf(stderr,"Error : evolution=vector requires propagator=eigen "
                            "(with expm the per-step matrix exponential dominates and "
                            "there is nothing to gain).\n");
@@ -215,7 +226,7 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
     Eigen::RowVectorXcd& alphaRho = alphaRhoInto ? *alphaRhoInto : alphaRhoOwn;
 
     MatrixXcd* result_tot = nullptr; // Density matrix before trace out (total density matrix)
-    if (strcasecmp(op->savemode,"allfull")==0){
+    if (strcasecmp(op->savemode,"cluster_density_matrix")==0){
         result_tot = new MatrixXcd[nstep]; //!
     }
 
@@ -232,7 +243,7 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
     // Everything fixed for this cluster: the eigendecomposition that replaces a
     // matrix exponential on every step.
     GcceWork gw;
-    const bool useCuda = computeUseCuda(cnf,totdim);
+    bool useCuda = computeUseCuda(cnf,totdim);
 #ifdef CCEX_USE_CUDA
     std::unique_ptr<GpuGcce,void(*)(GpuGcce*)> gpu(nullptr,gpuGcceDestroy);
     if (useCuda){
@@ -244,17 +255,43 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
         try {
             gpu.reset(gpuGcceCreate(totdim,qdim,useVector,std::min(cnf->gpu_batch_steps,std::max(1,nstep)),
                 Htot.data(),useVector ? psi0.data() : rho0.data(),pulse->npulse,pulseData.data(),cnf->gcce_refinement,cnf->gcce_refinement_max_sweeps));
+        } catch (const GpuOutOfMemory& e){
+            // backend auto: this cluster on the CPU (one by one), or, in a cluster batch, the batch given up
+            if (!computeCudaOutOfMemory(cnf,totdim,e.what())){
+                fprintf(stderr,"Error: CUDA gCCE setup: %s\n",e.what());
+                MPI_Abort(MPI_COMM_WORLD,1);
+            }
+            if (batchCollector) batchCollector->outOfMemory=true;
+            else useCuda=false;
         } catch (const std::exception& e){
             fprintf(stderr,"Error: CUDA gCCE setup: %s\n",e.what());
             MPI_Abort(MPI_COMM_WORLD,1);
         }
-    }else
+    }
 #endif
-    {
-        prepareGcceWork(&gw,Htot,strcasecmp(Config_getPropagator(cnf),"eigen")==0,
+    // the CPU's work for the cluster: on the CPU from the start, or after the GPU ran out of memory (backend auto)
+    const auto prepareOnCpu=[&](){
+    if (sparse){
+        if (!useVector){
+            fprintf(stderr,"Error : propagator=sparse needs evolution=vector\n");
+            ccexFatal();
+        }
+        double asym, scale;
+        if (!csrFiniteHermitian(sw.H,asym,scale)){
+            fprintf(stderr,"Error : propagator=sparse : the gCCE Hamiltonian (dim %d) is not finite and Hermitian "
+                           "(max|H-H^dag| = %.3e, max|H| = %.3e)\n",totdim,asym,scale);
+            ccexFatal();
+        }
+        sw.qdim = qdim; sw.bdim = bdim;
+        sw.levels = Eigen::SelfAdjointEigenSolver<MatrixXcd>(Hq).eigenvectors();   // the parts of GcceSparseWork::evolve
+    }else{
+        // eigen (also below sparse_min_dim with propagator = sparse) or expm
+        prepareGcceWork(&gw,Htot,strcasecmp(Config_getPropagator(cnf),"expm")!=0,
                         cnf->gcce_refinement,cnf->gcce_refinement_max_sweeps);
         prepareGccePulses(&gw,Upulses,pulse->npulse,bdim);
     }
+    };
+    if (!useCuda) prepareOnCpu();
     const double profileSetupEnd = cnf->profile ? MPI_Wtime() : 0.0;
 
 #ifdef CCEX_USE_CUDA
@@ -295,6 +332,15 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
                     if (result_tot) result_tot[start+t]=Eigen::Map<const MatrixXcd>(full.data()+(size_t)t*totdim*totdim,totdim,totdim);
                 }
             }
+        } catch (const GpuOutOfMemory& e){
+            // backend auto: the whole cluster again on the CPU (what the card had is freed)
+            if (!computeCudaOutOfMemory(cnf,totdim,e.what())){
+                fprintf(stderr,"Error: CUDA gCCE evolution: %s\n",e.what());
+                MPI_Abort(MPI_COMM_WORLD,1);
+            }
+            gpu.reset();
+            useCuda=false;
+            prepareOnCpu();
         } catch (const std::exception& e){
             fprintf(stderr,"Error: CUDA gCCE evolution: %s\n",e.what());
             MPI_Abort(MPI_COMM_WORLD,1);
@@ -314,7 +360,8 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
             // |psi(t)> = Utot |psi0>, without ever forming Utot.
             // evolution_update = recursive: the step number, so the phases between every 16th step are carried over (A16 b);
             // exact: the call without it, as before (one call with a variable step changed the bits of a dm result, g++)
-            const Eigen::VectorXcd& psit = recursivePhases ? propagateStateGcce(psi0, pulse, tfree, &gw, i, deltat)
+            const Eigen::VectorXcd& psit = sparse ? propagateStateGcceSparse(sw, psi0, pulse, Upulses, tfree, cnf->sparse_tol)
+                                         : recursivePhases ? propagateStateGcce(psi0, pulse, tfree, &gw, i, deltat)
                                                            : propagateStateGcce(psi0, pulse, tfree, &gw);
 
             // Tracing the bath out of |psi><psi| is a reshape. kron() lays the state out
@@ -325,9 +372,9 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
                 Psi(psit.data(), qdim, bdim);
             reducedRhot.noalias() = Psi * Psi.adjoint();
 
-            // allfull wants the full qubit+bath density matrix; from a pure state that is
+            // cluster_density_matrix wants the full qubit+bath density matrix; from a pure state that is
             // an outer product, O(n^2), cheaper than the O(n^3) the matrix path pays.
-            if (strcasecmp(op->savemode,"allfull")==0){
+            if (strcasecmp(op->savemode,"cluster_density_matrix")==0){
                 result_tot[i] = psit * psit.adjoint();
             }
         }else{
@@ -338,7 +385,7 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
             MatrixXcd rhot = Utot * rho0 * Utot.adjoint();
 
             // Save the density matrix
-            if (strcasecmp(op->savemode,"allfull")==0){
+            if (strcasecmp(op->savemode,"cluster_density_matrix")==0){
                 result_tot[i] = rhot;
             }
 
@@ -368,18 +415,17 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
         tfree += deltat;
     }
 
-    if (cnf->profile) computeProfile(cnf,"gcce",useCuda ? "cuda" : "cpu",totdim,
+    if (cnf->profile) computeProfile(cnf,"gcce",useCuda ? "cuda" : sparse ? "sparse" : "cpu",totdim,
         profileBuildEnd-profileStart,profileSetupEnd-profileBuildEnd,MPI_Wtime()-profileSetupEnd);
+    if (cnf->profile && sparse)
+        printf("[sparse] rank=%d method=gcce dim=%d nnz=%ld matvecs=%lld substeps=%lld rejected=%lld\n",
+               rank, totdim, long(sw.H.val.size()), sw.stats.matvecs, sw.stats.substeps, sw.stats.rejected);
 
     // Save the density matrix
-    if (strcasecmp(op->savemode,"allfull")==0){
-        // Output_save_all reads nspin+nqubit labels for the full Hilbert space.
-        int* cluster = allocInt1d(nspin+nqubit);
-        for (int i = 0; i<nspin+nqubit; i++){
-            cluster[i] = i;
-        }
-        Output_save_all(op,result_tot,nstep,deltat,cluster,nspin+nqubit,0);
-        freeInt1d(&cluster);
+    // to op's outfile as it is: the caller names it after the cluster and the state (Output_fullOutput). Labelling it here
+    // with 0..nspin+nqubit-1 gave clusters of the same size one file name (2026-10-13).
+    if (strcasecmp(op->savemode,"cluster_density_matrix")==0){
+        Output_save(op,result_tot,result_tot,nstep,deltat,0);
     }
 
     // free
@@ -845,7 +891,10 @@ std::vector<MatrixXcd*> calCoherenceGcceCudaBatch(QubitArray* qa,
         GcceBatch work;
         const int n=int(baths.size()),q=QubitArray_dim(qa),nstep=cnf->nstep;
         const int batch=std::min(cnf->gpu_batch_steps,std::max(1,nstep));
-        for(BathArray* bath:baths)calCoherenceGcce(qa,bath,cnf,pulse,output,&work);
+        for(BathArray* bath:baths){
+            calCoherenceGcce(qa,bath,cnf,pulse,output,&work);
+            if(work.outOfMemory)return {};   // backend auto: the caller computes the clusters one by one (on the CPU)
+        }
         std::vector<doublec> reduced((size_t)n*batch*q*q);
         std::vector<double> times(batch),delays(pulse->npulse+1);
         for(int p=0;p<=pulse->npulse;++p)delays[p]=pulse->sequence[pulse->sequence_indices[p]][2];
@@ -871,6 +920,10 @@ std::vector<MatrixXcd*> calCoherenceGcceCudaBatch(QubitArray* qa,
         }
         computeClusterBatch(cnf,dimension,n);
         return results;
+    }catch(const GpuOutOfMemory& error){
+        if(computeCudaOutOfMemory(cnf,QubitArray_dim(qa)*BathArray_dim(baths[0]),error.what()))return {};
+        fprintf(stderr,"Error: CUDA gCCE cluster batch: %s\n",error.what());
+        MPI_Abort(MPI_COMM_WORLD,1);return {};
     }catch(const std::exception& error){
         fprintf(stderr,"Error: CUDA gCCE cluster batch: %s\n",error.what());
         MPI_Abort(MPI_COMM_WORLD,1);return {};

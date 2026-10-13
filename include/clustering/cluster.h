@@ -7,12 +7,9 @@
 #include "physical/defect.h"
 
 /**
- * @struct ClusterConfig
- * @brief  This structure contains clustering algorithm-related parameters.
+ * @struct Cluster
+ * @brief  This structure contains clustering algorithm-related parameters and the clusters made from them.
  * @details Each parameter is read from the input file or options.
- *          We will refine the parameters later to use in the simulation.
- *          Those parameters will be converted into "struct Cluster" 
- *          (See directory "clustering").
 */
 typedef struct {
 
@@ -44,14 +41,10 @@ typedef struct {
      *  nk is useful when you calculate CCE with order >= 3
      *  At order >=3, Creating clusters is based on rdip, a ton of cluster will be formed (at least 1e6).      
      *  This value would consider nk # clusters for each order after sorting this clusters by coupling-strength.
-     *  ( NOTE : this parameter is only available at "clusalgo = hash" )
      * 
-     * Input file format :
-     *   nk = k:n (0<=k<=order, 0<=n<=Maximum number of clusters)
-     *   e.g. nk = { 1:1000, 2:100, 3:10, 4:5 }
-     *        nk = { 2:100000, 3:100000 }
-     *        nk = { 4:0 } 
-     *        (if n=0, it means we will include all clusters at order 4)
+     * Input file format : an integer array of exactly order+1 entries, the index being the order
+     *   e.g. order = 3 : "nk" : [0, 0, 0, 30000]  (keep the 30000 strongest clusters of order 3)
+     *   An entry 0 means no limit for that order (all clusters within rdip).
      * 
      * Array format: 
      *   nk[order + 1] = {0,} (default, including all clusters for each order)
@@ -69,7 +62,7 @@ typedef struct {
      *  If turn on this option, 
      *  it will include all sub-clusters of the highest order 
      *  and give the more robust result.
-     *  (default : off)
+     *  (default : on)
     */
     bool addsubclus;
 

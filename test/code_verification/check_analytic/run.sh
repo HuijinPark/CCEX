@@ -6,7 +6,7 @@
 # form, another frame, a recorded run); this one does not, so a common error such as
 # a wrong time scale in the free evolution is caught here (D22, 2026-10-02).
 # A self-test runs the echo with a wrong gyro and requires the check to fail.
-# Two hfmedi runs at zero field (degenerate qubit levels) close it, see below.
+# hfmedi runs at zero field (degenerate qubit levels) close it, see below.
 #
 # Usage:  bash test/code_verification/check_analytic/run.sh      (CCEX_BIN, CCEX_MPI as for the others)
 # ---------------------------------------------------------------------------
@@ -46,28 +46,44 @@ elif [ $ac -eq 0 ]; then echo "  FAIL  self-test : a 1 % wrong gyro passed"; FAI
 else echo "  FAIL  self-test : $(cat "$W/selftest.log")"; FAIL=$((FAIL+1)); fi
 # hfmedi with degenerate qubit levels (review 20261012-194049-af8e42 R1), not a closed form: at zero field an axial ZFS
 # leaves +1 and -1 degenerate but uncoupled (the term of that pair is 0: finite output, exit 0, as it was NaN); without
-# ZFS the levels 0 and +1 are degenerate and coupled, where the second-order term does not exist (refused)
-hfmedi(){ # hfmedi <name> <qzfs>
+# ZFS the levels 0 and +1 are degenerate and coupled, where the second-order term does not exist (refused). Review
+# 20261012-233058-452278: P1-02, the same degenerate levels with a zero hyperfine (gyro 0) have no coupling and are
+# accepted; P1-03, a ZFS shifted by 1e13 I (an energy shift) is decided as the unshifted one.
+hfmedi(){ # hfmedi <name> <qzfs> [gyro file]
     cat > "$W/$1.json" <<JSON
-{"method": "CCE", "quantity": "coherence", "qubitfile": "qubit", "gyrofile": "gyro", "bathfile": ["bath"],
+{"method": "CCE", "quantity": "coherence", "qubitfile": "qubit", "gyrofile": "${3:-gyro}", "bathfile": ["bath"],
  "order": 1, "bfield": 0, "rbath": 20, "rdip": 10, "deltat": 0.001, "nstep": 3, "hfmedi": true,
  "qalphams": 1, "qbetams": 0, "npulse": 1, "nstate": 0, "seed": 1, "qzfs": $2}
 JSON
     ( cd "$W" && run_ccex "$BIN_DEV" "$1.json" "proc_$1" -o "out_$1" )
 }
-hfmedi hfmedi_axial '[[-956666.6666666666,0,0],[0,-956666.6666666666,0],[0,0,1913333.3333333333]]'
-rc=$?
-if [ $rc -ne 0 ]; then echo "  FAIL  hfmedi B=0 axial ZFS : CCEX exit $rc"; FAIL=$((FAIL+1))
-elif python3 -c '
+finite(){ # finite <name>: both outputs there, 3 points each, all finite
+    python3 -c '
 import math, sys
 v = [complex(x) for f in sys.argv[1:] for l in open(f) for x in l.split()[1:]]
-sys.exit(0 if len(v) == 6 and all(math.isfinite(z.real) and math.isfinite(z.imag) for z in v) else 1)' "$W/out_hfmedi_axial_noDiv" "$W/out_hfmedi_axial_wiDiv"
-then echo "  PASS  hfmedi B=0 axial ZFS : finite"; PASS=$((PASS+1))
-else echo "  FAIL  hfmedi B=0 axial ZFS : output missing or not finite"; FAIL=$((FAIL+1)); fi
+sys.exit(0 if len(v) == 6 and all(math.isfinite(z.real) and math.isfinite(z.imag) for z in v) else 1)' "$W/out_$1_noDiv" "$W/out_$1_wiDiv"
+}
+accepted(){ # accepted <name> <label> <exit>
+    if [ "$3" -ne 0 ]; then echo "  FAIL  $2 : CCEX exit $3"; FAIL=$((FAIL+1))
+    elif finite "$1"; then echo "  PASS  $2 : finite"; PASS=$((PASS+1))
+    else echo "  FAIL  $2 : output missing or not finite"; FAIL=$((FAIL+1)); fi
+}
+hfmedi hfmedi_axial '[[-956666.6666666666,0,0],[0,-956666.6666666666,0],[0,0,1913333.3333333333]]'
+accepted hfmedi_axial "hfmedi B=0 axial ZFS" $?
 hfmedi hfmedi_nozfs '[[0,0,0],[0,0,0],[0,0,0]]'
 rc=$?
 if [ $rc -ne 0 ] && grep -q "hfmedi: qubit level .* is degenerate" "$W/proc_hfmedi_nozfs"; then
     echo "  PASS  hfmedi B=0 no ZFS : refused (exit=$rc)"; PASS=$((PASS+1))
 else echo "  FAIL  hfmedi B=0 no ZFS : exit $rc, expected the degeneracy refusal"; FAIL=$((FAIL+1)); fi
+printf '13C 0.5 0\n' > "$W/gyro_zero"
+hfmedi hfmedi_zero_hf '[[0,0,0],[0,0,0],[0,0,0]]' gyro_zero
+accepted hfmedi_zero_hf "hfmedi B=0 no ZFS, zero hyperfine" $?
+hfmedi hfmedi_small '[[0,0,0],[0,0,0],[0,0,1]]'
+rs=$?
+hfmedi hfmedi_shift '[[1e13,0,0],[0,1e13,0],[0,0,10000000000001.0]]'
+rh=$?
+if [ $rs -eq 0 ] && [ $rh -eq 0 ] && finite hfmedi_small && finite hfmedi_shift; then
+    echo "  PASS  hfmedi B=0 ZFS diag(0,0,1) and + 1e13 I : both accepted, finite"; PASS=$((PASS+1))
+else echo "  FAIL  hfmedi B=0 ZFS diag(0,0,1) exit $rs, + 1e13 I exit $rh : expected the same decision (accepted, finite)"; FAIL=$((FAIL+1)); fi
 echo " closed-form checks : PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]

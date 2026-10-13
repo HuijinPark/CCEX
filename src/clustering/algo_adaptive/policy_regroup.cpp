@@ -298,7 +298,9 @@ Factor culprit_factor(std::complex<double> pair, std::complex<double> a, std::co
     const Scaled f = normalize(std::complex<double>(re, im), pair_scaled.exponent-both.exponent);
     const std::complex<double> v = value(f);
     const double size = std::hypot(v.real(), v.imag());
-    if (finite(v) && size >= std::numeric_limits<double>::min()) {
+    // A finite v can still have an infinite modulus (both parts near DBL_MAX): that
+    // case takes the scaled path too, or distinct large factors tie at +inf.
+    if (finite(v) && std::isfinite(size) && size >= std::numeric_limits<double>::min()) {
         out.g = std::log(size);
         return out;
     }
@@ -1040,6 +1042,21 @@ Outcome Search::round(const Partition& units, const Curves& curves, const std::s
         double batch_reserve = 0.;
         const auto reserve_for = [&](const std::vector<std::pair<Sites, std::string> >& wanted,
                                      double reserve) {
+            // The cache first, as acquire does (review 20261012-233058-452278 P4-03): what
+            // the disk holds costs nothing, so only the probes still missing after it are
+            // charged; whether a curve was in RAM or on disk does not change the choice.
+            // preload keeps the cache-memory limit (all or nothing), and what it supplied
+            // is recorded for the region's release like acquire's cache hits.
+            std::set<Sites> absent;
+            for (const std::pair<Sites, std::string>& w : wanted)
+                if (raw.count(w.first) == 0 && batched.count(w.first) == 0)
+                    absent.insert(w.first);
+            if (!absent.empty()) {
+                source_->preload(absent);
+                for (const std::pair<Sites, std::string>& w : wanted)
+                    if (absent.erase(w.first) != 0 && raw.count(w.first) != 0)
+                        fetched_.push_back(w);
+            }
             std::vector<Sites> extra;
             for (const std::pair<Sites, std::string>& w : wanted)
                 if (raw.count(w.first) == 0 && batched.count(w.first) == 0 &&

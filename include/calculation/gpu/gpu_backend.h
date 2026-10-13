@@ -1,12 +1,18 @@
 #ifndef CCEX_GPU_BACKEND_H
 #define CCEX_GPU_BACKEND_H
 #include <cstddef>
+#include <stdexcept>
 #include "accelerator_defaults.h"
 
 // No Eigen/MPI types cross the CUDA translation-unit boundary. Matrices are
 // column-major complex doubles, represented as interleaved real/imag doubles.
 // Host code and nvcc may use different SIMD alignment settings.
 struct GpuGcce;
+// Thrown by every call below when the card has no memory left for it (cudaMalloc, cuBLAS or cuSOLVER allocation
+// failure). What the call had allocated is freed and the context stays usable, so with backend auto the caller can
+// compute the cluster on the CPU instead (compute_backend.h, computeCudaOutOfMemory). Test hook:
+// CCEX_TEST_GPU_OOM_BYTES=<n> makes every device allocation of n bytes or more fail this way.
+struct GpuOutOfMemory : std::runtime_error { using std::runtime_error::runtime_error; };
 bool gpuInitialize(int localRank, int localSize, char* description, int capacity);
 void gpuFinalize();
 // the global memory of the smallest visible device, 0 without one (or with CUDA_VISIBLE_DEVICES hiding them all)

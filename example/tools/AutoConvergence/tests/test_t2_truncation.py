@@ -137,13 +137,26 @@ class TestTruncation(unittest.TestCase):
         self.assertEqual(truncation.judge(T, flat, flat.copy(), 12.6e-3)["route"], "raw-area")
         self.assertIn("fit_error", j)
 
+    def test_raw_area_runs_to_t_d_exactly(self):          # review 20261012-233058-452278 P4-02 (and P4-01: no np.trapezoid)
+        t = np.array([0.0, 1.0, 2.0])
+        y = np.array([1.0, 1.0, 0.0])
+        self.assertAlmostEqual(truncation.raw_area(t, y, 1.5), 1.0 + 0.5 * (1.0 + 0.5) / 2, places=15)  # partial interval in
+        self.assertAlmostEqual(truncation.raw_area(t, y, 2.0), 1.5, places=15)
+        self.assertTrue(np.isnan(truncation.raw_area(t, y, 2.5)))                              # beyond the data: not judged
+        # the review's counterexample: the last partial interval carries the difference (10 %, a fail at 2 %)
+        tt = np.linspace(0, 1, 6)
+        T2 = .9 / np.log(100) ** (1 / 1.2)
+        bb = np.exp(-(tt / T2) ** 1.2)
+        aa = bb.copy(); aa[1] = .01; aa[2] += bb[1] - .01; aa[-1] = 1
+        self.assertGreater(abs(truncation.raw_area(tt, aa, .9) / truncation.raw_area(tt, bb, .9) - 1), 0.02)
+
     def test_a_failed_fit_on_one_side_is_judged_on_the_raw_area(self):     # user 2026-10-12, plan 2.1
         _, r = self.pair()
         A_ref = 3e-3 * truncation.gamma(1 + 1 / 1.2)
         same = np.array([t2.model(T, A_ref / truncation.gamma(1 + 1 / 6), 6.0)] * len(r), complex)   # n 6: outside 0.3-4
         j = truncation.judge(T, same, r, 12.6e-3)
         m = T <= 12.6e-3
-        raw = np.trapezoid(np.abs(same.mean(0))[m], T[m]) / np.trapezoid(np.abs(r.mean(0))[m], T[m]) - 1
+        raw = truncation.raw_area(T, np.abs(same.mean(0)), 12.6e-3) / truncation.raw_area(T, np.abs(r.mean(0)), 12.6e-3) - 1
         self.assertEqual((j["route"], j["verdict"], j["area_rel"]), ("raw-area", "pass", None))
         self.assertAlmostEqual(j["raw_area_rel"], raw, places=12)
         self.assertLessEqual(abs(raw), 0.02)

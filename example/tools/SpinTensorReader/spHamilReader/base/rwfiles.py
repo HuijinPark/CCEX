@@ -71,3 +71,14 @@ def writefile(fout,dtype,data,comment=None):
 
     f.close()
 
+def provenanceline(source, spin):
+    """The second line of every hyperfine (A) file since format v3 (2026-10-13). CCEX reads a file with this line
+    as it stands (x 1): the values are the hyperfine of the spin-S defect, whatever DFT code they came from."""
+    return f"# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = {source}, S = {spin:g}\n"
+
+def check_spin(spin):
+    """S must be a positive half-integer (0.5, 1, 1.5, ...)."""
+    if not (spin > 0 and abs(2*spin - round(2*spin)) < 1e-9):
+        pyform._error(f"--spin {spin}: the defect total spin S must be a positive half-integer (0.5, 1, 1.5, ...)")
+    return spin
+

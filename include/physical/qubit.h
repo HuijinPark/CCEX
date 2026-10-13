@@ -5,8 +5,8 @@
 #include "common/utilities.h"
 
 /**
- * @struct Qubit structure
- * @brief Qubit structure contains each qubit's information 
+ * @struct Qubit
+ * @brief Qubit structure contains each qubit's information
  * @note When you make this structure, 
  *       the following action would be done automatically.
  *       (1) alpha, beta value would be allocated
@@ -38,31 +38,27 @@ typedef struct {
 
     /**
      * @brief The name of a qubit
-     * @details Value can be obtained from &Qubit -> "qname" (default : e)
-     * @todo Add documentation for cce.in : &Qubit -> "qname" tag
+     * @details Read from Qubit.qubit[i].name (default : q0, q1, ... by position)
      */
     char name[MAX_CHARARRAY_LENGTH];
 
     /**
      * @brief The spin number of a qubit
-     * @details Value can be obtained from &Qubit -> "qnspin" (default : 1)
-     * @todo Add documentation for cce.in : &Qubit -> "qspin" tag
+     * @details Read from Qubit.qubit[i].spin, or the top-level "qspin" with a qubitfile (default : 1)
     */
     float spin;
 
     /**
      * @brief The gyromagnetic ratio of a qubit (Unit : radkHz/G)
-     * @details Value is obtained from &Qubit -> "qgyro" (default : gyro_electron)
-     * @note Unit in input file (cce.in) : radkHz/G
-     * @todo Add documentation for cce.in : &Qubit -> "qgyro" tag
+     * @details Read from Qubit.qubit[i].gyro (default : GAMMA_ELECTRON)
+     * @note Unit in the input file : radkHz/G
     */
     double gyro; 
 
     /**
      * @brief The position of a qubit (Unit : angstrom)
-     * @details Value should be obtained from &Qubit -> "qxyz" or qubitfile (no default value)
-     * @note Unit in input file (cce.in) : angstrom
-     * @todo Add documentation for cce.in : &Qubit -> "qxyz" tag and qubitfile
+     * @details Read from Qubit.qubit[i].xyz, or from the qubitfile (no default value)
+     * @note Unit in the input file : angstrom
     */
     double xyz[3];
 
@@ -71,17 +67,15 @@ typedef struct {
 
     /**
      * @brief The detuning value of a qubit (Unit : radkHz)
-     * @details The artifitial effect to shift energy level of a qubit.
-     *          Value can be obtained from &Qubit -> "qdetuning" (default : 0.0)
-     * @note Unit in input file (cce.in) : MHz
-     * @todo Add documentation for cce.in : &Qubit -> "qdetuning" tag
+     * @details The artificial effect to shift energy level of a qubit.
+     *          Read from Qubit.qubit[i].detuning, a number or [number] (default : 0.0)
+     * @note Unit in the input file : kHz; stored multiplied by 2pi (radkHz = rad/ms)
     */
     double detuning; 
 
     /**
      * @brief The energy detuning from spin bath (Unit : radkHz)
-     * @details Automatically set if &Qubit -> "qoverhaus" tag is true (default : 0.0)
-     * @todo Add documentation for cce.in : &Qubit -> "qoverhaus" tag 
+     * @details Set automatically when Qubit.overhaus is true (default : 0.0)
     */
     double overhaus; 
 
@@ -89,21 +83,16 @@ typedef struct {
 
     /**
      * @brief The projected state of a qubit (alpha)
-     * @details Value is be obtained from &Qubit -> "alphams" or -> "alphastate" tag (no default value)
-     *       - Demension : 2*spin+1
-     *       - alphams : The z-basis sub level of alpha (e.g. S, S-1, S-2 ... -S+1, -S)
-     *       - alphastate : The spin state (matrix) of alpha (e.g. [1 0 0], [0 1 0], [0 0 1])
-     * @todo Add documentation for cce.in : &Qubit -> "alphams" and -> "alphastate" tag
+     * @details Built from Qubit.qubit[i].alphams, the z-basis sublevel (S, S-1, ..., -S; default : 1),
+     *          or the top-level "qalphams" with a qubitfile. Dimension : 2*spin+1.
+     *          The whole-register vectors Qubit.psia/psib and Qubit.alphaidx/betaidx are separate (QubitArray).
     */
     MatrixXcd alpha; 
 
     /**
      * @brief The projected state of a qubit (beta)
-     * @details Value is be obtained from &Qubit -> "betams" or -> "betastate" tag (no default value)
-     *      - Demension : 2*spin+1
-     *      - betams : The z-basis sub level of beta (e.g. S, S-1, S-2 ... -S+1, -S)
-     *      - betastate : The spin state (matrix) of beta (e.g. [1 0 0], [0 1 0], [0 0 1])
-     * @todo Add documentation for cce.in : &Qubit -> "betams" and -> "betastate" tag
+     * @details Built from Qubit.qubit[i].betams, the z-basis sublevel (default : 0),
+     *          or the top-level "qbetams" with a qubitfile. Dimension : 2*spin+1.
     */
     MatrixXcd beta;
     

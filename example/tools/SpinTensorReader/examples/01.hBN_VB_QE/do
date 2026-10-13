@@ -3,25 +3,26 @@
 tool="QE"
 fposcar="./QE_POSCAR_flat"
 dfname="VB"
+spin=1    # V_B- is S = 1; required for QE: hyperfine.out is the S = 1/2 coupling, the A file holds it x 1/(2S)
 fhf="./QE_Hyper_flat.out"
 fefg="./QE_EFG_flat.out"
 
 #python ./../../main.py -h
 
 # case 1-1
-#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg} --fidentify False
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --spin ${spin} --Q ${fefg}
 
 # case 1-2
-#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg}
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --spin ${spin} --Q ${fefg}
 
 # case 1-3
-#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg} --fidentify False --rangeformat coord
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --spin ${spin} --Q ${fefg} --rangeformat coord
 
 # case 1-4
-python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg} --fidentify False --rangeformat vertex
+python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --spin ${spin} --Q ${fefg} --rangeformat vertex
 
 # case 2
-#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} 
+#python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --spin ${spin} 
 
 # case 3
 #python ./../../main.py ${tool} ${fposcar} ${dfname} --Q ${fefg} 
@@ -40,6 +41,7 @@ python ./../../main.py ${tool} ${fposcar} ${dfname} --A ${fhf} --Q ${fefg} --fid
         eQ value in efg.in have to be 1.0 
         we don't consider the eQ value in this code
     
-    3) In the case of QE, Version 1 = Version 2
+    3) The A file starts with the tag QUANTUMESPRESSO and the provenance line
+       "# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = QE hyperfine.out, S = 1"
 END
 ################################################################################

@@ -16,7 +16,7 @@ typedef enum {
 } DefectAxisReference;
 
 /**
- * @struct CalConfig
+ * @struct Config
  * @brief This structure contains the parameters for the simulation.
  * @details Each parameter is read from the input file or options.
  *          and those parameters are used in the simulation directly.
@@ -44,8 +44,10 @@ typedef struct {
      * 
     */
     char method[MAX_CHARARRAY_LENGTH];
-    char quantity[MAX_CHARARRAY_LENGTH];  /**< Measurment : coherence | noise  | dm   */
-    char propagator[MAX_CHARARRAY_LENGTH];/**< gCCE free-evolution propagator : eigen | expm */
+    char quantity[MAX_CHARARRAY_LENGTH];  /**< Measurement : coherence | dm (noise is refused: not implemented) */
+    char propagator[MAX_CHARARRAY_LENGTH];/**< free-evolution propagator : eigen | expm (gCCE) | sparse (A2) */
+    long sparse_min_dim;                  /**< propagator sparse: clusters of this Hilbert dimension and above take it (default 4096) */
+    double sparse_tol;                    /**< propagator sparse: the Krylov expansion tolerance (default 1e-12) */
     char evolution[MAX_CHARARRAY_LENGTH]; /**< gCCE state representation : matrix | vector   */
     bool evolution_isdefault;             /**< true until an "evolution" key is actually read */
     char evolution_update[16];            /**< exact | recursive: the phases of the time grid by sin/cos at every point, or by the previous point's times one step's factor (A16 b); empty until given or resolved (A29: recursive where supported, else exact) */
@@ -63,11 +65,13 @@ typedef struct {
     int gpu_cluster_batch_mb;              /**< estimated live buffer budget for bundleing clusters */
     int gpu_packed_max_dim;                /**< gpu_options.packed_max_dim: cCCE clusters of this bath dimension or less (2, 4) to the packed kernel; 0 off; -1 until Config_resolvePackedMaxDim */
     char gpu_packed_source[64];            /**< "given", or the default and why (Config_resolvePackedMaxDim) */
+    int gpu_warp_max_dim;                  /**< gpu_options.warp_max_dim (A40): clusters of a compiled total dimension up to this value to the warp kernel; 0 off; -1 until Config_resolveWarpMaxDim */
+    char gpu_warp_source[64];              /**< "given", or the default and why (Config_resolveWarpMaxDim) */
     bool profile;                         /**< print per-rank, per-dimension timing totals */
     bool cluster_contributions;           /**< record irreducible cluster log importance over all input times */
     int cluster_contribution_max_mb;      /**< diagnostic raw-table budget per MPI rank */
     int nrdip_ladder;                     /**< number of rdip_ladder rungs (0 = off) */
-    float rdip_ladder[64];                /**< extra rdip rungs assembled from one cCCE2 run (auto-truncation-plan.md) */
+    float rdip_ladder[64];                /**< extra rdip rungs assembled from one order-2 coherence run: CCE, gCCE or pCCE (src/auto_convergence/rdip_ladder.cpp) */
     char pcce_partition[16];              /**< deterministic (default) | legacy */
     char pcce_connections[16];            /**< centers (default) | spins: which distance connects two partitions */
     char pcce_cache_mode[16];             /**< off (default) | read | readwrite */
@@ -84,7 +88,7 @@ typedef struct {
     char adaptive_work_file[MAX_FILEPATH]; /**< optional request for the refinement driver */
 
     // General options
-    int   order;        /**< Maximum nuclear spins included in a cluster ( >= 0 )*/
+    int   order;        /**< Maximum cluster size ( >= 0 ): bath sites (standard), partitions of sK spins (pCCE), bundles (cluster_mode adaptive) */
     float bfield[3];    /**< Magnetic field (Bx,Bx,Bz) (Unit G)                  */
     float rbath;        /**< Bath radius (Unit angstrom)                         */
     float rdip;         /**< Dipole radius (Unit angstrom)                       */
@@ -164,7 +168,9 @@ typedef struct {
      *          computational basis and are left alone. It says nothing about the POSITION
      *          columns of the tensor file, which are always read in the original frame,
      *          because that is what the lookup matches against.
-     *          Empty = not given; required when the rotation is on and hf_readmode > 0.
+     *          Empty = not given; required when the rotation is on and hf_readmode is 2 or 3.
+     *          At hf_readmode 1 the anisotropic part is rebuilt as a point dipole from the
+     *          source geometry, so a given frame is not used (only noted in the log).
     */
     char rot_hf_tensor_frame[MAX_CHARARRAY_LENGTH];
     char rot_qd_tensor_frame[MAX_CHARARRAY_LENGTH]; /**< Same, for the quadrupole tensors */
@@ -206,11 +212,11 @@ typedef struct {
     // DFT Hyperfine tensor
     int hf_readmode; /**< Read mode for hyperfine tensor file : 0 : off , 1~3 : fermi & DFT */ 
     char* hf_tensorfile; /**< Hyperfine tensor file name */
-    int hf_ignore_oor; /**< Ignore nuclear spins out of range the hyperfine tensor file */
+    int hf_ignore_oor; /**< A spin inside the hyperfine file's range but with no entry in it: 0 = error, else its point-dipole tensor is used (no spin is removed) */
     
 
     // DFT Quadrupole tensor
-    int qd_readmode; /**< Read mode for quadrupole tensor file : 0 : off , 1 : exp , 2: dft */
+    int qd_readmode; /**< Read mode for quadrupole tensor file : 0 off; 2, 3, 4 read qd_tensorfile (3 and 4 also need qd_tensorfile_woqubit and qd_cellpara); 1 was removed and is refused */
     char* qd_tensorfile; /**< Quadrupole tensor file name */
     char* qd_tensorfile_woqubit ; /**< Quadrupole tensor file name without qubit */
     double qd_cellpara[3]; 
@@ -291,7 +297,9 @@ void Config_setPropagator(Config* cnf, char* propagator);
 void Config_setEvolution(Config* cnf, char* evolution);
 void Config_resolveEvolution(Config* cnf);
 void Config_validateEvolutionUpdate(Config* cnf);
+void Config_validatePropagator(const Config* cnf, int nqubit);
 void Config_resolvePackedMaxDim(Config* cnf);   /**< gpu_options.packed_max_dim without the key (A26) */
+void Config_resolveWarpMaxDim(Config* cnf);     /**< gpu_options.warp_max_dim without the key (A40) */
 void Config_setOrder(Config* cnf, int order);
 void Config_setBfield(Config* cnf, float* bfield);
 void Config_setBfield_z(Config* cnf, float bz);

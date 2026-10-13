@@ -116,7 +116,7 @@ Add these keys to an existing CCE, pCCE or gCCE input:
     "backend": "auto",
     "propagator": "eigen",
     "gpu_options": {
-        "min_dim": 256,
+        "min_dim": 768,
         "evolution_batch_steps": 64,
         "evolution_batch_size": 8,
         "cluster_batch_mb": 64,
@@ -149,11 +149,12 @@ The complete list of these keys, with their types and defaults, is
 
 | Option | Behavior |
 | --- | --- |
-| `backend=cpu` | Default; no CUDA initialization or GPU computation |
-| `backend=cuda` | Require CUDA for every CCE/pCCE/gCCE cluster calculation; fail if unsupported or unavailable |
-| `backend=auto` | Use CUDA for supported clusters with dimension at least `gpu_options.min_dim`; otherwise use CPU |
-| `gpu_options.min_dim` | Positive integer, default 256; applies only to `auto` (the flat `gpu_min_dim` before 2026-10-12, now refused) |
+| `backend=cpu` | Default; no GPU computation for the clusters the packed kernel does not take (with `packed_max_dim` > 0, given explicitly, node rank 0 still opens CUDA for the packed clusters) |
+| `backend=cuda` | Require CUDA for every CCE/pCCE/gCCE cluster the packed kernel does not take; fail if unsupported or unavailable |
+| `backend=auto` | Of the clusters the packed kernel does not take, use CUDA for supported clusters with dimension at least `gpu_options.min_dim`; otherwise use CPU |
+| `gpu_options.min_dim` | Positive integer, default 768 (256 until 2026-10-13; A37: the GPU wins from about 670-750 on, every path); applies only to `auto` (the flat `gpu_min_dim` before 2026-10-12, now refused) |
 | `gpu_options.packed_max_dim` | 0 (off), 2 or 4; default 4 in `main_gpu.out` with `backend` `cuda`/`auto` and CCE, else 0: cCCE clusters of bath dimension up to it go to [the packed kernel](#the-packed-kernel-for-small-ccce-clusters-gpu_optionspacked_max_dim) |
+| `gpu_options.warp_max_dim` | 0 (off) to 32; default 27 in `main_gpu.out` with `backend` `cuda`/`auto` and CCE or gCCE, else 0: clusters of a compiled total dimension up to it go to [the warp kernel](#the-warp-kernel-for-clusters-up-to-dimension-32-gpu_optionswarp_max_dim) |
 | `gpu_options.evolution_batch_steps` | Positive integer, default 64; maximum time points processed together (was `gpu_batch_steps`) |
 | `gpu_options.evolution_batch_size` | Positive integer, default 8; maximum consecutive compatible clusters evolved together; 1 uses the sequential cluster path (was `gpu_batch_clusters`) |
 | `gpu_options.cluster_batch_mb` | Positive integer, default 64 MiB per rank; estimated active evolution-buffer budget used when grouping clusters (was `gpu_cluster_batch_mb`) |
@@ -188,16 +189,29 @@ The partition cache algorithm identity is now `pcce-deterministic-20260912-v3`:
 `readwrite` recomputes old v1/v2 identities once; `read` rejects them until
 regenerated. The on-disk cache format remains version 1.
 
-`auto` defers CUDA initialization until a rank encounters its first eligible
-cluster. A run containing only smaller clusters does not initialize CUDA. Ranks
+The rest of this paragraph is about the per-rank CUDA initialization of the
+large-cluster path; the packed kernel's context (below) is opened separately by
+node rank 0 at the start whenever `packed_max_dim` > 0, which in the GPU build is
+the default for CCE with `cuda`/`auto`. `auto` defers the per-rank initialization
+until a rank encounters its first eligible cluster, so a run containing only
+smaller clusters does not initialize it on that rank. Ranks
 with no eligible clusters do not wait for those that initialize: only node-rank
 metadata discovery is collective. `backend=cuda` still requires initialization
 on every rank at startup.
 
 `auto` also works in a CPU-only executable and falls back to CPU when CUDA
-initialization is unavailable. Once GPU computation starts, allocation, solver or
-execution failures abort the MPI job with an error; they do not silently rerun a
-partially completed cluster. An explicit `cuda` request with gCCE `expm` or an
+initialization is unavailable. Once GPU computation starts, solver or execution
+failures abort the MPI job with an error; they do not silently rerun a partially
+completed cluster. Running out of GPU memory is the exception under `auto` (since
+2026-10-13; A37 job 699 aborted when 20 ranks held dimension-2197 ensemble clusters
+on one 96 GB card at once, and took the MPS server with it): what the cluster had on
+the card is freed, the cluster is computed on the CPU from the start, and that rank
+sends no later cluster of that dimension or larger to the GPU. The log has one
+`[gpu-memory-fallback] rank=R dim=D` line per rank and dimension, and a count per
+rank at the end; the curves are the CPU path's for those clusters. With `cuda` an
+out-of-memory still stops the run. `CCEX_TEST_GPU_OOM_BYTES=<n>` (a test hook) fails
+every device allocation of n bytes or more, as a full card would; `check_options.py`
+uses it for cCCE and gCCE, one by one and in cluster batches. An explicit `cuda` request with gCCE `expm` or an
 unsupported method is rejected after command-line overrides are resolved.
 
 `cluster_mode=adaptive` adds variable-size automatic grouping to `method=cce`
@@ -213,7 +227,7 @@ gCCE, the qubit. It is not just the CCE order. Reduce the time batch size if GPU
 memory is tight. gCCE matrix evolution has two main complex-double buffers of
 `16 * D² * batch_steps` bytes each; cCCE ensemble uses three. The corresponding
 pure-state buffers hold `D * batch_steps` elements each. Eigensystems, solver
-workspace and other buffers add to this. gCCE `allfull` requires additional
+workspace and other buffers add to this. gCCE `savemode` `cluster_density_matrix` requires additional
 density-matrix storage and host output storage.
 
 For pCCE, `order` counts groups and `sK` is the number of bath sites per group.
@@ -237,6 +251,7 @@ that mode retain the original seed **and MPI size**; each rank uses the historic
 `max(1, max_trial / ranks)` trials and shared C RNG behavior. Legacy mode preserves
 its MPI dependence and potentially repeated search streams.
 
+<a id="the-packed-kernel-for-small-ccce-clusters-gpu_optionspacked_max_dim"></a>
 ## The packed kernel for small cCCE clusters (`gpu_options.packed_max_dim`)
 
 The paths above give each cluster its own eigensolver calls, copies and synchronizations. For the bath-dimension 2 and 4
@@ -249,16 +264,32 @@ that path:
   `include/calculation/gpu/small_cluster_math.h`): cyclic complex Jacobi for both conditional Hamiltonians (lower
   triangle, as Eigen reads it), M = V_up^† V_down, then for every time point the chain of `evolveSingleState` - the
   ensemble as the average of that chain over the basis states, the Hahn ensemble by the CPU's identity
-  Σ |X_ab|² conj(Du_a) Du_b / D with X = M Dd M^†. Pulse plans with at most four distinct interval lengths; phases
-  `exact` or `recursive`, as the run's `evolution_update`. A cluster whose Jacobi does not converge (off-diagonal above
-  1e-12 of the diagonal), or whose Hamiltonian is not finite and Hermitian, goes back to the CPU path;
+  Σ |X_ab|² conj(Du_a) Du_b / D with X = M Dd M^†. Pulse plans with at most 64 pulses (`maxIntervals` = npulse + 1 = 65)
+  and at most four distinct interval lengths, chosen after the general input checks (an ensemble `Manual` sequence is
+  refused with `backend=cuda` and switched to `cpu` with `auto` before this); phases
+  `exact` or `recursive`, as the run's `evolution_update`. The Jacobi rotations run on the Hamiltonian scaled by a
+  power of two (exact) to a largest component in [0.5, 1), with `hypot` for the magnitudes, so that no finite
+  Hamiltonian overflows or underflows in them. A cluster whose Jacobi does not converge (off-diagonal above
+  1e-12 of the diagonal), whose eigenvalues, eigenvectors or coherences are not finite, or whose Hamiltonian is not
+  finite and Hermitian, goes back to the CPU path;
 - **one CUDA context per node**: every rank builds its clusters' Hamiltonians with the CPU path's own function and packs
   them into its part of a node shared-memory window (MPI-3, page-locked once); node rank 0 runs a feeder thread that
   takes the submitted windows (2048 clusters each, two per rank) of all ranks into combined batches in two lanes and
   writes the coherences back. The ranks assemble the product as before. With one context per rank, 32 ranks starting
   CUDA at once took 3.5 s and tearing it down about 2 s (job 683); the context and the shared memory are therefore
   started in `computeBackendInit`, in a thread, while the bath is read and the clusters are made, and until they are
-  up the ranks compute their clusters on the CPU. A node with several GPUs uses its first one.
+  up the ranks compute their clusters on the CPU. When no rank has a cluster of a dimension the packed or the warp
+  kernel takes (each rank looks at its clusters until it finds one; one Allreduce), that start is released before the
+  calculation and no feeder runs (GPU 다음 셋 (1), 2026-10-13). A node with several GPUs uses its first one. A window holds fewer
+  clusters when their coherences would pass 6 MiB per slot (19 at 20,000 time points); when one cluster's alone pass it,
+  or no rank has a cluster, the batch is off and nothing is allocated past the start. The batch runs threads beside
+  MPI, so `main.out` asks MPI for `MPI_THREAD_FUNNELED` (only the main thread calls MPI) and the batch is refused if
+  the MPI provides less;
+- **a GPU that cannot be opened**: with `backend` = `auto` the batch is turned off and every cluster is computed on the
+  CPU (the `auto` contract above; the log says `[gpu-packed] off: the GPU could not be opened`); with `cuda`, or an
+  explicit `packed_max_dim` with `cpu`, the run stops - also when the ranks had finished their clusters before the
+  opening failed (the feeder's state is read again after it is joined), so the outcome does not depend on the timing.
+  Errors after the GPU is up stop the run under every `backend`.
 
 Every loop over the matrix indices has a compile-time trip count and is unrolled. The step-0 prototype without that
 unrolling got dimension-4 eigenvalues wrong on the device (up to 3.4e6): after the first rotation the device read the
@@ -267,6 +298,46 @@ NVVM optimizer (cicc -O3) on the dynamically indexed local arrays (job 680,
 (internal notes)). The standing check `test_small_cluster_cuda`
 (`make gpu-test`) runs the kernel on CPU-dumped clusters (11 files: single state and ensemble, Hahn, CPMG, Ramsey,
 `exact` and `recursive`, 128 production P1 clusters) against 1e-8 + 2e-6 |CPU| per point.
+
+## The warp kernel for clusters up to dimension 32 (`gpu_options.warp_max_dim`)
+
+A40 (2026-10-12; adopted and on by default in the GPU build with backend `auto`/`cuda` since 2026-10-13, default 27 =
+every compiled dimension; 0 in the CPU build and with backend `cpu`). gCCE clusters with an NV-like qubit (dimension 3) are 3 × bath dimension: 6, 12 for a
+P1 bath (dimension 12 is 83–87 % of P1 gCCE2 time), 9, 12, 21, 27 in h-BN — too large for the packed kernel's registers
+and far below `min_dim`. `"gpu_options": {"warp_max_dim": 27}` (the default) sends the clusters of a compiled total
+dimension up to it to
+`src/calculation/gpu/warp_cluster_gpu.cu` (plan and sizes in `include/calculation/gpu/warp_cluster.h`):
+
+- **one cluster per warp**: the matrices in shared memory; the eigensystem by a parallel cyclic Jacobi (round-robin
+  ordering: each round rotates disjoint index pairs at once, the 32 lanes sharing the column and row updates; the
+  rotation, threshold, 20-sweep limit, convergence test, power-of-two scaling and finiteness checks of the packed kernel;
+  a cluster whose eigensystem or coherence is not finite goes back to the CPU); then lane l computes the time points
+  l, l + 32, ..., each the whole interval chain of `propagateStateGcce` (gCCE) or of `evolveSingleState` (cCCE) with the
+  eigenvectors read from shared memory. gCCE ensemble (`evolution=matrix`, ρ0 = ρq ⊗ 1/d_bath) is the same chain averaged
+  over the d_bath starts ψq ⊗ e_m; a single state with `evolution=matrix` uses the pure start ψq ⊗ ψbath. Quantity
+  coherence or dm (the qdim × qdim reduced density matrix). cCCE ensemble Hahn by the CPU's identity, as the packed
+  kernel. Phases exact (with the tail of `refinedPhases` for gCCE). Compiled: gCCE qubit dimension 3 × bath 2, 3, 4, 6, 7,
+  8, 9; cCCE bath 8 and 16. The step-0 prototype ((internal notes), job 698) of this scheme ran
+  P1 dimension-12 clusters 1.6 times as fast as 32 CPU cores;
+- **the packed kernel's node feeder**: the clusters go into the same windows of node shared memory, in an input area of
+  their own (6 MiB per window; a window closes early when it is full), their outputs after the packed ones; the feeder
+  launches one kernel per dimension. The gCCE plan (pulses, ψa, ψb, ψq) is taken in the first state (`beginState`) and
+  must not change afterwards (it cannot: those are set once per run).
+
+What it does not take runs as with `warp_max_dim` 0 (one `[gpu-warp] off: ...` line; the default switches itself off): `gcce_refinement`, `pulseiter`, a pulse
+detuning, savemode `cluster_density_matrix`, a qubit of another dimension, more than one qubit, more than 4 distinct pulse intervals.
+With the key on, the large-cluster batching of `evolution_batch_size` is off, as with the packed kernel (the windows and
+that batching both take clusters ahead). The step-0 thread-per-cluster variant was wrong at `-O3` on sm_120 (Jacobi
+unconverged for 97 % of the clusters; right on sm_86 and with `-Xcicc -O0`), the same NVVM-optimizer pattern as A26
+step 0 (dynamically indexed local arrays). The warp kernel keeps the matrices in shared memory and selects its phase slot
+without a run-time index into the per-lane arrays. The standing check `test_warp_cluster_cuda` (`make gpu-test`) runs it
+through the batch API on CPU-dumped clusters (`test/gpu_verification/check_gpu/data/warp_cluster/`, 15 files: every
+compiled dimension, single state and ensemble, coherence and dm, Hahn, CPMG, Ramsey, 64 production P1 CR60 clusters)
+against 1e-8 + 2e-6 |CPU| per value and both lanes the same bits. Measured (job 703, 32 ranks + MPS, against the GPU
+build without it): P1 CR0 gCCE2 r 0.69, CR60 σ4 0.60, h-BN gCCE2 0.86; the curves within the tolerance except 14 of 2416
+P1 CR60 values in the stretch where the product diverges (|L| > 1 and between), which the acceptance leaves out (user
+2026-10-13; there CPU exact and recursive agree within it, so the difference is the eigensolver's rounding amplified); a deliberately broken rotation (the conjugate in one
+column update) fails it with 32 FAIL lines (the h-BN clusters, whose off-diagonals are real, cannot see that change).
 
 ## MPI and multiple GPUs
 
@@ -409,7 +480,7 @@ Consecutive clusters of the same dimension, state mode and pulse schedule can
 share batched cuBLAS evolution calls. This applies to cCCE, pCCE and gCCE reduced
 outputs. Hamiltonians and eigensystems are still prepared per cluster; clustering
 and Hamiltonian construction remain on the CPU. Cluster order and product order
-are preserved. `savemode=allfull` uses sequential gCCE cluster evolution.
+are preserved. `savemode=cluster_density_matrix` uses sequential gCCE cluster evolution.
 
 Grouping uses a conservative buffer estimate and the two cluster-batch limits.
 The budget is **not a hard cap on total device memory**: a single cluster,
@@ -438,10 +509,10 @@ Library references: [cuSOLVER Hermitian eigensolver](https://docs.nvidia.com/cud
 
 ## Validation and reproduction
 
-For the `ssh gpu` server, [CCE2 Slurm jobs](../../test/gpu_verification/server/README.md) build
+For the `ssh gpu` server, CCE2 Slurm jobs (`test/gpu_verification/server/README.md`) build
 the code on the server and compare all four combinations on the original inputs.
-See the server CCE2–4 measurements and
-한국어 테스트 종합 정리. CCE2 and CCE3 passed; CCE4
+See the server CCE2–4 measurements ((internal notes)) and
+한국어 테스트 종합 정리 ((internal notes)). CCE2 and CCE3 passed; CCE4
 stopped on a numerical comparison failure after six passing cases. The full-bath
 CCE5 server job was cancelled before execution at the user's request.
 The 2026-09-12 improvement record (archive/gpu-optimization-20260912.md) documents
@@ -454,7 +525,7 @@ large MoS₂ pCCE matrices favored CUDA/auto with about four MPI ranks per GPU.
 P1 sK2 favored CUDA at two MPI ranks, but CPU at 16 ranks was faster than the
 best CUDA configuration. The dimension-only `auto` threshold is a heuristic;
 use the recorded bath-specific timings to choose the backend and MPI count.
-The pCCE validation report covers the subsequent pCCE
+The pCCE validation report ((internal notes)) covers the subsequent pCCE
 extension and the supplied PL6 archive comparison.
 
 The Python tools use only the standard library, read the existing regression
@@ -501,12 +572,12 @@ python3 test/gpu_verification/check_gpu/check_cce_pulses.py --cpu bin/main.out \
 ```
 
 Add `--mpirun /path/to/mpirun --ranks 2 --backend auto --min-dim 16 --batch 7`
-to exercise MPI, mixed CPU/GPU selection and batch tails. `--method gcce --savemode allfull`
+to exercise MPI, mixed CPU/GPU selection and batch tails. `--method gcce --savemode cluster_density_matrix`
 checks exported full density matrices as well as coherence. With `--repeats 3`,
 the benchmark alternates execution order, reports median wall times and the
 largest observed errors, and retains every run's timings and profile. Exit code 77 from
 the standalone CUDA numerical test means GPU initialization was unavailable;
 it is not a numerical pass.
 
-See cCCE measurements and gCCE measurements
+See cCCE measurements ((internal notes)) and gCCE measurements ((internal notes))
 for accuracy, timing and the limits of the tested hardware and inputs.

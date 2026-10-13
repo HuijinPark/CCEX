@@ -1,5 +1,6 @@
 #include "../../../include/calculation/gpu/compute_backend.h"
 #include "../../../include/calculation/gpu/small_cluster_batch.h"
+#include <climits>
 #include <cstdarg>
 #include <map>
 #include <string>
@@ -14,6 +15,8 @@ bool cudaReady = false;
 bool cudaAttempted = false;
 bool cudaSupported = false;
 int nodeRank = 0, nodeSize = 1;
+int cpuFromDimension = INT_MAX;          // backend auto after an out-of-memory: this dimension and above on the CPU
+long long outOfMemoryClusters = 0;
 struct Timing { long long count=0; double build=0, setup=0, evolution=0; };
 std::map<std::tuple<std::string,std::string,int>,Timing> timings;
 struct BatchTiming { long long batches=0, clusters=0; int largest=0; };
@@ -33,6 +36,7 @@ void fail(const char* message){
 
 void computeBackendInit(const Config* config){
     cudaReady=false; cudaAttempted=false; cudaSupported=false;
+    cpuFromDimension=INT_MAX; outOfMemoryClusters=0;
     smallClusterWarmUp(config);          // A26: the small-cluster batch's CUDA context, early (nothing unless asked for)
     if (!strcasecmp(config->backend,"cpu")) return;
     const bool required = !strcasecmp(config->backend,"cuda");
@@ -87,7 +91,7 @@ std::size_t computeDeviceMemory(const Config* config){
 
 bool computeUseCuda(const Config* config, int dimension){
     if (!cudaSupported || !strcasecmp(config->backend,"cpu")) return false;
-    if (!strcasecmp(config->backend,"auto") && dimension<config->gpu_min_dim) return false;
+    if (!strcasecmp(config->backend,"auto") && (dimension<config->gpu_min_dim || dimension>=cpuFromDimension)) return false;
 #ifdef CCEX_USE_CUDA
     if (!cudaAttempted){
         char description[512]={};
@@ -98,6 +102,18 @@ bool computeUseCuda(const Config* config, int dimension){
     }
 #endif
     return cudaReady;
+}
+
+bool computeCudaOutOfMemory(const Config* config, int dimension, const char* what){
+    if (strcasecmp(config->backend,"auto")) return false;
+    ++outOfMemoryClusters;
+    if (dimension < cpuFromDimension){
+        cpuFromDimension = dimension;
+        fprintf(stdout,"[gpu-memory-fallback] rank=%d dim=%d: the GPU is out of memory (%s); backend=auto, so this cluster "
+                       "and every later one of dimension %d or more on this rank are computed on the CPU\n",rank,dimension,what,dimension);
+        fflush(stdout);
+    }
+    return true;
 }
 
 void computeProfile(const Config* config, const char* method, const char* backend,
@@ -128,6 +144,9 @@ void computeProfileFlush(){
         append(text,"[gpu-batch] rank=%d dim=%d batches=%lld clusters=%lld max_clusters=%d\n",
                rank,entry.first,entry.second.batches,entry.second.clusters,entry.second.largest);
     clusterBatches.clear();
+    if(outOfMemoryClusters)
+        append(text,"[gpu-memory-fallback] rank=%d clusters=%lld from_dim=%d\n",rank,outOfMemoryClusters,cpuFromDimension);
+    outOfMemoryClusters=0;
 #ifdef CCEX_USE_CUDA
     if (cudaReady && profiled){
         const auto stats=gpuMemoryStats();

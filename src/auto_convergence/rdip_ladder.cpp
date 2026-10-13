@@ -64,7 +64,7 @@ void prepare(Config* c,Cluster* cls,BathArray* ba,Output* op){
     if(Cluster_getOrder(cls)!=(pcce ? 2*cls->sK : 2))refuse("needs order 2");
     if(strcasecmp(c->cluster_mode,"standard"))refuse("needs cluster_mode standard");
     if(c->cluster_contributions)refuse("cannot be combined with cluster_contributions");
-    if(strcasecmp(Output_getSavemode(op),"normal"))refuse("needs savemode normal");
+    if(strcasecmp(Output_getSavemode(op),"coherence"))refuse("needs savemode coherence");
     const float rdip=Config_getRdip(c),cut=Config_getRdipcut(c);
     for(int k=0;k<c->nrdip_ladder;++k)
         if(!(c->rdip_ladder[k]>cut && c->rdip_ladder[k]<rdip))refuse("rungs must lie between rdipcut and rdip");

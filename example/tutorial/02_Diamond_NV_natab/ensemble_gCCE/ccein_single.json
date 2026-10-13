@@ -11,25 +11,10 @@
     "rdip"          : 10,
     "deltat"        : 0.001,
     "nstep"         : 2000,
+    # the NV zero-field splitting, the same tensor as each NV of ccein_multi2.json (kHz)
+    "qzfs"          : [[-960000, 0, 0],[0, -960000, 0],[0, 0, 1920000]],
 
     # Qubit 
-    "Qubit"   : { 
-                   "nqubit" : 1,
-                   "qubit"  : [{   
-                                    "name"   : "qubit1",
-                                    "spin"   : 1.0,
-                                    "gyro"   : -17608.597050,
-                                    "xyz"    :  [  73.73895,	  75.72808,	  73.97033],
-                                    "alphams": -1,
-                                    "betams" : 0,
-                                    "detuning": [0.0]
-                              }],  
-        			"intmap": [{
-        			                "between": ["qubit1", "qubit1"],
-        			                "tensor" : [[-960000, 0, 0],[0, -960000, 0 ],[0, 0, 1920000]]
-        			           }]
-                },   
-
     "qalphams"     : 1,
     "qbetams"      : 0,
 

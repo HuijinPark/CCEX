@@ -3,8 +3,10 @@
   "tol": 0.0001,
   "renames": {
    "arbitrary_gcce1_dm": {
-    "out_0_1_noDiv": "out_0_0_noDiv",
-    "out_0_1_wiDiv": "out_0_0_wiDiv"
+    "out_0_full_state1_noDiv": "out_0_0_noDiv",
+    "out_full_state1_noDiv": "out_0_noDiv",
+    "out_0_full_state1_wiDiv": "out_0_0_wiDiv",
+    "out_full_state1_wiDiv": "out_0_wiDiv"
    }
   },
   "cases": {
@@ -13,19 +15,24 @@
    "p1_manual_hahn": "deltat was a float until 39d03aa5c; a 2e-8 shift in time moves the fast P1 phases",
    "p1_cpmg8_manual": "deltat was a float until 39d03aa5c; a 2e-8 shift in time moves the fast P1 phases",
    "p1_gcce2_population": "deltat was a float until 39d03aa5c; the population at 5 ms moves by 1e-3; and elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero",
-   "hbn_gcce2_dm": "elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero",
+   "hbn_gcce2_dm": "elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero; and 2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.544, wiDiv 0.619",
    "p1_cce4": "float deltat (39d03aa5c) and float tau (8185aa31e); 1e-6 in noDiv, 4e-4 only in wiDiv",
    "p1_pcce2_sk2": "the pCCE partition search is seeded; the random sequence changed on this branch, so the partitions differ",
-   "hbn_hfmedi": "aa883d0d4: the hyperfine-mediated term is the complete second order, sum over every intermediate qubit eigenstate beta != alpha of E_ab E_ab^dagger / (w_a - w_b) with E_ab = sum_i <alpha|S|beta>.A_i.I_i (every ordered pair and i = j); before it summed one pair order (i < j; both orders from 18722ae54) over the partner level only and was not Hermitian for the spin-1 V_B qubit; and the input's qzfs typo [[-1080000,0,0],[-1180000,0,0],[0,0,232000]] became [[-1080000,0,0],[0,-1180000,0],[0,0,2320000]] in the same commit. Against 18722ae54: noDiv 0.947, wiDiv 0.854 (code alone 0.696 / 0.457, input alone 0.571 / 0.663)",
-   "natab_knight_shift": "aa883d0d4: the Knight-shift term multiplies by the nuclear Zeeman vector -gamma_n B (was the bare field B) and takes |m_s| of each branch as <S_z^2> (was the eigenvector norm, always 1); the tilted field of this case makes the term nonzero: noDiv 0.984, wiDiv 1.30"
+   "hbn_hfmedi": "aa883d0d4: the hyperfine-mediated term is the complete second order, sum over every intermediate qubit eigenstate beta != alpha of E_ab E_ab^dagger / (w_a - w_b) with E_ab = sum_i <alpha|S|beta>.A_i.I_i (every ordered pair and i = j); before it summed one pair order (i < j; both orders from 18722ae54) over the partner level only and was not Hermitian for the spin-1 V_B qubit; and the input's qzfs typo [[-1080000,0,0],[-1180000,0,0],[0,0,232000]] became [[-1080000,0,0],[0,-1180000,0],[0,0,2320000]] in the same commit. Against 18722ae54: noDiv 0.947, wiDiv 0.854 (code alone 0.696 / 0.457, input alone 0.571 / 0.663); and 2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.880, wiDiv 0.775",
+   "natab_knight_shift": "aa883d0d4: the Knight-shift term multiplies by the nuclear Zeeman vector -gamma_n B (was the bare field B) and takes |m_s| of each branch as <S_z^2> (was the eigenvector norm, always 1); the tilted field of this case makes the term nonzero: noDiv 0.984, wiDiv 1.30",
+   "hbn_cce2_hf3_qd0": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 5.37e-2, wiDiv 5.37e-2",
+   "hbn_cce2_hf3_qd2": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.694, wiDiv 3.46e-2",
+   "hbn_gcce2_oh": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.614, wiDiv 0.117"
   }
  },
  "v1.2.2": {
   "tol": 0.0001,
   "renames": {
    "arbitrary_gcce1_dm": {
-    "out_0_1_noDiv": "out_0_0_noDiv",
-    "out_0_1_wiDiv": "out_0_0_wiDiv"
+    "out_0_full_state1_noDiv": "out_0_0_noDiv",
+    "out_full_state1_noDiv": "out_0_noDiv",
+    "out_0_full_state1_wiDiv": "out_0_0_wiDiv",
+    "out_full_state1_wiDiv": "out_0_wiDiv"
    }
   },
   "cases": {
@@ -34,23 +41,67 @@
    "p1_manual_hahn": "deltat was a float until 39d03aa5c; a 2e-8 shift in time moves the fast P1 phases",
    "p1_cpmg8_manual": "deltat was a float until 39d03aa5c; a 2e-8 shift in time moves the fast P1 phases",
    "p1_gcce2_population": "deltat was a float until 39d03aa5c; the population at 5 ms moves by 1e-3; and elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero",
-   "hbn_gcce2_dm": "elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero",
+   "hbn_gcce2_dm": "elements the free evolution keeps at zero were nan (round-off over zero) until 2026-09-24; divMatrixXcdElementWise leaves them at zero; and 2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.544, wiDiv 0.619",
    "p1_cce4": "float deltat (39d03aa5c) and float tau (8185aa31e); 1e-6 in noDiv, 4e-4 only in wiDiv",
    "p1_pcce2_sk2": "the pCCE partition search is seeded; the random sequence changed on this branch, so the partitions differ",
-   "hbn_hfmedi": "aa883d0d4: the hyperfine-mediated term is the complete second order, sum over every intermediate qubit eigenstate beta != alpha of E_ab E_ab^dagger / (w_a - w_b) with E_ab = sum_i <alpha|S|beta>.A_i.I_i (every ordered pair and i = j); before it summed one pair order (i < j; both orders from 18722ae54) over the partner level only and was not Hermitian for the spin-1 V_B qubit; and the input's qzfs typo [[-1080000,0,0],[-1180000,0,0],[0,0,232000]] became [[-1080000,0,0],[0,-1180000,0],[0,0,2320000]] in the same commit. Against 18722ae54: noDiv 0.947, wiDiv 0.854 (code alone 0.696 / 0.457, input alone 0.571 / 0.663)",
-   "natab_knight_shift": "aa883d0d4: the Knight-shift term multiplies by the nuclear Zeeman vector -gamma_n B (was the bare field B) and takes |m_s| of each branch as <S_z^2> (was the eigenvector norm, always 1); the tilted field of this case makes the term nonzero: noDiv 0.984, wiDiv 1.30"
+   "hbn_hfmedi": "aa883d0d4: the hyperfine-mediated term is the complete second order, sum over every intermediate qubit eigenstate beta != alpha of E_ab E_ab^dagger / (w_a - w_b) with E_ab = sum_i <alpha|S|beta>.A_i.I_i (every ordered pair and i = j); before it summed one pair order (i < j; both orders from 18722ae54) over the partner level only and was not Hermitian for the spin-1 V_B qubit; and the input's qzfs typo [[-1080000,0,0],[-1180000,0,0],[0,0,232000]] became [[-1080000,0,0],[0,-1180000,0],[0,0,2320000]] in the same commit. Against 18722ae54: noDiv 0.947, wiDiv 0.854 (code alone 0.696 / 0.457, input alone 0.571 / 0.663); and 2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.880, wiDiv 0.775",
+   "natab_knight_shift": "aa883d0d4: the Knight-shift term multiplies by the nuclear Zeeman vector -gamma_n B (was the bare field B) and takes |m_s| of each branch as <S_z^2> (was the eigenvector norm, always 1); the tilted field of this case makes the term nonzero: noDiv 0.984, wiDiv 1.30",
+   "hbn_cce2_hf3_qd0": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 5.37e-2, wiDiv 5.37e-2",
+   "hbn_cce2_hf3_qd2": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.694, wiDiv 3.46e-2",
+   "hbn_gcce2_oh": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.614, wiDiv 0.117"
   }
  },
  "head-20260924-64f0a1a41": {
+  "renames": {
+   "arbitrary_gcce1_dm": {
+    "out_0_full_state1_noDiv": "out_0_1_noDiv",
+    "out_full_state1_noDiv": "out_0_noDiv",
+    "out_0_full_state1_wiDiv": "out_0_1_wiDiv",
+    "out_full_state1_wiDiv": "out_0_wiDiv"
+   }
+  },
   "cases": {
-   "hbn_hfmedi": "aa883d0d4: the hyperfine-mediated term is the complete second order, sum over every intermediate qubit eigenstate beta != alpha of E_ab E_ab^dagger / (w_a - w_b) with E_ab = sum_i <alpha|S|beta>.A_i.I_i (every ordered pair and i = j); before it summed one pair order (i < j; both orders from 18722ae54) over the partner level only and was not Hermitian for the spin-1 V_B qubit; and the input's qzfs typo [[-1080000,0,0],[-1180000,0,0],[0,0,232000]] became [[-1080000,0,0],[0,-1180000,0],[0,0,2320000]] in the same commit. Against 18722ae54: noDiv 0.947, wiDiv 0.854 (code alone 0.696 / 0.457, input alone 0.571 / 0.663)",
-   "natab_knight_shift": "aa883d0d4: the Knight-shift term multiplies by the nuclear Zeeman vector -gamma_n B (was the bare field B) and takes |m_s| of each branch as <S_z^2> (was the eigenvector norm, always 1); the tilted field of this case makes the term nonzero: noDiv 0.984, wiDiv 1.30"
+   "hbn_hfmedi": "aa883d0d4: the hyperfine-mediated term is the complete second order, sum over every intermediate qubit eigenstate beta != alpha of E_ab E_ab^dagger / (w_a - w_b) with E_ab = sum_i <alpha|S|beta>.A_i.I_i (every ordered pair and i = j); before it summed one pair order (i < j; both orders from 18722ae54) over the partner level only and was not Hermitian for the spin-1 V_B qubit; and the input's qzfs typo [[-1080000,0,0],[-1180000,0,0],[0,0,232000]] became [[-1080000,0,0],[0,-1180000,0],[0,0,2320000]] in the same commit. Against 18722ae54: noDiv 0.947, wiDiv 0.854 (code alone 0.696 / 0.457, input alone 0.571 / 0.663); and 2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.880, wiDiv 0.775",
+   "natab_knight_shift": "aa883d0d4: the Knight-shift term multiplies by the nuclear Zeeman vector -gamma_n B (was the bare field B) and takes |m_s| of each branch as <S_z^2> (was the eigenvector norm, always 1); the tilted field of this case makes the term nonzero: noDiv 0.984, wiDiv 1.30",
+   "hbn_cce2_hf3_qd0": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 5.37e-2, wiDiv 5.37e-2",
+   "hbn_cce2_hf3_qd2": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.694, wiDiv 3.46e-2",
+   "hbn_gcce2_dm": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.544, wiDiv 0.619",
+   "hbn_gcce2_oh": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.614, wiDiv 0.117"
   }
  },
  "head-20261012-18722ae54": {
+  "renames": {
+   "arbitrary_gcce1_dm": {
+    "out_0_full_state1_noDiv": "out_0_1_noDiv",
+    "out_full_state1_noDiv": "out_0_noDiv",
+    "out_0_full_state1_wiDiv": "out_0_1_wiDiv",
+    "out_full_state1_wiDiv": "out_0_wiDiv"
+   }
+  },
   "cases": {
-   "hbn_hfmedi": "aa883d0d4: the hyperfine-mediated term is the complete second order, sum over every intermediate qubit eigenstate beta != alpha of E_ab E_ab^dagger / (w_a - w_b) with E_ab = sum_i <alpha|S|beta>.A_i.I_i (every ordered pair and i = j); before it summed one pair order (i < j; both orders from 18722ae54) over the partner level only and was not Hermitian for the spin-1 V_B qubit; and the input's qzfs typo [[-1080000,0,0],[-1180000,0,0],[0,0,232000]] became [[-1080000,0,0],[0,-1180000,0],[0,0,2320000]] in the same commit. Against 18722ae54: noDiv 0.947, wiDiv 0.854 (code alone 0.696 / 0.457, input alone 0.571 / 0.663)",
-   "natab_knight_shift": "aa883d0d4: the Knight-shift term multiplies by the nuclear Zeeman vector -gamma_n B (was the bare field B) and takes |m_s| of each branch as <S_z^2> (was the eigenvector norm, always 1); the tilted field of this case makes the term nonzero: noDiv 0.984, wiDiv 1.30"
+   "hbn_hfmedi": "aa883d0d4: the hyperfine-mediated term is the complete second order, sum over every intermediate qubit eigenstate beta != alpha of E_ab E_ab^dagger / (w_a - w_b) with E_ab = sum_i <alpha|S|beta>.A_i.I_i (every ordered pair and i = j); before it summed one pair order (i < j; both orders from 18722ae54) over the partner level only and was not Hermitian for the spin-1 V_B qubit; and the input's qzfs typo [[-1080000,0,0],[-1180000,0,0],[0,0,232000]] became [[-1080000,0,0],[0,-1180000,0],[0,0,2320000]] in the same commit. Against 18722ae54: noDiv 0.947, wiDiv 0.854 (code alone 0.696 / 0.457, input alone 0.571 / 0.663); and 2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.880, wiDiv 0.775",
+   "natab_knight_shift": "aa883d0d4: the Knight-shift term multiplies by the nuclear Zeeman vector -gamma_n B (was the bare field B) and takes |m_s| of each branch as <S_z^2> (was the eigenvector norm, always 1); the tilted field of this case makes the term nonzero: noDiv 0.984, wiDiv 1.30",
+   "hbn_cce2_hf3_qd0": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 5.37e-2, wiDiv 5.37e-2",
+   "hbn_cce2_hf3_qd2": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.694, wiDiv 3.46e-2",
+   "hbn_gcce2_dm": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.544, wiDiv 0.619",
+   "hbn_gcce2_oh": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.614, wiDiv 0.117"
+  }
+ },
+ "head-20261012-aa883d0d4": {
+  "renames": {
+   "arbitrary_gcce1_dm": {
+    "out_0_full_state1_noDiv": "out_0_1_noDiv",
+    "out_full_state1_noDiv": "out_0_noDiv",
+    "out_0_full_state1_wiDiv": "out_0_1_wiDiv",
+    "out_full_state1_wiDiv": "out_0_wiDiv"
+   }
+  },
+  "cases": {
+   "hbn_cce2_hf3_qd0": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 5.37e-2, wiDiv 5.37e-2",
+   "hbn_cce2_hf3_qd2": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.694, wiDiv 3.46e-2",
+   "hbn_gcce2_dm": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.544, wiDiv 0.619",
+   "hbn_gcce2_oh": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.614, wiDiv 0.117",
+   "hbn_hfmedi": "2026-10-13, tensor format v3: the h-BN hyperfine file is hBN_VB_flat_ATensor_HSE_CellPBE_v3 (the v1 numbers / 2, read x 1); the reference read hBN_VB_flat_ATensor_HSE_CellPBE_tag, SpinTensorReader v1 data (OUTCAR x 2) with a VASP line, x 1: every hyperfine tensor 2x (hfmedi 4x). Against head-20261012-aa883d0d4: noDiv/dm 0.880, wiDiv 0.775"
   }
  }
 }

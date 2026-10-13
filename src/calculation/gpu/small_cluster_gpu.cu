@@ -4,6 +4,7 @@
 // per dimension computes them all, and the coherences are copied back item by item. Two lanes, so that one batch is
 // copied while the other computes.
 #include "calculation/gpu/small_cluster_gpu.h"
+#include "calculation/gpu/warp_cluster_gpu.h"
 #include <cuda_runtime.h>
 #include <cstdio>
 #include <cstdlib>
@@ -33,6 +34,8 @@ template<class T> struct Device {
 };
 struct Lane {
     Device<C> in2, in4, out; Device<unsigned char> status;
+    Device<C> inW; Device<WarpEntry> entries;      // A40: the warp clusters' inputs and their launch lists
+    WarpEntry* hostEntries=nullptr; size_t hostEntriesSize=0;   // page-locked, read by the copy until the lane is done
     cudaStream_t stream=nullptr;
     cudaEvent_t done=nullptr;
     bool busy=false;
@@ -71,7 +74,7 @@ void launchDim(const Plan& plan, bool ensemble, bool recursive, const C* in, C* 
 }
 }
 
-struct GpuSmallDevice { Lane lane[2]; };
+struct GpuSmallDevice { Lane lane[2]; warpcluster::Plan warp; bool warpSet=false; };
 
 GpuSmallDevice* gpuSmallOpen(int device, char* description, int capacity){
     // the guard of gpuInitialize (gpu_backend.cu): an empty CUDA_VISIBLE_DEVICES aborts inside cudaGetDeviceCount
@@ -109,6 +112,7 @@ void gpuSmallClose(GpuSmallDevice* gpu){
         if (l.stream) cudaStreamSynchronize(l.stream);
         if (l.done) cudaEventDestroy(l.done);
         if (l.stream) cudaStreamDestroy(l.stream);
+        if (l.hostEntries) cudaFreeHost(l.hostEntries);
     }
     delete gpu;
 }
@@ -120,18 +124,59 @@ bool gpuSmallRegister(void* pointer, std::size_t bytes){
 }
 void gpuSmallUnregister(void* pointer){ if (cudaHostUnregister(pointer)!=cudaSuccess) cudaGetLastError(); }
 
+void gpuSmallWarpPlan(GpuSmallDevice* gpu, const warpcluster::Plan& plan){
+    warpClusterUpload(plan);
+    gpu->warp=plan; gpu->warpSet=true;
+}
+
 void gpuSmallSubmit(GpuSmallDevice* gpu, int lane, const Plan& plan, bool ensemble, bool recursive,
                     const GpuSmallItem* items, int count){
     Lane& l=gpu->lane[lane];
     if (l.busy) throw std::runtime_error("small-cluster GPU: submit to a busy lane");
     const int extra=ensemble ? 0 : 1, per2=8+2*extra, per4=32+4*extra;
     const size_t nstep=size_t(plan.nstep);
-    long total2=0,total4=0;
-    for (int i=0;i<count;++i){ total2+=items[i].count2; total4+=items[i].count4; }
+    long total2=0,total4=0,totalW=0;
+    for (int i=0;i<count;++i){ total2+=items[i].count2; total4+=items[i].count4; totalW+=items[i].countW; }
+    if (totalW && !gpu->warpSet) throw std::runtime_error("small-cluster GPU: warp clusters before the warp plan");
+    const size_t perW=totalW ? nstep*warpcluster::outputPer(gpu->warp) : 0;
     l.in2.reserve(size_t(total2)*per2); l.in4.reserve(size_t(total4)*per4);
-    l.out.reserve(size_t(total2+total4)*nstep); l.status.reserve(size_t(total2+total4));
+    l.out.reserve(size_t(total2+total4)*nstep+size_t(totalW)*perW); l.status.reserve(size_t(total2+total4+totalW));
     C* out4=l.out.p+size_t(total2)*nstep;
     unsigned char* status4=l.status.p+total2;
+    C* outW=l.out.p+size_t(total2+total4)*nstep;
+    unsigned char* statusW=l.status.p+total2+total4;
+    // A40: the warp clusters' inputs one item after the other, and a launch list per total dimension
+    long countDim[warpcluster::maxDim+1]={}, firstDim[warpcluster::maxDim+2]={};
+    size_t totalWIn=0;
+    for (int i=0;i<count;++i)
+        for (long c=0;c<items[i].countW;++c){ const int d=items[i].dimW[c]; ++countDim[d]; totalWIn+=warpcluster::inputSize(gpu->warp,d); }
+    if (totalW){
+        for (int d=0;d<=warpcluster::maxDim;++d) firstDim[d+1]=firstDim[d]+countDim[d];
+        if (l.hostEntriesSize<size_t(totalW)){
+            if (l.hostEntries) SC_CHECK(cudaFreeHost(l.hostEntries));
+            l.hostEntries=nullptr; l.hostEntriesSize=0;
+            SC_CHECK(cudaMallocHost((void**)&l.hostEntries,sizeof(WarpEntry)*totalW));
+            l.hostEntriesSize=size_t(totalW);
+        }
+        long at[warpcluster::maxDim+1];
+        for (int d=0;d<=warpcluster::maxDim;++d) at[d]=firstDim[d];
+        long in=0, index=0;
+        for (int i=0;i<count;++i)
+            for (long c=0;c<items[i].countW;++c){
+                const int d=items[i].dimW[c];
+                l.hostEntries[at[d]++]=WarpEntry{in,index++};
+                in+=warpcluster::inputSize(gpu->warp,d);
+            }
+        l.inW.reserve(totalWIn); l.entries.reserve(size_t(totalW));
+        SC_CHECK(cudaMemcpyAsync(l.entries.p,l.hostEntries,sizeof(WarpEntry)*totalW,cudaMemcpyHostToDevice,l.stream));
+        size_t atIn=0;
+        for (int i=0;i<count;++i){
+            size_t n=0;
+            for (long c=0;c<items[i].countW;++c) n+=warpcluster::inputSize(gpu->warp,items[i].dimW[c]);
+            if (n) SC_CHECK(cudaMemcpyAsync(l.inW.p+atIn,items[i].inW,sizeof(C)*n,cudaMemcpyHostToDevice,l.stream));
+            atIn+=n;
+        }
+    }
     long at2=0,at4=0;
     for (int i=0;i<count;++i){
         const GpuSmallItem& it=items[i];
@@ -141,7 +186,10 @@ void gpuSmallSubmit(GpuSmallDevice* gpu, int lane, const Plan& plan, bool ensemb
     }
     launchDim<2>(plan,ensemble,recursive,l.in2.p,l.out.p,l.status.p,total2,l.stream);
     launchDim<4>(plan,ensemble,recursive,l.in4.p,out4,status4,total4,l.stream);
+    for (int d=0;d<=warpcluster::maxDim && totalW;++d)
+        if (countDim[d]) warpClusterLaunch(gpu->warp,d,l.inW.p,l.entries.p+firstDim[d],countDim[d],outW,statusW,l.stream);
     at2=at4=0;
+    long atW=0;
     for (int i=0;i<count;++i){
         const GpuSmallItem& it=items[i];
         if (it.count2){
@@ -153,7 +201,12 @@ void gpuSmallSubmit(GpuSmallDevice* gpu, int lane, const Plan& plan, bool ensemb
                                      cudaMemcpyDeviceToHost,l.stream));
             SC_CHECK(cudaMemcpyAsync(it.status+it.count2,status4+at4,it.count4,cudaMemcpyDeviceToHost,l.stream));
         }
-        at2+=it.count2; at4+=it.count4;
+        if (it.countW){
+            SC_CHECK(cudaMemcpyAsync(it.out+size_t(it.count2+it.count4)*nstep,outW+size_t(atW)*perW,sizeof(C)*perW*it.countW,
+                                     cudaMemcpyDeviceToHost,l.stream));
+            SC_CHECK(cudaMemcpyAsync(it.status+it.count2+it.count4,statusW+atW,it.countW,cudaMemcpyDeviceToHost,l.stream));
+        }
+        at2+=it.count2; at4+=it.count4; atW+=it.countW;
     }
     SC_CHECK(cudaEventRecord(l.done,l.stream));
     l.busy=true;

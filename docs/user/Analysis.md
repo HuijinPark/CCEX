@@ -24,10 +24,12 @@ Three steps, and every tutorial's `run.sh` does the first two:
 1. **Error correction** (`-err`): CCE divides a cluster's coherence by its
    sub-clusters' and the division blows up near zeros, so the divided curve
    (`_wiDiv`) is repaired against the undivided one (`_noDiv`) with a tolerance
-   (`-err_tol`, default 2.0). The rule is the group's convention (the first and
-   last points are set to 0, a bad point becomes the mean of the previous
-   corrected value and the next good one), and every recorded result was made
-   with it; call it, do not rewrite it.
+   (`-err_tol`, default 2.0). Only a point where |wiDiv − noDiv| reaches the
+   tolerance is changed. The rule is the group's convention: a bad last point is
+   first moved to noDiv + tolerance − 1e-6 (so it is no longer bad and stays
+   there), a bad first point is set to 0, and any other bad point becomes the
+   mean of the previous corrected value and the next good one. Every recorded
+   result was made with it; call it, do not rewrite it.
 2. **Ensemble average** (`-ea`) over the values of a variable (`-vn`, `-v`): one
    `EnsAvg_conv<N>` file per remaining variable.
 3. **Plots and fits**: `-pl` one figure per file, `-pl_m` all curves in one, `-fit`

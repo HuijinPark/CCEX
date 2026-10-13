@@ -7,7 +7,7 @@ Two keys that make a CCE2 run cheaper without changing what it computes, on the 
   below `rdip`. One order-2 run also writes, for every rung, the curve that a separate run at
   `rdip` = r<sub>k</sub> gives (`<outfile>_rdip<r>_wiDiv`/`_noDiv`); the main output stays the run at
   `rdip`. Order 2 of CCE, gCCE and pCCE, `quantity` coherence, standard clusters, `savemode`
-  normal; anything else is refused with `Error: rdip_ladder ...`
+  coherence; anything else is refused with `Error: rdip_ladder ...`
   (`test/code_verification/check_rdip_ladder/run.sh` lists the refusals). The automatic
   convergence (11) uses it for its rdip step.
 - `evolution_update` (`docs/user/InputFile_Backend.md#tag_evolution_update`): `exact` forms the

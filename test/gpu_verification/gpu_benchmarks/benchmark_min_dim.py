@@ -52,7 +52,7 @@ def prepare(method, nstate, sites, npulse, nstep, directory):
     (directory/'bath').write_text(f'{sites+1}.0 0 0 0\n'+'\n'.join(r for _, r in near)+'\n')
     radius = max(math.dist([float(v) for v in r.split()[:3]], origin) for _, r in near)+1
     config.update(bathfile=[str(directory/'bath')], order=sites-1, rbath=radius, rdip=2*radius,
-                  npulse=npulse, nstep=nstep, profile=True, savemode='normal')
+                  npulse=npulse, nstep=nstep, profile=True, savemode='coherence')
     config.pop('nk', None)
     return config
 

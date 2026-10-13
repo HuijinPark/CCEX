@@ -161,7 +161,7 @@ else
 fi
 
 # get spinHamil, ExData ( no core effect )
-python ${pySEcode} "VASP" ${fMtarg} ${dfname} --version "v2" --fidentify "True" \
+python ${pySEcode} "VASP" ${fMtarg} ${dfname} --version "v2" \
                                               --addhfcore "False" --rangeformat "coord" \
                                               --JT ${jt} --addspin "${addspin}" \
                                               --ccein ${fEtargN} --cceindiag ${fEtargND} ${optstatement} 
@@ -169,7 +169,7 @@ mv Afile ${fStargA}
 mv Qfile ${fStargQ} 
 
 # get spinHamil, ExData ( add core effect )
-python ${pySEcode} "VASP" ${fMtarg} ${dfname} --version "v2" --fidentify "True" \
+python ${pySEcode} "VASP" ${fMtarg} ${dfname} --version "v2" \
                                               --addhfcore "True" --rangeformat "coord" \
                                               --JT ${jt} --addspin "${addspin}" \
                                               --ccein ${fEtargC} --cceindiag ${fEtargCD} ${optstatement} 

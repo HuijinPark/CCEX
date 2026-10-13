@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 import numpy as np
+import sys
 from spHamilReader.spin_database.constants import * 
 from spHamilReader.base.cnvt_coord import frac2cart 
 from spHamilReader.base.Calgeometry import distance
-from spHamilReader.qe.extract_spinHamils_qe import * 
+from spHamilReader.qe.extract_spinHamils_qe import *
+from spHamilReader.base.rwfiles import provenanceline, check_spin
+from spHamilReader.base import pyform
 
 ###############################################################
 #
@@ -169,12 +172,12 @@ def mkDefectKeyInPOSCAR(dposcar,dfctname,defectposition_frac=None):
         # add defect atomic position as a new key
         dposcar['central_defect'] = defectposition    
     else:
-        if defectposition==None:
+        if defectposition_frac==None:
             sys.exit("Error!!! \
                         you should add defect position in argument of code \
                         or add defect position in file")
         else:
-            dposcar['central_defect'] = [dfctname] + defectposition    
+            dposcar["central_defect"] = [dfctname] + defectposition_frac
 
     return dposcar    
 
@@ -246,7 +249,7 @@ def relativeDistance(latt_constant,unit_cell_parameter,frac_unitCellInfo,frac_ce
 #
 ###############################################################
 
-def Afile(relativepos,doutcar_Adata,doutcar_isodata,fout,_fidentify=True,_rangeformat='vertex'):
+def Afile(relativepos,doutcar_Adata,doutcar_isodata,fout,_spin,_rangeformat='vertex'):
 
     """
         Args:
@@ -302,7 +305,9 @@ def Afile(relativepos,doutcar_Adata,doutcar_isodata,fout,_fidentify=True,_rangef
     # Make A tensor file
     with open(fout, 'w') as f:
         # HEAD
-        if _fidentify : f.write("QUANTUMESSPRESSO\n")
+        # HEAD: the tag and the provenance line CCEX reads (format v3, 2026-10-13)
+        f.write("QUANTUMESPRESSO\n")
+        f.write(provenanceline("QE hyperfine.out",_spin))
         f.write(divline())
         f.write(Afilehead())
         # ISOTOPE DATA
@@ -328,8 +333,11 @@ def Afile(relativepos,doutcar_Adata,doutcar_isodata,fout,_fidentify=True,_rangef
         # MAIN DATA
         f.write(divline())
         for i,atm in enumerate(relativepos['r_1i']):
-            corrected_Aiso = np.asarray(doutcar_Adata['Aiso'][i])/np.asarray(doutcar_Adata['giveng'][i])
-            corrected_Adip = np.asarray(doutcar_Adata['Adip'][i])/np.asarray(doutcar_Adata['giveng'][i])
+            # GIPAW (hyperfine.f90) uses the bare spin density rho_up - rho_down with the prefactor
+            # 8 pi/3 mu0/(4 pi) gamma_e g_N mu_N and no division by the total spin: the coupling of S = 1/2.
+            # For the spin-S defect, A = (that) / (2S).
+            corrected_Aiso = np.asarray(doutcar_Adata['Aiso'][i])/np.asarray(doutcar_Adata['giveng'][i]) / (2*_spin)
+            corrected_Adip = np.asarray(doutcar_Adata['Adip'][i])/np.asarray(doutcar_Adata['giveng'][i]) / (2*_spin)
             f.write(Atensorform().format(*atm,\
                                         corrected_Aiso,\
                                         *corrected_Adip))
@@ -394,12 +402,11 @@ def Qfile(relativepos,doutcar_Qdata,doutcar_isodata,fout,ignoreatm=None,_rangefo
 
 class do_mkAQDdata:
 
-    def __init__(self,fposcar,dfname,dfposition_frac=None,_ignoreatm=None,_fidentify=True,_addhfcore=True,_version='v2',_rangeformat='vertex'):
+    def __init__(self,fposcar,dfname,dfposition_frac=None,_ignoreatm=None,_addhfcore=True,_spin=None,_rangeformat='vertex'):
         self.fposcar = fposcar
         self.dfname = dfname
         self._ignoreatm = _ignoreatm
         self.dfposition_frac = dfposition_frac
-        self._fidentify = _fidentify
         self._rangeformat = _rangeformat
 
         # add hyperfine core effect
@@ -407,10 +414,9 @@ class do_mkAQDdata:
         # no need to add hf core
         self._addhfcore = _addhfcore
 
-        # version
-        # In the case of QE
-        # v1 = v2 (the same version)
-        self._version = _version 
+        # The defect spin S (required for the A file): GIPAW's hyperfine.out is the coupling of S = 1/2
+        # (see Afile), the file holds it x 1/(2S)
+        self._spin = _spin
 
         #prt
         print(self.startmessage())
@@ -454,7 +460,10 @@ class do_mkAQDdata:
         #print("\t",self.fout_Afile)
 
         # Make A tensor file
-        Afile(self.relativepos, self.Adata, self.isodata,self.fout_Afile,_fidentify=self._fidentify,_rangeformat=self._rangeformat)
+        if self._spin is None:
+            pyform._error("QE: the A file needs the defect total spin, --spin S (hyperfine.out is the S = 1/2 coupling; "
+                          "the file holds it x 1/(2S))")
+        Afile(self.relativepos, self.Adata, self.isodata,self.fout_Afile,check_spin(self._spin),_rangeformat=self._rangeformat)
         ###########################################################
 
     def mkQdata(self,fefgout,fout_Qfile):
@@ -500,13 +509,13 @@ class do_mkAQDdata:
 
         try:
             self.Adata['Adip']
-            message+=f"\tAfile : {fout_Afile}\n"
+            message+=f"\tAfile : {self.fout_Afile}\n"
         except:
             message+=f"\tAfile : No read A\n"
             
         try:
             self.Qdata['EFG'] 
-            message+=f"\tQfile : {fout_Qfile}\n"
+            message+=f"\tQfile : {self.fout_Qfile}\n"
         except:
             message+=f"\tQfile : No read Q\n"
 

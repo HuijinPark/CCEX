@@ -21,10 +21,10 @@ pCCE     : site ──(위치 K개씩)──> center ──────> cluster
 가변형   : site ──(결합 세기)───> bundle ──────> cluster  (order = bundle 개수)
 ```
 
-pCCE는 같은 자리의 층을 **center**라고 부른다(`src/clustering/cluster_pcce.cpp:22`,
+pCCE는 같은 자리의 층을 **center**라고 부른다(`src/clustering/cluster_pcce.cpp:24`,
 `pCCE(N,K) indicates a clustering method of the N-clusters having K number of bath spins`).
 혼동을 막기 위해 가변형의 층은 **bundle**로 부르고 `group`이라는 말은 쓰지 않는다.
-`src/cluster_dsjitb.*`의 `GroupChecker`는 disjoint-set 알고리즘의 것으로 이 층과 무관하다.
+`src/clustering/cluster_dsjitb.cpp`·`include/clustering/cluster_dsjitb.h`의 `GroupChecker`는 disjoint-set 알고리즘의 것으로 이 층과 무관하다.
 
 ## 2. 두 방법
 
@@ -48,10 +48,10 @@ budgeted를 반복)는 2026-09-25에 뺐다: 차수끼리 일치해도 정확도
 ## 3. order
 
 `order`는 **cluster 하나에 들어가는 bundle의 개수**다. 표준 CCE의 "spin 개수"와 이름은
-같지만 세는 대상이 다르다. CCEX 자신의 로그도 `group_order`로 구분해 찍는다
-(`src/cluster_adaptive.cpp:144`) — 이 이름은 `bundle_order`로 바꾼다.
+같지만 세는 대상이 다르다. CCEX 자신의 로그도 `bundle_order`로 구분해 찍는다
+(`src/clustering/bundle/bundle_cluster.cpp:143`; 2026-09-18 전 기록에서는 `group_order`).
 
-bundle 하나도 cluster다: 전개는 크기 1인 집합부터 만든다(`refine/expansion.cpp:50`).
+bundle 하나도 cluster다: 전개는 크기 1인 집합부터 만든다(`expandAdaptivePlan`, `src/clustering/bundle/bundle_expansion.cpp`).
 
 ## 4. 차원 상한
 

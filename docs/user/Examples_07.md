@@ -5,7 +5,14 @@ the DFT hyperfine and quadrupole tensors in `bath/flat/` (made with
 `example/tools/SpinTensorReader`). `ensemble_CCE/` reads the tensors
 (`hf_readmode`, `qd_readmode`) in three combinations; `hyperfine_mediated_term/`
 turns `hfmedi` on and off; `single-sample_gCCE_DPS/` is gCCE2 with and without
-the `OH` term. 3 to 11 s each.
+the `OH` term. 0.4 to 5 s each (4 ranks, one configuration).
+
+The hyperfine file is `hBN_VB_flat_ATensor_HSE_CellPBE_v3`, in tensor format v3 (a `VASP` first line and the
+provenance line `# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = VASP OUTCAR, S = 1`), so
+CCEX reads it as written; the nearest ¹⁴N has A_zz = 48.6 MHz (measured 47 MHz). Until 2026-10-13 the inputs read
+`hBN_VB_flat_ATensor_HSE_CellPBE_tag`, which held twice these numbers and was read 2x; the figures below were made
+again with the v3 file. `DefectTotSpin` must be the defect's spin, 1 (it is checked against the file's S);
+`CorrTotSpin` is not used for a v3 file ([hf_tensorfile](InputFile_General.md#tag_hf_tensorfile)).
 
 ![07: CCE2 with the DFT hyperfine and quadrupole tensors](../images/tutorials/07_hBN_tensors.png)
 
@@ -43,7 +50,7 @@ the `OH` term. 3 to 11 s each.
 
     # Bath HF
     "hf_readmode"   : 3,
-    "hf_tensorfile" : "../bath/flat/hBN_VB_flat_ATensor_HSE_CellPBE_tag",
+    "hf_tensorfile" : "../bath/flat/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
     "hf_ignore_oor" : 0,
     "DefectTotSpin" : 1.0,
     "CorrTotSpin"   : 0.0,

@@ -18,16 +18,16 @@ already in the computational frame are left as they are. Every Defect entry whos
 <tt>coordinate_frame</tt> is <tt>"bath"</tt> is normalized in this same step, before its
 on-site spins are constructed; clusterization follows. <br>
 
-The transformation is <b>passive</b>: it builds the rotation $R$ with <br>
-$$R \cdot \widehat{\texttt{qubit\_axis}} = [0,0,1]$$
-and applies $ r_{new} = r_0 + R (r_{old} - r_0) $ to every qubit AND every bath spin
-alike, with $r_0$ the position of the REFERENCE QUBIT -- the one named by
+The transformation is <b>passive</b>: it builds the rotation R with <br>
+<p align="center">R · <i>qubit_axis</i>/|<i>qubit_axis</i>| = [0, 0, 1]</p>
+and applies r<sub>new</sub> = r<sub>0</sub> + R (r<sub>old</sub> − r<sub>0</sub>) to every qubit AND every bath spin
+alike, with r<sub>0</sub> the position of the REFERENCE QUBIT -- the one named by
 "reference_qubit", or the only qubit when that key is omitted. The reference qubit has
-$r_{old} = r_0$ and so does not move; everything else moves rigidly around it. It is
+r<sub>old</sub> = r<sub>0</sub> and so does not move; everything else moves rigidly around it. It is
 NOT the active rotation that would carry bath_axis onto qubit_axis. <br>
 The frame is
-$$e_z = \hat q, \qquad e_x = \widehat{\hat q \times \hat b}, \qquad e_y = e_z \times e_x$$
-with $e_x, e_y, e_z$ as the ROWS of $R$. bath_axis therefore only fixes the
+<p align="center">e<sub>z</sub> = q̂, &nbsp;&nbsp; e<sub>x</sub> = (q̂ × b̂)/|q̂ × b̂|, &nbsp;&nbsp; e<sub>y</sub> = e<sub>z</sub> × e<sub>x</sub></p>
+with e<sub>x</sub>, e<sub>y</sub>, e<sub>z</sub> as the ROWS of R (q̂ and b̂ the unit qubit_axis and bath_axis). bath_axis therefore only fixes the
 azimuth of x and y about the new z; it does not change where z points. <br>
 
 Both vectors are given in the bath file's own Cartesian frame. <b>Transformed:</b> every
@@ -39,8 +39,8 @@ and every explicit entry with [tensor_frame](../user/InputFile_Qubit.md#tag_tens
 entries included. <br>
 For each Defect entry with [coordinate_frame](../user/InputFile_Defect.md#tag_df_coordinate_frame) = "bath",
 its [axis](../user/InputFile_Defect.md#tag_df_axis), rxyzs displacement vectors, and hypf / efg / zfs tensors
-are transformed by the same $R$. The displacement is a relative vector, so it receives
-$Rr$ without the rotation origin. Defect detuning is scalar and is not transformed.
+are transformed by the same R. The displacement is a relative vector, so it receives
+R r without the rotation origin. Defect detuning is scalar and is not transformed.
 <br>
 
 <b>Not transformed:</b> explicit Qubit.intmap entries with tensor_frame = "qubit"; the
@@ -62,11 +62,11 @@ command-line -B, which sets bz. <br>
 A field with any transverse component is refused: a tilted field is not supported
 alongside the rotation in this version. The check runs once the input file and the
 command line have both been applied, against the final Config.bfield, and compares
-$ |B_\perp| = \sqrt{B_x^2+B_y^2} $ against $ 10^{-12}\max(1,|B|) $ -- a tight
+|B<sub>⊥</sub>| = √(B<sub>x</sub>² + B<sub>y</sub>²) against 10<sup>−12</sup> max(1, |B|) -- a tight
 bound, because nothing rotates these numbers and anything larger is a component the user
 meant. A zero field is always allowed. <br>
 The run log prints the field both ways round, so the physical direction is visible:
-$ R^{T}[0,0,B_z] = B_z\,\widehat{\texttt{qubit\_axis}} $. <br>
+R<sup>T</sup> [0, 0, B<sub>z</sub>] = B<sub>z</sub> · <i>qubit_axis</i>/|<i>qubit_axis</i>|. <br>
 
 Refused: collinear bath_axis and qubit_axis, because the cross product then leaves the
 azimuth undefined -- the one exception is bath_axis = qubit_axis = [0,0,1], which is the
@@ -75,26 +75,26 @@ restriction that predates this option -- see hf_tensor_frame below), a missing
 reference_qubit or qubit_position_frame, and an explicit intmap entry with no
 tensor_frame. <br>
 Multi-qubit coherence is validated with method = gCCE. cCCE remains single-qubit and
-src/simulator_cce.cpp is untouched by this option. <br>
+src/calculation/simulator_cce.cpp is untouched by this option. <br>
 
 "reference_qubit" names the qubit the rotation is taken about, by its exact
-[Qubit](../user/InputFile_Qubit.md#tag_qubit) name. Its position is $r_0$, and it is the one thing that
+[Qubit](../user/InputFile_Qubit.md#tag_qubit) name. Its position is r<sub>0</sub>, and it is the one thing that
 does not move. With a single qubit it is optional -- that qubit is used, and one supplied
 through [qubitfile](../user/InputFile_General.md#tag_qubitfile) is named "q0". <b>With more than one qubit it is
 required</b>, there being no sensible default. It must match an existing qubit exactly,
 and duplicate qubit names are refused. Any index may be named, not just the first. <br>
-When bath_axis and qubit_axis -- and therefore $R$ -- are held fixed, changing only
+When bath_axis and qubit_axis -- and therefore R -- are held fixed, changing only
 reference_qubit changes the rotation ORIGIN. The two coordinate sets then differ by the
-rigid translation $(I-R)(r_0-r_1)$, so distances, interaction tensors and coherence
+rigid translation (I − R)(r<sub>0</sub> − r<sub>1</sub>), so distances, interaction tensors and coherence
 are unchanged; only the printed coordinates move. <br>
 If reference_qubit is changed to a qubit with a DIFFERENT physical axis, qubit_axis must
-be changed to that qubit's actual source-frame axis as well. $R$ is then different
+be changed to that qubit's actual source-frame axis as well. R is then different
 too, and the relation above no longer holds. <br>
 
 "qubit_position_frame" states the frame every [Qubit.xyz](../user/InputFile_Qubit.md#tag_xyz) is written in.
 One value for the whole QubitArray -- per-qubit frames are not accepted. The only
 supported value is <tt>"bath"</tt>: the qubit positions use the same Cartesian basis AND
-the same origin as the bath files, so a single $R$ and $r_0$ move every qubit
+the same origin as the bath files, so a single R and r<sub>0</sub> move every qubit
 and every bath spin together. <br>
 <tt>"qubit"</tt> is refused. It would put the qubit positions in the computational frame
 while the bath files are still read in the source frame, and readBathfiles would then
@@ -108,7 +108,7 @@ That name is still accepted, with a warning; giving both is an error. <br>
 
 "hf_tensor_frame" and "qd_tensor_frame" say which basis the COMPONENTS of an external
 tensor file are written in. "bath" means the original bath Cartesian basis, so each
-tensor is transformed as $ T \rightarrow R\,T\,R^{T} $; "qubit" means they are
+tensor is transformed as T → R T R<sup>T</sup>; "qubit" means they are
 already in the computational basis and are left alone. They say nothing about the
 POSITION columns of those files, which are always read in the original, unrotated frame
 -- that is what the lookup matches against, and the files themselves are never touched.
