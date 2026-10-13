@@ -1,4 +1,7 @@
 #!/bin/sh
+# SRC_ROOT: the root of the data this script was first run on (the original author's server). Set it to your
+# own data root before running; the paths below are kept relative to it.
+: "${SRC_ROOT:?set SRC_ROOT to the root of your data}"
 
 Exspins="NVHn"
 
@@ -62,16 +65,16 @@ mkdir 5_spinHamil
 for i in $(seq 1 1 ${avaax} )
 do
 
-python /home/huijin/scrp/pyFunction/15.mkExSpinData/ExPOSCARMod.py "./2_CONTCAR/contcar_${Exspins}${i}_up.vasp" "./4_modPOSCAR/contcar_${Exspins}${i}_up_mod.vasp" ${Exspins}_up2
-python /home/huijin/scrp/pyFunction/12.3.AQtensor_reader/do_mkAQfile.py VASP "./4_modPOSCAR/contcar_${Exspins}${i}_up_mod.vasp" "${dfname}" on on "./3_OUTCAR/outcar_${Exspins}${i}_up"
+python ${SRC_ROOT}/scrp/pyFunction/15.mkExSpinData/ExPOSCARMod.py "./2_CONTCAR/contcar_${Exspins}${i}_up.vasp" "./4_modPOSCAR/contcar_${Exspins}${i}_up_mod.vasp" ${Exspins}_up2
+python ${SRC_ROOT}/scrp/pyFunction/12.3.AQtensor_reader/do_mkAQfile.py VASP "./4_modPOSCAR/contcar_${Exspins}${i}_up_mod.vasp" "${dfname}" on on "./3_OUTCAR/outcar_${Exspins}${i}_up"
 
 mv Afile "./5_spinHamil/${Exspins}${i}_up_Afile"
 mv Qfile "./5_spinHamil/${Exspins}${i}_up_Qfile"
 
     if [ ${dwchk} == 'on' ];then
 
-        python /home/huijin/scrp/pyFunction/15.mkExSpinData/ExPOSCARMod.py "./2_CONTCAR/contcar_${Exspins}${i}_dw.vasp" "./4_modPOSCAR/contcar_${Exspins}${i}_dw_mod.vasp" ${Exspins}_dw2
-        python /home/huijin/scrp/pyFunction/12.3.AQtensor_reader/do_mkAQfile.py VASP "./4_modPOSCAR/contcar_${Exspins}${i}_dw_mod.vasp" "${dfname}" on on "./3_OUTCAR/outcar_${Exspins}${i}_dw"
+        python ${SRC_ROOT}/scrp/pyFunction/15.mkExSpinData/ExPOSCARMod.py "./2_CONTCAR/contcar_${Exspins}${i}_dw.vasp" "./4_modPOSCAR/contcar_${Exspins}${i}_dw_mod.vasp" ${Exspins}_dw2
+        python ${SRC_ROOT}/scrp/pyFunction/12.3.AQtensor_reader/do_mkAQfile.py VASP "./4_modPOSCAR/contcar_${Exspins}${i}_dw_mod.vasp" "${dfname}" on on "./3_OUTCAR/outcar_${Exspins}${i}_dw"
         
         mv Afile "./5_spinHamil/${Exspins}${i}_dw_Afile"
         mv Qfile "./5_spinHamil/${Exspins}${i}_dw_Qfile"
@@ -104,7 +107,7 @@ do
     JTs+="${JT} "
 done
 
-python /home/huijin/scrp/pyFunction/15.mkExSpinData/do_mkExSpinCCEfile.py "$fAs" "$fQs" "$JTs" "./6_ExSpinData/${fcce}" "$addspin" 
+python ${SRC_ROOT}/scrp/pyFunction/15.mkExSpinData/do_mkExSpinCCEfile.py "$fAs" "$fQs" "$JTs" "./6_ExSpinData/${fcce}" "$addspin" 
 
 fi
 ######################################################################
@@ -112,7 +115,7 @@ fi
  
 if [ ${opt} == 4 ]; then
 
-path="/home/huijin/cal/bath/5.DiaExspins/${Exspins}/"
+path="${SRC_ROOT}/cal/bath/5.DiaExspins/${Exspins}/"
 
 cp 1_POSCAR     ${path}  -r     
 cp 2_CONTCAR    ${path}  -r

@@ -345,7 +345,7 @@ gCCE의 별도 L0 계산은 전파 항 수에서 제외했다. 신규 분할기�
 원본 입력/출력/소스/로그 809개 파일은 `test/cluster_verification/check_bundle/archive/adaptive-local-20260912.tar.gz`에
 보존했다. SHA-256은 `06bfaf8032fa5410c9d00114984b9724858eea85e36bd1711d64b468b0d815b3`이다.
 
-IDM/GPU 공유 저장소: `/home/dlwodnr95/tmp/ccex-adaptive-20260912`.
+IDM/GPU 공유 저장소: `<server-home>/tmp/ccex-adaptive-20260912`.
 소스/의존 파일/입력/검증 도구 4,270개 파일을 전송 후 해시 확인했다.
 GPU 서버 검증은 재실행 작업 **462**에서 **3분 10초, exit 0:0으로 통과**했다.
 13,257개 분할 검사와 ASan/UBSan, 117회 통합 실행, 실제 bath 15회 비교를 완료했다.

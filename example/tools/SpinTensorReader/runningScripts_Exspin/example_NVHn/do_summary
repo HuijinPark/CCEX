@@ -1,4 +1,7 @@
 #!/bin/sh
+# SRC_ROOT: the root of the data this script was first run on (the original author's server). Set it to your
+# own data root before running; the paths below are kept relative to it.
+: "${SRC_ROOT:?set SRC_ROOT to the root of your data}"
 
 if [ $# != 8 ];then
     echo "============================="
@@ -75,8 +78,8 @@ fOtarg="${dirOtarg}/outcar_${Exspins}${i}_${d}"
 # [AQDC]Parameters : Option 2
 
 # Main python code
-pyMcode="/home/huijin/scrp/pyFunction/12.6.AQtensor_reader/runningScripts/ExPOSCARMod.py"
-pySEcode="/home/huijin/scrp/pyFunction/12.6.AQtensor_reader/main.py"
+pyMcode="${SRC_ROOT}/scrp/pyFunction/12.6.AQtensor_reader/runningScripts/ExPOSCARMod.py"
+pySEcode="${SRC_ROOT}/scrp/pyFunction/12.6.AQtensor_reader/main.py"
 
 # Target directory & files
 dirMtarg="4_modPOSCAR"
@@ -103,7 +106,7 @@ pyMopt="${Exspins}_${d}2"
 
 ######################################################################
 # [FINA]Parameters : Option 3
-dirFinal="/home/huijin/cal/bath/5.DiaExspins/${Exspins}/"
+dirFinal="${SRC_ROOT}/cal/bath/5.DiaExspins/${Exspins}/"
 
 ######################################################################
 #                                                                    #

@@ -1,8 +1,11 @@
 #!/bin/sh
+# SRC_ROOT: the root of the data this script was first run on (the original author's server). Set it to your
+# own data root before running; the paths below are kept relative to it.
+: "${SRC_ROOT:?set SRC_ROOT to the root of your data}"
 
 stlist=" t101 t102 t103 t104 t105 t106 t107 t108 t109 t110 t111 t112 t113 t114 t115 "
 
-path="/home/huijin/cal/vasp/14_hBN_tStrain{orth}/results/bathsrc"
+path="${SRC_ROOT}/cal/vasp/14_hBN_tStrain{orth}/results/bathsrc"
 
 for st in $stlist
 do

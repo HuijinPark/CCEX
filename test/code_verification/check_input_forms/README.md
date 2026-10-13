@@ -24,7 +24,8 @@ within 1e-8 of eigen `exact` in the raw `_noDiv` and in `_wiDiv` at |L| <= 1 (P1
 splitting); malformed values are refused), `tensor_format` (2026-10-13: on the five h-BN cases of `../check_numerics`, the hyperfine
 file of format v3 - tag line and provenance line, read x 1 - gives the bytes of the old untagged v1 file read x 0.5; the
 VASP-tagged v1 file of the tutorial until then is read as before, x 1, and gives the bytes of `head-20261012-aa883d0d4`, recorded
-with it; old files warn in the log), `autoconv` (`auto_convergence.enabled`: `false` gives
+with it; old files warn in the log; values of 10 characters or more, written by SpinTensorReader's VASP and QE writers in
+their format and in the tab-glued one before 2026-10-13, are read as written: `example/tools/SpinTensorReader/tests/check_wide_fields.py`), `autoconv` (`auto_convergence.enabled`: `false` gives
 the bytes of the input without the block, an enabled block makes `main.out -f` start the runner, once under `mpirun -n 2`,
 a value that is not a boolean and another option beside it are refused, `--auto_status` reads the workdir, and a tool
 file or folder writable by others is refused). The refused key combinations are `../check_refusals/`, the

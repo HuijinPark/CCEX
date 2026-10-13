@@ -146,7 +146,7 @@ def write_POSCAR(outputFile,new_atomicData,print_io=None):
 if __name__ =="__main__":
     import dictproc as dp
 
-    f = "/home/huijin/cal/vasp/10_hBN_gStrain{hsym}/results_20A/contcars/POSCAR_g90_VB_S1"
+    f = "<path>/cal/vasp/10_hBN_gStrain{hsym}/results_20A/contcars/POSCAR_g90_VB_S1"
     atomicData = read_POSCAR(f)
     for i,v in enumerate(atomicData["unit_cell_information"][-10:]):
         print(i,v)

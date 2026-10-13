@@ -32,7 +32,11 @@ public:
     // qubit, and a pulse plan of at most 4 distinct intervals - or with gpu_options.warp_max_dim and a run the warp kernel
     // takes (warpClusterRun). Asked for in a build without CUDA or with another method the run stops in smallClusterWarmUp.
     // localclusters, order: this rank's clusters (localclusters[n]) - the window is no larger than the largest number of
-    // one order, and the batch is off (no memory, no card, no feeder) when no rank has a cluster of a dimension it takes.
+    // one order, and the batch is off (no memory, no card, no feeder) when no rank has a cluster of a dimension it takes,
+    // or - with neither packed_max_dim nor warp_max_dim given - when the cluster evaluations (clusters x states) it would
+    // take over all ranks are fewer than 20000 per rank (starting the card costs more than it saves; A40 follow-up,
+    // 2026-10-13). The warp input region
+    // is there only when some rank has a cluster of a warp dimension.
     // savemode: the run's (the warp kernel is off for gCCE cluster_density_matrix).
     SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pulse* pls, bool isGCCE, int*** localclusters,
                       int order, const char* savemode = nullptr);

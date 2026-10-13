@@ -2033,6 +2033,11 @@ bool READ_BD_vertex(const char* inputfile, double*** vertex, double*** center, d
 //related Hyperfine
 ////////////////////
 
+// The tensor readers below split a line at any blank. Until 2026-10-13 they split at spaces only, and the tool writes
+// "{:10.5f}" fields between tabs: a value of 10 characters or more (-123.45678, 1234.56789) ran into the field before
+// it and the row was dropped or read shifted ((internal notes) "텐서 도구").
+static const char* TENSOR_BLANKS = " \t\r\n";
+
 //Read the tensor(3x3) value in tensor file
 void READ_Tensor(const char* inputfile, double*** Tensor,int numCol){
     FILE* data;
@@ -2053,7 +2058,7 @@ void READ_Tensor(const char* inputfile, double*** Tensor,int numCol){
     while(!feof(data)){
         fgets(lline,max,data);
 
-        char *ptr = strtok(lline," ");
+        char *ptr = strtok(lline, TENSOR_BLANKS);
         int count=0;
         //count the value in tensor file, and tempory save the value in test
         while(ptr !=NULL){
@@ -2064,7 +2069,7 @@ void READ_Tensor(const char* inputfile, double*** Tensor,int numCol){
             }else{
                 if (isStringDouble(ptr) != 0){test[count]=tempNum;count++;}
             }
-            ptr = strtok(NULL, " ");
+            ptr = strtok(NULL, TENSOR_BLANKS);
             if (count==numCol){break;}
         }
 
@@ -2114,7 +2119,7 @@ void READ_Tensor_etc(const char* inputfile, char** names, int nspecies, double**
         fgets(lline,max,data);
         bool CheckCondi=false;
         bool CheckAtom=false;
-        char *ptr = strtok(lline," ");
+        char *ptr = strtok(lline, TENSOR_BLANKS);
         int count=0;
         int col=0;
         //count the value in tensor file, and tempory save the value in test
@@ -2144,7 +2149,7 @@ void READ_Tensor_etc(const char* inputfile, char** names, int nspecies, double**
                     }
                 }
             }
-            ptr = strtok(NULL, " ");
+            ptr = strtok(NULL, TENSOR_BLANKS);
             if (numCol==col){CheckIs=false;break;}
         }
     }
@@ -2187,7 +2192,7 @@ void READ_Tensor_const(const char* inputfile, char** names, int nspecies, double
         fgets(lline,max,data);
         bool CheckCondi=false;
         bool CheckAtom=false;
-        char *ptr = strtok(lline," ");
+        char *ptr = strtok(lline, TENSOR_BLANKS);
         int count=0;
         //count the value in tensor file, and tempory save the value in test
         while(ptr !=NULL){
@@ -2215,7 +2220,7 @@ void READ_Tensor_const(const char* inputfile, char** names, int nspecies, double
                     if (isStringDouble(ptr) !=0){(*Array)[count]=tempNum;break;}
                 }
             }
-            ptr = strtok(NULL, " ");
+            ptr = strtok(NULL, TENSOR_BLANKS);
         }
     }
     //print array for test
@@ -2246,7 +2251,7 @@ bool READ_Tensor_array(const char* inputfile, double(*Array)[3],char* condition,
     while(!feof(data)){
         fgets(lline,max,data);
         bool CheckOption=false;
-        char *ptr = strtok(lline," ");
+        char *ptr = strtok(lline, TENSOR_BLANKS);
         int count=0;
         //count the value in tensor file, and tempory save the value in test
         while(ptr !=NULL){
@@ -2262,7 +2267,7 @@ bool READ_Tensor_array(const char* inputfile, double(*Array)[3],char* condition,
                     if (isStringDouble(ptr) !=0){(*Array)[count]=tempNum;count++;}
                 }
             }
-            ptr = strtok(NULL, " ");
+            ptr = strtok(NULL, TENSOR_BLANKS);
             if (count==numCol){rewind(data);fclose(data);return true;} //success to get data
         }
     }

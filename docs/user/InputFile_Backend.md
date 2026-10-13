@@ -93,6 +93,17 @@ run against the CPU binary on the same node, median of AB BA AB): CR60 σ4 30 st
 6.5 → 3.9 s (0.59), CR0 30 states 13.6 → 11.4 s (0.84), but the CR0 ensemble, a 1.8 s run, 1.80 → 1.71 s (0.95);
 (internal notes). In that job the 12 small fixture runs (under 1 s) finished before the GPU was
 up and ran entirely on the CPU. <br>
+<b>When they stay off (A40 follow-up, 2026-10-13).</b> With neither `packed_max_dim` nor `warp_max_dim` given, the packed
+and warp kernels are not started at all when the cluster evaluations they would take (clusters × states: each cluster
+once per state, `nstate` states or 1 for the ensemble), counted over all ranks from order 1 up, are fewer than 20000 per
+rank (640000 for 32 ranks): on a full node starting the card costs about 0.5 s, and the card saves about 4.4 rank-µs per
+packed evaluation and 21 per warp one, so such runs gain little or lose (the reasoning and the numbers:
+(internal notes)). The log says so (`[gpu-packed] off: N cluster evaluations
+(clusters x states) for the packed kernel, fewer than the threshold ...`), and every cluster is computed on the CPU path,
+byte-identical to the run with both set to 0. The card's early start (opened beside the bath reading, before the count is
+known) is closed again at that point; it is not avoided. A given value of either key starts the card whatever the count. The warp kernel's part of the
+node shared memory is allocated only when some rank has a cluster of a warp dimension (a cCCE run with clusters of bath
+dimension 2 and 4 only keeps the packed kernel's memory: P1 CR0 cCCE2 was 4.7 % slower with it, job 708). <br>
 
 <b>The warp kernel (`warp_max_dim`; A40, user 2026-10-13).</b> Clusters too large for the packed kernel's
 one-thread-per-cluster registers but far below `min_dim`: one cluster per warp of 32 GPU threads, its matrices in shared

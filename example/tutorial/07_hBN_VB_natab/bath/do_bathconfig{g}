@@ -1,15 +1,18 @@
 #!/bin/sh
+# SRC_ROOT: the root of the data this script was first run on (the original author's server). Set it to your
+# own data root before running; the paths below are kept relative to it.
+: "${SRC_ROOT:?set SRC_ROOT to the root of your data}"
 
 stlist=g92 #"flat  g90  g91  g92  g93  g94  g95  g96  g97  g98  g99"
 
 for st in $stlist
 do
 
-/home/huijin/cal/vasp/10_hBN_gStrain{hsym}/results_20A/bathsrc
-f_flat="/home/huijin/cal/vasp/10_hBN_gStrain{hsym}/results_20A/bathsrc/flat/POSCAR_flat_pure_rlx_mod"
-#f_defect="/home/huijin/scratch/hBN/20A_highsym/results_20A/bathsrc/${st}/POSCAR_${st}_VB_S1_rlx_mod_vb_mvatoms" 
-f_defect="/home/huijin/cal/vasp/10_hBN_gStrain{hsym}/results_20A/bathsrc/${st}/POSCAR_${st}_VB_S1_rlx_mod_vb"
-f_curved="/home/huijin/cal/vasp/10_hBN_gStrain{hsym}/results_20A/bathsrc/${st}/POSCAR_${st}_pure_rlx_mod" 
+${SRC_ROOT}/cal/vasp/10_hBN_gStrain{hsym}/results_20A/bathsrc
+f_flat="${SRC_ROOT}/cal/vasp/10_hBN_gStrain{hsym}/results_20A/bathsrc/flat/POSCAR_flat_pure_rlx_mod"
+#f_defect="${SRC_ROOT}/scratch/hBN/20A_highsym/results_20A/bathsrc/${st}/POSCAR_${st}_VB_S1_rlx_mod_vb_mvatoms" 
+f_defect="${SRC_ROOT}/cal/vasp/10_hBN_gStrain{hsym}/results_20A/bathsrc/${st}/POSCAR_${st}_VB_S1_rlx_mod_vb"
+f_curved="${SRC_ROOT}/cal/vasp/10_hBN_gStrain{hsym}/results_20A/bathsrc/${st}/POSCAR_${st}_pure_rlx_mod" 
 f_probability="./prob_hBN"
 bathsize="80"
 name_impurity="VB" 
@@ -28,9 +31,9 @@ do
 iend=$ista
 
 if [ ${st} == 'flat' ];then
-	/home/huijin/scrp/pyFunction/13.mkBathConfig/BathGenerator_insert.py ${f_flat} ${f_defect} ${f_probability} ${bathsize} ${name_impurity} ${name_vacancy} ${fout} ${ista} ${iend} ${opt_2d}
+	${SRC_ROOT}/scrp/pyFunction/13.mkBathConfig/BathGenerator_insert.py ${f_flat} ${f_defect} ${f_probability} ${bathsize} ${name_impurity} ${name_vacancy} ${fout} ${ista} ${iend} ${opt_2d}
 else
-	/home/huijin/scrp/pyFunction/13.mkBathConfig/BathGenerator_curve_insert.py ${f_flat} ${f_defect} ${f_curved} ${f_probability} ${bathsize} ${name_impurity} ${name_vacancy} ${fout} ${ista} ${iend} ${opt_2d}
+	${SRC_ROOT}/scrp/pyFunction/13.mkBathConfig/BathGenerator_curve_insert.py ${f_flat} ${f_defect} ${f_curved} ${f_probability} ${bathsize} ${name_impurity} ${name_vacancy} ${fout} ${ista} ${iend} ${opt_2d}
 fi
 done
 

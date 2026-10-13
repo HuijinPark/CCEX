@@ -73,6 +73,12 @@
   kernel by default** (`gpu_options.warp_max_dim` 27; `"warp_max_dim": 0` gives the earlier path). Its results agree with
   the CPU within 1e-8 + 2e-6 |CPU| outside the stretch where a product diverges (|L| > 1 and between) and are not
   bit-identical to those of the earlier GPU path; `backend` `cpu` and `bin/main.out` are unchanged.
+- **Short runs leave the packed and warp kernels off** (A40 follow-up, 2026-10-13): with neither `packed_max_dim` nor
+  `warp_max_dim` given, a run whose cluster evaluations for them (clusters x states) are fewer than 20000 per rank over all
+  ranks does not use the card (its early start is closed again)
+  and computes everything on the CPU path (byte-identical to both set to 0), with one `off: ... fewer than the threshold`
+  log line; and the warp kernel's shared-memory region is allocated only when some rank has a warp cluster (P1 CR0 cCCE2
+  had been 4.7 % slower from it). Reasoning: (internal notes).
 - **The default of `evolution_update` is `recursive` where it exists** (the CPU cCCE, single state and ensemble, the packed
   kernel, and the CPU gCCE with `propagator` = `eigen`, `evolution` `vector` or `matrix`), and `exact` elsewhere (the GPU
   large-cluster path, gCCE `expm`), without a message, per path: in `bin/main_gpu.out` with `backend` `auto` the clusters

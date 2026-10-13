@@ -10,6 +10,9 @@
 #     untagged file) gives the bytes of a v3 file holding the same numbers (v3 x 2) - the old rule is x 1 for a VASP
 #     line - and, while reference/head-20261012-aa883d0d4 (recorded with that _tag file) exists, its bytes;
 # T3  the log of an old file has the warning, the log of a v3 file the format-v3 line and SpinFactor = 1.
+# T4  values of 10 characters or more (1234.56789, -12345.6) in the A and Q files of SpinTensorReader's VASP and QE
+#     writers, in their format now and in the one before 2026-10-13 (tab-glued fields), are read as written
+#     (example/tools/SpinTensorReader/tests/check_wide_fields.py).
 # The refused files (a tag that contradicts the source, S other than DefectTotSpin, a malformed line) are in
 # ../check_refusals/.
 #
@@ -73,5 +76,8 @@ for d in "$NUM"/cases/hbn_*/; do
     if [ $ok -eq 1 ]; then echo "  PASS  T3 $case: old files warn, the v3 file is logged as read x 1"; PASS=$((PASS+1))
     else echo "  FAIL  T3 $case"; FAIL=$((FAIL+1)); fi
 done
+out=$(python3 "$EX/tools/SpinTensorReader/tests/check_wide_fields.py" "$BIN_DEV" "$MPIRUN" "$W/wide_fields" 2>&1); rc=$?
+echo "$out" | sed 's/^  PASS  /  PASS  T4 /; s/^  FAIL  /  FAIL  T4 /'
+if [ $rc -eq 0 ]; then PASS=$((PASS+$(grep -c "^  PASS" <<<"$out"))); else FAIL=$((FAIL+1)); fi
 echo "tensor_format: $PASS passed, $FAIL failed"
 [ $FAIL -eq 0 ]

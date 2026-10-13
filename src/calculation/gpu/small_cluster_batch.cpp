@@ -577,7 +577,10 @@ void smallClusterWarmUp(const Config* cnf){
                              packed ? "packed_max_dim" : "warp_max_dim",provided,warp ? " and warp_max_dim to 0" : "");
         ccexFatal();
     }
-    const unsigned long long mask = warp ? warpMask(cnf) : 0;
+    // A40 follow-up (2026-10-13): with the packed kernel on, the early memory has no warp input region - most cCCE runs have
+    // no cluster of a warp dimension (P1 CR0 cCCE2: +4.7 % from that region, job 708); the constructor adds it when some
+    // rank has one (a new memory, the early CUDA context kept)
+    const unsigned long long mask = warp && !packed ? warpMask(cnf) : 0;
     if (warm.memory.allocated() || layoutFor(cnf,packed,mask).windowSize == 0) return;
     const double start = MPI_Wtime();
     warm.memory.allocate(layoutFor(cnf,packed,mask));
@@ -601,6 +604,24 @@ void smallClusterWarmUp(const Config* cnf){
 #endif
 }
 
+
+#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
+// collective: the early memory released (its page-lock undone), the early CUDA context kept for the feeder
+static void warmReleaseMemory(){
+    if (warm.thread.joinable()) warm.thread.join();
+    if (warm.locked){ gpuSmallUnregister(warm.memory.parts[0]); warm.locked = false; }
+    warm.memory.release();
+}
+#endif
+
+// The packed and warp kernels stay off (the card is not started) when the cluster evaluations (clusters x states) they
+// would take, over all ranks, are fewer than this many per rank (A40 follow-up, 2026-10-13; the reasoning in
+// (internal notes)): starting the card cost a full node of 32 ranks about 0.5 s
+// (0.3-0.85, c4_ens, jobs 707-708), and it saves about 4.4 rank-us per packed evaluation and 21 per warp one (P1 CR0 cCCE2,
+// P1 CR60 gCCE2) - break-even 23-66 k per rank; 20 k keeps on the one measured run near break-even (A26 P1 CR0 ensemble,
+// about 25 k per rank, 0.95 of the CPU build). Only when neither kernel was given in gpu_options (a given value starts
+// the card whatever the count).
+constexpr long batchMinClustersPerRank = 20000;
 
 void smallClusterWarmDown(){
 #if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
@@ -654,34 +675,63 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
 #if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
     // review 20261012-233058-452278 P3-04: no window (and no memory) without clusters, none beyond the 6 MiB budget;
     // GPU 다음 셋 (1): and no feeder (the early start released) when no rank has a cluster of a dimension the batch takes.
-    // A rank looks at its clusters in order (order 1 first) until it finds one (bath dimension: the cluster's bath array,
-    // as calculate() makes it); a run that uses the batch finds one at once.
-    long most = 0, eligible = 0;
-    const int nqubit = QubitArray_getNqubit(qa), qubitFactor = isGCCE ? wp.qdim : 1;
-    for (int n=1; n<=order; n++) most = std::max<long>(most, localclusters[n][0][0]-1);
-    for (int n=1; n<=order && !eligible; n++)
-        for (int ic=1; ic<=localclusters[n][0][0]-1 && !eligible; ic++){
-            BathArray* b = createBathArray(localclusters[n][ic]+1,n,ba,dfa,nqubit);
-            const int d = BathArray_dim(b), dw = qubitFactor*d;
-            BathArray_freeAll(b);
-            eligible = (packedOn && (d == 2 || d == 4) && d <= cnf->gpu_packed_max_dim) ||
-                       (warpOn && dw <= warpcluster::maxDim && (mask>>dw & 1ULL));
+    // A40 follow-up (2026-10-13): the warp input region only when some rank has a warp cluster, and the batch off when the
+    // clusters it would take are fewer than the threshold (batchMinClustersPerRank). The count is of cluster evaluations,
+    // a cluster once per state (nstate states, or 1 for the ensemble), as the batch's own count and the saving per cluster
+    // are. A rank counts its clusters from order 1 up and stops once it has the threshold and has seen a warp cluster
+    // (bath dimension: the product of the spins' dimensions, a defect's added spins included, as createBathArray makes
+    // the cluster).
+    const bool given = (packedOn && !strcmp(cnf->gpu_packed_source,"given")) || (warpOn && !strcmp(cnf->gpu_warp_source,"given"));
+    const long threshold = given ? 0 : batchMinClustersPerRank*long(nprocess), need = std::max(threshold,1L);
+    const long states = std::max(Config_getNstate(cnf),1);
+    long most = 0, taken = 0, warpTaken = 0;
+    const int qubitFactor = isGCCE ? wp.qdim : 1;
+    std::vector<int> spinDim(BathArray_getNspin(ba),0);
+    auto dimOf = [&](int ibs){
+        int& d = spinDim[ibs];
+        if (!d){
+            d = BathSpin_dim(BathArray_getBath_i(ba,ibs));
+            const int idf = DefectArray_findDefectIndex(dfa,BathArray_getBath_i_name(ba,ibs));
+            if (idf >= 0)
+                for (int isp=0; isp<DefectArray_getDefect_idf_naddspin(dfa,idf); isp++) d *= BathSpin_dim(DefectArray_getSubbath_i_isp(dfa,ibs,isp));
         }
-    long counts[2] = {most, eligible};
+        return d;
+    };
+    for (int n=1; n<=order; n++) most = std::max<long>(most, localclusters[n][0][0]-1);
+    for (int n=1; n<=order && !(taken*states >= need && (warpTaken || !warpOn)); n++)
+        for (int ic=1; ic<=localclusters[n][0][0]-1; ic++){
+            long d = 1;
+            for (int k=0; k<n && d <= warpcluster::maxDim; k++) d *= dimOf(localclusters[n][ic][1+k]);
+            const long dw = qubitFactor*d;
+            if (packedOn && (d == 2 || d == 4) && d <= cnf->gpu_packed_max_dim) ++taken;
+            else if (warpOn && dw <= warpcluster::maxDim && (mask>>dw & 1ULL)){ ++taken; ++warpTaken; }
+            if (taken*states >= need && (warpTaken || !warpOn)) break;
+        }
+    long counts[2] = {most, warpTaken}, total = std::min(taken*states,need);
     MPI_Allreduce(MPI_IN_PLACE,counts,2,MPI_LONG,MPI_MAX,MPI_COMM_WORLD);
-    most = counts[0]; eligible = counts[1];
+    MPI_Allreduce(MPI_IN_PLACE,&total,1,MPI_LONG,MPI_SUM,MPI_COMM_WORLD);
+    most = counts[0];
+    if (!counts[1]) mask = 0;                  // no rank has a warp cluster: no warp kernel, no warp input region
+    const bool warpUsed = warpOn && mask;
     const Layout full = layoutFor(cnf,packedOn,mask);
-    if (most <= 0 || !eligible || full.windowSize == 0){
+    if (most <= 0 || !total || total < threshold || full.windowSize == 0){
         if (rank==0){
             if (most <= 0) printf("%s off: no clusters to compute\n",tag);
-            else if (!eligible) printf("%s off: no cluster of a dimension it takes (%s): every cluster on its usual path\n",
-                                       tag,packedOn && warpOn ? "packed and warp kernel" : packedOn ? "packed kernel" : "warp kernel");
+            else if (!total) printf("%s off: no cluster of a dimension it takes (%s): every cluster on its usual path\n",
+                                    tag,packedOn && warpOn ? "packed and warp kernel" : packedOn ? "packed kernel" : "warp kernel");
+            else if (total < threshold)
+                printf("%s off: %ld cluster evaluations (clusters x states) for the %s, fewer than the threshold %ld (%ld per rank "
+                       "x %d ranks; starting the card would cost more than it saves): every cluster on its usual path\n",tag,total,
+                       packedOn && warpUsed ? "packed and warp kernels" : packedOn ? "packed kernel" : "warp kernel",
+                       threshold,batchMinClustersPerRank,nprocess);
             else printf("%s off: the %d values of one cluster pass the 6 MiB of a window: every cluster on the CPU\n",
                         tag,full.nstep*full.outPer);
         }
         smallClusterWarmDown();                // collective: the early memory and context (if any) released now, not at the end
         return;
     }
+    if (warpOn && !warpUsed && rank==0) printf("[gpu-warp] off: no cluster of a dimension it takes - no warp input region\n");
+    warpOn = warpUsed;
     Impl* m = new Impl;
     m->qa = qa; m->ba = ba; m->dfa = dfa; m->cnf = cnf;
     m->plan = packedOn ? plan : wp.time; m->ensemble = packedOn ? ensemble : bool(wp.ensemble); m->recursive = recursive;
@@ -690,10 +740,10 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
     m->warp = warpOn; m->warpMask = mask; m->gcce = isGCCE; m->qdim = wp.qdim; m->wplan = wp;
     if (warpOn && !isGCCE) m->warpReady.store(1,std::memory_order_release);   // the cCCE plan needs no qubit state
     // the memory of smallClusterWarmUp when it fits (the same on every rank: it depends on the input only), else a new one
-    // whose window is no larger than any rank's largest number of clusters in one order
+    // whose window is no larger than any rank's largest number of clusters in one order (the early CUDA context kept)
     if (warm.memory.matches(full)){ m->mem = warm.memory; warm.memory = NodeMemory{}; m->fromWarm = true; m->allocateSeconds = warm.allocateSeconds; }
     else {
-        if (warm.memory.allocated()) smallClusterWarmDown();   // collective, as the test above is the same on every rank
+        if (warm.memory.allocated()) warmReleaseMemory();   // collective, as the test above is the same on every rank
         const double start = MPI_Wtime();
         m->mem.allocate(layoutFor(cnf,packedOn,mask,most));
         m->allocateSeconds = MPI_Wtime()-start;

@@ -23,7 +23,7 @@ file is complete before that and the tool is not at fault.
 
 ## SpinTensorReader
 
-`spHamilReader/` is the package (`base/`, `vasp/`, `qe/`, and the `v2_*` readers),
+`spHamilReader/` is the package (`base/`, `vasp/`, `qe/`),
 `main.py` the command line. `examples/` are five worked cases with their inputs and
 the tensor files they produced; `do` in each reproduces them (`04.Diamond_N2p/do`
 takes two arguments, the JT index and the case, e.g. `bash do 4 1-2`). On
@@ -41,8 +41,16 @@ and example 03's MoS2 `Afile`). `--fidentify` is gone (the lines are always writ
 spin) are unchanged. The examples were re-run that day: 01 (QE, S = 1) nearest ¹⁴N A_zz 50.4 MHz (PBEsol); 02 (VASP)
 48.8 MHz without the core term (`Afile_nocore`, = the removed `Afile_v1` / 2) and 35.4 MHz with it (the default
 `--addhfcore True`); 03 and 05 S = 1/2; 04 v2 only (the v1 outputs removed). Every `Qfile`, and every v2 `Afile` apart
-from its two new lines, is byte-identical. The `v2_vasp/`, `v2_qe/` copies are not imported by `main.py` and were not
-changed.
+from its two new lines, is byte-identical.
+
+**Wide values (2026-10-13).** The `Afile`/`Qfile` fields are `%10.5f` between tabs, and CCEX's tensor reader split a
+line at spaces only: a value of 10 characters or more (-123.45678, 1234.56789) ran into the field before it, and the
+row was dropped (CCEX then stopped with "doesn't exist in A-file") or read shifted. The writers now put a space in front
+of every value, and CCEX splits at any blank, so old files with such values are read too (`runningScripts_Exspin/`'s
+NVHn `Afile`s have an iso of -141 MHz). `tests/check_wide_fields.py` (run by the `tensor_format` stage of
+`test/code_verification/check_input_forms`) writes values up to -12345.6 with both writers, in the new and in the old
+format, and checks that CCEX reads them as written. Examples 01-05 were re-run: every `Afile`/`Qfile` has the same
+numbers as before (only the added spaces). The unused copies `v2_vasp/`, `v2_qe/` (not imported anywhere) were removed.
 Python 3.12 prints SyntaxWarnings for a few regular expressions; they are harmless.
 
 `runningScripts_Exspin/` holds two example runs (N2p, NVHn) with their OUTCARs and

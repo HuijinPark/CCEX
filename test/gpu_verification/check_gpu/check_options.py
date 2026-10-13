@@ -83,17 +83,45 @@ def main():
     # profile line and the tolerance is the GPU's (review 20261012-233058-452278 P3-05); the default is cce-auto-packed
     run('cce-auto-cpu',args.cuda,{'backend':'auto','method':'CCE','gpu_options':{'min_dim':256,'packed_max_dim':0}},
         reference='cce-cpu')
-    run('cce-auto-packed',args.cuda,{'backend':'auto','method':'CCE','gpu_options':{'min_dim':256}},reference='cce-cpu',
+    # packed_max_dim given: these runs are far below the threshold of the default (A40 follow-up, 2026-10-13), and a given
+    # value starts the card whatever the count
+    run('cce-auto-packed',args.cuda,{'backend':'auto','method':'CCE','gpu_options':{'min_dim':256,'packed_max_dim':4}},reference='cce-cpu',
         actual_backend=None)
     output=(args.output/'cce-auto-packed'/'run.log').read_text()
     assert '[gpu-packed] on' in output and re.search(r'\[gpu-packed\] clusters on the GPU \d+, on the CPU while the GPU started \d+',
                                                      output), 'cce-auto-packed'
     print('PASS cce-auto-packed log: the packed kernel on, its counts printed',flush=True)
+    # ... and with the warp kernel at its default but no cluster of dimension 8 or 16 (order 1: dimension 2 only), no warp
+    # input region (A40 follow-up: P1 CR0 cCCE2 was +4.7 % from it, job 708)
+    assert '[gpu-warp] on' not in output and '[gpu-warp] off: no cluster of a dimension it takes - no warp input region' in output, \
+        'cce-auto-packed warp'
+    print('PASS cce-auto-packed log: no warp input region without a warp cluster',flush=True)
+    # the threshold (A40 follow-up): with packed_max_dim and warp_max_dim at their defaults, a run whose cluster evaluations
+    # for them (clusters x states) are fewer than 20000 per rank stays on the CPU, and computes exactly what the batch
+    # switched off computes; a single-state run counts each cluster once per state
+    def same_bytes(a,b):
+        files=sorted(p.name for p in (args.output/a).iterdir() if p.name.startswith('coherence'))
+        assert files and files==sorted(p.name for p in (args.output/b).iterdir() if p.name.startswith('coherence')), (a,b)
+        for f in files: assert (args.output/a/f).read_bytes()==(args.output/b/f).read_bytes(), (a,b,f)
+        print('PASS '+a+' output byte-identical to '+b+' ('+str(len(files))+' files)',flush=True)
+    evaluations={}
+    for name,base in (('cce3-threshold',{'method':'CCE','order':3,'rbath':15}),('gcce-threshold',{}),
+                      ('gcce-threshold-states',{'nstate':3})):
+        run(name+'-off',args.cuda,dict(base,backend='auto',gpu_options={'packed_max_dim':0,'warp_max_dim':0}),reference=None)
+        run(name,args.cuda,dict(base,backend='auto'),reference=None)
+        output=(args.output/name/'run.log').read_text()
+        found=re.search(r'off: (\d+) cluster evaluations \(clusters x states\) for the .*, fewer than the threshold 20000 \(20000 per rank x 1 ranks',output)
+        assert found and '[gpu-packed] on' not in output and '[gpu-warp] on' not in output, name
+        evaluations[name]=int(found.group(1))
+        print('PASS '+name+' log: below the threshold, the batch off',flush=True)
+        same_bytes(name,name+'-off')
+    assert evaluations['gcce-threshold-states']==3*evaluations['gcce-threshold'], evaluations
+    print('PASS gcce-threshold-states log: 3 states, 3 times the evaluations of the ensemble',flush=True)
     # P3-01: a card that cannot be opened - auto leaves every cluster on the CPU (the packed kernel off), cuda refuses, and
     # an explicit packed_max_dim with backend cpu (its only GPU work) refuses too
     for value in ('-1','99'):
         tag=value.replace('-','m')
-        run('cce-hidden-auto-'+tag,args.cuda,{'backend':'auto','method':'CCE'},hidden=value,reference='cce-cpu')
+        run('cce-hidden-auto-'+tag,args.cuda,{'backend':'auto','method':'CCE','gpu_options':{'packed_max_dim':4}},hidden=value,reference='cce-cpu')
         assert '[gpu-packed] off: the GPU could not be opened' in (args.output/('cce-hidden-auto-'+tag)/'run.log').read_text(), tag
         print('PASS cce-hidden-auto-'+tag+' log: the packed kernel off, every cluster on the CPU',flush=True)
         run('cce-hidden-cuda-'+tag,args.cuda,{'backend':'cuda','method':'CCE'},'CUDA initialization failed',hidden=value)
@@ -103,11 +131,20 @@ def main():
     # (warp_max_dim 0 here and in the out-of-memory cases below: the warp kernel, on by default since A40, would take them)
     third={'method':'CCE','order':3,'rbath':15}
     run('cce3-cpu',args.cpu,dict(third,backend='cpu'),reference=None)
-    run('cce3-auto-packed-batch',args.cuda,dict(third,backend='auto',gpu_options={'min_dim':8,'evolution_batch_size':8,'warp_max_dim':0}),
+    run('cce3-auto-packed-batch',args.cuda,dict(third,backend='auto',gpu_options={'min_dim':8,'evolution_batch_size':8,'packed_max_dim':4,'warp_max_dim':0}),
         reference='cce3-cpu',actual_backend=None)
     output=(args.output/'cce3-auto-packed-batch'/'run.log').read_text()
     assert '[gpu-packed] on' in output and re.search(r'\[gpu-batch\] rank=\d+ dim=8 batches=[1-9]',output), 'cce3-auto-packed-batch'
     print('PASS cce3-auto-packed-batch log: dimension 8 in the ordinary CUDA batches beside the packed kernel',flush=True)
+    # A40 follow-up: packed and warp both given, with clusters of dimension 8 - the early memory (no warp region) is
+    # replaced by one with the warp input region, the early CUDA context kept (a run this small may finish on the CPU
+    # before the card is up, so the check is the memory and the curve, not the count)
+    run('cce3-auto-packed-warp',args.cuda,dict(third,backend='auto',gpu_options={'packed_max_dim':4,'warp_max_dim':8}),
+        reference='cce3-cpu',actual_backend=None)
+    output=(args.output/'cce3-auto-packed-warp'/'run.log').read_text()
+    assert '[gpu-packed] on' in output and re.search(r'\[gpu-warp\] on .* of inputs per window',output) and \
+        '[gpu-warp] of these in the warp kernel' in output, 'cce3-auto-packed-warp'
+    print('PASS cce3-auto-packed-warp log: packed and warp kernels on, the warp region added',flush=True)
     # out of GPU memory (user 2026-10-13, A37 job 699): CCEX_TEST_GPU_OOM_BYTES=512 fails every device allocation of
     # 512 bytes or more, as a full card would. auto: those clusters on the CPU (CPU tolerance against the CPU build), the
     # run goes on; cuda: refused. cCCE and gCCE, in cluster batches (evolution_batch_size 8, the default) and one by one.

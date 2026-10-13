@@ -1109,7 +1109,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                     description="\
-    ./DataSpace.py  -d  /home/huijin/cal/pycce/result/STRAIN/BFIELDG/rawdata/ \
+    ./DataSpace.py  -d  <path>/cal/pycce/result/STRAIN/BFIELDG/rawdata/ \
                     -f  gCCE2_hBNVB_HE_BFIELD_Conv10 \
                     -vn STRAIN BFIELD  \
                     -v  g95 g96 g97 flat t110  // Variable values for STRAIN \
