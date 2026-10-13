@@ -1,0 +1,163 @@
+"""Regression tests of convert_input_keys.py (review 20261013-180049 C1).
+
+    python3 -m unittest discover -s example/tools/InputKeys/tests      (or python3 -m pytest example/tools/InputKeys/tests)
+
+fixtures/<name>.old.json are tutorial inputs as they were before A47 (git show 87cd7365a^:<path>), and <name>.new.json
+what the converter made of them in 87cd7365a, the commit that converted the repository's inputs.
+"""
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+TOOL = os.path.join(os.path.dirname(HERE), 'convert_input_keys.py')
+FIX = os.path.join(HERE, 'fixtures')
+sys.path.insert(0, os.path.dirname(HERE))
+from convert_input_keys import convert_text, strip_comments   # noqa: E402
+
+NAMES = sorted(f[:-len('.old.json')] for f in os.listdir(FIX) if f.endswith('.old.json'))
+
+
+def read(path):
+    with open(path) as f:
+        return f.read()
+
+
+def comments(text):
+    """The comments of a CCEX input (# or ! to the end of the line, outside strings), stripped."""
+    out = []
+    for line in text.splitlines():
+        code = strip_comments(line)
+        if code != line:
+            out.append(line[len(code):].strip())
+    return out
+
+
+def run(*args):
+    return subprocess.run([sys.executable, TOOL, *args], capture_output=True, text=True)
+
+
+class Fixtures(unittest.TestCase):
+    def test_there_are_fixtures(self):
+        self.assertGreaterEqual(len(NAMES), 5)
+
+    def test_converted_as_in_87cd7365a(self):
+        for name in NAMES:
+            with self.subTest(name):
+                new, log = convert_text(read(os.path.join(FIX, name + '.old.json')))
+                self.assertEqual(new, read(os.path.join(FIX, name + '.new.json')))
+                self.assertTrue(log)
+
+    def test_comments_kept(self):
+        for name in NAMES:
+            with self.subTest(name):
+                old = read(os.path.join(FIX, name + '.old.json'))
+                new, _ = convert_text(old)
+                self.assertTrue(comments(old))
+                self.assertEqual(sorted(comments(old)), sorted(comments(new)))
+
+    def test_second_pass_changes_nothing(self):
+        for name in NAMES:
+            with self.subTest(name):
+                new = read(os.path.join(FIX, name + '.new.json'))
+                again, log = convert_text(new)
+                self.assertEqual(again, new)
+                self.assertEqual(log, [])
+
+
+class OldAndNewKeyTogether(unittest.TestCase):
+    """An old key beside its new name was written twice (`"count":1,"count":2`): CCEX reads the first, Python the last."""
+
+    def test_different_values_refused(self):
+        for text in ('{"npulse": 2, "pulse": {"count": 1}}',
+                     '{"npulse": 2, "pulse": {"Count": 1}}',
+                     '{"statefile": "a", "bath_state_file": "b"}',
+                     '{"Adaptive": {"policy": "merge"}, "adaptive": {"policy": "hub"}}',
+                     '{"Qubit": {"qubit": [{"name": "q", "Spin": 1, "spin": 0.5}]}}',
+                     '{"addsubclus": 1, "add_subclusters": 1}'):          # 1 -> true, beside a 1 that CCEX refuses
+            with self.subTest(text), self.assertRaisesRegex(ValueError, 'written twice with different values'):
+                convert_text(text)
+
+    def test_conflict_names_the_key(self):
+        with self.assertRaisesRegex(ValueError, r'pulse\.count .*\(1 and 2\)'):
+            convert_text('{"npulse": 2, "pulse": {"count": 1}}')
+        with self.assertRaisesRegex(ValueError, r'Qubit\.qubit\[0\]\.Spin'):
+            convert_text('{"Qubit": {"qubit": [{"name": "q", "Spin": 1, "spin": 0.5}]}}')
+
+    def test_same_value_kept_once(self):
+        new, log = convert_text('{"npulse": 2, "pulse": {"count": 2}}')
+        self.assertEqual(json.loads(new), {'pulse': {'count': 2}})
+        self.assertEqual(new.count('count'), 1)
+        self.assertIn('pulse.count: the same value was written twice, kept once', log)
+        new, _ = convert_text('{"Adaptive": {"policy": "merge"}, "adaptive": {"policy": "merge"}}')
+        self.assertEqual(json.loads(new), {'adaptive': {'policy': 'merge'}})
+
+    def test_same_value_keeps_the_comment(self):
+        old = '{\n    "npulse": 2,     # Hahn echo\n    "pulse": {\n        "count": 2\n    }\n}\n'
+        new, _ = convert_text(old)
+        self.assertEqual(json.loads(strip_comments(new)), {'pulse': {'count': 2}})
+        self.assertEqual(comments(new), ['# Hahn echo'])
+
+
+class CommandLine(unittest.TestCase):
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.dir)
+
+    def copy(self, name):
+        path = os.path.join(self.dir, name + '.json')
+        shutil.copy(os.path.join(FIX, name + '.old.json'), path)
+        return path
+
+    def write(self, text):
+        path = os.path.join(self.dir, 'input.json')
+        with open(path, 'w') as f:
+            f.write(text)
+        return path
+
+    def test_rewrites_in_place(self):
+        path = self.copy(NAMES[0])
+        r = run(path)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(read(path), read(os.path.join(FIX, NAMES[0] + '.new.json')))
+        r = run(path)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn('already in the new form', r.stdout)
+
+    def test_check_and_stdout_leave_the_file(self):
+        for name in NAMES:
+            with self.subTest(name):
+                path = self.copy(name)
+                before, stamp = read(path), os.stat(path).st_mtime_ns
+                r = run('--check', path)
+                self.assertEqual(r.returncode, 1)                 # it still has old keys
+                r = run('--stdout', path)
+                self.assertEqual(r.returncode, 0, r.stderr)
+                self.assertEqual(r.stdout, read(os.path.join(FIX, name + '.new.json')))
+                self.assertEqual(read(path), before)
+                self.assertEqual(os.stat(path).st_mtime_ns, stamp)
+
+    def test_check_of_a_new_input(self):
+        path = os.path.join(self.dir, 'new.json')
+        shutil.copy(os.path.join(FIX, NAMES[0] + '.new.json'), path)
+        r = run('--check', path)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn('already in the new form', r.stdout)
+
+    def test_conflict_leaves_the_file(self):
+        text = '{\n    "npulse": 2,\n    "pulse": {"count": 1}\n}\n'
+        for option in ((), ('--check',), ('--stdout',)):
+            with self.subTest(option):
+                path = self.write(text)
+                r = run(*option, path)
+                self.assertEqual(r.returncode, 2)
+                self.assertIn('pulse.count is written twice with different values', r.stderr)
+                self.assertEqual(read(path), text)
+
+
+if __name__ == '__main__':
+    unittest.main()

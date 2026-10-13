@@ -228,7 +228,10 @@ python3 example/tools/InputKeys/convert_input_keys.py --stdout FILE     # print 
 ```
 
 It drops keys the run did not read (e.g. `qd_tensorfile` with `qd_readmode` 0) and the defaults `hf_readmode` 0 and
-`qd_readmode` 0, and refuses an input it cannot express (a `CorrTotSpin` other than 0). Keys not in the table kept their
+`qd_readmode` 0, and refuses an input it cannot express (a `CorrTotSpin` other than 0). An old key whose new name is
+already in the input (`npulse` beside `pulse.count`; case not read) is kept once when the two values are the same, and
+stops the file, before it is written, when they differ. Its tests are `example/tools/InputKeys/tests` (`python3 -m
+unittest discover -s example/tools/InputKeys/tests`). Keys not in the table kept their
 names (`quantity`, `order`, `bfield`, `deltat`, `nstep`, `nstate`, `seed`, `rdip_ladder`, `gyrofile`, `bathfile`,
 `outfile`, `savemode`, `backend`, `gpu_options`, `propagator`, `evolution`, `evolution_update`, `probe_memory_gb`,
 `profile`, `coordinate_frame_rotation`, `defect_axis_reference`, `auto_convergence`, the keys of `Qubit.qubit` and

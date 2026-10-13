@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <map>
 #ifdef CCEX_BLAS_DIRECT
 #include "../../include/common/blas_option.h"   // the thresholds printBanner reports
 #endif
@@ -917,19 +918,35 @@ std::vector<int> rankClusterRows(int m, const std::function<double(int)>& rowCos
         }
         return rows;
     }
-    std::vector<double> cost(m);
-    for (int i=0; i<m; i++) cost[i] = rowCost(i);
-    std::vector<int> order(m);
-    for (int i=0; i<m; i++) order[i] = i;
-    std::stable_sort(order.begin(), order.end(), [&](int a, int b){ return cost[a] > cost[b]; });
     std::priority_queue<std::pair<double,int>, std::vector<std::pair<double,int>>, std::greater<std::pair<double,int>>> least;
     for (int r=0; r<nprocess; r++) least.push({loads[r], r});
-    for (int i : order){
+    auto place = [&](int i, double c){
         std::pair<double,int> top = least.top();
         least.pop();
         if (top.second == rank) rows.push_back(i+1);
-        top.first += cost[i];
+        top.first += c;
         least.push(top);
+    };
+    // X10: few distinct costs (the cost is D^2 (D+nstep), so a mixed bath has a few): the rows grouped by cost, the
+    // largest first, each group in list order - the order the stable sort below gives, so the same rows and the same
+    // additions to the loads, without sorting the m rows
+    constexpr size_t maxGroups = 64;
+    std::map<double,std::vector<int>,std::greater<double>> groups;
+    bool few = true;
+    for (int i=0; i<m && few; i++){
+        groups[rowCost(i)].push_back(i);
+        few = groups.size() <= maxGroups;
+    }
+    if (few){
+        for (const auto& g : groups) for (int i : g.second) place(i, g.first);
+    } else {
+        groups.clear();
+        std::vector<double> cost(m);
+        for (int i=0; i<m; i++) cost[i] = rowCost(i);
+        std::vector<int> order(m);
+        for (int i=0; i<m; i++) order[i] = i;
+        std::stable_sort(order.begin(), order.end(), [&](int a, int b){ return cost[a] > cost[b]; });
+        for (int i : order) place(i, cost[i]);
     }
     while (!least.empty()){ loads[least.top().second] = least.top().first; least.pop(); }
     std::sort(rows.begin(), rows.end());

@@ -1,13 +1,16 @@
 // A30: the batched small-cluster cCCE evolution on the CPU (cce_batch.h) against the scalar path, bit for bit, on clusters
 // CCEX dumped (CCEX_SMALL_CLUSTER_DUMP: Halpha, Hbeta, psi and the time plan of each cluster;
 // test/gpu_verification/check_gpu/data/small_cluster/*.bin, the A26 fixtures and the production P1 CR60 sigma4 clusters).
-// Both sides start from the dumped Hamiltonians: the scalar path is cceSetup + cceEvolve (what calCoherenceCceInto runs
-// after building them), the batched one cceSetup + ccebatchPackLane + the kernel, as CceBatchWindow runs it. The objects
+// Both sides start from the dumped Hamiltonians: the scalar path is cceSetupSmallAlone (A42; cceSetup when off) + cceEvolve
+// (what calCoherenceCceInto runs after building them), the batched one the grouped eigensolves (A42) + cceSetupSmall +
+// ccebatchPackLane + the kernel, as CceBatchWindow runs it. The objects
 // are main.out's, so the check holds for the build it is compiled in - run it in every build (make cpu-test).
 // Each file is run as dumped and with the other evolution_update; a one-state file also as the ensemble Hahn echo.
-// Cases the build's kernel does not cover (lanes() 0, the ensemble CPMG/Ramsey) are counted as scalar and pass.
+// Cases the build's kernel does not cover (lanes() 0, the ensemble CPMG/Ramsey) are counted as scalar and pass; a build
+// whose kernel fails the A51 self-check (ccebatchUsable) passes as "off on this machine".
 // usage: test_cce_batch.out DUMP...
 #include "calculation/cce_batch_window.h"
+#include "calculation/small_eigensolver.h"
 #include <cstdio>
 #include <cstring>
 #include <string>
@@ -87,16 +90,43 @@ void runCase(const std::string& name, const std::vector<Rec>& cl, bool ensemble,
             std::vector<bool> batched(group.size(),false);
             for (size_t c=0; c<group.size(); ++c){
                 ws.Halpha = group[c]->Ha; ws.Hbeta = group[c]->Hb;
-                cceSetup(ws, ensemble ? nullptr : &group[c]->psi);
+                if (!cceSetupSmallAlone(ws, ensemble ? nullptr : &group[c]->psi)) cceSetup(ws, ensemble ? nullptr : &group[c]->psi);
                 cceEvolve(cnf,&pulse,res.data(),ws);
                 for (int i=0; i<nstep; ++i) scalarOut[c*nstep+i] = res[i](0,0);
+            }
+            // A42: the batched side solves the eigensystems as CceBatchWindow does - smalleig::maxLanes matrices at a time,
+            // Halpha then Hbeta of each cluster in order - and the scalar side (cceSetup) one at a time
+            const bool jacobi = smalleig::on();
+            std::vector<double> eigW(group.size()*8); std::vector<doublec> eigV(group.size()*32);
+            std::vector<char> eigOk(group.size()*2,0);
+            if (jacobi){
+                std::vector<size_t> pending;
+                const doublec* h[smalleig::maxLanes]; double* w[smalleig::maxLanes]; doublec* V[smalleig::maxLanes];
+                bool ok[smalleig::maxLanes];
+                auto flush = [&](){
+                    if (pending.empty()) return;
+                    smalleig::solve(D,int(pending.size()),h,w,V,ok);
+                    for (size_t g=0; g<pending.size(); ++g) eigOk[pending[g]] = ok[g];
+                    pending.clear();
+                };
+                for (size_t c=0; c<group.size(); ++c) for (int t=0; t<2; ++t){
+                    const size_t m = 2*c+t;
+                    h[pending.size()] = (t == 0 ? group[c]->Ha : group[c]->Hb).data();
+                    w[pending.size()] = &eigW[m*4]; V[pending.size()] = &eigV[m*16];
+                    pending.push_back(m);
+                    if (int(pending.size()) == smalleig::maxLanes) flush();
+                }
+                flush();
             }
             static ccebatch::Pack pack;
             std::complex<double>* out[ccebatch::maxLanes] = {};
             int count = 0;
             for (size_t c=0; c<group.size(); ++c){
                 ws.Halpha = group[c]->Ha; ws.Hbeta = group[c]->Hb;
-                cceSetup(ws, ensemble ? nullptr : &group[c]->psi);
+                const double* w[2] = {nullptr,nullptr}; const doublec* V[2] = {nullptr,nullptr};
+                for (int t=0; jacobi && t<2; ++t) if (eigOk[2*c+t]){ w[t] = &eigW[(2*c+t)*4]; V[t] = &eigV[(2*c+t)*16]; }
+                if (jacobi) cceSetupSmall(ws, ensemble ? nullptr : &group[c]->psi, w, V);
+                else cceSetup(ws, ensemble ? nullptr : &group[c]->psi);
                 if (!ccebatchPackLane(ws,ensemble,D,pack,count)) continue;
                 batched[c] = true;
                 out[count++] = &batchOut[c*nstep];
@@ -123,7 +153,15 @@ void runCase(const std::string& name, const std::vector<Rec>& cl, bool ensemble,
 
 int main(int argc, char** argv){
     if (argc < 2){ fprintf(stderr,"usage: %s DUMP...\n",argv[0]); return 2; }
-    printf("A30 batched small-cluster kernel: %s, %d lanes\n",ccebatch::variant(),ccebatch::lanes());
+    printf("A30 batched small-cluster kernel: %s, %d lanes; A42 small eigensolver %s\n",ccebatch::variant(),ccebatch::lanes(),
+           smalleig::on() ? "on" : "off (CCEX_SMALL_EIG=0)");
+    // A51: a build whose kernel fails the start-up self-check never uses it (CceBatchWindow stays off), so there is nothing
+    // to compare: every cluster goes the scalar path
+    const char* why = nullptr;
+    if (ccebatch::lanes() > 0 && !ccebatchUsable(&why)){
+        printf("PASS off on this machine: the A51 self-check turned the batched kernel off (%s); every cluster goes the scalar path\n",why);
+        return 0;
+    }
     for (int a=1; a<argc; ++a){
         FILE* f = fopen(argv[a],"rb");
         if (!f){ perror(argv[a]); return 2; }

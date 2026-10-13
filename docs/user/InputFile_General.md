@@ -41,7 +41,10 @@ cluster Hamiltonian). How the bath is cut into clusters is [cluster_mode](InputF
 (`standard`, `pcce`, `bundle`, `dsj`, `itb`, `dsjitb`). `pcce`, `dsj`, `itb` and `dsjitb` run with cCCE only: gCCE with
 them is refused as not implemented yet.
 
-You can give the method with the "-m" command-line option (`-m cCCE`, `-m gCCE`); it keeps the input's `cluster_mode`. <br>
+You can give the method with the "-m" command-line option (`-m cCCE`, `-m gCCE`); it keeps the input's `cluster_mode`,
+and it is the method with `-m` that is checked against that `cluster_mode`: an input with `gCCE` and `pcce` runs under
+`-m cCCE`, and an input with `cCCE` and `pcce` is refused under `-m gCCE` (until 2026-10-13 the input's own method was
+checked first, so the first was refused too). The method written in the input still has to be a method name. <br>
 <b>Data Type:</b> String (case is not significant)
 
 <b>Options:</b><br>

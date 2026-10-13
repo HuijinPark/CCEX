@@ -2,8 +2,10 @@
 #include "../../../include/calculation/gpu/small_cluster_batch.h"
 #include "../../../include/calculation/hamiltonian_check.h"
 #include "../../../include/calculation/small_hamiltonian.h"
+#include "../../../include/calculation/cce_batch_window.h"
 #include <algorithm>
 #include <atomic>
+#include <climits>
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
@@ -336,7 +338,7 @@ struct SmallClusterBatch::Impl {
     double allocateSeconds = 0;
     char* own = nullptr;
     // this rank's windows; kind of a cluster: 0 the CPU, 2 or 4 the packed kernel, 1 the warp kernel
-    struct Window { int first = 0, last = 0; bool submitted = false, waited = false; std::vector<int> where; std::vector<char> dim, kind; long count[3] = {0,0,0}; };
+    struct Window { int first = 0, last = 0; bool submitted = false, waited = false, cpu = false; std::vector<int> where; std::vector<char> dim, kind; long count[3] = {0,0,0}; };
     Window window[2];
     int order = 0, ncluster = 0; int** clusters = nullptr;
     MatrixXcd Ha, Hb, Ht, Hq;
@@ -379,7 +381,7 @@ struct SmallClusterBatch::Impl {
         w.first = first; w.last = std::min(first+cpuWhileStarting, ncluster+1);
         w.where.assign(w.last-w.first,-1); w.dim.assign(w.last-w.first,0); w.kind.assign(w.last-w.first,0);
         w.count[0] = w.count[1] = w.count[2] = 0;
-        w.submitted = w.waited = true;
+        w.submitted = w.waited = true; w.cpu = true;
         cpuStarting += w.last-w.first;
     }
 };
@@ -468,6 +470,7 @@ void SmallClusterBatch::Impl::prepare(int slot, int first){
     w.first = first; w.last = std::min(first+L().windowSize, ncluster+1);
     w.where.assign(w.last-w.first,-1); w.dim.assign(w.last-w.first,0); w.kind.assign(w.last-w.first,0);
     w.count[0] = w.count[1] = w.count[2] = 0;
+    w.cpu = false;
     // the slot was waited for (or never used): the feeder is done with it
     C* dst[2] = {in2(own,slot), in4(own,slot)};
     C* arena = inW(own,slot);
@@ -557,7 +560,7 @@ void SmallClusterBatch::Impl::wait(int slot){
 struct SmallClusterBatch::Impl {};
 #endif
 
-void smallClusterWarmUp(const Config* cnf){
+void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const char* savemode){
     const bool packed = cnf->gpu_packed_max_dim > 0, warp = cnf->gpu_warp_max_dim > 0;
     if (!packed && !warp) return;
     // refused here, before the bath is read: the packed kernel is cCCE, and it is in the GPU binary only
@@ -577,13 +580,51 @@ void smallClusterWarmUp(const Config* cnf){
                              packed ? "packed_max_dim" : "warp_max_dim",provided,warp ? " and warp_max_dim to 0" : "");
         ccexFatal();
     }
+    // review 20261013-221715 X7: no early start for a kernel the input already rules out - what the constructor will find
+    // without looking at the clusters: the packed kernel outside its runs (one qubit, coherence, at most 4 distinct
+    // intervals) or off by A48 (not given, the ensemble, and the CPU batch takes the run); the warp kernel where
+    // warpClusterRun refuses the run (gcce_refinement, propagator, pulseiter, ...) or savemode cluster_density_matrix (gCCE),
+    // or without a dimension for the qubit. A wrong guess here costs only time: the constructor starts the card itself.
+    // Whether a run is short (its clusters) is known only after the bath is read; the early start stays for those
+    // (deferring every start to the constructor slowed P1 CR0 cCCE2 8.63 -> 8.92 s, job 707).
+    bool packedLikely = packed, warpLikely = warp;
+    int qdim = 3;
+    if (qa && pls){
+        Config* c = const_cast<Config*>(cnf);
+        if (packedLikely){
+            Plan plan{}; bool ensemble = false, recursive = false;
+            packedLikely = QubitArray_getNqubit(qa)==1 && !strcasecmp(cnf->quantity,"coherence") &&
+                           smallClusterPlan(c,pls,plan,ensemble,recursive);
+            ccebatch::Plan cpuPlan; bool cpuDims[2]; const char* cpuWhy = nullptr;
+            if (packedLikely && ensemble && strcmp(cnf->gpu_packed_source,"given") &&
+                ccebatchRunTakes(qa,c,pls,false,cpuPlan,cpuDims,&cpuWhy) && cpuDims[0] && (cnf->gpu_packed_max_dim < 4 || cpuDims[1]))
+                packedLikely = false;
+        }
+        if (warpLikely){
+            warpcluster::Plan wp{}; const char* why = nullptr;
+            const bool gcce = !strcasecmp(cnf->method,"gcce");
+            warpLikely = warpClusterRun(qa,c,pls,wp,why) && !(gcce && savemode && !strcasecmp(savemode,"cluster_density_matrix")) &&
+                         warpMask(cnf,wp.qdim);
+            if (warpLikely) qdim = wp.qdim;
+            // A53 (user 2026-10-13): cCCE with the packed kernel off (packed_max_dim 0, its plan, the A48 ensemble rule) -
+            // whether a cluster of a warp dimension (bath 8, 16) exists is known only from the bath, and most cCCE baths
+            // have none (P1, h-BN ensembles: 0.2-0.35 s of start for nothing, job 17443), so the card starts in the
+            // constructor when some rank has one. With the packed kernel on, the early start stays (job 707).
+            if (warpLikely && !gcce && !packedLikely){
+                warpLikely = false;
+                if (rank==0) printf("[gpu-warp] no early start: cCCE with the packed kernel off - the card starts only if some rank "
+                                    "has a cluster of a warp dimension (A53)\n");
+            }
+        }
+        if (!packedLikely && !warpLikely) return;
+    }
     // A40 follow-up (2026-10-13): with the packed kernel on, the early memory has no warp input region - most cCCE runs have
     // no cluster of a warp dimension (P1 CR0 cCCE2: +4.7 % from that region, job 708); the constructor adds it when some
     // rank has one (a new memory, the early CUDA context kept)
-    const unsigned long long mask = warp && !packed ? warpMask(cnf) : 0;
-    if (warm.memory.allocated() || layoutFor(cnf,packed,mask).windowSize == 0) return;
+    const unsigned long long mask = warpLikely && !packedLikely ? warpMask(cnf,qdim) : 0;
+    if (warm.memory.allocated() || layoutFor(cnf,packedLikely,mask).windowSize == 0) return;
     const double start = MPI_Wtime();
-    warm.memory.allocate(layoutFor(cnf,packed,mask));
+    warm.memory.allocate(layoutFor(cnf,packedLikely,mask));
     warm.allocateSeconds = MPI_Wtime()-start;
     if (warm.memory.nodeRank != 0) return;
     // the range by value: SmallClusterBatch takes warm.memory over (and clears it) while this thread may still run
@@ -671,21 +712,9 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
         }
     }
     if (!packedOn && !warpOn) return;            // the early memory, if any, is freed at the end (smallClusterWarmDown)
-    const char* tag = packedOn ? "[gpu-packed]" : "[gpu-warp]";
 #if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
-    // review 20261012-233058-452278 P3-04: no window (and no memory) without clusters, none beyond the 6 MiB budget;
-    // GPU 다음 셋 (1): and no feeder (the early start released) when no rank has a cluster of a dimension the batch takes.
-    // A40 follow-up (2026-10-13): the warp input region only when some rank has a warp cluster, and the batch off when the
-    // clusters it would take are fewer than the threshold (batchMinClustersPerRank). The count is of cluster evaluations,
-    // a cluster once per state (nstate states, or 1 for the ensemble), as the batch's own count and the saving per cluster
-    // are. A rank counts its clusters from order 1 up and stops once it has the threshold and has seen a warp cluster
-    // (bath dimension: the product of the spins' dimensions, a defect's added spins included, as createBathArray makes
-    // the cluster).
-    const bool given = (packedOn && !strcmp(cnf->gpu_packed_source,"given")) || (warpOn && !strcmp(cnf->gpu_warp_source,"given"));
-    const long threshold = given ? 0 : batchMinClustersPerRank*long(nprocess), need = std::max(threshold,1L);
-    const long states = std::max(Config_getNstate(cnf),1);
-    long most = 0, taken = 0, warpTaken = 0;
-    const int qubitFactor = isGCCE ? wp.qdim : 1;
+    // bath dimension of a spin: the product of the spins' dimensions, a defect's added spins included, as createBathArray
+    // makes the cluster
     std::vector<int> spinDim(BathArray_getNspin(ba),0);
     auto dimOf = [&](int ibs){
         int& d = spinDim[ibs];
@@ -697,6 +726,58 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
         }
         return d;
     };
+    // A48 (user 2026-10-13): with packed_max_dim not given and the CPU batch (A30, CceBatchWindow) taking this run's
+    // clusters of the packed dimensions, the packed kernel only where it is faster than A30 (idm4-gpu, 32 ranks, MPS, jobs
+    // 17403/17404/17407: per state and rank the card loses about 0.105 s and saves 2.65 us per evaluation - break-even
+    // 39.6 k): one state - on when the clusters of bath dimension 2 and 4 (up to packed_max_dim) are at least
+    // packedMinPerRankState per rank (each state evaluates them all), else off; the ensemble - off (no gain at 25-178 k).
+    // A run A30 does not take keeps the threshold below. Collective (the same on every rank: the input decides).
+    if (packedOn && strcmp(cnf->gpu_packed_source,"given")){
+        constexpr long packedMinPerRankState = 40000;
+        ccebatch::Plan cpuPlan; bool cpuDims[2]; const char* cpuWhy = nullptr;
+        const bool cpuTakes = ccebatchRunTakes(qa,cnf,pls,isGCCE,cpuPlan,cpuDims,&cpuWhy) && cpuDims[0] &&
+                              (cnf->gpu_packed_max_dim < 4 || cpuDims[1]);
+        if (!cpuTakes){
+            if (rank==0) printf("[gpu-packed] the CPU batch (A30) does not take this run (%s): the packed kernel unless its "
+                                "cluster evaluations (clusters x states) are fewer than %ld per rank (A48)\n",
+                                cpuWhy ? cpuWhy : "not every packed dimension",batchMinClustersPerRank);
+        } else if (ensemble){
+            packedOn = false;
+            if (rank==0) printf("[gpu-packed] off: the ensemble - the CPU batch (A30, %s) computes the clusters of bath dimension "
+                                "2 and 4 (the card saves nothing there; A48)\n",ccebatch::variant());
+        } else {
+            const long cap = packedMinPerRankState*long(nprocess);
+            long count = 0;
+            for (int n=1; n<=order && count<cap; n++)
+                for (int ic=1; ic<=localclusters[n][0][0]-1 && count<cap; ic++){
+                    long d = 1;
+                    for (int k=0; k<n && d <= 4; k++) d *= dimOf(localclusters[n][ic][1+k]);
+                    if ((d == 2 || d == 4) && d <= cnf->gpu_packed_max_dim) ++count;
+                }
+            MPI_Allreduce(MPI_IN_PLACE,&count,1,MPI_LONG,MPI_SUM,MPI_COMM_WORLD);
+            packedOn = count >= cap;
+            if (rank==0){
+                if (packedOn) printf("[gpu-packed] on: one state, at least %ld evaluations of bath dimension 2 and 4 per rank per "
+                                     "state (A48 threshold; fewer go to the CPU batch, A30)\n",packedMinPerRankState);
+                else printf("[gpu-packed] off: one state, %.0f evaluations of bath dimension 2 and 4 per rank per state, fewer than "
+                            "%ld - the CPU batch (A30, %s) computes them (A48)\n",double(count)/nprocess,packedMinPerRankState,
+                            ccebatch::variant());
+            }
+        }
+        if (!packedOn && !warpOn){ smallClusterWarmDown(); return; }   // collective: the early start released now
+    }
+    const char* tag = packedOn ? "[gpu-packed]" : "[gpu-warp]";
+    // review 20261012-233058-452278 P3-04: no window (and no memory) without clusters, none beyond the 6 MiB budget;
+    // GPU 다음 셋 (1): and no feeder (the early start released) when no rank has a cluster of a dimension the batch takes.
+    // A40 follow-up (2026-10-13): the warp input region only when some rank has a warp cluster, and the batch off when the
+    // clusters it would take are fewer than the threshold (batchMinClustersPerRank). The count is of cluster evaluations,
+    // a cluster once per state (nstate states, or 1 for the ensemble), as the batch's own count and the saving per cluster
+    // are. A rank counts its clusters from order 1 up and stops once it has the threshold and has seen a warp cluster.
+    const bool given = (packedOn && !strcmp(cnf->gpu_packed_source,"given")) || (warpOn && !strcmp(cnf->gpu_warp_source,"given"));
+    const long threshold = given ? 0 : batchMinClustersPerRank*long(nprocess), need = std::max(threshold,1L);
+    const long states = std::max(Config_getNstate(cnf),1);
+    long most = 0, taken = 0, warpTaken = 0;
+    const int qubitFactor = isGCCE ? wp.qdim : 1;
     for (int n=1; n<=order; n++) most = std::max<long>(most, localclusters[n][0][0]-1);
     for (int n=1; n<=order && !(taken*states >= need && (warpTaken || !warpOn)); n++)
         for (int ic=1; ic<=localclusters[n][0][0]-1; ic++){
@@ -764,7 +845,7 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
                wp.time.intervals, wp.time.distinct, m->mem.layout.windowSize, m->mem.layout.arena*16.0/1048576.0, m->mem.partBytes/1048576.0);
     }
 #else
-    (void)ba; (void)dfa; (void)localclusters; (void)order; (void)tag;
+    (void)ba; (void)dfa; (void)localclusters; (void)order;
     if (rank==0) fprintf(stderr,"Error: gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
                          packedOn ? "packed_max_dim" : "warp_max_dim");
     ccexFatal();
@@ -809,6 +890,18 @@ bool SmallClusterBatch::packs(int dim) const {
 #else
     (void)dim;
     return false;
+#endif
+}
+
+int SmallClusterBatch::cpuEnd(int ic) const {
+#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
+    if (!impl || impl->off || !impl->packed) return INT_MAX;
+    for (const Impl::Window& w : impl->window)
+        if (w.submitted && w.cpu && ic >= w.first && ic < w.last) return w.last;
+    return ic+1;
+#else
+    (void)ic;
+    return INT_MAX;
 #endif
 }
 

@@ -78,6 +78,19 @@
   icpx 2026.1 AVX2, icpx 2023.2 AVX-512; any other build keeps the one-by-one path). One state with any pulse plan and the
   ensemble Hahn echo, `exact` and `recursive`. Production P1 cCCE2 on idm (64 ranks): 0.60–0.64 of the time with
   `recursive`, 0.74–0.77 with `exact`. See (internal notes).
+  Since A51 (2026-10-13) each process first checks the batch against the one-by-one path on a few made-up clusters
+  (about 1 ms) and turns it off, with one `[cpu-batch] off` line, where a bit differs (e.g. a build with
+  `CXXFLAGS_EXTRA=-ffp-contract=off`, review 20261013-cpu R1, or another CPU's `-march=native` tuning, CI); results are
+  the one-by-one path's everywhere. Its window storage is made only when a window is used, and a time grid whose
+  coherences for one group of lanes pass 4 MiB runs one by one (review 20261013-221715 X5).
+- **`bin/main_gpu.out` uses the CPU batch too, and chooses between it and the packed kernel** (A48, 2026-10-13): the
+  clusters of bath dimension 2 and 4 the GPU does not take (while the card starts, `packed_max_dim` 0, given back) go to
+  the CPU batch; with `packed_max_dim` not given and a run the CPU batch takes, the packed kernel is on for one state only
+  from 40000 such clusters per rank per state and off for the ensemble (break-even measured at about 39.6 k on idm4-gpu,
+  32 ranks; (internal notes)). Runs it turns off write the bytes of `bin/main.out`. Other runs
+  keep the threshold below; a given `packed_max_dim` is kept. The early CUDA and shared-memory start is skipped where the
+  input alone rules the kernels out (X7), and for cCCE with the packed kernel off by the input the warp kernel's card
+  start waits for a cluster of a warp dimension (A53).
 - **Repository layout**: `src/` and `include/` in five parts (input, physical, clustering, calculation, common);
   `example/{tutorial,analysis,tools}`; `external/`; `test/{code_verification,cluster_verification,gpu_verification}`.
   The tutorials were rewritten as numbered folders (twelve; 11 and 12 added on 2026-10-12) with `run.sh`.
@@ -203,6 +216,21 @@ the results are byte-identical, or within the stated bound for `recursive`. For 
 - SpinTensorReader's QE writer used names it never defined (`sys`, `defectposition`, `fout_Afile`/`fout_Qfile` in its
   summary), so its error paths crashed instead of stopping with their message; and its tag was misspelt
   `QUANTUMESSPRESSO`.
+- The input file given as `-fFILE` (or `-vfFILE`) skipped the `adaptive` block: a bundle input with one ran as a plain
+  bundle run without a word (its curve off by up to 2.84 on a six-spin case), and `adaptive` with cluster_mode `standard`
+  was not refused. The file is found by getopt as the rest of the options are (review 20261013-180049 I01).
+- `-m` is checked with the input's `cluster_mode` in place of the input's method: an input with `gCCE` and `pcce` (or
+  `dsj`, `itb`, `dsjitb`) runs under `-m cCCE`; it was refused before `-m` was applied (I02).
+- The keys of the `savemode` and `propagator` blocks and of the `adaptive` block are read without regard to case, as
+  every other key (`"Mode"`, `"Method"`, `"Policy"` were refused) (I03).
+- The input-key converter wrote a key twice when the input had an old key and its new name (`"count": 1, "count": 2`;
+  CCEX reads the first, Python the last). The same value is kept once, different values (or keys that differ only in
+  case) stop the file before it is written; the converter has tests in `example/tools/InputKeys/tests` (C1).
+- The automatic convergence read `auto_convergence`, `method` and the other keys with their case, unlike CCEX: an
+  `"Auto_Convergence"` block was refused as missing and `"Method": "gCCE"` ran as cCCE. Keys are read without regard to
+  case and two keys that differ only in case are refused (R4).
+- SpinTensorReader (VASP) read the defect spin for a Q file alone too, and stopped on an OUTCAR with magnetization 0 or
+  none; the spin is read, and `--spin` checked, for the A file only (T1).
 
 ### Refused now (inputs that used to be accepted)
 - **The input keys before A47** (2026-10-13): an old name, value (`method` `CCE`, `pCCE`, `dsj`, ...; `cluster_mode`

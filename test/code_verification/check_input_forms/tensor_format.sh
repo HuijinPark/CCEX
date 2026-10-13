@@ -14,6 +14,9 @@
 # T4  values of 10 characters or more (1234.56789, -12345.6) in the A and Q files of SpinTensorReader's VASP and QE
 #     writers, in their format now and in the one before 2026-10-13 (tab-glued fields), are read as written
 #     (example/tools/SpinTensorReader/tests/check_wide_fields.py).
+# T5  a Q file alone from a VASP OUTCAR whose magnetization is 0 or missing is written (the same Q file), while an A file
+#     from it, or with a --spin it contradicts, is still refused (review 20261013-180049 T1;
+#     example/tools/SpinTensorReader/tests/check_qfile_spin.py).
 # The refused files (a tag that contradicts the source, S other than the qubit spin, a malformed line) are in
 # ../check_refusals/.
 #
@@ -95,6 +98,9 @@ PY
 done
 out=$(python3 "$EX/tools/SpinTensorReader/tests/check_wide_fields.py" "$BIN_DEV" "$MPIRUN" "$W/wide_fields" 2>&1); rc=$?
 echo "$out" | sed 's/^  PASS  /  PASS  T4 /; s/^  FAIL  /  FAIL  T4 /'
+if [ $rc -eq 0 ]; then PASS=$((PASS+$(grep -c "^  PASS" <<<"$out"))); else FAIL=$((FAIL+1)); fi
+out=$(python3 "$EX/tools/SpinTensorReader/tests/check_qfile_spin.py" "$W/qfile_spin" 2>&1); rc=$?
+echo "$out" | sed 's/^  PASS  /  PASS  T5 /; s/^  FAIL  /  FAIL  T5 /'
 if [ $rc -eq 0 ]; then PASS=$((PASS+$(grep -c "^  PASS" <<<"$out"))); else FAIL=$((FAIL+1)); fi
 echo "tensor_format: $PASS passed, $FAIL failed"
 [ $FAIL -eq 0 ]

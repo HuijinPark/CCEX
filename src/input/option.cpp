@@ -2,6 +2,7 @@
 #include "../../include/input/option.h"
 #include "../../include/input/json.h"
 #include "../../include/common/memory.h"
+#include "../../include/auto_convergence/rdip_ladder.h"
 
 #include <cmath>
 #include <limits>
@@ -251,7 +252,8 @@ static void refuseOldInputKeys(cJSON* root){
 // cluster_mode adaptive for bundle - so nothing past the readers changed (and the -P inventory writes what it wrote).
 // gCCE with pcce, dsj, itb or dsjitb is not implemented yet (those shapes run with cCCE only; improvements.md A47).
 // meCCE and noise are reserved method names (A49): accepted by the reader, refused as not implemented yet.
-static void internalMethod(const char* method, const char* shape, const char* where, char* methodOut, char* modeOut){
+// A method name: cCCE or gCCE (true for gCCE); reserved, old and unknown names are refused.
+static bool checkedMethodName(const char* method, const char* where){
     const bool gcce = !strcasecmp(method,"gcce");
     if (!strcasecmp(method,"mecce") || !strcasecmp(method,"noise")){
         fprintf(stderr,"Error: %s \"%s\" is not implemented yet (a reserved name; the methods that run are cCCE and gCCE)\n",
@@ -269,6 +271,11 @@ static void internalMethod(const char* method, const char* shape, const char* wh
                     where,method);
         exit(EXIT_FAILURE);
     }
+    return gcce;
+}
+
+static void internalMethod(const char* method, const char* shape, const char* where, char* methodOut, char* modeOut){
+    const bool gcce = checkedMethodName(method,where);
     static const char* shapes[] = {"standard", "pcce", "bundle", "dsj", "itb", "dsjitb"};
     int k = 0;
     while (k < 6 && strcasecmp(shape,shapes[k])) ++k;
@@ -289,14 +296,26 @@ static void internalMethod(const char* method, const char* shape, const char* wh
     strcpy(modeOut,k == 2 ? "adaptive" : "standard");
 }
 
+// The last -m of the command line, or NULL (cJSON_setMethodOverride). It replaces the file's method before the
+// combination with cluster_mode is judged, so a file with gCCE + pcce runs under -m cCCE (review 20261013-180049 I02).
+static const char* methodOverride = NULL;
+
 static void readMethod(cJSON* root, char* methodOut, char* modeOut){
     cJSON* mode = cJSON_GetObjectItem(root,"cluster_mode");
     if (mode && (!cJSON_IsString(mode) || !mode->valuestring)){
         fprintf(stderr,"Error: cluster_mode must be a string (standard, pcce, bundle, dsj, itb, dsjitb)\n");
         exit(EXIT_FAILURE);
     }
-    internalMethod(cJSON_ReadString(root,(char*)"method",true,(char*)"cCCE"),mode ? mode->valuestring : "standard","method",
-                   methodOut,modeOut);
+    const char* method = cJSON_ReadString(root,(char*)"method",true,(char*)"cCCE");
+    if (methodOverride){
+        checkedMethodName(method,"method");   // the file's own value is still a method name
+        method = methodOverride;
+    }
+    internalMethod(method,mode ? mode->valuestring : "standard",methodOverride ? "-m" : "method",methodOut,modeOut);
+}
+
+void cJSON_setMethodOverride(const char* method){
+    methodOverride = method;
 }
 
 void cJSON_applyMethodOption(Config* cnf, Cluster* cls, const char* method){
@@ -894,7 +913,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     cJSON* propagatorItem = cJSON_GetObjectItem(root,"propagator");
     if (cJSON_IsObject(propagatorItem)){
         for (cJSON* key = propagatorItem->child; key; key = key->next)
-            if (strcmp(key->string,"method") && strcmp(key->string,"min_dim") && strcmp(key->string,"tol")){
+            if (strcasecmp(key->string,"method") && strcasecmp(key->string,"min_dim") && strcasecmp(key->string,"tol")){
                 fprintf(stderr,"Error: propagator has no key \"%s\" (method, min_dim, tol)\n",key->string);
                 exit(EXIT_FAILURE);
             }
@@ -1048,15 +1067,18 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             cnf->cluster_contribution_max_mb=int(value);
         }
     }
-    if(auto* item=cJSON_GetObjectItem(root,"rdip_ladder")) {           // checked against rdip and the method in rdip_ladder.h
+    // checked against rdip and the method in rdip_ladder.h. Every rank reads the input, so a refusal here stops the ranks together
+    // (rdipladder::refuse: one message, MPI_Finalize, exit 1); a plain exit on each rank let mpirun kill the slower rank and
+    // report 1 or 255 at random, sometimes with one message (A54)
+    if(auto* item=cJSON_GetObjectItem(root,"rdip_ladder")) {
         const int count=cJSON_IsArray(item) ? cJSON_GetArraySize(item) : -1;
         if(count<1 || count>64) {
-            fprintf(stderr,"Error: rdip_ladder must be an array of 1 to 64 numbers\n");exit(EXIT_FAILURE);
+            rdipladder::refuse("must be an array of 1 to 64 numbers");
         }
         for(int k=0;k<count;++k) {
             const double value=readFiniteNumber(cJSON_GetArrayItem(item,k),"rdip_ladder");
             if(value<=0 || (k>0 && float(value)<=cnf->rdip_ladder[k-1])) {
-                fprintf(stderr,"Error: rdip_ladder must be positive and strictly increasing\n");exit(EXIT_FAILURE);
+                rdipladder::refuse("must be positive and strictly increasing");
             }
             cnf->rdip_ladder[k]=float(value);
         }
@@ -2248,7 +2270,7 @@ void cJSON_readSavemode(cJSON* item, Output* op, bool readNodiv){
         exit(EXIT_FAILURE);
     }
     for (cJSON* key = item->child; key; key = key->next)
-        if (strcmp(key->string,"mode") && strcmp(key->string,"nodiv")){
+        if (strcasecmp(key->string,"mode") && strcasecmp(key->string,"nodiv")){
             fprintf(stderr,"Error: savemode has no key \"%s\" (mode, nodiv)\n",key->string);
             exit(EXIT_FAILURE);
         }

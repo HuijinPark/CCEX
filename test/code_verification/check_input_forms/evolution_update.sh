@@ -57,9 +57,11 @@ else echo "  FAIL  E1 (see $W/numerics.txt)"; FAIL=$((FAIL+1)); fi
 fi
 
 # E3: without the key, recursive where it exists. The gCCE rows use hbn_gcce2_dm: since the h-BN hyperfine was halved
-# (tensor format v3, 2026-10-13) exact and recursive write the same bytes on hbn_gcce2_oh, which then cannot tell them apart
+# (tensor format v3, 2026-10-13) exact and recursive write the same bytes on hbn_gcce2_oh, which then cannot tell them apart;
+# the one-state cCCE row uses p1_cce2e2n for the same reason since A42 (the dim-2/4 Jacobi eigensystems, 2026-10-13: on
+# p1_cce2_single, natab_cce2_single and vp_cce2 exact and recursive now write the same bytes)
 # name  case  changes
-SUPPORTED="cce_single p1_cce2_single {}
+SUPPORTED="cce_single p1_cce2e2n {}
 cce_ensemble hbn_cce2_hf3_qd0 {}
 gcce_vector hbn_gcce2_dm {}
 gcce_matrix hbn_gcce2_dm {\"evolution\":\"matrix\"}"
@@ -93,8 +95,8 @@ while read -r name case change why; do
     else echo "  FAIL  E4 $name (see $d)"; FAIL=$((FAIL+1)); fi
 done <<< "$UNSUPPORTED"
 
-# E5: backend auto in the CPU build is the CPU default (A36): against the backend cpu runs of E3
-AUTO="cce_single p1_cce2_single
+# E5: backend auto in the CPU build is the CPU default (A36): against the backend cpu runs of E3 (the same cases)
+AUTO="cce_single p1_cce2e2n
 cce_ensemble hbn_cce2_hf3_qd0
 gcce_vector hbn_gcce2_dm"
 while read -r name case; do

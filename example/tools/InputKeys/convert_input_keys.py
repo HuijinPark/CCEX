@@ -9,6 +9,8 @@ The table of old and new names is docs/user/InputFile.md; (internal notes) has t
 Comments (# or ! to the end of a line, outside strings) stay: a key that moves into a block takes the comment lines
 above it and the comment after it on its line. A value is copied as written unless its form changes (method, a 0/1
 switch, hf_readmode, ...). An object nothing changed in is left byte for byte. A file in the new form is left alone.
+A key written twice (an old key beside its new name, or two spellings that differ in case only) is kept once when the
+values are the same; different values stop the file before anything is written. Tests: tests/ (python3 -m unittest).
 """
 import json
 import sys
@@ -104,6 +106,10 @@ class Obj(Container):
         i, m = self.find(key)
         if m is None:
             return None
+        return self.drop_at(i)
+
+    def drop_at(self, i):
+        m = self.items[i]
         del self.items[i]
         self.dirty = True
         body = m.pre.rsplit('\n', 1)[0] if '\n' in m.pre else ''
@@ -368,8 +374,38 @@ class Converter:
         self.qubit(R, top)
         self.hamiltonian(R, top)
         self.defect(R, top)
+        self.single_keys(R, '')
         self.compact(R)
         return self.prefix + R.render() + self.suffix
+
+    def single_keys(self, node, path):
+        """One member per key, case ignored as CCEX ignores it (review 20261013-180049 C1). An old key whose new name is
+        already written (npulse beside pulse.count) gave the key twice, and CCEX reads the first, Python json the last:
+        the same value is kept once, different values refuse the file before anything is written."""
+        if isinstance(node, Obj):
+            i = 0
+            while i < len(node.items):
+                m = node.items[i]
+                first = next(x for x in node.items if x.key.lower() == m.key.lower())
+                if first is m:
+                    i += 1
+                    continue
+                a, b = plain(first.value), plain(m.value)
+                if json.dumps(a, sort_keys=True) != json.dumps(b, sort_keys=True):     # true is not 1 here
+                    raise ValueError(f'{path}{first.key} is written twice with different values ({json.dumps(a)} and '
+                                     f'{json.dumps(b)}): an old key and its new name were both in the input, or a key in '
+                                     f'two cases; keep one')
+                node.drop_at(i)                 # its comment lines stay; the comment after it goes above the one kept
+                if m.tail.strip():
+                    ind = first.indent()
+                    if ind is not None:
+                        first.pre = first.pre[:len(first.pre) - len(ind)] + ind + m.tail.strip() + '\n' + ind
+                    else:
+                        self.note(f'{path}{m.key}: its comment {m.tail.strip()!r} was not kept (the block is on one line)')
+                self.note(f'{path}{m.key}: the same value was written twice, kept once')
+        for n, m in enumerate(node.items):
+            if isinstance(m.value, Container):
+                self.single_keys(m.value, f'{path}{m.key}.' if m.keyraw is not None else f'{path[:-1]}[{n}].')
 
     def compact(self, obj):
         """A new block of a few plain values on one line: "pulse": {"count": 1}. The comment lines that came with its

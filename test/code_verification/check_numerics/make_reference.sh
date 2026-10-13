@@ -8,7 +8,7 @@ set -eu
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$HERE/../../.." && pwd)"; NP="${NP:-2}"
 what="$1"
 if [ "$what" = current ]; then
-  name="head-$(date +%Y%m%d)-$(cd "$REPO" && git rev-parse --short HEAD)"; BIN="$REPO/bin/main.out"
+  name="head-$(date +%Y%m%d%H%M)-$(cd "$REPO" && git rev-parse --short HEAD)"   # date and time: two references of one day sort by time, not by commit hash; BIN="$REPO/bin/main.out"
 else
   name="$what"; WT="${CCEX_WORKTREE_DIR:-/tmp}/ccex-$name"
   if [ ! -x "$WT/bin/main.out" ]; then

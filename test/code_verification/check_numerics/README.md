@@ -20,8 +20,9 @@ A binary built with MKL (A46: `do_compile.sh` and CMake turn it on when they fin
 `MKL for large clusters : on`) is judged against the newest `head-*` reference (the one that decides) relative to
 it instead: |run − reference| ≤
 1e-12 |reference| element by element, 1e-12 absolute where the reference is 0. The references were recorded
-without MKL, and the library changes the last digits of the clusters it takes (zgemm from bath dimension 21,
-zheevd from 63); held relative, a diverged element (|L| of order 1e5, where 1e-9 absolute is a 1e-14 change) is
+without MKL, and the library changes the last digits of the clusters it takes (zgemm in the cCCE ensemble
+Hahn echo's recursive path from bath dimension 21, zheevd from dimension 63: the bath for cCCE, qubit × bath for gCCE);
+held relative, a diverged element (|L| of order 1e5, where 1e-9 absolute is a 1e-14 change) is
 measured against its own size, and every value below 1e3 is held tighter than by 1e-9. The older `head-*` tables
 keep 1e-9 and the tagged references their own tolerance. `compare.py` reads the run logs to know which rule applies.
 
@@ -85,7 +86,7 @@ run (for A/B comparisons).
 
 | folder | what | how it was made |
 |---|---|---|
-| `head-<date>-<commit>/` | this branch at that commit, on WSL, 2 ranks | `bash make_reference.sh current` |
+| `head-<date>-<commit>/`, since 2026-10-13 21:30 `head-<date><time>-<commit>/` | this branch at that commit, on WSL, 2 ranks, MKL off (`CCEX_BLAS=off`) | `bash make_reference.sh current` |
 | `v1.1.0/`, `v1.2.2/` | the tagged releases, built from the tag on the same WSL | `bash make_reference.sh v1.2.2` (a worktree of the tag under /tmp, `do_compile.sh wsl-gnu`, removed afterwards) |
 
 v1.0.0 does not build with the current compiler (`src/bath.cpp: taking address
@@ -127,3 +128,12 @@ reason for the earlier references and the tags. The new outputs are the bytes of
 rule (x 0.5), `../check_input_forms/tensor_format.sh`, which also needs `head-20261012-aa883d0d4` (recorded with the
 `_tag` file) to show that an old file is read as before - keep that folder.
 
+
+**2026-10-13 21:30: `head-202610132130-2b2cc3e16`, A42** (the dimension 2 and 4 cCCE eigensolves by a fixed four-sweep
+complex Jacobi, A42). Recorded with `CCEX_BLAS=off` like the earlier heads. Against
+`head-20261013-8a775921f` (noDiv/dm, wiDiv): `p1_cce2_single` 9.2e-10 / 9.9e-10, `natab_cce2_hahn`, `natab_manual_hahn`,
+`p1_cce2_ensemble`, `vp_cce2` 1e-10 (one digit of the ten written), `natab_cce2_cpmg8` and `natab_knight_shift` wiDiv 1e-10,
+`p1_cce4` wiDiv 4.8e-4 and `p1_pcce2_sk2` wiDiv 0.38 on curves that diverge (about 2e-7 of the value); gCCE, h-BN and the
+rest byte-identical. With `CCEX_SMALL_EIG=0` the run gives the earlier bits. From this one on the name carries the time
+(`make_reference.sh`), so that two references of one day sort in the order they were made: by name alone this one
+(`...-2b2cc3e16`) would have sorted before `head-20261013-8a775921f` and not decided.
