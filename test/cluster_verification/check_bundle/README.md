@@ -12,7 +12,7 @@ because they are the scripts behind the records listed below and cited in
 | script (historical) | checked then | needed then |
 |---|---|---|
 | `check_adaptive.py --baseline DIR --output DIR` | adaptive CCE/gCCE against the full-bath and subset calculations recorded in the baseline | a baseline run |
-| `check_auto_connections.py`, `check_auto_groups.py` | the automatic connection choice (`bundle_connections=auto`, omitted `rdip`) against the full graph and independent subsets | a baseline run; MPI and CUDA variants |
+| `check_auto_connections.py`, `check_auto_groups.py` | the automatic connection choice (`bundle.connections=auto`, omitted `rdip`) against the full graph and independent subsets | a baseline run; MPI and CUDA variants |
 | `check_baths.py --fixtures DIR --output DIR` | bundles on the full NV and PL6 baths across MPI ranks and backends | `../../code_verification/bath_data/ensemble_data` |
 | `check_refinement.py --baseline DIR --output DIR` | end-to-end refinement against complete small-bath calculations | a baseline run |
 

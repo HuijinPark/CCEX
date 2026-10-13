@@ -410,7 +410,9 @@ std::unique_ptr<Executed> Driver::execute(const std::string& mode,
     const std::string request_text = write_json(request, 2);
     write_file(here+"/request.json", request_text);
     Value config = cfg_;
-    config.set("adaptive_work_file", Value::text(here+"/request.json"));
+    Value work = Value::object();
+    work.set("work_file", Value::text(here+"/request.json"));
+    config.set("adaptive", work);
     config.set("outfile", Value::text(here+"/coherence"));
     const std::string input_text = write_json(config, 2);
     write_file(here+"/input.json", input_text);
@@ -738,7 +740,9 @@ int Driver::finish(const std::string& status, const std::string& directory, cons
     request.set("bundles", sites_list(step.plan.bundles));
     write_file(root_+"/final-request.json", write_json(request, 2));
     Value config = cfg_;
-    config.set("adaptive_work_file", Value::text(root_+"/final-request.json"));
+    Value work = Value::object();
+    work.set("work_file", Value::text(root_+"/final-request.json"));
+    config.set("adaptive", work);
     config.set("outfile", Value::text(root_+"/final-coherence"));
     write_file(root_+"/final-input.json", write_json(config, 2));
     persist();
@@ -841,10 +845,10 @@ std::vector<Sites> patch_clusters(const std::vector<Sites>& bundles, const std::
 
 ExpansionLimits Driver::config_limits() const {
     ExpansionLimits limits;
-    if (cfg_.has("expansion_max_clusters"))
-        limits.max_clusters = cfg_.at("expansion_max_clusters").as_int();
-    if (cfg_.has("expansion_max_work"))
-        limits.max_work = cfg_.at("expansion_max_work").as_int();
+    if (const Value* max_clusters = find_path(cfg_, {"bundle", "max_clusters"}))
+        limits.max_clusters = max_clusters->as_int();
+    if (const Value* max_work = find_path(cfg_, {"bundle", "max_work"}))
+        limits.max_work = max_work->as_int();
     return limits;
 }
 

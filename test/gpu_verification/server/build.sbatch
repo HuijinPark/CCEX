@@ -2,6 +2,7 @@
 #SBATCH --job-name=ccex-cce2-build
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu-short
+#SBATCH --export=NONE
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=8G

@@ -34,33 +34,41 @@ struct Prepared {
     std::vector<int> states;
 };
 
-// The input may carry an "Adaptive" object - that is how bin/main.out is asked to
+// The input may carry an "adaptive" object - that is how bin/main.out is asked to
 // refine without a command line. It is this run's request, not part of the
 // calculation: copied into a step's input.json it would ask the step to start a
-// refinement of its own.
+// refinement of its own. CCEX reads keys without regard to case ("Adaptive" until A47),
+// so any spelling is left out; so is a step's "adaptive": {"work_file"}.
 adaptive::Value without_adaptive_block(const adaptive::Value& given) {
     adaptive::Value out = adaptive::Value::object();
-    for (const std::string& key : given.keys())
-        if (key != "Adaptive")
+    for (const std::string& key : given.keys()) {
+        std::string lower = key;
+        for (char& c : lower)
+            c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+        if (lower != "adaptive")
             out.set(key, given.at(key));
+    }
     return out;
 }
 
 Prepared prepare_config(const adaptive::Value& given) {
     Prepared out;
     out.cfg = given;
-    if (!out.cfg.has("rdip") && !out.cfg.has("bundle_connections"))
+    if (!out.cfg.has("rdip") && !adaptive::find_path(out.cfg, {"bundle", "connections"}))
         throw adaptive::ValueError(
             "For rdip-omitted checked connections, run CCEX directly. This separate "
             "refinement driver requires rdip or explicit legacy connection settings.");
-    if (!out.cfg.has("cluster_mode") || out.cfg.at("cluster_mode").as_string() != "adaptive" ||
+    if (!out.cfg.has("cluster_mode") || out.cfg.at("cluster_mode").as_string() != "bundle" ||
         (out.cfg.has("quantity") && out.cfg.at("quantity").as_string() != "coherence"))
-        throw adaptive::ValueError("input must use cluster_mode=adaptive and quantity=coherence");
-    out.method = out.cfg.has("method") ? out.cfg.at("method").as_string() : "cce";
+        throw adaptive::ValueError("input must use cluster_mode=bundle and quantity=coherence");
+    // method cCCE or gCCE (A47); inside, the policy names them cce and gcce, as CCEX does
+    out.method = out.cfg.has("method") ? out.cfg.at("method").as_string() : "ccce";
     for (char& c : out.method)
         c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-    if (out.method != "cce" && out.method != "gcce")
-        throw adaptive::ValueError("refinement supports cce/gcce");
+    if (out.method == "ccce")
+        out.method = "cce";
+    else if (out.method != "gcce")
+        throw adaptive::ValueError("refinement supports method cCCE/gCCE");
     if (!out.cfg.has("seed") || out.cfg.at("seed").kind() != adaptive::Value::Kind::Int)
         throw adaptive::ValueError(
             "an explicit integer seed is required to preserve bath states between runs");
@@ -184,11 +192,7 @@ int adaptive_main(const std::vector<std::string>& given) {
             !std::isfinite(timeout_value) || timeout_value <= 0.)
             throw UsageError{"budgets/ranks/timeout must be positive; max-rounds may be zero"};
 
-        adaptive::Value raw_cfg = adaptive::Value::object();
-        for (const std::string& key : given.keys())
-            if (key != "adaptive_work_file")
-                raw_cfg.set(key, given.at(key));
-        const Prepared prepared = prepare_config(raw_cfg);
+        const Prepared prepared = prepare_config(given);   // the adaptive block, work_file with it, is left out
         adaptive::Value cfg = prepared.cfg;
         const std::string method = prepared.method;
         const std::vector<int> states = prepared.states;
@@ -204,12 +208,12 @@ int adaptive_main(const std::vector<std::string>& given) {
                 throw adaptive::ValueError("--regroup supports method cce only (gCCE's physical bound is not decided)");
             if (order != 2)
                 throw adaptive::ValueError("--regroup needs bundle order 2: the culprit is a pair of bundles");
-            std::string connections = cfg.has("bundle_connections") ? cfg.at("bundle_connections").as_string()
-                                                                     : "distance";
+            const adaptive::Value* given_connections = adaptive::find_path(cfg, {"bundle", "connections"});
+            std::string connections = given_connections ? given_connections->as_string() : "distance";
             for (char& c : connections)                     // CCEX reads it with strcasecmp
                 c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
             if (connections != "distance")
-                throw adaptive::ValueError("--regroup needs bundle_connections distance: its connections are worked "
+                throw adaptive::ValueError("--regroup needs bundle.connections distance: its connections are worked "
                                            "out again from the site distances, which auto and checked do not use");
             if (!cfg.has("rdip"))
                 throw adaptive::ValueError("--regroup needs rdip: its connections are the sites within it");
@@ -218,9 +222,11 @@ int adaptive_main(const std::vector<std::string>& given) {
             // Method and order are checked above; the power-0 terms these two options add would mix
             // with the culprit factors and with P_K.
             if (regroup_factors || regroup_except) {
-                const bool contributions = cfg.has("cluster_contributions") &&
-                                           cfg.at("cluster_contributions").kind() == adaptive::Value::Kind::Bool &&
-                                           cfg.at("cluster_contributions").as_bool();
+                // the cluster_contributions block is on unless it says "enabled": false (A47)
+                const adaptive::Value* block = cfg.find("cluster_contributions");
+                const adaptive::Value* enabled = block ? adaptive::find_path(*block, {"enabled"}) : nullptr;
+                const bool contributions = block && block->kind() == adaptive::Value::Kind::Object &&
+                                           (!enabled || (enabled->kind() == adaptive::Value::Kind::Bool && enabled->as_bool()));
                 const bool ladder = cfg.has("rdip_ladder") && cfg.at("rdip_ladder").kind() == adaptive::Value::Kind::Array &&
                                     cfg.at("rdip_ladder").size() > 0;
                 if (contributions || ladder)
@@ -264,7 +270,10 @@ int adaptive_main(const std::vector<std::string>& given) {
         adaptive::MergeContext merge;
         merge.neighbors = static_cast<long long>(args.at("neighbors").as_int());
         merge.max_patches = static_cast<long long>(args.at("max_patches").as_int());
-        merge.bundle_max_dim = cfg.at("bundle_max_dim").as_int();
+        const adaptive::Value* max_dim = adaptive::find_path(cfg, {"bundle", "max_dim"});
+        if (!max_dim)
+            throw adaptive::ValueError("cluster_mode bundle requires bundle.max_dim");
+        merge.bundle_max_dim = max_dim->as_int();
         merge.merge_priority = args.at("merge_priority").as_string();
         adaptive::Driver::Limits limits;
         limits.max_rounds = static_cast<long long>(args.at("max_rounds").as_int());

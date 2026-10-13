@@ -21,7 +21,7 @@
 // from those probes - the same assembly CCEX's run makes, with nothing else to compare
 // it with here. Every pair of bundles is connected (the prototype's graph); the site
 // IDs are the stored ones, used as they are; a site is two-dimensional (P1 with the
-// 14N scalar, the stored plan's site_dimensions), so K = 2, 3 is bundle_max_dim 4, 8.
+// 14N scalar, the stored plan's site_dimensions), so K = 2, 3 is bundle.max_dim 4, 8.
 // The budget is unlimited, which is what the prototype had.
 #include <cmath>
 #include <dirent.h>

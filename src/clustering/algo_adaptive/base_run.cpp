@@ -373,9 +373,12 @@ NativeResult run_native(const std::vector<std::string>& command, const std::stri
 // ----------------------------------------------------------------------------
 namespace adaptive {
 namespace {
-const char* kInputFiles[] = {"gyrofile", "qubitfile", "bathfile", "statefile", "exstatefile",
-                             "avaaxfile", "hf_tensorfile", "qd_tensorfile",
-                             "qd_tensorfile_woqubit"};
+// the input keys that name files, as paths into the input's blocks (A47); the order is the manifest's
+const std::vector<std::vector<const char*>> kInputFiles = {
+    {"gyrofile"}, {"Qubit", "file"}, {"bathfile"}, {"bath_state_file"}, {"Defect", "state_file"},
+    {"Defect", "axis_file"}, {"hamiltonian", "common", "hyperfine", "file"},
+    {"hamiltonian", "common", "quadrupole", "file"},
+    {"hamiltonian", "common", "quadrupole", "file_without_defect"}};
 
 std::string parent_of(const std::string& path) {
     const std::size_t slash = path.rfind('/');
@@ -458,10 +461,13 @@ std::string resolved(const std::string& cwd, const std::string& name) {
 
 Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector<int>& states) {
     Value files = Value::object();
-    for (const char* key : kInputFiles) {
+    for (const std::vector<const char*>& key : kInputFiles) {
         std::vector<std::string> paths;
-        if (cfg.has(key) && cfg.at(key).kind() != Value::Kind::Null) {
-            const Value& given = cfg.at(key);
+        const Value* at = &cfg;
+        for (const char* step : key)
+            at = at && at->kind() == Value::Kind::Object ? at->find(step) : nullptr;
+        if (at && at->kind() != Value::Kind::Null) {
+            const Value& given = *at;
             if (given.kind() == Value::Kind::String) {
                 paths.push_back(given.as_string());
             } else {
@@ -469,8 +475,8 @@ Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector
                     paths.push_back(given.at(i).as_string());
             }
         }
-        const std::string name(key);
-        if (name == "statefile" || name == "exstatefile") {
+        const std::string name(key.back());
+        if (name == "bath_state_file" || name == "state_file") {
             std::vector<std::string> spread;
             for (const std::string& path : paths)
                 for (int state : states)
@@ -491,15 +497,25 @@ Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector
 Value identity(const Value& cfg, const std::string& cwd, const std::vector<int>& states,
                const std::string& binary_sha256, long long ranks) {
     // These choose where output goes or how bundles are drawn, not the dynamics of
-    // an explicit site list, so two runs that differ only here share probes.
-    static const std::set<std::string> ignored{
-        "outfile", "adaptive_work_file", "profile", "savemode", "bundle_max_dim",
-        "bundle_merge_cutoff", "bundle_connections",
-        "bundle_connection_budget"};
+    // an explicit site list, so two runs that differ only here share probes: in the
+    // bundle block, all but its expansion limits (max_clusters, max_work).
+    static const std::set<std::string> ignored{"outfile", "adaptive", "profile", "savemode"};
+    static const std::set<std::string> ignoredBundle{"max_dim", "merge_cutoff", "connections", "connection_budget"};
     Value config = Value::object();
-    for (const std::string& key : cfg.keys())
-        if (ignored.count(key) == 0)
-            config.set(key, cfg.at(key));
+    for (const std::string& key : cfg.keys()) {
+        if (ignored.count(key) != 0)
+            continue;
+        if (key == "bundle" && cfg.at(key).kind() == Value::Kind::Object) {
+            Value kept = Value::object();
+            for (const std::string& inner : cfg.at(key).keys())
+                if (ignoredBundle.count(inner) == 0)
+                    kept.set(inner, cfg.at(key).at(inner));
+            if (!kept.keys().empty())
+                config.set(key, kept);
+            continue;
+        }
+        config.set(key, cfg.at(key));
+    }
     Value out = Value::object();
     out.set("schema", Value::integer(static_cast<long long>(1)));
     out.set("config", config);

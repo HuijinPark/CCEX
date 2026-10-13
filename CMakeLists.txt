@@ -8,6 +8,10 @@
 #     CCEX_CUDA=AUTO|ON|OFF   the CUDA backend binary; AUTO builds it when a CUDA compiler is found
 #     CCEX_NATIVE=ON|OFF      -march=native on the CPU objects (ON)
 #     CCEX_SANITIZE=ON|OFF    AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects (OFF)
+#     CCEX_BLAS=AUTO|MKL|OFF  large cCCE/gCCE clusters by Intel MKL (zgemm from bath dimension 21, zheevd from
+#                             63; include/common/blas_option.h), as do_compile.sh's CCEX_BLAS. AUTO (default): on when
+#                             oneAPI's MKLConfig.cmake is found (MKLROOT from setvars.sh or the intel module); MKL:
+#                             stop without it; OFF: never. lp64, sequential
 #     CCEX_BIN_DIR=<dir>      where the executables go (default <build>/bin); -DCCEX_BIN_DIR=$PWD/bin
 #                             puts them where do_compile.sh does and the checks look by default
 #     CMAKE_CUDA_ARCHITECTURES=<cc>   the card's compute capability, e.g. 86 or 120 (default: native)
@@ -22,7 +26,7 @@
 # each other's main.out. The checks take the binary to test from CCEX_BIN, e.g.
 # CCEX_BIN=$PWD/build/bin/main.out, and the unit-test drivers of check_rotation and
 # check_pcce take the build folder from CCEX_BUILD_DIR.
-# Eigen, uthash and SQLite are in external/. MKL is not used (see do_compile.sh).
+# Eigen, uthash and SQLite are in external/. MKL when it is found (CCEX_BLAS, see do_compile.sh).
 
 cmake_minimum_required(VERSION 3.18)
 project(CCEX VERSION 2.0.0 LANGUAGES C CXX)
@@ -30,6 +34,7 @@ project(CCEX VERSION 2.0.0 LANGUAGES C CXX)
 set(CCEX_CUDA AUTO CACHE STRING "CUDA backend binary: AUTO, ON or OFF")
 option(CCEX_NATIVE "-march=native on the CPU objects" ON)
 option(CCEX_SANITIZE "AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects" OFF)
+set(CCEX_BLAS AUTO CACHE STRING "Intel MKL for the large clusters: AUTO (when found), MKL (required) or OFF")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -46,6 +51,40 @@ endif()
 
 find_package(MPI REQUIRED COMPONENTS CXX)
 find_package(Threads REQUIRED)
+
+# ---- CCEX_BLAS (A46): with MKL every target compiles with CCEX_BLAS_DIRECT and links MKL (lp64, sequential: one thread
+#      per MPI rank), set before the targets below so that the binaries and the unit tests get the same
+set(_ccex_blas_unit_libs)
+set(_ccex_mkl OFF)
+string(TOUPPER "${CCEX_BLAS}" _ccex_blas)
+if(_ccex_blas STREQUAL "AUTO" OR _ccex_blas STREQUAL "MKL")
+  set(MKL_INTERFACE lp64)
+  set(MKL_INTERFACE_FULL intel_lp64)            # the name older MKLConfig.cmake (2023) reads
+  set(MKL_THREADING sequential)
+  set(MKL_LINK dynamic)
+  if(_ccex_blas STREQUAL "MKL")
+    find_package(MKL CONFIG REQUIRED)
+  else()
+    find_package(MKL CONFIG QUIET)
+  endif()
+  set(_ccex_mkl ${MKL_FOUND})
+elseif(NOT _ccex_blas STREQUAL "OFF")
+  message(FATAL_ERROR "CCEX: CCEX_BLAS=${CCEX_BLAS}: expected AUTO, MKL or OFF")
+endif()
+if(_ccex_mkl)
+  add_compile_definitions(CCEX_BLAS_DIRECT)
+  link_libraries(MKL::MKL)
+  set(_mkl_lib ${MKL_ROOT}/lib/intel64)
+  if(NOT IS_DIRECTORY ${_mkl_lib})
+    set(_mkl_lib ${MKL_ROOT}/lib)
+  endif()
+  set(_ccex_blas_unit_libs -L${_mkl_lib} -Wl,-rpath,${_mkl_lib} -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_core)
+  message(STATUS "CCEX: MKL on (${_mkl_lib})")
+elseif(_ccex_blas STREQUAL "OFF")
+  message(STATUS "CCEX: MKL off (CCEX_BLAS=OFF)")
+else()
+  message(STATUS "CCEX: MKL off (MKLConfig.cmake not found; source setvars.sh or set MKL_DIR)")
+endif()
 
 # ---- CUDA: AUTO means "when nvcc is found"
 include(CheckLanguage)
@@ -160,7 +199,10 @@ set(_unit_includes)
 foreach(i ${CCEX_INCLUDE} ${MPI_CXX_INCLUDE_DIRS})
   list(APPEND _unit_includes -I${i})
 endforeach()
-set(_unit_libs ${MPI_CXX_LINK_FLAGS} ${MPI_CXX_LIBRARIES} -lpthread -ldl -lm)
+set(_unit_libs ${MPI_CXX_LINK_FLAGS} ${MPI_CXX_LIBRARIES} ${_ccex_blas_unit_libs} -lpthread -ldl -lm)
+if(_ccex_mkl)
+  list(APPEND _unit_flags -DCCEX_BLAS_DIRECT)
+endif()
 if(CCEX_SANITIZE)
   list(APPEND _unit_libs -fsanitize=address,undefined)
 endif()

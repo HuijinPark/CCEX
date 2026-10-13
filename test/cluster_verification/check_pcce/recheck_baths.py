@@ -25,7 +25,9 @@ def execution(directory, dimension_bound=None):
     if not profiles:
         raise ValueError(f'Missing profiles: {directory}')
     config = json.loads((directory/'input.json').read_text())
-    if any(p['method'] != config['method'].lower() or
+    # the [profile] lines name the method as the code does: pcce, cce or gcce (A47: method cCCE/gCCE + cluster_mode)
+    internal = 'pcce' if config.get('cluster_mode') == 'pcce' else 'gcce' if config['method'].lower() == 'gcce' else 'cce'
+    if any(p['method'] != internal or
            p['backend'] != config['backend'] for p in profiles):
         raise ValueError(f'Unexpected method/backend: {directory}')
     if dimension_bound and max(int(p['dim']) for p in profiles) > dimension_bound:

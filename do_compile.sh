@@ -25,13 +25,16 @@
 # Every preset builds bin/main.out (CPU). A preset with CUDA also builds
 # bin/main_gpu.out, the same sources with -DCCEX_USE_CUDA and the CUDA kernels,
 # for "backend": "cuda" / "auto" in the input. Eigen, uthash and sqlite are in
-# external/; nothing else is needed. MKL is not used: EIGEN_USE_MKL_ALL used to be
-# defined after Eigen was included and had no effect, and no MKL symbol was ever
-# linked (2026-09-24: ldd showed no MKL library in the binaries the old MKL presets
-# made, and the 25-case numerics check gave the same numbers without MKL).
+# external/; nothing else is needed. Intel MKL is used when it is found (CCEX_BLAS
+# below; every preset decides after its modules/setvars.sh, CCEX_BLAS=off turns it off).
+# The old presets' EIGEN_USE_MKL_ALL was defined after Eigen was included and had no
+# effect, and no MKL symbol was linked (2026-09-24: ldd, and the 25-case numerics check
+# gave the same numbers without it); it was removed then.
 #
 #   CCEX_JOBS=N       make -jN (default 5: idm's login node is shared)
 #   CCEX_SANITIZE=1   -fsanitize=address,undefined on the CPU objects, the adaptive ones and SQLite
+#   CCEX_BLAS=auto|mkl|off   large cCCE/gCCE clusters by Intel MKL (zgemm, zheevd): auto (default) when
+#                     MKL is found, mkl insists (stops without it), off never; see below
 
 if [ $# -ne 1 ]; then
     echo "usage: bash do_compile.sh <preset>" >&2
@@ -184,6 +187,42 @@ mac)
     ;;
 esac
 
+# CCEX_BLAS (A46): the cCCE ensemble Hahn step's D^3 product from bath dimension 21 and the
+# cCCE/gCCE cluster eigensolve from dimension 63 by MKL's zgemm/zheevd (include/common/blas_option.h).
+# idm job 17337: h-BN r 0.72-0.88 where the time is in such clusters, P1 untouched; the curves move
+# in the last digits (h-BN gCCE late times up to 9e-8). auto (the default; user decision 2026-10-13):
+# on when $MKLROOT (set by setvars.sh or an intel module, so decided here, after the preset) holds
+# the three libraries; mkl: the same, but stop when they are not there; off: never. MKL is linked
+# sequential (one thread per MPI rank); the binary then needs MKL's libraries at run time (rpath).
+BLAS_MODE="$(echo "${CCEX_BLAS:-auto}" | tr '[:upper:]' '[:lower:]')"
+MKL_LIB=""
+MKL_WHY=""
+case "$BLAS_MODE" in
+off) MKL_WHY="CCEX_BLAS=off" ;;
+auto|mkl)
+    if [ -z "${MKLROOT:-}" ]; then
+        MKL_WHY="MKLROOT is not set"
+    else
+        for d in "$MKLROOT/lib/intel64" "$MKLROOT/lib"; do
+            if [ -e "$d/libmkl_core.so" ] && [ -e "$d/libmkl_intel_lp64.so" ] && [ -e "$d/libmkl_sequential.so" ]; then MKL_LIB="$d"; break; fi
+        done
+        [ -n "$MKL_LIB" ] || MKL_WHY="no libmkl_core/intel_lp64/sequential.so under $MKLROOT/lib(/intel64)"
+    fi
+    if [ "$BLAS_MODE" = mkl ] && [ -z "$MKL_LIB" ]; then
+        echo "[build] CCEX_BLAS=mkl: $MKL_WHY (source setvars.sh or load the intel module)" >&2; exit 1
+    fi
+    ;;
+*) echo "[build] CCEX_BLAS=$CCEX_BLAS: expected auto, mkl or off" >&2; exit 1 ;;
+esac
+if [ -n "$MKL_LIB" ]; then
+    LIBRARY_EXTRA="$LIBRARY_EXTRA -L$MKL_LIB -Wl,-rpath,$MKL_LIB -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_core"
+    CXXFLAGS="$CXXFLAGS -DCCEX_BLAS_DIRECT"
+    NOTE="$NOTE, MKL on ($MKL_LIB)"
+    echo "[build] MKL on ($MKL_LIB)"
+else
+    NOTE="$NOTE, MKL off ($MKL_WHY)"
+    echo "[build] MKL off ($MKL_WHY)"
+fi
 CXXFLAGS="$CXXFLAGS ${CXXFLAGS_EXTRA:-}"
 # The refinement policies get their own flags (below), not CXXFLAGS, and they carry
 # infinities and NaNs as values (an unmeasured error is inf). A compiler whose default

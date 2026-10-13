@@ -7,9 +7,9 @@ figures average over them. `SpinEcho_CCE2_1ppm/`, `SpinEcho_CCE4_1ppm/` and
 `SpinEcho_CCE2e2n_1ppm/` are the order check (CCE2 against CCE4, and the
 electron-electron-nuclear clusters); `SpinEcho_gCCE2_10ppm_ZFS/` is gCCE2 at
 zero field with and without the NV zero-field splitting (a self entry of `Qubit.intmap` in
-`ccein_with_ZFS.json`, the top-level `qzfs` of the `qubitfile` form in `ccein_with_ZFS_v2.json`);
-`Population_gCCE2_10ppm/` is the population (density matrix, `npulse` 0);
-`SpinEcho_pCCE2_1ppm/` runs pCCE2 with `sK` 1 to 4 spins per partition (heavy;
+`ccein_with_ZFS.json`, `Qubit.zfs` of the `Qubit.file` form in `ccein_with_ZFS_v2.json`);
+`Population_gCCE2_10ppm/` is the population (density matrix, `pulse.count` 0);
+`SpinEcho_pCCE2_1ppm/` runs pCCE2 with `pcce.partition_size` 1 to 4 spins per partition (heavy;
 not in the figures). With 50 states, CCE2 took 2 minutes and CCE4 7 minutes;
 CCE2e2n 7 minutes with 5 states; the ZFS pair 8 s.
 
@@ -24,17 +24,22 @@ one-state run (100 s); the recorded run averaged more.
 
 ## The input
 
-`example/tutorial/04_Diamond_NV_P1Bath/SpinEcho_CCE2_1ppm/ccein.json`; the other calculations change `order`, `method`, the zero-field splitting (`intmap`/`qzfs`) and the sampled states. `run.sh` in the same folder runs it as
+`example/tutorial/04_Diamond_NV_P1Bath/SpinEcho_CCE2_1ppm/ccein.json`; the other calculations change `order`, `method`, the zero-field splitting (`intmap`/`Qubit.zfs`) and the sampled states. `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```
 {
     # Config - Method 
-    "method"        : "CCE", 
+    "method"        : "cCCE", 
     "quantity"      : "coherence",
     
-    # Config - File
-    "qubitfile"     :  "../bath/14N_1ppm/bath_DiaP1_1ppm_Defect",
+    "Qubit"         : {
+        # Config - File
+        "file"          :  "../bath/14N_1ppm/bath_DiaP1_1ppm_Defect",
+        # Qubit
+        "alphams"      : -1,
+        "betams"       : 0
+    },
     "gyrofile"      :  "../bath/DiaP1_gyro",
     "bathfile"      : ["../bath/14N_1ppm/bath_DiaP1_1ppm_"],
   #"avaaxfile"     :  "Random",
@@ -47,47 +52,43 @@ one-state run (100 s); the recorded run averaged more.
     "rbath"         : 850,
     "rdip"          : 620,
     "deltat"        : 0.01,
-    "nstep"         : 300,  
-
-    # Qubit 
-    "qalphams"     : -1,
-    "qbetams"      : 0,
+    "nstep"         : 300,
 
     # Cluster
-    "addsubclus"  : 0, # true / false
-    "nk"          : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
+    "add_subclusters" : false, # true / false
+    "max_clusters_per_order" : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
 
     # Pulse
-    "npulse"      : 1,
+    "pulse"         : {"count": 1},
 
-    # Config - Spin tensor
-    "hf_readmode"   : 0, 
+    # Config - Spin tensor 
 #  "hf_tensorfile" : "0",
 #  "qd_readmode"   : 0,
 
     # Output
-    "savemode"    : "coherence"
+    "savemode"    : "coherence",
 
-,  "Defect"         : [
-		{   
-            "dfname": "P1",
-            "apprx": true,
-            "naddspin" : 0,
-            "navaax" : 12, 
-            "detuning" : [ [1,  "e",   84.946496],
-                           [2,  "e",   84.946496],
-                           [3,  "e",   84.946496],
-                           [4,  "e",     0.00000],
-                           [5,  "e",     0.00000],
-                           [6,  "e",     0.00000],
-                           [7,  "e",  -84.946496],
-                           [8,  "e",  -84.946496],
-                           [9,  "e",  -84.946496],
-                           [10, "e",  114.026400],
-                           [11, "e",     0.00000],
-                           [12, "e", -114.026400]]
-        }   
+  "Defect"         : {
+        "species"       : [
+    		{   
+                "name": "P1",
+                "n_nuclear_spins" : 0,
+                "n_configurations" : 12, 
+                "detuning" : [ [1,  "e",   84.946496],
+                               [2,  "e",   84.946496],
+                               [3,  "e",   84.946496],
+                               [4,  "e",     0.00000],
+                               [5,  "e",     0.00000],
+                               [6,  "e",     0.00000],
+                               [7,  "e",  -84.946496],
+                               [8,  "e",  -84.946496],
+                               [9,  "e",  -84.946496],
+                               [10, "e",  114.026400],
+                               [11, "e",     0.00000],
+                               [12, "e", -114.026400]]
+            }   
 
-                       ]
+                           ]
+    }
 }
 ```

@@ -19,8 +19,9 @@ Cluster* Cluster_init(){
     cls->clusinfo = NULL;
     cls->localRequest = false;
     cls->pairsLocal = false;
-    cls->pairBounds = NULL;
-    cls->npairBounds = 0;
+    cls->pairRows = NULL;
+    cls->npairRows = 0;
+    cls->pairLoads = NULL;
     
     return cls;
 }
@@ -526,8 +527,10 @@ void Cluster_freeClusinfo(Cluster* cls){
         free(cls->clusinfo);
         cls->clusinfo = NULL;
     }
-    free(cls->pairBounds);
-    cls->pairBounds = NULL;
-    cls->npairBounds = 0;
+    free(cls->pairRows);
+    free(cls->pairLoads);
+    cls->pairRows = NULL;
+    cls->npairRows = 0;
+    cls->pairLoads = NULL;
     cls->pairsLocal = false;
 }

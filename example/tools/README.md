@@ -1,6 +1,6 @@
 # example/tools/
 
-Four tools that make what CCEX reads (`IsotopeTable/` its built-in isotope table), and the runner of the automatic convergence, which runs CCEX itself.
+Four tools that make what CCEX reads (`IsotopeTable/` its built-in isotope table), the runner of the automatic convergence, which runs CCEX itself, and the converter of inputs written with the keys before 2026-10-13.
 
 | Tool | Makes | Run | Needs |
 |---|---|---|---|
@@ -9,6 +9,7 @@ Four tools that make what CCEX reads (`IsotopeTable/` its built-in isotope table
 | `IsotopeTable/` | `src/input/isotope_table.cpp`, the 154 nuclear isotopes (spin, gyromagnetic ratio) CCEX uses for a species no gyrofile names, from the EasySpin database in `SpinTensorReader/` | `python3 example/tools/IsotopeTable/make_isotope_table.py` from the repository root | python3 |
 | `Runner/` | the job folders of the tutorials: one per value of a variable (order, ppm, rbath, ...) from the templates in `MkCCEJobs/mkjobs.sngapp/`, which were driven by a tutorial's `domkjobs` and `opt/` files (removed on 2026-09-23) | `example/tools/Runner/domkjobs MKE` (`-h` lists the options), with `SourceFileName` and `SourceFileDir` set in the environment to the input template; until 2026-09-23 a copy sat in each tutorial calculation and was run there as `./domkjobs MKE` | idm Slurm |
 | `AutoConvergence/` | the automatic convergence: `main.out -f input.json` with an `auto_convergence` block (or `mpirun -n N main.out -f input.json` since 2026-10-10: rank 0 runs the runner and every CCEX run gets `mpirun -n N`; the block's `launcher`, when given, comes first) finds the time window, rdip, rbath and the configurations and runs the production on the baths you prepare (it says which baths to add when they are too small or too few); `main.out --auto_status -f input.json` shows where it is. `CCEX_PYTHON` picks the interpreter, `CCEX_AUTOCONV_DIR` the tool folder; it may be a shared installation (owned by you, root or the owner of `main.out`), but neither it nor any folder above it may be writable by others (other users, or a group other than the owner's own private group; `chmod go-w`). Also `python -m autoconv analyze` for existing runs (`AutoConvergence/README.md`) | `main.out -f input.json`; tests `python -m unittest discover -s tests` | numpy, scipy, matplotlib |
+| `InputKeys/` | an input in the keys of 2026-10-13 from one written before (`method` cCCE/gCCE with `cluster_mode`, the `hamiltonian`, `pcce`, `bundle`, `pulse` blocks, ...; the table is [Old and new names](../../docs/user/InputFile.md#OldNames)); comments stay, a file already in the new keys is left alone | `python3 example/tools/InputKeys/convert_input_keys.py FILE...` rewrites in place and lists what changed; `--check FILE...` lists only (exit 1 while old keys remain); `--stdout FILE` prints the new text | python3 |
 
 ## BathGenerator
 
@@ -32,7 +33,7 @@ example was checked to reproduce its tracked `Afile`/`Qfile` byte for byte.
 
 **Tensor format v3 (2026-10-13).** Every `Afile` starts with the tag (`VASP` / `QUANTUMESPRESSO`) and the provenance
 line `# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = <VASP OUTCAR|QE hyperfine.out>, S = <S>`,
-and holds the hyperfine of the spin-S defect, which CCEX reads x 1 (`docs/user/InputFile_General.md#tag_hf_tensorfile`).
+and holds the hyperfine of the spin-S defect, which CCEX reads x 1 (`docs/user/InputFile_General.md#tag_hyperfine_file`).
 VASP: the OUTCAR numbers (VASP divides by the total spin), S from the OUTCAR magnetization (`--spin`, if given, must
 agree). QE: GIPAW's `hyperfine.f90` uses the bare spin density with the S = 1/2 prefactor, so `--spin S` is required
 and the file holds `hyperfine.out` x 1/(2S). `--version v1` is refused: it wrote the OUTCAR x 2, which is the defect's

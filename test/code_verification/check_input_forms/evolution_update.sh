@@ -115,10 +115,10 @@ done <<< "$AUTO"
 VARIANTS="cce cce ccein_nstate1.json {}
 gcce gcce ccein_nstate1.json {}
 cce_ensemble cce ccein_nstate0.json {}
-cce_ensemble_cpmg8 cce ccein_nstate0.json {\"npulse\":8}
-cce_ensemble_manual cce ccein_nstate0.json {\"npulse\":2,\"pulsename\":\"Manual\",\"sequence\":[[0.2,\"X\",180],[0.5,\"X\",180],[0.3,\"I\",0]]}
+cce_ensemble_cpmg8 cce ccein_nstate0.json {\"pulse\":{\"count\":8}}
+cce_ensemble_manual cce ccein_nstate0.json {\"pulse\":{\"count\":2,\"name\":\"Manual\",\"sequence\":[[0.2,\"X\",180],[0.5,\"X\",180],[0.3,\"I\",0]]}}
 gcce_matrix gcce ccein_nstate0.json {}
-gcce_matrix_cpmg8 gcce ccein_nstate1.json {\"evolution\":\"matrix\",\"npulse\":8}"
+gcce_matrix_cpmg8 gcce ccein_nstate1.json {\"evolution\":\"matrix\",\"pulse\":{\"count\":8}}"
 NAMES=""
 while read -r name sys file change; do
     NAMES="$NAMES $name"; mkdir -p "$W/$name/out"; cp -r "$REG/Diamond_NV_P1_10ppm_$sys/inputfiles" "$W/$name/"

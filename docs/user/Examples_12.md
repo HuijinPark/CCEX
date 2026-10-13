@@ -19,9 +19,14 @@ of the last decimal written, and the runs took 5.5 s and 4.6 s. The ladder run t
 ```
 {
     # Config (General) : 02's ensemble_CCE input with rdip 12
-    "method"        : "CCE",
+    "method"        : "cCCE",
     "quantity"      : "coherence",
-    "qubitfile"     : "../../02_Diamond_NV_natab/bath/bath_Diamond_NV_natab_defect",
+    "Qubit"         : {
+        "file"          : "../../02_Diamond_NV_natab/bath/bath_Diamond_NV_natab_defect",
+        # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
+        "alphams"       : 1,
+        "betams"        : 0
+    },
     "gyrofile"      : "../../02_Diamond_NV_natab/bath/gyro_13C",
     "bathfile"      : ["../../02_Diamond_NV_natab/bath/bath_Diamond_NV_natab_1"],
     "order"         : 2,
@@ -37,11 +42,7 @@ of the last decimal written, and the runs took 5.5 s and 4.6 s. The ladder run t
     #               which stays the run at rdip 12. Order 2 only (CCE, gCCE, pCCE), quantity coherence, standard
     #               clusters, savemode coherence; anything else is refused with "Error: rdip_ladder ...".
     "rdip_ladder"   : [4, 6, 8, 10],
-
-    # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
-    "qalphams"      : 1,
-    "qbetams"       : 0,
-    "npulse"        : 1,
+    "pulse"         : {"count": 1},
 
     "outfile"       : "./results/CCE2_ladder_1"
 }

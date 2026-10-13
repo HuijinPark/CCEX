@@ -126,8 +126,9 @@ void runOneCalculation(Config* cnf, QubitArray* qa, BathArray* ba, DefectArray* 
     // A31: the cost split (Cluster_costFunction); after clusterize, which can cut the bath (pCCE).
     const std::function<double(int,const int*)> clusterCost = Cluster_costFunction(cnf,qa,ba,dfa);
     // A38: when clusterizePairs kept only this rank's pair rows, it decided their split first.
-    const std::vector<int> pairBounds(cls->pairBounds, cls->pairBounds + cls->npairBounds);
-    int*** localclusters = MPI_getLocalClusters(order,clusters,clusterCost,cls->pairsLocal ? 2 : 0,&pairBounds);
+    const std::vector<int> pairRows(cls->pairRows, cls->pairRows + cls->npairRows);
+    const std::vector<double> pairLoads(cls->pairLoads, cls->pairLoads + (cls->pairLoads ? nprocess : 0));
+    int*** localclusters = MPI_getLocalClusters(order,clusters,clusterCost,cls->pairsLocal ? 2 : 0,&pairRows,&pairLoads);
     // int*** localclusters = clusters; // No MPI
     // reportClusinfo(localclusters,order);
     MPI_Barrier(MPI_COMM_WORLD);
@@ -164,11 +165,35 @@ void validatePulsesForMethod(Config* cnf, Pulse* pls) {
     }
 }
 
-// An "Adaptive" object in the input file asks for what --adaptive asks for on the
+// hamiltonian.cCCE holds the terms of the cCCE Hamiltonian (A47): in a gCCE run - from the input or from -m - they
+// would do nothing, so they are refused. Checked once -m has been applied.
+//
+// delta_A false (A47) replaces the hyperfine tensors of a cluster's bath spins by their mean (createBathArray), which is
+// defined for a bath of nuclear spins: the spins a defect species brings into a cluster and the qubit's mean field
+// (the Overhauser field, computed from the tensors before they are averaged) are refused with it.
+void validateHamiltonianForMethod(Config* cnf, QubitArray* qa, DefectArray* dfa) {
+    if(!strcasecmp(cnf->method,"gcce") && cnf->hamiltonian_ccce_given) {
+        if(rank==0) fprintf(stderr,"Error: hamiltonian.cCCE (knight, hfmedi, delta_A) belongs to method cCCE; this run is gCCE\n");
+        MPI_Abort(MPI_COMM_WORLD,1);
+    }
+    if(!cnf->delta_A && (DefectArray_getNdefect(dfa) > 0 || QubitArray_getOverhaus(qa))) {
+        if(rank==0) fprintf(stderr,"Error: hamiltonian.cCCE.delta_A false is for a bath of nuclear spins: not with Defect species "
+                                   "or hamiltonian.common.qubit_bath_mean_field true\n");
+        MPI_Abort(MPI_COMM_WORLD,1);
+    }
+    setClusterHyperfineMean(!cnf->delta_A);
+}
+
+// An "adaptive" object in the input file asks for what --adaptive asks for on the
 // command line: its keys are the refinement options with '-' written as '_',
 //
-//     "Adaptive": { "policy": "merge", "output": "./adaptive_out",
+//     "adaptive": { "policy": "merge", "output": "./adaptive_out",
 //                 "atol": 1e-8, "rtol": 2e-6, "max_rounds": 8 }
+//
+// (written "Adaptive" until A47; keys are read without regard to case). The block
+// belongs to cluster_mode pcce or bundle. A step's input, which the refinement
+// driver writes, holds "adaptive": {"work_file": ...} alone: that is the step's
+// work request (cJSON_readOptionConfig), not a request for a refinement.
 //
 // and what comes back is the argument list adaptive_main already takes, so the
 // policy code and its own checks are the ones the command line goes through.
@@ -180,7 +205,7 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
     char* text = cJSON_ReadFccein(fccein);
     std::unique_ptr<cJSON,decltype(&cJSON_Delete)> root(cJSON_Parse(text),cJSON_Delete);
     freeChar1d(&text);
-    cJSON* block = root ? cJSON_GetObjectItem(root.get(),"Adaptive") : nullptr;
+    cJSON* block = root ? cJSON_GetObjectItem(root.get(),"adaptive") : nullptr;
     const auto fail = [](const std::string& message) {
         if(rank==0) fprintf(stderr,"Error: %s\n",message.c_str());
         MPI_Finalize(); exit(EXIT_FAILURE);
@@ -188,9 +213,18 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
     // The block was called "Refine" until 2026-09-23. The old name is refused, not read:
     // a run that silently did no refinement would look like a finished one.
     if(root && cJSON_GetObjectItem(root.get(),"Refine"))
-        fail("the \"Refine\" block is called \"Adaptive\" now; rename it (docs/methods/adaptive-input-block.md)");
+        fail("the \"Refine\" block is called \"adaptive\" now; rename it (docs/methods/adaptive-input-block.md)");
     if(!block) return args;
-    if(!cJSON_IsObject(block)) fail("Adaptive must be an object of refinement options");
+    if(!cJSON_IsObject(block)) fail("adaptive must be an object of refinement options");
+    if(cJSON_GetObjectItem(block,"work_file")) {
+        if(block->child->next || strcasecmp(block->child->string,"work_file"))
+            fail("adaptive.work_file is written by the refinement driver into a step's input, beside no other adaptive key");
+        return args;
+    }
+    cJSON* mode = cJSON_GetObjectItem(root.get(),"cluster_mode");
+    const char* shape = cJSON_IsString(mode) ? mode->valuestring : "standard";
+    if(strcasecmp(shape,"pcce") && strcasecmp(shape,"bundle"))
+        fail(std::string("the adaptive block belongs to cluster_mode pcce or bundle (this input has cluster_mode ")+shape+")");
     static const char* fixed[] = {"input","binary","cwd","mpiexec","ranks"};
     const auto value_text = [&](cJSON* v, const std::string& key) -> std::string {
         if(cJSON_IsString(v)) return v->valuestring;
@@ -201,7 +235,7 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
             else snprintf(buffer,sizeof buffer,"%.17g",x);
             return buffer;
         }
-        fail("Adaptive."+key+" must be a number or a string");
+        fail("adaptive."+key+" must be a number or a string");
         return "";
     };
     for(cJSON* item=block->child; item; item=item->next) {
@@ -211,15 +245,15 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
         const adaptive::options::Option* option = nullptr;
         for(const adaptive::options::Option& one : adaptive::options::kOptions)
             if(name == one.name) option = &one;
-        if(!option) fail("Adaptive."+key+" is not a refinement option");
+        if(!option) fail("adaptive."+key+" is not a refinement option");
         for(const char* f : fixed)
-            if(name == f) fail("Adaptive."+key+" is decided by the run itself and cannot be set in the input");
+            if(name == f) fail("adaptive."+key+" is decided by the run itself and cannot be set in the input");
         if(cJSON_IsNull(item)) continue;
         if(option->kind == adaptive::options::Kind::Flag) {
-            if(!cJSON_IsBool(item)) fail("Adaptive."+key+" is a switch: write true or false");
+            if(!cJSON_IsBool(item)) fail("adaptive."+key+" is a switch: write true or false");
             if(cJSON_IsTrue(item)) args.push_back("--"+name);
         } else if(cJSON_IsArray(item)) {
-            fail("Adaptive."+key+" takes one value, not a list");
+            fail("adaptive."+key+" takes one value, not a list");
         } else {
             args.push_back("--"+name); args.push_back(value_text(item,key));
         }
@@ -230,14 +264,14 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
         if(!one.required || is_fixed) continue;
         bool given = false;
         for(const std::string& arg : args) if(arg == std::string("--")+one.name) given = true;
-        if(!given) fail(std::string("Adaptive.")+one.dest+" is required");
+        if(!given) fail(std::string("adaptive.")+one.dest+" is required");
     }
     args.insert(args.begin(), {"--input", fccein, "--binary", self});
     return args;
 }
 
 // The settings a refinement step can change, and nothing else: merge writes the
-// user's input with outfile and adaptive_work_file set per step and savemode forced
+// user's input with outfile and adaptive.work_file set per step and savemode forced
 // to coherence. Nothing the bath depends on ever moves, which is why the bath can be
 // read once and kept (plan stage 8). (order, bundle_merge_cutoff, npulse and the
 // connection pair were changed only by the policies removed on 2026-10-10; a step
@@ -251,7 +285,7 @@ void applyStepConfig(const std::string& stepInput, const std::string& firstInput
     // touch the bath that was read once: it is an output layout. Without it here a
     // user input that did not already spell out savemode was refused at the first
     // step (measured 2026-09-19; the recorded inputs all spell it).
-    static const char* mutable_keys[] = {"outfile", "adaptive_work_file", "savemode"};
+    static const char* mutable_keys[] = {"outfile", "adaptive", "savemode"};   // adaptive: {"work_file"} in a step
     // Both files are read as CCEX inputs (a line ends at its first ! or #): the
     // first one is the user's, and may carry comments; the step's is what the
     // policy wrote, and carries none.
@@ -276,7 +310,8 @@ void applyStepConfig(const std::string& stepInput, const std::string& firstInput
         }
     }
     cJSON* v;
-    if((v=cJSON_GetObjectItem(b.get(),"adaptive_work_file")) && cJSON_IsString(v)) {
+    cJSON* stepBlock=cJSON_GetObjectItem(b.get(),"adaptive");
+    if(stepBlock && (v=cJSON_GetObjectItem(stepBlock,"work_file")) && cJSON_IsString(v)) {
         strncpy(cnf->adaptive_work_file,v->valuestring,MAX_FILEPATH-1);
         cnf->adaptive_work_file[MAX_FILEPATH-1]=0;
     } else cnf->adaptive_work_file[0]=0;
@@ -579,7 +614,7 @@ int main(int argc, char* argv[]){
         const std::vector<std::string> fromInput = adaptiveArgsFromInput(argv[i+1], self);
         if (fromInput.empty()) break;
         if (!adaptiveArgs.empty()) {
-            if (rank == 0) fprintf(stderr,"Error: the input has an Adaptive block and the command line has --adaptive; use one\n");
+            if (rank == 0) fprintf(stderr,"Error: the input has an adaptive block and the command line has --adaptive; use one\n");
             MPI_Finalize(); exit(EXIT_FAILURE);
         }
         adaptiveArgs = fromInput;
@@ -630,8 +665,7 @@ int main(int argc, char* argv[]){
                 break;
 
             case 'm':
-                Config_setMethod(cnf,optarg);
-                Cluster_setMethod(cls,optarg);
+                cJSON_applyMethodOption(cnf,cls,optarg);   // cCCE or gCCE; the input's cluster_mode stays (A47)
                 break;
 
             case 'q':
@@ -706,7 +740,7 @@ int main(int argc, char* argv[]){
                 printf("  -f FILE\t\t\t\tInput file (cce.in)\n");
                 printf("  -I FILE\t\t\t\tInput file name (it can be more than one)\n");
                 printf("  -N N\t\t\t\t\tNumber of bath states\n");
-                printf("  -m METHOD\t\t\t\tMethod (cce | gcce | pcce | dsj | dsjitb | itb)\n");
+                printf("  -m METHOD\t\t\t\tMethod (cCCE | gCCE; meCCE and noise reserved, not implemented yet); the cluster shape is the input's cluster_mode\n");
                 printf("  -q QUANTITY\t\t\t\tQuantity (coherence | dm)\n");
                 printf("  -B BZ\t\t\t\t\tMagnetic field\n");
                 printf("  -v\t\t\t\t\tLong or short print\n");
@@ -717,13 +751,13 @@ int main(int argc, char* argv[]){
                 printf("JSON execution options (in the -f input):\n");
                 printf("  backend: cpu (default), cuda, auto; profile: true for per-dimension counts/timing\n");
                 printf("  gpu_options: {min_dim, packed_max_dim (0, 2, 4), warp_max_dim (0-32), evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb}\n");
-                printf("  propagator: eigen (default), sparse (one state; cCCE, gCCE vector), expm (gCCE)\n  evolution, gcce_refinement, gcce_refinement_max_sweeps (gCCE)\n");
+                printf("  propagator: eigen (default), sparse (one state; cCCE, gCCE vector), expm (gCCE)\n  evolution, gcce_refinement {enabled, max_sweeps} (gCCE)\n");
                 printf("  evolution_update: exact or recursive (cCCE on the CPU and in the packed kernel, gCCE with propagator=eigen on the CPU); default recursive there, exact elsewhere (GPU clusters)\n");
                 printf("  probe_memory_gb (memory of the adaptive probes running at once on a node)\n");
                 printf("  seed: shared RNG seed; omit to generate and report a seed on MPI rank 0\n");
-                printf("  vector_mean_field: true for the static mean field as the vector J.m_j (nstate > 0)\n");
-                printf("  pcce_partition, pcce_connections, pcce_cache_mode, pcce_cache_file, pcce_detail_limit\n");
-                printf("  cluster_mode: adaptive; order and bundle_max_dim are required\n");
+                printf("  hamiltonian.common.bath_bath_mean_field: off, z (default) or xyz, the static field of the other bath spins (nstate > 0)\n");
+                printf("  cluster_mode: standard (default), pcce, bundle, dsj, itb, dsjitb; the pcce and bundle blocks hold their settings\n");
+                printf("  input keys renamed 2026-10-13: example/tools/InputKeys/convert_input_keys.py rewrites an old input\n");
                 printf("See docs/user/InputFile_Backend.md, docs/methods/gpu.md and docs/methods/adaptive-cluster-mode.md for defaults and limits.\n");
                 exit(EXIT_SUCCESS);
                 break;
@@ -749,13 +783,14 @@ int main(int argc, char* argv[]){
     Config_validatePropagator(cnf,QubitArray_getNqubit(qa));   // A2: before the evolution_update check, so sparse is named
     Config_validateEvolutionUpdate(cnf);       // after the packed kernel's value (A36)
     validatePulsesForMethod(cnf,pls);
+    validateHamiltonianForMethod(cnf,qa,dfa);
     validateAdaptiveConfig(cnf,cls);
     Config_validatePcceCache(cnf);
     if (clusterPlanOnly && ((strcasecmp(cnf->method,"cce") &&
          strcasecmp(cnf->method,"gcce") && strcasecmp(cnf->method,"pcce")) ||
          !strcasecmp(cnf->bundle_connections,"checked") || adaptiveWork(cnf).mode=="probe" ||
          adaptiveWork(cnf).mode=="factors" || adaptiveWork(cnf).mode=="except")) {
-        if(rank==0)fprintf(stderr,"Error: -P supports cce/gcce/pcce plans with explicit connections; rdip-omitted checked connections and probe, factors and except work require dynamics\n");
+        if(rank==0)fprintf(stderr,"Error: -P supports cCCE, gCCE and cluster_mode pcce plans with explicit connections; rdip-omitted checked connections and probe, factors and except work require dynamics\n");
         MPI_Abort(MPI_COMM_WORLD,1);
     }
     computeBackendInit(cnf);

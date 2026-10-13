@@ -1,8 +1,13 @@
 {
     # Config (General)
-    "method"        : "CCE", 
+    "method"        : "cCCE", 
     "quantity"      : "coherence",
-    "qubitfile"     : "../bath/bath_Diamond_NV_natab_defect",
+    "Qubit"         : {
+        "file"          : "../bath/bath_Diamond_NV_natab_defect",
+        # Qubit
+        "alphams"      : 1,
+        "betams"       : 0
+    },
     "gyrofile"      : "../bath/gyro_13C",
     "bathfile"      : ["../bath/bath_Diamond_NV_natab_1"],
     "order"         : 2,
@@ -13,14 +18,8 @@
     "nstep"         : 2000,
     "nstate"        : 1,
     "seed"          : 9407,
-
-    # Qubit 
-    "qalphams"     : 1,
-    "qbetams"      : 0,
-
     # Pulse
-    "npulse"      : 4,
-    "pulsename"   : "WAHUHA",
+    "pulse"         : {"count": 4, "name": "WAHUHA"},
 
     # Output
     "outfile"     : "./results/CCE2_Diamond_NV_natab_1"

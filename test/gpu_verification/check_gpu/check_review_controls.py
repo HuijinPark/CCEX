@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 import re
-from benchmark import REPO, compare
+from benchmark import REPO, compare, put
 from check_pcce import run_case
 from check_seed_states import sampled, random_reference, check_stream
 
@@ -17,7 +17,7 @@ def main():
     args.cpu, args.output = args.cpu.resolve(), args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=False)
     config = json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
-    config.update(backend='cpu', nstate=2, max_trial=12, iter_detail=True, pcce_detail_limit=2)
+    config = put(config, {'backend': 'cpu', 'nstate': 2, 'pcce.trials': 12, 'pcce.print_trials': True, 'pcce.print_limit': 2})
     config.pop('seed')
     first, log = run_case(config, args.output/'generated', args.cpu, ranks=2)
     assert first['returncode'] == 0, log[-2000:]
@@ -30,7 +30,7 @@ def main():
     check_stream(states, random_reference(config['seed'], 6, 2))
     for ranks in (1, 2, 4):
         directory = args.output/f'replay-{ranks}'
-        replay, output = run_case(dict(config, pcce_detail_limit=0), directory, args.cpu, ranks=ranks)
+        replay, output = run_case(put(config, {'pcce.print_limit': 0}), directory, args.cpu, ranks=ranks)
         assert replay['returncode'] == 0, output[-2000:]
         assert '[partition-iteration]' not in output
         assert replay['cluster_listing_sha256'] == first['cluster_listing_sha256']

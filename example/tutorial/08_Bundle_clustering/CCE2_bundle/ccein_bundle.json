@@ -1,8 +1,13 @@
 {
     # Config (General)
-    "method"        : "CCE",
+    "method"        : "cCCE",
     "quantity"      : "coherence",
-    "qubitfile"     : "../bath/bath_Diamond_NV_natab_defect",
+    "Qubit"         : {
+        "file"          : "../bath/bath_Diamond_NV_natab_defect",
+        # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
+        "alphams"        : 1,
+        "betams"         : 0
+    },
     "gyrofile"      : "../bath/gyro_13C",
     "bathfile"      : ["../bath/bath_Diamond_NV_natab_1"],
     "order"         : 2,
@@ -16,13 +21,9 @@
     #              order counts bundles per cluster, bundle_max_dim caps one bundle's Hilbert dimension
     #              (8 = up to three 13C). Bundles of one spin each are ordinary CCE2. With rdip present
     #              the bundles are connected by distance; without it weak connections are dropped after a check.
-    "cluster_mode"    : "adaptive",
-    "bundle_max_dim"  : 8,
-
-    # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
-    "qalphams"       : 1,
-    "qbetams"        : 0,
-    "npulse"        : 1,
+    "cluster_mode"    : "bundle",
+    "bundle"        : {"max_dim": 8},
+    "pulse"         : {"count": 1},
 
     "outfile"       : "./results/CCE2_bundle_1"
 }

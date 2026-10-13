@@ -6,7 +6,6 @@
     "test/cluster_verification/check_bundle/bath_6"
   ],
   "Qubit": {
-    "nqubit": 1,
     "qubit": [
       {
         "name": "NV",
@@ -26,7 +25,7 @@
   "rbath": 15,
   "rdip": 30,
   "bfield": 300,
-  "npulse": 1,
+  "pulse": {"count": 1},
   "nstep": 9,
   "deltat": 0.005,
   "nstate": 1,
@@ -36,7 +35,6 @@
   "profile": true,
   "savemode": "coherence",
   "outfile": "bin/adaptive_gcce_single",
-  "cluster_mode": "adaptive",
-  "bundle_max_dim": 8,
-  "bundle_merge_cutoff": 1.0
+  "cluster_mode": "bundle",
+  "bundle": {"max_dim": 8, "merge_cutoff": 1.0}
 }

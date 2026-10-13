@@ -3,20 +3,20 @@
 The clustering this branch added, on the NV of 02 (`bath/` is a copy of 02's bath, defect and gyro files, plus `bath_p1_6`, six P1 spins, for `CCE2_regroup`, which reads the NV position and the P1 gyromagnetic ratio from 09's `bath/`). `docs/methods/clustering-terminology.md`
 fixes the words: a **bundle** is a set of strongly coupled spins that always enters a
 cluster whole and is computed exactly inside; **bundle clustering** (`cluster_mode`
-`adaptive` in the input, `src/clustering/bundle/`) builds the bundles once, from the
-coupling strengths, under the dimension cap `bundle_max_dim`, and then runs CCE with
-`order` counting bundles per cluster; **adaptive refinement** (the `Adaptive` block,
+`bundle` in the input, `src/clustering/bundle/`) builds the bundles once, from the
+coupling strengths, under the dimension cap `bundle.max_dim`, and then runs CCE with
+`order` counting bundles per cluster; **adaptive refinement** (the `adaptive` block,
 `src/clustering/algo_adaptive/`, `docs/methods/adaptive-input-block.md`) repeats that calculation, measures
 the error at the bundle boundaries and re-bundles until the curve settles.
 
 | Calculation | Inputs | What it shows | Recorded run |
 |---|---|---|---|
-| `CCE2_bundle/` | ccein_standard.json, ccein_bundle.json | CCE2 Hahn echo (rbath 30) with ordinary clusters and with bundles of up to three ¹³C (`bundle_max_dim` 8): the `[adaptive]` line that says how the 199 spins were bundled (84 bundles), the largest difference between the two curves, and a plot | added 2026-09-23; WSL, 2 ranks: 1 s and 21 s |
-| `CCE2_adaptive/` | ccein.json | the bundled calculation (rbath 20, 2 ms) with an `Adaptive` block, merge policy, `atol` 1e-3: three rounds, 28 → 26 bundles, then "no feasible improving merge" (exit status 2); `results/adaptive/` holds one folder per step and `summary.json` | added 2026-09-23; WSL, 2 ranks: 7 min |
-| `CCE2_regroup/` | ccein.json | `"regroup": true` in the `Adaptive` block, on the NV in six P1 electron spins (`bath/bath_p1_6`, five sampled states; the adaptive check's `regroup-p1` case): the bundles [0,3] [1,5] [2,4] give 3 states with \|L\| > 1.01; the culprit pairs (g > 0) are [0,3]–[1,5] (g 1.63), [0,3]–[2,4] (0.10) and [1,5]–[2,4] (5e-4); one change, splitting [2,4] into [2] and [4], is accepted and the rerun has no unphysical state (status `physical`, exit 0) | added 2026-10-12; WSL, 4 ranks: 1 s |
+| `CCE2_bundle/` | ccein_standard.json, ccein_bundle.json | CCE2 Hahn echo (rbath 30) with ordinary clusters and with bundles of up to three ¹³C (`bundle.max_dim` 8): the `[adaptive]` line that says how the 199 spins were bundled (84 bundles), the largest difference between the two curves, and a plot | added 2026-09-23; WSL, 2 ranks: 1 s and 21 s |
+| `CCE2_adaptive/` | ccein.json | the bundled calculation (rbath 20, 2 ms) with an `adaptive` block, merge policy, `atol` 1e-3: three rounds, 28 → 26 bundles, then "no feasible improving merge" (exit status 2); `results/adaptive/` holds one folder per step and `summary.json` | added 2026-09-23; WSL, 2 ranks: 7 min |
+| `CCE2_regroup/` | ccein.json | `"regroup": true` in the `adaptive` block, on the NV in six P1 electron spins (`bath/bath_p1_6`, five sampled states; the adaptive check's `regroup-p1` case): the bundles [0,3] [1,5] [2,4] give 3 states with \|L\| > 1.01; the culprit pairs (g > 0) are [0,3]–[1,5] (g 1.63), [0,3]–[2,4] (0.10) and [1,5]–[2,4] (5e-4); one change, splitting [2,4] into [2] and [4], is accepted and the rerun has no unphysical state (status `physical`, exit 0) | added 2026-10-12; WSL, 4 ranks: 1 s |
 
 Bundles of one spin each are ordinary CCE, so the two curves of `CCE2_bundle` differ
-only by what the bundles change (here 1.7e-2 at most). `Adaptive` needs an explicit
+only by what the bundles change (here 1.7e-2 at most). `adaptive` needs an explicit
 `seed`: every round recomputes the same system.
 
     cd CCE2_bundle && NP=4 bash run.sh

@@ -71,7 +71,9 @@ MatrixXcd HamilBath(BathArray* ba, MatrixXcd** sigmas, Config* cnf){
         Hbi_Detuning = BathArray_DetuningHamil(ba,sigmas,ib);
         Hbi_Quad     = BathArray_QuadHamil(ba,sigmas,ib);
 
-        if (nstate > 0){    // Single-sample app.
+        // Single-sample app.; hamiltonian.common.bath_bath_mean_field "off" (A47) leaves the static field of the
+        // other bath spins out
+        if (nstate > 0 && !cnf->bath_mean_field_off){
             Hbi_Disorder = BathArray_DisorderHamil(ba,sigmas,ib, \
                                                     Hbi_Disorder_rm_overlap);
         }else{ // Ensemble app.

@@ -1,15 +1,18 @@
 {
     # Config - Method 
-    "method"        : "CCE", 
+    "method"        : "cCCE", 
     "quantity"      : "coherence",
     
-    # Config - File
-    "qubitfile"     :  "../bath/50ppm/bath_DiaVp_50ppm_Defect",
+    "Qubit"         : {
+        # Config - File
+        "file"          :  "../bath/50ppm/bath_DiaVp_50ppm_Defect",
+        # Qubit
+        "alphams"      : -1,
+        "betams"       : 0
+    },
     "gyrofile"      :  "../bath/DiaVp_gyro",
     "bathfile"      : ["../bath/50ppm/bath_DiaVp_50ppm_"],
-  #"avaaxfile"     :  "Random",
-  #"statefile"     :  "Random",
-  #"exstatefile"   :  "Random",
+  #"bath_state_file" :  "Random",
 
     # Config - General
     "order"         : 2,
@@ -17,23 +20,17 @@
     "rbath"         : 240,
     "rdip"          : 220,
     "deltat"        : 0.0002,
-    "nstep"         : 300,  
-
-    # Qubit 
-    "qalphams"     : -1,
-    "qbetams"      : 0,
+    "nstep"         : 300,
 
     # Cluster
-    "addsubclus"  : 0, # true / false
-    "nk"          : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
+    "add_subclusters" : false, # true / false
+    "max_clusters_per_order" : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
 
     # Pulse
-    "npulse"      : 1,
+    "pulse"         : {"count": 1},
 
-    # Config - Spin tensor
-    "hf_readmode"   : 0, 
-#  "hf_tensorfile" : "0",
-#  "qd_readmode"   : 0,
+    # Config - Spin tensor 
+#  "hamiltonian"   : {"common": {"hyperfine": {"dipole": "point"}, "quadrupole": "off"}},
 
     # Output
     "savemode"    : "coherence"

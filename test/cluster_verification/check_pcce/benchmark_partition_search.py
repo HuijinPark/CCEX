@@ -7,6 +7,7 @@ import re
 import statistics
 import struct
 from sweep_support import REPO,execute,config_for,compare,sha,save
+from benchmark import get,put
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
     for name,want in manifest['files'].items():assert sha(fixture/name)==want,name
     for item in manifest['realizations']:assert sha(fixture/item['name'])==item['sha256']
     families={f['name']:f for f in manifest['families']}
-    summary=dict(status='running',scope=a.scope,note='Every timed execution has pcce_cache_mode=off; no partition reuse.',
+    summary=dict(status='running',scope=a.scope,note='Every timed execution has pcce.cache.mode off; no partition reuse.',
                  manifest=manifest,cases=[],exact_partitions=[],binary_sha256={})
     for version,base in [('before',baseline),('after',REPO/'bin')]:
         for backend in ['cpu','cuda']:
@@ -39,12 +40,12 @@ def main():
                 for version in (['before','after'] if repeat%2==0 else ['after','before']):
                     binary=(baseline if version=='before' else REPO/'bin')/f"main.{'cpu' if backend=='cpu' else 'cuda'}.out"
                     directory=root/name/f'{backend}-{repeat}-{version}'
-                    run=execute(dict(cfg,backend=backend,pcce_cache_mode='off'),directory,binary,ranks,timeout=1200)
+                    run=execute(put(cfg,{'backend':backend,'pcce.cache.mode':'off'}),directory,binary,ranks,timeout=1200)
                     assert run['status']=='passed',(name,backend,version,run)
                     log=(directory/'run.log').read_text()
                     assert '[partition-cache]' not in log and 'source=cache' not in log
                     trial=re.search(r'\[partition\] mode=deterministic total_trials=(\d+) best_trial=(\d+)',log)
-                    assert trial and int(trial[1])==cfg['max_trial']
+                    assert trial and int(trial[1])==get(cfg,'pcce.trials')
                     run['best_trial']=int(trial[2])
                     if reference is None:reference=(directory,run)
                     for key in ['groups','cluster_listing_sha256','cluster_counts_by_dimension','best_trial']:
@@ -85,7 +86,7 @@ def main():
                 cache=root/f'{family}-{version}.partition'
                 directory=root/f'exact-{family}-{version}'
                 binary=(baseline if version=='before' else REPO/'bin')/'main.cpu.out'
-                run=execute(dict(cfg,pcce_cache_mode='readwrite',pcce_cache_file=str(cache)),directory,binary,a.ranks)
+                run=execute(put(cfg,{'pcce.cache.mode':'readwrite','pcce.cache.file':str(cache)}),directory,binary,a.ranks)
                 assert run['status']=='passed'
                 data=cache.read_bytes();magic=b'CCEX-PCCE-CACHE-v1\n'
                 assert data.startswith(magic)

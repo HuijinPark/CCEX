@@ -108,7 +108,7 @@ static int resolveReferenceQubit(QubitArray* qa, Config* cnf){
         fprintf(stderr,"Defined qubit names are :");
         for (int i=0; i<nqubit; i++){ fprintf(stderr," \"%s\"",QubitArray_getQubit_i_name(qa,i)); }
         fprintf(stderr,"\n");
-        fprintf(stderr,"A single qubit given through \"qubitfile\" is named \"q0\" by default.\n");
+        fprintf(stderr,"A single qubit given through \"Qubit.file\" is named \"q0\" by default.\n");
         exit(EXIT_FAILURE);
     }
     return iref;
@@ -186,18 +186,18 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
     // External tensor files : a pre-existing restriction, caught earlier
     ////////////////////////////////////////////////////////////////////////
     if (Config_getHf_readmode(cnf) != 0){
-        fprintf(stderr,"Error(coordinate_frame_rotation): hf_readmode = %d with nqubit = %d is not supported\n",
-                Config_getHf_readmode(cnf),nqubit);
+        fprintf(stderr,"Error(coordinate_frame_rotation): a hyperfine tensor file (hamiltonian.common.hyperfine) with %d qubits is not supported\n",
+                nqubit);
         fprintf(stderr,"readHftensorfile already refuses more than one qubit with a hyperfine tensor file:\n");
         fprintf(stderr,"the file is written around a single defect, so which qubit it belongs to is not\n");
-        fprintf(stderr,"defined. Use hf_readmode = 0, or run one qubit at a time.\n");
+        fprintf(stderr,"defined. Use hyperfine dipole \"point\" with contact false, or run one qubit at a time.\n");
         exit(EXIT_FAILURE);
     }
     if (Config_getQd_readmode(cnf) != 0){
-        fprintf(stderr,"Error(coordinate_frame_rotation): qd_readmode = %d with nqubit = %d is not supported\n",
-                Config_getQd_readmode(cnf),nqubit);
+        fprintf(stderr,"Error(coordinate_frame_rotation): a quadrupole tensor file (hamiltonian.common.quadrupole) with %d qubits is not supported\n",
+                nqubit);
         fprintf(stderr,"readQdtensorfile already refuses more than one qubit with a quadrupole tensor file,\n");
-        fprintf(stderr,"for the same reason. Use qd_readmode = 0, or run one qubit at a time.\n");
+        fprintf(stderr,"for the same reason. Use quadrupole \"off\", or run one qubit at a time.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -1047,8 +1047,10 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
     char* hf_tensorfile = Config_getHf_tensorfile(cnf);
     int hf_ignore_oor = Config_getHf_ignore_oor(cnf);
 
-    double DefectTotSpin = Config_getDefectTotSpin(cnf);
-    double CorrTotSpin = Config_getCorrTotSpin(cnf);
+    // the defect's spin is the qubit's (the input key DefectTotSpin had to equal it until A47); CorrTotSpin, used for
+    // old-format VASP files only, was removed with it and is 0 here, as it was by default
+    double DefectTotSpin = QubitArray_getQubit_i_spin(qa,0);
+    double CorrTotSpin = 0.0;
     double SpinFactor = 0.0;
 
     // Provenance of every tensor this function is about to store. Both states occur in
@@ -1209,16 +1211,9 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
                 MatrixXcd Atot = MatrixXcd::Zero(3,3);
 
                 // qubit information
-                float qspin = QubitArray_getQubit_i_spin(qa,iqubit);
                 double qgyro = QubitArray_getQubit_i_gyro(qa,iqubit);
                 double* qxyz = QubitArray_getQubit_i_xyz(qa,iqubit);
 
-                if (DefectTotSpin != qspin){
-                    fprintf(stderr,"Error(readHftensorfile): The defect spin is not matched with the qubit spin\n");
-                    fprintf(stderr,"DefectTotSpin : %lf\n",DefectTotSpin);
-                    fprintf(stderr,"QubitSpin : %lf\n",qspin);
-                    exit(EXIT_FAILURE);
-                }
 
                 // bath spin information
                 double spgyro = BathArray_getBath_i_gyro(ba,ispin);
@@ -1391,8 +1386,10 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
     char* qd_tensorfile_woqubit = Config_getQd_tensorfile_woqubit(cnf);
     double* qd_cellpara = Config_getQd_cellpara(cnf);
 
-    double DefectTotSpin = Config_getDefectTotSpin(cnf);
-    double CorrTotSpin = Config_getCorrTotSpin(cnf);
+    // the defect's spin is the qubit's (the input key DefectTotSpin had to equal it until A47); CorrTotSpin, used for
+    // old-format VASP files only, was removed with it and is 0 here, as it was by default
+    double DefectTotSpin = QubitArray_getQubit_i_spin(qa,0);
+    double CorrTotSpin = 0.0;
     double SpinFactor = 0.0;
 
     if (rank==0){
@@ -1550,16 +1547,9 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
                 MatrixXcd efg = MatrixXcd::Zero(3,3);
 
                 // qubit information
-                float qspin = QubitArray_getQubit_i_spin(qa,iqubit);
                 double qgyro = QubitArray_getQubit_i_gyro(qa,iqubit);
                 double* qxyz = QubitArray_getQubit_i_xyz(qa,iqubit);
 
-                if (DefectTotSpin != qspin){
-                    fprintf(stderr,"Error(readQdtensorfile): The defect spin is not matched with the qubit spin\n");
-                    fprintf(stderr,"DefectTotSpin : %lf\n",DefectTotSpin);
-                    fprintf(stderr,"QubitSpin : %lf\n",qspin);
-                    exit(EXIT_FAILURE);
-                }
 
                 // bath spin information
                 double spgyro = BathArray_getBath_i_gyro(ba,ispin);
@@ -2367,8 +2357,7 @@ bool READ_Tensor_provenance(const char* inputfile, double DefectTotSpin, int* ve
     }
     if (std::fabs(S - DefectTotSpin) > 1e-9){
         snprintf(why, sizeof why, "the file holds the hyperfine of a spin S = %g defect (provenance line) but "
-                 "DefectTotSpin is %g; the file and the input describe different defects (DefectTotSpin must be the "
-                 "defect's spin, the qubit spin)", S, DefectTotSpin);
+                 "the qubit spin is %g; the file and the input describe different defects", S, DefectTotSpin);
         refuseTensorFile(inputfile, why);
     }
     *version = fromSource;

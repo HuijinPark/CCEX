@@ -1,23 +1,25 @@
 {
-  "method": "pCCE",
+  "method": "cCCE",
+  "cluster_mode": "pcce",
   "quantity": "coherence",
   "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
   "bathfile": ["test/gpu_verification/check_gpu/examples/bath_pcce_6"],
   "Qubit": {
-    "nqubit": 1,
     "qubit": [{"name": "NV", "spin": 1, "gyro": -17608.597050,
                "xyz": [0, 0, 0], "alphams": 1, "betams": 0}]
   },
   "order": 2,
-  "sK": 2,
-  "max_trial": 8,
-  "max_iter": 20,
-  "kmeans_pp": true,
-  "iter_detail": false,
+  "pcce": {
+    "partition_size": 2,
+    "trials": 8,
+    "max_iterations": 20,
+    "kmeans_pp": true,
+    "print_trials": false
+  },
   "rbath": 15,
   "rdip": 30,
   "bfield": 300,
-  "npulse": 1,
+  "pulse": {"count": 1},
   "nstep": 9,
   "deltat": 0.02,
   "nstate": 0,

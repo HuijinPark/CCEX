@@ -9,7 +9,7 @@ import re
 import subprocess
 import time
 
-from benchmark import REPO, compare, parse_profiles
+from benchmark import REPO, compare, parse_profiles, put
 
 
 # mpirun as test/README.md has it: CCEX_MPI when set, else the Intel MPI of the loaded module, else PATH. With
@@ -73,7 +73,7 @@ def main():
         for state in (0, 1):
             for pulses in (1, 4):
                 name = f'sK{size}_state{state}_pulse{pulses}'
-                config = dict(original, sK=size, nstate=state, npulse=pulses)
+                config = put(original, {'pcce.partition_size': size, 'nstate': state, 'pulse.count': pulses})
                 cpu, _ = run_case(dict(config, backend='cpu'), args.output/name/'cpu', args.cpu, args.ranks)
                 assert cpu['returncode'] == 0, name
                 compare(args.output/name/'cpu', args.output/name/'cpu', 1e-8, 2e-6)
@@ -90,17 +90,15 @@ def main():
                     print('PASS', name, backend, error, flush=True)
 
     for name, overrides, expected in [
-        ('missing-sK', {'sK': None}, 'pCCE requires sK'),
-        ('zero-sK', {'sK': 0}, 'positive 32-bit integer'),
-        ('fractional-sK', {'sK': 1.5}, 'positive 32-bit integer'),
-        ('string-sK', {'sK': '2'}, 'finite JSON number'),
-        ('zero-trials', {'max_trial': 0}, 'positive 32-bit integer'),
-        ('zero-iterations', {'max_iter': 0}, 'positive 32-bit integer'),
-        ('oversized-sK', {'sK': 7}, 'bath spin count'),
+        ('missing-sK', {'pcce.partition_size': None}, 'cluster_mode pcce requires pcce.partition_size'),
+        ('zero-sK', {'pcce.partition_size': 0}, 'positive 32-bit integer'),
+        ('fractional-sK', {'pcce.partition_size': 1.5}, 'positive 32-bit integer'),
+        ('string-sK', {'pcce.partition_size': '2'}, 'finite JSON number'),
+        ('zero-trials', {'pcce.trials': 0}, 'positive 32-bit integer'),
+        ('zero-iterations', {'pcce.max_iterations': 0}, 'positive 32-bit integer'),
+        ('oversized-sK', {'pcce.partition_size': 7}, 'bath spin count'),
     ]:
-        config = dict(original, backend='cpu', **overrides)
-        if config.get('sK') is None:
-            config.pop('sK')
+        config = put(original, dict(overrides, backend='cpu'))
         result, log = run_case(config, args.output/name, args.cpu)
         assert result['returncode'] != 0 and expected in log, (name, log[-1000:])
         print('PASS', name, flush=True)

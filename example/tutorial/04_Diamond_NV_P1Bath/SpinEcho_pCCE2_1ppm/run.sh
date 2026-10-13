@@ -1,5 +1,5 @@
 #!/bin/sh
-# 04_Diamond_NV_P1Bath/SpinEcho_pCCE2_1ppm: pCCE2 with sK = 1..4 spins per centre, 1 ppm
+# 04_Diamond_NV_P1Bath/SpinEcho_pCCE2_1ppm: pCCE2 with pcce.partition_size = 1..4 spins per centre, 1 ppm
 #
 # Recorded run: 50 bath configuration(s) x 50 sampled states, 128 MPI ranks on idm.
 # Here NCONF configurations on NP ranks; NSTATE sampled states. Set them to repeat the recorded run.

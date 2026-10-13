@@ -158,11 +158,12 @@ void QubitArray_checkIdxAgainstMs(const QubitArray* qa){
         }
         return any ? (psi.adjoint()*P*psi)(0,0).real()/std::max(psi.squaredNorm(),1e-300) : 1.0;
     };
-    const double wa = weight(qa->psia, qa->_alphaGiven, true, "alphams");
-    const double wb = weight(qa->psib, qa->_betaGiven, false, "betams");
+    // a side not picked by an index (Qubit.alpha_state/beta_state as a vector, or not given; A47) is not checked
+    const double wa = qa->_alphaidx ? weight(qa->psia, qa->_alphaGiven, true, "alphams") : 1.0;
+    const double wb = qa->_betaidx ? weight(qa->psib, qa->_betaGiven, false, "betams") : 1.0;
     if (wa < 0.5 || wb < 0.5){
         if (rank==0){
-            fprintf(stderr,"Error: Qubit.alphaidx/betaidx pick psia = m_s %s and psib = m_s %s, but the input also writes\n"
+            fprintf(stderr,"Error: Qubit.alpha_state/beta_state index pick psia = m_s %s and psib = m_s %s, but the input also writes\n"
                            "       %s (weight of psia %.3f, of psib %.3f on what is written). The indices count the qubit\n"
                            "       eigenstates by descending energy (an order that changes with the field) and would be used.\n"
                            "       Keep one of the two.\n",
@@ -206,18 +207,19 @@ void QubitArray_setPsiaPsib_fromIdx(QubitArray* qa, float* bfield){
     VectorXcd sortedEigenValues = sortEigenValues(eigenValues,idx);
     MatrixXcd sortedEigenVectors = sortEigenVectors(eigenVectors, idx);
 
-    // Get Psia, Psib
-    MatrixXcd psia = sortedEigenVectors.col(*alphaidx);
-    MatrixXcd psib = sortedEigenVectors.col(*betaidx);
-
-    // Normalize
+    // Get Psia, Psib: the sides that have an index (one side alone since A47, Qubit.alpha_state/beta_state)
     int res;
-    res = normalize(&psia);
-    res = normalize(&psib);
-
-    // Set Psia, Psib
-    QubitArray_setPsia(qa,psia);
-    QubitArray_setPsib(qa,psib);
+    if (alphaidx != NULL){
+        MatrixXcd psia = sortedEigenVectors.col(*alphaidx);
+        res = normalize(&psia);
+        QubitArray_setPsia(qa,psia);
+    }
+    if (betaidx != NULL){
+        MatrixXcd psib = sortedEigenVectors.col(*betaidx);
+        res = normalize(&psib);
+        QubitArray_setPsib(qa,psib);
+    }
+    (void)res;
 
     freeInt1d(&idx);   // getIndexInOrder allocates it and nobody was freeing it
 }

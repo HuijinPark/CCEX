@@ -2,7 +2,7 @@
 
     sh test/cluster_verification/check_adaptive/verify.sh unit        # build the driver (cpp/bin/ccex-adaptive) and its unit tests, run them
     sh test/cluster_verification/check_adaptive/verify.sh regress     # the merge policy against 33 recorded runs and their golden answers
-    sh test/cluster_verification/check_adaptive/verify.sh inprocess   # the driver inside bin/main.out, and from an "Adaptive" block, against the separate one (11 cases), then probe_rotation.py
+    sh test/cluster_verification/check_adaptive/verify.sh inprocess   # the driver inside bin/main.out, and from an "adaptive" block, against the separate one (11 cases), then probe_rotation.py
     sh test/cluster_verification/check_adaptive/verify.sh sanitize    # unit and regress again, built with ASan and UBSan
     sh test/cluster_verification/check_adaptive/verify.sh fuzz [SEED [COUNT]]   # random JSON through the reader and the writer
 
@@ -11,6 +11,17 @@ shell where Intel MPI's `mpirun` is first on `PATH`. (Until 2026-10-10 the
 two timeout fault cases recorded exit 15 instead of -15 under anaconda's or
 Ubuntu's `mpirun`; they went with auto-partition. regress.py now treats any nonzero
 exit after a timeout alike, which covers fault-probe-timeout.)
+
+`regress` holds every decision (exit status, accepted patches, rounds, policy choices: every string, integer and
+boolean of the summaries) exactly to `regression/golden/`, and a float to 1e-9 relative. When `bin/main.out` was
+built with MKL (A46: the build turns it on when it finds MKL; the run logs of the case say
+`MKL for large clusters : on`), a float may move by 1e-5 of the golden value instead, and never less than 1e-12
+absolute (the golden value 0, and round-off-sized values such as regroup's max_abs_difference_from_prediction, 1.0e-15
+in golden against 8.9e-16 with MKL), decisions still exact (user decision 2026-10-13). The library changes the last digits of the clusters it takes
+(zgemm from bath dimension 21, zheevd from 63), and the policies' error numbers are differences of nearly equal
+coherences, so that carries up to 4.4e-6 relative (WSL, MKL 2026.0: 8 of the 33 cases, scaled_error and
+local_before/after, with the same decisions). The golden answers stay the ones recorded without MKL; `test_adaptive_tools.py`
+(`RegressVerdict`, run by `unit`) holds the rule.
 
 | here | is |
 |---|---|
@@ -44,7 +55,7 @@ The regression cases, all `--regroup`, with `--atol 1e-3 --rtol 0` (D does not r
 |---|---|
 | `regroup-p1` | six P1 sites, three bundles of two; one split, then physical (exit 0) |
 | `regroup-p1-sparse` | eight P1 sites with rdip 45 Å, so not every pair is connected: a site moves between bundles, neighbours are checked, a revisit is blocked, then no candidate (exit 2) |
-| `regroup-p1-limit` | `regroup-p1` with `expansion_max_clusters` 6: the three splits are refused before CCEX is asked and the rest are judged, no candidate (exit 2) |
+| `regroup-p1-limit` | `regroup-p1` with `bundle.max_clusters` 6: the three splits are refused before CCEX is asked and the rest are judged, no candidate (exit 2) |
 | `regroup-p1-budget` | `regroup-p1` with `--max-total-work 5e6`: the region's direct solution does not fit, `budget_limited` (exit 2) |
 | `regroup-c13-physical` | the 13C input of `merge-cce`: physical from the start, nothing changes (exit 0) |
 | `regroup-fault-probe-drop` | `regroup-p1` whose first probe loses its response: `failed` (exit 1) |

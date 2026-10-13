@@ -11,7 +11,7 @@ Exit status 0 only if every check passed. Everything the suite writes goes to
 ## Where the frame changes
 
     read options -> CLI flags -> B FIELD ALIGNMENT CHECK
-      -> read bath (source frame) -> bathadjust -> rbath/rbathcut selection
+      -> read bath (source frame) -> bath_shift -> rbath selection (inner, outer)
       -> HF tensor lookup (source frame) -> QD tensor lookup (source frame)
       -> ROTATE positions and bath-frame tensors/Defect templates together
       -> Defect construction -> clusterization
@@ -33,16 +33,16 @@ tensor it stored was computed here from the source geometry or read from the
 file; `applyCoordinateFrameRotation` transforms the first kind always, and the
 second kind only when `hf_tensor_frame` says `bath`. The two occur together:
 
-| hf_readmode | what is stored | transformed? |
+| `hyperfine` (hf_readmode until 2026-10-13) | what is stored | transformed? |
 |---|---|---|
-| 0 | point dipole | always |
-| 1 | point dipole + isotropic FC (the file's tensor is discarded) | always; `hf_tensor_frame` does not apply |
-| 2 / 3, matched | DFT tensor from the file | only when `hf_tensor_frame = bath` |
-| 2 / 3, fallback | point dipole (spin not covered by the file) | always |
+| `point` (0) | point dipole | always |
+| `point` + `contact` (1) | point dipole + isotropic FC (the file's tensor is discarded) | always; `hf_tensor_frame` does not apply |
+| `dft` (2 / 3), matched | DFT tensor from the file | only when `hf_tensor_frame = bath` |
+| `dft` (2 / 3), fallback | point dipole (spin not covered by the file) | always |
 
-`qd_readmode` keeps a single flag: `readQdtensorfile` has no computed-here
-fallback to distinguish. Modes 3 and 4 share this post-read path. Their two-file
-reader is exercised with distinct wiDef and woDef boundaries; mode 2 additionally
+The quadrupole keeps a single flag: `readQdtensorfile` has no computed-here
+fallback to distinguish. The structures `strained` and `bubble` (qd_readmode 3 and 4) share this post-read path. Their two-file
+reader is exercised with distinct wiDef and woDef boundaries; `plain` (mode 2) additionally
 has the full hand-transformed versus automatic-rotation tensor/coherence check.
 
 ## Why it is split in two
@@ -75,8 +75,8 @@ that "r0 stays fixed" is a real check), 6 `13C` in `bath_a` and 3 more in
 the [111] axis, so after the rotation it must land at `r0 + (0, 0, sqrt(3))`.
 
 **P1 defect bath.** The same 6 positions as `P1` electron spins, with a `Defect`
-section: `naddspin = 0`, `navaax = 12`, a scalar per-axis `detuning`, and
-`avaax_p1` pinning the assignments so no RNG is involved. It is checked twice:
+section: `n_nuclear_spins = 0`, `n_configurations = 12`, a scalar per-axis `detuning`, and
+`avaax_p1` (`Defect.axis_file`) pinning the assignments so no RNG is involved. It is checked twice:
 
 - an **identity** rotation must leave the run byte-identical, which isolates the
   feature itself from any geometry change;
@@ -84,15 +84,15 @@ section: `naddspin = 0`, `navaax = 12`, a scalar per-axis `detuning`, and
   `paxes[i]` and the `detuning[iax]` table they index into stay exactly the same.
 
 Per-spin detuning is `detuning[paxes[i]]`, so those two together pin it down;
-CCEX does not print the per-spin value anywhere reachable at `naddspin = 0`.
+CCEX does not print the per-spin value anywhere reachable at `n_nuclear_spins = 0`.
 
-`naddspin = 0` is deliberate. `rxyzs`, `hypf` and `efg` only exist for added
+`n_nuclear_spins = 0` is deliberate. `nuclear_positions`, `hyperfine` and `efg` only exist for added
 subspins. This legacy P1 entry has no `axis` or `coordinate_frame`, so it keeps
 the backward-compatible `qubit` default; its scalar detuning is frame-independent.
 
 **NV defect bath.** Six spin-1 `NV_0` bath spins use three deterministically
 selected frozen configurations. One physical `axis` belongs to `NV_0`; the three
-`navaax` entries are configurations, not three orientations. The suite describes
+`n_configurations` entries are configurations, not three orientations. The suite describes
 the same [111] NV five ways: shared `{D,E,unit}`, shared tensor, the old three-entry
 tensor list, D in GHz, and an already transformed qubit-frame axis. It also expresses
 the same indexed detuning as a legacy MHz list, a unit-aware MHz object, and a GHz
@@ -142,7 +142,7 @@ for the point-dipole system and for the DFT-tensor one alike.
 
 The rotation moves every qubit and every bath spin with one R about one r0 -- the
 position of `reference_qubit`, which therefore does not move. That is what makes
-the source-frame rbath / rbathcut selection valid for several qubits too: nothing
+the source-frame rbath selection valid for several qubits too: nothing
 changes any relative distance.
 
 MQ/C holds `bath_axis` and `qubit_axis` fixed -- so `R` is the same in both runs --
@@ -166,7 +166,7 @@ rather than guessing from what kind of tensor it is:
 | `INTMAP_AUTO_SOURCE_GEOMETRY` | `setIntmap_dipAuto`, from the source qubit positions | always |
 | `INTMAP_EXPLICIT_BATH` | explicit, `tensor_frame: "bath"` | always |
 | `INTMAP_EXPLICIT_QUBIT` | explicit, `tensor_frame: "qubit"` | never |
-| `INTMAP_EXPLICIT_UNSPECIFIED` | explicit, no `tensor_frame` | fatal at nqubit>1; kept at nqubit==1 (legacy `qzfs`) |
+| `INTMAP_EXPLICIT_UNSPECIFIED` | explicit, no `tensor_frame` | fatal with more than one qubit; kept with one (`Qubit.zfs` of the `Qubit.file` form, `qzfs` until 2026-10-13) |
 
 Each explicit `Qubit.intmap` entry may also carry `unit: "Hz"`, `"kHz"`,
 `"MHz"`, or `"GHz"`. An absent unit retains the legacy kHz interpretation.
@@ -182,7 +182,7 @@ message AND that neither `Read the Hyperfine interaction from DFT inputfile` nor
 the part that would silently regress if the check drifted later in the run.
 
 External HF/QD tensor files stay single-qubit. That restriction is **not new**:
-`readHftensorfile` and `readQdtensorfile` have always refused `nqubit > 1`, and
+`readHftensorfile` and `readQdtensorfile` have always refused more than one qubit, and
 both guards are still there. The rotation just reports it before a file is
 opened.
 
@@ -190,7 +190,7 @@ opened.
 
 Multi-qubit runs with an external HF or QD tensor file (a pre-existing
 restriction, see above), `qubit_position_frame: "qubit"`, an explicit intmap
-tensor with no `tensor_frame` at `nqubit > 1`, and a tilted magnetic field
+tensor with no `tensor_frame` with more than one qubit, and a tilted magnetic field
 alongside the rotation. cCCE remains single-qubit -- `simulator_cce.cpp` is
 untouched -- so multi-qubit coherence is tested with gCCE.
 
@@ -200,21 +200,21 @@ Four different things get lumped together as "the ZFS"; they are not the same:
 
 | input | frame | transformed? |
 |---|---|---|
-| `Defect` entry with `coordinate_frame: "bath"` | source bath/crystal frame | axis/rxyzs and hypf/efg/zfs transformed |
+| `Defect` entry with `coordinate_frame: "bath"` | source bath/crystal frame | axis/nuclear_positions and hyperfine/efg/zfs transformed |
 | `Defect` entry with `coordinate_frame: "qubit"` (also the legacy default) | computational frame | no |
 | `Defect.detuning` | scalar frequency | never |
 | `bfield` | computational-frame input | never |
-| legacy top-level `qzfs` | read as written, for backward compatibility | never |
+| `Qubit.zfs` of the `Qubit.file` form (top-level `qzfs` until 2026-10-13) | read as written, for backward compatibility | never |
 | `Qubit.intmap` self/ZFS tensor | whatever its `tensor_frame` says | `"bath"` yes, `"qubit"` no |
 
-`qzfs` belongs to the single-qubit `qubitfile` path and has no `tensor_frame`
+`Qubit.zfs` belongs to the single-qubit `Qubit.file` form and has no `tensor_frame`
 sub-key to declare, which is why it is kept rather than transformed. A ZFS given
 through `Qubit.intmap` does have one, and is transformed when it says `"bath"` --
-so "the ZFS is not rotated" is only true of the legacy spelling.
+so "the ZFS is not rotated" is only true of `Qubit.zfs`.
 
 A `Defect` section written in the crystal frame must declare
 `coordinate_frame: "bath"`. `applyCoordinateFrameRotation` then transforms its
-normalized axis and relative `rxyzs` with R, and its `hypf`, `efg`, and `zfs`
+normalized axis and relative `nuclear_positions` with R, and its `hyperfine`, `efg`, and `zfs`
 with R T R^T before Defect construction. Scalar `detuning` is unchanged. A
 legacy entry without either a new `axis` or object-form `zfs` defaults to
 `"qubit"`, preserving its old result.

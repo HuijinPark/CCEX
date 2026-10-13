@@ -1,8 +1,13 @@
 {
     # Config (General) : ccein_ladder.json as a separate run at rdip 6, one of its rungs, without the ladder
-    "method"        : "CCE",
+    "method"        : "cCCE",
     "quantity"      : "coherence",
-    "qubitfile"     : "../../02_Diamond_NV_natab/bath/bath_Diamond_NV_natab_defect",
+    "Qubit"         : {
+        "file"          : "../../02_Diamond_NV_natab/bath/bath_Diamond_NV_natab_defect",
+        # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
+        "alphams"       : 1,
+        "betams"        : 0
+    },
     "gyrofile"      : "../../02_Diamond_NV_natab/bath/gyro_13C",
     "bathfile"      : ["../../02_Diamond_NV_natab/bath/bath_Diamond_NV_natab_1"],
     "order"         : 2,
@@ -12,11 +17,7 @@
     "deltat"        : 0.0002,
     "nstep"         : 10000,
     "seed"          : 1,
-
-    # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
-    "qalphams"      : 1,
-    "qbetams"       : 0,
-    "npulse"        : 1,
+    "pulse"         : {"count": 1},
 
     "outfile"       : "./results/CCE2_rdip6_1"
 }

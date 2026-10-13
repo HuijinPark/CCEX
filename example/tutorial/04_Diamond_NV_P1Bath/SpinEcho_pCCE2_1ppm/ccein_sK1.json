@@ -1,15 +1,19 @@
 {
     # Config - Method 
-    "method"        : "pCCE", 
+    "method"        : "cCCE",
+    "cluster_mode"  : "pcce", 
     "quantity"      : "coherence",
     
-    # Config - File
-    "qubitfile"     :  "../bath/14N_1ppm/bath_DiaP1_1ppm_Defect",
+    "Qubit"         : {
+        # Config - File
+        "file"          :  "../bath/14N_1ppm/bath_DiaP1_1ppm_Defect",
+        # Qubit
+        "alphams"      : -1,
+        "betams"       : 0
+    },
     "gyrofile"      :  "../bath/DiaP1_gyro",
     "bathfile"      : ["../bath/14N_1ppm/bath_DiaP1_1ppm_"],
-  #"avaaxfile"     :  "Random",
-  #"statefile"     :  "Random",
-  #"exstatefile"   :  "Random",
+  #"bath_state_file" :  "Random",
 
     # Config - General
     "order"         : 2,
@@ -17,51 +21,50 @@
     "rbath"         : 850,
     "rdip"          : 620,
     "deltat"        : 0.01,
-    "nstep"         : 300,  
-
-    # Qubit 
-    "qalphams"     : -1,
-    "qbetams"      : 0,
+    "nstep"         : 300,
 
     # Cluster
-    "addsubclus"  : 0, # true / false
-    "nk"          : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
-    "sK"            : 1,  # int
-    "max_iter"      : 1000,  # int
-    "max_trial"     : 1000, # int
-    "kmeans_pp"     : true, # true / false
-    "iter_detail"   : true, # true / false
+    "add_subclusters" : false, # true / false
+    "max_clusters_per_order" : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
+    "pcce"          : {
+        "partition_size" : 1,  # int
+        "trials"        : 1000, # int
+        "max_iterations" : 1000,  # int
+        "kmeans_pp"     : true, # true / false
+        "print_trials"  : true # true / false
+    },
 
     # Pulse
-    "npulse"      : 1,
+    "pulse"         : {"count": 1},
 
-    # Config - Spin tensor
-    "hf_readmode"   : 0, 
-#  "hf_tensorfile" : "0",
-#  "qd_readmode"   : 0,
+    # Config - Spin tensor 
+#  "hamiltonian"   : {"common": {"hyperfine": {"dipole": "point"}, "quadrupole": "off"}},
 
     # Output
-    "savemode"    : "coherence"
+    "savemode"    : "coherence",
 
-,  "Defect"         : [
-		{   
-            "dfname": "P1",
-            "apprx": true,
-            "naddspin" : 0,
-            "navaax" : 12, 
-            "detuning" : [ [1,  "e",   84.946496],
-                           [2,  "e",   84.946496],
-                           [3,  "e",   84.946496],
-                           [4,  "e",     0.00000],
-                           [5,  "e",     0.00000],
-                           [6,  "e",     0.00000],
-                           [7,  "e",  -84.946496],
-                           [8,  "e",  -84.946496],
-                           [9,  "e",  -84.946496],
-                           [10, "e",  114.026400],
-                           [11, "e",     0.00000],
-                           [12, "e", -114.026400]]
-        }   
+  "Defect"         : {
+        #"state_file"    : "Random",
+        #"axis_file"     : "Random",
+        "species"       : [
+    		{   
+                "name": "P1",
+                "n_nuclear_spins" : 0,
+                "n_configurations" : 12, 
+                "detuning" : [ [1,  "e",   84.946496],
+                               [2,  "e",   84.946496],
+                               [3,  "e",   84.946496],
+                               [4,  "e",     0.00000],
+                               [5,  "e",     0.00000],
+                               [6,  "e",     0.00000],
+                               [7,  "e",  -84.946496],
+                               [8,  "e",  -84.946496],
+                               [9,  "e",  -84.946496],
+                               [10, "e",  114.026400],
+                               [11, "e",     0.00000],
+                               [12, "e", -114.026400]]
+            }   
 
-                       ]
+                           ]
+    }
 }

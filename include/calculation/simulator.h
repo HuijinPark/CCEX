@@ -12,6 +12,7 @@
 #include "physical/pulse.h"
 #include "clustering/cluster.h"
 #include "input/general.h"
+#include "common/blas_option.h"   // A46: CcexEigensolver (Eigen's solver unless built with CCEX_BLAS_DIRECT)
 
 //MatrixXcd cal_Upulse_withDetuning(QubitArray* qa, Pulse* pulse, double angle, MatrixXcd sigma, MatrixXcd sigma_z);
 void calUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse);
@@ -19,6 +20,7 @@ void calTDUpulses(MatrixXcd* Upulses, QubitArray* qa, Pulse* pulse, MatrixXcd Hq
 void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cc, Pulse* pulse, Cluster* cluster, Output* output, int*** localClusters);
 
 BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* dfa, int nqubit);
+void setClusterHyperfineMean(bool on);   // hamiltonian.cCCE.delta_A false: createBathArray averages a cluster's hyperfine tensors
 
 struct GcceBatch;
 MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op, GcceBatch* batch=nullptr);
@@ -30,7 +32,7 @@ MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pl
  */
 struct CceWorkspace {
     MatrixXcd Halpha, Hbeta;                         // A25: the conditional Hamiltonians
-    Eigen::SelfAdjointEigenSolver<MatrixXcd> up, down;
+    CcexEigensolver up, down;
     MatrixXcd M, Madj;
     Eigen::VectorXcd valUp, valDown;
     Eigen::RowVectorXcd rowStart, row, rowNext;

@@ -1,5 +1,5 @@
 #!/bin/sh
-# 09_GPU_backend/pCCE_P1: pCCE2 (groups of sK = 2 P1) Hahn echo of the NV in the five-spin P1 bath of CCE5_P1, once per backend: cpu, auto, and cuda when bin/main_gpu.out exists
+# 09_GPU_backend/pCCE_P1: pCCE2 (groups of pcce.partition_size = 2 P1) Hahn echo of the NV in the five-spin P1 bath of CCE5_P1, once per backend: cpu, auto, and cuda when bin/main_gpu.out exists
 #
 # Added 2026-10-12. idm4-gpu job 695 (32 ranks, RTX PRO 6000): cpu 0.43 s, auto 0.44 s, cuda 4.2 s, curves identical.
 # WSL, 4 ranks: cpu 0.4 s, auto 0.4 s (CPU-only binary or RTX 3050 build), cuda 0.4 s (RTX 3050).

@@ -27,7 +27,7 @@ AdaptivePlan makeAdaptivePlan(const std::vector<int>& dims,std::vector<AdaptiveE
     std::vector<std::set<int>> neighbors(n);
     std::set<std::pair<int,int>> unique;
     for(int d:dims) require(d>0 && d<=bundle_cap,
-        "an indivisible site exceeds bundle_max_dim");
+        "an indivisible site exceeds bundle.max_dim");
     for(auto& e:edges) {
         if(e.a>e.b) std::swap(e.a,e.b);
         require(e.a>=0 && e.a<e.b && e.b<n,"invalid adaptive edge indices");
@@ -91,7 +91,7 @@ AdaptivePlan makeAdaptiveAutoPlan(const std::vector<int>& dims,std::vector<Adapt
     require(std::isfinite(duration) && duration>=0,"adaptive auto duration must be finite and nonnegative");
     require(std::isfinite(budget) && budget>=0,"adaptive auto connection budget must be finite and nonnegative");
     require(dims.size()<size_t(INT_MAX),"too many adaptive sites");
-    for(int d:dims)require(d>0 && d<=bundleCap,"an indivisible site exceeds bundle_max_dim");
+    for(int d:dims)require(d>0 && d<=bundleCap,"an indivisible site exceeds bundle.max_dim");
     const int n=int(dims.size());
     struct Link { long double strength=0; bool allowed=false; };
     std::vector<std::map<int,Link>> graph(n);

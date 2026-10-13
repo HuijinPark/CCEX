@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'gpu_verification/check_gpu'))
-from benchmark import REPO,compare
+from benchmark import REPO,compare,put
 from check_pcce import run_case
 from partition_log import check_search
 
@@ -23,7 +23,7 @@ def main():
     config=json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
     config['gyrofile']=str(REPO/config['gyrofile'])
     config['bathfile']=[str(REPO/p) for p in config['bathfile']]
-    config.update(iter_detail=True,backend='cpu')
+    config=put(config,{'pcce.print_trials':True,'backend':'cpu'})
     records=[]
     for size,state,trials,seed,plus in [(1,0,5,19,True),(2,2,5,19,True),
             (2,2,17,73,False),(3,2,1,97,True),(2,0,1,0,False)]:
@@ -31,7 +31,8 @@ def main():
         previous=None;reference=None;search_reference=None
         for ranks in args.ranks:
             directory=root/case/f'ranks{ranks}'
-            run,log=run_case(dict(config,sK=size,nstate=state,max_trial=trials,seed=seed,kmeans_pp=plus),directory,args.cpu.resolve(),ranks,120)
+            run,log=run_case(put(config,{'pcce.partition_size':size,'nstate':state,'pcce.trials':trials,'seed':seed,
+                                         'pcce.kmeans_pp':plus}),directory,args.cpu.resolve(),ranks,120)
             if run['returncode']:raise RuntimeError(f'Execution failed: {case} ranks={ranks}')
             audit=check_search(log,trials,ranks)
             if search_reference is None:search_reference=audit
@@ -50,7 +51,7 @@ def main():
             for mode,binary in [('before',args.baseline),('legacy',args.cpu)]:
                 # Old main reset the C RNG to zero regardless of the input seed.
                 # Seed 0 compares the same historical random stream explicitly.
-                result,_=run_case(dict(config,pcce_partition='legacy',nstate=2,seed=0),root/f'legacy{ranks}'/mode,binary.resolve(),ranks,120)
+                result,_=run_case(put(config,{'pcce.partition':'legacy','nstate':2,'seed':0}),root/f'legacy{ranks}'/mode,binary.resolve(),ranks,120)
                 if result['returncode']:raise RuntimeError('Legacy execution failed')
             error=compare(root/f'legacy{ranks}'/'before',root/f'legacy{ranks}'/'legacy',1e-8,2e-6)
             records.append(dict(case='legacy_compatibility',ranks=ranks,comparison=error))
@@ -58,7 +59,7 @@ def main():
     if args.cuda:
         # Only one rank receives the single six-spin cluster. Lazy initialization
         # must not wait for ranks that never encounter a GPU-eligible cluster.
-        c=dict(config,sK=3,max_trial=1,nstate=2,gpu_options=dict(config.get('gpu_options',{}),min_dim=64))
+        c=put(config,{'pcce.partition_size':3,'pcce.trials':1,'nstate':2,'gpu_options.min_dim':64})
         ranks=max(args.ranks)
         cpu,_=run_case(dict(c,backend='cpu'),root/'uneven_auto/cpu',args.cpu.resolve(),ranks,120)
         gpu,log=run_case(dict(c,backend='auto'),root/'uneven_auto/auto',args.cuda.resolve(),ranks,120)

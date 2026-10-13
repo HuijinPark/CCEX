@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 import statistics
-from benchmark import REPO,compare
+from benchmark import REPO,compare,get,put
 from check_pcce import run_case
 import sys
 sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parents[1]/'check_gpu'))   # benchmark.py, the helper the checks share
@@ -33,10 +33,10 @@ def main():
     try:
         for name in args.cases:
             source=args.baseline_run.resolve()/name/'cpu/input.json'
-            config=json.loads(source.read_text());config.update(pcce_partition='legacy')
-            assert config['method'].lower()=='pcce' and config['nstate']==0 and config['order']==2
+            config=put(json.loads(source.read_text()),{'pcce.partition':'legacy'})
+            assert config.get('cluster_mode')=='pcce' and config['nstate']==0 and config['order']==2
             data=[config['gyrofile'],*config['bathfile']]
-            if config.get('qubitfile'):data.append(config['qubitfile'])
+            if get(config,'Qubit.file'):data.append(get(config,'Qubit.file'))
             record=dict(case=name,source_input=str(source),source_input_sha256=sha(source),
                 input_data_sha256={p:sha(Path(p)) for p in data},config=config,trials=[])
             summary['cases'].append(record)

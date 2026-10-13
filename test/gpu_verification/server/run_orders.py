@@ -10,14 +10,14 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'check_gpu'))  # benchmark.py
-from benchmark import INPUTS, REPO, compare
+from benchmark import INPUTS, REPO, compare, FILE_KEYS, get, put
 
 
 def prepare_config(source, directory, order, backend, batch):
     config = json.loads(source.read_text())
-    for key in ('qubitfile', 'gyrofile', 'avaaxfile', 'statefile', 'exstatefile'):
-        if config.get(key):
-            config[key] = str((source.parent.parent / config[key]).resolve())
+    for key in FILE_KEYS:
+        if get(config, key):
+            config = put(config, {key: str((source.parent.parent / get(config, key)).resolve())})
     config['bathfile'] = [str((source.parent.parent / p).resolve()) for p in config['bathfile']]
     config.update(order=order, backend=backend, profile=True, savemode='coherence',
                   outfile=str(directory / 'coherence'),

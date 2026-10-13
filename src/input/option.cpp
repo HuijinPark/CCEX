@@ -21,22 +21,32 @@
 // object it made, so a lookup knows its block whichever of the six readers made the tree.
 static std::set<std::string>& lookedUpKeys(){ static std::set<std::string> keys; return keys; }
 static std::map<const cJSON*, std::string>& objectPaths(){ static std::map<const cJSON*, std::string> paths; return paths; }
+// the same paths as written (case kept), for the messages: "Error: pulse.count is not found" (A47, 2026-10-13)
+static std::map<const cJSON*, std::string>& shownPaths(){ static std::map<const cJSON*, std::string> paths; return paths; }
 static std::string lowerKey(const char* key){
     std::string out(key ? key : "");
     for (char& c : out) c = (char)std::tolower((unsigned char)c);
     return out;
 }
 static std::string joinKey(const std::string& path, const std::string& key){ return path.empty() ? key : path + "." + key; }
-static void recordPaths(const cJSON* node, const std::string& path){
+static void recordPaths(const cJSON* node, const std::string& path, const std::string& shown){
     objectPaths()[node] = path;
+    shownPaths()[node] = shown;
     for (const cJSON* c = node->child; c; c = c->next){
-        const std::string childPath = cJSON_IsObject(node) && c->string ? joinKey(path, lowerKey(c->string)) : path + "[]";
-        if (cJSON_IsObject(c) || cJSON_IsArray(c)) recordPaths(c, childPath);
+        const bool member = cJSON_IsObject(node) && c->string;
+        const std::string childPath = member ? joinKey(path, lowerKey(c->string)) : path + "[]";
+        const std::string childShown = member ? joinKey(shown, c->string) : shown + "[]";
+        if (cJSON_IsObject(c) || cJSON_IsArray(c)) recordPaths(c, childPath, childShown);
     }
+}
+// key inside object, as the input writes the path to it ("Qubit.file"; a top-level key alone)
+static std::string shownKey(const cJSON* object, const char* key){
+    const auto where = shownPaths().find(object);
+    return where == shownPaths().end() ? std::string(key ? key : "") : joinKey(where->second, key ? key : "");
 }
 static cJSON* trackedParse(const char* text){
     cJSON* root = cJSON_Parse(text);
-    if (root) recordPaths(root, "");
+    if (root) recordPaths(root, "", "");
     return root;
 }
 static cJSON* trackedGetObjectItem(const cJSON* object, const char* key){
@@ -102,6 +112,234 @@ static bool readStrictBool(cJSON* section, const char* section_name, const char*
     return (bool)item->valueint;
 }
 
+static void refuseWrongType(cJSON* item, const char* key, bool right, const char* what);
+static double finiteNumber(cJSON* item, const char* key, int i, int j, bool asFloat);
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// A47 (2026-10-13, (internal notes)): the input keys were renamed and grouped into blocks. An old name
+// is refused, not read, and the message names the new one (as savemode's old values are): a run that took a default for a
+// key it no longer knows would look like a finished one. The converter rewrites an old input.
+static const char* const kConvertHint =
+    "Old inputs: python3 example/tools/InputKeys/convert_input_keys.py FILE... rewrites them with the new keys";
+
+// A lookup the unread-key check does not record (cJSON_checkInputKeys): the refusals look for names nobody reads, and a
+// recorded old name would be offered as "did you mean" for a typo.
+static cJSON* untrackedItem(const cJSON* object, const char* key){
+    if (!object || !cJSON_IsObject(object)) return NULL;
+    for (cJSON* c = object->child; c; c = c->next)
+        if (c->string && !strcasecmp(c->string,key)) return c;
+    return NULL;
+}
+
+static void refuseOldInputKeys(cJSON* root){
+    struct Renamed { const char* block; const char* key; const char* now; };
+    static const Renamed renamed[] = {
+        {"", "qubitfile", "is now \"Qubit.file\" (\"Qubit\": {\"file\": ...})"},
+        {"", "qspin", "is now \"Qubit.spin\" (with Qubit.file)"},
+        {"", "qzfs", "is now \"Qubit.zfs\" (with Qubit.file)"},
+        {"", "qalphams", "is now \"Qubit.alphams\" (with Qubit.file)"},
+        {"", "qbetams", "is now \"Qubit.betams\" (with Qubit.file)"},
+        {"", "rbathcut", "is now the inner radius of \"rbath\": [inner, outer]"},
+        {"", "rdipcut", "is now the inner radius of \"rdip\": [inner, outer]"},
+        {"", "bathadjust", "is now \"bath_shift\""},
+        {"", "statefile", "is now \"bath_state_file\""},
+        {"", "exstatefile", "is now \"Defect.state_file\""},
+        {"", "avaaxfile", "is now \"Defect.axis_file\""},
+        {"", "addsubclus", "is now \"add_subclusters\" (true or false)"},
+        {"", "nk", "is now \"max_clusters_per_order\""},
+        {"", "vector_mean_field", "is now \"hamiltonian.common.bath_bath_mean_field\" (\"xyz\" for true, \"z\" for false)"},
+        {"", "hf_readmode", "is now \"hamiltonian.common.hyperfine\" {\"dipole\": \"point\"|\"dft\", \"contact\": true|false} "
+                            "(0 point/false, 1 point/true, 2 dft/false, 3 dft/true)"},
+        {"", "hf_tensorfile", "is now \"hamiltonian.common.hyperfine.file\""},
+        {"", "hf_ignore_oor", "is now \"hamiltonian.common.hyperfine.missing_row\" (0 \"stop\", 1 \"point_dipole\")"},
+        {"", "qd_readmode", "is now \"hamiltonian.common.quadrupole\" (0 \"off\"; 2, 3, 4 {\"structure\": \"plain\", "
+                            "\"strained\", \"bubble\"})"},
+        {"", "qd_tensorfile", "is now \"hamiltonian.common.quadrupole.file\""},
+        {"", "qd_tensorfile_woqubit", "is now \"hamiltonian.common.quadrupole.file_without_defect\""},
+        {"", "qd_cellpara", "is now \"hamiltonian.common.quadrupole.cell\""},
+        {"", "knight", "is now \"hamiltonian.cCCE.knight\""},
+        {"", "hfmedi", "is now \"hamiltonian.cCCE.hfmedi\""},
+        {"", "DefectTotSpin", "was removed: the qubit spin is used (also for the S of a v3 tensor file)"},
+        {"", "CorrTotSpin", "was removed: it served old-format VASP tensor files only; remake such a file with "
+                            "example/tools/SpinTensorReader (format v3)"},
+        {"", "sK", "is now \"pcce.partition_size\""},
+        {"", "max_trial", "is now \"pcce.trials\""},
+        {"", "max_iter", "is now \"pcce.max_iterations\""},
+        {"", "kmeans_pp", "is now \"pcce.kmeans_pp\""},
+        {"", "iter_detail", "is now \"pcce.print_trials\""},
+        {"", "pcce_detail_limit", "is now \"pcce.print_limit\""},
+        {"", "pcce_partition", "is now \"pcce.partition\""},
+        {"", "pcce_connections", "is now \"pcce.connections\""},
+        {"", "pcce_cache_mode", "is now \"pcce.cache.mode\""},
+        {"", "pcce_cache_file", "is now \"pcce.cache.file\""},
+        {"", "bundle_max_dim", "is now \"bundle.max_dim\""},
+        {"", "bundle_merge_cutoff", "is now \"bundle.merge_cutoff\""},
+        {"", "bundle_connections", "is now \"bundle.connections\""},
+        {"", "bundle_connection_budget", "is now \"bundle.connection_budget\""},
+        {"", "expansion_max_clusters", "is now \"bundle.max_clusters\""},
+        {"", "expansion_max_work", "is now \"bundle.max_work\""},
+        {"", "adaptive_work_file", "is now \"adaptive.work_file\""},
+        {"", "npulse", "is now \"pulse.count\""},
+        {"", "pulsename", "is now \"pulse.name\""},
+        {"", "sequence", "is now \"pulse.sequence\""},
+        {"", "pulseiter", "is now \"pulse.per_qubit\""},
+        {"", "pulse_time", "is now \"pulse.duration\""},
+        {"", "detuning_factor", "is now \"pulse.detuning_factor\""},
+        {"", "gcce_refinement_max_sweeps", "is now \"gcce_refinement.max_sweeps\""},
+        {"", "cluster_contribution_max_mb", "is now \"cluster_contributions.max_mb\""},
+        {"Qubit", "nqubit", "was removed: the number of qubits is the length of Qubit.qubit"},
+        {"Qubit", "overhaus", "is now \"hamiltonian.common.qubit_bath_mean_field\""},
+        {"Qubit", "alphaidx", "is now \"Qubit.alpha_state\": {\"index\": n}"},
+        {"Qubit", "betaidx", "is now \"Qubit.beta_state\": {\"index\": n}"},
+        {"Qubit", "psia", "is now \"Qubit.alpha_state\": {\"vector\": [...]}"},
+        {"Qubit", "psib", "is now \"Qubit.beta_state\": {\"vector\": [...]}"},
+    };
+    static const Renamed species[] = {
+        {"", "dfname", "is now \"name\""},
+        {"", "apprx", "was removed (it changed nothing)"},
+        {"", "naddspin", "is now \"n_nuclear_spins\""},
+        {"", "navaax", "is now \"n_configurations\""},
+        {"", "eqs", "is now \"quadrupole_moments\""},
+        {"", "rxyzs", "is now \"nuclear_positions\""},
+        {"", "hypf", "is now \"hyperfine\""},
+    };
+    std::vector<std::string> found;
+    for (const Renamed& r : renamed){
+        cJSON* block = *r.block ? untrackedItem(root,r.block) : root;
+        if (untrackedItem(block,r.key))
+            found.push_back(std::string("input key \"") + (*r.block ? std::string(r.block) + "." : "") + r.key + "\" " + r.now);
+    }
+    if (cJSON* method = untrackedItem(root,"method")){
+        const char* v = cJSON_IsString(method) ? method->valuestring : "";
+        if (!strcasecmp(v,"cce")) found.push_back(std::string("method \"") + v + "\" is now \"cCCE\"");
+        for (const char* shape : {"pcce", "dsj", "itb", "dsjitb"})
+            if (!strcasecmp(v,shape))
+                found.push_back(std::string("method \"") + v + "\" is now \"method\": \"cCCE\" with \"cluster_mode\": \""
+                                + shape + "\"");
+    }
+    if (cJSON* mode = untrackedItem(root,"cluster_mode"))
+        if (cJSON_IsString(mode) && !strcasecmp(mode->valuestring,"adaptive"))
+            found.push_back("cluster_mode \"adaptive\" is now \"bundle\" (the bundle partition; the \"adaptive\" block "
+                            "asks for the refinement)");
+    if (cJSON* item = untrackedItem(root,"gcce_refinement"))
+        if (cJSON_IsBool(item)) found.push_back("\"gcce_refinement\": true|false is now \"gcce_refinement\": {\"enabled\": true|false}");
+    if (cJSON* item = untrackedItem(root,"cluster_contributions"))
+        if (cJSON_IsBool(item))
+            found.push_back("\"cluster_contributions\": true|false is now \"cluster_contributions\": {\"enabled\": true|false}");
+    if (cJSON* defect = untrackedItem(root,"Defect")){
+        cJSON* list = defect;
+        if (cJSON_IsArray(defect))
+            found.push_back("\"Defect\": [...] is now \"Defect\": {\"species\": [...]} (with \"state_file\" and \"axis_file\" "
+                            "beside the list)");
+        else list = untrackedItem(defect,"species");
+        int i = 0;
+        for (cJSON* entry = cJSON_IsArray(list) ? list->child : NULL; entry; entry = entry->next, ++i)
+            for (const Renamed& r : species)
+                if (untrackedItem(entry,r.key))
+                    found.push_back("input key \"Defect.species[" + std::to_string(i) + "]." + r.key + "\" " + r.now);
+    }
+    if (found.empty()) return;
+    if (rank==0){
+        for (const std::string& f : found) fprintf(stderr,"Error: %s\n",f.c_str());
+        fprintf(stderr,"%s (docs/user/InputFile.md has the table of old and new names)\n",kConvertHint);
+    }
+    exit(EXIT_FAILURE);
+}
+
+// The calculation method and the cluster shape (A47): "method" is cCCE or gCCE, "cluster_mode" standard, pcce, bundle,
+// dsj, itb or dsjitb. Inside, the code keeps the names it compares against - CCE, gCCE, pCCE, dsj, itb, dsjitb, and
+// cluster_mode adaptive for bundle - so nothing past the readers changed (and the -P inventory writes what it wrote).
+// gCCE with pcce, dsj, itb or dsjitb is not implemented yet (those shapes run with cCCE only; improvements.md A47).
+// meCCE and noise are reserved method names (A49): accepted by the reader, refused as not implemented yet.
+static void internalMethod(const char* method, const char* shape, const char* where, char* methodOut, char* modeOut){
+    const bool gcce = !strcasecmp(method,"gcce");
+    if (!strcasecmp(method,"mecce") || !strcasecmp(method,"noise")){
+        fprintf(stderr,"Error: %s \"%s\" is not implemented yet (a reserved name; the methods that run are cCCE and gCCE)\n",
+                where,method);
+        exit(EXIT_FAILURE);
+    }
+    if (!gcce && strcasecmp(method,"ccce")){
+        if (!strcasecmp(method,"cce"))
+            fprintf(stderr,"Error: %s \"%s\" is now \"cCCE\"\n",where,method);
+        else if (!strcasecmp(method,"pcce") || !strcasecmp(method,"dsj") || !strcasecmp(method,"itb") || !strcasecmp(method,"dsjitb"))
+            fprintf(stderr,"Error: %s \"%s\" is now method \"cCCE\" with \"cluster_mode\": \"%s\" in the input\n",where,method,
+                    lowerKey(method).c_str());
+        else
+            fprintf(stderr,"Error: %s must be cCCE or gCCE (meCCE and noise are reserved, not implemented yet), not \"%s\"\n",
+                    where,method);
+        exit(EXIT_FAILURE);
+    }
+    static const char* shapes[] = {"standard", "pcce", "bundle", "dsj", "itb", "dsjitb"};
+    int k = 0;
+    while (k < 6 && strcasecmp(shape,shapes[k])) ++k;
+    if (k == 6){
+        if (!strcasecmp(shape,"adaptive"))
+            fprintf(stderr,"Error: cluster_mode \"adaptive\" is now \"bundle\"\n");
+        else
+            fprintf(stderr,"Error: cluster_mode must be standard, pcce, bundle, dsj, itb or dsjitb, not \"%s\"\n",shape);
+        exit(EXIT_FAILURE);
+    }
+    if (gcce && k != 0 && k != 2){
+        fprintf(stderr,"Error: method gCCE with cluster_mode \"%s\" is not implemented yet; cluster_mode %s runs with method cCCE\n",
+                shapes[k],shapes[k]);
+        exit(EXIT_FAILURE);
+    }
+    static const char* internal[] = {"CCE", "pCCE", "CCE", "dsj", "itb", "dsjitb"};
+    strcpy(methodOut,gcce ? "gCCE" : internal[k]);
+    strcpy(modeOut,k == 2 ? "adaptive" : "standard");
+}
+
+static void readMethod(cJSON* root, char* methodOut, char* modeOut){
+    cJSON* mode = cJSON_GetObjectItem(root,"cluster_mode");
+    if (mode && (!cJSON_IsString(mode) || !mode->valuestring)){
+        fprintf(stderr,"Error: cluster_mode must be a string (standard, pcce, bundle, dsj, itb, dsjitb)\n");
+        exit(EXIT_FAILURE);
+    }
+    internalMethod(cJSON_ReadString(root,(char*)"method",true,(char*)"cCCE"),mode ? mode->valuestring : "standard","method",
+                   methodOut,modeOut);
+}
+
+void cJSON_applyMethodOption(Config* cnf, Cluster* cls, const char* method){
+    // -m changes the method and keeps the input's cluster_mode
+    const char* shape = "standard";
+    for (const char* s : {"pcce", "dsj", "itb", "dsjitb"}) if (!strcasecmp(cnf->method,s)) shape = s;
+    if (!strcasecmp(cnf->cluster_mode,"adaptive")) shape = "bundle";
+    char internal[MAX_CHARARRAY_LENGTH], mode[16];
+    internalMethod(method,shape,"-m",internal,mode);
+    Config_setMethod(cnf,internal);
+    Cluster_setMethod(cls,internal);
+}
+
+// An input block ("pulse", "hamiltonian", ...): absent is NULL, anything but an object is refused.
+static cJSON* readBlock(cJSON* parent, const char* key){
+    cJSON* item = parent ? cJSON_GetObjectItem(parent,key) : NULL;
+    if (item && !cJSON_IsObject(item)){
+        fprintf(stderr,"Error: %s must be an object\n",shownKey(parent,key).c_str());
+        exit(EXIT_FAILURE);
+    }
+    return item;
+}
+
+// rbath and rdip: a number (the outer radius) or [inner, outer] (A47; the inner radius was rbathcut, rdipcut). The outer
+// item comes back, the inner one in *inner (NULL for a number).
+static cJSON* radiusItem(cJSON* root, const char* key, cJSON** inner){
+    cJSON* item = cJSON_GetObjectItem(root,key);
+    *inner = NULL;
+    if (!cJSON_IsArray(item)) return item;
+    if (cJSON_GetArraySize(item) != 2){
+        fprintf(stderr,"Error: %s must be a number or [inner, outer]\n",key);
+        exit(EXIT_FAILURE);
+    }
+    *inner = cJSON_GetArrayItem(item,0);
+    return cJSON_GetArrayItem(item,1);
+}
+
+// cJSON_ReadFloat of an item that is there
+static float readFloatItem(cJSON* item, const char* label){
+    refuseWrongType(item,label,cJSON_IsNumber(item),"a number");
+    return finiteNumber(item,label,-1,-1,true);
+}
+
 static DefectCoordinateFrame readDefectCoordinateFrame(cJSON* defect, const char* dfname,
                                                        bool* was_explicit){
 
@@ -113,13 +351,13 @@ static DefectCoordinateFrame readDefectCoordinateFrame(cJSON* defect, const char
     if (item == NULL){ return DEFECT_COORDINATE_FRAME_QUBIT; }
 
     if (!cJSON_IsString(item) || item->valuestring == NULL){
-        fprintf(stderr,"Error: Defect[%s].coordinate_frame must be \"bath\" or \"qubit\"\n",dfname);
+        fprintf(stderr,"Error: Defect.species[%s].coordinate_frame must be \"bath\" or \"qubit\"\n",dfname);
         exit(EXIT_FAILURE);
     }
     if (strcasecmp(item->valuestring,"bath") == 0){ return DEFECT_COORDINATE_FRAME_BATH; }
     if (strcasecmp(item->valuestring,"qubit") == 0){ return DEFECT_COORDINATE_FRAME_QUBIT; }
 
-    fprintf(stderr,"Error: Defect[%s].coordinate_frame = \"%s\" is not supported\n",
+    fprintf(stderr,"Error: Defect.species[%s].coordinate_frame = \"%s\" is not supported\n",
             dfname,item->valuestring);
     fprintf(stderr,"Use \"bath\" for crystal/bath-file components or \"qubit\" for computational-frame components.\n");
     exit(EXIT_FAILURE);
@@ -131,7 +369,7 @@ static double readDefectFrequencyScaleToMHz(cJSON* object, const char* dfname,
     cJSON* item = cJSON_GetObjectItem(object,"unit");
     if (item == NULL){ return 1.0; } // documented default
     if (!cJSON_IsString(item) || item->valuestring == NULL){
-        fprintf(stderr,"Error: Defect[%s].%s.unit must be a string\n",dfname,field_name);
+        fprintf(stderr,"Error: Defect.species[%s].%s.unit must be a string\n",dfname,field_name);
         exit(EXIT_FAILURE);
     }
 
@@ -140,7 +378,7 @@ static double readDefectFrequencyScaleToMHz(cJSON* object, const char* dfname,
     if (strcasecmp(item->valuestring,"MHz") == 0){ return 1.0; }
     if (strcasecmp(item->valuestring,"GHz") == 0){ return 1.0e3; }
 
-    fprintf(stderr,"Error: Defect[%s].%s.unit = \"%s\" is not supported\n",
+    fprintf(stderr,"Error: Defect.species[%s].%s.unit = \"%s\" is not supported\n",
             dfname,field_name,item->valuestring);
     fprintf(stderr,"Supported frequency units are Hz, kHz, MHz and GHz.\n");
     exit(EXIT_FAILURE);
@@ -234,16 +472,16 @@ static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
     }
 
     if (!cJSON_IsObject(item)){
-        fprintf(stderr,"Error: Defect[%s].zfs must be an object or the legacy indexed array\n",df->dfname);
+        fprintf(stderr,"Error: Defect.species[%s].zfs must be an object or the legacy indexed array\n",df->dfname);
         exit(EXIT_FAILURE);
     }
     if (!coordinate_frame_explicit){
-        fprintf(stderr,"Error: Defect[%s] uses an object-form zfs but has no coordinate_frame\n",df->dfname);
+        fprintf(stderr,"Error: Defect.species[%s] uses an object-form zfs but has no coordinate_frame\n",df->dfname);
         fprintf(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the tensor basis is explicit.\n");
         exit(EXIT_FAILURE);
     }
     if (nconfig < 1){
-        fprintf(stderr,"Error: Defect[%s] has an object-form zfs but navaax = %d\n",df->dfname,nconfig);
+        fprintf(stderr,"Error: Defect.species[%s] has an object-form zfs but n_configurations = %d\n",df->dfname,nconfig);
         fprintf(stderr,"At least one indexed configuration is required.\n");
         exit(EXIT_FAILURE);
     }
@@ -252,11 +490,11 @@ static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
     cJSON* E_item = cJSON_GetObjectItem(item,"E");
     cJSON* tensor_item = cJSON_GetObjectItem(item,"tensor");
     if ((D_item != NULL) == (tensor_item != NULL)){
-        fprintf(stderr,"Error: Defect[%s].zfs must contain exactly one of D or tensor\n",df->dfname);
+        fprintf(stderr,"Error: Defect.species[%s].zfs must contain exactly one of D or tensor\n",df->dfname);
         exit(EXIT_FAILURE);
     }
     if (tensor_item != NULL && E_item != NULL){
-        fprintf(stderr,"Error: Defect[%s].zfs.E cannot be combined with zfs.tensor\n",df->dfname);
+        fprintf(stderr,"Error: Defect.species[%s].zfs.E cannot be combined with zfs.tensor\n",df->dfname);
         exit(EXIT_FAILURE);
     }
 
@@ -266,22 +504,22 @@ static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
 
     if (D_item != NULL){
         if (!df->axis_set){
-            fprintf(stderr,"Error: Defect[%s].zfs uses D/E form but Defect[%s].axis is missing\n",
+            fprintf(stderr,"Error: Defect.species[%s].zfs uses D/E form but Defect.species[%s].axis is missing\n",
                     df->dfname,df->dfname);
             fprintf(stderr,"The symmetry axis is required to construct the Cartesian ZFS tensor.\n");
             exit(EXIT_FAILURE);
         }
 
         char what[160];
-        snprintf(what,sizeof(what),"Defect[%s].zfs.D",df->dfname);
+        snprintf(what,sizeof(what),"Defect.species[%s].zfs.D",df->dfname);
         double D_mhz = scale_to_mhz * readFiniteNumber(D_item,what);
         double E_mhz = 0.0;
         if (E_item != NULL){
-            snprintf(what,sizeof(what),"Defect[%s].zfs.E",df->dfname);
+            snprintf(what,sizeof(what),"Defect.species[%s].zfs.E",df->dfname);
             E_mhz = scale_to_mhz * readFiniteNumber(E_item,what);
         }
         if (fabs(E_mhz) > 1.0e-12){
-            fprintf(stderr,"Error: Defect[%s].zfs.E is non-zero (%g MHz)\n",df->dfname,E_mhz);
+            fprintf(stderr,"Error: Defect.species[%s].zfs.E is non-zero (%g MHz)\n",df->dfname,E_mhz);
             fprintf(stderr,"An axis fixes z but not the transverse x/y directions needed by E. Use zfs.tensor instead.\n");
             exit(EXIT_FAILURE);
         }
@@ -297,7 +535,7 @@ static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
         mode = DEFECT_ZFS_SHARED_DE;
     }else{
         char tensor_label[160];
-        snprintf(tensor_label,sizeof(tensor_label),"Defect[%s].zfs.tensor",df->dfname);
+        snprintf(tensor_label,sizeof(tensor_label),"Defect.species[%s].zfs.tensor",df->dfname);
         zfs = readDefectTensor3x3(tensor_item,tensor_label,scale_to_mhz);
         mode = DEFECT_ZFS_SHARED_TENSOR;
     }
@@ -319,14 +557,14 @@ static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nco
     }
 
     if (!cJSON_IsObject(item)){
-        fprintf(stderr,"Error: Defect[%s].detuning must be an object or the legacy indexed array\n",
+        fprintf(stderr,"Error: Defect.species[%s].detuning must be an object or the legacy indexed array\n",
                 df->dfname);
         exit(EXIT_FAILURE);
     }
 
     cJSON* values = cJSON_GetObjectItem(item,"values");
     if (!cJSON_IsArray(values)){
-        fprintf(stderr,"Error: Defect[%s].detuning.values must be an indexed array\n",df->dfname);
+        fprintf(stderr,"Error: Defect.species[%s].detuning.values must be an indexed array\n",df->dfname);
         fprintf(stderr,"Example: \"detuning\": {\"values\": [[1,\"e\",-2.14]], \"unit\": \"MHz\"}\n");
         exit(EXIT_FAILURE);
     }
@@ -338,7 +576,7 @@ static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nco
     for (int i=0; i<nentry; i++){
         cJSON* entry = cJSON_GetArrayItem(values,i);
         if (!cJSON_IsArray(entry) || cJSON_GetArraySize(entry) != 3){
-            fprintf(stderr,"Error: Defect[%s].detuning.values[%d] must be [configuration, \"e\", value]\n",
+            fprintf(stderr,"Error: Defect.species[%s].detuning.values[%d] must be [configuration, \"e\", value]\n",
                     df->dfname,i);
             exit(EXIT_FAILURE);
         }
@@ -347,7 +585,7 @@ static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nco
         if (!cJSON_IsNumber(iax_item)
             || iax_item->valuedouble != (double)iax_item->valueint
             || iax_item->valueint < 1 || iax_item->valueint > nconfig){
-            fprintf(stderr,"Error: Defect[%s].detuning.values[%d] configuration must be an integer in 1..%d\n",
+            fprintf(stderr,"Error: Defect.species[%s].detuning.values[%d] configuration must be an integer in 1..%d\n",
                     df->dfname,i,nconfig);
             exit(EXIT_FAILURE);
         }
@@ -355,13 +593,13 @@ static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nco
         cJSON* spin_item = cJSON_GetArrayItem(entry,1);
         if (!cJSON_IsString(spin_item) || spin_item->valuestring == NULL
             || strcasecmp(spin_item->valuestring,"e") != 0){
-            fprintf(stderr,"Error: Defect[%s].detuning.values[%d] spin label must be \"e\"\n",
+            fprintf(stderr,"Error: Defect.species[%s].detuning.values[%d] spin label must be \"e\"\n",
                     df->dfname,i);
             exit(EXIT_FAILURE);
         }
 
         char what[180];
-        snprintf(what,sizeof(what),"Defect[%s].detuning.values[%d][2]",df->dfname,i);
+        snprintf(what,sizeof(what),"Defect.species[%s].detuning.values[%d][2]",df->dfname,i);
         df->detuning[iax_item->valueint] =
             scale_to_mhz * readFiniteNumber(cJSON_GetArrayItem(entry,2),what);
     }
@@ -372,7 +610,7 @@ static double readDefectGyroScaleToRadkHzPerG(cJSON* object, const char* dfname)
     cJSON* item = cJSON_GetObjectItem(object,"unit");
     if (item == NULL){ return 1.0; }
     if (!cJSON_IsString(item) || item->valuestring == NULL){
-        fprintf(stderr,"Error: Defect[%s].gyros.unit must be a string\n",dfname);
+        fprintf(stderr,"Error: Defect.species[%s].gyros.unit must be a string\n",dfname);
         exit(EXIT_FAILURE);
     }
 
@@ -385,7 +623,7 @@ static double readDefectGyroScaleToRadkHzPerG(cJSON* object, const char* dfname)
     if (strcasecmp(unit,"radMHz/T") == 0 || strcasecmp(unit,"rad/us/T") == 0){ return 1.0e-1; }
     if (strcasecmp(unit,"rad/s/T") == 0){ return 1.0e-7; }
 
-    fprintf(stderr,"Error: Defect[%s].gyros.unit = \"%s\" is not supported\n",dfname,unit);
+    fprintf(stderr,"Error: Defect.species[%s].gyros.unit = \"%s\" is not supported\n",dfname,unit);
     fprintf(stderr,"Supported gyro units are radkHz/G, rad/ms/G, kHz/G, MHz/G, MHz/T, Hz/T, radMHz/T and rad/s/T.\n");
     exit(EXIT_FAILURE);
 }
@@ -395,7 +633,7 @@ static double readDefectEqScaleTo1eMinus30m2(cJSON* object, const char* dfname){
     cJSON* item = cJSON_GetObjectItem(object,"unit");
     if (item == NULL){ return 1.0; }
     if (!cJSON_IsString(item) || item->valuestring == NULL){
-        fprintf(stderr,"Error: Defect[%s].eqs.unit must be a string\n",dfname);
+        fprintf(stderr,"Error: Defect.species[%s].quadrupole_moments.unit must be a string\n",dfname);
         exit(EXIT_FAILURE);
     }
 
@@ -410,7 +648,7 @@ static double readDefectEqScaleTo1eMinus30m2(cJSON* object, const char* dfname){
     if (strcasecmp(unit,"mbarn") == 0 || strcasecmp(unit,"millibarn") == 0
         || strcasecmp(unit,"mb") == 0){ return 1.0e-1; }
 
-    fprintf(stderr,"Error: Defect[%s].eqs.unit = \"%s\" is not supported\n",dfname,unit);
+    fprintf(stderr,"Error: Defect.species[%s].quadrupole_moments.unit = \"%s\" is not supported\n",dfname,unit);
     fprintf(stderr,"Supported quadrupole-moment units are 1e-30 m^2, fm^2, m^2, cm^2, barn and mbarn.\n");
     exit(EXIT_FAILURE);
 }
@@ -420,7 +658,7 @@ static double readDefectEfgScaleToHartreePerBohr2(cJSON* object, const char* dfn
     cJSON* item = cJSON_GetObjectItem(object,"unit");
     if (item == NULL){ return 1.0; }
     if (!cJSON_IsString(item) || item->valuestring == NULL){
-        fprintf(stderr,"Error: Defect[%s].efg.unit must be a string\n",dfname);
+        fprintf(stderr,"Error: Defect.species[%s].efg.unit must be a string\n",dfname);
         exit(EXIT_FAILURE);
     }
 
@@ -444,7 +682,7 @@ static double readDefectEfgScaleToHartreePerBohr2(cJSON* object, const char* dfn
         return 1.0e20*volt_per_m2_to_au;
     }
 
-    fprintf(stderr,"Error: Defect[%s].efg.unit = \"%s\" is not supported\n",dfname,unit);
+    fprintf(stderr,"Error: Defect.species[%s].efg.unit = \"%s\" is not supported\n",dfname,unit);
     fprintf(stderr,"Supported EFG units are Hartree/Bohr^2 (a.u.), V/m^2 and V/angstrom^2.\n");
     exit(EXIT_FAILURE);
 }
@@ -454,7 +692,7 @@ static cJSON* readDefectObjectValues(cJSON* object, const char* dfname,
 
     cJSON* values = cJSON_GetObjectItem(object,"values");
     if (!cJSON_IsArray(values) || cJSON_GetArraySize(values) != expected_count){
-        fprintf(stderr,"Error: Defect[%s].%s.values must be an array of exactly %d numbers\n",
+        fprintf(stderr,"Error: Defect.species[%s].%s.values must be an array of exactly %d numbers\n",
                 dfname,field_name,expected_count);
         exit(EXIT_FAILURE);
     }
@@ -474,7 +712,7 @@ static void readDefectGyros(cJSON* defect, DefectArray* dfa, int idf,
         return;
     }
     if (!cJSON_IsObject(item)){
-        fprintf(stderr,"Error: Defect[%s].gyros must be an object or the legacy value array\n",df->dfname);
+        fprintf(stderr,"Error: Defect.species[%s].gyros must be an object or the legacy value array\n",df->dfname);
         exit(EXIT_FAILURE);
     }
 
@@ -482,7 +720,7 @@ static void readDefectGyros(cJSON* defect, DefectArray* dfa, int idf,
     double scale = readDefectGyroScaleToRadkHzPerG(item,df->dfname);
     for (int isp=0; isp<naddspin; isp++){
         char what[180];
-        snprintf(what,sizeof(what),"Defect[%s].gyros.values[%d]",df->dfname,isp);
+        snprintf(what,sizeof(what),"Defect.species[%s].gyros.values[%d]",df->dfname,isp);
         df->gyros[isp] = scale * readFiniteNumber(cJSON_GetArrayItem(values,isp),what);
     }
 }
@@ -490,10 +728,10 @@ static void readDefectGyros(cJSON* defect, DefectArray* dfa, int idf,
 static void readDefectEqs(cJSON* defect, DefectArray* dfa, int idf, int naddspin){
 
     Defect* df = dfa->defect[idf];
-    cJSON* item = cJSON_GetObjectItem(defect,"eqs");
+    cJSON* item = cJSON_GetObjectItem(defect,"quadrupole_moments");
 
     if (item == NULL || cJSON_IsArray(item)){
-        double* values = cJSON_ReadDouble1d(defect,(char*)"eqs",true,NULL,naddspin);
+        double* values = cJSON_ReadDouble1d(defect,(char*)"quadrupole_moments",true,NULL,naddspin);
         if (values != NULL){
             DefectArray_setDefect_idf_eqs(dfa,idf,values);
             freeDouble1d(&values);
@@ -505,15 +743,15 @@ static void readDefectEqs(cJSON* defect, DefectArray* dfa, int idf, int naddspin
         return;
     }
     if (!cJSON_IsObject(item)){
-        fprintf(stderr,"Error: Defect[%s].eqs must be an object or the legacy value array\n",df->dfname);
+        fprintf(stderr,"Error: Defect.species[%s].quadrupole_moments must be an object or the legacy value array\n",df->dfname);
         exit(EXIT_FAILURE);
     }
 
-    cJSON* values = readDefectObjectValues(item,df->dfname,"eqs",naddspin);
+    cJSON* values = readDefectObjectValues(item,df->dfname,"quadrupole_moments",naddspin);
     double scale = readDefectEqScaleTo1eMinus30m2(item,df->dfname);
     for (int isp=0; isp<naddspin; isp++){
         char what[180];
-        snprintf(what,sizeof(what),"Defect[%s].eqs.values[%d]",df->dfname,isp);
+        snprintf(what,sizeof(what),"Defect.species[%s].quadrupole_moments.values[%d]",df->dfname,isp);
         df->eqs[isp] = scale * readFiniteNumber(cJSON_GetArrayItem(values,isp),what);
     }
 }
@@ -539,12 +777,12 @@ static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int
         return;
     }
     if (!cJSON_IsObject(item)){
-        fprintf(stderr,"Error: Defect[%s].%s must be an object or the legacy indexed array\n",
+        fprintf(stderr,"Error: Defect.species[%s].%s must be an object or the legacy indexed array\n",
                 df->dfname,field_name);
         exit(EXIT_FAILURE);
     }
     if (!coordinate_frame_explicit){
-        fprintf(stderr,"Error: Defect[%s] uses object-form %s but has no coordinate_frame\n",
+        fprintf(stderr,"Error: Defect.species[%s] uses object-form %s but has no coordinate_frame\n",
                 df->dfname,field_name);
         fprintf(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the tensor basis is explicit.\n");
         exit(EXIT_FAILURE);
@@ -552,13 +790,13 @@ static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int
 
     cJSON* values = cJSON_GetObjectItem(item,"values");
     if (!cJSON_IsArray(values)){
-        fprintf(stderr,"Error: Defect[%s].%s.values must be an indexed tensor array\n",
+        fprintf(stderr,"Error: Defect.species[%s].%s.values must be an indexed tensor array\n",
                 df->dfname,field_name);
         exit(EXIT_FAILURE);
     }
 
-    double scale = (strcasecmp(field_name,"hypf") == 0)
-                 ? readDefectFrequencyScaleToMHz(item,df->dfname,"hypf")
+    double scale = (strcasecmp(field_name,"hyperfine") == 0)
+                 ? readDefectFrequencyScaleToMHz(item,df->dfname,"hyperfine")
                  : readDefectEfgScaleToHartreePerBohr2(item,df->dfname);
 
     for (int iax=0; iax<=nconfig; iax++){
@@ -569,7 +807,7 @@ static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int
     for (int i=0; i<nentry; i++){
         cJSON* entry = cJSON_GetArrayItem(values,i);
         if (!cJSON_IsArray(entry) || cJSON_GetArraySize(entry) != 3){
-            fprintf(stderr,"Error: Defect[%s].%s.values[%d] must be [configuration, spin, tensor]\n",
+            fprintf(stderr,"Error: Defect.species[%s].%s.values[%d] must be [configuration, spin, tensor]\n",
                     df->dfname,field_name,i);
             exit(EXIT_FAILURE);
         }
@@ -578,26 +816,26 @@ static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int
         if (!cJSON_IsNumber(iax_item)
             || iax_item->valuedouble != (double)iax_item->valueint
             || iax_item->valueint < 1 || iax_item->valueint > nconfig){
-            fprintf(stderr,"Error: Defect[%s].%s.values[%d] configuration must be an integer in 1..%d\n",
+            fprintf(stderr,"Error: Defect.species[%s].%s.values[%d] configuration must be an integer in 1..%d\n",
                     df->dfname,field_name,i,nconfig);
             exit(EXIT_FAILURE);
         }
 
         cJSON* spin_item = cJSON_GetArrayItem(entry,1);
         if (!cJSON_IsString(spin_item) || spin_item->valuestring == NULL){
-            fprintf(stderr,"Error: Defect[%s].%s.values[%d] spin label must be a string\n",
+            fprintf(stderr,"Error: Defect.species[%s].%s.values[%d] spin label must be a string\n",
                     df->dfname,field_name,i);
             exit(EXIT_FAILURE);
         }
         int isp = findDefectSpinType(df,spin_item->valuestring);
         if (isp < 0){
-            fprintf(stderr,"Error: Defect[%s].%s.values[%d] spin type \"%s\" is not in types\n",
+            fprintf(stderr,"Error: Defect.species[%s].%s.values[%d] spin type \"%s\" is not in types\n",
                     df->dfname,field_name,i,spin_item->valuestring);
             exit(EXIT_FAILURE);
         }
 
         char tensor_label[220];
-        snprintf(tensor_label,sizeof(tensor_label),"Defect[%s].%s.values[%d][2]",
+        snprintf(tensor_label,sizeof(tensor_label),"Defect.species[%s].%s.values[%d][2]",
                  df->dfname,field_name,i);
         (*target)[iax_item->valueint][isp] =
             readDefectTensor3x3(cJSON_GetArrayItem(entry,2),tensor_label,scale);
@@ -624,26 +862,29 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     }else{
 		;//printf("%s",cJSON_Print(root));
 	}
+    refuseOldInputKeys(root);   // the first reader: an old key name stops the run here (A47)
 
     ////////////////////////////////////////////////////////////////////////
     // General Options
     ////////////////////////////////////////////////////////////////////////
-    if (rank==0){ 
+    if (rank==0){
         printMessage("Read Config Options ...\n");
     }
 
     if (rank==0){
         printMessage("  - General option-related keys : ");
-        printMessage("    [ method, quantity, propagator, evolution, evolution_update, backend, profile, ");
-        printMessage("      cluster_contributions, cluster_contribution_max_mb, ");
+        printMessage("    [ method, cluster_mode, quantity, propagator, evolution, evolution_update, backend, profile, ");
+        printMessage("      cluster_contributions { enabled, max_mb }, ");
         printMessage("      gpu_options { min_dim, packed_max_dim, warp_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb }, ");
-        printMessage("      probe_memory_gb, ");
-        printMessage("      gcce_refinement, gcce_refinement_max_sweeps, vector_mean_field, pcce_partition, pcce_connections, pcce_detail_limit, ");
-        printMessage("      pcce_cache_mode, pcce_cache_file, order, bfield, ");
-        printMessage("      rbath, rdip, deltat, nstep, rbathcut, rdipcut, nstate, seed ] \n");
+        printMessage("      probe_memory_gb, gcce_refinement { enabled, max_sweeps }, ");
+        printMessage("      pcce { partition, connections, print_limit, cache { mode, file } }, ");
+        printMessage("      bundle { max_dim, merge_cutoff, connections, connection_budget, max_clusters, max_work }, ");
+        printMessage("      order, bfield, rbath, rdip, deltat, nstep, nstate, seed ] \n");
     }
-    char* method = cJSON_ReadString(root,"method",true,"cce");
-    Config_setMethod(cnf,method); // Current possible options : cce, gcce, pcce, dsj, dsjitb, itb
+    char method[MAX_CHARARRAY_LENGTH], clusterMode[16];
+    readMethod(root,method,clusterMode);
+    Config_setMethod(cnf,method); // inside: CCE, gCCE, pCCE, dsj, dsjitb, itb (from method and cluster_mode)
+    strcpy(cnf->cluster_mode,clusterMode);   // inside: standard, or adaptive for cluster_mode bundle
 
     char* quantity = cJSON_ReadString(root,"quantity",true,"coherence");
     Config_setQuantity(cnf,quantity); // Current possible options : coherence, noise, dm
@@ -783,26 +1024,29 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         if (value < 0){ fprintf(stderr,"Error: probe_memory_gb must be nonnegative\n"); exit(EXIT_FAILURE); }
         cnf->probe_memory_gb = value;
     }
-    cnf->gcce_refinement=readStrictBool(root,"config","gcce_refinement",false);
-    cnf->vector_mean_field=readStrictBool(root,"config","vector_mean_field",false);
-    const char* numericKeys[]={"gcce_refinement_max_sweeps","pcce_detail_limit"};
-    int* numericValues[]={&cnf->gcce_refinement_max_sweeps,&cnf->pcce_detail_limit};
-    for(int k=0;k<2;++k)if(auto* item=cJSON_GetObjectItem(root,numericKeys[k])) {
-        const double value=readFiniteNumber(item,numericKeys[k]);
-        if(value<(k==0 ? 1 : 0) || value>INT_MAX || std::floor(value)!=value) {
-            fprintf(stderr,"Error: %s must be a %s 32-bit integer\n",numericKeys[k],k==0 ? "positive" : "nonnegative");
-            exit(EXIT_FAILURE);
+    // gcce_refinement and cluster_contributions are blocks (A47): {"enabled", ...}; a block without "enabled" is on, as an
+    // auto_convergence block is (main.cpp, inputAsksAutoConv)
+    if (cJSON* block = readBlock(root,"gcce_refinement")){
+        cnf->gcce_refinement=readStrictBool(block,"gcce_refinement","enabled",true);
+        if(auto* item=cJSON_GetObjectItem(block,"max_sweeps")) {
+            const double value=readFiniteNumber(item,"gcce_refinement.max_sweeps");
+            if(value<1 || value>INT_MAX || std::floor(value)!=value) {
+                fprintf(stderr,"Error: gcce_refinement.max_sweeps must be a positive 32-bit integer\n");
+                exit(EXIT_FAILURE);
+            }
+            cnf->gcce_refinement_max_sweeps=int(value);
         }
-        *numericValues[k]=int(value);
     }
     cnf->profile = readStrictBool(root,"config","profile",false);
-    cnf->cluster_contributions = readStrictBool(root,"config","cluster_contributions",false);
-    if(auto* item=cJSON_GetObjectItem(root,"cluster_contribution_max_mb")) {
-        const double value=readFiniteNumber(item,"cluster_contribution_max_mb");
-        if(value<1 || value>INT_MAX || std::floor(value)!=value) {
-            fprintf(stderr,"Error: cluster_contribution_max_mb must be a positive 32-bit integer\n");exit(EXIT_FAILURE);
+    if (cJSON* block = readBlock(root,"cluster_contributions")){
+        cnf->cluster_contributions = readStrictBool(block,"cluster_contributions","enabled",true);
+        if(auto* item=cJSON_GetObjectItem(block,"max_mb")) {
+            const double value=readFiniteNumber(item,"cluster_contributions.max_mb");
+            if(value<1 || value>INT_MAX || std::floor(value)!=value) {
+                fprintf(stderr,"Error: cluster_contributions.max_mb must be a positive 32-bit integer\n");exit(EXIT_FAILURE);
+            }
+            cnf->cluster_contribution_max_mb=int(value);
         }
-        cnf->cluster_contribution_max_mb=int(value);
     }
     if(auto* item=cJSON_GetObjectItem(root,"rdip_ladder")) {           // checked against rdip and the method in rdip_ladder.h
         const int count=cJSON_IsArray(item) ? cJSON_GetArraySize(item) : -1;
@@ -818,111 +1062,117 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         }
         cnf->nrdip_ladder=count;
     }
-    cJSON* clusterMode=cJSON_GetObjectItem(root,"cluster_mode");
-    if(clusterMode) {
-        if(!cJSON_IsString(clusterMode) || !clusterMode->valuestring ||
-           (strcasecmp(clusterMode->valuestring,"standard") && strcasecmp(clusterMode->valuestring,"adaptive"))) {
-            fprintf(stderr,"Error: cluster_mode must be standard or adaptive\n");exit(EXIT_FAILURE);
-        }
-        strcpy(cnf->cluster_mode,clusterMode->valuestring);
-    }
-    const char* bundleKeys[]={"bundle_max_dim","bundle_merge_cutoff"};
-    for(int k=0;k<2;++k) {
-        cJSON* item=cJSON_GetObjectItem(root,bundleKeys[k]);
+    // the bundle block: cluster_mode bundle only (validateAdaptiveConfig refuses it elsewhere)
+    cJSON* bundle=readBlock(root,"bundle");
+    if(bundle)cnf->adaptive_options_present=true;
+    const char* bundleKeys[]={"max_dim","merge_cutoff"};
+    for(int k=0;k<2 && bundle;++k) {
+        cJSON* item=cJSON_GetObjectItem(bundle,bundleKeys[k]);
         if(!item)continue;
-        cnf->adaptive_options_present=true;
-        double value=readFiniteNumber(item,bundleKeys[k]);
+        const std::string name="bundle."+std::string(bundleKeys[k]);
+        double value=readFiniteNumber(item,name.c_str());
         if(k<1) {
             if(value<1 || value>2147483647.0 || std::floor(value)!=value) {
-                fprintf(stderr,"Error: %s must be a positive 32-bit integer\n",bundleKeys[k]);exit(EXIT_FAILURE);
+                fprintf(stderr,"Error: %s must be a positive 32-bit integer\n",name.c_str());exit(EXIT_FAILURE);
             }
             cnf->bundle_max_dim=int(value);
         } else {
-            if(value<0) { fprintf(stderr,"Error: bundle_merge_cutoff must be nonnegative\n");exit(EXIT_FAILURE); }
+            if(value<0) { fprintf(stderr,"Error: bundle.merge_cutoff must be nonnegative\n");exit(EXIT_FAILURE); }
             cnf->bundle_merge_cutoff=value;
         }
     }
-    const char* expansionKeys[]={"expansion_max_clusters","expansion_max_work"};
+    const char* expansionKeys[]={"max_clusters","max_work"};
     int* expansionValues[]={&cnf->expansion_max_clusters,&cnf->expansion_max_work};
-    for(int k=0;k<2;++k)if(auto* item=cJSON_GetObjectItem(root,expansionKeys[k])) {
-        cnf->adaptive_options_present=true;
-        const double value=readFiniteNumber(item,expansionKeys[k]);
+    for(int k=0;k<2 && bundle;++k)if(auto* item=cJSON_GetObjectItem(bundle,expansionKeys[k])) {
+        const std::string name="bundle."+std::string(expansionKeys[k]);
+        const double value=readFiniteNumber(item,name.c_str());
         if(value<1 || value>INT_MAX || std::floor(value)!=value) {
-            fprintf(stderr,"Error: %s must be a positive 32-bit integer\n",expansionKeys[k]);exit(EXIT_FAILURE);
+            fprintf(stderr,"Error: %s must be a positive 32-bit integer\n",name.c_str());exit(EXIT_FAILURE);
         }
         *expansionValues[k]=int(value);
     }
-    cJSON* connections=cJSON_GetObjectItem(root,"bundle_connections");
+    cJSON* connections=bundle ? cJSON_GetObjectItem(bundle,"connections") : NULL;
     if(connections) {
-        cnf->adaptive_options_present=true;
         if(!cJSON_IsString(connections) || !connections->valuestring ||
            (strcasecmp(connections->valuestring,"distance") && strcasecmp(connections->valuestring,"auto"))) {
-            fprintf(stderr,"Error: bundle_connections must be distance or auto\n");exit(EXIT_FAILURE);
+            fprintf(stderr,"Error: bundle.connections must be distance or auto\n");exit(EXIT_FAILURE);
         }
         strcpy(cnf->bundle_connections,connections->valuestring);
     }
-    cJSON* connectionBudget=cJSON_GetObjectItem(root,"bundle_connection_budget");
+    cJSON* connectionBudget=bundle ? cJSON_GetObjectItem(bundle,"connection_budget") : NULL;
     if(connectionBudget) {
-        cnf->adaptive_options_present=true;
-        cnf->bundle_connection_budget=readFiniteNumber(connectionBudget,"bundle_connection_budget");
+        cnf->bundle_connection_budget=readFiniteNumber(connectionBudget,"bundle.connection_budget");
         if(cnf->bundle_connection_budget<0) {
-            fprintf(stderr,"Error: bundle_connection_budget must be nonnegative\n");exit(EXIT_FAILURE);
+            fprintf(stderr,"Error: bundle.connection_budget must be nonnegative\n");exit(EXIT_FAILURE);
         }
     }
-    cJSON* adaptiveWork=cJSON_GetObjectItem(root,"adaptive_work_file");
+    // adaptive.work_file: the request the refinement driver writes into a step's input; the rest of the adaptive block is
+    // the refinement request itself, read in main.cpp (adaptiveArgsFromInput)
+    cJSON* adaptiveBlock=readBlock(root,"adaptive");
+    cJSON* adaptiveWork=adaptiveBlock ? cJSON_GetObjectItem(adaptiveBlock,"work_file") : NULL;
     if(adaptiveWork) {
         cnf->adaptive_options_present=true;
         if(!cJSON_IsString(adaptiveWork) || !adaptiveWork->valuestring || !*adaptiveWork->valuestring ||
            strlen(adaptiveWork->valuestring)>=MAX_FILEPATH) {
-            fprintf(stderr,"Error: adaptive_work_file must be a nonempty bounded path\n");exit(EXIT_FAILURE);
+            fprintf(stderr,"Error: adaptive.work_file must be a nonempty bounded path\n");exit(EXIT_FAILURE);
         }
         strcpy(cnf->adaptive_work_file,adaptiveWork->valuestring);
     }
-    if(!strcasecmp(cnf->cluster_mode,"adaptive")) {
-        // Fixed-size search controls have no meaning in this separate mode.
-        const char* fixedKeys[]={"sK","max_trial","max_iter","kmeans_pp","iter_detail",
-                                 "pcce_partition","pcce_connections","pcce_cache_file"};
-        for(const char* key:fixedKeys) if(cJSON_GetObjectItem(root,key)) {
-            fprintf(stderr,"Error: %s is not an adaptive cluster option\n",key);exit(EXIT_FAILURE);
-        }
+    // the pcce block: cluster_mode pcce only (partition_size, trials, max_iterations, kmeans_pp and print_trials are read
+    // with the clusters, cJSON_readOptionCluster)
+    cJSON* pcce=readBlock(root,"pcce");
+    if(pcce && strcasecmp(cnf->method,"pcce")) {
+        fprintf(stderr,"Error: the pcce block belongs to cluster_mode pcce (this input has cluster_mode %s)\n",
+                !strcasecmp(cnf->cluster_mode,"adaptive") ? "bundle" : !strcasecmp(cnf->method,"gcce") || !strcasecmp(cnf->method,"cce")
+                ? "standard" : cnf->method);
+        exit(EXIT_FAILURE);
     }
-    cJSON* partition = cJSON_GetObjectItem(root,"pcce_partition");
+    if(auto* item=pcce ? cJSON_GetObjectItem(pcce,"print_limit") : NULL) {
+        const double value=readFiniteNumber(item,"pcce.print_limit");
+        if(value<0 || value>INT_MAX || std::floor(value)!=value) {
+            fprintf(stderr,"Error: pcce.print_limit must be a nonnegative 32-bit integer\n");
+            exit(EXIT_FAILURE);
+        }
+        cnf->pcce_detail_limit=int(value);
+    }
+    cJSON* partition = pcce ? cJSON_GetObjectItem(pcce,"partition") : NULL;
     if (partition){
         if (!cJSON_IsString(partition) || !partition->valuestring ||
             (strcasecmp(partition->valuestring,"deterministic") &&
              strcasecmp(partition->valuestring,"legacy"))){
-            fprintf(stderr,"Error: pcce_partition must be deterministic or legacy\n");
+            fprintf(stderr,"Error: pcce.partition must be deterministic or legacy\n");
             exit(EXIT_FAILURE);
         }
         strcpy(cnf->pcce_partition,partition->valuestring);
     }
-    cJSON* pcceConnections = cJSON_GetObjectItem(root,"pcce_connections");
+    cJSON* pcceConnections = pcce ? cJSON_GetObjectItem(pcce,"connections") : NULL;
     if (pcceConnections){
         if (!cJSON_IsString(pcceConnections) || !pcceConnections->valuestring ||
             (strcasecmp(pcceConnections->valuestring,"centers") &&
              strcasecmp(pcceConnections->valuestring,"spins"))){
-            fprintf(stderr,"Error: pcce_connections must be centers or spins\n");
+            fprintf(stderr,"Error: pcce.connections must be centers or spins\n");
             exit(EXIT_FAILURE);
         }
         strcpy(cnf->pcce_connections,pcceConnections->valuestring);
     }
 
-    cJSON* cacheMode = cJSON_GetObjectItem(root,"pcce_cache_mode");
+    cJSON* cache = pcce ? readBlock(pcce,"cache") : NULL;
+    cJSON* cacheMode = cache ? cJSON_GetObjectItem(cache,"mode") : NULL;
     if (cacheMode){
         if (!cJSON_IsString(cacheMode) || !cacheMode->valuestring ||
             (strcasecmp(cacheMode->valuestring,"off") &&
              strcasecmp(cacheMode->valuestring,"read") &&
              strcasecmp(cacheMode->valuestring,"readwrite"))){
-            fprintf(stderr,"Error: pcce_cache_mode must be off, read, or readwrite\n");
+            fprintf(stderr,"Error: pcce.cache.mode must be off, read, or readwrite\n");
             exit(EXIT_FAILURE);
         }
         strcpy(cnf->pcce_cache_mode,cacheMode->valuestring);
     }
-    cJSON* cacheFile = cJSON_GetObjectItem(root,"pcce_cache_file");
+    cJSON* cacheFile = cache ? cJSON_GetObjectItem(cache,"file") : NULL;
     if (cacheFile){
         if (!cJSON_IsString(cacheFile) || !cacheFile->valuestring ||
             !cacheFile->valuestring[0] || strlen(cacheFile->valuestring)>=MAX_FILEPATH){
-            fprintf(stderr,"Error: pcce_cache_file must be a nonempty path shorter than %d bytes\n",MAX_FILEPATH);
+            fprintf(stderr,"Error: pcce.cache.file must be a nonempty path shorter than %d bytes\n",MAX_FILEPATH);
             exit(EXIT_FAILURE);
         }
         strcpy(cnf->pcce_cache_file,cacheFile->valuestring);
@@ -932,10 +1182,11 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     if(!strcasecmp(cnf->cluster_mode,"adaptive")) {
         const double value=readFiniteNumber(cJSON_GetObjectItem(root,"order"),"order");
         if(value<1 || value>=INT_MAX || value>cnf->expansion_max_clusters || std::floor(value)!=value) {
-            fprintf(stderr,"Error: adaptive requires positive integer bundle order\n");exit(EXIT_FAILURE);
+            fprintf(stderr,"Error: cluster_mode bundle requires a positive integer order (of bundles) up to bundle.max_clusters\n");
+            exit(EXIT_FAILURE);
         }
     }
-    Config_setOrder(cnf,order);    
+    Config_setOrder(cnf,order);
 
     // Magnetic field : This value can be set by [bx,by,bz] or bz
     // (the array reader refuses a number, so it is asked only when bfield is an array)
@@ -966,11 +1217,17 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     }
     ////////////////////////////////////////////////////////////////////////
     
-    float rbath = cJSON_ReadFloat(root,"rbath",false,-1);
+    // rbath and rdip are a number (the outer radius) or [inner, outer] (A47: the inner radius was rbathcut, rdipcut)
+    cJSON* rbathInner = NULL;
+    cJSON* rbathOuter = radiusItem(root,"rbath",&rbathInner);
+    if (!rbathOuter){ fprintf(stderr,"Error: rbath is not found in the input file\n"); exit(EXIT_FAILURE); }
+    float rbath = readFloatItem(rbathOuter,rbathInner ? "rbath[1]" : "rbath");
     Config_setRbath(cnf,rbath);
 
     const bool adaptive=!strcasecmp(cnf->cluster_mode,"adaptive");
-    cJSON* radius=cJSON_GetObjectItem(root,"rdip");
+    cJSON* rdipInner=NULL;
+    cJSON* radius=radiusItem(root,"rdip",&rdipInner);
+    const char* rdipName=rdipInner ? "rdip[1]" : "rdip";
     // Simple inputs select the policy by the presence of rdip. Explicit old
     // distance/auto controls retain their existing semantics and validation.
     if(adaptive && !radius && !connections)strcpy(cnf->bundle_connections,"checked");
@@ -979,11 +1236,13 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     cnf->adaptive_rdip_is_set=radius!=nullptr;
     float rdip;
     if(adaptive && radius) {
-        rdip=float(readFiniteNumber(radius,"rdip"));
+        rdip=float(readFiniteNumber(radius,rdipName));
         if(!std::isfinite(rdip) || rdip<=0) {
-            fprintf(stderr,"Error: explicit adaptive rdip must be finite and positive; omit it for unlimited auto connections\n");exit(EXIT_FAILURE);
+            fprintf(stderr,"Error: explicit cluster_mode bundle rdip must be finite and positive; omit it for unlimited auto connections\n");exit(EXIT_FAILURE);
         }
-    } else rdip=cJSON_ReadFloat(root,"rdip",autoConnections,autoConnections ? 0 : -1);
+    } else if(radius) rdip=readFloatItem(radius,rdipName);
+    else if(autoConnections) rdip=0;
+    else { fprintf(stderr,"Error: rdip is not found in the input file\n"); exit(EXIT_FAILURE); }
     Config_setRdip(cnf,rdip);
 
     double deltat = cJSON_ReadDouble(root,"deltat",false,-1);
@@ -992,12 +1251,12 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     int nstep = cJSON_ReadInt(root,"nstep",false,-1);
     Config_setNstep(cnf,nstep);
 
-    float rbathcut = cJSON_ReadFloat(root,"rbathcut",true,0.0);
+    float rbathcut = rbathInner ? readFloatItem(rbathInner,"rbath[0]") : 0.0f;
     Config_setRbathcut(cnf,rbathcut);
 
-    float rdipcut = cJSON_ReadFloat(root,"rdipcut",true,0.0);
-    if(adaptive && cJSON_GetObjectItem(root,"rdipcut"))
-        rdipcut=float(readFiniteNumber(cJSON_GetObjectItem(root,"rdipcut"),"rdipcut"));
+    float rdipcut = rdipInner ? readFloatItem(rdipInner,"rdip[0]") : 0.0f;
+    if(adaptive && rdipInner)
+        rdipcut=float(readFiniteNumber(rdipInner,"rdip[0]"));
     Config_setRdipcut(cnf,rdipcut);
 
     int nstate = cJSON_ReadInt(root,"nstate",true,0);
@@ -1015,12 +1274,13 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     if (rank==0){
         printf("\n");
         printMessage("  - File-related keys :");
-        printMessage("    [ qubitfile, gyrofile, bathfile, bathadjust, coordinate_frame_rotation, ");
-        printMessage("      defect_axis_reference, avaaxfile, statefile, exstatefile ] \n");
+        printMessage("    [ Qubit.file, gyrofile, bathfile, bath_shift, coordinate_frame_rotation, ");
+        printMessage("      defect_axis_reference, Defect.axis_file, bath_state_file, Defect.state_file ] \n");
     }
 
-    // qubitfile
-    char* qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
+    // Qubit.file (the qubit of a defect file; the Qubit block reader checks the rest of the block)
+    cJSON* qubitBlock = readBlock(root,"Qubit");
+    char* qubitfile = qubitBlock ? cJSON_ReadFilePath(qubitBlock,(char*)"file",true,NULL) : NULL;
     if (qubitfile != NULL) {
         Config_allocQubitfile(cnf);
         Config_setQubitfile(cnf,qubitfile);
@@ -1046,9 +1306,9 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         freeChar2d(&bathfiles,length);
     }
     
-    // bathadjust
+    // bath_shift (bathadjust until A47)
     double** bathadjustDefault = allocDouble2d(length,3); // all elements are 0.0
-    double** bathadjust = cJSON_ReadDouble2d(root,"bathadjust",true,bathadjustDefault,length,3);
+    double** bathadjust = cJSON_ReadDouble2d(root,(char*)"bath_shift",true,bathadjustDefault,length,3);
     
     for (int i = 0; i < length; i++){
         Config_setBathadjust_i(cnf,bathadjust[i],i);
@@ -1161,60 +1421,114 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         }
     }
 
-    char* avaaxfile = cJSON_ReadFilePath(root,"avaaxfile",true,NULL);
+    // Defect.axis_file and Defect.state_file (avaaxfile, exstatefile until A47) sit beside the species list
+    cJSON* defectBlock = readBlock(root,"Defect");
+    char* avaaxfile = defectBlock ? cJSON_ReadFilePath(defectBlock,(char*)"axis_file",true,NULL) : NULL;
     if (avaaxfile != NULL) {
         Config_allocAvaaxfile(cnf);
         Config_setAvaaxfile(cnf,avaaxfile);
     }
 
-    char* statefile = cJSON_ReadFilePath(root,"statefile",true,NULL);
+    char* statefile = cJSON_ReadFilePath(root,(char*)"bath_state_file",true,NULL);
     if (statefile != NULL) {
         Config_allocStatefile(cnf);
         Config_setStatefile(cnf,statefile);
     }
 
-    char* exstatefile = cJSON_ReadFilePath(root,"exstatefile",true,NULL);
+    char* exstatefile = defectBlock ? cJSON_ReadFilePath(defectBlock,(char*)"state_file",true,NULL) : NULL;
     if (exstatefile != NULL) {
         Config_allocExstatefile(cnf);
         Config_setExstatefile(cnf,exstatefile);
     }
 
     ////////////////////////////////////////////////////////////////////////
-    // Tensor file central spin option
+    // The hamiltonian block (A47): common to both methods, and the terms of one method
     ////////////////////////////////////////////////////////////////////////
     if (rank==0){
         printf("\n");
-        printMessage("  - Tensorfile-related keys :");
-        printMessage("    [ DefectTotSpin, CorrTotSpin, ");
-        printMessage("      hf_readmode, hf_tensorfile, hf_ignore_oor, ");
-        printMessage("      qd_readmode, qd_tensorfile, qd_tensorfile_woqubit, qd_cellpara ] \n");
+        printMessage("  - Hamiltonian-related keys :");
+        printMessage("    hamiltonian.common : [ qubit_bath_mean_field, bath_bath_mean_field, ");
+        printMessage("      hyperfine { dipole, contact, file, missing_row }, ");
+        printMessage("      quadrupole (\"off\" or { structure, file, file_without_defect, cell }) ] ");
+        printMessage("    hamiltonian.cCCE : [ knight, hfmedi, delta_A ] \n");
+    }
+    cJSON* hamiltonian = readBlock(root,"hamiltonian");
+    cJSON* common = hamiltonian ? readBlock(hamiltonian,"common") : NULL;
+    cJSON* cCCE = hamiltonian ? readBlock(hamiltonian,"cCCE") : NULL;
+    // gCCE, and the reserved methods meCCE and noise (A49), have no settings yet: an empty section is allowed
+    for (const char* name : {"gCCE", "meCCE", "noise"}){
+        cJSON* section = hamiltonian ? readBlock(hamiltonian,name) : NULL;
+        if (section && section->child){
+            fprintf(stderr,"Error: hamiltonian.%s has no settings yet (\"%s\")\n",name,section->child->string);
+            exit(EXIT_FAILURE);
+        }
+    }
+    // a cCCE setting in a gCCE run is refused once -m has been applied (main.cpp, validateHamiltonianForMethod)
+    cnf->hamiltonian_ccce_given = cCCE && cCCE->child;
+
+    // the static field of the other bath spins (nstate > 0; with nstate 0 it is not used, as vector_mean_field was not):
+    // off, its z part (the default), or the vector J.m_j
+    if (cJSON* item = common ? cJSON_GetObjectItem(common,"bath_bath_mean_field") : NULL){
+        const char* v = cJSON_IsString(item) && item->valuestring ? item->valuestring : "";
+        if (strcasecmp(v,"off") && strcasecmp(v,"z") && strcasecmp(v,"xyz")){
+            fprintf(stderr,"Error: hamiltonian.common.bath_bath_mean_field must be \"off\", \"z\" or \"xyz\"\n");
+            exit(EXIT_FAILURE);
+        }
+        cnf->vector_mean_field = !strcasecmp(v,"xyz");
+        cnf->bath_mean_field_off = !strcasecmp(v,"off");
     }
 
-    double DefectTotSpin = cJSON_ReadDouble(root,"DefectTotSpin",true,1.0);
-    Config_setDefectTotSpin(cnf,DefectTotSpin);
-
-    double CorrTotSpin = cJSON_ReadDouble(root,"CorrTotSpin",true,0.0);
-    Config_setCorrTotSpin(cnf,CorrTotSpin);
-    
     ////////////////////////////////////////////////////////////////////////
-    // DFT Hyperfine tensor
+    // DFT Hyperfine tensor: hamiltonian.common.hyperfine {dipole: point | dft, contact: false | true} is the readmode of
+    // the code (0 point/false, 1 point/true, 2 dft/false, 3 dft/true)
     ////////////////////////////////////////////////////////////////////////
-    int hf_readmode = cJSON_ReadInt(root,"hf_readmode",true,0);
+    cJSON* hyperfine = common ? readBlock(common,"hyperfine") : NULL;
+    int hf_readmode = 0;
+    if (hyperfine){
+        const char* dipole = cJSON_ReadString(hyperfine,(char*)"dipole",true,(char*)"point");
+        if (strcasecmp(dipole,"point") && strcasecmp(dipole,"dft")){
+            fprintf(stderr,"Error: hamiltonian.common.hyperfine.dipole must be \"point\" or \"dft\"\n");
+            exit(EXIT_FAILURE);
+        }
+        const bool contact = readStrictBool(hyperfine,"hamiltonian.common.hyperfine","contact",false);
+        hf_readmode = (strcasecmp(dipole,"dft") ? 0 : 2) + (contact ? 1 : 0);
+    }
     Config_setHf_readmode(cnf,hf_readmode);
 
     if (hf_readmode != 0){
-        char* hf_tensorfile = cJSON_ReadFilePath(root,"hf_tensorfile",false,NULL);
+        char* hf_tensorfile = cJSON_ReadFilePath(hyperfine,(char*)"file",false,NULL);
         Config_allocHf_tensorfile(cnf);
         Config_setHf_tensorfile(cnf,hf_tensorfile);
 
-        int hf_ignore_oor = cJSON_ReadInt(root,"hf_ignore_oor",true,0.0);
-        Config_setHf_ignore_oor(cnf,hf_ignore_oor);
-    }    
+        // a bath spin outside the file's range: stop (0), or take the point-dipole tensor (1)
+        const char* missing = cJSON_ReadString(hyperfine,(char*)"missing_row",true,(char*)"stop");
+        if (strcasecmp(missing,"stop") && strcasecmp(missing,"point_dipole")){
+            fprintf(stderr,"Error: hamiltonian.common.hyperfine.missing_row must be \"stop\" or \"point_dipole\"\n");
+            exit(EXIT_FAILURE);
+        }
+        Config_setHf_ignore_oor(cnf,strcasecmp(missing,"stop") ? 1 : 0);
+    }
 
     ////////////////////////////////////////////////////////////////////////
-    // DFT Quadrupole tensor
+    // DFT Quadrupole tensor: hamiltonian.common.quadrupole is "off" or {structure: plain | strained | bubble, ...}, the
+    // readmode of the code 0, or 2, 3, 4
     ////////////////////////////////////////////////////////////////////////
-    int qd_readmode = cJSON_ReadInt(root,"qd_readmode",true,0);
+    cJSON* quadrupole = common ? cJSON_GetObjectItem(common,"quadrupole") : NULL;
+    int qd_readmode = 0;
+    if (quadrupole && !(cJSON_IsString(quadrupole) && !strcasecmp(quadrupole->valuestring,"off"))){
+        if (!cJSON_IsObject(quadrupole)){
+            fprintf(stderr,"Error: hamiltonian.common.quadrupole must be \"off\" or an object {\"structure\": \"plain\"|\"strained\"|"
+                           "\"bubble\", \"file\": ..., \"file_without_defect\": ..., \"cell\": [a, b, c]}\n");
+            exit(EXIT_FAILURE);
+        }
+        const char* structure = cJSON_ReadString(quadrupole,(char*)"structure",false,NULL);
+        static const char* structures[] = {"plain", "strained", "bubble"};
+        for (int k=0; k<3; ++k) if (!strcasecmp(structure,structures[k])) qd_readmode = 2+k;
+        if (qd_readmode == 0){
+            fprintf(stderr,"Error: hamiltonian.common.quadrupole.structure must be \"plain\", \"strained\" or \"bubble\"\n");
+            exit(EXIT_FAILURE);
+        }
+    }
     Config_setQd_readmode(cnf,qd_readmode);
 
     char* qd_tensorfile = NULL;
@@ -1222,20 +1536,14 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     double* qd_cellpara = NULL;
 
     switch (qd_readmode){
-        case 1:
-            if (rank==0){
-                printf("Error! qd readmode = 1 is removed option. use 0,2-4\n");
-            }
-            exit(1);
-            break;
         case 2:
-            qd_tensorfile = cJSON_ReadFilePath(root,"qd_tensorfile",false,NULL);
+            qd_tensorfile = cJSON_ReadFilePath(quadrupole,(char*)"file",false,NULL);
             Config_allocQd_tensorfile(cnf);
             Config_setQd_tensorfile(cnf,qd_tensorfile);
 
             break;
         case 3: case 4:
-            qd_tensorfile = cJSON_ReadFilePath(root,"qd_tensorfile",false,NULL);
+            qd_tensorfile = cJSON_ReadFilePath(quadrupole,(char*)"file",false,NULL);
             Config_allocQd_tensorfile(cnf);
             Config_setQd_tensorfile(cnf,qd_tensorfile);
 
@@ -1245,11 +1553,11 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             // segfaulted instead of being told what was missing. "false" as the _default
             // argument was a string literal, which is a non-null pointer and therefore
             // true, so qd_cellpara asked for the opposite of what it meant.
-            qd_tensorfile_woqubit = cJSON_ReadFilePath(root,"qd_tensorfile_woqubit",false,NULL);
+            qd_tensorfile_woqubit = cJSON_ReadFilePath(quadrupole,(char*)"file_without_defect",false,NULL);
             Config_allocQd_tensorfile_woqubit(cnf);
             Config_setQd_tensorfile_woqubit(cnf,qd_tensorfile_woqubit);
 
-            double* qd_cellpara = cJSON_ReadDouble1d(root, "qd_cellpara", false, NULL,3);
+            double* qd_cellpara = cJSON_ReadDouble1d(quadrupole,(char*)"cell", false, NULL,3);
             Config_setQd_cellpara(cnf,qd_cellpara);
             freeDouble1d(&qd_cellpara);
 
@@ -1258,19 +1566,12 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     }
 
     ////////////////////////////////////////////////////////////////////////
-    if (rank==0){
-        printf("\n");
-        printMessage("  - Additional Hamiltonian-related keys :");
-        printMessage("    [ hfmedi, knight ] \n");
-    }
-
-    bool hfmediDefault = false;
-    bool hfmedi = cJSON_ReadBool(root,"hfmedi",true,hfmediDefault);
-    Config_setHfmedi(cnf, hfmedi);
-
-    bool knightDefault = false;
-    bool knight = cJSON_ReadBool(root,"knight",true,knightDefault);
-    Config_setKnight(cnf, knight);
+    // hamiltonian.cCCE: knight, hfmedi, and delta_A (false: the hyperfine tensors of a cluster's spins are replaced by
+    // their mean, so their Knight fields no longer differ; A47)
+    ////////////////////////////////////////////////////////////////////////
+    Config_setHfmedi(cnf, cCCE ? readStrictBool(cCCE,"hamiltonian.cCCE","hfmedi",false) : false);
+    Config_setKnight(cnf, cCCE ? readStrictBool(cCCE,"hamiltonian.cCCE","knight",false) : false);
+    cnf->delta_A = cCCE ? readStrictBool(cCCE,"hamiltonian.cCCE","delta_A",true) : true;
 
     ////////////////////////////////////////////////////////////////////////
     // Defect axis reference
@@ -1311,27 +1612,26 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         // Fermi-contact term, which has no frame. So hf_tensor_frame decides nothing
         // there -- not required, and said out loud if it is given anyway.
         if (Config_getHf_readmode(cnf) == 1 && Config_getRot_hf_tensor_frame(cnf)[0] != '\0' && rank==0){
-            printMessage("  Note: hf_tensor_frame is not applicable at hf_readmode = 1.");
+            printMessage("  Note: hf_tensor_frame is not applicable to hyperfine dipole point with contact true.");
             printMessage("        Only the isotropic Fermi-contact term is taken from the file, and the");
             printMessage("        point-dipole tensor is transformed from the bath frame regardless.\n");
         }
 
         if ((Config_getHf_readmode(cnf) == 2 || Config_getHf_readmode(cnf) == 3)
             && Config_getRot_hf_tensor_frame(cnf)[0] == '\0'){
-            fprintf(stderr,"Error: hf_readmode = %d with the coordinate frame rotation on, but\n",
-                    Config_getHf_readmode(cnf));
+            fprintf(stderr,"Error: hamiltonian.common.hyperfine dipole \"dft\" with the coordinate frame rotation on, but\n");
             fprintf(stderr,"coordinate_frame_rotation.hf_tensor_frame is not set.\n");
-            fprintf(stderr,"State the basis the tensor COMPONENTS in \"hf_tensorfile\" are written in:\n");
+            fprintf(stderr,"State the basis the tensor COMPONENTS in hamiltonian.common.hyperfine.file are written in:\n");
             fprintf(stderr,"  \"bath\"  : the original bath Cartesian basis -- they get transformed\n");
             fprintf(stderr,"  \"qubit\" : already the qubit-aligned basis -- they are left alone\n");
             fprintf(stderr,"(The POSITION columns of that file are always read in the original frame.)\n");
             exit(EXIT_FAILURE);
         }
         if (Config_getQd_readmode(cnf) != 0 && Config_getRot_qd_tensor_frame(cnf)[0] == '\0'){
-            fprintf(stderr,"Error: qd_readmode = %d with the coordinate frame rotation on, but\n",
-                    Config_getQd_readmode(cnf));
+            fprintf(stderr,"Error: hamiltonian.common.quadrupole (structure %s) with the coordinate frame rotation on, but\n",
+                    Config_getQd_readmode(cnf) == 2 ? "plain" : Config_getQd_readmode(cnf) == 3 ? "strained" : "bubble");
             fprintf(stderr,"coordinate_frame_rotation.qd_tensor_frame is not set.\n");
-            fprintf(stderr,"State the basis the tensor COMPONENTS in \"qd_tensorfile\" are written in:\n");
+            fprintf(stderr,"State the basis the tensor COMPONENTS in hamiltonian.common.quadrupole.file are written in:\n");
             fprintf(stderr,"  \"bath\"  : the original bath Cartesian basis -- they get transformed\n");
             fprintf(stderr,"  \"qubit\" : already the qubit-aligned basis -- they are left alone\n");
             exit(EXIT_FAILURE);
@@ -1352,12 +1652,12 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         printf("\n");
         printMessage("Read Qubit Options ...\n");
         printMessage("  - Read values of main-key 'Qubit'");
-        printMessage("    sub-key of 'Qubit' : [ nqubit, qubit, intmap, psia, psib, psi0, overhaus, alphaidx, betaidx ] \n");
+        printMessage("    sub-key of 'Qubit' : [ qubit, intmap, alpha_state, beta_state, psi0 ] or [ file, spin, zfs, alphams, betams ] \n");
         printMessage("  - Read values of sub-key 'qubit'");
         printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ] \n");
         printMessage("  - Read values of sub-key 'intmap'");
         printMessage("    sub-sub-key : [ between, tensor, unit, tensor_frame ] \n");
-        printMessage("  - Read values of main-key 'qubitfile', 'qzfs', 'qspin', 'qalphams', 'qbetams'");
+        printMessage("  - Read hamiltonian.common.qubit_bath_mean_field");
     }
 
     char* data = cJSON_ReadFccein(fccein);
@@ -1382,22 +1682,28 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
     
     MatrixXcd intmapDefault = MatrixXcd::Zero(3,3);
     MatrixXcd psiDefault;
-    int* alphaidxDefault = NULL;
-    int* betaidxDefault = NULL;
-    bool overhausDefault = false;
-    
-    // qubitfile and a Qubit block are two descriptions of the qubits; the block used to be ignored without a word
-    // when both were given (review 20261013-readme R01: a "two-qubit" tutorial ran one qubit)
-    if (cJSON_GetObjectItem(root,"qubitfile") != NULL && cJSON_GetObjectItem(root,"Qubit") != NULL){
-        if (rank==0){
-            fprintf(stderr,"Error: the input has both \"qubitfile\" and a \"Qubit\" block; keep one "
-                           "(\"qubitfile\" for one qubit from a defect file, \"Qubit\" for one or more qubits written out)\n");
-        }
-        exit(EXIT_FAILURE);
+    // the Overhauser field of the bath on the qubits (Qubit.overhaus until A47); both forms of the Qubit block read it
+    cJSON* hamiltonian = readBlock(root,"hamiltonian");
+    cJSON* common = hamiltonian ? readBlock(hamiltonian,"common") : NULL;
+    const bool overhaus = common ? readStrictBool(common,"hamiltonian.common","qubit_bath_mean_field",false) : false;
+    QubitArray_setOverhaus(qa,overhaus);
+
+    // Qubit.file and Qubit.qubit are two descriptions of the qubits (qubitfile and the Qubit block until A47); one was
+    // ignored without a word when both were given (review 20261013-readme R01: a "two-qubit" tutorial ran one qubit)
+    cJSON* QubitSection = readBlock(root,"Qubit");
+    if (QubitSection && cJSON_GetObjectItem(QubitSection,"file") != NULL){
+        for (const char* key : {"qubit", "intmap", "alpha_state", "beta_state", "psi0"})
+            if (cJSON_GetObjectItem(QubitSection,key) != NULL){
+                if (rank==0){
+                    fprintf(stderr,"Error: the Qubit block has both \"file\" and \"%s\"; keep one form (\"file\" for one "
+                                   "qubit from a defect file, \"qubit\" for one or more qubits written out)\n",key);
+                }
+                exit(EXIT_FAILURE);
+            }
     }
 
-    // read qubitfile
-    char* _qubitfile = cJSON_ReadFilePath(root,"qubitfile",true,NULL);
+    // read Qubit.file
+    char* _qubitfile = QubitSection ? cJSON_ReadFilePath(QubitSection,(char*)"file",true,NULL) : NULL;
     
     if (_qubitfile != NULL) {
         // when the qubitfile exist : doesn't read "Qubit section"
@@ -1418,12 +1724,12 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_setQubit_i_name(qa,nameDefault,0);
         QubitArray_setQubit_i_gyro(qa,gyroDefault,0);
         QubitArray_setQubit_i_detuning(qa,detuningDefault,0);
-        float spin = cJSON_ReadFloat(root,"qspin",true,spinDefault);
+        float spin = cJSON_ReadFloat(QubitSection,(char*)"spin",true,spinDefault);
         QubitArray_setQubit_i_spin(qa,spin,0);
 
         // set the qubit state (alpha, beta)
-        float alphams = cJSON_ReadFloat(root,"qalphams",true,alphaMsDefault);
-        float betams = cJSON_ReadFloat(root,"qbetams",true,betaMsDefault);
+        float alphams = cJSON_ReadFloat(QubitSection,(char*)"alphams",true,alphaMsDefault);
+        float betams = cJSON_ReadFloat(QubitSection,(char*)"betams",true,betaMsDefault);
         QubitArray_setQubit_i_alpha_fromMs(qa,alphams,0);
         QubitArray_setQubit_i_beta_fromMs(qa,betams,0);
 
@@ -1436,12 +1742,12 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_allocIntmap(qa);
 
         // read interaction map
-        MatrixXcd tensor = cJSON_ReadTensor(root,"qzfs",true,intmapDefault);
+        MatrixXcd tensor = cJSON_ReadTensor(QubitSection,(char*)"zfs",true,intmapDefault);
         tensor = KHZ_TO_RADKHZ(tensor);
 
-        // Set ZFS in qubit intmap 
+        // Set ZFS in qubit intmap
         QubitArray_setIntmap_i_j(qa,tensor,0,0); // qubit index:0,0
-        // "qzfs" has no tensor_frame sub-key, and this path is single-qubit only, so it
+        // Qubit.zfs (qzfs until A47) has no tensor_frame sub-key, and this path is single-qubit only, so it
         // stays where the legacy code left it: read as written, never rotated.
         QubitArray_setIntmap_i_j_frame(qa,INTMAP_EXPLICIT_UNSPECIFIED,0,0);
 
@@ -1450,30 +1756,27 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         freeChar1d(&data);
         return;
     }else{
-        // when the qubitfile doesn't exist : read "Qubit section"
+        // without Qubit.file : the qubits are written out in Qubit.qubit
         // It is possible to read multiple qubits
-        cJSON* QubitSection = cJSON_GetObjectItem(root,"Qubit");
-
         int iqubit = 0;
-    
+
         ////////////////////////////////////////////////////////////////////////
-        // set nqubit
+        // set nqubit: the length of Qubit.qubit (Qubit.nqubit until A47)
         ////////////////////////////////////////////////////////////////////////
-        int nqubit = cJSON_ReadInt(QubitSection,"nqubit",true,nqubitDefault);
+        cJSON* qubitArray = QubitSection ? cJSON_GetObjectItem(QubitSection,"qubit") : NULL;
+        if (!cJSON_IsArray(qubitArray) || cJSON_GetArraySize(qubitArray) < 1){
+            fprintf(stderr, "Error: Qubit.qubit must be an array of one entry per qubit (or Qubit.file for one qubit from a "
+                            "defect file)\n");
+            exit(EXIT_FAILURE);
+        }
+        int nqubit = cJSON_GetArraySize(qubitArray);
         QubitArray_setNqubit(qa,nqubit);
         QubitArray_allocQubit(qa);
-        
+
         ////////////////////////////////////////////////////////////////////////
         // set qubit properties by nqubit
         ////////////////////////////////////////////////////////////////////////
-        cJSON* qubitArray = cJSON_GetObjectItem(QubitSection,"qubit");
         cJSON* qubit;
-        // one entry per qubit: a shorter array left the last qubits allocated but never set (review 20261008-autoconv-d42 #5)
-        if (!cJSON_IsArray(qubitArray) || cJSON_GetArraySize(qubitArray) != nqubit){
-            fprintf(stderr, "Error: Qubit.qubit must be an array of nqubit (%d) entries, %d given\n", nqubit,
-                    cJSON_IsArray(qubitArray) ? cJSON_GetArraySize(qubitArray) : 0);
-            exit(EXIT_FAILURE);
-        }
 
         cJSON_ArrayForEach(qubit, qubitArray){
             if (qubit == NULL) {
@@ -1604,23 +1907,43 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         ////////////////////////////////////////////////////////////////////////
         //  psia, psib, psi0
         ////////////////////////////////////////////////////////////////////////
-        // read psia, psib, psi0
+        // Qubit.alpha_state and beta_state (alphaidx/betaidx and psia/psib until A47): {"index": n}, the n-th eigenstate
+        // of the qubit Hamiltonian by descending energy, or {"vector": [...]}, the state itself. A side not given is the
+        // product of the qubits' alphams (betams); each side is decided on its own (QubitArray_setPsiaPsib), with no
+        // order of precedence between the forms. Not both in one state.
         int dim = QubitArray_dim(qa);
-  
-        double* psiamat = cJSON_ReadDouble1d(QubitSection,"psia",true,NULL,dim);
-        double* psibmat = cJSON_ReadDouble1d(QubitSection,"psib",true,NULL,dim);
-        double* psi0mat = cJSON_ReadDouble1d(QubitSection,"psi0",true,NULL,dim);
-
-        // psiDefault is the 0 dimension matrix
-        if (psiamat != NULL && psibmat != NULL) {
-            QubitArray_setPsia(qa,Double1dToMatrixXcd(psiamat,dim));
-            QubitArray_setPsib(qa,Double1dToMatrixXcd(psibmat,dim));
-        }else{
-            QubitArray_setPsia(qa,psiDefault);
-            QubitArray_setPsib(qa,psiDefault);
+        const char* sides[] = {"alpha_state", "beta_state"};
+        for (int side=0; side<2; ++side){
+            cJSON* state = readBlock(QubitSection,sides[side]);
+            MatrixXcd vector = psiDefault;   // psiDefault is the 0 dimension matrix: not given
+            if (state){
+                cJSON* indexItem = cJSON_GetObjectItem(state,"index");
+                cJSON* vectorItem = cJSON_GetObjectItem(state,"vector");
+                if ((indexItem != NULL) == (vectorItem != NULL)){
+                    fprintf(stderr,"Error: Qubit.%s must have one of \"index\" and \"vector\" (%s)\n",sides[side],
+                            indexItem ? "it has both" : "it has neither");
+                    exit(EXIT_FAILURE);
+                }
+                if (indexItem){
+                    const int index = cJSON_ReadInt(state,(char*)"index",false,0);
+                    if (index < 0 || index >= dim){
+                        fprintf(stderr,"Error: Qubit.%s.index must be 0 to %d (the qubit eigenstates by descending energy)\n",
+                                sides[side],dim-1);
+                        exit(EXIT_FAILURE);
+                    }
+                    int*& slot = side == 0 ? qa->_alphaidx : qa->_betaidx;
+                    slot = (int*)allocArray1d(1,sizeof(int));
+                    *slot = index;
+                }else{
+                    double* values = cJSON_ReadDouble1d(state,(char*)"vector",false,NULL,dim);
+                    vector = Double1dToMatrixXcd(values,dim);
+                    freeDouble1d(&values);
+                }
+            }
+            if (side == 0) QubitArray_setPsia(qa,vector);
+            else           QubitArray_setPsib(qa,vector);
         }
-        freeDouble1d(&psiamat);
-        freeDouble1d(&psibmat);
+        double* psi0mat = cJSON_ReadDouble1d(QubitSection,"psi0",true,NULL,dim);
 
         if (psi0mat != NULL) {
             QubitArray_setPsi0(qa,Double1dToMatrixXcd(psi0mat,dim));
@@ -1628,31 +1951,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         }else{
             QubitArray_setPsi0(qa,psiDefault);
         }
-
-        ////////////////////////////////////////////////////////////////////////
-        //  etc options
-        //////////////////////////////////////////////////////////////////////// 
-
-        // overhaus
-        bool overhaus = cJSON_ReadBool(QubitSection,"overhaus",true,overhausDefault);
-        QubitArray_setOverhaus(qa,overhaus);
-
-        // alphaidx, betaidx
-        int alphaidx = cJSON_ReadInt(QubitSection,"alphaidx",true,-1);
-        int betaidx = cJSON_ReadInt(QubitSection,"betaidx",true,-1);
-        if (alphaidx == -1 || betaidx == -1) {
-            if (alphaidx != betaidx) {
-                fprintf(stderr, "Error: alphaidx and betaidx should be set together\n");
-                exit(EXIT_FAILURE);
-            }
-            QubitArray_set_alphaidx(qa,alphaidxDefault);
-            QubitArray_set_betaidx(qa,betaidxDefault);
-        }else{
-            QubitArray_alloc_alphaidx_betaidx(qa);
-            QubitArray_set_alphaidx(qa,&alphaidx);
-            QubitArray_set_betaidx(qa,&betaidx);
-        }
-    }    
+    }
     cJSON_Delete(root);
     freeChar1d(&data);
 }
@@ -1667,7 +1966,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     if (rank==0){
         printf("\n");
         printMessage("Read Cluster Options ...");
-        printMessage("  [ order, method, addsubclus, nk ] \n");
+        printMessage("  [ order, method, cluster_mode, add_subclusters, max_clusters_per_order ] \n");
     }
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
@@ -1683,15 +1982,23 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     int order = cJSON_ReadInt(root,"order",false,1);
     Cluster_setOrder(clus,order);
 
-    char* method = cJSON_ReadString(root,"method",true,"cce"); // read twice
+    char method[MAX_CHARARRAY_LENGTH], clusterMode[16];
+    readMethod(root,method,clusterMode); // read twice (cJSON_readOptionConfig)
     Cluster_setMethod(clus,method);
 
-    bool addsubclus = cJSON_ReadBool(root,"addsubclus",true,true);
+    // add_subclusters and max_clusters_per_order (addsubclus and nk until A47)
+    bool addsubclus = true;
+    if (cJSON* item = cJSON_GetObjectItem(root,"add_subclusters")){
+        if (!cJSON_IsBool(item)){
+            fprintf(stderr,"Error: add_subclusters must be true or false\n");
+            exit(EXIT_FAILURE);
+        }
+        addsubclus = cJSON_IsTrue(item);
+    }
     Cluster_setAddsubclus(clus,addsubclus);
 
-    // nk
     Cluster_allocNk(clus);
-    int* nk = cJSON_ReadInt1d(root,"nk",true,NULL,order+1);
+    int* nk = cJSON_ReadInt1d(root,(char*)"max_clusters_per_order",true,NULL,order+1);
     if (nk!=NULL){
         Cluster_setNk(clus,nk);
     }else{;} 
@@ -1702,32 +2009,34 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     if (strcasecmp(Cluster_getMethod(clus),"pcce") == 0){
 
         if (rank==0){
-            printMessage("  [ sK , max_trial, max_iter, kmeans_pp, iter_detail ] \n");
+            printMessage("  pcce : [ partition_size, trials, max_iterations, kmeans_pp, print_trials ] \n");
         }
 
-        // Do not dereference a null default argument even when sK is supplied.
+        // Do not dereference a null default argument even when partition_size is supplied.
         // Zero or fractional sizes also make the partition divisions invalid.
-        const char* keys[] = {"sK", "max_trial", "max_iter"};
+        cJSON* pcce = readBlock(root,"pcce");
+        const char* keys[] = {"partition_size", "trials", "max_iterations"};
         int values[] = {0, 30000, 30000};
         for (int k=0; k<3; ++k){
-            cJSON* item = cJSON_GetObjectItem(root,keys[k]);
+            cJSON* item = pcce ? cJSON_GetObjectItem(pcce,keys[k]) : NULL;
             if (!item){
                 if (k==0){
-                    fprintf(stderr,"Error: pCCE requires sK\n");
+                    fprintf(stderr,"Error: cluster_mode pcce requires pcce.partition_size\n");
                     exit(EXIT_FAILURE);
                 }
                 continue;
             }
-            double value = readFiniteNumber(item,keys[k]);
+            const std::string name = "pcce." + std::string(keys[k]);
+            double value = readFiniteNumber(item,name.c_str());
             if (value < 1 || value > 2147483647.0 || std::floor(value) != value){
-                fprintf(stderr,"Error: pCCE %s must be a positive 32-bit integer\n",keys[k]);
+                fprintf(stderr,"Error: %s must be a positive 32-bit integer\n",name.c_str());
                 exit(EXIT_FAILURE);
             }
             values[k] = (int)value;
         }
         int sK = values[0], max_trial = values[1], max_iter = values[2];
-        bool kmeans_pp   = cJSON_ReadBool(root,"kmeans_pp"  , true , true);
-        bool iter_detail = cJSON_ReadBool(root,"iter_detail", true , false);
+        bool kmeans_pp   = pcce ? readStrictBool(pcce,"pcce","kmeans_pp",true) : true;
+        bool iter_detail = pcce ? readStrictBool(pcce,"pcce","print_trials",false) : false;
 
         Cluster_setSk(clus,sK);
         Cluster_setMax_trial(clus,max_trial);
@@ -1823,14 +2132,11 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     if (rank == 0) {
         printf("\n");
         printMessage("Read Pulse Options ...");
-        printMessage("  [ npulse, pulsename, sequence ] \n");
+        printMessage("  pulse : [ count, name, sequence, per_qubit, duration, detuning_factor ] \n");
     }
 
     char*  data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
-
-    bool pulseiter = cJSON_ReadBool(root,"pulseiter",true,false);
-    Pulse_setPulseiter(pulse, pulseiter);
 
     if (root == NULL){
         if (rank == 0) {
@@ -1840,23 +2146,34 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
         freeChar1d(&data);
     }
 
+    // the pulse block (npulse, pulsename, sequence, pulseiter, pulse_time and detuning_factor until A47)
+    cJSON* block = readBlock(root,"pulse");
+    if (block == NULL){
+        fprintf(stderr,"Error: pulse is not found in the input file (\"pulse\": {\"count\": 1} for a Hahn echo, 0 for a "
+                       "Ramsey, n > 1 for CPMG)\n");
+        exit(EXIT_FAILURE);
+    }
+
+    bool pulseiter = readStrictBool(block,"pulse","per_qubit",false);
+    Pulse_setPulseiter(pulse, pulseiter);
+
     bool made = false;
 
-    // Read "pulse number" (Default: -1, i.e. not set)
-    int npulse = cJSON_ReadInt(root,"npulse",false, -1);
+    // Read "pulse number" (required)
+    int npulse = cJSON_ReadInt(block,(char*)"count",false, -1);
     Pulse_setNpulse(pulse,npulse);
 
     // ================= //
     // New Parameters !! //
     // Input pulse duration time (unit : ns)
-    double pulse_time     = cJSON_ReadDouble(root, "pulse_time", true, 0.0);
+    double pulse_time     = cJSON_ReadDouble(block, (char*)"duration", true, 0.0);
     Pulse_setPulseTime(pulse,pulse_time);
     // Input pulse detuning offset (default : 0)
-    double detuning_factor = cJSON_ReadDouble(root, "detuning_factor", true, 1.0);
+    double detuning_factor = cJSON_ReadDouble(block, (char*)"detuning_factor", true, 1.0);
     Pulse_setPulseDetuningFactor(pulse,detuning_factor);
     // ================= //
 
-    char* pulsename = cJSON_ReadString(root,"pulsename",true,"None");
+    char* pulsename = cJSON_ReadString(block,(char*)"name",true,(char*)"None");
     Pulse_setPulsename(pulse,pulsename);
 
     Pulse_allocSequence(pulse);
@@ -1864,20 +2181,20 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     Pulse_allocAngles(pulse);
     Pulse_allocSequenceIndices(pulse);
 
-    cJSON* sequence_array = cJSON_GetObjectItem(root, "sequence");
+    cJSON* sequence_array = cJSON_GetObjectItem(block, "sequence");
     if (sequence_array == NULL){
         allocateDefaultSequence(pulse);
         made = true;
     }
     if (strcasecmp(pulse->pulsename, "Manual") == 0) {
         if (!(sequence_array && cJSON_IsArray(sequence_array))) {
-            fprintf(stderr, "[Error] sequence_array is missing or not a valid JSON array. [case pulse name = manual]\n");
+            fprintf(stderr, "[Error] pulse.sequence is missing or not a valid JSON array. [case pulse name = manual]\n");
             exit(EXIT_FAILURE);
         }
 
         int count = cJSON_GetArraySize(sequence_array);
         if (count != (pulse->npulse) + 1) {
-            throw std::runtime_error("Mismatch between sequence length and npulse");
+            throw std::runtime_error("Mismatch between pulse.sequence length and pulse.count + 1");
         }
 
         double total_frac = 0.0;
@@ -2005,10 +2322,10 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
     if (rank==0){
         printf("\n");
         printMessage("Read Defect Options ...\n");
-        printMessage("  - Read values of main-key 'Defect' (Array format)");
-        printMessage("    sub-key : [ dfname, naddspin, navaax, apprx, coordinate_frame, ( type : single value) ");
-        printMessage("                axis, types, spins, gyros, eqs,    ( type : array ) ");
-        printMessage("                rxyzs, hypf, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) \n");
+        printMessage("  - Read values of main-key 'Defect' { state_file, axis_file, species }");
+        printMessage("    Defect.species[] : [ name, n_nuclear_spins, n_configurations, coordinate_frame, ( type : single value) ");
+        printMessage("                axis, types, spins, gyros, quadrupole_moments,    ( type : array ) ");
+        printMessage("                nuclear_positions, hyperfine, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) \n");
     }
 
     char* data = cJSON_ReadFccein(fccein);
@@ -2024,7 +2341,13 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
 
     int ndefect = 0;
 
-    cJSON* defectArray = cJSON_GetObjectItem(root,"Defect");
+    // Defect is {"state_file", "axis_file", "species": [...]} (a list until A47; refuseOldInputKeys)
+    cJSON* defectBlock = readBlock(root,"Defect");
+    cJSON* defectArray = defectBlock ? cJSON_GetObjectItem(defectBlock,"species") : NULL;
+    if (defectArray && !cJSON_IsArray(defectArray)){
+        fprintf(stderr,"Error: Defect.species must be an array of the defect species\n");
+        exit(EXIT_FAILURE);
+    }
     cJSON* defect;
 
     // Read the number of defect information
@@ -2035,7 +2358,7 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
     DefectArray_allocDefect(dfa);
 
     // Default values
-    bool apprxDefault = true; // do approximation (do not clusterize)
+    bool apprxDefault = true; // apprx is no longer an input (A47): it changed nothing
     int naddspinDefault = 0;
     int navaaxDefault = 0;
 
@@ -2047,18 +2370,17 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         ////////////////////////////////////////////////////////////////////////
         // General information && Allocation
         ////////////////////////////////////////////////////////////////////////
-        int naddspin = cJSON_ReadInt(defect,"naddspin",true,naddspinDefault);
-        int navaax = cJSON_ReadInt(defect,"navaax",true,navaaxDefault);
+        int naddspin = cJSON_ReadInt(defect,(char*)"n_nuclear_spins",true,naddspinDefault);
+        int navaax = cJSON_ReadInt(defect,(char*)"n_configurations",true,navaaxDefault);
         
         DefectArray_setDefect_idf_naddspin(dfa,idf,naddspin);
         DefectArray_setDefect_idf_navaax(dfa,idf,navaax+1); // 0th : main spin
         DefectArray_allocDefect_idf(dfa,idf,navaax+1,naddspin);
 
-        char* dfname = cJSON_ReadString(defect,"dfname",false,NULL);
+        char* dfname = cJSON_ReadString(defect,(char*)"name",false,NULL);
         DefectArray_setDefect_idf_dfname(dfa,idf,dfname);
 
-        bool apprx = cJSON_ReadBool(defect,"apprx",true,apprxDefault);
-        DefectArray_setDefect_idf_apprx(dfa,idf,apprx);
+        DefectArray_setDefect_idf_apprx(dfa,idf,apprxDefault);
 
         bool coordinate_frame_explicit = false;
         DefectCoordinateFrame coordinate_frame =
@@ -2068,7 +2390,7 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         cJSON* axis_item = cJSON_GetObjectItem(defect,"axis");
         if (axis_item != NULL){
             if (!coordinate_frame_explicit){
-                fprintf(stderr,"Error: Defect[%s].axis is present but coordinate_frame is missing\n",dfname);
+                fprintf(stderr,"Error: Defect.species[%s].axis is present but coordinate_frame is missing\n",dfname);
                 fprintf(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the axis basis is explicit.\n");
                 exit(EXIT_FAILURE);
             }
@@ -2076,8 +2398,8 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
             double axis_normalized[3];
             char section_label[160];
             char axis_label[160];
-            snprintf(section_label,sizeof(section_label),"Defect[%s]",dfname);
-            snprintf(axis_label,sizeof(axis_label),"Defect[%s].axis",dfname);
+            snprintf(section_label,sizeof(section_label),"Defect.species[%s]",dfname);
+            snprintf(axis_label,sizeof(axis_label),"Defect.species[%s].axis",dfname);
             readAxis3(defect,section_label,"axis",axis_raw,true);
             normalizeAxisOrDie(axis_raw,axis_normalized,axis_label);
             DefectArray_setDefect_idf_axis(dfa,idf,axis_normalized);
@@ -2108,12 +2430,12 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         // Relative position && tensor information for each axis/additional spins
         ////////////////////////////////////////////////////////////////////////
 
-        // Read rxyzs other wise set 0.0
-        cJSON_ReadDefectInfo_IntCharDoubleArray(defect,"rxyzs",3,&(dfa->defect[idf]->rxyzs),dfa->defect[idf]->types,navaax+1,naddspin);
+        // Read nuclear_positions (rxyzs until A47) other wise set 0.0
+        cJSON_ReadDefectInfo_IntCharDoubleArray(defect,(char*)"nuclear_positions",3,&(dfa->defect[idf]->rxyzs),dfa->defect[idf]->types,navaax+1,naddspin);
 
         // Unit-aware objects are converted to the legacy internal units while parsing.
         // Their tensor basis is explicit for the same reason as object-form zfs.
-        readDefectIndexedTensorWithUnit(defect,dfa,idf,"hypf",&(dfa->defect[idf]->hypf),
+        readDefectIndexedTensorWithUnit(defect,dfa,idf,"hyperfine",&(dfa->defect[idf]->hypf),
                                         navaax,naddspin,coordinate_frame_explicit);
         readDefectIndexedTensorWithUnit(defect,dfa,idf,"efg",&(dfa->defect[idf]->efg),
                                         navaax,naddspin,coordinate_frame_explicit);
@@ -2197,8 +2519,9 @@ static int integerValue(cJSON* item, const char* key){
 }
 
 char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_value){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
-    refuseWrongType(item, key, cJSON_IsString(item), "a string (a file path)");
+    refuseWrongType(item, name, cJSON_IsString(item), "a string (a file path)");
 
     if (cJSON_IsString(item) && (item->valuestring != NULL)) {
         if (access(item->valuestring, R_OK) == 0) {
@@ -2209,16 +2532,16 @@ char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_va
             // here is how a qubit ends up at the cell origin and the run still "works".
             if (rank==0){
                 fprintf(stderr,"Warning: %s : cannot read \"%s\" -- continuing with defaults\n",
-                        key, item->valuestring);
+                        name, item->valuestring);
             }
             return item->valuestring;
         }
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
@@ -2235,8 +2558,9 @@ static const char* stringElement(cJSON* element, const char* key, int i){
 }
 
 char** cJSON_ReadFilePath1d(int* length, cJSON* root, char* key, bool _default, char** default_value){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
-    refuseWrongType(item, key, cJSON_IsArray(item), "an array of file paths");
+    refuseWrongType(item, name, cJSON_IsArray(item), "an array of file paths");
 
     if (cJSON_IsArray(item)) {
         char** array = NULL;
@@ -2256,124 +2580,128 @@ char** cJSON_ReadFilePath1d(int* length, cJSON* root, char* key, bool _default, 
             }else{
                 reallocChar2d(&array,i,i+1,MAX_FILEPATH);
             }
-            copyBounded(array[i],stringElement(itemElement,key,i),MAX_FILEPATH,key);
+            copyBounded(array[i],stringElement(itemElement,name,i),MAX_FILEPATH,name);
             i++;
         }
         *length = i;
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;
             
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 char* cJSON_ReadString(cJSON* root, char* key, bool _default, char* default_value){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
-    refuseWrongType(item, key, cJSON_IsString(item), "a string");
+    refuseWrongType(item, name, cJSON_IsString(item), "a string");
     if (cJSON_IsString(item) && (item->valuestring != NULL)) {
         return item->valuestring;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 char** cJSON_ReadString1d(cJSON* root, char* key, bool _default, char** default_value, int size){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
 
     cJSON* item = cJSON_GetObjectItem(root, key);
 
-    refuseWrongType(item, key, cJSON_IsArray(item), "an array of strings");
+    refuseWrongType(item, name, cJSON_IsArray(item), "an array of strings");
     if (cJSON_IsArray(item)) {
         char** array = allocChar2d(size,MAX_CHARARRAY_LENGTH);
         int i = 0;
         cJSON* itemElement;
         cJSON_ArrayForEach(itemElement, item){
             if (i>=size){
-                fprintf(stderr, "Error: %s is too long in the input file\n",key);
+                fprintf(stderr, "Error: %s is too long in the input file\n",name);
                 exit(EXIT_FAILURE);
             }else{
-                copyBounded(array[i],stringElement(itemElement,key,i),MAX_CHARARRAY_LENGTH,key);
+                copyBounded(array[i],stringElement(itemElement,name,i),MAX_CHARARRAY_LENGTH,name);
             }
             i++;
         }
         if (i < size){   // a short array was filled with empty strings and used (D42)
-            fprintf(stderr, "Error: %s has %d entries in the input file, %d are needed\n",key,i,size);
+            fprintf(stderr, "Error: %s has %d entries in the input file, %d are needed\n",name,i,size);
             exit(EXIT_FAILURE);
         }
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;
             
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 int cJSON_ReadInt(cJSON* root, char* key, bool _default, int default_value){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
 
     cJSON* item = cJSON_GetObjectItem(root, key);
-    refuseWrongType(item, key, cJSON_IsNumber(item), "an integer");
+    refuseWrongType(item, name, cJSON_IsNumber(item), "an integer");
     if (cJSON_IsNumber(item)) {
-        return integerValue(item, key);
+        return integerValue(item, name);
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 int* cJSON_ReadInt1d(cJSON* root, char* key, bool _default, int* default_value, int size){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
     
-    refuseWrongType(item, key, cJSON_IsArray(item), "an array of integers");
+    refuseWrongType(item, name, cJSON_IsArray(item), "an array of integers");
     if (cJSON_IsArray(item)) {
         int* array = allocInt1d(size);
         int i = 0;
         cJSON* itemElement;
         cJSON_ArrayForEach(itemElement, item){
             if(i >= size){
-                fprintf(stderr, "Error: %s is too long in the input file\n",key);
+                fprintf(stderr, "Error: %s is too long in the input file\n",name);
                 exit(EXIT_FAILURE);
             }else{
                 if (!cJSON_IsNumber(itemElement)){
-                    fprintf(stderr, "Error: %s[%d] must be an integer in the input file\n",key,i);
+                    fprintf(stderr, "Error: %s[%d] must be an integer in the input file\n",name,i);
                     exit(EXIT_FAILURE);
                 }
-                array[i] = integerValue(itemElement, key);
+                array[i] = integerValue(itemElement, name);
             }
             i++;
         }
         if (i != size) {
-            fprintf(stderr, "Error: %s is too short(%d) in the input file (expected size = %d)\n",key,i,size);
+            fprintf(stderr, "Error: %s is too short(%d) in the input file (expected size = %d)\n",name,i,size);
             exit(EXIT_FAILURE);
         }
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;
             
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
@@ -2394,55 +2722,57 @@ static double finiteNumber(cJSON* item, const char* key, int i, int j, bool asFl
 }
 
 double cJSON_ReadDouble(cJSON* root, char* key, bool _default, double default_value){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
-    refuseWrongType(item, key, cJSON_IsNumber(item), "a number");
+    refuseWrongType(item, name, cJSON_IsNumber(item), "a number");
     if (cJSON_IsNumber(item)) {
-        return finiteNumber(item, key, -1, -1, false);
+        return finiteNumber(item, name, -1, -1, false);
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;    
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 double* cJSON_ReadDouble1d(cJSON* root, char* key, bool _default, double* default_value, int size){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
     
-    refuseWrongType(item, key, cJSON_IsArray(item), "an array of numbers");
+    refuseWrongType(item, name, cJSON_IsArray(item), "an array of numbers");
     if (cJSON_IsArray(item)) {
         double* array = allocDouble1d(size);
         int i = 0;
         cJSON* itemElement;
         cJSON_ArrayForEach(itemElement, item){
             if(i >= size){
-                fprintf(stderr, "Error: %s is too long in the input file\n",key);
+                fprintf(stderr, "Error: %s is too long in the input file\n",name);
                 exit(EXIT_FAILURE);
             }
             // A non-number element used to be read anyway: cJSON leaves valuedouble at 0
             // for a string or a bool, so "bfield": [0,0,"500"] became [0,0,0] silently.
             if (!cJSON_IsNumber(itemElement)){
-                fprintf(stderr, "Error: %s[%d] must be a number in the input file\n",key,i);
+                fprintf(stderr, "Error: %s[%d] must be a number in the input file\n",name,i);
                 exit(EXIT_FAILURE);
             }
-            array[i] = finiteNumber(itemElement, key, i, -1, false);
+            array[i] = finiteNumber(itemElement, name, i, -1, false);
             i++;
         }
         if (i != size) {
-            fprintf(stderr, "Error: %s is too short(%d) in the input file (expected size = %d)\n",key,i,size);
+            fprintf(stderr, "Error: %s is too short(%d) in the input file (expected size = %d)\n",name,i,size);
             exit(EXIT_FAILURE);
         }
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;
             
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
@@ -2450,9 +2780,10 @@ double* cJSON_ReadDouble1d(cJSON* root, char* key, bool _default, double* defaul
 
 
 double** cJSON_ReadDouble2d(cJSON* root, char* key, bool _default, double** default_value, int row, int col){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
 
     cJSON* item = cJSON_GetObjectItem(root, key);
-    refuseWrongType(item, key, cJSON_IsArray(item), "an array of arrays of numbers");
+    refuseWrongType(item, name, cJSON_IsArray(item), "an array of arrays of numbers");
     double** array = allocDouble2d(row,col);
 
     if (cJSON_IsArray(item)) {
@@ -2460,114 +2791,117 @@ double** cJSON_ReadDouble2d(cJSON* root, char* key, bool _default, double** defa
         cJSON* itemElement;
         cJSON_ArrayForEach(itemElement, item){
             if(i >= row){
-                fprintf(stderr, "Error: %s is too long in the input file\n",key);
+                fprintf(stderr, "Error: %s is too long in the input file\n",name);
                 exit(EXIT_FAILURE);
             }else{
                 if (!cJSON_IsArray(itemElement)){
-                    fprintf(stderr, "Error: %s[%d] must be an array of numbers in the input file\n",key,i);
+                    fprintf(stderr, "Error: %s[%d] must be an array of numbers in the input file\n",name,i);
                     exit(EXIT_FAILURE);
                 }
                 int j = 0;
                 cJSON* itemElement_j;
                 cJSON_ArrayForEach(itemElement_j, itemElement){
                     if(j >= col){
-                        fprintf(stderr, "Error: %s is too long in the input file\n",key);
+                        fprintf(stderr, "Error: %s is too long in the input file\n",name);
                         exit(EXIT_FAILURE);
                     }else{
                         if (!cJSON_IsNumber(itemElement_j)){
-                            fprintf(stderr, "Error: %s[%d][%d] must be a number in the input file\n",key,i,j);
+                            fprintf(stderr, "Error: %s[%d][%d] must be a number in the input file\n",name,i,j);
                             exit(EXIT_FAILURE);
                         }
-                        array[i][j] = finiteNumber(itemElement_j, key, i, j, false);
+                        array[i][j] = finiteNumber(itemElement_j, name, i, j, false);
                     }
                     j++;
                 }
                 if (j < col){   // a short row was filled with 0 and used (D42)
-                    fprintf(stderr, "Error: %s[%d] has %d numbers in the input file, %d are needed\n",key,i,j,col);
+                    fprintf(stderr, "Error: %s[%d] has %d numbers in the input file, %d are needed\n",name,i,j,col);
                     exit(EXIT_FAILURE);
                 }
             }
             i++;
         }
         if (i < row){
-            fprintf(stderr, "Error: %s has %d rows in the input file, %d are needed\n",key,i,row);
+            fprintf(stderr, "Error: %s has %d rows in the input file, %d are needed\n",name,i,row);
             exit(EXIT_FAILURE);
         }
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             copyDouble2d(array,(const double**)default_value,row,col);
             return array;
             
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 float cJSON_ReadFloat(cJSON* root, char* key, bool _default, float default_value){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
-    refuseWrongType(item, key, cJSON_IsNumber(item), "a number");
+    refuseWrongType(item, name, cJSON_IsNumber(item), "a number");
     if (cJSON_IsNumber(item)) {
-        return finiteNumber(item, key, -1, -1, true);
+        return finiteNumber(item, name, -1, -1, true);
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;    
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 float* cJSON_ReadFloat1d(cJSON* root, char* key, bool _default, float* default_value, int size){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
     
-    refuseWrongType(item, key, cJSON_IsArray(item), "an array of numbers");
+    refuseWrongType(item, name, cJSON_IsArray(item), "an array of numbers");
     if (cJSON_IsArray(item)) {
         float* array = allocFloat1d(size);
         int i = 0;
         cJSON* itemElement;
         cJSON_ArrayForEach(itemElement, item){
             if(i >= size){
-                fprintf(stderr, "Error: %s is too long in the input file\n",key);
+                fprintf(stderr, "Error: %s is too long in the input file\n",name);
                 exit(EXIT_FAILURE);
             }
             // A non-number element used to be read anyway: cJSON leaves valuedouble at 0
             // for a string or a bool, so "bfield": [0,0,"500"] became [0,0,0] silently.
             if (!cJSON_IsNumber(itemElement)){
-                fprintf(stderr, "Error: %s[%d] must be a number in the input file\n",key,i);
+                fprintf(stderr, "Error: %s[%d] must be a number in the input file\n",name,i);
                 exit(EXIT_FAILURE);
             }
-            array[i] = finiteNumber(itemElement, key, i, -1, true);
+            array[i] = finiteNumber(itemElement, name, i, -1, true);
             i++;
         }
         if (i != size) {
-            fprintf(stderr, "Error: %s is too short(%d) in the input file (expected size = %d)\n",key,i,size);
+            fprintf(stderr, "Error: %s is too short(%d) in the input file (expected size = %d)\n",name,i,size);
             exit(EXIT_FAILURE);
         }
         return array;
     }else{
         if(_default){
-            if (rank==0 && strcasecmp(key,"bfield")!=0){printf("           %s : use default value .. \n",key);}
+            if (rank==0 && strcasecmp(name,"bfield")!=0){printf("           %s : use default value .. \n",name);}
             return default_value;
             
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 bool cJSON_ReadBool(cJSON* root, char* key, bool _default, bool default_value){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
     cJSON* item = cJSON_GetObjectItem(root, key);
     // 0 and 1 are taken as false and true: 29 order-2 inputs write "addsubclus": 0, which
     // was ignored for the default true until 2026-10-02 and changes nothing at order 2
     const bool cBool = cJSON_IsNumber(item) && (item->valuedouble == 0.0 || item->valuedouble == 1.0);
-    refuseWrongType(item, key, cJSON_IsBool(item) || cBool, "true or false (or 0 or 1)");
+    refuseWrongType(item, name, cJSON_IsBool(item) || cBool, "true or false (or 0 or 1)");
     if (cBool) {
         return item->valuedouble == 1.0;
     }
@@ -2575,39 +2909,40 @@ bool cJSON_ReadBool(cJSON* root, char* key, bool _default, bool default_value){
         return item->valueint;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",key);}
+            if (rank==0){printf("           %s : use default value .. \n",name);}
             return default_value;    
         }else{
-            fprintf(stderr, "Error: %s is not found in the input file\n",key);
+            fprintf(stderr, "Error: %s is not found in the input file\n",name);
             exit(EXIT_FAILURE);
         }
     }
 }
 
 MatrixXcd cJSON_ReadTensor(cJSON* root, char* key, bool _default, MatrixXcd default_value){
+    const std::string shownName = shownKey(root,key); const char* name = shownName.c_str();   // the path, for the messages
 
     cJSON* tensor = cJSON_GetObjectItem(root,key);
-    refuseWrongType(tensor, key, cJSON_IsArray(tensor), "a 3x3 array of numbers");
+    refuseWrongType(tensor, name, cJSON_IsArray(tensor), "a 3x3 array of numbers");
     if (!cJSON_IsArray(tensor)){
         if(_default) return default_value;
-        fprintf(stderr, "Error: %s is not found in the input file\n",key);
+        fprintf(stderr, "Error: %s is not found in the input file\n",name);
         exit(EXIT_FAILURE);
     }
     // Exactly 3 rows of 3 finite numbers (D28, 2026-10-02): a shorter array used to be padded with
     // zeros ("tensor": [[1]] ran as diag(1,0,0)), as the object form of Defect never allowed.
     if (cJSON_GetArraySize(tensor) != 3){
-        fprintf(stderr, "Error: %s must be a 3x3 array of numbers (it has %d rows)\n",key,cJSON_GetArraySize(tensor));
+        fprintf(stderr, "Error: %s must be a 3x3 array of numbers (it has %d rows)\n",name,cJSON_GetArraySize(tensor));
         exit(EXIT_FAILURE);
     }
     MatrixXcd mat = MatrixXcd::Zero(3,3);
     for (int i = 0; i < 3; ++i){
         cJSON* tensor_i = cJSON_GetArrayItem(tensor, i);
         if (!cJSON_IsArray(tensor_i) || cJSON_GetArraySize(tensor_i) != 3){
-            fprintf(stderr, "Error: %s row %d must contain exactly 3 numbers\n",key,i);
+            fprintf(stderr, "Error: %s row %d must contain exactly 3 numbers\n",name,i);
             exit(EXIT_FAILURE);
         }
         for (int j = 0; j < 3; ++j){
-            char label[160]; snprintf(label,sizeof(label),"%s[%d][%d]",key,i,j);
+            char label[160]; snprintf(label,sizeof(label),"%s[%d][%d]",name,i,j);
             mat(i,j) = readFiniteNumber(cJSON_GetArrayItem(tensor_i, j),label);
         }
     }

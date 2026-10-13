@@ -80,7 +80,7 @@ const AdaptiveWork& adaptiveWork(const Config* c) {
     workLoaded=true;
     if(!*c->adaptive_work_file)return work;
     try {
-        require(!strcasecmp(c->cluster_mode,"adaptive"),"work request requires adaptive mode");
+        require(!strcasecmp(c->cluster_mode,"adaptive"),"work request requires cluster_mode bundle");
         std::ifstream input(c->adaptive_work_file);require(bool(input),"cannot open request file");
         std::stringstream buffer;buffer<<input.rdbuf();
         std::unique_ptr<cJSON,decltype(&cJSON_Delete)> root(cJSON_Parse(buffer.str().c_str()),cJSON_Delete);

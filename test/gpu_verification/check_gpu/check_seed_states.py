@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import re
 
-from benchmark import REPO, compare
+from benchmark import REPO, compare, put
 from check_pcce import run_case
 
 
@@ -58,7 +58,9 @@ def check_stream(actual, expected):
 def main(args):
     args.output.mkdir(parents=True, exist_ok=False)
     base = json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
-    base.update(backend='cpu', nstate=3, nstep=5, max_trial=5, iter_detail=False)
+    base = put(base, {'backend': 'cpu', 'nstate': 3, 'nstep': 5, 'pcce.trials': 5, 'pcce.print_trials': False})
+    # the same input without the pcce partition: cluster_mode standard, method cCCE or gCCE (A47)
+    standard = lambda method: put(base, {'method': method, 'cluster_mode': 'standard', 'pcce': None})
     report = dict(status='running', binary_sha256={}, cases=[], negative_control=None)
     for name in ('cpu', 'cuda', 'baseline'):
         binary = getattr(args, name)
@@ -78,35 +80,30 @@ def main(args):
 
     try:
         if args.baseline:
-            old = [run(f'before/seed-{s}', dict(base, method='gcce', seed=s), args.baseline)[1]
+            old = [run(f'before/seed-{s}', dict(standard('gCCE'), seed=s), args.baseline)[1]
                    for s in (19, 7, 12345)]
             assert old[0] == old[1] == old[2], 'Baseline no longer reproduces the reported seed bug'
             check_stream(old[0], random_reference(0, 6, 3))
             report['negative_control'] = 'Before binary ignores all three seeds and follows srand(0)'
         p1 = json.loads((REPO/'test/gpu_verification/check_gpu/examples/p1_gcce4_single.json').read_text())
         p1.update(backend='cpu', order=1, nstate=3, nstep=4, profile=True)
-        cases = [('cce', dict(base, method='cce'), 6, False),
-                 ('gcce', dict(base, method='gcce'), 6, False),
-                 ('pcce', dict(base, pcce_partition='deterministic'), 6, False),
-                 ('pcce-legacy', dict(base, pcce_partition='legacy'), 6, False),
-                 ('adaptive', dict(base, method='cce', cluster_mode='adaptive',
-                                   bundle_max_dim=16), 6, False),
-                 ('adaptive-checked', dict(base, method='gcce', cluster_mode='adaptive',
-                                           bundle_max_dim=48, deltat=0.005), 6, False),
+        cases = [('cce', standard('cCCE'), 6, False),
+                 ('gcce', standard('gCCE'), 6, False),
+                 ('pcce', put(base, {'pcce.partition': 'deterministic'}), 6, False),
+                 ('pcce-legacy', put(base, {'pcce.partition': 'legacy'}), 6, False),
+                 ('adaptive', put(standard('cCCE'), {'cluster_mode': 'bundle', 'bundle.max_dim': 16}), 6, False),
+                 ('adaptive-checked', put(standard('gCCE'), {'cluster_mode': 'bundle', 'bundle.max_dim': 48,
+                                                             'deltat': 0.005, 'rdip': None}), 6, False),
                  ('p1-gcce', p1, 4, True),
-                 ('p1-cce', dict(p1, method='cce'), 4, True)]
+                 ('p1-cce', dict(p1, method='cCCE'), 4, True)]
         for name, cfg, size, defect in cases:
-            if cfg.get('cluster_mode') == 'adaptive':
-                for key in ('sK', 'max_trial', 'max_iter', 'kmeans_pp', 'iter_detail', 'pcce_partition'):
-                    cfg.pop(key, None)
-            if name == 'adaptive-checked': cfg.pop('rdip')
             observed = []
             row = dict(name=name, checks=[])
             for seed in (19, 7, 12345):
                 current = dict(cfg, seed=seed)
                 directory, states, _ = run(f'{name}/seed-{seed}', current)
                 if name != 'pcce-legacy':
-                    axes = cfg['Defect'][0]['navaax'] if defect else 0
+                    axes = cfg['Defect']['species'][0]['n_configurations'] if defect else 0
                     check_stream(states, random_reference(seed, size, 3, axes))
                 observed.append(states)
                 row['checks'].append(dict(seed=seed, sampled_states=states))
@@ -136,7 +133,7 @@ def main(args):
             report['cases'].append(row); save()
             print('PASS', name, 'seed sensitivity, expected states, replay and supported backends/ranks', flush=True)
         # Missing-seed replay must also replay actual sampled states.
-        cfg = dict(base, method='gcce'); cfg.pop('seed')
+        cfg = standard('gCCE'); cfg.pop('seed')
         reference, states, log = run('generated/initial', cfg, ranks=2)
         seeds = re.findall(r'\[seed\] generated on rank 0 and shared with all ranks: (\d+);', log)
         assert len(seeds) == 1, seeds

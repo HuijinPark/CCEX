@@ -10,28 +10,27 @@ import json
 import os
 from pathlib import Path
 
-from benchmark import REPO, compare
+from benchmark import REPO, compare, put
 from check_pcce import run_case
 
 
 def cases():
     for method, fixture in [('cce', 'p1_cce5_single.json'), ('gcce', 'p1_gcce4_single.json')]:
         config = json.loads((REPO/'test/gpu_verification/check_gpu/examples'/fixture).read_text())
-        config.update(order=2, nstep=9, npulse=4, gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=4))
+        config = put(config, {'order': 2, 'nstep': 9, 'pulse.count': 4, 'gpu_options.evolution_batch_steps': 4})
         for state in (0, 1, 3):
             yield f'p1-{method}-state{state}', dict(config, nstate=state)
         if method == 'gcce':
-            # Existing semantics ignore an unpaired psia/psib, but its parsed
-            # temporary must still be released.
-            for key in ('psia', 'psib'):
-                yield f'p1-gcce-unpaired-{key}', dict(config, Qubit=dict(config['Qubit'], **{key: [1, 0, 0]}))
+            # One side's state given as a vector, the other from alphams/betams (Qubit.alpha_state/beta_state, A47;
+            # an unpaired psia/psib was ignored before): its parsed temporary must still be released.
+            for key in ('alpha_state', 'beta_state'):
+                yield f'p1-gcce-unpaired-{key}', dict(config, Qubit=dict(config['Qubit'], **{key: {'vector': [1, 0, 0]}}))
     base = json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
     for state in (0, 1):
-        yield f'13c-pcce-state{state}', dict(base, nstate=state, npulse=4)
+        yield f'13c-pcce-state{state}', put(base, {'nstate': state, 'pulse.count': 4})
     # No Defect section, inline Qubit, and empty higher cluster orders.
-    for method in ('CCE', 'gCCE'):
-        config = dict(base, method=method, order=4, rdip=0.01)
-        config.pop('sK')
+    for method in ('cCCE', 'gCCE'):
+        config = put(base, {'method': method, 'cluster_mode': 'standard', 'pcce': None, 'order': 4, 'rdip': 0.01})
         yield f'13c-{method.lower()}-empty-orders', config
 
 

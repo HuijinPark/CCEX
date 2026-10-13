@@ -67,7 +67,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     // its own Hamiltonian never enters -- the field is still parsed, stored and printed,
     // which reads exactly like it took effect.
     if (!isGCCE && QubitArray_getOverhaus(qa) && rank==0){
-        fprintf(stderr,"Warning: \"overhaus\" has no effect with method=%s.\n"
+        fprintf(stderr,"Warning: hamiltonian.common.qubit_bath_mean_field has no effect with method=%s.\n"
                        "         CCE projects the qubit out, so the qubit Hamiltonian --\n"
                        "         where the Overhauser field lives -- is never built.\n"
                        "         Use method=gCCE for mean-field.\n", method);
@@ -216,26 +216,33 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             int* alphaidx = QubitArray_get_alphaidx(qa);
             int* betaidx = QubitArray_get_betaidx(qa);
 
-            if (psia.rows()==0 && psia.cols()==0 && psib.rows()==0 && psib.cols()==0){
-                if (alphaidx!=NULL && betaidx!=NULL){
-                    if (rank==0){
-                        printSubTitle("Set psia, psib from qubit index...");
-                    }
-                    QubitArray_setPsiaPsib_fromIdx(qa,bfield);
-                    QubitArray_checkIdxAgainstMs(qa);
-                }else if (alphaidx==NULL && betaidx==NULL){
-                    if (rank==0){
-                        printSubTitle("Set psia, psib from qubit alpha, beta...");
-                    }
-                    QubitArray_setPsiaPsib_fromQubit(qa);
-                }else{
-                    fprintf(stderr,"Error : calculate,, Invalid qubit index (cannot set the psia,psib)\n");
-                    exit(1);
-                }
-            }else{
+            // Qubit.alpha_state and beta_state (A47): each side is its vector, the eigenstate of its index, or the
+            // product of the qubits' alphams (betams). Two sides given the same way take the paths they always took.
+            const bool vectorA = psia.size() > 0, vectorB = psib.size() > 0;
+            if (vectorA && vectorB){
                 if (rank==0){
                     printSubTitle("Set psia, psib from input...\n");
                 }
+            }else if (!vectorA && !vectorB && alphaidx!=NULL && betaidx!=NULL){
+                if (rank==0){
+                    printSubTitle("Set psia, psib from qubit index...");
+                }
+                QubitArray_setPsiaPsib_fromIdx(qa,bfield);
+                QubitArray_checkIdxAgainstMs(qa);
+            }else if (!vectorA && !vectorB && alphaidx==NULL && betaidx==NULL){
+                if (rank==0){
+                    printSubTitle("Set psia, psib from qubit alpha, beta...");
+                }
+                QubitArray_setPsiaPsib_fromQubit(qa);
+            }else{
+                if (rank==0){
+                    printSubTitle("Set psia, psib side by side (vector, index, or alphams/betams)...");
+                }
+                QubitArray_setPsiaPsib_fromQubit(qa);
+                if (alphaidx!=NULL || betaidx!=NULL) QubitArray_setPsiaPsib_fromIdx(qa,bfield);
+                if (vectorA) QubitArray_setPsia(qa,psia);
+                if (vectorB) QubitArray_setPsib(qa,psib);
+                if (alphaidx!=NULL || betaidx!=NULL) QubitArray_checkIdxAgainstMs(qa);
             }
 
             if (rank==0){
@@ -793,6 +800,12 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     }
 }
 
+// hamiltonian.cCCE.delta_A false (A47): every cluster of more than one bath spin takes, for each qubit, the mean of its
+// spins' hyperfine tensors, so the Knight fields of its spins no longer differ (Zhao 2011 SI eq. 23, Z_jk = A_j,z - A_k,z;
+// Maze 2008 eq. 8) and a pair's flip-flop leaves the coherence alone. A cluster of one spin (ESEEM) keeps its own tensor.
+static bool clusterHyperfineMean = false;
+void setClusterHyperfineMean(bool on){ clusterHyperfineMean = on; }
+
 BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* dfa, int nqubit){
 
     // Initialize  ba_cluster
@@ -849,6 +862,15 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
                 // Add the additional spin to the cluster
                 addedspin++;
             }
+        }
+    }
+
+    if (clusterHyperfineMean && nspin_cluster > 1){
+        for (int iq=0; iq<nqubit; iq++){
+            MatrixXcd mean = MatrixXcd::Zero(3,3);
+            for (int i=0; i<nspin_cluster; i++) mean += BathArray_getBath_i_hypf_j(ba_cluster,i,iq);
+            mean /= double(nspin_cluster);
+            for (int i=0; i<nspin_cluster; i++) BathArray_setBath_i_hypf_j(ba_cluster,mean,i,iq);
         }
     }
 

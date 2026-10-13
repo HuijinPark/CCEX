@@ -65,14 +65,14 @@ if sysname == "S1a":
          'deprecated bath_coordinate_rotation == coordinate_frame_rotation')
 
 elif sysname == "S3":
-    df = legacy["Defect"][0]
-    hypf_rows = df["hypf"]; efg_rows = df["efg"]
-    gyro = df["gyros"][0];  eq = df["eqs"][0]
-    navaax = df["navaax"]
+    df = legacy["Defect"]["species"][0]
+    hypf_rows = df["hyperfine"]; efg_rows = df["efg"]
+    gyro = df["gyros"][0];  eq = df["quadrupole_moments"][0]
+    navaax = df["n_configurations"]
 
     def mk(**defect_changes):
         d = copy.deepcopy(legacy)
-        nd = d["Defect"][0]
+        nd = d["Defect"]["species"][0]
         # object forms all require the frame to be explicit; "qubit" is the legacy
         # default, so stating it must not move a number
         nd["coordinate_frame"] = "qubit"
@@ -85,10 +85,10 @@ elif sysname == "S3":
     # canonical units : the scale factor is exactly 1, so byte identity is required
     emit("df_gyro_canon", mk(gyros={"values":[gyro], "unit":"radkHz/G"}),
          "df_frame_only", "byte", 'gyros {values,unit=radkHz/G} == legacy array')
-    emit("df_eq_canon",   mk(eqs={"values":[eq], "unit":"1e-30 m^2"}),
-         "df_frame_only", "byte", 'eqs {values,unit=1e-30 m^2} == legacy array')
-    emit("df_hypf_canon", mk(hypf={"values":hypf_rows, "unit":"MHz"}),
-         "df_frame_only", "byte", 'hypf {values,unit=MHz} == legacy array')
+    emit("df_eq_canon",   mk(quadrupole_moments={"values":[eq], "unit":"1e-30 m^2"}),
+         "df_frame_only", "byte", 'quadrupole_moments {values,unit=1e-30 m^2} == legacy array')
+    emit("df_hypf_canon", mk(hyperfine={"values":hypf_rows, "unit":"MHz"}),
+         "df_frame_only", "byte", 'hyperfine {values,unit=MHz} == legacy array')
     emit("df_efg_canon",  mk(efg={"values":efg_rows, "unit":"Hartree/Bohr^2"}),
          "df_frame_only", "byte", 'efg {values,unit=Hartree/Bohr^2} == legacy array')
 
@@ -104,16 +104,16 @@ elif sysname == "S3":
 
     emit("df_gyro_mhzt", mk(gyros={"values":[gyro/S_GYRO], "unit":"MHz/T"}),
          "df_frame_only", "num", 'gyros in MHz/T == the same gyro in radkHz/G')
-    emit("df_eq_mbarn",  mk(eqs={"values":[eq/S_EQ], "unit":"mbarn"}),
-         "df_frame_only", "num", 'eqs in mbarn == the same eQ in 1e-30 m^2')
-    emit("df_hypf_ghz",  mk(hypf={"values":scaled(hypf_rows,S_HF), "unit":"GHz"}),
-         "df_frame_only", "num", 'hypf in GHz == the same tensors in MHz')
+    emit("df_eq_mbarn",  mk(quadrupole_moments={"values":[eq/S_EQ], "unit":"mbarn"}),
+         "df_frame_only", "num", 'quadrupole_moments in mbarn == the same eQ in 1e-30 m^2')
+    emit("df_hypf_ghz",  mk(hyperfine={"values":scaled(hypf_rows,S_HF), "unit":"GHz"}),
+         "df_frame_only", "num", 'hyperfine in GHz == the same tensors in MHz')
     emit("df_efg_va2",   mk(efg={"values":scaled(efg_rows,S_EFG), "unit":"V/angstrom^2"}),
          "df_frame_only", "num", 'efg in V/angstrom^2 == the same tensors in a.u.')
 
     # detuning : absent from this fixture, so add it in both forms at once
     det_rows = [[i, "e", 0.35*i] for i in range(1, navaax+1)]   # arbitrary, fixed
-    d_leg = copy.deepcopy(legacy); d_leg["Defect"][0]["detuning"] = det_rows
+    d_leg = copy.deepcopy(legacy); d_leg["Defect"]["species"][0]["detuning"] = det_rows
     emit("df_det_legacy", d_leg, "base", "num",
          'detuning added (legacy array) : changes the physics, its own baseline')
     emit("df_det_object", mk(detuning={"values":det_rows, "unit":"MHz"}),
@@ -179,12 +179,13 @@ elif sysname == "S5":
     emit("qdet_array", with_detuning([1000.0]), "qdet_number", "byte",
          'qubit detuning [1000] == 1000')
 
-    # A Bool may be written 0 or 1 (D18, 2026-10-02: 29 order-2 inputs write "addsubclus": 0, ignored
-    # for the default true until then). overhaus true has to change the result, 1 has to equal true.
+    # hamiltonian.common.qubit_bath_mean_field (Qubit.overhaus until A47) true has to change the result. (Qubit.overhaus
+    # could be written 1 for true; the switches of A47 are true or false only, so ovh_one went with it.)
     def with_overhaus(value):
-        d = copy.deepcopy(legacy); d["Qubit"]["overhaus"] = value; return d
-    emit("ovh_true", with_overhaus(True), "base", "differ", 'Qubit.overhaus true : read, so the result moves')
-    emit("ovh_one", with_overhaus(1), "ovh_true", "byte", 'Qubit.overhaus 1 == true')
+        d = copy.deepcopy(legacy); d.setdefault("hamiltonian", {}).setdefault("common", {})["qubit_bath_mean_field"] = value
+        return d
+    emit("ovh_true", with_overhaus(True), "base", "differ",
+         'hamiltonian.common.qubit_bath_mean_field true : read, so the result moves')
 
     # A key nobody reads inside a block is reported, not refused, unless it is one or two letters from
     # a key of the same block that is absent (D24): a note on a qubit must not stop the run, and must

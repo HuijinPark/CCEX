@@ -20,7 +20,7 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'check_gpu'))
-from benchmark import INPUTS, REPO, compare, parse_profiles
+from benchmark import INPUTS, REPO, compare, parse_profiles, FILE_KEYS, get, put
 
 # name, method folder, nstate file, sites, npulse, nstep, ranks
 CONDITIONS = [
@@ -41,19 +41,19 @@ def prepare(method, nstate, sites, npulse, nstep, directory):
     """the input, cut to the nearest sites, with every path absolute"""
     source = INPUTS/f'Diamond_NV_P1_10ppm_{method}'/'inputfiles'/f'ccein_nstate{nstate}.json'
     config = json.loads(source.read_text())
-    for key in ('qubitfile', 'gyrofile', 'avaaxfile', 'statefile', 'exstatefile'):
-        if config.get(key): config[key] = str((source.parent.parent/config[key]).resolve())
+    for key in FILE_KEYS:
+        if get(config, key): config = put(config, {key: str((source.parent.parent/get(config, key)).resolve())})
     config['bathfile'] = [str((source.parent.parent/p).resolve()) for p in config['bathfile']]
-    origin = ([float(v) for v in Path(config['qubitfile']).read_text().split()[:3]] if 'qubitfile' in config
+    origin = ([float(v) for v in Path(config['Qubit']['file']).read_text().split()[:3]] if get(config, 'Qubit.file')
               else config['Qubit']['qubit'][0]['xyz'])
     rows = Path(config['bathfile'][0]).read_text().splitlines()[1:]
     near = sorted(sorted(enumerate(rows), key=lambda r: math.dist([float(v) for v in r[1].split()[:3]], origin))[:sites])
     directory.mkdir(parents=True, exist_ok=False)
     (directory/'bath').write_text(f'{sites+1}.0 0 0 0\n'+'\n'.join(r for _, r in near)+'\n')
     radius = max(math.dist([float(v) for v in r.split()[:3]], origin) for _, r in near)+1
-    config.update(bathfile=[str(directory/'bath')], order=sites-1, rbath=radius, rdip=2*radius,
-                  npulse=npulse, nstep=nstep, profile=True, savemode='coherence')
-    config.pop('nk', None)
+    config = put(config, {'bathfile': [str(directory/'bath')], 'order': sites-1, 'rbath': radius, 'rdip': 2*radius,
+                          'pulse.count': npulse, 'nstep': nstep, 'profile': True, 'savemode': 'coherence',
+                          'max_clusters_per_order': None})
     return config
 
 

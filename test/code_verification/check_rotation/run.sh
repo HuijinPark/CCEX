@@ -118,9 +118,9 @@ write_ccein(){
 import ast, json, sys
 dest, extra = sys.argv[1], sys.argv[2]
 cfg = {
-    "method"   : "CCE",
+    "method"   : "cCCE",
     "quantity" : "coherence",
-    "qubitfile": "./inputfiles/qubit_offcenter",
+    "Qubit"    : {"file": "./inputfiles/qubit_offcenter"},
     "gyrofile" : "./inputfiles/gyro_13C",
     "bathfile" : ["./inputfiles/bath_a"],
     "order"    : 2,
@@ -129,7 +129,7 @@ cfg = {
     "rdip"     : 10,
     "deltat"   : 0.1,
     "nstep"    : 2,
-    "npulse"   : 1,
+    "pulse"    : {"count": 1},
     "nstate"   : 0,
     "seed"     : 1,
 }
@@ -217,8 +217,8 @@ fi
 
 echo
 echo "--- [P1] a defect bath : avaax assignments and per-axis detuning ---"
-# A P1 electron bath with naddspin = 0, navaax = 12, scalar per-axis detuning and a
-# FIXED avaaxfile (no RNG anywhere). The Defect section is read as written -- it is
+# A P1 electron bath with n_nuclear_spins = 0, n_configurations = 12, scalar per-axis detuning and a
+# FIXED Defect.axis_file (no RNG anywhere). The Defect section is read as written -- it is
 # expected to be in the qubit-aligned frame already -- so nothing in it may move.
 #
 # Two comparisons, because they prove different things:
@@ -229,11 +229,11 @@ echo "--- [P1] a defect bath : avaax assignments and per-axis detuning ---"
 #                                        differ; what may not differ is paxes[i] and
 #                                        the detuning[iax] table they index into.
 P1DEF="'gyrofile': './inputfiles/gyro_P1', 'bathfile': ['./inputfiles/bath_p1'],
-       'avaaxfile': './inputfiles/avaax_p1',
-       'Defect': [{'dfname': 'P1', 'apprx': False, 'naddspin': 0, 'navaax': 12,
+       'Defect': {'axis_file': './inputfiles/avaax_p1',
+                  'species': [{'name': 'P1', 'n_nuclear_spins': 0, 'n_configurations': 12,
                    'detuning': [[1,'e',1.0],[2,'e',2.0],[3,'e',3.0],[4,'e',4.0],
                                 [5,'e',5.0],[6,'e',6.0],[7,'e',7.0],[8,'e',8.0],
-                                [9,'e',9.0],[10,'e',10.0],[11,'e',11.0],[12,'e',12.0]]}]"
+                                [9,'e',9.0],[10,'e',10.0],[11,'e',11.0],[12,'e',12.0]]}]}"
 
 run_case p1_norot    "$P1DEF"
 [ $RC -eq 0 ] || fail "p1_norot run failed (rc=$RC, see $WORK/p1_norot.log)"
@@ -300,10 +300,10 @@ fi
 
 echo
 echo "--- [NV ZFS] shared D/E and tensor forms, units, frames, and legacy compatibility ---"
-# navaax is three frozen configurations here, selected deterministically as 1,2,3,... .
+# n_configurations is three frozen configurations here, selected deterministically as 1,2,3,... .
 # It is not three NV orientations: the one physical NV_0 axis belongs to the Defect.
-NVBASE="'gyrofile': './inputfiles/gyro_NV', 'bathfile': ['./inputfiles/bath_nv'],
-        'avaaxfile': './inputfiles/avaax_nv'"
+NVBASE="'gyrofile': './inputfiles/gyro_NV', 'bathfile': ['./inputfiles/bath_nv']"
+NVAX="'axis_file': './inputfiles/avaax_nv'"
 NVDET="'detuning': [[1,'e',-2.14],[2,'e',0.0],[3,'e',2.14]]"
 NVDET_MHZ_OBJ="'detuning': {'values': [[1,'e',-2.14],[2,'e',0.0],[3,'e',2.14]],
                             'unit': 'MHz'}"
@@ -316,27 +316,27 @@ NVTENSOR_FLAT="[0.0,956.6666666666666,956.6666666666666,
                 956.6666666666666,0.0,956.6666666666666,
                 956.6666666666666,956.6666666666666,0.0]"
 
-NV_DE_BATH="$NVBASE, 'Defect': [{'dfname':'NV_0','naddspin':0,'navaax':3,
+NV_DE_BATH="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
     'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET}]"
-NV_TENSOR_BATH="$NVBASE, 'Defect': [{'dfname':'NV_0','naddspin':0,'navaax':3,
+    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET}]}"
+NV_TENSOR_BATH="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
     'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'tensor':$NVTENSOR,'unit':'MHz'}, $NVDET}]"
-NV_LEGACY_BATH="$NVBASE, 'Defect': [{'dfname':'NV_0','naddspin':0,'navaax':3,
+    'zfs':{'tensor':$NVTENSOR,'unit':'MHz'}, $NVDET}]}"
+NV_LEGACY_BATH="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
     'coordinate_frame':'bath',
-    'zfs':[[1,'e',$NVTENSOR_FLAT],[2,'e',$NVTENSOR_FLAT],[3,'e',$NVTENSOR_FLAT]], $NVDET}]"
-NV_DE_GHZ="$NVBASE, 'Defect': [{'dfname':'NV_0','naddspin':0,'navaax':3,
+    'zfs':[[1,'e',$NVTENSOR_FLAT],[2,'e',$NVTENSOR_FLAT],[3,'e',$NVTENSOR_FLAT]], $NVDET}]}"
+NV_DE_GHZ="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
     'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'D':2.87,'E':0.0,'unit':'GHz'}, $NVDET}]"
-NV_DE_QUBIT="$NVBASE, 'Defect': [{'dfname':'NV_0','naddspin':0,'navaax':3,
+    'zfs':{'D':2.87,'E':0.0,'unit':'GHz'}, $NVDET}]}"
+NV_DE_QUBIT="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
     'axis':[0.0,0.0,1.0], 'coordinate_frame':'qubit',
-    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET}]"
-NV_DE_DET_MHZ="$NVBASE, 'Defect': [{'dfname':'NV_0','naddspin':0,'navaax':3,
+    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET}]}"
+NV_DE_DET_MHZ="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
     'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET_MHZ_OBJ}]"
-NV_DE_DET_GHZ="$NVBASE, 'Defect': [{'dfname':'NV_0','naddspin':0,'navaax':3,
+    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET_MHZ_OBJ}]}"
+NV_DE_DET_GHZ="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
     'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET_GHZ_OBJ}]"
+    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET_GHZ_OBJ}]}"
 
 run_case nv_de_bath     "$NV_DE_BATH, $ROT111"
 [ $RC -eq 0 ] || fail "[NV ZFS] D/E bath-frame run failed (rc=$RC, see $WORK/nv_de_bath.log)"
@@ -389,36 +389,36 @@ grep -q "zfs\[shared\]" "$WORK/nv_de_bath.log" \
     || fail "[NV ZFS] shared ZFS report is missing"
 
 echo
-echo "--- [Defect units] hypf, efg, gyros, and eqs object forms ---"
+echo "--- [Defect units] hyperfine, efg, gyros, and quadrupole_moments object forms ---"
 UNITBASE="'gyrofile':'./inputfiles/gyro_unit_defect',
-          'bathfile':['./inputfiles/bath_unit_defect'],
-          'avaaxfile':'./inputfiles/avaax_unit_defect', 'order':1"
-UNITPREFIX="$UNITBASE, 'Defect':[{'dfname':'DUT','apprx':True,'naddspin':1,
-    'types':['14N'],'spins':[1.0],'navaax':1,'coordinate_frame':'qubit',
-    'rxyzs':[[1,'14N',[0.1,0.0,0.0]]],"
-HYPF_MHZ="'hypf':{'values':[[1,'14N',[[81.312,0.0,0.0],[0.0,81.312,0.0],[0.0,0.0,114.0264]]]],'unit':'MHz'}"
-HYPF_GHZ="'hypf':{'values':[[1,'14N',[[0.081312,0.0,0.0],[0.0,0.081312,0.0],[0.0,0.0,0.1140264]]]],'unit':'GHz'}"
+          'bathfile':['./inputfiles/bath_unit_defect'], 'order':1"
+UNITAX="'axis_file':'./inputfiles/avaax_unit_defect'"
+UNITPREFIX="$UNITBASE, 'Defect':{$UNITAX, 'species':[{'name':'DUT','n_nuclear_spins':1,
+    'types':['14N'],'spins':[1.0],'n_configurations':1,'coordinate_frame':'qubit',
+    'nuclear_positions':[[1,'14N',[0.1,0.0,0.0]]],"
+HYPF_MHZ="'hyperfine':{'values':[[1,'14N',[[81.312,0.0,0.0],[0.0,81.312,0.0],[0.0,0.0,114.0264]]]],'unit':'MHz'}"
+HYPF_GHZ="'hyperfine':{'values':[[1,'14N',[[0.081312,0.0,0.0],[0.0,0.081312,0.0],[0.0,0.0,0.1140264]]]],'unit':'GHz'}"
 EFG_AU="'efg':{'values':[[1,'14N',[[0.521910,0.0,0.0],[0.0,0.522771,-0.000086],[0.0,-0.000086,-1.044681]]]],'unit':'Hartree/Bohr^2'}"
 EFG_VA2="'efg':{'values':[[1,'14N',[[50.715887885787069,0.0,0.0],[0.0,50.79955437899406,-0.0083569319579576713],[0.0,-0.0083569319579576713,-101.51544226478113]]]],'unit':'V/angstrom^2'}"
 GYRO_INTERNAL="'gyros':{'values':[1.9337792],'unit':'radkHz/G'}"
 GYRO_MHZT="'gyros':{'values':[3.0777051852829089],'unit':'MHz/T'}"
-EQ_INTERNAL="'eqs':{'values':[2.044],'unit':'1e-30 m^2'}"
-EQ_MBARN="'eqs':{'values':[20.44],'unit':'mbarn'}"
+EQ_INTERNAL="'quadrupole_moments':{'values':[2.044],'unit':'1e-30 m^2'}"
+EQ_MBARN="'quadrupole_moments':{'values':[20.44],'unit':'mbarn'}"
 
 run_case unit_legacy "$UNITPREFIX
-    'gyros':[1.9337792], 'eqs':[2.044],
-    'hypf':[[1,'14N',[81.312,0.0,0.0,0.0,81.312,0.0,0.0,0.0,114.0264]]],
-    'efg':[[1,'14N',[0.521910,0.0,0.0,0.0,0.522771,-0.000086,0.0,-0.000086,-1.044681]]]}]"
+    'gyros':[1.9337792], 'quadrupole_moments':[2.044],
+    'hyperfine':[[1,'14N',[81.312,0.0,0.0,0.0,81.312,0.0,0.0,0.0,114.0264]]],
+    'efg':[[1,'14N',[0.521910,0.0,0.0,0.0,0.522771,-0.000086,0.0,-0.000086,-1.044681]]]}]}"
 [ $RC -eq 0 ] || fail "[Defect units] legacy run failed (rc=$RC)"
-run_case unit_objects "$UNITPREFIX $GYRO_INTERNAL, $EQ_INTERNAL, $HYPF_MHZ, $EFG_AU}]"
+run_case unit_objects "$UNITPREFIX $GYRO_INTERNAL, $EQ_INTERNAL, $HYPF_MHZ, $EFG_AU}]}"
 [ $RC -eq 0 ] || fail "[Defect units] canonical object run failed (rc=$RC)"
-run_case unit_hypf_ghz "$UNITPREFIX $GYRO_INTERNAL, $EQ_INTERNAL, $HYPF_GHZ, $EFG_AU}]"
+run_case unit_hypf_ghz "$UNITPREFIX $GYRO_INTERNAL, $EQ_INTERNAL, $HYPF_GHZ, $EFG_AU}]}"
 [ $RC -eq 0 ] || fail "[Defect units] hypf GHz run failed (rc=$RC)"
-run_case unit_gyro_mhzt "$UNITPREFIX $GYRO_MHZT, $EQ_INTERNAL, $HYPF_MHZ, $EFG_AU}]"
+run_case unit_gyro_mhzt "$UNITPREFIX $GYRO_MHZT, $EQ_INTERNAL, $HYPF_MHZ, $EFG_AU}]}"
 [ $RC -eq 0 ] || fail "[Defect units] gyro MHz/T run failed (rc=$RC)"
-run_case unit_eq_mbarn "$UNITPREFIX $GYRO_INTERNAL, $EQ_MBARN, $HYPF_MHZ, $EFG_AU}]"
+run_case unit_eq_mbarn "$UNITPREFIX $GYRO_INTERNAL, $EQ_MBARN, $HYPF_MHZ, $EFG_AU}]}"
 [ $RC -eq 0 ] || fail "[Defect units] eqs mbarn run failed (rc=$RC)"
-run_case unit_efg_va2 "$UNITPREFIX $GYRO_INTERNAL, $EQ_INTERNAL, $HYPF_MHZ, $EFG_VA2}]"
+run_case unit_efg_va2 "$UNITPREFIX $GYRO_INTERNAL, $EQ_INTERNAL, $HYPF_MHZ, $EFG_VA2}]}"
 [ $RC -eq 0 ] || fail "[Defect units] EFG V/angstrom^2 run failed (rc=$RC)"
 
 compare_numeric_outputs unit_legacy unit_objects "[Defect units] canonical object forms preserve legacy output"
@@ -452,24 +452,35 @@ hex_case(){
 import ast, json, sys
 dest, hexdir, outfile, hf, qd, extra = sys.argv[1:7]
 cfg = {
-    "method": "CCE", "quantity": "coherence",
-    "qubitfile": hexdir + "/defect",
+    "method": "cCCE", "quantity": "coherence",
+    "Qubit": {"file": hexdir + "/defect", "alphams": 1, "betams": 0},
     "gyrofile" : hexdir + "/../ensemble_data/Gyro_h_BN",
     "bathfile" : [hexdir + "/bath_1"],
     "order": 1, "bfield": 30000, "rbath": 8, "rdip": 8,
-    "deltat": 0.002, "nstep": 2, "npulse": 1, "nstate": 0, "seed": 1,
-    "qalphams": 1, "qbetams": 0,
-    "hf_readmode": int(hf), "qd_readmode": int(qd),
+    "deltat": 0.002, "nstep": 2, "pulse": {"count": 1}, "nstate": 0, "seed": 1,
     "outfile": outfile,
 }
+# the readmodes of the code: hyperfine 0 point/no contact, 1 point+contact, 2 dft, 3 dft+contact; quadrupole 0 off,
+# 2 plain, 3 strained, 4 bubble (the hamiltonian block, A47)
+common = {}
 if int(hf) != 0:
-    cfg.update({"hf_tensorfile": hexdir + "/Afile_vertex", "hf_cutoff": 0, "hf_ignore_oor": 0})
+    common["hyperfine"] = {"dipole": "dft" if int(hf) >= 2 else "point", "contact": int(hf) in (1, 3),
+                           "file": hexdir + "/Afile_vertex", "missing_row": "stop"}
+    cfg["hf_cutoff"] = 0
 if int(qd) != 0:
-    cfg.update({"qd_tensorfile": hexdir + "/Qfile_vertex",
-                "qd_tensorfile_woqubit": hexdir + "/Qfile_vertex"})
+    common["quadrupole"] = {"structure": {2: "plain", 3: "strained", 4: "bubble"}[int(qd)],
+                            "file": hexdir + "/Qfile_vertex"}
+    if int(qd) != 2:
+        common["quadrupole"]["file_without_defect"] = hexdir + "/Qfile_vertex"
+if common:
+    cfg["hamiltonian"] = {"common": common}
+def merge(into, extra):     # a block of the overrides changes the keys it names
+    for k, v in extra.items():
+        if isinstance(v, dict) and isinstance(into.get(k), dict): merge(into[k], v)
+        else: into[k] = v
 if extra.strip():
     # the overrides arrive as a bare "key: value, ..." fragment, like run_case's
-    cfg.update(ast.literal_eval("{" + extra + "}"))
+    merge(cfg, ast.literal_eval("{" + extra + "}"))
 json.dump(cfg, open(dest, "w"), indent=4)
 PYEOF
     "$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/$name.json" -v > "$WORK/$name.log" 2>&1
@@ -487,10 +498,10 @@ hex_case hex_hf2_rotq  2 0 "$HEXROT_HFQ" ; [ $RC -eq 0 ] || fail "hex_hf2_rotq f
 hex_case hex_qd2_norot 0 2 ""            ; [ $RC -eq 0 ] || fail "hex_qd2_norot failed (rc=$RC)"
 hex_case hex_qd2_rot   0 2 "$HEXROT_QD"  ; [ $RC -eq 0 ] || fail "hex_qd2_rot failed (rc=$RC, see $WORK/hex_qd2_rot.log)"
 
-# qd_readmode 3/4 need both the defect and no-defect files. Use one bath spin that
+# quadrupole strained/bubble (qd_readmode 3/4) need both the defect and no-defect files. Use one bath spin that
 # matches the defect file so this remains a fast reader test, and move every vertex
 # in the no-defect copy by +100 A along x. The two v1 reports then prove that the
-# second boundary was read from qd_tensorfile_woqubit rather than from qd_tensorfile
+# second boundary was read from quadrupole.file_without_defect rather than from quadrupole.file
 # a second time.
 python3 - "$WORK/qd34_bath" "$HEX/Qfile_vertex" "$WORK/Qfile_wo_shifted" <<'PYEOF'
 import re, sys
@@ -512,8 +523,8 @@ PYEOF
 for qdmode in 3 4; do
     hex_case "hex_qd${qdmode}_files" 0 "$qdmode" \
         "'bathfile': ['$WORK/qd34_bath'],
-         'qd_tensorfile_woqubit': '$WORK/Qfile_wo_shifted',
-         'qd_cellpara': [100.0,100.0,100.0]"
+         'hamiltonian': {'common': {'quadrupole': {'file_without_defect': '$WORK/Qfile_wo_shifted',
+                                                   'cell': [100.0,100.0,100.0]}}}"
     if [ $RC -ne 0 ]; then
         fail "hex_qd${qdmode}_files failed (rc=$RC, see $WORK/hex_qd${qdmode}_files.log)"
         continue
@@ -528,7 +539,7 @@ ok = len(xs) >= 4 and math.isclose(xs[3] - xs[0], 100.0, abs_tol=2e-6)
 sys.exit(0 if ok else 1)
 PYEOF
     if [ $? -eq 0 ]; then
-        pass "[qd_readmode=$qdmode] woDef boundary comes from qd_tensorfile_woqubit"
+        pass "[qd_readmode=$qdmode] woDef boundary comes from quadrupole.file_without_defect"
     else
         fail "[qd_readmode=$qdmode] woDef boundary did not come from its own file"
     fi
@@ -579,65 +590,65 @@ expect_fail(){
 }
 
 expect_fail defect_zfs_nonzero_E \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'axis':[1,1,1],'coordinate_frame':'bath','zfs':{'D':2870,'E':5,'unit':'MHz'}}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'axis':[1,1,1],'coordinate_frame':'bath','zfs':{'D':2870,'E':5,'unit':'MHz'}}]}" \
     "zfs.E is non-zero"
 expect_fail defect_zfs_missing_axis \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'coordinate_frame':'bath','zfs':{'D':2870,'unit':'MHz'}}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'coordinate_frame':'bath','zfs':{'D':2870,'unit':'MHz'}}]}" \
     "axis is missing"
 expect_fail defect_zfs_missing_frame \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'zfs':{'D':2870,'unit':'MHz'}}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'zfs':{'D':2870,'unit':'MHz'}}]}" \
     "object-form zfs but has no coordinate_frame"
 expect_fail defect_axis_missing_frame \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'axis':[1,1,1]}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'axis':[1,1,1]}]}" \
     "axis is present but coordinate_frame is missing"
 expect_fail defect_zfs_bad_unit \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'axis':[1,1,1],'coordinate_frame':'bath','zfs':{'D':2870,'unit':'cm-1'}}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'axis':[1,1,1],'coordinate_frame':'bath','zfs':{'D':2870,'unit':'cm-1'}}]}" \
     "Supported frequency units are Hz, kHz, MHz and GHz"
 expect_fail defect_zfs_bad_tensor \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'coordinate_frame':'bath','zfs':{'tensor':[[1,0],[0,1]],'unit':'MHz'}}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'coordinate_frame':'bath','zfs':{'tensor':[[1,0],[0,1]],'unit':'MHz'}}]}" \
     "must be a flat 9-number or nested 3x3 array"
 expect_fail defect_detuning_bad_unit \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'detuning':{'values':[[1,'e',1.0]],'unit':'cm-1'}}]" \
-    "Defect\[NV_0\].detuning.unit"
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'detuning':{'values':[[1,'e',1.0]],'unit':'cm-1'}}]}" \
+    "Defect.species\[NV_0\].detuning.unit"
 expect_fail defect_detuning_missing_values \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'detuning':{'unit':'MHz'}}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'detuning':{'unit':'MHz'}}]}" \
     "detuning.values must be an indexed array"
 expect_fail defect_detuning_bad_index \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'detuning':{'values':[[4,'e',1.0]],'unit':'MHz'}}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'detuning':{'values':[[4,'e',1.0]],'unit':'MHz'}}]}" \
     "configuration must be an integer in 1..3"
 expect_fail defect_detuning_bad_spin \
-    "$NVBASE, 'Defect':[{'dfname':'NV_0','naddspin':0,'navaax':3,
-      'detuning':{'values':[[1,'n',1.0]],'unit':'MHz'}}]" \
+    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'detuning':{'values':[[1,'n',1.0]],'unit':'MHz'}}]}" \
     "spin label must be .e."
 expect_fail defect_gyro_bad_unit \
-    "$UNITPREFIX 'gyros':{'values':[1.0],'unit':'rpm/G'}}]" \
+    "$UNITPREFIX 'gyros':{'values':[1.0],'unit':'rpm/G'}}]}" \
     "gyros.unit"
 expect_fail defect_gyro_bad_count \
-    "$UNITPREFIX 'gyros':{'values':[1.0,2.0],'unit':'radkHz/G'}}]" \
+    "$UNITPREFIX 'gyros':{'values':[1.0,2.0],'unit':'radkHz/G'}}]}" \
     "gyros.values must be an array of exactly 1 numbers"
 expect_fail defect_eq_bad_unit \
-    "$UNITPREFIX $GYRO_INTERNAL, 'eqs':{'values':[2.0],'unit':'C m^2'}}]" \
-    "eqs.unit"
+    "$UNITPREFIX $GYRO_INTERNAL, 'quadrupole_moments':{'values':[2.0],'unit':'C m^2'}}]}" \
+    "quadrupole_moments.unit"
 expect_fail defect_hypf_bad_unit \
-    "$UNITPREFIX $GYRO_INTERNAL, 'hypf':{'values':[[1,'14N',[1,0,0,0,1,0,0,0,1]]],'unit':'Tesla'}}]" \
-    "hypf.unit"
+    "$UNITPREFIX $GYRO_INTERNAL, 'hyperfine':{'values':[[1,'14N',[1,0,0,0,1,0,0,0,1]]],'unit':'Tesla'}}]}" \
+    "hyperfine.unit"
 expect_fail defect_efg_bad_unit \
-    "$UNITPREFIX $GYRO_INTERNAL, 'efg':{'values':[[1,'14N',[1,0,0,0,1,0,0,0,1]]],'unit':'MHz'}}]" \
+    "$UNITPREFIX $GYRO_INTERNAL, 'efg':{'values':[[1,'14N',[1,0,0,0,1,0,0,0,1]]],'unit':'MHz'}}]}" \
     "efg.unit"
 expect_fail defect_hypf_missing_frame \
-    "$UNITBASE, 'Defect':[{'dfname':'DUT','naddspin':1,'types':['14N'],'spins':[1.0],
-      'gyros':[1.9337792],'navaax':1,
-      'hypf':{'values':[[1,'14N',[1,0,0,0,1,0,0,0,1]]],'unit':'MHz'}}]" \
-    "object-form hypf but has no coordinate_frame"
+    "$UNITBASE, 'Defect':{$UNITAX, 'species':[{'name':'DUT','n_nuclear_spins':1,'types':['14N'],'spins':[1.0],
+      'gyros':[1.9337792],'n_configurations':1,
+      'hyperfine':{'values':[[1,'14N',[1,0,0,0,1,0,0,0,1]]],'unit':'MHz'}}]}" \
+    "object-form hyperfine but has no coordinate_frame"
 
 expect_fail zeronorm \
     "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [0.0,0.0,0.0]}" \
@@ -680,53 +691,47 @@ expect_fail notbool \
 # The tensor frame has no default: not saying it is the one mistake that cannot be
 # caught downstream, because a missed or doubled rotation still looks like a tensor.
 expect_fail hfmode_noframe \
-    "'hf_readmode': 2, 'hf_tensorfile': './inputfiles/gyro_13C', $ROT111" \
+    "'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C'}}}, $ROT111" \
     "hf_tensor_frame is not set"
 expect_fail qdmode_noframe \
-    "'qd_readmode': 2, 'qd_tensorfile': './inputfiles/gyro_13C', $ROT111" \
+    "'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C'}}}, $ROT111" \
     "qd_tensor_frame is not set"
 expect_fail hfmode_badframe \
-    "'hf_readmode': 2, 'hf_tensorfile': './inputfiles/gyro_13C', 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'crystal'}" \
+    "'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'crystal'}" \
     "hf_tensor_frame must be .bath. or .qubit."
 expect_fail qdmode_badframe \
-    "'qd_readmode': 2, 'qd_tensorfile': './inputfiles/gyro_13C', 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'qd_tensor_frame': 'lab'}" \
+    "'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'qd_tensor_frame': 'lab'}" \
     "qd_tensor_frame must be .bath. or .qubit."
 
-# Out-of-range hf_readmode is caught where it is read, before any file is opened.
-# (The HYPF_UNSET sweep at the end of readHftensorfile stays as an internal invariant
-# and is no longer reachable from input -- which is the point of checking here.)
-expect_fail hf_readmode_range \
-    "'hf_readmode': 7, 'hf_tensorfile': './inputfiles/gyro_13C'" \
-    "current hf_readmode"
+# An unknown hyperfine.dipole is caught where it is read, before any file is opened. (The out-of-range
+# hf_readmode of the old keys cannot be written since A47; the HYPF_UNSET sweep at the end of readHftensorfile stays
+# as an internal invariant and is not reachable from input -- which is the point of checking here.)
+expect_fail hf_dipole_bad \
+    "'hamiltonian': {'common': {'hyperfine': {'dipole': 'x', 'file': './inputfiles/gyro_13C'}}}" \
+    "hamiltonian.common.hyperfine.dipole must be"
 
-# qd_readmode is not a range either -- 1 was removed, so the supported set is 0, 2, 3, 4.
-# An unsupported value used to slip through and leave the run with no quadrupole
-# interaction at all, silently, so both of these must stop at option-parse time and
-# never reach readQdtensorfile.
-expect_fail qd_readmode_range \
-    "'qd_readmode': 9, 'qd_tensorfile': './inputfiles/gyro_13C'" \
-    "current qd_readmode"
-grep -q "Read the Quadrupole interaction" "$WORK/qd_readmode_range.log" \
-    && fail "[qd_readmode_range] the run reached readQdtensorfile before failing" \
-    || pass "[qd_readmode_range] rejected before readQdtensorfile ran"
+# An unknown quadrupole structure or value used to slip through (as qd_readmode 9) and leave the run with no
+# quadrupole interaction at all, silently, so both of these must stop at option-parse time and never reach
+# readQdtensorfile. (The removed qd_readmode 1 cannot be written since A47; an unknown string takes its place.)
+expect_fail qd_structure_bad \
+    "'hamiltonian': {'common': {'quadrupole': {'structure': 'x', 'file': './inputfiles/gyro_13C'}}}" \
+    "hamiltonian.common.quadrupole.structure must be"
+grep -q "Read the Quadrupole interaction" "$WORK/qd_structure_bad.log" \
+    && fail "[qd_structure_bad] the run reached readQdtensorfile before failing" \
+    || pass "[qd_structure_bad] rejected before readQdtensorfile ran"
 
-expect_fail qd_readmode_removed \
-    "'qd_readmode': 1, 'qd_tensorfile': './inputfiles/gyro_13C'" \
-    "supported values are 0, 2, 3 and 4"
-grep -q "Read the Quadrupole interaction" "$WORK/qd_readmode_removed.log" \
-    && fail "[qd_readmode_removed] the run reached readQdtensorfile before failing" \
-    || pass "[qd_readmode_removed] mode 1 rejected before readQdtensorfile ran"
+expect_fail qd_value_bad \
+    "'hamiltonian': {'common': {'quadrupole': 'on'}}" \
+    "hamiltonian.common.quadrupole must be \"off\" or an object"
+grep -q "Read the Quadrupole interaction" "$WORK/qd_value_bad.log" \
+    && fail "[qd_value_bad] the run reached readQdtensorfile before failing" \
+    || pass "[qd_value_bad] an unknown quadrupole value rejected before readQdtensorfile ran"
 
-# Two qubits: given through the Qubit section, so qubitfile has to go away.
+# Two qubits: given through Qubit.qubit, which replaces the base's Qubit.file.
 write_ccein "$WORK/multiqubit.json" "{'outfile': '$WORK/multiqubit', $ROT111,
-    'Qubit': {'nqubit': 2, 'qubit': [
+    'Qubit': {'qubit': [
         {'name':'q0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},
         {'name':'q1','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,40.0],'alphams':1.0,'betams':0.0}]}}"
-python3 - "$WORK/multiqubit.json" <<'PY'
-import json, sys
-p = sys.argv[1]; cfg = json.load(open(p)); cfg.pop("qubitfile", None)
-json.dump(cfg, open(p,"w"), indent=4)
-PY
 "$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/multiqubit.json" -v > "$WORK/multiqubit.log" 2>&1
 rc=$?
 if [ $rc -eq 0 ]; then
@@ -758,7 +763,7 @@ grep -q "is deprecated" "$WORK/newname.log" \
     && fail "[newname] the new name wrongly warns about deprecation" \
     || pass "[newname] the new name warns about nothing"
 
-# The reference qubit: a single qubit from "qubitfile" is named q0, so naming it
+# The reference qubit: a single qubit from "Qubit.file" is named q0, so naming it
 # explicitly must change nothing at all.
 run_case refq0 "$ROT111, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'q0'}"
 [ $RC -eq 0 ] || fail "refq0 run failed (rc=$RC)"
@@ -883,8 +888,8 @@ cfg = {
     "method": "gCCE", "quantity": "coherence",
     "gyrofile": "./inputfiles/gyro_13C", "bathfile": ["./inputfiles/bath_a"],
     "order": 1, "bfield": [0.0, 0.0, 500.0], "rbath": 10, "rdip": 10,
-    "deltat": 0.1, "nstep": 2, "npulse": 1, "nstate": 1, "seed": 1,
-    "Qubit": {"nqubit": 2, "qubit": [
+    "deltat": 0.1, "nstep": 2, "pulse": {"count": 1}, "nstate": 1, "seed": 1,
+    "Qubit": {"qubit": [
         {"name": "NV0", "spin": 1.0, "gyro": -17608.597050,
          "xyz": [10.0, 20.0, 30.0], "alphams": 1.0, "betams": 0.0},
         {"name": "NV1", "spin": 1.0, "gyro": -17608.597050,
@@ -968,7 +973,7 @@ ZFS0="[[2870.0,0.0,0.0],[0.0,2870.0,0.0],[0.0,0.0,-5740.0]]"
 ZFS1="[[1900.0,120.0,-80.0],[120.0,2100.0,45.0],[-80.0,45.0,-4000.0]]"
 PAIR="[[12.0,3.0,-5.0],[3.0,-7.0,2.0],[-5.0,2.0,-5.0]]"
 
-MQ_QUBITS_PREFIX="'Qubit': {'nqubit': 2, 'qubit': [
+MQ_QUBITS_PREFIX="'Qubit': {'qubit': [
     {'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},
     {'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]"
 
@@ -979,11 +984,11 @@ IM_QUBIT="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','tensor':$Z
                      {'between':['NV1','NV1'],'tensor_frame':'qubit','tensor':$ZFS1},
                      {'between':['NV0','NV1'],'tensor_frame':'qubit','tensor':$PAIR}]"
 
-mq_case mq_im_norot   "'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
+mq_case mq_im_norot   "'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
 [ $RC -eq 0 ] || fail "mq_im_norot run failed (rc=$RC)"
-mq_case mq_im_bath    "$MQROT, 'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
+mq_case mq_im_bath    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
 [ $RC -eq 0 ] || fail "mq_im_bath run failed (rc=$RC, see $WORK/mq_im_bath.log)"
-mq_case mq_im_qubit   "$MQROT, 'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_QUBIT}"
+mq_case mq_im_qubit   "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_QUBIT}"
 [ $RC -eq 0 ] || fail "mq_im_qubit run failed (rc=$RC, see $WORK/mq_im_qubit.log)"
 
 # Qubit.intmap historically means kHz when unit is absent. Exercise every supported
@@ -1052,7 +1057,7 @@ python3 check_tensors.py "$WORK/mq_norot.log" "$WORK/mq_rot.log" \
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 echo "  [D,G,H] validation"
-MQ2="'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]"
+MQ2="'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]"
 
 # mq_expect_fail <name> <extra> <needle>
 mq_expect_fail(){
@@ -1075,7 +1080,7 @@ mq_expect_fail(){
 ROTNOFRAME="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0'}"
 
 mq_expect_fail mq_xyz_string \
-    "$MQROT, 'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,'41'],'alphams':1.0,'betams':0.0}]}" \
+    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,'41'],'alphams':1.0,'betams':0.0}]}" \
     "must be a number"
 
 mq_expect_fail mq_noposframe "$ROTNOFRAME" \
@@ -1093,7 +1098,7 @@ mq_expect_fail mq_refmissing \
     "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV9', 'qubit_position_frame': 'bath'}" \
     "is not one of the qubits"
 mq_expect_fail mq_dupname \
-    "$MQROT, 'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]}" \
+    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]}" \
     "share the name"
 
 mq_expect_fail mq_im_noframe \
@@ -1114,11 +1119,11 @@ mq_expect_fail mq_im_unit_notstring \
     ".unit must be a string"
 
 mq_expect_fail mq_hfmode \
-    "$MQROT, 'hf_readmode': 2, 'hf_tensorfile': './inputfiles/gyro_13C', 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath', 'hf_tensor_frame': 'bath'}" \
-    "hf_readmode = 2 with nqubit = 2 is not supported"
+    "$MQROT, 'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath', 'hf_tensor_frame': 'bath'}" \
+    "a hyperfine tensor file (hamiltonian.common.hyperfine) with 2 qubits is not supported"
 mq_expect_fail mq_qdmode \
-    "$MQROT, 'qd_readmode': 2, 'qd_tensorfile': './inputfiles/gyro_13C', 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath', 'qd_tensor_frame': 'bath'}" \
-    "qd_readmode = 2 with nqubit = 2 is not supported"
+    "$MQROT, 'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath', 'qd_tensor_frame': 'bath'}" \
+    "a quadrupole tensor file (hamiltonian.common.quadrupole) with 2 qubits is not supported"
 
 echo
 echo "--- [A/B] hand-transformed input vs automatic rotation ---"
@@ -1161,9 +1166,8 @@ python3 make_manual_frame.py --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 $QR0 \
     --tensor 12 bath "$HEX/Qfile_vertex" "$WORK/ab/Qfile_qframe" | sed 's/^/  /'
 
 hex_case ab/A2 2 2 "'bathfile': ['$WORK/ab/bath_1_qframe'],
-    'hf_tensorfile': '$WORK/ab/Afile_qframe',
-    'qd_tensorfile': '$WORK/ab/Qfile_qframe',
-    'qd_tensorfile_woqubit': '$WORK/ab/Qfile_qframe'"
+    'hamiltonian': {'common': {'hyperfine': {'file': '$WORK/ab/Afile_qframe'},
+                               'quadrupole': {'file': '$WORK/ab/Qfile_qframe'}}}"
 rcA=$RC
 hex_case ab/B2 2 2 "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'bath', 'qd_tensor_frame': 'bath'}"
 rcB=$RC
@@ -1182,13 +1186,13 @@ echo "  [A/B-3] hf_readmode=1 : the file supplies only the isotropic Fermi conta
 python3 make_manual_frame.py --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 $QR0 \
     --tensor 13 qubit "$HEX/Afile_vertex" "$WORK/ab/Afile_poskept" | sed 's/^/  /'
 
-hex_case ab/A3 1 0 "'bathfile': ['$WORK/ab/bath_1_qframe'], 'hf_tensorfile': '$WORK/ab/Afile_qframe'"
+hex_case ab/A3 1 0 "'bathfile': ['$WORK/ab/bath_1_qframe'], 'hamiltonian': {'common': {'hyperfine': {'file': '$WORK/ab/Afile_qframe'}}}"
 rcA=$RC
 hex_case ab/B3 1 0 "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}"
 rcB=$RC
 [ $rcA -eq 0 ] && [ $rcB -eq 0 ] || fail "[A/B-3] a run failed (A=$rcA B=$rcB)"
 
-grep -q "is not applicable at hf_readmode = 1" "$WORK/ab/B3.log" \
+grep -q "is not applicable to hyperfine dipole point with contact true" "$WORK/ab/B3.log" \
     && fail "[A/B-3] hf_tensor_frame was reported as given, but it was omitted" \
     || pass "[A/B-3] hf_tensor_frame is not required at hf_readmode = 1"
 
@@ -1201,7 +1205,7 @@ if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 hex_case ab/B3q 1 0 "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'qubit'}"
 [ $RC -eq 0 ] || fail "[A/B-3] the hf_tensor_frame=qubit run failed (rc=$RC)"
 
-grep -q "is not applicable at hf_readmode = 1" "$WORK/ab/B3q.log" \
+grep -q "is not applicable to hyperfine dipole point with contact true" "$WORK/ab/B3q.log" \
     && pass "[A/B-3] hf_tensor_frame=qubit at readmode 1 is reported as not applicable" \
     || fail "[A/B-3] no note that hf_tensor_frame does not apply at readmode 1"
 
@@ -1216,7 +1220,7 @@ echo "  [A/B-4] hf_readmode=2 and 3 with hf_tensor_frame=qubit"
 # computational, so they are copied across unrotated -- only the position columns and
 # the boundary vertices move, because A's bath has moved.
 for M in 2 3; do
-    hex_case "ab/A4m$M" $M 0 "'bathfile': ['$WORK/ab/bath_1_qframe'], 'hf_tensorfile': '$WORK/ab/Afile_poskept'"
+    hex_case "ab/A4m$M" $M 0 "'bathfile': ['$WORK/ab/bath_1_qframe'], 'hamiltonian': {'common': {'hyperfine': {'file': '$WORK/ab/Afile_poskept'}}}"
     rcA=$RC
     hex_case "ab/B4m$M" $M 0 "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'qubit'}"
     rcB=$RC
@@ -1270,8 +1274,8 @@ cfg = {
     "method": "gCCE", "quantity": "coherence",
     "gyrofile": "./inputfiles/gyro_13C", "bathfile": [bathfile],
     "order": 1, "bfield": [0.0, 0.0, 500.0], "rbath": 10, "rdip": 10,
-    "deltat": 0.1, "nstep": 2, "npulse": 1, "nstate": 1, "seed": 1,
-    "Qubit": {"nqubit": 2, "qubit": [
+    "deltat": 0.1, "nstep": 2, "pulse": {"count": 1}, "nstate": 1, "seed": 1,
+    "Qubit": {"qubit": [
         {"name": "NV0", "spin": 1.0, "gyro": -17608.597050,
          "xyz": rot_pos([10.0,20.0,30.0]), "alphams": 1.0, "betams": 0.0},
         {"name": "NV1", "spin": 1.0, "gyro": -17608.597050,
@@ -1286,7 +1290,7 @@ json.dump(cfg, open(dest, "w"), indent=4)
 PYEOF
 "$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/ab/A5.json" -v > "$WORK/ab/A5.log" 2>&1
 rcA=$?
-mq_case ab/B5 "$MQROT, 'Qubit': {'nqubit': 2, 'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
+mq_case ab/B5 "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
 rcB=$RC
 [ $rcA -eq 0 ] && [ $rcB -eq 0 ] || fail "[A/B-5] a run failed (A=$rcA B=$rcB)"
 

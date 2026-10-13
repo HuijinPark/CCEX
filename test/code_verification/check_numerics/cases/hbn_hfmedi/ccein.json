@@ -1,7 +1,28 @@
 {
-  "method": "CCE",
+  "method": "cCCE",
   "quantity": "coherence",
-  "qubitfile": "../../inputs/hbn/bath_hBN_VB_flat_Defect",
+  "Qubit": {
+    "file": "../../inputs/hbn/bath_hBN_VB_flat_Defect",
+    "zfs": [
+      [
+        -1080000,
+        0,
+        0
+      ],
+      [
+        0,
+        -1180000,
+        0
+      ],
+      [
+        0,
+        0,
+        2320000
+      ]
+    ],
+    "alphams": 1,
+    "betams": 0
+  },
   "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
   "bathfile": [
     "../../inputs/hbn/bath_hBN_VB_flat_1"
@@ -13,39 +34,21 @@
   "deltat": 5e-06,
   "nstep": 50,
   "nstate": 0,
-  "qzfs": [
-    [
-      -1080000,
-      0,
-      0
-    ],
-    [
-      0,
-      -1180000,
-      0
-    ],
-    [
-      0,
-      0,
-      2320000
-    ]
-  ],
-  "hfmedi": true,
-  "qalphams": 1,
-  "qbetams": 0,
-  "npulse": 1,
-  "hf_readmode": 3,
-  "hf_tensorfile": "../../inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
-  "hf_ignore_oor": 0,
-  "DefectTotSpin": 1.0,
-  "CorrTotSpin": 0.0,
-  "qd_readmode": 2,
-  "qd_tensorfile": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE",
-  "qd_tensorfile_woqubit": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE",
-  "qd_cellpara": [
-    0.0,
-    0.0,
-    0.0
-  ],
+  "hamiltonian": {
+    "common": {
+      "hyperfine": {
+        "dipole": "dft",
+        "contact": true,
+        "file": "../../inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
+        "missing_row": "stop"
+      },
+      "quadrupole": {
+        "structure": "plain",
+        "file": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE"
+      }
+    },
+    "cCCE": {"hfmedi": true}
+  },
+  "pulse": {"count": 1},
   "seed": 19
 }

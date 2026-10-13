@@ -38,8 +38,8 @@ def main():
 
     # Keep the fixture's absolute file paths while changing only the sequence.
     config=json.loads((root/'nstate1_pulses3/cpu/input.json').read_text())
-    config.update(pulsename='manual',sequence=[['1/8','X',180],['2/8','Y',180],
-                                             ['3/8','X',180],['2/8','I',0]])
+    config['pulse'].update(name='manual',sequence=[['1/8','X',180],['2/8','Y',180],
+                                                 ['3/8','X',180],['2/8','I',0]])
     source=root/'manual.json'
     source.write_text(json.dumps(config))
     args.pulses=None

@@ -14,11 +14,16 @@ the configurations. 12 s for the three.
 ```
 {
     # Config - Method 
-    "method"        : "CCE", 
+    "method"        : "cCCE", 
     "quantity"      : "coherence",
     
-    # Config - File
-    "qubitfile"     :  "../bath/10ppm/bath_DiaVp_10ppm_Defect",
+    "Qubit"         : {
+        # Config - File
+        "file"          :  "../bath/10ppm/bath_DiaVp_10ppm_Defect",
+        # Qubit
+        "alphams"      : -1,
+        "betams"       : 0
+    },
     "gyrofile"      :  "../bath/DiaVp_gyro",
     "bathfile"      : ["../bath/10ppm/bath_DiaVp_10ppm_"],
   #"avaaxfile"     :  "Random",
@@ -31,21 +36,16 @@ the configurations. 12 s for the three.
     "rbath"         : 370,
     "rdip"          : 330,
     "deltat"        : 0.00003,
-    "nstep"         : 300,  
-
-    # Qubit 
-    "qalphams"     : -1,
-    "qbetams"      : 0,
+    "nstep"         : 300,
 
     # Cluster
-    "addsubclus"  : 0, # true / false
-    "nk"          : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
+    "add_subclusters" : false, # true / false
+    "max_clusters_per_order" : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
 
     # Pulse
-    "npulse"      : 1,
+    "pulse"         : {"count": 1},
 
-    # Config - Spin tensor
-    "hf_readmode"   : 0, 
+    # Config - Spin tensor 
 #  "hf_tensorfile" : "0",
 #  "qd_readmode"   : 0,
 

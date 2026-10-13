@@ -13,11 +13,13 @@ adaptive::Value context_value() {
     adaptive::Value config = adaptive::Value::object();
     config.set("nstep", adaptive::Value::integer(static_cast<long long>(3)));
     config.set("deltat", adaptive::Value::number(0.01));
-    config.set("method", adaptive::Value::text("cce"));
+    config.set("method", adaptive::Value::text("cCCE"));
     config.set("order", adaptive::Value::integer(static_cast<long long>(2)));
     config.set("seed", adaptive::Value::integer(static_cast<long long>(19)));
     config.set("rdip", adaptive::Value::number(30.0));
-    config.set("npulse", adaptive::Value::integer(static_cast<long long>(1)));
+    adaptive::Value pulse = adaptive::Value::object();
+    pulse.set("count", adaptive::Value::integer(static_cast<long long>(1)));
+    config.set("pulse", pulse);
     adaptive::Value states = adaptive::Value::array();
     states.push(adaptive::Value::integer(static_cast<long long>(0)));
     states.push(adaptive::Value::integer(static_cast<long long>(2)));

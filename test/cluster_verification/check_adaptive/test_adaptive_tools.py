@@ -65,6 +65,55 @@ class CompareSummaries(unittest.TestCase):
             self.assertEqual(cs.compare(a, b), ['/x'])
 
 
+class RegressVerdict(unittest.TestCase):
+    """regress.py's comparison with golden (A46): decisions exact on every build; with MKL, floats within 1e-5 of the
+    golden value, without it within 1e-9."""
+    golden = {'returncode': 0, 'summaries': {'summary.json': {'rounds': [
+        {'accepted': {'patch': [3, 7], 'policy': 'merge', 'local_after': 0.11628271974642508},
+         'whole_bath_error': {'scaled_error': 0.11628271974641156}, 'stopped': False}]}}}
+
+    def verdict(self, run, mkl):
+        import regress
+        return list(regress.differences(self.golden, run, mkl=mkl))
+
+    def changed(self, path, value):
+        run = json.loads(json.dumps(self.golden))
+        node = run
+        for k in path[:-1]:
+            node = node[k]
+        node[path[-1]] = value
+        return run
+
+    def test_a_different_decision_fails_with_mkl(self):
+        base = ['summaries', 'summary.json', 'rounds', 0]
+        for path, value in ((base + ['accepted', 'patch'], [3, 8]), (base + ['accepted', 'policy'], 'regroup'),
+                            (base + ['stopped'], True), (['returncode'], 1)):
+            self.assertTrue(self.verdict(self.changed(path, value), mkl=True), path)
+
+    def test_floats_with_mkl(self):
+        path = ['summaries', 'summary.json', 'rounds', 0, 'whole_bath_error', 'scaled_error']
+        g = self.golden['summaries']['summary.json']['rounds'][0]['whole_bath_error']['scaled_error']
+        self.assertEqual(self.verdict(self.changed(path, g*(1+4.4e-6)), mkl=True), [])     # the WSL MKL build's worst
+        self.assertTrue(self.verdict(self.changed(path, g*(1+1e-4)), mkl=True))
+        self.assertTrue(self.verdict(self.changed(path, g*(1+4.4e-6)), mkl=False))           # without MKL: 1e-9
+
+    def test_zero_golden_is_absolute(self):
+        import regress
+        self.assertTrue(regress.close(0.0, 1e-13, True))
+        self.assertFalse(regress.close(0.0, 1e-11, True))
+        self.assertTrue(regress.close(1.0026641665932502e-15, 8.88185195937854e-16, True))   # round-off sized
+        self.assertFalse(regress.close(1e-9, 3e-9, True))
+
+    def test_mkl_detected_from_the_run_logs(self):
+        import regress
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d)
+            write(out/'0001-run'/'run.log', 'x').write_text('               MKL for large clusters : off\n')
+            self.assertFalse(regress.built_with_mkl(out))
+            write(out/'0002-probe'/'run.log', 'x').write_text('               MKL for large clusters : on (zgemm from dim 21)\n')
+            self.assertTrue(regress.built_with_mkl(out))
+
+
 class FaultLauncher(unittest.TestCase):
     def test_fixed_profile_rewrites_the_timings(self):
         with tempfile.TemporaryDirectory() as root:

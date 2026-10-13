@@ -34,7 +34,7 @@ def prepare(work):
     probes = [[i] for i in range(14)]+[[i, i+1] for i in range(0, 13, 2)]+LARGE
     base = json.loads(TEMPLATE.read_text())
     base.update(gyrofile=str(FIXTURE/'gyro_13C'), bathfile=[str(work/'bath')], nstate=3, rbath=40, rdip=40,
-                bundle_max_dim=2048, nstep=6, npulse=1, profile=False, backend='cpu')
+                bundle=dict(base['bundle'], max_dim=2048), nstep=6, pulse={'count': 1}, profile=False, backend='cpu')
     return base, probes
 
 
@@ -43,7 +43,7 @@ def run(work, base, probes, name, ranks, budget):
     d.mkdir()
     (d/'request.json').write_text(json.dumps(dict(mode='probe', response=str(d/'response'),
                                                   bundles=[[i] for i in range(14)], probes=probes)))
-    cfg = dict(base, outfile=str(d/'coherence'), adaptive_work_file=str(d/'request.json'))
+    cfg = dict(base, outfile=str(d/'coherence'), adaptive={'work_file': str(d/'request.json')})
     if budget:
         cfg['probe_memory_gb'] = budget
     (d/'input.json').write_text(json.dumps(cfg, indent=1))

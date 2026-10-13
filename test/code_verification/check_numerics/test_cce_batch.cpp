@@ -13,6 +13,13 @@
 #include <string>
 #include <vector>
 
+// A46: with the MKL option (CCEX_BLAS_DIRECT) the scalar path calls the library only from dimension 21 (zgemm) and 63
+// (zheevd), and those calls live in their own file (src/common/blas_option.cpp), so the scalar path of the dimensions
+// compared here (2, 4) is the same code as without the option and the bit-for-bit comparison stands in that build too.
+#ifdef CCEX_BLAS_DIRECT
+static_assert(ccexBlas::gemmMin > 4 && ccexBlas::eigMin > 4, "test_cce_batch compares D 2 and 4 bit for bit");
+#endif
+
 int rank=0,nprocess=1,seed=19;
 bool verbosity=false;
 

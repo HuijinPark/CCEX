@@ -1,7 +1,11 @@
 {
-  "method": "CCE",
+  "method": "cCCE",
   "quantity": "coherence",
-  "qubitfile": "../../inputs/p1_1ppm/bath_DiaP1_1ppm_Defect",
+  "Qubit": {
+    "file": "../../inputs/p1_1ppm/bath_DiaP1_1ppm_Defect",
+    "alphams": -1,
+    "betams": 0
+  },
   "gyrofile": "../../inputs/p1_1ppm/DiaP1_gyro",
   "bathfile": [
     "../../inputs/p1_1ppm/bath_DiaP1_1ppm_1"
@@ -12,91 +16,89 @@
   "rdip": 620,
   "deltat": 0.01,
   "nstep": 200,
-  "qalphams": -1,
-  "qbetams": 0,
-  "addsubclus": true,
-  "nk": [
+  "add_subclusters": true,
+  "max_clusters_per_order": [
     0,
     0,
     0,
     5000,
     10000
   ],
-  "npulse": 1,
-  "hf_readmode": 0,
+  "pulse": {"count": 1},
   "savemode": "coherence",
-  "Defect": [
-    {
-      "dfname": "P1",
-      "apprx": true,
-      "naddspin": 0,
-      "navaax": 12,
-      "detuning": [
-        [
-          1,
-          "e",
-          84.946496
-        ],
-        [
-          2,
-          "e",
-          84.946496
-        ],
-        [
-          3,
-          "e",
-          84.946496
-        ],
-        [
-          4,
-          "e",
-          0.0
-        ],
-        [
-          5,
-          "e",
-          0.0
-        ],
-        [
-          6,
-          "e",
-          0.0
-        ],
-        [
-          7,
-          "e",
-          -84.946496
-        ],
-        [
-          8,
-          "e",
-          -84.946496
-        ],
-        [
-          9,
-          "e",
-          -84.946496
-        ],
-        [
-          10,
-          "e",
-          114.0264
-        ],
-        [
-          11,
-          "e",
-          0.0
-        ],
-        [
-          12,
-          "e",
-          -114.0264
+  "Defect": {
+    "axis_file": "../../inputs/p1_1ppm/avaax_nav12",
+    "species": [
+      {
+        "name": "P1",
+        "n_nuclear_spins": 0,
+        "n_configurations": 12,
+        "detuning": [
+          [
+            1,
+            "e",
+            84.946496
+          ],
+          [
+            2,
+            "e",
+            84.946496
+          ],
+          [
+            3,
+            "e",
+            84.946496
+          ],
+          [
+            4,
+            "e",
+            0.0
+          ],
+          [
+            5,
+            "e",
+            0.0
+          ],
+          [
+            6,
+            "e",
+            0.0
+          ],
+          [
+            7,
+            "e",
+            -84.946496
+          ],
+          [
+            8,
+            "e",
+            -84.946496
+          ],
+          [
+            9,
+            "e",
+            -84.946496
+          ],
+          [
+            10,
+            "e",
+            114.0264
+          ],
+          [
+            11,
+            "e",
+            0.0
+          ],
+          [
+            12,
+            "e",
+            -114.0264
+          ]
         ]
-      ]
-    }
-  ],
+      }
+    ]
+  },
   "seed": 19,
   "nstate": 1,
-  "avaaxfile": "../../inputs/p1_1ppm/avaax_nav12",
-  "statefile": "../../inputs/p1_1ppm/state_"
+  "bath_state_file": "../../inputs/p1_1ppm/state_"
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The merge policy run three times with the same request - ccex-adaptive in its own
 process, main.out --adaptive in ours, and main.out -f with the request written as
-an "Adaptive" block in the input file - and the three output trees compared.
+an "adaptive" block in the input file - and the three output trees compared.
 
     inprocess_compare.py WORKDIR
 
@@ -18,7 +18,7 @@ single-sample copy of cost-two-conditions (its conditions differed in npulse);
 they went with error-gated, budgeted, auto-partition and cost-preserving. The
 merge cases after merge-grow were added on 2026-10-11: gCCE with two sampled
 states, order 1, prefer-physical and hub candidates. merge-hub-capped is not here:
-one of its plan steps is refused (a bundle over bundle_max_dim), which the separate
+one of its plan steps is refused (a bundle over bundle.max_dim), which the separate
 driver takes as a rejected candidate but which ends the whole process in-process
 (MPI_Abort; the same before the 2026-10-11 cleanup).
 
@@ -62,7 +62,7 @@ FIXED = ('--input', '--binary', '--cwd', '--output', '--mpiexec', '--ranks')
 
 
 def as_block(args, out, name):
-    """The same request as an "Adaptive" object inside a copy of the input file."""
+    """The same request as an "adaptive" object inside a copy of the input file."""
     block, listed = {}, list(args)
     i = 0
     while i < len(listed):
@@ -83,7 +83,7 @@ def as_block(args, out, name):
         block[key[2:].replace('-', '_')] = value          # given twice, the last wins, as on the command line
     block['output'] = str(out)
     cfg = json.loads(Path(args[args.index('--input')+1]).read_text())
-    cfg['Adaptive'] = block
+    cfg['adaptive'] = block
     path = WORK/f'{name}.block.json'
     path.write_text(json.dumps(cfg, indent=2)+'\n')
     return path

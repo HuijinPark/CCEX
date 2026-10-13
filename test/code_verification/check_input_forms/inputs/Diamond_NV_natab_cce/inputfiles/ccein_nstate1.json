@@ -1,8 +1,12 @@
 {
-    "method"        : "CCE",
+    "method"        : "cCCE",
     "quantity"      : "coherence",
 
-    "qubitfile"     : "./inputfiles/bath_Diamond_NV_natab_defect",
+    "Qubit"         : {
+        "file"          : "./inputfiles/bath_Diamond_NV_natab_defect",
+        "alphams"        : 1,
+        "betams"         : 0
+    },
     "gyrofile"      : "./inputfiles/gyro_13C",
     "bathfile"      : ["./inputfiles/bath_Diamond_NV_natab_1"],
 
@@ -13,10 +17,7 @@
 
     "deltat"        : 0.08,
     "nstep"         : 30,
-
-    "qalphams"       : 1,
-    "qbetams"        : 0,
-    "npulse"        : 1,
+    "pulse"         : {"count": 1},
 
     "nstate"        : 1,
     "seed"          : 1,

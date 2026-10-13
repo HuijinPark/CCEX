@@ -1,9 +1,9 @@
 # NV-13C test of the automatic convergence with the candidates given (WSL-sized). Make the data first: sh make_data.sh;
 # then: main.out -f input.json (no mpirun: the launcher below runs CCEX)
 {
-  "method": "CCE", "quantity": "coherence", "order": 2,
-  "qubitfile": "data/qubit", "gyrofile": "data/gyro_13C",
-  "bfield": 500, "qalphams": 1, "qbetams": 0, "npulse": 1, "seed": 1,
+  "method": "cCCE", "quantity": "coherence", "order": 2,
+  "Qubit": {"file": "data/qubit", "alphams": 1, "betams": 0}, "gyrofile": "data/gyro_13C",
+  "bfield": 500, "pulse": {"count": 1}, "seed": 1,
   "deltat": 0.01, "nstep": 101, "nstate": 10,
   "auto_convergence": {
     "workdir": "auto",

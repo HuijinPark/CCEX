@@ -73,13 +73,15 @@ typedef struct {
      *  cluster_contributions, no adaptive work request); clusterizePairs may then keep only this rank's rows.
      *  pairsLocal: it did. clusinfo[2] still has every row slot and the count, but a row is allocated only for
      *  this rank's share and the first and last four (Cluster_reportClusinfo); the other slots are NULL.
-     *  pairBounds (npairBounds = nprocess+1 entries, or 0 for the equal-count split): the A31 cost split of
-     *  order 2 it decided, which MPI_getLocalClusters then uses instead of the rows.
+     *  pairRows (npairRows entries, ascending, 1-based): this rank's order-2 rows under the split it decided
+     *  (rankClusterRows: A31 cost, A45 largest first), which MPI_getLocalClusters then uses instead of the rows;
+     *  pairLoads (nprocess entries): every rank's cost after that split, which order 1 starts from.
     */
     bool localRequest;
     bool pairsLocal;
-    int* pairBounds;
-    int npairBounds;
+    int* pairRows;
+    int npairRows;
+    double* pairLoads;
 
     /**
      * @brief The clusters for each order "k"

@@ -19,8 +19,8 @@ column as tau instead of the total time gives 0.37 (echo) and 1.96 (free inducti
 
 `analytic.py` exits 1 on a numerical mismatch and 2 when the output is missing, cannot be
 read or does not hold the requested grid (400 points, k * 0.0005 ms); the self-test counts
-only a clean CCEX run that `analytic.py` rejects with 1. The qubit file form takes the branch
-keys as `qalphams`/`qbetams`.
+only a clean CCEX run that `analytic.py` rejects with 1. The inputs use the `Qubit.file` form with the branch
+keys `Qubit.alphams`/`Qubit.betams` (`qalphams`/`qbetams` until 2026-10-13).
 
 More runs, not closed forms, cover `hfmedi` at zero field (review 20261012-194049-af8e42 R1): with an axial
 ZFS the levels +1 and -1 are degenerate but not coupled by S, and the run has to finish with finite values (it wrote NaN);
@@ -30,4 +30,12 @@ the same degenerate levels with a zero hyperfine (gyro 0) have no coupling, so t
 only) have to get the same decision, both accepted and finite (P1-03: the degeneracy tolerance followed the largest
 level, not their spread, and refused the shifted one).
 
-Exit status 0 only if all seven pass. Everything written goes to `_work/`.
+Two runs check the Hamiltonian switches added on 2026-10-13 (A47), each against what the switch must give, not against
+another CCEX run alone. `hamiltonian.cCCE.delta_A` false: two ¹³C on the NV axis 1.54 Å apart at 14.5 Å (`inputs/bath_pair`;
+axial tensors, so one spin alone gives L = 1 in a Hahn echo) decay with delta_A true (max |L−1| 0.53) and give L = 1 to
+every written decimal with false, and order 1 (clusters of one spin keep their own tensor) is byte for byte the run
+without the key (two checks). `hamiltonian.common.bath_bath_mean_field` "off": two electron-like spins off the axis
+(`inputs/bath_off`, one fixed state each, order 1) give the product of each spin alone in its bath (1.5e-10, the written
+decimals), while the default "z" differs by 0.44 (one check).
+
+Exit status 0 only if all ten pass. Everything written goes to `_work/`.

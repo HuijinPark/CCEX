@@ -55,8 +55,8 @@ bundle 하나도 cluster다: 전개는 크기 1인 집합부터 만든다(`expan
 
 ## 4. 차원 상한
 
-`bundle_max_dim` **하나만** 받는다. cluster 차원은 여기서 따라 나오는 값이며
-(`bundle_max_dim^order`가 상한), 별도 옵션으로 받지 않는다. 2026-09-18 이전의
+`bundle.max_dim` **하나만** 받는다. cluster 차원은 여기서 따라 나오는 값이며
+(`bundle.max_dim^order`가 상한), 별도 옵션으로 받지 않는다. 2026-09-18 이전의
 `adaptive_cluster_max_dim`은 제거했다 — cluster 상한을 받으면 `order`를 올릴 때마다
 bundle이 조여들어, "어느 spin을 정확히 계산할 것인가"와 "상관을 어디까지 볼 것인가"라는
 서로 다른 두 결정이 한 숫자에 묶였다.
@@ -67,7 +67,7 @@ bundle이 조여들어, "어느 spin을 정확히 계산할 것인가"와 "상�
 |---|---|
 | group | bundle |
 | group order | bundle order |
-| adaptive_group_max_dim | bundle_max_dim |
+| adaptive_group_max_dim, bundle_max_dim | bundle.max_dim |
 | adaptive_cluster_max_dim | (제거) |
 
 `test/cluster_verification/check_bundle/` 아래의 과거 실행 기록과 그것을 읽는 분석 스크립트는 옛 이름을 그대로

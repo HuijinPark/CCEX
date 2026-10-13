@@ -29,7 +29,6 @@ One second.
     "nstate"        : 1,
 
     "Qubit": {
-        "nqubit": 1,
         "qubit": [
         {
             "name": "qubit1",
@@ -47,7 +46,7 @@ One second.
         #"betams"      : 0,
 
     # Pulse
-    "npulse"      : 1,
+    "pulse"         : {"count": 1},
 
     # Output
     "outfile"     : "./results/CCE2_Diamond_NV_natab_1",

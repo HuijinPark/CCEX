@@ -2,9 +2,10 @@
     # Config (General) : the physics only. rbath, rdip and the time window are not given: the
     #                    auto_convergence block finds them. nstep is the number of time points of
     #                    every run; deltat only sets the first window ((nstep - 1) x deltat = 1 ms).
-    "method"        : "CCE",
+    "method"        : "cCCE",
     "quantity"      : "coherence",
-    "qubitfile"     : "results/bath/config_defect",
+    # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
+    "Qubit"         : {"file": "results/bath/config_defect", "alphams": 1, "betams": 0},
     "gyrofile"      : "../../02_Diamond_NV_natab/bath/gyro_13C",
     "order"         : 2,
     "bfield"        : 500,
@@ -13,11 +14,7 @@
     "seed"          : 1,
     # nstate 0 : the ensemble, one curve per bath configuration; only the number of configurations is chosen
     "nstate"        : 0,
-
-    # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
-    "qalphams"       : 1,
-    "qbetams"        : 0,
-    "npulse"        : 1,
+    "pulse"         : {"count": 1},
 
     # auto_convergence : with this block "mpirun -n N main.out -f ccein.json" runs the automatic convergence
     #                    (example/tools/AutoConvergence/README.md) instead of one calculation: every CCEX run

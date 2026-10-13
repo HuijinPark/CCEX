@@ -30,8 +30,8 @@ the tutorials were made with this copy. A newer generator lives at
 
 Reads the hyperfine and electric-field-gradient tensors a DFT code wrote for
 every nucleus around the defect and writes them in the layout the reference
-describes under [hf_tensorfile](InputFile_General.md#tag_hf_tensorfile) and
-[qd_tensorfile](InputFile_General.md#tag_qd_tensorfile): the species lines,
+describes under [hyperfine.file](InputFile_General.md#tag_hyperfine_file) and
+[quadrupole.file](InputFile_General.md#tag_quadrupole_file): the species lines,
 the range the file covers and one row per atom with its position relative to
 the defect and the nine components.
 

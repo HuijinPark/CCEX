@@ -17,13 +17,39 @@ import time
 
 REPO = Path(__file__).resolve().parents[3]
 INPUTS = REPO / 'test/code_verification/check_input_forms/inputs'
+# the input keys that name files, as dotted paths into the input's blocks (A47, 2026-10-13)
+FILE_KEYS = ('Qubit.file', 'gyrofile', 'Defect.axis_file', 'bath_state_file', 'Defect.state_file')
+
+
+def get(config, path, default=None):
+    """config at a dotted path ('pcce.cache.mode'), or default."""
+    for key in path.split('.'):
+        if not isinstance(config, dict) or key not in config:
+            return default
+        config = config[key]
+    return config
+
+
+def put(config, changes):
+    """A deep copy of config with each dotted path set to its value (None removes it)."""
+    out = json.loads(json.dumps(config))
+    for path, value in changes.items():
+        *parents, last = path.split('.')
+        here = out
+        for key in parents:
+            here = here.setdefault(key, {})
+        if value is None:
+            here.pop(last, None)
+        else:
+            here[last] = value
+    return out
 
 
 def parse_profiles(log):
     # MPI's output forwarding can concatenate another rank's unterminated
     # output with a complete profile record. A profile need not start a line.
     number = r'[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?'
-    pattern = (r'\[profile\]\s+(rank=\d+\s+method=\w+\s+backend=\w+\s+'
+    pattern = (r'\[profile\]\s+(rank=\d+\s+method=\w+\s+backend=[\w-]+\s+'
                r'dim=\d+\s+clusters=\d+\s+build_s='+number+
                r'\s+setup_s='+number+r'\s+evolution_s='+number+')')
     records = [dict(part.split('=', 1) for part in match.split())
@@ -84,17 +110,17 @@ def compare(reference, target, atol, rtol):
 def run(binary, source, directory, backend, args):
     directory.mkdir(parents=True, exist_ok=False)
     config = json.loads(source.read_text())
-    for key in ['qubitfile', 'gyrofile', 'avaaxfile', 'statefile', 'exstatefile']:
-        if config.get(key):
-            config[key] = str((source.parent.parent / config[key]).resolve())
+    for key in FILE_KEYS:
+        if get(config, key):
+            config = put(config, {key: str((source.parent.parent / get(config, key)).resolve())})
     config['bathfile'] = [str((source.parent.parent / p).resolve()) for p in config['bathfile']]
     if args.nearest_sites:
         if len(config['bathfile']) != 1:
             raise ValueError('--nearest-sites requires one bath file')
-        if 'Qubit' in config:
+        if get(config, 'Qubit.qubit'):
             origin = config['Qubit']['qubit'][0]['xyz']
         else:
-            origin = [float(v) for v in Path(config['qubitfile']).read_text().split()[:3]]
+            origin = [float(v) for v in Path(config['Qubit']['file']).read_text().split()[:3]]
             if len(origin)!=3:
                 raise ValueError('Cannot read qubit origin')
         rows = Path(config['bathfile'][0]).read_text().splitlines()[1:]
@@ -110,7 +136,7 @@ def run(binary, source, directory, backend, args):
         config.update(order=args.nearest_sites,rbath=radius,rdip=2*radius)
     config.update(backend=backend, profile=True, savemode=args.savemode, outfile=str(directory/'coherence'))
     if args.pulses is not None:
-        config['npulse'] = args.pulses
+        config = put(config, {'pulse.count': args.pulses})
     if args.steps is not None:
         config['nstep'] = args.steps
     if args.batch is not None:

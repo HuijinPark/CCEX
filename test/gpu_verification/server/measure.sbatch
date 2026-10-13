@@ -2,6 +2,7 @@
 #SBATCH --job-name=ccex-cce2-measure
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu-short
+#SBATCH --export=NONE
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu:1

@@ -3,6 +3,14 @@
 ## 2.0.0 — unreleased (changes since v1.2.2, 2026-09-04)
 
 ### Added
+- **Reserved method names `meCCE` and `noise`**: `method` (and `-m`) accepts the names and refuses them as not
+  implemented yet; `hamiltonian.meCCE` and `hamiltonian.noise` are empty sections like `hamiltonian.gCCE`.
+- **`hamiltonian.common.bath_bath_mean_field: "off"`** (nstate > 0): the static field of the bath spins outside a cluster
+  left out (`"z"` stays the default, `"xyz"` is the former `vector_mean_field: true`).
+- **`hamiltonian.cCCE.delta_A: false`**: the hyperfine tensors of a cluster's spins replaced by their mean, so the pair
+  flip-flop of different Knight fields is gone (a comparison calculation; clusters of one spin unchanged).
+- **`example/tools/InputKeys/convert_input_keys.py`**: rewrites inputs written with the old keys (comments kept, the
+  changed keys listed, any number of files; `--check`, `--stdout`).
 - **GPU backends** (`backend`: `cpu`, `cuda`, `auto`; settings in the `gpu_options` block) for cCCE, gCCE and pCCE, with
   `propagator` (`eigen`, `expm`), `evolution` (`vector`, `matrix`) and `gcce_refinement` for gCCE. See `docs/methods/gpu.md`.
 - **Adaptive clustering** (`cluster_mode: adaptive` with an `Adaptive` input block): bundles of strongly coupled spins with
@@ -43,8 +51,25 @@
   h-BN gCCE2 0.86 of the earlier GPU build's time. See `docs/user/InputFile_Backend.md#tag_gpu_options` and
   (internal notes).
 - **Builds**: `do_compile.sh` presets (`wsl-gnu`, `wsl-icpx`, `idm4`, `gpu`, `nurion`, `mac`, `generic`) and a CMake build.
+- **MKL for large clusters, when the build finds it** (`do_compile.sh` every preset and CMake, `CCEX_BLAS` auto by
+  default; `off` without it, `mkl` to insist; the build and the run log's header say on or off): the cCCE ensemble Hahn step's D³ product from bath dimension 21 by zgemm and the cCCE/gCCE cluster
+  eigensolve from dimension 63 by zheevd (MKL lp64, sequential). idm, 64 ranks: h-BN cCCE2 ensemble 0.80–0.88, gCCE3
+  0.72–0.80, gCCE2 0.98 of the time; P1 production inputs unchanged. The curves differ in the last digits (cCCE ≤ 2e-10,
+  h-BN gCCE late times up to 9e-8). (internal notes) A46.
 
 ### Changed
+- **Input keys renamed and grouped** (A47, 2026-10-13; the table of old and new names is in `docs/user/InputFile.md`):
+  `method` is `cCCE` or `gCCE` and the cluster shape is `cluster_mode` (`standard`, `pcce`, `bundle` - the former
+  `adaptive` -, `dsj`, `itb`, `dsjitb`); the Hamiltonian settings are one `hamiltonian` block (`common`:
+  `qubit_bath_mean_field`, `bath_bath_mean_field`, `hyperfine {dipole, contact, file, missing_row}`, `quadrupole`; `cCCE`:
+  `knight`, `hfmedi`, `delta_A`); `pcce`, `bundle`, `adaptive`, `pulse`, `gcce_refinement` and `cluster_contributions`
+  are blocks; `Qubit.file` replaces `qubitfile` (with `spin`, `zfs`, `alphams`, `betams`), `Qubit.alpha_state` /
+  `beta_state` (`{"index"}` or `{"vector"}`, each side on its own) replace `alphaidx`/`betaidx`/`psia`/`psib`, the length of
+  `Qubit.qubit` replaces `nqubit`; `rbath`/`rdip` take `[inner, outer]` (`rbathcut`/`rdipcut`); `bath_shift`,
+  `bath_state_file`, `add_subclusters`, `max_clusters_per_order`; `Defect` is `{state_file, axis_file, species: [...]}`
+  with `name`, `n_nuclear_spins`, `n_configurations`, `quadrupole_moments`, `nuclear_positions`, `hyperfine`. Numeric
+  codes became words and 0/1 switches true/false. `-m` takes `cCCE` or `gCCE` and keeps the input's `cluster_mode`.
+  Results are unchanged: every input of the repository, converted, gives the bytes it gave before.
 - **Faster CPU paths with unchanged results** (byte-identical output): the cCCE and gCCE product assembly, the state preparation,
   fixed-size paths for small clusters, the order-2 cluster list built without duplicated work, the small-cluster
   Hamiltonians, and the pCCE partition search (up to 9x faster on large baths). See Performance below.
@@ -110,7 +135,7 @@
   required; VASP's OUTCAR as it is, S from its magnetization). CCEX reads such a file x 1: `DefectTotSpin` is only
   checked against S and `CorrTotSpin` is not used. A file without the line is read by the earlier rule (first line `VASP`
   -> x 1, otherwise x 0.5/`DefectTotSpin`), with a warning in the log; its results are unchanged.
-  `--fidentify` is removed (the lines are always written). See `docs/user/InputFile_General.md#tag_hf_tensorfile`.
+  `--fidentify` is removed (the lines are always written). See `docs/user/InputFile_General.md#tag_hyperfine_file`.
 
 ### Compared with v1.2.2 (same inputs and node, idm Xeon Gold 6530, 64 ranks, median of 3)
 
@@ -180,6 +205,12 @@ the results are byte-identical, or within the stated bound for `recursive`. For 
   `QUANTUMESSPRESSO`.
 
 ### Refused now (inputs that used to be accepted)
+- **The input keys before A47** (2026-10-13): an old name, value (`method` `CCE`, `pCCE`, `dsj`, ...; `cluster_mode`
+  `adaptive`) or form (`Defect` as a list, `gcce_refinement: true`) stops the run with the new one named and the
+  converter pointed to; `DefectTotSpin` (the qubit spin is used) and `CorrTotSpin` (old-format VASP tensor files only)
+  are removed. Also refused: `gCCE` with `cluster_mode` `pcce`/`dsj`/`itb`/`dsjitb` (not implemented yet), a
+  `hamiltonian.cCCE` setting in a gCCE run, the `adaptive` block outside `pcce`/`bundle`, the `pcce` block outside `pcce`,
+  a qubit state with both `index` and `vector`, 0/1 for the switches.
 - `alphams` at the top of a `qubitfile` (it had been ignored since v1.1.0).
 - Arrays shorter than needed (Defect types shorter than `naddspin`, `bathadjust` rows with fewer than 3 numbers).
 - An `avaax` axis beyond the defect's `navaax`.

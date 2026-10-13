@@ -59,33 +59,37 @@ def main():
     run('fractional-batch',args.cpu,{'gpu_options':{'evolution_batch_steps':1.5}},'positive 32-bit integer')
     run('string-batch',args.cpu,{'gpu_options':{'evolution_batch_steps':'64'}},'finite JSON number')
     run('invalid-profile',args.cpu,{'profile':'true'},'must be a boolean')
-    run('invalid-refinement',args.cpu,{'gcce_refinement':'false'},'must be a boolean')
-    run('zero-refinement-sweeps',args.cpu,{'gcce_refinement_max_sweeps':0},'positive 32-bit integer')
-    run('fractional-refinement-sweeps',args.cpu,{'gcce_refinement_max_sweeps':1.5},'positive 32-bit integer')
-    run('negative-detail-limit',args.cpu,{'pcce_detail_limit':-1},'nonnegative 32-bit integer')
-    run('extended-refinement',args.cpu,{'gcce_refinement_max_sweeps':64})
-    run('cpu-refinement-off',args.cpu,{'gcce_refinement':False},reference=None)
-    run('cuda-refinement-off',args.cuda,{'backend':'cuda','gcce_refinement':False},reference='cpu-refinement-off',actual_backend='cuda')
+    run('invalid-refinement',args.cpu,{'gcce_refinement':{'enabled':'false'}},'must be a boolean')
+    run('zero-refinement-sweeps',args.cpu,{'gcce_refinement':{'enabled':False,'max_sweeps':0}},'positive 32-bit integer')
+    run('fractional-refinement-sweeps',args.cpu,{'gcce_refinement':{'enabled':False,'max_sweeps':1.5}},'positive 32-bit integer')
+    # pcce.print_limit, pcce.partition and pcce.connections are read with cluster_mode pcce only (A47); they are checked
+    # while the input is read, before the missing pcce.partition_size would stop the run
+    PCCE={'method':'cCCE','cluster_mode':'pcce'}
+    run('negative-detail-limit',args.cpu,dict(PCCE,pcce={'print_limit':-1}),'nonnegative 32-bit integer')
+    run('extended-refinement',args.cpu,{'gcce_refinement':{'enabled':False,'max_sweeps':64}})
+    run('cpu-refinement-off',args.cpu,{'gcce_refinement':{'enabled':False}},reference=None)
+    run('cuda-refinement-off',args.cuda,{'backend':'cuda','gcce_refinement':{'enabled':False}},reference='cpu-refinement-off',actual_backend='cuda')
     run('negative-cache',args.cpu,{'gpu_options':{'cache_mb':-1}},'nonnegative 32-bit integer')
     run('disabled-cache',args.cpu,{'gpu_options':{'cache_mb':0}})
     run('invalid-cluster-batch',args.cpu,{'gpu_options':{'evolution_batch_size':0}},'positive 32-bit integer')
     run('invalid-cluster-budget',args.cpu,{'gpu_options':{'cluster_batch_mb':0}},'positive 32-bit integer')
-    run('invalid-partition',args.cpu,{'pcce_partition':'unknown'},'pcce_partition must be')
-    run('invalid-connections',args.cpu,{'pcce_connections':'unknown'},'pcce_connections must be')
+    run('invalid-partition',args.cpu,dict(PCCE,pcce={'partition':'unknown'}),'pcce.partition must be')
+    run('invalid-connections',args.cpu,dict(PCCE,pcce={'connections':'unknown'}),'pcce.connections must be')
     run('cuda-hidden-cpu',args.cuda,{'backend':'cpu'},hidden=True)
     run('cuda-hidden-auto',args.cuda,{'backend':'auto'},hidden=True)
     run('cuda-hidden-required',args.cuda,{'backend':'cuda'},'CUDA initialization failed',hidden=True)
-    run('cuda-reject-expm',args.cuda,{'backend':'cuda','propagator':'expm'},'supports method=CCE')
-    run('cuda-reject-cli-dsj',args.cuda,{'backend':'cuda'},'supports method=CCE',extra=('-m','dsj'))
-    run('cce-cpu',args.cpu,{'backend':'cpu','method':'CCE'},reference=None)
-    run('cce-cuda-cli',args.cuda,{'backend':'cuda'},extra=('-m','CCE'),reference='cce-cpu',actual_backend='cuda')
+    run('cuda-reject-expm',args.cuda,{'backend':'cuda','propagator':'expm'},'supports method cCCE')
+    # dsj is a cluster_mode of method cCCE since A47 (-m takes cCCE or gCCE only)
+    run('cuda-reject-dsj',args.cuda,{'backend':'cuda','method':'cCCE','cluster_mode':'dsj'},'supports method cCCE')
+    run('cce-cpu',args.cpu,{'backend':'cpu','method':'cCCE'},reference=None)
+    run('cce-cuda-cli',args.cuda,{'backend':'cuda'},extra=('-m','cCCE'),reference='cce-cpu',actual_backend='cuda')
     # packed_max_dim 0 here: with the default (4) the GPU may take every cluster once it is up, and then there is no CPU
     # profile line and the tolerance is the GPU's (review 20261012-233058-452278 P3-05); the default is cce-auto-packed
-    run('cce-auto-cpu',args.cuda,{'backend':'auto','method':'CCE','gpu_options':{'min_dim':256,'packed_max_dim':0}},
+    run('cce-auto-cpu',args.cuda,{'backend':'auto','method':'cCCE','gpu_options':{'min_dim':256,'packed_max_dim':0}},
         reference='cce-cpu')
     # packed_max_dim given: these runs are far below the threshold of the default (A40 follow-up, 2026-10-13), and a given
     # value starts the card whatever the count
-    run('cce-auto-packed',args.cuda,{'backend':'auto','method':'CCE','gpu_options':{'min_dim':256,'packed_max_dim':4}},reference='cce-cpu',
+    run('cce-auto-packed',args.cuda,{'backend':'auto','method':'cCCE','gpu_options':{'min_dim':256,'packed_max_dim':4}},reference='cce-cpu',
         actual_backend=None)
     output=(args.output/'cce-auto-packed'/'run.log').read_text()
     assert '[gpu-packed] on' in output and re.search(r'\[gpu-packed\] clusters on the GPU \d+, on the CPU while the GPU started \d+',
@@ -105,7 +109,7 @@ def main():
         for f in files: assert (args.output/a/f).read_bytes()==(args.output/b/f).read_bytes(), (a,b,f)
         print('PASS '+a+' output byte-identical to '+b+' ('+str(len(files))+' files)',flush=True)
     evaluations={}
-    for name,base in (('cce3-threshold',{'method':'CCE','order':3,'rbath':15}),('gcce-threshold',{}),
+    for name,base in (('cce3-threshold',{'method':'cCCE','order':3,'rbath':15}),('gcce-threshold',{}),
                       ('gcce-threshold-states',{'nstate':3})):
         run(name+'-off',args.cuda,dict(base,backend='auto',gpu_options={'packed_max_dim':0,'warp_max_dim':0}),reference=None)
         run(name,args.cuda,dict(base,backend='auto'),reference=None)
@@ -121,15 +125,15 @@ def main():
     # an explicit packed_max_dim with backend cpu (its only GPU work) refuses too
     for value in ('-1','99'):
         tag=value.replace('-','m')
-        run('cce-hidden-auto-'+tag,args.cuda,{'backend':'auto','method':'CCE','gpu_options':{'packed_max_dim':4}},hidden=value,reference='cce-cpu')
+        run('cce-hidden-auto-'+tag,args.cuda,{'backend':'auto','method':'cCCE','gpu_options':{'packed_max_dim':4}},hidden=value,reference='cce-cpu')
         assert '[gpu-packed] off: the GPU could not be opened' in (args.output/('cce-hidden-auto-'+tag)/'run.log').read_text(), tag
         print('PASS cce-hidden-auto-'+tag+' log: the packed kernel off, every cluster on the CPU',flush=True)
-        run('cce-hidden-cuda-'+tag,args.cuda,{'backend':'cuda','method':'CCE'},'CUDA initialization failed',hidden=value)
-        run('cce-hidden-cpu-packed-'+tag,args.cuda,{'backend':'cpu','method':'CCE','gpu_options':{'packed_max_dim':4}},
+        run('cce-hidden-cuda-'+tag,args.cuda,{'backend':'cuda','method':'cCCE'},'CUDA initialization failed',hidden=value)
+        run('cce-hidden-cpu-packed-'+tag,args.cuda,{'backend':'cpu','method':'cCCE','gpu_options':{'packed_max_dim':4}},
             'Error: the packed GPU kernel',hidden=value)
     # P1-05: with the packed kernel on, clusters of a dimension it does not take (8 here) keep the ordinary CUDA batching
     # (warp_max_dim 0 here and in the out-of-memory cases below: the warp kernel, on by default since A40, would take them)
-    third={'method':'CCE','order':3,'rbath':15}
+    third={'method':'cCCE','order':3,'rbath':15}
     run('cce3-cpu',args.cpu,dict(third,backend='cpu'),reference=None)
     run('cce3-auto-packed-batch',args.cuda,dict(third,backend='auto',gpu_options={'min_dim':8,'evolution_batch_size':8,'packed_max_dim':4,'warp_max_dim':0}),
         reference='cce3-cpu',actual_backend=None)
@@ -182,7 +186,7 @@ def main():
     run('auto-reject-recursive',args.cuda,{'backend':'auto','evolution_update':'recursive'},'this run has backend=auto')
     run('cuda-reject-recursive',args.cuda,{'backend':'cuda','evolution_update':'recursive'},'this run has backend=cuda')
     run('cce-cuda-reject-recursive',args.cuda,{'backend':'cuda','evolution_update':'recursive'},'this run has backend=cuda',
-        extra=('-m','CCE'))
+        extra=('-m','cCCE'))
 
     # the warp kernel (A40, gpu_options.warp_max_dim; user 2026-10-13: default 27 in the GPU build with backend auto or
     # cuda and method CCE or gCCE, 0 otherwise): a given value is refused where it cannot run; the log says the value and why
@@ -201,15 +205,16 @@ def main():
     run('warp-reject-dimension',args.cuda,{'backend':'auto','gpu_options':{'warp_max_dim':5}},'has no dimension up to it')
     run('warp-reject-form',args.cuda,{'backend':'auto','gpu_options':{'warp_max_dim':33}},'an integer up to 32')
     run('warp-reject-old-key',args.cuda,{'backend':'auto','gpu_options':{'warp_dims':[6]}},'unknown key gpu_options.warp_dims')
-    run('warp-reject-pcce',args.cuda,{'backend':'auto','gpu_options':{'warp_max_dim':27}},'works with method=CCE or gCCE',
-        extra=('-m','pCCE'))
-    # (this input has no sK, so the pCCE run stops at clustering - after the log has printed the settings)
-    run('warp-default-pcce',args.cuda,{'backend':'auto'},'pCCE sK',extra=('-m','pCCE'))
+    # cluster_mode pcce (-m pCCE until A47) with a partition larger than the bath, so the run stops at clustering - after
+    # the log has printed the settings
+    PCCE_BIG=dict(PCCE,pcce={'partition_size':100000})
+    run('warp-reject-pcce',args.cuda,dict(PCCE_BIG,backend='auto',gpu_options={'warp_max_dim':27}),'works with method=CCE or gCCE')
+    run('warp-default-pcce',args.cuda,dict(PCCE_BIG,backend='auto'),'bath spin count')
     warp('warp-default-pcce',0,'default (not method=CCE (coherence) or gCCE)')
     run('warp-off-gcce',args.cuda,{'backend':'auto','gpu_options':{'warp_max_dim':0}},reference=None)
     warp('warp-off-gcce',0,'given')
     # the default switches itself off where the kernel does not apply (here gcce_refinement), and the run goes on
-    run('warp-default-refinement',args.cuda,{'backend':'auto','gcce_refinement':True},reference=None)
+    run('warp-default-refinement',args.cuda,{'backend':'auto','gcce_refinement':{'enabled':True}},reference=None)
     assert '[gpu-warp] off: gcce_refinement' in (args.output/'warp-default-refinement'/'run.log').read_text()
     print('PASS warp-default-refinement log: [gpu-warp] off',flush=True)
 

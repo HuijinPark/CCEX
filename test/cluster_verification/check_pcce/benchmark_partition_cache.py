@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import statistics
 from sweep_support import REPO,execute,config_for,compare,sha,save
+from benchmark import put
 
 
 def main():
@@ -40,7 +41,7 @@ def main():
                     for backend in backends:
                         directory=root/name/f'{phase}-{repeat}-{backend}'
                         cache=root/name/f'partition-{repeat}-{backend}.cache' if phase=='cold' else cached_file
-                        cfg=dict(config,backend=backend,pcce_cache_mode='readwrite' if phase=='cold' else 'read',pcce_cache_file=str(cache))
+                        cfg=put(config,{'backend':backend,'pcce.cache.mode':'readwrite' if phase=='cold' else 'read','pcce.cache.file':str(cache)})
                         binary=REPO/f"bin/main.{'cpu' if backend=='cpu' else 'cuda'}.out"
                         before=sha(cache) if phase=='reuse' else None
                         run=execute(cfg,directory,binary,4,timeout=1800)

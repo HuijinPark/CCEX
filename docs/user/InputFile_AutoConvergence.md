@@ -3,8 +3,8 @@
 An `auto_convergence` block in an ordinary input makes `main.out -f input.json` choose the time
 window, rdip, rbath and the number of configurations (and states) of a coherence calculation by
 itself, then run the production. Every calculation it makes is an ordinary CCEX run in its own
-folder under `workdir`. Supported: CCE and pCCE (order ≥ 2), gCCE (order ≥ 1), fixed bundles
-(`cluster_mode` adaptive without an `Adaptive` block), CPU or GPU backends. How each step decides,
+folder under `workdir`. Supported: cCCE with `cluster_mode` standard or pcce (order ≥ 2), gCCE (order ≥ 1), fixed bundles
+(`cluster_mode` bundle without an `adaptive` block), CPU or GPU backends. How each step decides,
 the outputs and the exit codes are in `example/tools/AutoConvergence/README.md`; tutorial 11
 ([Examples_11.md](Examples_11.md)) is a worked input.
 
@@ -65,8 +65,11 @@ All four `false` is refused (run CCEX itself).
 | | `floor` | only the points before \|mean\| falls below this are fitted | 0.05 |
 | | `n_range` | allowed stretching exponent n of exp(−(t/T2)^n); outside it the fit fails | [0.3, 4.0] |
 | `configurations` | `bathfile` | bath file pattern with `{k}` (a non-negative integer; `config_7`, not `config_07`) | required |
-| | `statefile` | state file prefix pattern (nstate > 0); left out, the states are made per run and removed | — |
-| | `avaaxfile`, `exstatefile` | optional per-configuration file patterns | — |
+| | `statefile` | state file prefix pattern (nstate > 0), written into each run's input as `bath_state_file`; left out, the states are made per run and removed | — |
+| | `avaaxfile`, `exstatefile` | optional per-configuration file patterns, written into each run's input as `Defect.axis_file` and `Defect.state_file` | — |
+
+The `configurations` keys keep these names (the tool's own pattern names); they were not renamed with the input keys on
+2026-10-13.
 | | `test`, `production` | configuration IDs for the convergence tests and for the production (never the same) | found |
 | | `converge`, `number`, `states` | see above | true, —, — |
 | | `threshold` | SE(A)/A target of the sampling | 0.05 |
@@ -79,9 +82,9 @@ All four `false` is refused (run CCEX itself).
 <a id="tag_ac_refused"></a>
 ## Refused together with the block
 
-Other methods (Adaptive refinement) or quantities than coherence, `rdip_ladder` in the input, an
-`Adaptive` block or `adaptive_work_file`, `pcce_cache_file` and `pcce_cache_mode` (the runner gives
-its own), `pcce_partition` legacy, `avaaxfile`/`exstatefile` outside `configurations`, `bathadjust`
+Other cluster modes (`dsj`, `itb`, `dsjitb`, the adaptive refinement) or quantities than coherence, `rdip_ladder` in the
+input, an `adaptive` block, `pcce.cache` (the runner gives its own), `pcce.partition` legacy, `cluster_contributions`,
+a nonzero `max_clusters_per_order`, `Defect.axis_file`/`Defect.state_file` outside `configurations`, a nonzero `bath_shift`
 and more than one qubit, a list together with its count, a fixed value with `converge` true, and
 options out of range.
 

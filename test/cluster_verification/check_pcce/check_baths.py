@@ -16,7 +16,7 @@ import shutil
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'gpu_verification/check_gpu'))
-from benchmark import REPO, compare, values
+from benchmark import REPO, compare, values, get, put
 from check_pcce import run_case
 
 
@@ -51,8 +51,8 @@ def prepare(output):
         root = REPO/'test/code_verification/check_input_forms/inputs'/folder
         path = root/'inputfiles/ccein_nstate0.json'
         config = json.loads(path.read_text())
-        for key in ('qubitfile', 'gyrofile'):
-            config[key] = stage(root/config[key], f'{name}-{key}')
+        for key in ('Qubit.file', 'gyrofile'):
+            config = put(config, {key: stage(root/get(config, key), f'{name}-{key}')})
         config['bathfile'] = [stage(root/config['bathfile'][0], f'{name}-bath')]
         config.update(nstep=17, seed=seed)
         families.append(dict(name=name, config=config, sizes=sizes,
@@ -60,9 +60,9 @@ def prepare(output):
             note='Original spatial bath, rbath, rdip, field, dt and defect tensors; method changed to pCCE, 17 time points, recorded seed and partition settings.'))
 
     root = REPO/'test/code_verification/bath_data/ensemble_data'
-    config = dict(method='pCCE', quantity='coherence', order=2, bfield=500,
-        rbath=10, rdip=10, deltat=0.01, nstep=13, qalphams=1, qbetams=0, seed=113)
-    config['qubitfile'] = stage(root/'bath_MoS2_1L_Cimpurity_Defect', 'mos2-qubit')
+    config = dict(method='cCCE', cluster_mode='pcce', quantity='coherence', order=2, bfield=500,
+        rbath=10, rdip=10, deltat=0.01, nstep=13, seed=113)
+    config['Qubit'] = dict(file=stage(root/'bath_MoS2_1L_Cimpurity_Defect', 'mos2-qubit'), alphams=1, betams=0)
     config['gyrofile'] = stage(root/'Gyro_MoS2', 'mos2-gyro')
     config['bathfile'] = [stage(root/'bath_MoS2_1L_Cimpurity_1', 'mos2-bath')]
     families.append(dict(name='mos2_nuclear', config=config, sizes=[1, 2],
@@ -86,9 +86,9 @@ def prepare(output):
     (output/'mixed-bath').write_text('8 0 0 0\n'+''.join(
         ' '.join(map(str, row))+'\n' for row in points))
     (output/'mixed-qubit').write_text('0 0 0\n')
-    config = dict(method='pCCE', quantity='coherence', order=2,
-        qubitfile='mixed-qubit', gyrofile='mixed-gyro', bathfile=['mixed-bath'],
-        rbath=20, rdip=50, bfield=300, qalphams=1, qbetams=0,
+    config = dict(method='cCCE', cluster_mode='pcce', quantity='coherence', order=2,
+        Qubit=dict(file='mixed-qubit', alphams=1, betams=0), gyrofile='mixed-gyro', bathfile=['mixed-bath'],
+        rbath=20, rdip=50, bfield=300,
         deltat=0.004, nstep=13, seed=211)
     families.append(dict(name='synthetic_mixed', config=config, sizes=[1, 2, 3],
         note='Artificial 7-site bath: spin 1/2, 1 and 3/2; seeded irregular geometry; no quadrupole. Gyros copied from stored 13C and h-BN tables.'))
@@ -96,30 +96,32 @@ def prepare(output):
     cases = []
     for family in families:
         config = family['config']
-        origin = list(map(float, (output/config['qubitfile']).read_text().split()[:3]))
+        origin = list(map(float, (output/config['Qubit']['file']).read_text().split()[:3]))
+        inner, outer = config['rbath'] if isinstance(config['rbath'], list) else (0, config['rbath'])
         rows = [row for row in bath_rows(output/config['bathfile'][0])
-                if config.get('rbathcut', 0) <= math.dist(list(map(float, row[:3])), origin) <= config['rbath']]
+                if inner <= math.dist(list(map(float, row[:3])), origin) <= outer]
         spins = {line.split()[0]: float(line.split()[1]) for line in
                  (output/config['gyrofile']).read_text().splitlines() if line.strip()}
         dimensions = {name: int(2*spin+1) for name, spin in spins.items()}
-        for defect in config.get('Defect', []):
-            dimensions[defect['dfname']] *= math.prod(int(2*s+1) for s in defect['spins'])
+        for defect in config.get('Defect', {}).get('species', []):
+            dimensions[defect['name']] *= math.prod(int(2*s+1) for s in defect.get('spins', []))
         family.update(loaded_sites=len(rows), species=dict(collections.Counter(row[3] for row in rows)),
                       site_dimensions=dimensions)
-        variants = [(f'sK{size}', dict(sK=size), True) for size in family['sizes']]
+        variants = [(f'sK{size}', {'pcce.partition_size': size}, True) for size in family['sizes']]
         if family['name'] == 'synthetic_mixed':
-            variants += [('one_center', dict(sK=7, npulse=4), False),
-                         ('disconnected', dict(sK=2, rdip=0.01, npulse=4), False),
-                         ('empty_order4', dict(sK=2, order=4, npulse=4), False),
-                         ('random_init', dict(sK=2, kmeans_pp=False, npulse=0, seed=347), True)]
+            variants += [('one_center', {'pcce.partition_size': 7, 'pulse.count': 4}, False),
+                         ('disconnected', {'pcce.partition_size': 2, 'rdip': 0.01, 'pulse.count': 4}, False),
+                         ('empty_order4', {'pcce.partition_size': 2, 'order': 4, 'pulse.count': 4}, False),
+                         ('random_init', {'pcce.partition_size': 2, 'pcce.kmeans_pp': False, 'pulse.count': 0, 'seed': 347}, True)]
         for label, overrides, baseline in variants:
             for state in (0, 1):
-                for pulse in ([overrides['npulse']] if 'npulse' in overrides else [1, 4]):
-                    c = dict(config, method='pCCE', order=2, max_trial=24, max_iter=40,
-                        kmeans_pp=True, iter_detail=False, gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=5, min_dim=16),
-                        profile=True, savemode='coherence', npulse=pulse, nstate=state, **{})
-                    c.update(overrides)
-                    size = c['sK']
+                for pulse in ([overrides['pulse.count']] if 'pulse.count' in overrides else [1, 4]):
+                    c = put(config, {'method': 'cCCE', 'cluster_mode': 'pcce', 'order': 2, 'pcce.trials': 24,
+                        'pcce.max_iterations': 40, 'pcce.kmeans_pp': True, 'pcce.print_trials': False,
+                        'gpu_options.evolution_batch_steps': 5, 'gpu_options.min_dim': 16,
+                        'profile': True, 'savemode': 'coherence', 'pulse.count': pulse, 'nstate': state})
+                    c = put(c, overrides)
+                    size = get(c, 'pcce.partition_size')
                     retained = rows[:len(rows)-len(rows)%size]
                     dims = sorted((dimensions[row[3]] for row in retained), reverse=True)
                     upper = math.prod(dims[:min(c['order']*size, len(dims))])
@@ -131,7 +133,8 @@ def prepare(output):
                     if label == 'disconnected':
                         reference = dict(c, order=1)
                     elif state == 0 and (size == 1 or (family['name'] == 'synthetic_mixed' and c['order'] >= len(retained)//size)):
-                        reference = dict(c, method='CCE', order=min(c['order'], len(retained)) if size == 1 else len(retained))
+                        reference = put(c, {'cluster_mode': 'standard', 'pcce': None,
+                                            'order': min(c['order'], len(retained)) if size == 1 else len(retained)})
                         if len(retained) != len(rows):
                             path = f'{family["name"]}-retained{len(retained)}'
                             (output/path).write_text(f'{len(retained)+1} 0 0 0\n'+''.join(' '.join(row)+'\n' for row in retained))
@@ -148,8 +151,8 @@ def prepare(output):
 
 def resolve(config, fixtures):
     config = copy.deepcopy(config)
-    for key in ('qubitfile', 'gyrofile'):
-        config[key] = str(fixtures/config[key])
+    for key in ('Qubit.file', 'gyrofile'):
+        config = put(config, {key: str(fixtures/get(config, key))})
     config['bathfile'] = [str(fixtures/path) for path in config['bathfile']]
     return config
 

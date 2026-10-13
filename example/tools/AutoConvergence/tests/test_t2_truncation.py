@@ -223,13 +223,13 @@ class TestCommandLine(unittest.TestCase):
                 d = Path(tmp) / name; d.mkdir()
                 if inp: (d / "input.json").write_text(json.dumps(inp))
                 return str(d)
-            a = run("a", bathfile=["b1"], statefile="s1", seed=1, rdip=200, outfile="x")
-            b = run("b", bathfile=["b1"], statefile="s1", seed=1, rdip=400, outfile="y")      # only setting keys differ
+            a = run("a", bathfile=["b1"], bath_state_file="s1", seed=1, rdip=200, outfile="x")
+            b = run("b", bathfile=["b1"], bath_state_file="s1", seed=1, rdip=400, outfile="y")      # only setting keys differ
             self.assertEqual(check_pairs([a], [b]), [])
-            c = run("c", bathfile=["b2"], statefile="s1", seed=1, rdip=400)                  # another configuration
+            c = run("c", bathfile=["b2"], bath_state_file="s1", seed=1, rdip=400)                  # another configuration
             with self.assertRaisesRegex(ValueError, "bathfile"):
                 check_pairs([a], [c])
-            e = run("e", bathfile=["b1"], statefile="s1", seed=2, rdip=400)                  # another seed
+            e = run("e", bathfile=["b1"], bath_state_file="s1", seed=2, rdip=400)                  # another seed
             with self.assertRaisesRegex(ValueError, "seed"):
                 check_pairs([a], [e])
             n = run("n")                                                                    # no input.json

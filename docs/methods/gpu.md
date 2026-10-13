@@ -2,15 +2,15 @@
 
 > The `archive/…` names below are dated records that were taken out of the tree on 2026-09-24. They are in git history up to commit 83fe451d5: `git show 83fe451d5:docs/archive/<name>`.
 
-CCEX has an optional NVIDIA CUDA backend for **conventional CCE (`method=CCE`),
-pCCE (`method=pCCE`) and gCCE with `propagator=eigen`**, both ensemble and single-sample calculations.
+CCEX has an optional NVIDIA CUDA backend for **conventional CCE (`method=cCCE`),
+pCCE (`method=cCCE`, `cluster_mode=pcce`) and gCCE with `propagator=eigen`**, both ensemble and single-sample calculations.
 The original CPU backend remains the default. gCCE with `propagator=expm` and
 other method names still run on the CPU.
 
 | Method | Ensemble (`nstate=0`) | Single (`nstate>0`) |
 | --- | --- | --- |
 | Conventional CCE, also called cCCE | GPU normalized bath trace | GPU conditional state vectors |
-| Partitioned CCE, `method=pCCE` | GPU normalized bath trace | GPU conditional state vectors |
+| Partitioned CCE, `cluster_mode=pcce` | GPU normalized bath trace | GPU conditional state vectors |
 | gCCE, `propagator=eigen` | GPU density-matrix evolution | GPU vector or density-matrix evolution |
 
 For cCCE and pCCE, `propagator` and `evolution` do not select an algorithm: the existing
@@ -70,15 +70,15 @@ it changed the error-corrected final coherence by at most 6.7e-7 — the predecl
 point was not met, because `wiDiv` diverges at some points whatever the setting (all-point differences up to 12.7, and
 2.75e11 on P1 gCCE3; (internal notes)) — while it took most of a cluster's setup
 time; `../user/InputFile_Backend.md`). When on, it is strict: nonconvergence within
-`gcce_refinement_max_sweeps` (default 32) stops the run and reports the dimension
+`gcce_refinement.max_sweeps` (default 32) stops the run and reports the dimension
 and sweep limit, and it never silently accepts the unrefined eigensystem.
 Compensated phase products and scaled coherence accumulation are active either way. These options
 apply only to gCCE with `propagator=eigen`.
 
 An omitted `seed` is generated on MPI rank 0, broadcast to every rank, and
-printed for replay. pCCE `iter_detail=true` prints at most `pcce_detail_limit`
+printed for replay. pCCE `pcce.print_trials=true` prints at most `pcce.print_limit`
 trial details from rank 0 per partition search (default 32; 0 suppresses them).
-The global partition summary still aggregates every rank. `pcce_partition=legacy`
+The global partition summary still aggregates every rank. `pcce.partition=legacy`
 preserves the original asymmetric tie rule: larger silhouette within a rank,
 smaller silhouette between ranks at equal inertia. Deterministic mode uses
 larger silhouette throughout.
@@ -161,14 +161,14 @@ The complete list of these keys, with their types and defaults, is
 | `gpu_options.cache_mb` | Nonnegative integer, default 64 MiB per rank; reusable free GPU allocations; 0 disables the cache (was `gpu_cache_mb`) |
 | `propagator` | gCCE: `eigen` (default; one eigendecomposition per cluster, required for CUDA) or `expm` (a matrix exponential per step, CPU only) |
 | `evolution` | gCCE: `vector` (pure initial state, `nstate>0`, `propagator=eigen`) or `matrix` (density matrix); default `vector` where it can run, else `matrix` |
-| `gcce_refinement` | Boolean, default false since 2026-10-02 (true before); compensated refinement of the eigensystem, CPU and CUDA (below) |
-| `gcce_refinement_max_sweeps` | Positive integer, default 32; a cluster not converged within it stops the run |
+| `gcce_refinement` | Block, off by default since 2026-10-02 (on before); `enabled` (true when the block is given) turns on the compensated refinement of the eigensystem, CPU and CUDA (below) |
+| `gcce_refinement.max_sweeps` | Positive integer, default 32; a cluster not converged within it stops the run |
 | `probe_memory_gb` | Nonnegative, default 0 (automatic: 80 % of the job's node memory and, when clusters may go to the GPU, of the smallest GPU); memory the adaptive probes running at once on a node may hold |
-| `iter_detail`, `pcce_detail_limit` | pCCE: rank 0 prints the details of at most `pcce_detail_limit` (default 32) partition trials |
-| `pcce_connections` | pCCE: `centers` (default; distance between partition centroids) or `spins` (any spin pair within `rdip`) |
-| `pcce_partition` | `deterministic` (default) or `legacy`; pCCE partition RNG and trial distribution policy |
-| `pcce_cache_mode` | `off` (default), `readwrite` (reuse or compute/store), `read` (require a matching stored partition); deterministic pCCE only |
-| `pcce_cache_file` | Explicit partition cache path, relative to the working directory or absolute; parent directory must exist |
+| `pcce.print_trials`, `pcce.print_limit` | pCCE: rank 0 prints the details of at most `pcce.print_limit` (default 32) partition trials |
+| `pcce.connections` | pCCE: `centers` (default; distance between partition centroids) or `spins` (any spin pair within `rdip`) |
+| `pcce.partition` | `deterministic` (default) or `legacy`; pCCE partition RNG and trial distribution policy |
+| `pcce.cache.mode` | `off` (default), `readwrite` (reuse or compute/store), `read` (require a matching stored partition); deterministic pCCE only |
+| `pcce.cache.file` | Explicit partition cache path, relative to the working directory or absolute; parent directory must exist |
 | `profile` | Boolean, default false; emit timings grouped by rank, method, backend and Hilbert dimension |
 
 pCCE also accelerates fresh searches by evaluating distances only to centers
@@ -179,11 +179,11 @@ search path; it does not move partitioning to CUDA. See the
 fresh-search validation (archive/pcce-partition-search-20260912.md).
 Fresh searches also detect exact repeated center/assignment states and skip
 whole periods, then execute the remaining iterations to preserve the original
-`max_iter` endpoint. They do not declare a cycle converged or change trial
+`pcce.max_iterations` endpoint. They do not declare a cycle converged or change trial
 selection. This applies to deterministic and legacy pCCE on every backend.
 The root `[partition-search]` log counts converged, cycling and limit-only
 trials, followed by logical, executed and skipped iterations summed over ranks.
-`iter_detail=true` adds each trial's period and counts. See
+`pcce.print_trials=true` adds each trial's period and counts. See
 cycle-skipping validation (archive/pcce-cycle-optimization-20260912.md).
 The partition cache algorithm identity is now `pcce-deterministic-20260912-v3`:
 `readwrite` recomputes old v1/v2 identities once; `read` rejects them until
@@ -214,9 +214,9 @@ every device allocation of n bytes or more, as a full card would; `check_options
 uses it for cCCE and gCCE, one by one and in cluster batches. An explicit `cuda` request with gCCE `expm` or an
 unsupported method is rejected after command-line overrides are resolved.
 
-`cluster_mode=adaptive` adds variable-size automatic grouping to `method=cce`
-and `method=gcce` while retaining the selected CPU/CUDA/auto engine. The dimension
-cap is `bundle_max_dim` (required); bundle orders of 3 and more are supported.
+`cluster_mode=bundle` adds variable-size automatic grouping to `method=cCCE`
+and `method=gCCE` while retaining the selected CPU/CUDA/auto engine. The dimension
+cap is `bundle.max_dim` (required); bundle orders of 3 and more are supported.
 See [adaptive mode](adaptive-cluster-mode.md) for inputs, pair-distance semantics,
 tests and the current limitations.
 
@@ -230,13 +230,13 @@ pure-state buffers hold `D * batch_steps` elements each. Eigensystems, solver
 workspace and other buffers add to this. gCCE `savemode` `cluster_density_matrix` requires additional
 density-matrix storage and host output storage.
 
-For pCCE, `order` counts groups and `sK` is the number of bath sites per group.
-The largest cluster can contain `order * sK` sites plus attached defect spins.
+For pCCE, `order` counts groups and `pcce.partition_size` is the number of bath sites per group.
+The largest cluster can contain `order * partition_size` sites plus attached defect spins.
 This grouping is different from enumerating every conventional CCE cluster of
-that spin order. The current partitioner drops the final `nspin % sK` sites;
+that spin order. The current partitioner drops the final `nspin % partition_size` sites;
 this existing behavior is identical for CPU and CUDA. Supply a positive integer
-`sK` no greater than the loaded bath size, and positive `max_trial`/`max_iter`.
-With `pcce_partition=deterministic`, `max_trial` is the exact global trial count.
+`pcce.partition_size` no greater than the loaded bath size, and positive `pcce.trials`/`pcce.max_iterations`.
+With `pcce.partition=deterministic`, `pcce.trials` is the exact global trial count.
 Trial `t` has its own RNG stream derived from `(seed,t)` and is assigned to rank
 `t % ranks`. The search does not consume the bath-state C RNG. Equal candidates
 are resolved by inertia, silhouette and then global trial index. With an explicit
@@ -246,9 +246,9 @@ last bits because MPI reduction order changes; this is not a promise of bitwise
 identity across compilers or architectures.
 
 This default changes the random search and sampled bath states relative to old
-pCCE runs. Set `pcce_partition=legacy` when reproducing an existing result. In
+pCCE runs. Set `pcce.partition=legacy` when reproducing an existing result. In
 that mode retain the original seed **and MPI size**; each rank uses the historical
-`max(1, max_trial / ranks)` trials and shared C RNG behavior. Legacy mode preserves
+`max(1, pcce.trials / ranks)` trials and shared C RNG behavior. Legacy mode preserves
 its MPI dependence and potentially repeated search streams.
 
 <a id="the-packed-kernel-for-small-ccce-clusters-gpu_optionspacked_max_dim"></a>
@@ -264,7 +264,7 @@ that path:
   `include/calculation/gpu/small_cluster_math.h`): cyclic complex Jacobi for both conditional Hamiltonians (lower
   triangle, as Eigen reads it), M = V_up^† V_down, then for every time point the chain of `evolveSingleState` - the
   ensemble as the average of that chain over the basis states, the Hahn ensemble by the CPU's identity
-  Σ |X_ab|² conj(Du_a) Du_b / D with X = M Dd M^†. Pulse plans with at most 64 pulses (`maxIntervals` = npulse + 1 = 65)
+  Σ |X_ab|² conj(Du_a) Du_b / D with X = M Dd M^†. Pulse plans with at most 64 pulses (`maxIntervals` = `pulse.count` + 1 = 65)
   and at most four distinct interval lengths, chosen after the general input checks (an ensemble `Manual` sequence is
   refused with `backend=cuda` and switched to `cpu` with `auto` before this); phases
   `exact` or `recursive`, as the run's `evolution_update`. The Jacobi rotations run on the Hamiltonian scaled by a
@@ -324,7 +324,7 @@ dimension up to it to
   launches one kernel per dimension. The gCCE plan (pulses, ψa, ψb, ψq) is taken in the first state (`beginState`) and
   must not change afterwards (it cannot: those are set once per run).
 
-What it does not take runs as with `warp_max_dim` 0 (one `[gpu-warp] off: ...` line; the default switches itself off): `gcce_refinement`, `pulseiter`, a pulse
+What it does not take runs as with `warp_max_dim` 0 (one `[gpu-warp] off: ...` line; the default switches itself off): `gcce_refinement`, `pulse.per_qubit`, a pulse
 detuning, savemode `cluster_density_matrix`, a qubit of another dimension, more than one qubit, more than 4 distinct pulse intervals.
 With the key on, the large-cluster batching of `evolution_batch_size` is off, as with the packed kernel (the windows and
 that batching both take clusters ahead). The step-0 thread-per-cluster variant was wrong at `-O3` on sm_120 (Jacobi
@@ -348,15 +348,17 @@ with the same selected bath and partition settings, enable an explicit cache:
 
 ```json
 {
-  "method": "pCCE",
-  "pcce_partition": "deterministic",
+  "method": "cCCE",
+  "cluster_mode": "pcce",
   "seed": 73,
-  "pcce_cache_mode": "readwrite",
-  "pcce_cache_file": "/path/to/existing-directory/nv-sk3.partition"
+  "pcce": {
+    "partition": "deterministic",
+    "cache": {"mode": "readwrite", "file": "/path/to/existing-directory/nv-sk3.partition"}
+  }
 }
 ```
 
-This is a configuration fragment; the usual bath, sK, order and dynamics options
+This is a configuration fragment; the usual bath, `pcce.partition_size`, order and dynamics options
 are still required. In `readwrite`, the first run performs the unchanged search
 and stores the group centers and spin-to-group assignment. Later matching runs
 skip the search. `read` requires an existing, valid, matching file and never
@@ -369,7 +371,7 @@ change the random stream used for sampled bath states.
 
 Identity is checked against the actual selected, transformed, ordered sites
 (names, spins, binary64 coordinates, including an excluded remainder), effective
-seed, sK, max_trial, max_iter, kmeans_pp, partition algorithm version, host compiler
+seed, partition_size, trials, max_iterations, kmeans_pp, partition algorithm version, host compiler
 and selected arithmetic compatibility markers. It is compared in full, rather
 than accepting a filename or hash as proof of a match. Centers are stored without
 rounding. A file checksum detects accidental corruption, and group indices,
@@ -389,7 +391,7 @@ version in `src/clustering/pcce_partition_cache.cpp`.
 Rank zero reads/writes and broadcasts the validated partition. All ranks first
 verify identical input identities. Writes use a unique temporary file beside the
 destination, flush it and rename it atomically. Concurrent writers cannot expose
-half-written data; using distinct files for different baths/sK/settings avoids
+half-written data; using distinct files for different baths/partition sizes/settings avoids
 repeated replacement. A hit reports `[partition-cache] status=hit` and
 `source=cache total_trials=0`. A miss/store reports lookup, search and write times.
 
@@ -432,7 +434,7 @@ returns the overlap of the conditional states (single) or its normalized
 Frobenius inner product (ensemble).
 
 This retains the existing cCCE semantics: ensemble uses Ramsey/CPMG intervals
-from `npulse`, including the CPU's float half-interval rounding and even-pulse
+from `pulse.count`, including the CPU's float half-interval rounding and even-pulse
 complex-conjugation convention. Single follows the configured interval sequence
 and its delay-cache indices. As on the CPU, cCCE toggles conditional Hamiltonians;
 this change does not add general finite-angle or finite-duration pulse physics

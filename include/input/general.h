@@ -57,7 +57,10 @@ typedef struct {
     int gpu_batch_steps;                   /**< maximum time points per CUDA batch */
     bool gcce_refinement;                 /**< compensated eigensystem refinement; off by default since 2026-10-02 */
     int gcce_refinement_max_sweeps;
-    bool vector_mean_field;               /**< the static mean field of the other bath spins as the vector J . m_j, not its z part alone (2026-10-03, off by default) */
+    bool vector_mean_field;               /**< the static mean field of the other bath spins as the vector J . m_j, not its z part alone (2026-10-03, off by default; hamiltonian.common.bath_bath_mean_field "xyz") */
+    bool bath_mean_field_off;             /**< no static mean field of the other bath spins at all (hamiltonian.common.bath_bath_mean_field "off", A47) */
+    bool hamiltonian_ccce_given;          /**< hamiltonian.cCCE has a setting: refused in a gCCE run (validateHamiltonianForMethod, main.cpp) */
+    bool delta_A;                         /**< hamiltonian.cCCE.delta_A: false replaces the hyperfine tensors of a cluster's bath spins by their mean (A47) */
     int pcce_detail_limit;                /**< rank-zero trial details, 0 disables */
     int gpu_cache_mb;                      /**< reusable device-buffer cache per rank; 0 disables */
     double probe_memory_gb;                /**< node budget for the probes running at once; 0: 80 % of RAM (and of the GPU) */
@@ -185,30 +188,6 @@ typedef struct {
     */
     DefectAxisReference defect_axis_reference;
 
-    // tensorfile-related
-    double DefectTotSpin; /**< Total spin of defect : default : 1 */
-                        // Central spin number in reading Atensor file (default S = 1)
-                        // It is nesessary for calulation of Hyperfin tensor with Atensor file
-                        // <ex.1>
-                        // If you use the Q.E., you will set this value which you want (S=5/2 --> DefectTotSpin = 5/2)
-                        // <ex.2>
-                        // If using VASP version, you don't consider the DefectTotSpin value (DefectTotSpin = 1)
-                        // <ex.3>
-                        // But if you wat to use other central spin which is different from A-file in VASP version,
-                        // you have to set the central spin which you want (S=3/2 --> DefectTotSpin =3/2)
-                        // , and then you will change CorrTotSpin !!!
-
-    double CorrTotSpin; /**< Total spin of correlation : default : 0 */
-                        // Correlation value of total spin in A-tensor (default : NULL)
-                        // <ex.1>
-                        // If A-tensor file of Q.E., automatically it adapt the central spin S = 1/2 into A-file
-                        // --> CorrTotSpin = 1/2
-                        // <ex.2>
-                        // If using VASP version, you don't consider the CorrTotSpin value (CorrTotSpin = NULL)
-                        // <ex.3>
-                        // But if you want to use other central spin which is different from A-file in VASP version,
-                        // you have to set the central spin of A-file (VASP; Half of Total magnetic moment (S/2))
-
     // DFT Hyperfine tensor
     int hf_readmode; /**< Read mode for hyperfine tensor file : 0 : off , 1~3 : fermi & DFT */ 
     char* hf_tensorfile; /**< Hyperfine tensor file name */
@@ -278,8 +257,6 @@ char*   Config_getRot_qubit_position_frame(Config* cnf);
 char*   Config_getRot_hf_tensor_frame(Config* cnf);
 char*   Config_getRot_qd_tensor_frame(Config* cnf);
 DefectAxisReference Config_getDefect_axis_reference(Config* cnf);
-double  Config_getDefectTotSpin(Config* cnf);
-double  Config_getCorrTotSpin(Config* cnf);
 char*   Config_getHf_tensorfile(Config* cnf);
 int     Config_getHf_ignore_oor(Config* cnf);
 int     Config_getHf_readmode(Config* cnf);
@@ -335,8 +312,6 @@ void Config_setDefect_axis_reference(Config* cnf, DefectAxisReference reference)
 // lie along it. Checked once every option source (input file, then CLI) is in.
 void Config_validateBfieldAlignment(Config* cnf);
 
-void Config_setDefectTotSpin(Config* cnf, double DefectTotSpin);
-void Config_setCorrTotSpin(Config* cnf, double CorrTotSpin);
 void Config_setHf_tensorfile(Config* cnf, char* hf_tensorfile);
 void Config_setHf_ignore_oor(Config* cnf, int hf_ignore_oor);
 void Config_setHf_readmode(Config* cnf, int hf_readmode);

@@ -2,6 +2,7 @@
 #SBATCH --job-name=ccex-gpu-sharing
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu-short
+#SBATCH --export=NONE
 #SBATCH --nodes=1
 #SBATCH --ntasks=32
 #SBATCH --cpus-per-task=1

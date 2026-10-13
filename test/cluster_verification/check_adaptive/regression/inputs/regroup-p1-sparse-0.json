@@ -1,7 +1,11 @@
 {
- "method": "CCE",
+ "method": "cCCE",
  "quantity": "coherence",
- "qubitfile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect",
+ "Qubit": {
+  "file": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect",
+  "alphams": -1,
+  "betams": 0
+ },
  "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
  "bathfile": [
   "test/cluster_verification/check_adaptive/regression/inputs/bath_p1_8"
@@ -12,88 +16,86 @@
  "rdip": 45,
  "deltat": 0.002,
  "nstep": 30,
- "qalphams": -1,
- "qbetams": 0,
- "npulse": 1,
+ "pulse": {"count": 1},
  "nstate": 5,
  "seed": 1,
- "Defect": [
-  {
-   "dfname": "P1",
-   "apprx": true,
-   "naddspin": 0,
-   "navaax": 12,
-   "detuning": {
-    "values": [
-     [
-      1,
-      "e",
-      84.946496
+ "Defect": {
+  "species": [
+   {
+    "name": "P1",
+    "n_nuclear_spins": 0,
+    "n_configurations": 12,
+    "detuning": {
+     "values": [
+      [
+       1,
+       "e",
+       84.946496
+      ],
+      [
+       2,
+       "e",
+       84.946496
+      ],
+      [
+       3,
+       "e",
+       84.946496
+      ],
+      [
+       4,
+       "e",
+       0.0
+      ],
+      [
+       5,
+       "e",
+       0.0
+      ],
+      [
+       6,
+       "e",
+       0.0
+      ],
+      [
+       7,
+       "e",
+       -84.946496
+      ],
+      [
+       8,
+       "e",
+       -84.946496
+      ],
+      [
+       9,
+       "e",
+       -84.946496
+      ],
+      [
+       10,
+       "e",
+       114.0264
+      ],
+      [
+       11,
+       "e",
+       0.0
+      ],
+      [
+       12,
+       "e",
+       -114.0264
+      ]
      ],
-     [
-      2,
-      "e",
-      84.946496
-     ],
-     [
-      3,
-      "e",
-      84.946496
-     ],
-     [
-      4,
-      "e",
-      0.0
-     ],
-     [
-      5,
-      "e",
-      0.0
-     ],
-     [
-      6,
-      "e",
-      0.0
-     ],
-     [
-      7,
-      "e",
-      -84.946496
-     ],
-     [
-      8,
-      "e",
-      -84.946496
-     ],
-     [
-      9,
-      "e",
-      -84.946496
-     ],
-     [
-      10,
-      "e",
-      114.0264
-     ],
-     [
-      11,
-      "e",
-      0.0
-     ],
-     [
-      12,
-      "e",
-      -114.0264
-     ]
-    ],
-    "unit": "MHz"
+     "unit": "MHz"
+    }
    }
-  }
- ],
+  ]
+ },
  "backend": "cpu",
  "savemode": "coherence",
  "outfile": "bin/adaptive_ensemble",
- "cluster_mode": "adaptive",
- "bundle_max_dim": 4,
- "bundle_merge_cutoff": 0
+ "cluster_mode": "bundle",
+ "bundle": {"max_dim": 4, "merge_cutoff": 0}
 }

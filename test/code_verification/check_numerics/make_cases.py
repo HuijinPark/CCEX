@@ -5,16 +5,30 @@ import os, re, json, shutil, glob
 T = 'example/tutorial'; R = 'test/code_verification/check_numerics'
 def lenient(t):
     t = re.sub(r'[#!][^\n]*', '', t); t = re.sub(r',\s*([}\]])', r'\1', t); return json.loads(t)
-FILE_KEYS = ('bathfile', 'gyrofile', 'qubitfile', 'hf_tensorfile', 'qd_tensorfile', 'qd_tensorfile_woqubit', 'avaaxfile', 'statefile', 'exstatefile')
+# the input keys that name files, as paths into the input's blocks (A47, docs/user/InputFile.md)
+FILE_KEYS = (('bathfile',), ('gyrofile',), ('Qubit', 'file'), ('hamiltonian', 'common', 'hyperfine', 'file'),
+             ('hamiltonian', 'common', 'quadrupole', 'file'), ('hamiltonian', 'common', 'quadrupole', 'file_without_defect'),
+             ('Defect', 'axis_file'), ('bath_state_file',), ('Defect', 'state_file'))
+def at(cfg, path):
+    for k in path:
+        if not isinstance(cfg, dict) or k not in cfg: return None
+        cfg = cfg[k]
+    return cfg
+def put(cfg, path, value):
+    for k in path[:-1]: cfg = cfg.setdefault(k, {})
+    cfg[path[-1]] = value
+def drop(cfg, path):
+    block = at(cfg, path[:-1]) if len(path) > 1 else cfg
+    if isinstance(block, dict): block.pop(path[-1], None)
 # name: (source input, system folder under inputs/, overrides, deterministic files wanted)
 C = {}
 def case(name, src, sys_, ov, det=()): C[name] = dict(src=f'{T}/{src}', sys=sys_, ov=ov, det=det)
 nat = dict(rbath=30, nstep=400, seed=19)
 case('natab_cce2_hahn',        '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', nat)
-case('natab_cce2_ramsey',      '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', dict(nat, npulse=0))
-case('natab_cce2_cpmg8',       '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', dict(nat, npulse=8))
+case('natab_cce2_ramsey',      '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', dict(nat, pulse={'count': 0}))
+case('natab_cce2_cpmg8',       '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', dict(nat, pulse={'count': 8}))
 case('natab_cce2_single',      '02_Diamond_NV_natab/single-sample_CCE/ccein.json',      'natab', dict(nat, nstate=2), ('state',))
-# The two gCCE2 cases were cut from ensemble_gCCE/ccein_single.json and ccein_multi2.json, whose qubitfile won over an
+# The two gCCE2 cases were cut from ensemble_gCCE/ccein_single.json and ccein_multi2.json, whose qubitfile (Qubit.file) won over an
 # unread Qubit block (one NV in both). Those inputs changed on 2026-10-13 (a qubitfile with a Qubit block is refused;
 # multi2 is a real two-qubit input, single has the ZFS), so the cases are cut from ensemble_CCE's input with the same
 # values: the same inputs as recorded, without the Qubit block. natab_gcce2_bathadjust (natab_gcce2_two_qubits until
@@ -22,7 +36,7 @@ case('natab_cce2_single',      '02_Diamond_NV_natab/single-sample_CCE/ccein.json
 gc = dict(method='gCCE', rbath=20, nstep=300, seed=19)
 case('natab_gcce2_hahn',       '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab', gc)
 case('natab_gcce2_bathadjust', '02_Diamond_NV_natab/ensemble_CCE/ccein.json',           'natab',
-     dict(gc, bathfile=['../bath/bath_Diamond_NV_natab_1', '../bath/bath_Diamond_NV_natab_1'], bathadjust=[[0, 0, 0], [0, 0, 50]]))
+     dict(gc, bathfile=['../bath/bath_Diamond_NV_natab_1', '../bath/bath_Diamond_NV_natab_1'], bath_shift=[[0, 0, 0], [0, 0, 50]]))
 case('natab_dsj2',             '02_Diamond_NV_natab/ensemble_Dsj/ccein.json',           'natab', nat)
 case('natab_knight_shift',     '02_Diamond_NV_natab/knight_shift/ccein_wi_knight.json', 'natab', nat)
 case('natab_manual_hahn',      '06_Pulse_Manual/HahnEcho_natab_ensemble_origin/ccein.json', 'natab_pulse', nat)
@@ -62,9 +76,9 @@ def det_files(sysdir, bath, gyro, defect, want):
     n, names = bath_lines(bath); spins = spins_from_gyro(gyro) if gyro else {}
     made = {}
     if 'avaax' in want:
-        navaax = int(defect.get('navaax', 0)) if defect else 0
+        navaax = int(defect.get('n_configurations', 0)) if defect else 0
         if navaax > 0:
-            p = f'{sysdir}/avaax_nav{navaax}'; open(p, 'w').write(f'{n}\n' + ''.join(f'{(i * 7) % navaax + 1}\n' for i in range(n))); made['avaaxfile'] = f'avaax_nav{navaax}'
+            p = f'{sysdir}/avaax_nav{navaax}'; open(p, 'w').write(f'{n}\n' + ''.join(f'{(i * 7) % navaax + 1}\n' for i in range(n))); made[('Defect', 'axis_file')] = f'avaax_nav{navaax}'
     if 'state' in want:
         for k in (1, 2):
             vals = []
@@ -74,11 +88,11 @@ def det_files(sysdir, bath, gyro, defect, want):
                 if S == int(S): vals.append(0.0)
                 else: vals.append(0.5 if (i + k) % 2 else -0.5)
             open(f'{sysdir}/state_{k}', 'w').write(f'{n}\n' + ''.join(f'{v:.5f}\n' for v in vals))
-        made['statefile'] = 'state_'
-    if 'exstate' in want and defect and int(defect.get('naddspin', 0)) > 0:
+        made[('bath_state_file',)] = 'state_'
+    if 'exstate' in want and defect and int(defect.get('n_nuclear_spins', 0)) > 0:
         for k in (1, 2):
             open(f'{sysdir}/exstate_{k}', 'w').write(f'{n}\n' + ''.join(f'{float(((i + k) % 3) - 1):.5f}\n' for i in range(n)))
-        made['exstatefile'] = 'exstate_'
+        made[('Defect', 'state_file')] = 'exstate_'
     return made
 summary = []
 for name, c in C.items():
@@ -105,23 +119,23 @@ for name, c in C.items():
             dst = f'{sysdir}/{os.path.basename(g)}'
             if not os.path.exists(dst): shutil.copy(g, dst)
         return f'../../inputs/{c["sys"]}/{os.path.basename(srcp)}' if got else None
-    for key in FILE_KEYS:
-        if key not in cfg: continue
-        v = cfg[key]
-        if isinstance(v, list): cfg[key] = [bring(x, key) or x for x in v]
+    for path in FILE_KEYS:
+        v = at(cfg, path)
+        if v is None: continue
+        if isinstance(v, list): put(cfg, path, [bring(x, path[-1]) or x for x in v])
         elif isinstance(v, str) and v not in ('Random',):
-            nv = bring(v, key)
-            if nv: cfg[key] = nv
-            else: del cfg[key]                       # 'Random' or a file that never existed: the deterministic file below replaces it
-    defect = (cfg.get('Defect') or [None])[0] if isinstance(cfg.get('Defect'), list) else cfg.get('Defect')
+            nv = bring(v, path[-1])
+            if nv: put(cfg, path, nv)
+            else: drop(cfg, path)                    # 'Random' or a file that never existed: the deterministic file below replaces it
+    defect = (at(cfg, ('Defect', 'species')) or [None])[0]
     bath = os.path.join(R, 'cases', name, cfg['bathfile'][0] if isinstance(cfg['bathfile'], list) else cfg['bathfile'])
     bath = os.path.normpath(os.path.join(f'{R}/cases/{name}', cfg['bathfile'][0] if isinstance(cfg['bathfile'], list) else cfg['bathfile']))
     gyro = os.path.normpath(os.path.join(f'{R}/cases/{name}', cfg['gyrofile'])) if 'gyrofile' in cfg else None
     if c['det']:
         made = det_files(sysdir, bath, gyro, defect, c['det'])
-        for k, f in made.items(): cfg[k] = f'../../inputs/{c["sys"]}/{f}'
+        for k, f in made.items(): put(cfg, k, f'../../inputs/{c["sys"]}/{f}')
     os.makedirs(f'{R}/cases/{name}', exist_ok=True)
     json.dump(cfg, open(f'{R}/cases/{name}/ccein.json', 'w'), indent=2)
-    summary.append((name, cfg.get('method'), cfg.get('quantity'), cfg.get('nstate', 0), cfg.get('npulse'), cfg.get('rbath'), cfg.get('nstep'), sorted(k for k in FILE_KEYS if k in cfg)))
-for s in summary: print(f'{s[0]:24} {str(s[1]):5} {str(s[2]):9} nstate={s[3]} npulse={s[4]} rbath={s[5]} nstep={s[6]} files={",".join(s[7])}')
+    summary.append((name, cfg.get('method'), cfg.get('quantity'), cfg.get('nstate', 0), at(cfg, ('pulse', 'count')), cfg.get('rbath'), cfg.get('nstep'), sorted('.'.join(k) for k in FILE_KEYS if at(cfg, k) is not None)))
+for s in summary: print(f'{s[0]:24} {str(s[1]):5} {str(s[2]):9} nstate={s[3]} pulse.count={s[4]} rbath={s[5]} nstep={s[6]} files={",".join(s[7])}')
 print('inputs:', sum(len(f) for _, _, f in os.walk(f'{R}/inputs')), 'files,', end=' '); os.system(f'du -sh {R}/inputs | cut -f1')

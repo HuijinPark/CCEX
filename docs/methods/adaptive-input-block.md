@@ -1,16 +1,16 @@
-# 입력 파일에서 재분할 켜기 — `Adaptive` 블록 (2026-09-20, 이름 변경 2026-09-23)
+# 입력 파일에서 재분할 켜기 — `adaptive` 블록 (2026-09-20, 이름 변경 2026-09-23·2026-10-13)
 
-입력 JSON에 `Adaptive` 객체를 두면 `bin/main.out -f 입력.json`이 한 번 계산하는 대신 **적응형 재분할**을
+입력 JSON에 `adaptive` 객체를 두면 `bin/main.out -f 입력.json`이 한 번 계산하는 대신 **적응형 재분할**을
 돈다: 계산하고, 오차를 재고, 묶음(bundle)을 고쳐 다시 계산하기를 되풀이한다. 블록이 없으면 지금까지와
 똑같이 한 번 계산한다.
 
 ```json
 {
-  "method": "cce", "order": 2,
-  "cluster_mode": "adaptive", "bundle_max_dim": 8, "bundle_merge_cutoff": 1e300,
+  "method": "cCCE", "order": 2,
+  "cluster_mode": "bundle", "bundle": {"max_dim": 8, "merge_cutoff": 1e300},
   "...": "나머지는 보통의 CCEX 입력",
 
-  "Adaptive": {
+  "adaptive": {
     "policy": "merge",
     "output": "./adaptive_out",
     "atol": 1e-8,
@@ -26,21 +26,21 @@ mpirun -n 4 bin/main.out -f 입력.json
 
 - 결과는 `output` 폴더에 쌓인다: 단계별 폴더(`0001-plan`, `0002-probe`, …)와 전체 요약 `summary.json`.
 - 랭크 수는 `mpirun -n`을 따른다. 계산은 같은 프로세스 안에서 돌므로 bath는 한 번만 읽는다.
-- 재분할은 가변 클러스터링 위에서 돈다. 입력에 `"cluster_mode": "adaptive"`와 `bundle_max_dim`이 있어야 한다.
-- 이름: `cluster_mode=adaptive`만 있으면 가변형(묶음을 한 번 만들어 계산), `Adaptive` 블록이 더 있으면 적응형(오차로 되먹이는 반복)이다 (`clustering-terminology.md`). 2026-09-23까지 이 블록의 이름은 `Refine`이었다. 옛 이름은 읽지 않고 오류로 알린다.
+- 재분할은 가변 클러스터링 위에서 돈다. 입력의 `cluster_mode`가 `bundle`(또는 `pcce`)이어야 한다(그 밖이면 시작 전에 거부).
+- 이름: `cluster_mode=bundle`만 있으면 가변형(묶음을 한 번 만들어 계산), `adaptive` 블록이 더 있으면 적응형(오차로 되먹이는 반복)이다 (`clustering-terminology.md`). 2026-09-23까지 이 블록의 이름은 `Refine`이었다. 옛 이름은 읽지 않고 오류로 알린다. 2026-10-13까지는 `Adaptive`로 적었고(키는 대소문자를 가리지 않으므로 지금도 읽힌다), `cluster_mode`의 값은 `adaptive`, 묶음 키는 `bundle_max_dim` 같은 평평한 이름이었다(`docs/user/InputFile.md`의 옛 이름 표).
 - 입력의 `#`·`!` 주석은 보통 입력과 같은 규칙으로 무시된다 (2026-09-23. 그 전에는 재분할 드라이버가 파일을 따로 읽어 주석이 있으면 실패했다). `seed`는 반드시 적어야 한다: 라운드마다 같은 계를 다시 계산하므로 bath 상태가 보존돼야 한다.
 
 ## 두 층의 구분
 
 | | 하는 일 | 어디서 제어 |
 |---|---|---|
-| 가변 클러스터링 | 스핀을 묶음으로 묶어 **한 번** 계산 | 입력의 `cluster_mode`, `bundle_*`, `expansion_*` |
-| 적응형 재분할 | 위 계산을 되풀이하며 묶음을 고침 | 입력의 `Adaptive` 블록 |
+| 가변 클러스터링 | 스핀을 묶음으로 묶어 **한 번** 계산 | 입력의 `cluster_mode`, `bundle` 블록 |
+| 적응형 재분할 | 위 계산을 되풀이하며 묶음을 고침 | 입력의 `adaptive` 블록 |
 
 ## 키
 
 이름은 명령줄 옵션(`--adaptive` 뒤에 쓰던 것)에서 `-`를 `_`로 바꾼 것이다. `true/false` 키는 `true`일 때만
-켜진다. 모르는 키, 형식이 틀린 값, 빠진 필수 키는 시작할 때 `Error: Adaptive.<키> …`로 알려 준다.
+켜진다. 모르는 키, 형식이 틀린 값, 빠진 필수 키는 시작할 때 `Error: adaptive.<키> …`로 알려 준다.
 
 | 키 | 형식 | 기본값 | |
 |---|---|---|---|
@@ -85,15 +85,15 @@ mpirun -n 4 bin/main.out -f 입력.json
   1e-4 넘게 줄고, 가장 가까운 바깥 bundle 셋 각각과의 국소 오차가 1e-4 넘게 커지지 않고, 전체 전개의 비물리 상태
   수가 늘지 않고 최악 상태의 초과량이 줄어야 받는다. 받은 분할은 다시 실행해 확인하고, 확인되지 않으면 되돌린 뒤
   막는다. 이미 가 본 분할로는 돌아가지 않는다. 받아들여 확인된 변경은 8번까지.
-- 연결은 옛 bundle에서 옮기지 않고 site 거리(rdip, rdipcut)로 매번 다시 정하며, 실행마다 CCEX가 계획한 연결과
+- 연결은 옛 bundle에서 옮기지 않고 site 거리(`rdip`, 안쪽 반지름 포함)로 매번 다시 정하며, 실행마다 CCEX가 계획한 연결과
   같은지 확인한다. 그래서 `response.physics.json`(site 좌표)을 첫 실행에서 받는다.
-- 범위(시작 전에 이유와 함께 거부): `method` cce, `order` 2, `bundle_connections` distance(생략 시 distance)와
+- 범위(시작 전에 이유와 함께 거부): `method` cCCE, `order` 2, `bundle.connections` distance(생략 시 distance)와
   `rdip`. gCCE, 다른 차수, `auto`·`checked`, 그리고 `prefer_physical`·`hub_candidates`와 함께 쓰면 거부한다.
 - 비용: `max_total_work`가 실행 전체의 누적 한도다(D^3 × 상태 × 시간점; 첫 실행·범인 probe·영역 직접해·이웃 직접해·
   후보·바깥 항·재실행을 따로 센다). 첫 실행은 결과가 있어야 하므로 한도와 무관하게 돌고 그 비용도 장부에 적는다 —
   한도는 그 뒤의 D 탐색에 걸린다(첫 곡선이 physical이면 그대로 끝나고, 아니면서 첫 실행만으로 한도를 넘었으면 고칠 후보를 하나도 못 받아 `budget_limited`). 필요한 probe를 중복 없이 모아 실행 전에 예약하고, 받을 경우의 재실행 몫을
   남겨 둔다(한 번에 모은 후보들 가운데 가장 큰 재실행 몫). 감당 못 하는 후보는 검사를 건너뛰지 않고 거부한다(`budget_limited`). `max_probes`·`cache_mb`도 그대로
-  적용된다. 실행 전체의 `expansion_max_clusters`·`expansion_max_work`를 넘는 후보도 CCEX에 묻기 전에 거부하므로,
+  적용된다. 실행 전체의 `bundle.max_clusters`·`bundle.max_work`를 넘는 후보도 CCEX에 묻기 전에 거부하므로,
   in-process에서 후보 하나 때문에 작업 전체가 끝나지 않는다.
 - 끝(요약의 `status`): `physical`(종료 코드 0), `no_positive_culprit`, `no_candidate`, `budget_limited`,
   `change_limit`(2), `failed`(1). 결과는 마지막으로 확인된 분할이다. `physical`은 정확하다는 뜻이 아니다 — merge의
@@ -129,5 +129,5 @@ hub_candidates), regroup 사례 다섯(한 번 바꾸고 physical, rdip로 성�
 `except`판)과 `outfile` 없는 입력에서
 두 방식의 산출물이 같음을 확인한다(2026-10-10 전에는 정책별 사례를 더해 여덟 사례, 2026-10-11 전에는 둘). 둘을 함께 쓰면 오류다.
 
-재분할이 단계마다 쓰는 `input.json`에는 `Adaptive` 블록이 복사되지 않는다 — 복사되면 단계 계산이 제 나름의
+재분할이 단계마다 쓰는 `input.json`에는 `adaptive` 블록이 복사되지 않는다 — 복사되면 단계 계산이 제 나름의
 재분할을 시작하려 든다.

@@ -9,11 +9,9 @@ per-cluster diagnostics.
 - [propagator](#tag_propagator)
 - [evolution](#tag_evolution)
 - [evolution_update](#tag_evolution_update)
-- [gcce_refinement](#tag_gcce_refinement)
-- [gcce_refinement_max_sweeps](#tag_gcce_refinement_max_sweeps)
+- [gcce_refinement](#tag_gcce_refinement) (`enabled`, [max_sweeps](#tag_gcce_refinement_max_sweeps))
 - [profile](#tag_profile)
-- [cluster_contributions](#tag_cluster_contributions)
-- [cluster_contribution_max_mb](#tag_cluster_contribution_max_mb)
+- [cluster_contributions](#tag_cluster_contributions) (`enabled`, [max_mb](#tag_cluster_contribution_max_mb))
 
 <a id="tag_backend"></a>
 ## backend
@@ -58,12 +56,12 @@ and cCCE clusters of dimension up to 27 in the warp kernel (`warp_max_dim`, belo
 | Key | Was | Type, default | Meaning |
 |---|---|---|---|
 | `min_dim` | `gpu_min_dim` | positive integer, `768` (`256` until 2026-10-13) | with `backend` = `auto`, the smallest cluster Hilbert dimension that goes to the GPU; smaller clusters stay on the CPU. Ignored by `cpu` and `cuda`. 768: on idm4-gpu (A37, job 699; RTX PRO 6000, 32 ranks) the GPU was faster from about 670-750 on in every path (cCCE and gCCE, single state and ensemble) and slower at 648 and below |
-| `packed_max_dim` | (new) | `0`, `2` or `4`; `4` in `bin/main_gpu.out` with `backend` `cuda` or `auto` and `method` CCE, else `0` | the packed kernel (below): cCCE clusters of bath dimension up to this value on the GPU, many at once. `0` is off |
+| `packed_max_dim` | (new) | `0`, `2` or `4`; `4` in `bin/main_gpu.out` with `backend` `cuda` or `auto` and `method` cCCE (`cluster_mode` standard or bundle), else `0` | the packed kernel (below): cCCE clusters of bath dimension up to this value on the GPU, many at once. `0` is off |
 | `evolution_batch_size` | `gpu_batch_clusters` | positive integer, `8` | the largest number of consecutive clusters of one dimension evolved together on the GPU (`backend` `cuda`/`auto`); `1` evolves one cluster at a time |
 | `evolution_batch_steps` | `gpu_batch_steps` | positive integer, `64` | the largest number of time points a GPU evolution processes together |
 | `cluster_batch_mb` | `gpu_cluster_batch_mb` | positive integer, `64` (MiB per rank) | the evolution-buffer budget that limits how many clusters one GPU batch may hold |
 | `cache_mb` | `gpu_cache_mb` | nonnegative integer, `64` (MiB per rank) | GPU memory that freed allocations are kept in for reuse; `0` disables the cache |
-| `warp_max_dim` | (new, A40) | `0` to `32`; `27` in `bin/main_gpu.out` with `backend` `cuda` or `auto` and `method` CCE or gCCE, else `0` | the warp kernel (below): gCCE and cCCE clusters of a compiled total dimension up to this value on the GPU, one per warp. `0` is off |
+| `warp_max_dim` | (new, A40) | `0` to `32`; `27` in `bin/main_gpu.out` with `backend` `cuda` or `auto` and `method` cCCE or gCCE, else `0` | the warp kernel (below): gCCE and cCCE clusters of a compiled total dimension up to this value on the GPU, one per warp. `0` is off |
 
 <b>The packed kernel (`packed_max_dim`).</b> The `cuda`/`auto` backends send a cluster to the GPU on its own, which
 for the dimension-2 and 4 clusters of a P1 bath costs far more than the CPU (A12, A26 step 0: about 400 times slower).
@@ -78,9 +76,9 @@ turns the packed kernel off and every cluster runs on the CPU; with `cuda` (or a
 the run stops. The packed plan is chosen after the general input checks (for instance the refusal
 of an ensemble `Manual` sequence with `cuda` above). Single state and ensemble, every pulse sequence with at most 64
 pulses and at most 4 distinct interval lengths (Hahn, CPMG, Ramsey, most `Manual` ones; others stay on the CPU), `evolution_update` `exact` and `recursive` (the kernel follows the run's value). Needs `bin/main_gpu.out` and
-`method` = `CCE` (refused otherwise). The results agree with the CPU within the GPU tolerance 1e-8 + 2e-6 |CPU|, not bit
+`method` = `cCCE` with `cluster_mode` standard or bundle (refused otherwise). The results agree with the CPU within the GPU tolerance 1e-8 + 2e-6 |CPU|, not bit
 for bit (the eigensolver differs); the standing check is `test_small_cluster_cuda` in `make gpu-test`.
-<b>Default (user, 2026-10-12):</b> on (`4`) in `bin/main_gpu.out` with `backend` = `cuda` or `auto` and `method` CCE
+<b>Default (user, 2026-10-12):</b> on (`4`) in `bin/main_gpu.out` with `backend` = `cuda` or `auto` and `method` cCCE
 (quantity coherence); off (`0`) with `backend` = `cpu`, with any other method, and always in the CPU build `bin/main.out`,
 where nothing goes to the GPU and only an explicit nonzero value is refused. An explicit value works with any `backend`
 (`cpu` included: then the packed clusters are the only GPU work). The run log prints the value and why
@@ -114,10 +112,10 @@ the clusters of a compiled dimension up to `warp_max_dim` go to it. gCCE: quanti
 (`evolution` `vector` or `matrix`) and ensemble (`matrix`), `propagator` eigen, one qubit; cCCE: as the packed kernel. Pulse
 plans with at most 4 distinct interval lengths (Hahn, CPMG, Ramsey). Phases are always `exact` there (the log's `chosen by`
 of `evolution_update` says "warp kernel included"); the CPU's default `recursive` differs from `exact` by about 1e-11.
-<b>Default:</b> `27` (every compiled dimension) in `bin/main_gpu.out` with `backend` `cuda` or `auto` and `method` CCE
+<b>Default:</b> `27` (every compiled dimension) in `bin/main_gpu.out` with `backend` `cuda` or `auto` and `method` cCCE
 (quantity coherence) or gCCE; `0` with `backend` `cpu`, another method, and always in the CPU build. The log prints the
 value and why (`chosen by : default (backend=auto, method=gCCE)`, `default (CPU build)`, ... or `given`). Where the run is
-one the kernel does not take (`gcce_refinement`, `pulseiter`, a pulse detuning, savemode `cluster_density_matrix`, another qubit
+one the kernel does not take (`gcce_refinement`, `pulse.per_qubit`, a pulse detuning, savemode `cluster_density_matrix`, another qubit
 dimension, more than 4 distinct intervals) it switches itself off, with one `[gpu-warp] off: ...` line, and the run goes
 on as before. A given nonzero value is refused in the CPU build, with `backend` `cpu`, with a method other than CCE or
 gCCE, and when no compiled dimension is up to it. <br>
@@ -139,8 +137,7 @@ gpu_cluster_batch_mb, gpu_cache_mb, gpu_warp_max_dim
 <a id="tag_propagator"></a>
 ## propagator
 <b>Description:</b><br>
-How the free evolution of a cluster is propagated. `eigen` and `sparse` exist for cCCE (`method` CCE, pCCE, dsj, itb or
-dsjitb) and gCCE, `expm` for gCCE only (refused with any other method). <br>
+How the free evolution of a cluster is propagated. `eigen` and `sparse` exist for cCCE (`method` cCCE, any `cluster_mode`) and gCCE, `expm` for gCCE only (refused with any other method). <br>
 `sparse` (A2, 2026-10-12) applies exp(-i H τ) to the state vector without diagonalizing H: the cluster Hamiltonian is
 assembled in compressed rows from its one- and two-spin terms (no dense matrix of the cluster is formed) and the
 exponential is a Lanczos (Krylov) expansion of dimension 30 (the whole space up to dimension 64) with an a-posteriori
@@ -148,7 +145,7 @@ error estimate per substep; the interval is split into as many substeps as the e
 Hilbert dimension `min_dim` and above (gCCE: qubit times bath dimension); smaller clusters keep the `eigen` path, so
 `"sparse"` with the default `min_dim` gives the bytes of `eigen` with `evolution_update` = `exact` wherever no cluster reaches 4096. It covers one sampled
 state (`nstate` > 0) of the cCCE and gCCE with `evolution` = `vector` and one qubit, with `backend` = `cpu` and
-`evolution_update` = `exact`, without `knight` and `hfmedi`; the ensemble (`nstate` = 0), gCCE `evolution` = `matrix`,
+`evolution_update` = `exact`, without `hamiltonian.cCCE.knight` and `hfmedi`; the ensemble (`nstate` = 0), gCCE `evolution` = `matrix`,
 `backend` = `cuda` or `auto`, `evolution_update` = `recursive`, `knight`, `hfmedi` and more than one qubit are refused at
 the start. <br>
 **When `sparse` pays:** only when the dense eigendecomposition of a cluster does not fit in memory. Memory is O(dim)
@@ -214,11 +211,11 @@ How the phases exp(-i E τ) of the eigenvalues are formed at each time point of 
 computes them with sin and cos at every point. `recursive` does so at points 0, 16, 32, … and in between multiplies the
 previous point's phases by one step's factor exp(-i E f `deltat`) (f the interval's fraction of the sequence), so the
 rounding of at most 15 products accumulates before the next exact point (A16 (b), 2026-10-11). <br>
-`recursive` exists on the CPU time evolution of cCCE (`method` CCE, pCCE, dsj, itb or dsjitb; one
+`recursive` exists on the CPU time evolution of cCCE (`method` cCCE, any `cluster_mode`; one
 sampled state, `nstate` > 0, and the ensemble, `nstate` = 0, since 2026-10-11 (A18)), in the packed kernel of
 `bin/main_gpu.out` (`gpu_options.packed_max_dim`, cCCE clusters of bath dimension 2 and 4) and on the CPU time evolution
 of gCCE with `propagator` = `eigen` (`evolution` = `vector`, and `matrix` since A18). Every pulse sequence these paths
-run is covered: the ensemble cCCE carries over the phases of its τ = t/2 (Hahn), t (Ramsey), t/(2 `npulse`) and 2τ
+run is covered: the ensemble cCCE carries over the phases of its τ = t/2 (Hahn), t (Ramsey), t/(2 `pulse.count`) and 2τ
 (CPMG) or of each `Manual` interval, the others those of each interval of the sequence. The GPU large-cluster path
 (`bin/main_gpu.out`: every other cluster with `backend` = `cuda`, the clusters of `gpu_options.min_dim` and above with
 `auto`) computes every phase with sin and cos, as `exact`. <br>
@@ -260,13 +257,13 @@ series should not switch between the two. Must be a JSON string. <br>
 <a id="tag_probe_memory_gb"></a>
 ## probe_memory_gb
 <b>Description:</b><br>
-The probe step of the adaptive clustering (`cluster_mode` = `adaptive`): the memory, in GB per node, that the probes
+The probe step of the adaptive clustering (`cluster_mode` = `bundle` with the `adaptive` block): the memory, in GB per node, that the probes
 running at once may hold. Since 2026-10-02 the probes of a bath state go to the ranks in turn and the ranks do not wait
 for each other between states, so the large probes of several states can run together; a probe waits while the probes
 already running on its node would pass this budget, and a probe larger than the budget runs alone. A probe is estimated
 on the path it takes (`estimate` in `src/clustering/bundle/bundle_work.cpp`), in dense dim × dim complex matrices of 16 dim²
 bytes each: on the CPU, gCCE 6 + n with `evolution` = `vector` and 7 + 2n with `matrix`; cCCE 8 for a sampled state, 23 for
-the ensemble and 10 + 4(n + 1) for an ensemble `Manual` sequence (n = `npulse`); on the GPU what the device allocates for
+the ensemble and 10 + 4(n + 1) for an ensemble `Manual` sequence (n = `pulse.count`); on the GPU what the device allocates for
 the time batch and evolution; with `savemode` = `cluster_density_matrix` also every time's full
 density matrix. Probes under 64 MiB do not count. 0 takes 80 % of the memory the job may use on the node (its RAM, or
 less if a cgroup limits the job) and, when the run may put clusters on the GPU, of the smallest GPU. The run prints the budget (`[probe-budget]`) and how long
@@ -284,7 +281,9 @@ each rank waited. <br>
 ## gcce_refinement
 <b>Description:</b><br>
 gCCE with `propagator` = `eigen`: refine the eigenvalues and eigenvectors the solver returns by
-compensated correction sweeps before they are used. Must be a JSON boolean. <br>
+compensated correction sweeps before they are used. A block `{"enabled": true|false, "max_sweeps": n}` (until 2026-10-13
+the boolean `gcce_refinement` and the key `gcce_refinement_max_sweeps`; the boolean is refused now). A block without
+`enabled` is on, as an `auto_convergence` block is; `enabled` must be a JSON boolean. <br>
 Off by default since 2026-10-02: on the NV–¹³C gCCE4 case the refinement was made for, and on P1 gCCE3, it
 changed the error-corrected final coherence by at most 6.7e-7 (idm job 16869,
 (internal notes); the raw `wiDiv` differs by more at points where it diverges with either
@@ -292,25 +291,25 @@ setting — up to 12.7 on NV–¹³C and 2.75e11 on P1 gCCE3 — so the predecla
 cluster (dim 768: about 4 s of 4.8 s on the CPU). Turn it on where the bath energies are very small beside the
 qubit's and the curve is read to better than 1e-6. <br>
 
-<b>Data Type:</b> Boolean
+<b>Data Type:</b> Object `{"enabled": Boolean, "max_sweeps": Integer}`
 
-<b>Default:</b> `false` (`true` until 2026-10-02)
+<b>Default:</b> off (absent; on until 2026-10-02)
 
-<b>Example:</b> ``` "gcce_refinement" : true ```
+<b>Example:</b> ``` "gcce_refinement" : {"enabled": true} ```
 
 <b>Related variable:</b> [Config](#Config)::gcce_refinement
 
 <a id="tag_gcce_refinement_max_sweeps"></a>
-## gcce_refinement_max_sweeps
+## gcce_refinement.max_sweeps
 <b>Description:</b><br>
-The largest number of refinement sweeps per cluster. A cluster that has not converged
-within it stops the run with an error naming its dimension. <br>
+The largest number of refinement sweeps per cluster (`gcce_refinement_max_sweeps` until 2026-10-13). A cluster that
+has not converged within it stops the run with an error naming its dimension. <br>
 
 <b>Data Type:</b> Integer (positive)
 
 <b>Default:</b> `32`
 
-<b>Example:</b> ``` "gcce_refinement_max_sweeps" : 32 ```
+<b>Example:</b> ``` "gcce_refinement" : {"enabled": true, "max_sweeps": 32} ```
 
 <b>Related variable:</b> [Config](#Config)::gcce_refinement_max_sweeps
 
@@ -319,7 +318,7 @@ within it stops the run with an error naming its dimension. <br>
 <b>Description:</b><br>
 Print timings at the end of the run. Every rank writes one `[profile]` line per method,
 backend and cluster dimension with the number of clusters and the seconds spent building,
-setting up and evolving them; with CUDA also `[gpu-batch]` and `[gpu-memory]` lines. In a plain CCE/gCCE run
+setting up and evolving them; with CUDA also `[gpu-batch]` and `[gpu-memory]` lines. In a plain cCCE/gCCE run
 rank 0 also prints one `[phase]` line per rank: the wall seconds of the state loop split into state preparation,
 cluster creation, cluster calculation, product assembly, freeing, waiting at the barriers, the reduction and saving.
 Must be a JSON boolean. <br>
@@ -341,20 +340,22 @@ Record the contribution of every cluster to the coherence over all time points
 power, dimension, the largest |log L̃|, undefined points, worst step) and once
 `<outfile>.contributions.sites.tsv` (site, name, spin, gyromagnetic ratio, position).
 A diagnostic; the raw table per rank is bounded by
-[cluster_contribution_max_mb](#tag_cluster_contribution_max_mb). Must be a JSON boolean. <br>
+[max_mb](#tag_cluster_contribution_max_mb). A block `{"enabled": true|false, "max_mb": n}` (until 2026-10-13 a boolean,
+refused now, and the key `cluster_contribution_max_mb`); a block without `enabled` is on. <br>
 
-<b>Data Type:</b> Boolean
+<b>Data Type:</b> Object `{"enabled": Boolean, "max_mb": Integer}`
 
-<b>Default:</b> `false`
+<b>Default:</b> off (absent)
 
-<b>Example:</b> ``` "cluster_contributions" : true ```
+<b>Example:</b> ``` "cluster_contributions" : {"enabled": true} ```
 
 <b>Related variable:</b> [Config](#Config)::cluster_contributions
 
 <a id="tag_cluster_contribution_max_mb"></a>
-## cluster_contribution_max_mb
+## cluster_contributions.max_mb
 <b>Description:</b><br>
-The memory per rank the contribution table of `cluster_contributions` may take. The run
+The memory per rank the contribution table of `cluster_contributions` may take (`cluster_contribution_max_mb` until
+2026-10-13). The run
 stops before the propagation if the table would exceed it. <br>
 
 <b>Data Type:</b> Integer (positive)
@@ -363,6 +364,6 @@ stops before the propagation if the table would exceed it. <br>
 
 <b>Default:</b> `256`
 
-<b>Example:</b> ``` "cluster_contribution_max_mb" : 512 ```
+<b>Example:</b> ``` "cluster_contributions" : {"enabled": true, "max_mb": 512} ```
 
 <b>Related variable:</b> [Config](#Config)::cluster_contribution_max_mb

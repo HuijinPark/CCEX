@@ -35,9 +35,11 @@ gen_reg(){  # gen_reg <sysname> <case> <tag>
 import json, sys, os, glob
 work, casedir, tag = sys.argv[1:4]
 d = json.load(open(f"{casedir}/inputfiles/ccein_{tag}.json"))
-for k in ("qubitfile","gyrofile","avaaxfile","statefile","exstatefile"):
-    if k in d and isinstance(d[k], str):
-        d[k] = os.path.abspath(os.path.join(casedir, d[k]))
+# the file keys (A47: Qubit.file, bath_state_file, Defect.state_file / axis_file)
+for block, k in ((d.get("Qubit"),"file"),(d,"gyrofile"),(d,"bath_state_file"),(d.get("Defect"),"state_file"),
+                 (d.get("Defect"),"axis_file")):
+    if isinstance(block, dict) and isinstance(block.get(k), str):
+        block[k] = os.path.abspath(os.path.join(casedir, block[k]))
 baths = sorted(glob.glob(f"{casedir}/inputfiles/bath_*_1"))
 d["bathfile"] = [os.path.abspath(baths[0])]
 d["outfile"] = "./OUT"
@@ -53,10 +55,10 @@ declare -A SYSTEMS=(
   [S1a]="NV natab, CCE-2, ensemble bath"
   [S1b]="NV natab, CCE-2, sampled bath"
   [S2a]="NV natab, gCCE-2"
-  [S2b]="NV + P1 10ppm, CCE-2, Defect naddspin=0"
-  [S2c]="NV + P1 10ppm, gCCE-2, Defect naddspin=0"
-  [S3]="P1 bath, Defect naddspin=1 (14N), navaax=4, avaax+state files"
-  [S4]="hBN VB, hf_readmode 3 + qd_readmode 2 (DFT tensor files, vertex boundary)"
+  [S2b]="NV + P1 10ppm, CCE-2, Defect n_nuclear_spins=0"
+  [S2c]="NV + P1 10ppm, gCCE-2, Defect n_nuclear_spins=0"
+  [S3]="P1 bath, Defect n_nuclear_spins=1 (14N), n_configurations=4, axis+state files"
+  [S4]="hBN VB, hyperfine dft+contact + quadrupole plain (DFT tensor files, vertex boundary)"
   [S4b]="hBN VB, the same but with the MinDif/MaxDif axis-aligned boundary"
   [S5]="2 NV, gCCE, explicit intmap self/ZFS tensors"
 )
@@ -84,18 +86,19 @@ src = open(f"{repo}/test/code_verification/bath_data/FullP1SpinBath/cce.json").r
 src = re.sub(r'!\S*','',src); src = re.sub(r'#[^\n]*','',src)   # CCEX json dialect
 d = json.loads(src)
 F = f"{fix}/single_data"
-d["qubitfile"]=f"{F}/bath_DiaP1_1ppm_Defect"; d["gyrofile"]=f"{F}/DiaP1_gyro"
-d["bathfile"]=[f"{F}/bath_DiaP1_1ppm_1"];     d["avaaxfile"]=f"{F}/bathJT_DiaP1_1ppm_1"
-d["statefile"]=f"{F}/state_DiaP1_1ppm_";      d["exstatefile"]=f"{F}/stateEx_DiaP1_1ppm_"
+d["Qubit"]["file"]=f"{F}/bath_DiaP1_1ppm_Defect"; d["gyrofile"]=f"{F}/DiaP1_gyro"
+d["bathfile"]=[f"{F}/bath_DiaP1_1ppm_1"];     d["Defect"]["axis_file"]=f"{F}/bathJT_DiaP1_1ppm_1"
+d["bath_state_file"]=f"{F}/state_DiaP1_1ppm_"; d["Defect"]["state_file"]=f"{F}/stateEx_DiaP1_1ppm_"
 # Reduced from the original (rbath 850 / rdip 620 / nstep 300, 469 spins, sized for
 # 24 ranks). Equivalence needs reproducibility, not convergence; rbath 360 keeps
 # 45 spins and 518 pairs, which still exercises every Defect code path.
 d["rbath"]=360; d["rdip"]=360; d["nstep"]=20; d["nstate"]=1
 d["outfile"]="./OUT"
 json.dump(d, open(f"{work}/legacy.json","w"), indent=4)
-print(f"    P1 Defect: rbath={d['rbath']} nstep={d['nstep']} navaax={d['Defect'][0]['navaax']} naddspin={d['Defect'][0]['naddspin']}")
+sp = d['Defect']['species'][0]
+print(f"    P1 Defect: rbath={d['rbath']} nstep={d['nstep']} n_configurations={sp['n_configurations']} n_nuclear_spins={sp['n_nuclear_spins']}")
 PY
-           # statefile passed BOTH in the ccein and on the command line, on purpose:
+           # bath_state_file passed BOTH in the ccein and on the command line, on purpose:
            # a missing -s falls back to randomized states that still look plausible.
            ;;
 
@@ -112,25 +115,24 @@ work, fix, suf = sys.argv[1:4]
 H=f"{fix}/hexagonal_data"
 # rbath 20 -> 6 : 3897 spins -> 101, and 121 s -> 0.4 s on one core. The A/Q files
 # cover this region comfortably, so both readers stay on their file path.
-d = {"method":"CCE","quantity":"coherence",
-     "qubitfile":f"{H}/defect","gyrofile":f"{fix}/ensemble_data/Gyro_h_BN",
+d = {"method":"cCCE","quantity":"coherence",
+     "Qubit":{"file":f"{H}/defect","alphams":1,"betams":0},"gyrofile":f"{fix}/ensemble_data/Gyro_h_BN",
      "bathfile":[f"{H}/bath_1"],
      "order":2,"bfield":30000,"rbath":6,"rdip":4,"deltat":0.002,"nstep":20,
-     "nstate":0,"qalphams":1,"qbetams":0,"npulse":1,
-     # hf_ignore_oor=1: the MinDif/MaxDif box in Afile is wider than the set of atoms
+     "nstate":0,"pulse":{"count":1},"hf_cutoff":0,
+     "hamiltonian":{"common":{
+     # missing_row point_dipole: the MinDif/MaxDif box in Afile is wider than the set of atoms
      # the file lists, so a spin can sit inside the box with no row of its own. Without
      # this the range-boundary run stops there and never reaches a coherence to compare.
-     "hf_readmode":3,"hf_tensorfile":f"{H}/Afile{suf}","hf_cutoff":0,
-     "hf_ignore_oor":(0 if suf else 1),
-     # The QD reader has no counterpart to hf_ignore_oor, and Qfile's box is wide in
+     "hyperfine":{"dipole":"dft","contact":True,"file":f"{H}/Afile{suf}",
+                  "missing_row":("stop" if suf else "point_dipole")},
+     # The QD reader has no counterpart to missing_row, and Qfile's box is wide in
      # the same way, so the range-boundary case runs without the quadrupole. S4 covers
      # the QD reader over the vertex boundary; the QD range boundary stays uncovered.
-     "qd_readmode":(2 if suf else 0),
-     "qd_tensorfile":f"{H}/Qfile{suf}",
-     "qd_tensorfile_woqubit":f"{H}/Qfile{suf}",
+     "quadrupole":({"structure":"plain","file":f"{H}/Qfile{suf}"} if suf else "off")}},
      "outfile":"./OUT"}
 json.dump(d, open(f"{work}/legacy.json","w"), indent=4)
-print(f"    hBN VB: hf_readmode={d['hf_readmode']} qd_readmode={d['qd_readmode']} "
+print(f"    hBN VB: hyperfine dft+contact, quadrupole={'plain' if suf else 'off'} "
       f"rbath={d['rbath']} boundary={'vertex' if suf else 'MinDif/MaxDif'}")
 PY
            ;;
@@ -146,10 +148,10 @@ d=json.loads(s)
 # bathfile as a LIST. Given as a bare string it is read as zero bath files and the
 # run segfaults with "Total 1-Cluster # : 0" -- v1.1.0 behaves the same way, so this
 # is the example being stale, not anything this branch changed.
-d["bathfile"]=[f"{E}/bath"]; d["statefile"]=f"{E}/state"; d["gyrofile"]=f"{E}/gyro_13C"
+d["bathfile"]=[f"{E}/bath"]; d["bath_state_file"]=f"{E}/state"; d["gyrofile"]=f"{E}/gyro_13C"
 d["nstep"]=20; d["outfile"]="./OUT"
 json.dump(d, open(f"{work}/legacy.json","w"), indent=4)
-print(f"    2 NV: nqubit={d['Qubit']['nqubit']} intmap={len(d['Qubit']['intmap'])} method={d['method']}")
+print(f"    2 NV: nqubit={len(d['Qubit']['qubit'])} intmap={len(d['Qubit']['intmap'])} method={d['method']}")
 PY
            ;;
       *) echo "  unknown system: $sys"; FAIL=$((FAIL+1)) ;;

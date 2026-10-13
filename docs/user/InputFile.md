@@ -2,7 +2,9 @@
 <a id="InputFile"></a>
 
 Every key of the input file, in eight groups. Each group is a page of its own, and
-every key in the lists below links to its entry there.
+every key in the lists below links to its entry there. The keys were renamed and grouped into blocks on 2026-10-13
+(A47); the [table of old and new names](#OldNames) is at the end of this page, and
+`example/tools/InputKeys/convert_input_keys.py` rewrites an old input.
 
 <a id="HowToWrite"></a>
 ## How to write the input file
@@ -26,7 +28,7 @@ line after a value can be a comment. Inside a string (`"#note"`, `"outfile": "ru
 ```
 # a comment line
 {
-    "method" : "CCE",       # a comment after a value
+    "method" : "cCCE",      # a comment after a value
     ! a comment line of the other kind
     "outfile" : "run#1"
 }
@@ -34,153 +36,96 @@ line after a value can be a comment. Inside a string (`"#note"`, `"outfile": "ru
 
 A key that is left out takes its default. A key that is present has to have the type its
 entry gives: `"knight": "true"`, a quoted number, `"nstep": 10.5` or a string inside a
-number array stops the run with the key named. Until 2026-10-02 such a value was taken as
-missing and the default was used without a word. Two older forms are still read: a Bool
-may be written `0` or `1`, and a qubit's `detuning` may be written `[x]`.
+number array stops the run with the key named (with its path in a block, e.g. `pulse.count`). Until 2026-10-02 such a
+value was taken as missing and the default was used without a word. A switch is `true` or `false` (the 0 and 1 the old
+keys took are not read by the new ones), and a qubit's `detuning` may still be written `[x]`. Keys are read without
+regard to case.
 
 A key that no part of the run reads is reported (`Warning: input key ... is not read`), and
 when it is one or two letters away from a key that was looked up and is absent from the same
-block, the run stops: `"nstates"` would leave `nstate` at its default. In the `qubitfile` form
-the branch keys are `qalphams`/`qbetams`; a top-level `alphams` there was ignored until
-2026-10-02 and is now refused. An input that gives both `qubitfile` and a `Qubit` block is
-refused (until 2026-10-13 the `qubitfile` was used and the block silently not read).
+block, the run stops: `"nstates"` would leave `nstate` at its default, `"alphms"` in the `Qubit` block its `alphams`.
+A key of the names before 2026-10-13 is refused with its new name (`Error: input key "npulse" is now "pulse.count"`) and
+a pointer to the converter.
+
+A whole input in the new keys:
+
+```
+{
+    "method"       : "cCCE",
+    "cluster_mode" : "standard",
+    "quantity"     : "coherence",
+    "Qubit"        : {"file": "../bath/bath_Diamond_NV_natab_defect", "alphams": 1, "betams": 0},
+    "gyrofile"     : "../bath/gyro_13C",
+    "bathfile"     : ["../bath/bath_Diamond_NV_natab_1"],
+    "order"        : 2,
+    "bfield"       : 500,
+    "rbath"        : 50,
+    "rdip"         : 10,
+    "deltat"       : 0.001,
+    "nstep"        : 2000,
+    "pulse"        : {"count": 1},
+    "hamiltonian"  : {"common": {"bath_bath_mean_field": "z"}, "cCCE": {"knight": false}},
+    "outfile"      : "./results/CCE2_Diamond_NV_natab_1"
+}
+```
 
 <a id="GeneralTag"></a>
 ## General tags
 The keys of this group are described in [InputFile_General.md](InputFile_General.md).
 
-Tags in this section is about simulatation parameters such as file path, numerical parameters.
+The method, the numbers of the calculation, the files of the bath, and the `hamiltonian` block.
 
 - [method](InputFile_General.md#tag_method)       
 - [quantity](InputFile_General.md#tag_quantity)     
 - [order](InputFile_General.md#tag_order)        
 - [bfield](InputFile_General.md#tag_bfield)       
-- [rbath](InputFile_General.md#tag_rbath)        
-- [rdip](InputFile_General.md#tag_rdip)         
+- [rbath](InputFile_General.md#tag_rbath) (a number or `[inner, outer]`)
+- [rdip](InputFile_General.md#tag_rdip) (a number or `[inner, outer]`)
 - [deltat](InputFile_General.md#tag_deltat)       
 - [nstep](InputFile_General.md#tag_nstep)        
-- [rbathcut](InputFile_General.md#tag_rbathcut)     
-- [rdipcut](InputFile_General.md#tag_rdipcut)       
 - [rdip_ladder](InputFile_General.md#tag_rdip_ladder)
 - [nstate](InputFile_General.md#tag_nstate)        
-- [vector_mean_field](InputFile_General.md#tag_vector_mean_field)
 - [seed](InputFile_General.md#tag_seed)       
-- [qubitfile](InputFile_General.md#tag_qubitfile)   
 - [gyrofile](InputFile_General.md#tag_gyrofile)      
 - [bathfile](InputFile_General.md#tag_bathfile)      
-- [bathadjust](InputFile_General.md#tag_bathadjust)
+- [bath_shift](InputFile_General.md#tag_bath_shift)
+- [bath_state_file](InputFile_General.md#tag_bath_state_file)
 - [coordinate_frame_rotation](InputFile_General.md#tag_coordinate_frame_rotation)
 - [defect_axis_reference](InputFile_General.md#tag_defect_axis_reference)
-- [avaaxfile](InputFile_General.md#tag_avaaxfile)
-- [statefile](InputFile_General.md#tag_statefile)                     
-- [exstatefile](InputFile_General.md#tag_exstatefile)                  
-- [DefectTotSpin](InputFile_General.md#tag_DefectTotSpin)                
-- [CorrTotSpin](InputFile_General.md#tag_CorrTotSpin)                  
-- [hf_readmode](InputFile_General.md#tag_hf_readmode)                       
-- [hf_tensorfile](InputFile_General.md#tag_hf_tensorfile)                
-- [hf_ignore_oor](InputFile_General.md#tag_hf_ignore_oor)                
-- [qd_readmode](InputFile_General.md#tag_qd_readmode)                  
-- [qd_tensorfile](InputFile_General.md#tag_qd_tensorfile)                
-- [qd_cellpara](InputFile_General.md#tag_qd_cellpara)                     
-- [qd_tensorfile_woqubit](InputFile_General.md#tag_qd_tensorfile_woqubit)
-- [hfmedi](InputFile_General.md#tag_hfmedi)
-- [knight](InputFile_General.md#tag_knight)
+- [hamiltonian](InputFile_General.md#tag_hamiltonian)
+    - common: [qubit_bath_mean_field](InputFile_General.md#tag_qubit_bath_mean_field),
+      [bath_bath_mean_field](InputFile_General.md#tag_bath_bath_mean_field),
+      [hyperfine](InputFile_General.md#tag_hyperfine) (`dipole`, `contact`, [file](InputFile_General.md#tag_hyperfine_file),
+      [missing_row](InputFile_General.md#tag_hyperfine_missing_row)),
+      [quadrupole](InputFile_General.md#tag_quadrupole) (`structure`, [file](InputFile_General.md#tag_quadrupole_file),
+      [file_without_defect](InputFile_General.md#tag_quadrupole_file_without_defect), [cell](InputFile_General.md#tag_quadrupole_cell))
+    - cCCE: [knight](InputFile_General.md#tag_knight), [hfmedi](InputFile_General.md#tag_hfmedi),
+      [delta_A](InputFile_General.md#tag_delta_A)
+    - gCCE, meCCE, noise: no settings yet (meCCE and noise are reserved methods)
 
 <a id="QubitArrayTags"></a>
 ## Qubit-related tags
 The keys of this group are described in [InputFile_Qubit.md](InputFile_Qubit.md).
 
-This tags are used for adjusting Qubit Hamiltonian and qubit inital state.
-The format is the following:
+The `Qubit` block, in one of two forms: <br>
+<b>Form 1.</b> [file](InputFile_Qubit.md#tag_Qubit_file): one qubit from a file, with `spin`, `zfs`, `alphams`,
+`betams` beside it. <b>Example:</b> ``` "Qubit" : {"file": "file-path", "alphams": 1, "betams": 0} ``` <br>
+<b>Form 2.</b> [qubit](InputFile_Qubit.md#tag_qubit): one or more qubits written out, with `intmap`, `alpha_state`,
+`beta_state` and `psi0` beside the list. The two forms in one block are refused. The full example is on the
+[Qubit page](InputFile_Qubit.md).
 
-<b>Case1.</b> [qubitfile](InputFile_General.md#tag_qubitfile) tag <br>
-  : Only single-qubit systems are supported. <br>
-    An input that has both `qubitfile` and a [Qubit](InputFile_Qubit.md#tag_Qubit) block is refused: give one or the other. <br>
-
-<b>Example:</b> ``` "qubitfile"  : "file-path" ```
-
-<b>Case2.</b> [Qubit](InputFile_Qubit.md#tag_Qubit) tag <br>
-  : Both multiple qubit and single system are supported. <br>
-
-<details>
-<summary><b>Example:</b> Click here to show example code</summary>
-```
-{
-    "Qubit" : {
-                "nqubit" : 2,
-                "qubit" : [
-                            {
-                                "name" : "Q1",
-                                "spin" : 0.5,
-                                "gyro" : -17608.597050,
-                                "xyz"  : [1.0, 2.0, 3.0],
-                                "detuning" : 0.0,
-                                "alphams" : 0.5,
-                                "betams"  : -0.5
-                            },
-                            {
-                                "name" : "Q2",
-                                "spin" : 1.0,
-                                "gyro" : -17608.597050,
-                                "xyz"  : [4.0, 5.0, 6.0],
-                                "detuning" : 0.0,
-                                "alphams" : 0,
-                                "betams"  : 1
-                            }
-                ],
-                "intmap" : [
-                            {
-                                # zero-field splitting of Q2
-                                "between" : ["Q2", "Q2"],
-                                "tensor"  : [[1.0, 2.0, 3.0],
-                                            [4.0, 5.0, 6.0], 
-                                            [7.0, 8.0, 9.0]]
-                            },
-                            {
-                                "between" : ["Q1", "Q2"],
-                                "tensor"  : [[1.0, 2.0, 3.0],
-                                            [4.0, 5.0, 6.0], 
-                                            [7.0, 8.0, 9.0]]
-                            }
-                ],
-                "psia" : [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-                "psib" : [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
-                "psi0" : [0.0, 0.70710678, 0.0, 0.70710678, 0.0, 0.0],
-                "overhaus" : true
-              }
-}
-```
-The first `intmap` entry is the zero-field splitting of Q2 (`between` names the same qubit twice); the
-second is the Q1–Q2 coupling. `psia`, `psib` and `psi0` sit inside the `Qubit` block and have the length
-of the whole qubit space, here 2 × 3 = 6, ordered as kron(Q1, Q2) with the last qubit varying fastest:
-`psia` is |m<sub>1</sub> = +1/2, m<sub>2</sub> = 0⟩ and `psib` is |−1/2, +1⟩, the same states that
-`alphams`/`betams` name.
-</details>
-
-- [qubitfile](InputFile_General.md#tag_qubitfile)
-- [qzfs](InputFile_Qubit.md#tag_qzfs)
-- [qspin](InputFile_Qubit.md#tag_qspin)
-- [qalphams](InputFile_Qubit.md#tag_qalphams) 
-- [qbetams](InputFile_Qubit.md#tag_qbetams)
 - [Qubit](InputFile_Qubit.md#tag_Qubit) 
-- [nqubit](InputFile_Qubit.md#tag_nqubit)
-- [qubit](InputFile_Qubit.md#tag_qubit)
-- [name](InputFile_Qubit.md#tag_name)         
-- [spin](InputFile_Qubit.md#tag_spin)
-- [gyro](InputFile_Qubit.md#tag_gyro)         
-- [xyz](InputFile_Qubit.md#tag_xyz)          
-- [detuning](InputFile_Qubit.md#tag_detuning)     
-- [alphams](InputFile_Qubit.md#tag_alphams) 
-- [betams](InputFile_Qubit.md#tag_betams)
-- [intmap](InputFile_Qubit.md#tag_intmap)
-- [between](InputFile_Qubit.md#tag_between)      
-- [tensor](InputFile_Qubit.md#tag_tensor)       
-- [psia](InputFile_Qubit.md#tag_psia)  
-- [psib](InputFile_Qubit.md#tag_psib)  
+- [file](InputFile_Qubit.md#tag_Qubit_file), [spin](InputFile_Qubit.md#tag_Qubit_spin), [zfs](InputFile_Qubit.md#tag_Qubit_zfs),
+  [alphams](InputFile_Qubit.md#tag_Qubit_alphams), [betams](InputFile_Qubit.md#tag_Qubit_betams) (form 1)
+- [qubit](InputFile_Qubit.md#tag_qubit) (form 2)
+    - [name](InputFile_Qubit.md#tag_name), [spin](InputFile_Qubit.md#tag_spin), [gyro](InputFile_Qubit.md#tag_gyro),
+      [xyz](InputFile_Qubit.md#tag_xyz), [detuning](InputFile_Qubit.md#tag_detuning), [alphams](InputFile_Qubit.md#tag_alphams),
+      [betams](InputFile_Qubit.md#tag_betams)
+- [intmap](InputFile_Qubit.md#tag_intmap): [between](InputFile_Qubit.md#tag_between), [tensor](InputFile_Qubit.md#tag_tensor),
+  [unit](InputFile_Qubit.md#tag_intmap_unit), [tensor_frame](InputFile_Qubit.md#tag_tensor_frame)
+- [alpha_state](InputFile_Qubit.md#tag_alpha_state), [beta_state](InputFile_Qubit.md#tag_beta_state)
 - [psi0](InputFile_Qubit.md#tag_psi0)
-- [overhaus](InputFile_Qubit.md#tag_overhaus)     
-- [alphaidx](InputFile_Qubit.md#tag_alphaidx) 
-- [betaidx](InputFile_Qubit.md#tag_betaidx)
+- the Overhauser field: [hamiltonian.common.qubit_bath_mean_field](InputFile_General.md#tag_qubit_bath_mean_field)
 
 <a id="ClusterTags"></a>
 ## Cluster-related tags
@@ -188,27 +133,19 @@ The keys of this group are described in [InputFile_Cluster.md](InputFile_Cluster
 
 - [order](InputFile_General.md#tag_order)        
 - [method](InputFile_General.md#tag_method)       
-- [addsubclus](InputFile_Cluster.md#tag_addsubclus)   
-- [nk](InputFile_Cluster.md#tag_nk)           
-- [sK](InputFile_Cluster.md#tag_sK)           
-- [max_trial](InputFile_Cluster.md#tag_max_trial)    
-- [max_iter](InputFile_Cluster.md#tag_max_iter)     
-- [kmeans_pp](InputFile_Cluster.md#tag_kmeans_pp)    
-- [iter_detail](InputFile_Cluster.md#tag_iter_detail)
-- [cluster_mode](InputFile_Cluster.md#tag_cluster_mode)
-- [bundle_max_dim](InputFile_Cluster.md#tag_bundle_max_dim)
-- [bundle_merge_cutoff](InputFile_Cluster.md#tag_bundle_merge_cutoff)
-- [bundle_connections](InputFile_Cluster.md#tag_bundle_connections)
-- [bundle_connection_budget](InputFile_Cluster.md#tag_bundle_connection_budget)
-- [expansion_max_clusters](InputFile_Cluster.md#tag_expansion_max_clusters)
-- [expansion_max_work](InputFile_Cluster.md#tag_expansion_max_work)
-- [adaptive_work_file](InputFile_Cluster.md#tag_adaptive_work_file)
-- [Adaptive](InputFile_Cluster.md#tag_Adaptive)
-- [pcce_partition](InputFile_Cluster.md#tag_pcce_partition)
-- [pcce_connections](InputFile_Cluster.md#tag_pcce_connections)
-- [pcce_cache_mode](InputFile_Cluster.md#tag_pcce_cache_mode)
-- [pcce_cache_file](InputFile_Cluster.md#tag_pcce_cache_file)
-- [pcce_detail_limit](InputFile_Cluster.md#tag_pcce_detail_limit)
+- [cluster_mode](InputFile_Cluster.md#tag_cluster_mode) (`standard`, `pcce`, `bundle`, `dsj`, `itb`, `dsjitb`)
+- [add_subclusters](InputFile_Cluster.md#tag_add_subclusters)   
+- [max_clusters_per_order](InputFile_Cluster.md#tag_max_clusters_per_order)           
+- [pcce](InputFile_Cluster.md#tag_pcce): [partition_size](InputFile_Cluster.md#tag_pcce_partition_size),
+  [trials](InputFile_Cluster.md#tag_pcce_trials), [max_iterations](InputFile_Cluster.md#tag_pcce_max_iterations),
+  [kmeans_pp](InputFile_Cluster.md#tag_pcce_kmeans_pp), [print_trials](InputFile_Cluster.md#tag_pcce_print_trials),
+  [print_limit](InputFile_Cluster.md#tag_pcce_print_limit), [partition](InputFile_Cluster.md#tag_pcce_partition),
+  [connections](InputFile_Cluster.md#tag_pcce_connections), [cache](InputFile_Cluster.md#tag_pcce_cache)
+- [bundle](InputFile_Cluster.md#tag_bundle): [max_dim](InputFile_Cluster.md#tag_bundle_max_dim),
+  [merge_cutoff](InputFile_Cluster.md#tag_bundle_merge_cutoff), [connections](InputFile_Cluster.md#tag_bundle_connections),
+  [connection_budget](InputFile_Cluster.md#tag_bundle_connection_budget), [max_clusters](InputFile_Cluster.md#tag_bundle_max_clusters),
+  [max_work](InputFile_Cluster.md#tag_bundle_max_work)
+- [adaptive](InputFile_Cluster.md#tag_adaptive) ([work_file](InputFile_Cluster.md#tag_adaptive_work_file), internal)
 
 <a id="BackendTags"></a>
 ## Backend tags
@@ -222,74 +159,47 @@ Where and how the cluster dynamics is computed, and what the run reports about i
 - [propagator](InputFile_Backend.md#tag_propagator)
 - [evolution](InputFile_Backend.md#tag_evolution)
 - [evolution_update](InputFile_Backend.md#tag_evolution_update)
-- [gcce_refinement](InputFile_Backend.md#tag_gcce_refinement)
-- [gcce_refinement_max_sweeps](InputFile_Backend.md#tag_gcce_refinement_max_sweeps)
+- [gcce_refinement](InputFile_Backend.md#tag_gcce_refinement) (`enabled`, [max_sweeps](InputFile_Backend.md#tag_gcce_refinement_max_sweeps))
 - [profile](InputFile_Backend.md#tag_profile)
-- [cluster_contributions](InputFile_Backend.md#tag_cluster_contributions)
-- [cluster_contribution_max_mb](InputFile_Backend.md#tag_cluster_contribution_max_mb)
+- [cluster_contributions](InputFile_Backend.md#tag_cluster_contributions) (`enabled`, [max_mb](InputFile_Backend.md#tag_cluster_contribution_max_mb))
 
 <a id="PulseTags"></a>
 ## Pulse-related tags
 The keys of this group are described in [InputFile_Pulse.md](InputFile_Pulse.md).
 
-- [npulse](InputFile_Pulse.md#tag_npulse)       
-- [pulsename](InputFile_Pulse.md#tag_pulsename)    
-- [sequence](InputFile_Pulse.md#tag_sequence)
-- [pulseiter](InputFile_Pulse.md#tag_pulseiter)
-- [pulse_time](InputFile_Pulse.md#tag_pulse_time)
-- [detuning_factor](InputFile_Pulse.md#tag_detuning_factor)
+- [pulse](InputFile_Pulse.md#tag_pulse) (required)
+    - [count](InputFile_Pulse.md#tag_pulse_count)       
+    - [name](InputFile_Pulse.md#tag_pulse_name)    
+    - [sequence](InputFile_Pulse.md#tag_sequence)
+    - [per_qubit](InputFile_Pulse.md#tag_pulse_per_qubit)
+    - [duration](InputFile_Pulse.md#tag_pulse_duration)
+    - [detuning_factor](InputFile_Pulse.md#tag_detuning_factor)
 
 <a id="DefectArrayTags"></a>
 ## DefectArray-related tags
 The keys of this group are described in [InputFile_Defect.md](InputFile_Defect.md).
 
-This tags are used for adjusting paramagnetic defect bath information.
-The format is the following:
-
-<details><summary><b>Example:</b> Click here to show example code</summary>
-```
-{
-"Defect"         : [
-		{
-			"dfname"	: "NV0",
-			"naddspin" 	: 1,
-			"types" 	: ["15N"],
-			"spins" 	: [0.5],   
-			"gyros" 	: [-2.71261804],
-			"navaax" 	: 4,
-			"rxyzs"      : [ [1, "15N", [  1.36404 ,   -0.78843 ,   -0.56598 ]],
-		                     [2, "15N", [ -1.36801 ,   -0.79025 ,   -0.56701 ]],
-		                     [3, "15N", [  0.00000 ,    1.57603 ,   -0.56511 ]],
-		                     [4, "15N", [  0.00000 ,   -0.00733 ,    1.67433 ]]],
-			"hypf" 		: [  [1, "15N", [ -10.33219 ,    1.01563 ,    1.50162 ,    1.01563 ,   -5.18317 ,   -0.16410 ,    1.50162 ,   -0.16410 ,   -6.50270]],  
-			  				 [2, "15N", [  -7.34999 ,   -2.73741 ,   -0.89293 ,   -2.73741 ,   -8.16537 ,   -1.21839 ,   -0.89293 ,   -1.21839 ,   -6.50270]], 
-			  				 [3, "15N", [  -5.59086 ,    1.72177 ,   -0.60870 ,    1.72177 ,   -9.92450 ,    1.38249 ,   -0.60870 ,    1.38249 ,   -6.50270]],
-			  				 [4, "15N", [  -6.01395 ,    0.00000 ,    0.00000 ,    0.00000 ,   -5.59086 ,   -1.82620 ,    0.00000 ,   -1.82620 ,  -10.41325]]]
-		},
-        {
-            ...
-        }
-                       ]
-}
-```
-</details>
+The `Defect` block of a paramagnetic defect bath: `species`, the list of the defect species, and beside it the files
+`axis_file` and `state_file`. The full example is on the [Defect page](InputFile_Defect.md).
 
 - [Defect](InputFile_Defect.md#tag_Defect)       
-- [dfname](InputFile_Defect.md#tag_df_dfname)       
-- [apprx](InputFile_Defect.md#tag_df_apprx)        
-- [naddspin](InputFile_Defect.md#tag_df_naddspin)     
-- [navaax](InputFile_Defect.md#tag_df_navaax)       
-- [axis](InputFile_Defect.md#tag_df_axis)
-- [coordinate_frame](InputFile_Defect.md#tag_df_coordinate_frame)
-- [types](InputFile_Defect.md#tag_df_types)        
-- [spins](InputFile_Defect.md#tag_df_spins)        
-- [gyros](InputFile_Defect.md#tag_df_gyros)        
-- [eqs](InputFile_Defect.md#tag_df_eqs)          
-- [rxyzs](InputFile_Defect.md#tag_df_rxyzs)        
-- [hypf](InputFile_Defect.md#tag_df_hypf)         
-- [efg](InputFile_Defect.md#tag_df_efg)          
-- [zfs](InputFile_Defect.md#tag_df_zfs)          
-- [detuning](InputFile_Defect.md#tag_df_detuning)
+- [axis_file](InputFile_Defect.md#tag_df_axis_file)
+- [state_file](InputFile_Defect.md#tag_df_state_file)
+- [species](InputFile_Defect.md#tag_df_species)
+    - [name](InputFile_Defect.md#tag_df_name)       
+    - [n_nuclear_spins](InputFile_Defect.md#tag_df_n_nuclear_spins)     
+    - [n_configurations](InputFile_Defect.md#tag_df_n_configurations)       
+    - [axis](InputFile_Defect.md#tag_df_axis)
+    - [coordinate_frame](InputFile_Defect.md#tag_df_coordinate_frame)
+    - [types](InputFile_Defect.md#tag_df_types)        
+    - [spins](InputFile_Defect.md#tag_df_spins)        
+    - [gyros](InputFile_Defect.md#tag_df_gyros)        
+    - [quadrupole_moments](InputFile_Defect.md#tag_df_quadrupole_moments)          
+    - [nuclear_positions](InputFile_Defect.md#tag_df_nuclear_positions)        
+    - [hyperfine](InputFile_Defect.md#tag_df_hyperfine)         
+    - [efg](InputFile_Defect.md#tag_df_efg)          
+    - [zfs](InputFile_Defect.md#tag_df_zfs)          
+    - [detuning](InputFile_Defect.md#tag_df_detuning)
 
 <a id="OutputTags"></a>
 ## Output tags
@@ -302,3 +212,100 @@ The keys of this group are described in [InputFile_Output.md](InputFile_Output.m
 ## Automatic convergence tags
 The `auto_convergence` block (its sections `time_window`, `rdip`, `rbath`, `t2_fit` and
 `configurations`) is described in [InputFile_AutoConvergence.md](InputFile_AutoConvergence.md).
+
+<a id="OldNames"></a>
+## Old and new names (2026-10-13)
+
+The input keys were renamed and grouped on 2026-10-13 (A47; the decisions are in
+(internal notes)). The results do not change: rewritten in the new keys, the inputs of the standing checks
+(check_numerics, check_input_forms, check_rotation) give the same output bytes as before. An old name, value or form is refused with its new one; the converter rewrites old inputs,
+keeping their comments, and lists what it changed:
+
+```
+python3 example/tools/InputKeys/convert_input_keys.py FILE...           # rewrite in place
+python3 example/tools/InputKeys/convert_input_keys.py --check FILE...   # list only; exit 1 when a file has old keys
+python3 example/tools/InputKeys/convert_input_keys.py --stdout FILE     # print the new text
+```
+
+It drops keys the run did not read (e.g. `qd_tensorfile` with `qd_readmode` 0) and the defaults `hf_readmode` 0 and
+`qd_readmode` 0, and refuses an input it cannot express (a `CorrTotSpin` other than 0). Keys not in the table kept their
+names (`quantity`, `order`, `bfield`, `deltat`, `nstep`, `nstate`, `seed`, `rdip_ladder`, `gyrofile`, `bathfile`,
+`outfile`, `savemode`, `backend`, `gpu_options`, `propagator`, `evolution`, `evolution_update`, `probe_memory_gb`,
+`profile`, `coordinate_frame_rotation`, `defect_axis_reference`, `auto_convergence`, the keys of `Qubit.qubit` and
+`Qubit.intmap` entries, and the Defect species' `types`, `spins`, `gyros`, `efg`, `zfs`, `detuning`, `axis`,
+`coordinate_frame`). The command-line options are the same; `-m` takes `cCCE` or `gCCE` and keeps the input's
+`cluster_mode`.
+
+| Before 2026-10-13 | Now |
+|---|---|
+| `"method": "CCE"` | `"method": "cCCE"` |
+| `"method": "pCCE"` | `"method": "cCCE", "cluster_mode": "pcce"` |
+| `"method": "dsj"` / `"itb"` / `"dsjitb"` | `"method": "cCCE", "cluster_mode": "dsj"` / `"itb"` / `"dsjitb"` |
+| `"cluster_mode": "adaptive"` | `"cluster_mode": "bundle"` |
+| `Adaptive` block | `adaptive` block (keys unchanged; `cluster_mode` pcce or bundle) |
+| `adaptive_work_file` | `adaptive.work_file` (written by the refinement driver) |
+| `rbathcut` | `rbath: [inner, outer]` (the inner radius) |
+| `rdipcut` | `rdip: [inner, outer]` (the inner radius) |
+| `bathadjust` | `bath_shift` |
+| `statefile` | `bath_state_file` |
+| `exstatefile` | `Defect.state_file` |
+| `avaaxfile` | `Defect.axis_file` |
+| `addsubclus` (0/1 or true/false) | `add_subclusters` (true/false) |
+| `nk` | `max_clusters_per_order` |
+| `qubitfile` | `Qubit.file` |
+| `qspin`, `qzfs`, `qalphams`, `qbetams` | `Qubit.spin`, `Qubit.zfs`, `Qubit.alphams`, `Qubit.betams` (with `Qubit.file`) |
+| `Qubit.nqubit` | removed: the length of `Qubit.qubit` |
+| `Qubit.overhaus` | `hamiltonian.common.qubit_bath_mean_field` |
+| `Qubit.alphaidx`, `Qubit.betaidx` | `Qubit.alpha_state: {"index": n}`, `Qubit.beta_state: {"index": n}` |
+| `Qubit.psia`, `Qubit.psib` | `Qubit.alpha_state: {"vector": [...]}`, `Qubit.beta_state: {"vector": [...]}` |
+| `vector_mean_field` (false / true) | `hamiltonian.common.bath_bath_mean_field` (`"z"` / `"xyz"`; `"off"` is new) |
+| `hf_readmode` 0 / 1 / 2 / 3 | `hamiltonian.common.hyperfine`: `dipole` `"point"` / `"point"` / `"dft"` / `"dft"`, `contact` false / true / false / true |
+| `hf_tensorfile` | `hamiltonian.common.hyperfine.file` |
+| `hf_ignore_oor` 0 / 1 | `hamiltonian.common.hyperfine.missing_row` `"stop"` / `"point_dipole"` |
+| `qd_readmode` 0 | `hamiltonian.common.quadrupole: "off"` (the default) |
+| `qd_readmode` 2 / 3 / 4 | `hamiltonian.common.quadrupole.structure` `"plain"` / `"strained"` / `"bubble"` |
+| `qd_tensorfile` | `hamiltonian.common.quadrupole.file` |
+| `qd_tensorfile_woqubit` | `hamiltonian.common.quadrupole.file_without_defect` |
+| `qd_cellpara` | `hamiltonian.common.quadrupole.cell` |
+| `knight` | `hamiltonian.cCCE.knight` |
+| `hfmedi` | `hamiltonian.cCCE.hfmedi` |
+| (none) | `hamiltonian.cCCE.delta_A` (new; `true` is the calculation before) |
+| `DefectTotSpin` | removed: the qubit spin is used (also for the S of a v3 tensor file) |
+| `CorrTotSpin` | removed: it served old-format VASP tensor files only; remake such a file with `example/tools/SpinTensorReader` (format v3) |
+| `sK` | `pcce.partition_size` |
+| `max_trial` | `pcce.trials` |
+| `max_iter` | `pcce.max_iterations` |
+| `kmeans_pp` | `pcce.kmeans_pp` |
+| `iter_detail` | `pcce.print_trials` |
+| `pcce_detail_limit` | `pcce.print_limit` |
+| `pcce_partition` | `pcce.partition` |
+| `pcce_connections` | `pcce.connections` |
+| `pcce_cache_mode` | `pcce.cache.mode` |
+| `pcce_cache_file` | `pcce.cache.file` |
+| `bundle_max_dim` | `bundle.max_dim` |
+| `bundle_merge_cutoff` | `bundle.merge_cutoff` |
+| `bundle_connections` | `bundle.connections` |
+| `bundle_connection_budget` | `bundle.connection_budget` |
+| `expansion_max_clusters` | `bundle.max_clusters` |
+| `expansion_max_work` | `bundle.max_work` |
+| `npulse` | `pulse.count` |
+| `pulsename` | `pulse.name` |
+| `sequence` | `pulse.sequence` |
+| `pulseiter` | `pulse.per_qubit` |
+| `pulse_time` | `pulse.duration` |
+| `detuning_factor` | `pulse.detuning_factor` |
+| `gcce_refinement` (true/false) | `gcce_refinement: {"enabled": true/false}` |
+| `gcce_refinement_max_sweeps` | `gcce_refinement.max_sweeps` |
+| `cluster_contributions` (true/false) | `cluster_contributions: {"enabled": true/false}` |
+| `cluster_contribution_max_mb` | `cluster_contributions.max_mb` |
+| `"Defect": [ ... ]` | `"Defect": {"species": [ ... ]}` (with `state_file` and `axis_file` beside it) |
+| Defect entry `dfname` | `name` |
+| Defect entry `apprx` | removed (it changed nothing) |
+| Defect entry `naddspin` | `n_nuclear_spins` |
+| Defect entry `navaax` | `n_configurations` |
+| Defect entry `eqs` | `quadrupole_moments` |
+| Defect entry `rxyzs` | `nuclear_positions` |
+| Defect entry `hypf` | `hyperfine` |
+| `-m CCE`, `-m pCCE`, ... | `-m cCCE` or `-m gCCE`; the cluster shape is the input's `cluster_mode` |
+
+The names of savemode changed the same day and are in [savemode](InputFile_Output.md#tag_savemode).

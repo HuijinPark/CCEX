@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]/'gpu_verification/check_gpu'))
-from benchmark import REPO, compare
+from benchmark import REPO, compare, put
 from check_pcce import run_case
 
 
@@ -24,11 +24,11 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     original = json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
     records = []
-    for name, overrides in [('one-center', {'sK': 6}),
+    for name, overrides in [('one-center', {'pcce.partition_size': 6}),
                             ('disconnected', {'rdip': 0.01}),
                             ('order4', {'order': 4})]:
         for state in (0, 1):
-            config = dict(original, npulse=4, nstate=state, **overrides)
+            config = put(original, dict(overrides, **{'pulse.count': 4, 'nstate': state}))
             directory = args.output/f'{name}_state{state}'
             cpu, _ = run_case(dict(config, backend='cpu'), directory/'cpu', args.cpu, args.ranks)
             assert cpu['returncode'] == 0 and cpu['profiles'], name
@@ -42,7 +42,8 @@ def main():
                 if name == 'disconnected':
                     reference['order'] = 1
                 else:
-                    reference.update(method='CCE', order=6)
+                    # the whole bath as one cCCE cluster: cluster_mode standard, without the pcce block
+                    reference = put(reference, {'cluster_mode': 'standard', 'pcce': None, 'order': 6})
                 result, _ = run_case(reference, directory/'reference', args.cpu, args.ranks)
                 assert result['returncode'] == 0
                 record['ensemble_reference'] = compare(directory/'reference', directory/'cpu', 1e-8, 2e-6)

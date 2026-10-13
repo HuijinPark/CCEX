@@ -32,12 +32,12 @@ void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
     int totnspin = BathArray_getNspin(ba);
 
     if (cls->sK < 1 || cls->sK > totnspin){
-        if (rank==0) fprintf(stderr,"Error: pCCE sK must be between 1 and the bath spin count (%d)\n",totnspin);
+        if (rank==0) fprintf(stderr,"Error: pcce.partition_size must be between 1 and the bath spin count (%d)\n",totnspin);
         MPI_Abort(MPI_COMM_WORLD,1);
         return;
     }
     if (cls->order < 1 || cls->order > (INT_MAX-1)/cls->sK){
-        if (rank==0) fprintf(stderr,"Error: pCCE order * sK must be a positive integer below INT_MAX\n");
+        if (rank==0) fprintf(stderr,"Error: pCCE order * pcce.partition_size must be a positive integer below INT_MAX\n");
         MPI_Abort(MPI_COMM_WORLD,1);
         return;
     }

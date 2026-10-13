@@ -13,7 +13,7 @@ The inputs are the eight existing files under
 | NV–13C | CCE, gCCE | ensemble, single | 2 | 30 Å | 8 Å | 30 | 0.08 ms |
 | NV–P1 | CCE, gCCE | ensemble, single | 2 | 200 Å | 100 Å | 40 | 0.0003 ms |
 
-Both families retain `npulse=1` and `seed=1`. The original qubit, gyro, bath and
+Both families retain `pulse.count` 1 and `seed=1`. The original qubit, gyro, bath and
 defect data are copied with the source snapshot. The benchmark changes backend,
 profiling, output paths and `savemode=coherence`; it does not select fewer bath sites
 or raise the order. `validate_inputs.py` checks the expected order, radii, time
@@ -29,10 +29,15 @@ Create an isolated source directory on the server, including the bundled Eigen
 and uthash headers and all eight input files with their referenced data. Create
 `server-results/` before submission so Slurm can open its log files. Submit from
 the source directory with `SbatchPath`, the wrapper these servers use (it calls
-`sbatch` with the same arguments and records the job in `~/JOBpath.idm4-gpu`;
-`sbatch` is not called directly). The jobs carry their own `--qos` line, so
+`sbatch` with the same arguments and records the job in `~/JOBpath`;
+`sbatch` is not called directly). Since 2026-10-13 idm4-gpu is the `gpu` partition of idm's Slurm: submit on idm
+(job ids are idm's; jobs before that are in `~/JOBpath.idm4-gpu`). The jobs carry their own `--qos` line, so
 `QosChange` is not run on them: it would also rewrite their partition, `--out`,
-task and CPU lines.
+task and CPU lines (for a GPU job it writes one task with 32 CPUs). Every job has `--export=NONE`, so idm's login
+modules (intel, anaconda) do not reach the GPU node; `environment.sh` starts from `module purge`. Job 17391
+(2026-10-13, commit a72bba1b9, 32 ranks, MPS) checked the new setup: the card visible, `make gpu-test` 185/0,
+`check_gpu/check_options.py` 95/0, P1 CR0 cCCE2 `main_gpu.out` against `main.out` within 2.2e-10. Job 17401 ran `build.sbatch` with `--export=NONE`: the
+build and the eight `backend=cpu` comparisons passed (max error 0).
 
 ```bash
 mkdir server-results
@@ -63,7 +68,7 @@ fixed at one; each executable uses one MPI rank.
 
 Automatic selection retains the default dimension threshold of 256. The current
 CCE2 fixtures are smaller than that threshold, so gCCE `auto` profiles are expected
-to show CPU computation. Since 2026-10-12 (A26) `auto` with method CCE (coherence)
+to show CPU computation. Since 2026-10-12 (A26) `auto` with method cCCE (coherence)
 sends cCCE clusters of bath dimension 2 and 4 to the packed GPU kernel by default
 (`gpu_options.packed_max_dim` 4, `Config_resolvePackedMaxDim` in `src/input/general.cpp`).
 Forced-CUDA profiles must show GPU computation.

@@ -1,8 +1,13 @@
 {
     # Config (General)
-    "method"        : "CCE",
+    "method"        : "cCCE",
     "quantity"      : "coherence",
-    "qubitfile"     : "../bath/bath_Diamond_NV_natab_defect",
+    "Qubit"         : {
+        "file"          : "../bath/bath_Diamond_NV_natab_defect",
+        # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
+        "alphams"        : 1,
+        "betams"         : 0
+    },
     "gyrofile"      : "../bath/gyro_13C",
     "bathfile"      : ["../bath/bath_Diamond_NV_natab_cubic_1"],
     "order"         : 2,
@@ -11,11 +16,7 @@
     "rdip"          : 10,
     "deltat"        : 0.001,
     "nstep"         : 2000,
-
-    # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
-    "qalphams"       : 1,
-    "qbetams"        : 0,
-    "npulse"        : 1,
+    "pulse"         : {"count": 1},
 
     # Coordinate frame : the bath file is written in the cubic crystal frame, where the NV
     # axis is [111]. Rotate positions (about the reference qubit) so that qubit_axis lands

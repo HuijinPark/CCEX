@@ -38,8 +38,11 @@ from .config import read_json
 from .curves import read_curve
 
 VERSION = 1
-METHODS = ("cce", "gcce", "pcce")    # Adaptive excluded (plan "지원 방법 넓히기", 2026-10-08)
-TENSOR_FILES = ("hf_tensorfile", "qd_tensorfile", "qd_tensorfile_woqubit")   # hashed into every run key and the plan
+METHODS = ("cce", "gcce", "pcce")    # Adaptive excluded (plan "지원 방법 넓히기", 2026-10-08); pcce: cCCE with cluster_mode pcce
+# the input files besides the bath, as paths into the input's blocks (input keys of A47, 2026-10-13): resolved to absolute
+# paths in every child input, and hashed into every run key and the plan
+INPUT_FILES = (("Qubit", "file"), ("gyrofile",), ("hamiltonian", "common", "hyperfine", "file"),
+               ("hamiltonian", "common", "quadrupole", "file"), ("hamiltonian", "common", "quadrupole", "file_without_defect"))
 MADE_STATES = 10 ** 6     # states the runner can make (no files): no limit of their own; max_states bounds the state test (review 01ecda #2)
 DEFAULTS = dict(pilot_states=10, test_number=10, test_states=5, max_configurations=None, max_states=30,
                 threshold_time_window=0.01, production_window_factor=1.5,
@@ -115,12 +118,12 @@ REPLACED = dict(step_threshold="removed (2026-10-10): the fit points are the pea
                 max_spins="removed (2026-10-08)", max_pairs="removed (2026-10-08)",
                 bath_generation="removed (2026-10-09): make the bath files yourself; the run says which ones to add")
 CODE = ("runner.py", "window.py", "t2.py", "truncation.py", "curves.py", "autostart.py")      # the decision code, in the plan fingerprint
-# pCCE partition cache (A17 (1), user 2026-10-11): every pCCE run gets pcce_cache_mode readwrite and a file named by a key of
+# pCCE partition cache (A17 (1), user 2026-10-11): every pCCE run gets pcce.cache.mode readwrite and a file named by a key of
 # its child input without the keys the partition does not read, the contents of the files it reads but the state files, and
 # the binary - so runs differing only in rdip (or in states, nstep, deltat) share one partition. CCEX compares the stored
 # partition's own inputs (bath spins, seed, sK, trials, iterations, kmeans_pp, build) byte for byte and searches again on
 # any difference (pcce_partition_cache.cpp), so the key only keeps different partitions in different files.
-PARTITION_FREE = ("rdip", "rdip_ladder", "nstate", "statefile", "exstatefile", "nstep", "deltat")
+PARTITION_FREE = ("rdip", "rdip_ladder", "nstate", "bath_state_file", "Defect.state_file", "nstep", "deltat")
 PARTITION_RULE = dict(mode="readwrite", key="child input without " + ", ".join(PARTITION_FREE) +
                       "; contents of the bath and other files but the states; binary",
                       seed="1 when the input has none (CCEX would take the start time, and the cache holds the seed)", version=2)
@@ -140,6 +143,33 @@ def _sha(path):
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _at(d, *path, default=None):
+    """d[path[0]][path[1]]...: the value at a path of keys of the input's blocks, or default."""
+    for k in path:
+        if not isinstance(d, dict) or k not in d:
+            return default
+        d = d[k]
+    return d
+
+
+def _radius(v):
+    """rbath or rdip of an input: a number (the outer radius) or [inner, outer] (A47: the inner one was rbathcut, rdipcut)."""
+    if isinstance(v, list) and len(v) == 2:
+        return v[0], v[1]
+    return 0.0, v
+
+
+def _method(base):
+    """The method as the runner names it: cce, gcce or pcce (cCCE with cluster_mode pcce); the input's method and
+    cluster_mode otherwise (cluster_mode bundle keeps the method's name)."""
+    m = str(base.get("method", "cCCE")).lower()
+    m = "cce" if m == "ccce" else m
+    shape = str(base.get("cluster_mode", "standard")).lower()
+    if shape == "pcce" and m == "cce":
+        return "pcce"
+    return m if shape in ("standard", "bundle") else f"{m} with cluster_mode {shape}"
 
 
 def _nodiv(cin):
@@ -372,9 +402,9 @@ class Runner:
         # rdip_ladder exists for order 2 of cCCE, gCCE and pCCE with standard clusters only (improvements.md A23); elsewhere
         # every rung is its own run, gathered under the ladder's names so the rest reads them alike (plan "지원 방법 넓히기" M3)
         b_ = self.base
-        self.ladder = str(b_.get("method", "")).lower() in ("cce", "gcce", "pcce") and b_.get("order") == 2 and \
-            str(b_.get("cluster_mode", "standard")).lower() == "standard"
-        self.pcce = str(b_.get("method", "")).lower() == "pcce" and str(b_.get("cluster_mode", "standard")).lower() != "adaptive"
+        self.ladder = _method(b_) in ("cce", "gcce", "pcce") and b_.get("order") == 2 and \
+            str(b_.get("cluster_mode", "standard")).lower() in ("standard", "pcce")
+        self.pcce = _method(b_) == "pcce"
         self.step_now, self.interrupted, self.status_now = 0, None, "running"
 
     # ---------------------------------------------------------------- input
@@ -461,9 +491,10 @@ class Runner:
         self.auto = {k for k, sec in (("candi_rdip", "rdip"), ("candi_rbath", "rbath")) if k not in b and self.converge[sec]}
         self.o = dict(DEFAULTS, **{k: v for k, v in b.items() if k in DEFAULTS})
         base = self.base
-        method = str(base.get("method", "")).lower()
+        method = _method(base)
         if method not in METHODS:
-            raise Refused(f"--auto_conv supports method CCE, gCCE or pCCE (Adaptive is excluded), not {base.get('method')!r}")
+            raise Refused(f"--auto_conv supports method cCCE, gCCE or cCCE with cluster_mode pcce (the adaptive block is excluded), "
+                          f"not {method}")
         if str(base.get("quantity", "")).lower() != "coherence":
             raise Refused("--auto_conv supports quantity coherence only")
         order = base.get("order")
@@ -471,15 +502,17 @@ class Runner:
             raise Refused(f"order must be an integer >= {1 if method == 'gcce' else 2} for {method}")
         if "save_nodiv" in base:            # CCEX refuses it too (2026-10-13)
             raise Refused('save_nodiv is now savemode.nodiv ("savemode": {"mode": "coherence", "nodiv": false})')
-        for k, bad in (("savemode", lambda v: str(v.get("mode", "coherence") if isinstance(v, dict) else v).lower() != "coherence"),
-                       ("cluster_contributions", bool),
-                       ("nk", lambda v: any(v)), ("rdip_ladder", lambda v: True), ("Adaptive", lambda v: True),
-                       ("adaptive_work_file", lambda v: True), ("pcce_cache_file", lambda v: True), ("pcce_cache_mode", lambda v: True),
-                       ("pcce_partition", lambda v: str(v).lower() == "legacy"),   # legacy partitions depend on the MPI size
-                       ("avaaxfile", lambda v: True), ("exstatefile", lambda v: True)):   # review 10-07 A6: files not hashed
-            if k in base and bad(base[k]):
-                why = " (the runner gives every pCCE run its own partition cache)" if k.startswith("pcce_cache") else ""
-                raise Refused(f"--auto_conv refuses {k} = {base[k]!r} in the base input{why}")
+        for path, bad in ((("savemode",), lambda v: str(v.get("mode", "coherence") if isinstance(v, dict) else v).lower() != "coherence"),
+                          (("cluster_contributions",), lambda v: not isinstance(v, dict) or v.get("enabled", True) is not False),
+                          (("max_clusters_per_order",), lambda v: any(v)), (("rdip_ladder",), lambda v: True),
+                          (("adaptive",), lambda v: True), (("pcce", "cache"), lambda v: True),
+                          (("pcce", "partition"), lambda v: str(v).lower() == "legacy"),   # legacy partitions depend on the MPI size
+                          (("Defect", "axis_file"), lambda v: True), (("Defect", "state_file"), lambda v: True)):   # review 10-07 A6: files not hashed
+            v = _at(base, *path)
+            if v is not None and bad(v):
+                k = ".".join(path)
+                why = " (the runner gives every pCCE run its own partition cache)" if k.startswith("pcce.cache") else ""
+                raise Refused(f"--auto_conv refuses {k} = {v!r} in the base input{why}")
         dt = base.get("deltat")
         if "deltat" in base and dt is None:
             raise Refused("deltat is null: leave it out to have it found from the window, or give a positive number of ms")
@@ -495,14 +528,14 @@ class Runner:
             raise Refused("nstep must be an integer >= 3")
         self.nstep0 = n if n is not None else DEFAULT_NSTEP     # time points: nstep of the input (user 2026-10-08)
         # review 10-07 A10: the preflight measures the bath around ONE qubit in the files' own coordinates
-        shift = base.get("bathadjust")
+        shift = base.get("bath_shift")
         flat = [shift] if isinstance(shift, (int, float)) else (shift or [])
         while any(isinstance(x, list) for x in flat):
             flat = [y for x in flat for y in (x if isinstance(x, list) else [x])]
         if any(float(x) != 0 for x in flat):
-            raise Refused("--auto_conv refuses bathadjust (its bath radius and resource checks read the files' own coordinates)")
+            raise Refused("--auto_conv refuses bath_shift (its bath radius and resource checks read the files' own coordinates)")
         qubits = base.get("Qubit", {})
-        if isinstance(qubits, dict) and int(qubits.get("nqubit", 1) or 1) > 1:
+        if isinstance(qubits, dict) and len(qubits.get("qubit", []) or []) > 1:
             raise Refused("--auto_conv supports one qubit (its bath radius is measured from it)")
         o = self.o
         checks = (("threshold_config", lambda v: 0 < v < 1), ("states_threshold", lambda v: 0 < v < 1), ("threshold_rdip", lambda v: 0 < v < 1), ("threshold_rbath", lambda v: 0 < v < 1), ("production_window_factor", lambda v: v >= 1),
@@ -595,14 +628,15 @@ class Runner:
             raise Refused("nstate 0 (ensemble): configurations.max_states is not used, leave it out")
         if not self.ensemble and not (isinstance(mxs, int) and not isinstance(mxs, bool) and mxs >= ts):
             raise Refused(f"configurations.max_states must be an integer >= test_states ({ts})")
-        if self.ensemble and ("statefile" in c or "exstatefile" in c):
+        if self.ensemble and ("statefile" in c or "exstatefile" in c):    # the tool's pattern names (configurations.*)
             raise Refused("nstate 0 (ensemble) does not read state files: remove configurations.statefile or set nstate > 0")
         # nstate > 0 without state files: the runner makes them for each run and removes them after (plan "state 파일 자동",
         # user 2026-10-09; CCEX's own random states change with rbath and would break the paired comparisons)
         self.auto_states = not self.ensemble and "statefile" not in c
         # keyed in lower case: CCEX finds a defect by its name ignoring case (strcasecmp; review 6548a9 R4)
-        self.defect_axes = {str(d_["dfname"]).lower(): int(d_.get("navaax", 0) or 0) for d_ in self.base.get("Defect", [])
-                            if isinstance(d_, dict) and "dfname" in d_ and int(d_.get("navaax", 0) or 0) > 0}
+        self.defect_axes = {str(d_["name"]).lower(): int(d_.get("n_configurations", 0) or 0)
+                            for d_ in _at(self.base, "Defect", "species", default=[])
+                            if isinstance(d_, dict) and "name" in d_ and int(d_.get("n_configurations", 0) or 0) > 0}
         self.auto_avaax = {}
         if self.auto_states and "exstatefile" in c:
             raise Refused("configurations.exstatefile needs configurations.statefile (the states the runner makes cover the bath spins only)")
@@ -631,9 +665,9 @@ class Runner:
         for name, seq in (("rdip.candidates", rungs + [rmax]), ("rbath.candidates", rb)):
             if not seq or any(not math.isfinite(x) or x <= 0 for x in seq) or any(y <= x for x, y in zip(seq, seq[1:])):
                 raise Refused(f"{name} must be positive, finite and strictly increasing")
-        cut = np.float32(self.base.get("rdipcut", 0.0) or 0.0)
-        if any(np.float32(r) <= cut for r in rungs):        # rdip_ladder.cpp needs rdipcut < rung (review ...-autostart #9)
-            raise Refused(f"rdip candidates at or below rdipcut {float(cut):g}: {[r for r in rungs if np.float32(r) <= cut]}")
+        cut = np.float32(_radius(self.base.get("rdip"))[0] or 0.0)
+        if any(np.float32(r) <= cut for r in rungs):        # rdip_ladder.cpp needs inner rdip < rung (review ...-autostart #9)
+            raise Refused(f"rdip candidates at or below the inner rdip {float(cut):g}: {[r for r in rungs if np.float32(r) <= cut]}")
         names = [_gname(r) for r in rungs]
         if len(set(names)) != len(names) or _gname(rmax) in names:
             raise Refused("two rdip rungs print the same name (%g of the float value)")
@@ -745,7 +779,7 @@ class Runner:
                 configs.append((sp, np.linalg.norm(xyz - q, axis=1)))
             names = sorted({n for sp, _ in configs for n in sp})
             r_cov = min(self.bath_radius(k) for k in self.pilot + self.pool)
-            cut = float(self.base.get("rbathcut", 0.0) or 0.0)
+            cut = float(_radius(self.base.get("rbath"))[0] or 0.0)
             gf = self.base.get("gyrofile")
             gf = None if gf is None else (Path(gf) if Path(gf).is_absolute() else self.root / gf)
             g = autostart.gyros(gf, set(names))
@@ -756,10 +790,11 @@ class Runner:
             qb = self.base.get("Qubit", {})
             q0 = qb.get("qubit", [{}])[0] if isinstance(qb, dict) and qb.get("qubit") else {}
             qg = float(q0.get("gyro", autostart.GAMMA_ELECTRON))
-            dm = float(q0.get("alphams", self.base.get("qalphams", 1.0))) - float(q0.get("betams", self.base.get("qbetams", 0.0)))
+            dm = float(q0.get("alphams", _at(self.base, "Qubit", "alphams", default=1.0))) - \
+                float(q0.get("betams", _at(self.base, "Qubit", "betams", default=0.0)))
             try:
                 sd = autostart.count_seeds(configs, cut, r_cov, {n: g[n][:2] for n in names}, qg, dm,
-                                           float(self.base.get("rdipcut", 0.0) or 0.0), n_rdip=o["num_candi_rdip"],
+                                           float(_radius(self.base.get("rdip"))[0] or 0.0), n_rdip=o["num_candi_rdip"],
                                            n_rbath=o["num_candi_rbath"])
             except ValueError as e:
                 raise Refused(str(e))
@@ -767,7 +802,7 @@ class Runner:
                 self.rbaths = sd["rbath_candidates"]
             if self.rdip_max is None:
                 if not sd["rdip_rungs"]:
-                    raise Refused(f"no rdip candidate above rdipcut below the top {sd['rdip_max']:g}: give rdip.candidates")
+                    raise Refused(f"no rdip candidate above the inner rdip below the top {sd['rdip_max']:g}: give rdip.candidates")
                 self.rdip_max, self.rungs = sd["rdip_max"], sd["rdip_rungs"]
             self.t_seed = sd["t_seed"]
             warn = list(sd["notes"])
@@ -869,8 +904,8 @@ class Runner:
         return float(min((q - xyz.min(0)).min(), (xyz.max(0) - q).min()))
 
     def qubit_xyz(self):
-        if "qubitfile" in self.base:
-            p = Path(self.base["qubitfile"]); p = p if p.is_absolute() else self.root / p
+        if _at(self.base, "Qubit", "file") is not None:
+            p = Path(self.base["Qubit"]["file"]); p = p if p.is_absolute() else self.root / p
             return np.array([float(x) for x in p.read_text().split()[:3]])
         return np.array(self.base["Qubit"]["qubit"][0]["xyz"], float)
 
@@ -878,14 +913,14 @@ class Runner:
         return np.loadtxt(self.files(k, 1)["bathfile"], skiprows=1, usecols=(0, 1, 2), ndmin=2)
 
     def inside(self, k, rbath):
-        """Bath spins CCEX keeps: rbathcut <= distance <= rbath, both read as float (bath.cpp, BathArray_readBath)."""
+        """Bath spins CCEX keeps: inner rbath <= distance <= rbath, both read as float (bath.cpp, BathArray_readBath)."""
         xyz = self.bath_xyz(k)
         r = np.linalg.norm(xyz - self.qubit_xyz(), axis=1)
-        return xyz[(r <= np.float32(rbath)) & (r >= np.float32(self.base.get("rbathcut", 0.0)))]
+        return xyz[(r <= np.float32(rbath)) & (r >= np.float32(_radius(self.base.get("rbath"))[0]))]
 
     def pair_count(self, xyz, r):
-        """Pairs CCEX connects: rdipcut < distance < rdip (bath.cpp, the connectivity map)."""
-        lo, n = np.float32(self.base.get("rdipcut", 0.0)), 0
+        """Pairs CCEX connects: inner rdip < distance < rdip (bath.cpp, the connectivity map)."""
+        lo, n = np.float32(_radius(self.base.get("rdip"))[0]), 0
         for i in range(len(xyz) - 1):
             d = np.linalg.norm(xyz[i + 1:] - xyz[i], axis=1)
             n += int(((d < np.float32(r)) & (d > lo)).sum())
@@ -925,22 +960,29 @@ class Runner:
     def child(self, k, nstate, nstep, rbath, rdip, ladder, first=1):
         c = copy.deepcopy(self.base)
         fs = self.files(k, nstate, first)
-        c.update(bathfile=[str(fs["bathfile"])], nstate=nstate, nstep=nstep, deltat=self.deltat, rbath=rbath, rdip=rdip, outfile="out")
+        # the inner radii of the base input stay ([inner, outer]; A47)
+        inner_b, inner_d = (v[0] if isinstance(v, list) and len(v) == 2 else None for v in (c.get("rbath"), c.get("rdip")))
+        c.update(bathfile=[str(fs["bathfile"])], nstate=nstate, nstep=nstep, deltat=self.deltat,
+                 rbath=rbath if inner_b is None else [inner_b, rbath], rdip=rdip if inner_d is None else [inner_d, rdip],
+                 outfile="out")
+        # the configuration's files under the CCEX input keys (A47): bath_state_file, Defect.axis_file, Defect.state_file
         if self.ensemble:
-            c.pop("statefile", None)
+            c.pop("bath_state_file", None)
         elif self.auto_states or first > 1:              # a later block of given state files: copied there as 1, 2, ...
-            c["statefile"] = "made/cfg_state"            # made in the run folder just before CCEX starts, removed after
+            c["bath_state_file"] = "made/cfg_state"      # made in the run folder just before CCEX starts, removed after
         else:
-            c["statefile"] = str(self._path(self.patterns["statefile"], k))
+            c["bath_state_file"] = str(self._path(self.patterns["statefile"], k))
         if "avaaxfile" in self.patterns:
-            c["avaaxfile"] = str(fs["avaaxfile"])
+            c.setdefault("Defect", {})["axis_file"] = str(fs["avaaxfile"])
         elif self.auto_avaax:
-            c["avaaxfile"] = "made/cfg_avaax"
+            c.setdefault("Defect", {})["axis_file"] = "made/cfg_avaax"
         if "exstatefile" in self.patterns:
-            c["exstatefile"] = "made/cfg_exstate" if first > 1 else str(self._path(self.patterns["exstatefile"], k))
-        for key in ("qubitfile", "gyrofile") + TENSOR_FILES:
-            if key in c and isinstance(c[key], str) and not Path(c[key]).is_absolute():
-                c[key] = str((self.root / c[key]).resolve())
+            c.setdefault("Defect", {})["state_file"] = "made/cfg_exstate" if first > 1 else \
+                str(self._path(self.patterns["exstatefile"], k))
+        for path in INPUT_FILES:
+            v = _at(c, *path)
+            if isinstance(v, str) and not Path(v).is_absolute():
+                _at(c, *path[:-1])[path[-1]] = str((self.root / v).resolve())
         if ladder and self.ladder:
             c["rdip_ladder"] = list(ladder)
         else:
@@ -950,9 +992,14 @@ class Runner:
         return c, fs
 
     def partition_key(self, cin, fs, extra):
-        """The pCCE partition cache key (PARTITION_RULE): the bath spins inside rbath (bath file content, rbath, rbathcut,
-        the qubit), seed, sK, max_trial, max_iter, kmeans_pp and the binary are all in it; rdip is not."""
-        return hashlib.sha256(_canon(dict(rule=PARTITION_RULE, input={n: v for n, v in cin.items() if n not in PARTITION_FREE},
+        """The pCCE partition cache key (PARTITION_RULE): the bath spins inside rbath (bath file content, rbath with its inner radius,
+        the qubit), seed, pcce.partition_size, trials, max_iterations, kmeans_pp and the binary are all in it; rdip is not."""
+        free = {n: v for n, v in cin.items() if n not in PARTITION_FREE}
+        if isinstance(free.get("Defect"), dict) and "state_file" in free["Defect"]:   # Defect.state_file: states too
+            free["Defect"] = {n: v for n, v in free["Defect"].items() if n != "state_file"}
+            if not free["Defect"]:
+                free.pop("Defect")
+        return hashlib.sha256(_canon(dict(rule=PARTITION_RULE, input=free,
                                           files={n: _sha(p) for n, p in fs.items() if not n.startswith(("state", "exstate"))},
                                           other={n: _sha(p) for n, p in extra.items() if Path(p).is_file()},
                                           binary=self.binary_sha)).encode()).hexdigest()
@@ -961,8 +1008,8 @@ class Runner:
         """Run (or reuse) one CCEX calculation; returns its folder. first > 1: states first ... first + nstate - 1 (written or
         copied to made/ as 1 ... nstate; the state test, 2026-10-10)."""
         cin, fs = self.child(k, nstate, nstep, rbath, rdip, ladder, first)
-        extra = {key: str((self.root / v).resolve() if not Path(v).is_absolute() else v) for key, v in cin.items()
-                 if key in ("qubitfile", "gyrofile") + TENSOR_FILES and isinstance(v, str)}
+        extra = {".".join(path): str((self.root / v).resolve() if not Path(v).is_absolute() else v)
+                 for path in INPUT_FILES for v in [_at(cin, *path)] if isinstance(v, str)}
         made = {}
         if self.auto_states and nstate:
             made["states"] = STATE_RULE
@@ -977,7 +1024,7 @@ class Runner:
             ckey = self.partition_key(cin, fs, extra)
             cache = self.work / "pcce_cache" / f"{ckey}.cache"
             # relative to the run folder (runs/<step>/<name>/), so the run key does not hold where the workdir is
-            cin.update(pcce_cache_mode="readwrite", pcce_cache_file=f"../../../pcce_cache/{cache.name}")
+            cin.setdefault("pcce", {})["cache"] = dict(mode="readwrite", file=f"../../../pcce_cache/{cache.name}")
         key = hashlib.sha256(_canon(dict(input=cin, rungs=[] if self.ladder else list(ladder), files={n: _sha(p) for n, p in sorted(fs.items())},
                                          **(dict(states_made=made) if made else {}),
                                          other={n: _sha(p) for n, p in extra.items() if Path(p).is_file()},
@@ -1043,7 +1090,8 @@ class Runner:
         logtext = (d / "process.log").read_text(errors="replace")
         if code != 0:
             raise RuntimeError(f"{d}: CCEX exited with {code}")
-        subbath = any(int(d.get("naddspin", 0) or 0) > 0 for d in self.base.get("Defect", []) if isinstance(d, dict))
+        subbath = any(int(d.get("n_nuclear_spins", 0) or 0) > 0 for d in _at(self.base, "Defect", "species", default=[])
+                      if isinstance(d, dict))
         if any(m in logtext for m in RANDOM_FALLBACK) or (subbath and SUBBATH_FALLBACK in logtext):
             raise RuntimeError(f"{d}: bath states or axes fell back to random values")
         own = [f for f in expected if self.ladder or not f.startswith("out_rdip")]
@@ -1187,11 +1235,11 @@ class Runner:
         hold everything they read)."""
         self._drop_cut_line()
         here = Path(__file__).resolve().parent
-        other = {}                         # qubitfile and gyrofile contents too (the runs hashed them, the plan did not)
-        for key in ("qubitfile", "gyrofile") + TENSOR_FILES:
-            v = self.base.get(key)
+        other = {}                         # Qubit.file and gyrofile contents too (the runs hashed them, the plan did not)
+        for path in INPUT_FILES:
+            v = _at(self.base, *path)
             if isinstance(v, str) and (self.root / v if not Path(v).is_absolute() else Path(v)).is_file():
-                other[key] = _sha(self.root / v if not Path(v).is_absolute() else Path(v))
+                other[".".join(path)] = _sha(self.root / v if not Path(v).is_absolute() else Path(v))
         files, resolved = self.source_sha, self.resolved
         if "pool" in self.auto:
             # production configurations found: files added later keep the plan - its allocation and the production batches stay
@@ -1304,8 +1352,8 @@ class Runner:
         self.progress(step=1)
         plan_fp = self.plan()
         # CCEX writes the total evolution time: 2τ for a Hahn echo, 2Nτ for N equally spaced π pulses, t otherwise
-        npulse = int(self.base.get("npulse", 0) or 0)
-        manual = str(self.base.get("pulsename", "")).lower() == "manual"
+        npulse = int(_at(self.base, "pulse", "count", default=0) or 0)
+        manual = str(_at(self.base, "pulse", "name", default="")).lower() == "manual"
         report_mod.TIME_LABEL = "t" if manual else "τ" if npulse == 0 else ("2τ" if npulse == 1 else f"{2 * npulse}τ")   # Ramsey: τ (user 2026-10-10)
         o, S0, Bn, Rm = self.o, 0 if self.ensemble else self.o["pilot_states"], self.rbaths[-1], self.rdip_max
         auto_dt, dt0 = self.deltat is None, self.deltat

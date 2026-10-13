@@ -66,9 +66,9 @@ write_ccein(){
 import json, sys
 dest, hf, qd, outfile, hex_dir = sys.argv[1:6]
 cfg = {
-    "method"    : "CCE",
+    "method"    : "cCCE",
     "quantity"  : "coherence",
-    "qubitfile" : hex_dir + "/defect",
+    "Qubit"     : {"file": hex_dir + "/defect", "alphams": 1, "betams": 0},
     "gyrofile"  : hex_dir + "/../ensemble_data/Gyro_h_BN",
     "bathfile"  : [hex_dir + "/bath_1"],
     "order"     : 1,
@@ -77,22 +77,21 @@ cfg = {
     "rdip"      : 10,
     "deltat"    : 0.002,
     "nstep"     : 20,
-    "npulse"    : 1,
+    "pulse"     : {"count": 1},
     "nstate"    : 0,
     "seed"      : 1,
-    "qalphams"  : 1,
-    "qbetams"   : 0,
-    "hf_readmode": int(hf),
-    "qd_readmode": int(qd),
     "outfile"   : outfile,
 }
+# hf / qd are the readmodes of the code, written as the hamiltonian block (A47)
+common = {}
 if int(hf) != 0:
-    cfg["hf_tensorfile"] = hex_dir + "/Afile_vertex"
+    common["hyperfine"] = {"dipole": "dft" if int(hf) >= 2 else "point", "contact": int(hf) in (1, 3),
+                           "file": hex_dir + "/Afile_vertex", "missing_row": "stop"}
     cfg["hf_cutoff"] = 0
-    cfg["hf_ignore_oor"] = 0
 if int(qd) != 0:
-    cfg["qd_tensorfile"] = hex_dir + "/Qfile_vertex"
-    cfg["qd_tensorfile_woqubit"] = hex_dir + "/Qfile_vertex"
+    common["quadrupole"] = {"structure": "plain", "file": hex_dir + "/Qfile_vertex"}
+if common:
+    cfg["hamiltonian"] = {"common": common}
 json.dump(cfg, open(dest, "w"), indent=4)
 PY
 }

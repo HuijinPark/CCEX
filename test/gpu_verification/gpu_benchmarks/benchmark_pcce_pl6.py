@@ -11,8 +11,12 @@ import re
 
 import numpy as np
 
-from benchmark import REPO, values
+from benchmark import REPO, values, get
 from check_pcce import run_case
+
+_keys = importlib.util.spec_from_file_location('convert_input_keys', REPO/'example/tools/InputKeys/convert_input_keys.py')
+KEYS = importlib.util.module_from_spec(_keys)
+_keys.loader.exec_module(KEYS)
 
 
 def metrics(reference, target, atol=1e-8, rtol=2e-6):
@@ -79,7 +83,9 @@ def main():
         for source in sorted((args.package/'inputs/ccein').glob('*.json')):
             if args.case and args.case not in source.name:
                 continue
-            config = json.loads(source.read_text())
+            # the archived inputs were written with the input keys before A47 (2026-10-13): converted as they are read
+            new_text, _ = KEYS.convert_text(source.read_text())
+            config = json.loads(KEYS.strip_comments(new_text))
             grid = 'coarse_grid_nstep500' if 'coarse' in source.name else 'fine_grid'
             name = re.sub(r'^ccein_(coarse|fine)_', '', source.stem)
             historical = args.package/'results'/grid/name
@@ -96,7 +102,7 @@ def main():
                 if len(matches) != 1:
                     raise ValueError(f'Expected one archived config-1 {suffix}: {historical}')
                 (old/f'coherence_{suffix}').write_bytes(matches[0].read_bytes())
-            record = dict(case=source.stem, seed=seed, sK=config['sK'], npulse=config['npulse'],
+            record = dict(case=source.stem, seed=seed, sK=get(config, 'pcce.partition_size'), npulse=get(config, 'pulse.count'),
                           nstep=config['nstep'], rdip=config['rdip'], backends={},
                           archived_wall_s=float(re.search(r'JOB DONE : Wall time = ([\d.]+)', old_log)[1]))
             summary['cases'].append(record)

@@ -195,43 +195,43 @@ AdaptivePlan unpack(const std::vector<int>& data) {
 
 void validateAdaptiveConfig(const Config* c,const Cluster* cls) {
     if(strcasecmp(c->cluster_mode,"adaptive")) {
-        if(c->adaptive_options_present)fail("adaptive options require cluster_mode=adaptive");
+        if(c->adaptive_options_present)fail("the bundle block and adaptive.work_file require cluster_mode bundle");
         return;
     }
     if(strcasecmp(c->method,"cce") && strcasecmp(c->method,"gcce"))
-        fail("cluster_mode=adaptive requires method=cce or gcce");
-    if(strcasecmp(c->quantity,"coherence"))fail("adaptive currently supports quantity=coherence");
-    if(c->order<1)fail("adaptive requires positive bundle order");
-    if(c->expansion_max_clusters<1 || c->expansion_max_work<1)fail("adaptive expansion limits must be positive");
+        fail("cluster_mode bundle requires method cCCE or gCCE");
+    if(strcasecmp(c->quantity,"coherence"))fail("cluster_mode bundle currently supports quantity=coherence");
+    if(c->order<1)fail("cluster_mode bundle requires positive bundle order");
+    if(c->expansion_max_clusters<1 || c->expansion_max_work<1)fail("bundle.max_clusters and bundle.max_work must be positive");
     if(c->bundle_max_dim<1)
-        fail("adaptive requires bundle_max_dim");
+        fail("cluster_mode bundle requires bundle.max_dim");
     if(!std::isfinite(c->bundle_merge_cutoff) || c->bundle_merge_cutoff<0)
-        fail("adaptive requires a nonnegative merge cutoff");
+        fail("cluster_mode bundle requires a nonnegative bundle.merge_cutoff");
     const bool automatic=!strcasecmp(c->bundle_connections,"auto");
     const bool checked=!strcasecmp(c->bundle_connections,"checked");
-    if(!automatic && !checked && strcasecmp(c->bundle_connections,"distance"))fail("bundle_connections must be distance or auto");
+    if(!automatic && !checked && strcasecmp(c->bundle_connections,"distance"))fail("bundle.connections must be distance or auto");
     if(automatic) {
         if(!std::isfinite(c->bundle_connection_budget) || c->bundle_connection_budget<0)
-            fail("adaptive auto requires a finite nonnegative bundle_connection_budget");
+            fail("bundle.connections auto requires a finite nonnegative bundle.connection_budget");
         if(!std::isfinite(c->deltat) || c->deltat<0 || c->nstep<1)
-            fail("adaptive auto requires finite nonnegative deltat and nstep >= 1");
-    } else if(c->bundle_connection_budget>=0)fail("bundle_connection_budget requires bundle_connections=auto");
+            fail("bundle.connections auto requires finite nonnegative deltat and nstep >= 1");
+    } else if(c->bundle_connection_budget>=0)fail("bundle.connection_budget requires bundle.connections auto");
     if(checked) {
         if(!std::isfinite(c->deltat) || c->deltat<0 || c->nstep<1 || c->nstate<0)
             fail("rdip omission requires finite nonnegative deltat, nstep >= 1 and nstate >= 0");
-        if(c->rdipcut!=0)fail("rdipcut requires rdip in the simplified adaptive input");
+        if(c->rdipcut!=0)fail("an inner rdip radius requires the outer one (rdip [inner, outer]) in the simplified bundle input");
         // Explicit plan/probe requests are an advanced protocol, with their own
         // validation policy. Avoid silently mixing two independent optimizers.
         const auto& work=adaptiveWork(c);
         if(work.active && (work.mode!="run" || !work.bundles.empty()))
-            fail("automatic checked connections require a normal run; use explicit bundle_connections for plan/probe or fixed bundles");
+            fail("automatic checked connections require a normal run; use explicit bundle.connections for plan/probe or fixed bundles");
     }
     if(!std::isfinite(c->rdip) || !std::isfinite(c->rdipcut) || c->rdipcut<0 ||
        (((!automatic && !checked) || c->adaptive_rdip_is_set) && (c->rdip<=0 || c->rdipcut>=c->rdip)))
-        fail("adaptive requires 0 <= rdipcut < rdip");
-    if(strcasecmp(c->pcce_cache_mode,"off"))fail("adaptive does not use pcce_cache_mode");
+        fail("cluster_mode bundle requires 0 <= inner < outer rdip");
+    if(strcasecmp(c->pcce_cache_mode,"off"))fail("cluster_mode bundle does not use pcce.cache.mode");
     if(cls && cls->nk)for(int i=0;i<=cls->order;++i)
-        if(cls->nk[i])fail("adaptive currently requires nk=0 (all retained bundle clusters)");
+        if(cls->nk[i])fail("cluster_mode bundle currently requires max_clusters_per_order all 0 (all retained bundle clusters)");
 }
 
 void clusterizeAdaptive(Cluster* cls,BathArray* ba,QubitArray* qa,DefectArray* dfa,const Config* c) {

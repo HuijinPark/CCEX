@@ -61,6 +61,10 @@ void evolveEnsembleRecursiveCce(const MatrixXcd& M, const MatrixXcd& M_up, const
             if (npulse == 1){
                 // Hahn echo: Tr[X Du X^dagger Du^*] with X = M Dd M^dagger
                 one.advance(i, tfree/2.0, deltat/2.0, false, valUp, valDown);
+#ifdef CCEX_BLAS_DIRECT
+                if (bdim >= ccexBlas::gemmMin) ccexBlas::hahnProduct(M, one.down, L_mat, X);   // A46: zgemm
+                else
+#endif
                 X.noalias() = (M.array().rowwise() * one.down.transpose().array()).matrix() * M.adjoint();
                 X2 = X.cwiseAbs2();
                 overlap = (one.up.adjoint() * X2.cast<doublec>() * one.up)(0,0);

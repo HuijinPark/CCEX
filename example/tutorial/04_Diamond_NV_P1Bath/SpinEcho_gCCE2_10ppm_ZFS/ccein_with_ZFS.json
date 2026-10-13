@@ -18,7 +18,6 @@
 
     # Qubit #(unit : kHz),  D = 2.88GHz 
     "Qubit"   : { 
-                   "nqubit" : 1,
                    "qubit"  : [{   
                                     "name"   : "qubit1",
                                     "spin"   : 1.0,
@@ -35,37 +34,37 @@
                 },
 
     # Cluster
-    "addsubclus"  : 0, # true / false
-    "nk"          : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
+    "add_subclusters" : false, # true / false
+    "max_clusters_per_order" : [0,0,0], # default : [0] (all) or [0,0,30,40,50]
 
     # Pulse
-    "npulse"      : 1,
+    "pulse"         : {"count": 1},
 
-    # Config - Spin tensor
-    "hf_readmode"   : 0, 
+    # Config - Spin tensor 
 
     # Output
-    "savemode"    : "coherence"
+    "savemode"    : "coherence",
 
-,  "Defect"         : [
-		{   
-            "dfname": "P1",
-            "apprx": true,
-            "naddspin" : 0,
-            "navaax" : 12, 
-            "detuning" : [ [1,  "e",   84.946496],
-                           [2,  "e",   84.946496],
-                           [3,  "e",   84.946496],
-                           [4,  "e",     0.00000],
-                           [5,  "e",     0.00000],
-                           [6,  "e",     0.00000],
-                           [7,  "e",  -84.946496],
-                           [8,  "e",  -84.946496],
-                           [9,  "e",  -84.946496],
-                           [10, "e",  114.026400],
-                           [11, "e",     0.00000],
-                           [12, "e", -114.026400]]
-        }   
+  "Defect"         : {
+        "species"       : [
+    		{   
+                "name": "P1",
+                "n_nuclear_spins" : 0,
+                "n_configurations" : 12, 
+                "detuning" : [ [1,  "e",   84.946496],
+                               [2,  "e",   84.946496],
+                               [3,  "e",   84.946496],
+                               [4,  "e",     0.00000],
+                               [5,  "e",     0.00000],
+                               [6,  "e",     0.00000],
+                               [7,  "e",  -84.946496],
+                               [8,  "e",  -84.946496],
+                               [9,  "e",  -84.946496],
+                               [10, "e",  114.026400],
+                               [11, "e",     0.00000],
+                               [12, "e", -114.026400]]
+            }   
 
-                       ]
+                           ]
+    }
 }

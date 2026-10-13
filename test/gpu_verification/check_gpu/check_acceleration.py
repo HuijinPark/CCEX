@@ -4,15 +4,15 @@ import argparse
 import json
 from pathlib import Path
 import re
-from benchmark import INPUTS,compare
+from benchmark import INPUTS,compare,get,put
 from check_pcce import run_case
 
 
 def config_for(family,state):
     root=INPUTS/family
     c=json.loads((root/'inputfiles'/f'ccein_nstate{state}.json').read_text())
-    for key in ('gyrofile','qubitfile'):
-        if c.get(key):c[key]=str(root/c[key])
+    for key in ('gyrofile','Qubit.file'):
+        if get(c,key):c=put(c,{key:str(root/get(c,key))})
     c['bathfile']=[str(root/p) for p in c['bathfile']]
     c.update(profile=True,savemode='coherence',propagator='eigen',gpu_options=dict(c.get('gpu_options',{}),evolution_batch_steps=4))
     return c
@@ -29,11 +29,11 @@ def main():
     for state in (0,1):
         c=config_for('Diamond_NV_natab_gcce',state);c.update(order=4)
         cases.append((f'gcce4_13c_state{state}',c))
-    c=config_for('Diamond_NV_natab_gcce',1);c.update(order=2,evolution='matrix',npulse=4,nstep=9)
+    c=put(config_for('Diamond_NV_natab_gcce',1),{'order':2,'evolution':'matrix','pulse.count':4,'nstep':9})
     cases.append(('gcce_single_matrix_pulse4',c))
     for method in ('cce','gcce'):
         for state in (0,1):
-            c=config_for('Diamond_NV_P1_10ppm_'+method,state);c.update(order=2,nstep=9,npulse=4)
+            c=put(config_for('Diamond_NV_P1_10ppm_'+method,state),{'order':2,'nstep':9,'pulse.count':4})
             cases.append((f'p1_{method}_state{state}',c))
     for name,c in cases:
         record=dict(case=name,executions={},comparisons={})

@@ -23,7 +23,6 @@
    "final_directory": "<OUT>/0007-run",
    "input": {
     "Qubit": {
-     "nqubit": 1,
      "qubit": [
       {
        "alphams": 1,
@@ -44,22 +43,26 @@
      "test/cluster_verification/check_bundle/bath_6"
     ],
     "bfield": 300,
-    "bundle_max_dim": 8,
-    "bundle_merge_cutoff": 1e+300,
-    "cluster_mode": "adaptive",
+    "bundle": {
+     "max_dim": 8,
+     "merge_cutoff": 1e+300
+    },
+    "cluster_mode": "bundle",
     "deltat": 0.2,
     "gpu_options": {
      "evolution_batch_steps": 4,
      "min_dim": 8
     },
     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
-    "method": "cce",
-    "npulse": 16,
+    "method": "cCCE",
     "nstate": 0,
     "nstep": 9,
     "order": 2,
     "outfile": "bin/adaptive_ensemble",
     "profile": true,
+    "pulse": {
+     "count": 16
+    },
     "quantity": "coherence",
     "rbath": 15,
     "rdip": 30,

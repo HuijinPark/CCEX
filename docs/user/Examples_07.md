@@ -3,16 +3,16 @@
 The boron vacancy in hexagonal BN with natural-abundance ¹⁰B, ¹¹B and ¹⁴N, and
 the DFT hyperfine and quadrupole tensors in `bath/flat/` (made with
 `example/tools/SpinTensorReader`). `ensemble_CCE/` reads the tensors
-(`hf_readmode`, `qd_readmode`) in three combinations; `hyperfine_mediated_term/`
-turns `hfmedi` on and off; `single-sample_gCCE_DPS/` is gCCE2 with and without
+(`hamiltonian.common.hyperfine`, `hamiltonian.common.quadrupole`) in three combinations; `hyperfine_mediated_term/`
+turns `hamiltonian.cCCE.hfmedi` on and off; `single-sample_gCCE_DPS/` is gCCE2 with and without
 the `OH` term. 0.4 to 5 s each (4 ranks, one configuration).
 
 The hyperfine file is `hBN_VB_flat_ATensor_HSE_CellPBE_v3`, in tensor format v3 (a `VASP` first line and the
 provenance line `# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = VASP OUTCAR, S = 1`), so
 CCEX reads it as written; the nearest ¹⁴N has A_zz = 48.6 MHz (measured 47 MHz). Until 2026-10-13 the inputs read
 `hBN_VB_flat_ATensor_HSE_CellPBE_tag`, which held twice these numbers and was read 2x; the figures below were made
-again with the v3 file. `DefectTotSpin` must be the defect's spin, 1 (it is checked against the file's S);
-`CorrTotSpin` is not used for a v3 file ([hf_tensorfile](InputFile_General.md#tag_hf_tensorfile)).
+again with the v3 file. The file's S is checked against the qubit spin, 1
+([hyperfine.file](InputFile_General.md#tag_hyperfine_file)).
 
 ![07: CCE2 with the DFT hyperfine and quadrupole tensors](../images/tutorials/07_hBN_tensors.png)
 
@@ -22,15 +22,20 @@ again with the v3 file. `DefectTotSpin` must be the defect's spin, 1 (it is chec
 
 ## The input
 
-`example/tutorial/07_hBN_VB_natab/ensemble_CCE/ccein_hf3_qd2.json`; the other two inputs set `hf_readmode` and `qd_readmode` to 0. `run.sh` in the same folder runs it as
+`example/tutorial/07_hBN_VB_natab/ensemble_CCE/ccein_hf3_qd2.json`; the other two leave out the hyperfine block (`ccein_hf0_qd2.json`, point dipole) or the quadrupole block (`ccein_hf3_qd0.json`). `run.sh` in the same folder runs it as
 `mpirun -n $NP bin/main.out -f <this file> -I <bath> -o results/<name>` and then the analyzer.
 
 ```
 {
     # Config (General)
-    "method"        : "CCE", 
+    "method"        : "cCCE", 
     "quantity"      : "coherence",
-    "qubitfile"     : "../bath/flat/bath_hBN_VB_flat_Defect",
+    "Qubit"         : {
+        "file"          : "../bath/flat/bath_hBN_VB_flat_Defect",
+        # Qubit
+        "alphams"      : 1,
+        "betams"       : 0
+    },
     "gyrofile"      : "../bath/hBN_natab_gyro",
     "bathfile"      : ["../bath/flat/bath_hBN_VB_flat_1"],
     "order"         : 2,
@@ -41,25 +46,24 @@ again with the v3 file. `DefectTotSpin` must be the defect's spin, 1 (it is chec
     "nstep"         : 50,
     "nstate"        : 0,
 
-    # Qubit 
-    "qalphams"     : 1,
-    "qbetams"      : 0,
-
     # Pulse
-    "npulse"      : 1,
-
-    # Bath HF
-    "hf_readmode"   : 3,
-    "hf_tensorfile" : "../bath/flat/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
-    "hf_ignore_oor" : 0,
-    "DefectTotSpin" : 1.0,
-    "CorrTotSpin"   : 0.0,
-
-    # Bath QD
-    "qd_readmode" : 2, #0 (X), exp, dft(2 widefect) dft(wi+wo defect), dft(wi+wo defect)
-    "qd_tensorfile" : "../bath/flat/hBN_VB_flat_QTensor_HSE_CellPBE",
-    "qd_tensorfile_woqubit" : "../bath/flat/hBN_VB_flat_QTensor_HSE_CellPBE",
-    "qd_cellpara" : [0.0, 0.0, 0.0],
+    "pulse"         : {"count": 1},
+    "hamiltonian"   : {
+        "common"        : {
+            # Bath HF
+            "hyperfine"     : {
+                "dipole"        : "dft",
+                "contact"       : true,
+                "file"          : "../bath/flat/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
+                "missing_row"   : "stop"
+            },
+            # Bath QD
+            "quadrupole"  : {
+                "structure"     : "plain",
+                "file"          : "../bath/flat/hBN_VB_flat_QTensor_HSE_CellPBE"
+            } #0 (X), exp, dft(2 widefect) dft(wi+wo defect), dft(wi+wo defect)
+        }
+    },
 
     # Output
     "outfile"     : "./results/gCCE2_hBN_VB_natab_1"

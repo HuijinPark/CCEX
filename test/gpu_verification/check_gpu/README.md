@@ -30,7 +30,7 @@ and were built by hand (D17); built without `-march=native` against objects buil
 
 On 2026-09-24 `check_review_controls.py --cpu` passed on the CPU build;
 `check_seed_states.py` wrote `adaptive_cluster_max_dim` in its adaptive cases until
-2026-09-24; it writes `bundle_max_dim` now and its nine cases pass on the CPU build.
+2026-09-24; it wrote `bundle_max_dim` from then on (`bundle.max_dim` since 2026-10-13) and its nine cases pass on the CPU build.
 One run in two failed in `benchmark.parse_profiles` because MPI interleaved two
 ranks' `[profile]` lines in the p1 case; that is the output forwarding, not the
 code, and a rerun passed.

@@ -189,7 +189,7 @@ void bathInto(MatrixXcd& Hb, BathArray* ba, MatrixXcd** sigmas, Config* cnf){
         const doublec vd[3] = {doublec(0.0), doublec(0.0), doublec(BathArray_getBath_i_detuning(ba,ib))};
         singleInt(detuning, vd, sigmas[ib]);
         selfInt(quad, sigmas[ib], ba->bath[ib]->quad);
-        if (nstate > 0) disorderInto(disorder, ba, sigmas, ib);
+        if (nstate > 0 && !cnf->bath_mean_field_off) disorderInto(disorder, ba, sigmas, ib);   // "off": A47
         else            disorder = MatrixXcd::Zero(d,d);
         single = zeeman + detuning + quad + disorder;
         addExpandedHamiltonian(Hb, sigmas, single, nspin, ib);
@@ -366,7 +366,7 @@ MatrixXcd bathSingle(BathArray* ba, MatrixXcd** sigmas, Config* cnf, int ib){
     singleInt(det, vd, sigmas[ib]);
     selfInt(qd, sigmas[ib], ba->bath[ib]->quad);
     const int d = BathArray_dimBath_i(ba,ib);
-    if (Config_getNstate(cnf) > 0) disorderInto(dis, ba, sigmas, ib);
+    if (Config_getNstate(cnf) > 0 && !cnf->bath_mean_field_off) disorderInto(dis, ba, sigmas, ib);   // "off": A47
     else                           dis = MatrixXcd::Zero(d,d);
     return zee + det + qd + dis;
 }

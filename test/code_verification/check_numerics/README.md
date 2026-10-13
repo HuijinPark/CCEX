@@ -16,18 +16,27 @@ change that moves any number is seen. Against the tagged versions the tolerance
 is 1e-4, and `expected.json` names the cases that differ for a known reason,
 which the table reports as "expected" instead of FAIL.
 
+A binary built with MKL (A46: `do_compile.sh` and CMake turn it on when they find it; the run log's header says
+`MKL for large clusters : on`) is judged against the newest `head-*` reference (the one that decides) relative to
+it instead: |run − reference| ≤
+1e-12 |reference| element by element, 1e-12 absolute where the reference is 0. The references were recorded
+without MKL, and the library changes the last digits of the clusters it takes (zgemm from bath dimension 21,
+zheevd from 63); held relative, a diverged element (|L| of order 1e5, where 1e-9 absolute is a 1e-14 change) is
+measured against its own size, and every value below 1e3 is held tighter than by 1e-9. The older `head-*` tables
+keep 1e-9 and the tagged references their own tolerance. `compare.py` reads the run logs to know which rule applies.
+
 ## The cases
 
 | name | system | method | approach | pulse | quantity |
 |---|---|---|---|---|---|
-| natab_cce2_hahn / _ramsey / _cpmg8 | NV + natural-abundance ¹³C, rbath 30 | CCE2 | ensemble (nstate 0) | Hahn / Ramsey (npulse 0) / CPMG-8 | coherence |
+| natab_cce2_hahn / _ramsey / _cpmg8 | NV + natural-abundance ¹³C, rbath 30 | CCE2 | ensemble (nstate 0) | Hahn / Ramsey (`pulse.count` 0) / CPMG-8 | coherence |
 | natab_cce2_single | same | CCE2 | single (nstate 2, state files) | Hahn | coherence |
-| natab_gcce2_hahn, natab_gcce2_bathadjust | same, one NV from the `qubitfile`; the second with the bath file given twice, the copy shifted 50 Å along z (`bathadjust`). The second was `natab_gcce2_two_qubits` until 2026-10-13: both inputs also had a `Qubit` block (two NV in the second) that the `qubitfile` overrode and nothing read (found 2026-10-02). Since then a `qubitfile` with a `Qubit` block is refused, the unread blocks are gone (outputs byte-identical to the recorded ones) and the case is named for what it computes; `make_cases.py` cuts both from tutorial 02's `ensemble_CCE` input now that `ensemble_gCCE`'s are a real two-qubit run and a single NV with its ZFS | gCCE2 | ensemble | Hahn | coherence |
+| natab_gcce2_hahn, natab_gcce2_bathadjust | same, one NV from the `Qubit.file` form (`qubitfile` until 2026-10-13); the second with the bath file given twice, the copy shifted 50 Å along z (`bath_shift`, `bathadjust` until 2026-10-13). The second was `natab_gcce2_two_qubits` until 2026-10-13: both inputs also had a `Qubit` block (two NV in the second) that the `qubitfile` overrode and nothing read (found 2026-10-02). Since then a `qubitfile` with a `Qubit` block is refused, the unread blocks are gone (outputs byte-identical to the recorded ones) and the case is named for what it computes; `make_cases.py` cuts both from tutorial 02's `ensemble_CCE` input now that `ensemble_gCCE`'s are a real two-qubit run and a single NV with its ZFS | gCCE2 | ensemble | Hahn | coherence |
 | natab_dsj2 | same | dsj | ensemble | Hahn | coherence |
 | natab_knight_shift | same, tilted field | CCE2 | ensemble | Hahn | coherence |
 | natab_manual_hahn | same, the Hahn echo written as a `sequence` | CCE2 | ensemble | manual | coherence |
 | p1_cce2_ensemble / _single | NV + P1 1 ppm, rbath 500 (103 spins), JT axes from a file | CCE2 | nstate 0 / nstate 2 | Hahn | coherence |
-| p1_cce2e2n, p1_cce4, p1_pcce2_sk2 | same (rbath 400 for CCE2e2n) | CCE2e2n / CCE4 / pCCE2 sK 2 | single | Hahn | coherence |
+| p1_cce2e2n, p1_cce4, p1_pcce2_sk2 | same (rbath 400 for CCE2e2n) | CCE2e2n / CCE4 / pCCE2 `pcce.partition_size` 2 | single | Hahn | coherence |
 | p1_gcce2_zfs | NV + P1 10 ppm, B = 0, zero-field splitting | gCCE2 | single | Hahn | coherence |
 | p1_gcce2_population | NV + P1 10 ppm | gCCE2 | single | Ramsey | dm |
 | p1_cpmg8_manual, p1_manual_hahn | NV + P1 1 ppm, `sequence` | gCCE2 | single | CPMG-8 / Hahn | coherence |
@@ -101,7 +110,7 @@ folder under `reference/`, but only the newest `head-*` by name decides the exit
 **2026-10-02: eight cases re-recorded in the three folders of that date** (`p1_cce2_ensemble`, `p1_cce2_single`,
 `p1_cce2e2n`, `p1_cce4`, `p1_cpmg8_manual`, `p1_manual_hahn`, `p1_pcce2_sk2`, `vp_cce2`). Their inputs
 wrote `"alphams": -1` at the top of the qubitfile form, which reads `qalphams`: every version ran
-them with the NV branch +1. The inputs now say `"qalphams": -1` and the references were run again
+them with the NV branch +1. The inputs then said `"qalphams": -1` (`"Qubit": {"file": ..., "alphams": -1}` since 2026-10-13) and the references were run again
 with the same command (NP 2; the tags built from the tag), so they hold the branch the inputs
 meant. The change against the old references was up to 1.26 (`p1_cce2_single`), 8e-6 for the
 ensemble case. Since then CCEX refuses such a key (D24).

@@ -24,7 +24,7 @@ class ServerDriverTests(unittest.TestCase):
         original = json.loads(source.read_text())
         generated = prepare_config(source, self.root, 5, 'auto', 4)
         allowed = {'order', 'backend', 'profile', 'savemode', 'outfile', 'gpu_options',
-                   'bathfile', 'qubitfile', 'gyrofile', 'avaaxfile', 'statefile', 'exstatefile'}
+                   'bathfile', 'Qubit', 'gyrofile', 'Defect', 'bath_state_file'}   # the blocks that hold file paths
         for key, value in original.items():
             if key not in allowed:
                 self.assertEqual(generated[key], value, key)

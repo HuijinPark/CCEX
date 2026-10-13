@@ -58,7 +58,7 @@ void prepareGcceWork(GcceWork* w, const MatrixXcd& Htot, bool useEigen, bool ref
 
     // A25: one solver kept from cluster to cluster (no allocation once the dimension has been seen; the constructor called
     // the same compute())
-    static Eigen::SelfAdjointEigenSolver<MatrixXcd> es;
+    static CcexEigensolver es;   // A46: Eigen's solver unless built with CCEX_BLAS_DIRECT
     es.compute(Htot);
     if (es.info() != Eigen::Success){
         fprintf(stderr,"Error : prepareGcceWork : eigendecomposition of Htot failed\n");
@@ -69,7 +69,7 @@ void prepareGcceWork(GcceWork* w, const MatrixXcd& Htot, bool useEigen, bool ref
     w->evalCorrections=Eigen::VectorXd::Zero(w->evals.size());
     try {if(refine)refineEigensystem(Htot,w->M,w->evals,w->evalCorrections,maxSweeps);}
     catch(const std::exception& error){
-        fprintf(stderr,"Error: gCCE eigensystem dim=%ld gcce_refinement_max_sweeps=%d: %s\n",
+        fprintf(stderr,"Error: gCCE eigensystem dim=%ld gcce_refinement.max_sweeps=%d: %s\n",
             static_cast<long>(Htot.rows()),maxSweeps,error.what());
         MPI_Abort(MPI_COMM_WORLD,1);
     }
@@ -697,7 +697,7 @@ MatrixXcd cal_Upulse_when_pulseiter_isTrue_whenOnlyXPulse(QubitArray* qa, Pulse*
     
         if (alpha.rows() == 0 && alpha.cols() == 0){
             fprintf(stderr,"Error : calPropagatorGcce : alpha or bata is not set\n");
-            fprintf(stderr,"If pulseiter turned on, you have to give alpha,beta\n");
+            fprintf(stderr,"If pulse.per_qubit is true, you have to give alpha,beta\n");
             exit(1);
         }
     

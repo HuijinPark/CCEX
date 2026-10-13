@@ -15,6 +15,18 @@ args = sys.argv[1:]; run, ref = args[0], args[1]
 tol = float(args[args.index('--tol') + 1]) if '--tol' in args else 1e-9
 expected = json.load(open(args[args.index('--expected') + 1])) if '--expected' in args else {}
 version = os.path.basename(ref.rstrip('/')); exp = expected.get(version, {}); tol = float(exp.get('tol', tol))
+# A46: a binary built with MKL (its log header says "MKL for large clusters : on") is judged relative to the reference,
+# |run - reference| <= 1e-12 |reference| element by element (1e-12 absolute where the reference is 0), instead of 1e-9
+# absolute, against the reference that decides (the newest head-*, as run.sh takes it; the older head-* tables are
+# history and keep 1e-9, the tagged ones their own tolerance). The library moves the last digits of clusters above its
+# thresholds; relative, a diverged element (|L| ~ 1e5) is held to its own size, and every value below 1e3 is held
+# tighter than by 1e-9 absolute.
+# (only run.sh's <case>/run.log: check_input_forms' E1 compares "exact" runs, which differ from this recursive reference
+# by up to 1e-9 on any build, and keeps its 1e-9 - it passes with MKL)
+mkl = any('MKL for large clusters : on' in open(p, errors='replace').read() for p in glob.glob(f'{run}/*/run.log'))
+heads = sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(ref.rstrip('/'))), 'head-*')))
+relative = mkl and 'tol' not in exp and bool(heads) and os.path.abspath(ref.rstrip('/')) == heads[-1]
+if relative: tol = 1e-12
 renames = exp.get('renames', {})
 def load(path):
     """Every whitespace-separated token as a number (complex() reads the whole token, inf and nan included), and
@@ -38,7 +50,9 @@ def broken(a, b, judged):
     return None
 def worst(a, b):
     if a.shape != b.shape: return float('inf')
-    d = np.abs(a - b); ok = np.isfinite(d)
+    d = np.abs(a - b)
+    if relative: d = d / np.where(b == 0, 1.0, np.abs(b))      # relative to the reference, absolute where it is 0
+    ok = np.isfinite(d)
     if (~ok & ~(np.isnan(a) & np.isnan(b))).any(): return float('inf')      # a nan on one side only
     return float(d[ok].max()) if ok.any() else 0.0
 fails = 0; rows = []
@@ -67,7 +81,8 @@ for name in names:
         if f != 'run.log' and f not in names_in_ref.values(): notes.append(f'only in reference: {f}'); missing.append(f)
     if missing or not compared: rows.append((name, None, shown, '; '.join(['not compared in full'] + notes))); continue    # also a broken file
     rows.append((name, judged, shown, '; '.join(notes)))
-print(f'{"case":24} {"noDiv/dm":>10} {"wiDiv":>10}  verdict   (reference {version}, tolerance {tol:g})')
+print(f'{"case":24} {"noDiv/dm":>10} {"wiDiv":>10}  verdict   (reference {version}, tolerance {tol:g}'
+      + (', relative: MKL build)' if relative else ')'))
 for name, j, s, note in rows:
     reason = exp.get('cases', {}).get(name)
     if j is None:     # nothing or not everything compared: no reason excuses it (reviews 4cc510 R2, 8fecd5 R1)

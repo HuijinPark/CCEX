@@ -42,7 +42,7 @@ def make_auto(tmp, ids=tuple(range(1, 31)), nspin=NSPIN, flat=False, species=("1
     fake.write_text(f"#!/bin/sh\nexec {PY} {HERE / 'fake_ccex.py'} \"$@\"\n"); fake.chmod(0o755)
     blk = dict(workdir="auto", configurations=dict(bathfile=str(data / "bath_{k}")), threshold_config=0.06, min_configurations=8)
     blk.update(block)
-    inp = dict(method="CCE", quantity="coherence", order=2, qubitfile=str(data / "qubit"), gyrofile=str(data / "gyro"),
+    inp = dict(method="cCCE", quantity="coherence", order=2, Qubit=dict(file=str(data / "qubit")), gyrofile=str(data / "gyro"),
                nstate=0, bfield=500, auto_convergence=nest(blk), **(base or {}))
     (tmp / "input.json").write_text(json.dumps(inp, indent=1))
     return tmp / "input.json", fake
@@ -234,8 +234,8 @@ class TestAutostartRuns(unittest.TestCase):
         self.assertIn(f"({100 * own['rel']:.2f} %)", txt)                       # its own difference (review #8)
         self.assertFalse((inp.parent / "auto/runs/production").exists())      # no production from an advisory
 
-    def test_a_given_rdip_is_not_blocked_by_the_seed(self):   # #8: rdipcut above the seed's ladder, rdip given
-        inp, fake = make_auto(self.tmp, nspin=1500, base=dict(rdipcut=15.0), candi_rdip=[20, 30], candi_rbath=[20, 25])
+    def test_a_given_rdip_is_not_blocked_by_the_seed(self):   # #8: inner rdip above the seed's ladder, rdip given
+        inp, fake = make_auto(self.tmp, nspin=1500, base=dict(rdip=[15.0, 30.0]), candi_rdip=[20, 30], candi_rbath=[20, 25])
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
 

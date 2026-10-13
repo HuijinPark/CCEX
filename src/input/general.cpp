@@ -26,6 +26,9 @@ Config* Config_init(){
     cnf->gcce_refinement=false;   // off by default since 2026-10-02 (A3; idm job 16869: on - off <= 6.7e-7)
     cnf->gcce_refinement_max_sweeps=ccex::refinementSweeps;
     cnf->vector_mean_field=false;
+    cnf->bath_mean_field_off=false;
+    cnf->hamiltonian_ccce_given=false;
+    cnf->delta_A=true;
     cnf->pcce_detail_limit=ccex::partitionDetailLimit;
     cnf->gpu_batch_clusters = 8;
     cnf->gpu_cluster_batch_mb = 64;
@@ -330,14 +333,6 @@ DefectAxisReference Config_getDefect_axis_reference(Config* cnf){
     return cnf->defect_axis_reference;
 }
 
-
-double  Config_getDefectTotSpin(Config* cnf){
-    return cnf->DefectTotSpin;
-}
-
-double  Config_getCorrTotSpin(Config* cnf){
-    return cnf->CorrTotSpin;
-}
 
 char*   Config_getHf_tensorfile(Config* cnf){
     return cnf->hf_tensorfile;
@@ -707,7 +702,7 @@ void Config_setNstep(Config* cnf, int nstep){
 void Config_setRbathcut(Config* cnf, float rbathcut){
 
     if (rbathcut < 0.0) {
-        fprintf(stderr, "Error: current rbathcut (%f < 0) is not available\n",rbathcut);
+        fprintf(stderr, "Error: the inner radius rbath[0] (%f < 0) is not available\n",rbathcut);
         exit(EXIT_FAILURE);
     }
     cnf->rbathcut = rbathcut;
@@ -716,7 +711,7 @@ void Config_setRbathcut(Config* cnf, float rbathcut){
 void Config_setRdipcut(Config* cnf, float rdipcut){
 
     if (rdipcut < 0.0) {
-        fprintf(stderr, "Error: current rdipcut (%f < 0) is not available\n",rdipcut);
+        fprintf(stderr, "Error: the inner radius rdip[0] (%f < 0) is not available\n",rdipcut);
         exit(EXIT_FAILURE);
     }
     cnf->rdipcut = rdipcut;
@@ -933,14 +928,6 @@ void Config_validateBfieldAlignment(Config* cnf){
     }
 }
 
-void Config_setDefectTotSpin(Config* cnf, double DefectTotSpin){
-    cnf->DefectTotSpin = DefectTotSpin;
-}
-
-void Config_setCorrTotSpin(Config* cnf, double CorrTotSpin){
-    cnf->CorrTotSpin = CorrTotSpin;
-}
-
 void Config_setHf_tensorfile(Config* cnf, char* hf_tensorfile){
 
     if (cnf->hf_tensorfile == NULL){
@@ -1113,8 +1100,6 @@ void Config_report(Config* cnf){
     printStructElementChar("statefile",Config_getStatefile(cnf));
     printStructElementChar("exstatefile",Config_getExstatefile(cnf));
 
-    printStructElementDouble("DefectTotSpin",Config_getDefectTotSpin(cnf));
-    printStructElementDouble("CorrTotSpin",Config_getCorrTotSpin(cnf));
 
     printStructElementInt("hf_readmode",Config_getHf_readmode(cnf));
     if (Config_getHf_readmode(cnf)!=0){

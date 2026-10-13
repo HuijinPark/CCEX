@@ -6,7 +6,6 @@
     "deltat" : 0.0000001,
 
     "Qubit" : {
-                "nqubit" : 2,
                 "qubit" : [
                     {"name": "q1", "xyz":[ 75.663000, 74.262800, 74.134800], "spin": 1.0, "gyro": -17608.597050, "alphams": 1, "betams": 0},
                     {"name": "q2", "xyz":[ 75.663000, 74.262800,124.134800], "spin": 1.0, "gyro": -17608.597050, "alphams": 1, "betams": 0}
@@ -18,14 +17,14 @@
     },
 
     "bathfile"  : ["bath"],
-    "statefile" : "state",
+    "bath_state_file" : "state",
     "gyrofile"  : "gyro_13C",
     "rbath"     : 10000,
     "rdip"      : 50000,
     "nstate"    : 1,
     "bfield"    : 500,
 
-    "npulse"      : 0,
+    "pulse"  : {"count": 0},
     
     "outfile"     : "./results/CCE2_Diamond_6NV_13C2_1"
 

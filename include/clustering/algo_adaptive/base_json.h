@@ -2,6 +2,7 @@
 // the input-file reader, and the text of floats and numbers.
 #pragma once
 #include <functional>
+#include <initializer_list>
 #include <map>
 #include <string>
 #include <vector>
@@ -61,6 +62,20 @@ class Value {
 // new - what Python's dict assignment does, and what a report needs when a
 // nested block has to be written back.
 Value with(const Value& object, const std::string& key, const Value& value);
+
+// The value at a path of object keys - cfg["bundle"]["max_dim"] - or nullptr when a key
+// is missing or a step on the way is not an object (the input blocks of A47, 2026-10-13).
+inline const Value* find_path(const Value& value, std::initializer_list<const char*> path) {
+    const Value* at = &value;
+    for (const char* key : path) {
+        if (at->kind() != Value::Kind::Object)
+            return nullptr;
+        at = at->find(key);
+        if (at == nullptr)
+            return nullptr;
+    }
+    return at;
+}
 
 // adaptive_refine.save: indent 2, non-finite doubles as "inf"/"-inf"/"nan", trailing newline.
 std::string write_json(const Value& value, int indent);

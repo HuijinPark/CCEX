@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# vector_mean_field (D45) against z, where the answer is known.
+# hamiltonian.common.bath_bath_mean_field "xyz" (vector_mean_field until A47, D45) against "z", where the answer is known.
 # ---------------------------------------------------------------------------
-# The p1_cce2e2n case (P1 with its 14N as a sub-spin, naddspin 1, nstate 1, state 1) with every P1 moved out of rbath but
+# The p1_cce2e2n case (P1 with its 14N as a sub-spin, n_nuclear_spins 1, nstate 1, state 1) with every P1 moved out of rbath but
 # the nearest one whose axis is not the NV axis and whose 14N is not at m = 0: no bath spin is outside the cluster, so the mean field is zero and the vector mode must give the
 # same curve as the z mode, byte for byte. Until review 158861 R1 the vector mode took the sub-spin's x, y field out of
 # the main spin although it had never been added, and the curves differed.
@@ -40,11 +40,13 @@ for i in range(1, len(rows)):
     out.append(rows[i] if i == near else ' %.5f\t %.5f\t %.5f\t        %s\t' % (float(p[0])+1e5, float(p[1])+1e5, float(p[2])+1e5, p[3]))
 open(f'{work}/bath_one', 'w').write('\n'.join(out)+'\n')
 c = json.load(open(f'{case}/ccein.json'))
-for k in ('qubitfile', 'gyrofile', 'avaaxfile', 'statefile', 'exstatefile'):
-    c[k] = f'{case}/{c[k]}'
+for block, k in ((c['Qubit'], 'file'), (c, 'gyrofile'), (c['Defect'], 'axis_file'), (c, 'bath_state_file'),
+                 (c['Defect'], 'state_file')):
+    block[k] = f'{case}/{block[k]}'
 c['bathfile'] = [f'{work}/bath_one']; c['nstep'] = 40
-for name, vec in (('z', False), ('vector', True)):
-    json.dump(dict(c, vector_mean_field=vec, outfile=f'{work}/{name}'), open(f'{work}/{name}.json', 'w'), indent=1)
+for name, field in (('z', 'z'), ('vector', 'xyz')):
+    json.dump(dict(c, hamiltonian={'common': {'bath_bath_mean_field': field}}, outfile=f'{work}/{name}'),
+              open(f'{work}/{name}.json', 'w'), indent=1)
 PY
 for m in z vector; do
     (cd "$WORK" && "$MPIRUN" -n 1 "$BIN" -f "$m.json" > "proc_$m" 2>&1 < /dev/null) || { echo "  FAIL  $m run: see $WORK/proc_$m"; exit 1; }
@@ -52,7 +54,7 @@ done
 n=$(grep -c "Number of bath spins : 1 " "$WORK/proc_vector" || true)
 if [ "$n" -lt 1 ]; then echo "  FAIL  the bath is not one P1: see $WORK/proc_vector"; exit 1; fi
 if cmp -s "$WORK"/z_state1_wiDiv "$WORK"/vector_state1_wiDiv && cmp -s "$WORK"/z_state1_noDiv "$WORK"/vector_state1_noDiv; then
-    echo "  PASS  one P1 with its 14N sub-spin: vector_mean_field gives the z curve byte for byte (no spin outside the cluster)"
+    echo "  PASS  one P1 with its 14N sub-spin: bath_bath_mean_field xyz gives the z curve byte for byte (no spin outside the cluster)"
 else
     echo "  FAIL  one P1 with its 14N sub-spin: vector and z differ"; exit 1
 fi

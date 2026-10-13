@@ -2,7 +2,7 @@
 
     bash test/code_verification/check_refusals/run.sh     # needs bin/main.out
 
-126 inputs that must be refused (4 of them outputs that cannot be written), three that must run, and `--help` (the same as `-h`), each run once to see
+172 inputs that must be refused (4 of them outputs that cannot be written), three that must run, and `--help` (the same as `-h`), each run once to see
 that CCEX stops with the expected message, most of them before it reads any tensor
 file. They are edits of the legacy inputs `../check_input_forms/legacy.sh`
 writes (so it is run first), on the real systems: the h-BN bath with DFT
@@ -11,24 +11,24 @@ defect bath (S3).
 
 | refused | because |
 |---|---|
-| `hf_readmode 3` / `qd_readmode` with the rotation on and no `hf_tensor_frame` / `qd_tensor_frame` | a tensor file has a frame, and the run must not guess it |
+| a DFT `hyperfine` file / a `quadrupole` with the rotation on and no `hf_tensor_frame` / `qd_tensor_frame` | a tensor file has a frame, and the run must not guess it |
 | a tilted `bfield` with the rotation on | the field is applied along z of the computational frame |
 | `qubit_position_frame` other than `bath` | only one meaning is defined |
 | two qubits without `reference_qubit`, or with a name that is not a qubit | the rotation is about one qubit |
 | an `intmap` tensor without its frame | same as the tensor files |
 | `magnetic_field_axis`, `defect_axis_reference` without the rotation | keys that belong to the rotation block alone |
 | `zfs` given as D and E without `axis`; `axis` without `coordinate_frame`; object-form `zfs` without `coordinate_frame`; E non-zero with one axis | a zero-field splitting needs its axes and their frame |
-| a Jahn-Teller axis index out of `1..navaax` | it indexes the per-axis tensors |
+| a Jahn-Teller axis index out of `1..n_configurations` | it indexes the per-axis tensors |
 | an unknown `unit` | the conversion would be silent |
 | `coordinate_frame_rotation` and `bath_coordinate_rotation` both present | the same option under two names |
 
 Without a row of their own (`run.sh` has a comment on each): `-N`/`-B` that are not numbers, and the command line
-winning over the file in either order; a missing qubitfile; `nstep` 0; a Manual sequence that does not sum to 1 or
+winning over the file in either order; a missing `Qubit.file`; `nstep` 0; a Manual sequence that does not sum to 1 or
 is malformed (a number fraction and an angle of 90.5 must run); a number outside the float it is stored in;
-`alphaidx`/`betaidx` naming other states than the written `alphams`/`betams` (D43; one that agrees must run);
-`intmap` tensors shorter than 3x3 or not numbers (D28); a qubit array shorter than `nqubit`; malformed entries of
-the indexed form (D28); arrays shorter than the input needs (D42); an `avaax` file axis past `navaax`; a key of the
-wrong type (D18); a misspelt key (D24); `quantity` `noise`, in the file and as `-q noise` (nothing computes it; review 20261013-doxygen D22); `qubitfile` together with a `Qubit` block (the block was ignored; review 20261013-readme R01).
+`alpha_state`/`beta_state` `{"index"}` naming other states than the written `alphams`/`betams` (D43; one that agrees must run);
+`intmap` tensors shorter than 3x3 or not numbers (D28); no qubit in `Qubit.qubit`; malformed entries of
+the indexed form (D28); arrays shorter than the input needs (D42); a `Defect.axis_file` axis past `n_configurations`; a key of the
+wrong type (D18); a misspelt key (D24); `quantity` `noise`, in the file and as `-q noise` (nothing computes it; review 20261013-doxygen D22); `Qubit.file` together with `Qubit.qubit` (until 2026-10-13 `qubitfile` with a `Qubit` block, and the block was ignored; review 20261013-readme R01).
 
 Since 2026-10-01 it also checks failures that used to end with exit status 0 (or, for the second file in info mode, crash):
 
@@ -72,16 +72,23 @@ refused before the calculation starts (the malformed values are in `../check_inp
 | `expm` with cCCE (`p1_cce2_single`) | the matrix exponential path exists in gCCE only |
 | `sparse` with the ensemble (`p1_cce2_ensemble`), gCCE `evolution` = `matrix` (`p1_manual_hahn`), `backend` = `cuda` or `auto`, `evolution_update` = `recursive` (cCCE and gCCE), `knight` (`natab_knight_shift`), `hfmedi` (`hbn_hfmedi`), two qubits (`natab_gcce2_two_qubits`) | the Krylov path propagates one state vector on the CPU with the phases of `exact`, from the Hamiltonian terms it assembles itself |
 
-Since 2026-10-13 it also checks hyperfine tensor files of format v3 (`docs/user/InputFile_General.md#tag_hf_tensorfile`), on
+Since 2026-10-13 it also checks hyperfine tensor files of format v3 (`docs/user/InputFile_General.md#tag_hyperfine_file`), on
 `hbn_cce2_hf3_qd0` with the h-BN v3 file edited once each: a first line that is not the tag of the provenance line's source
 (both ways), the provenance line not on line 2 or twice, an unknown format version or source, no S or an S that is not a
-half-integer, and S other than `DefectTotSpin` (both ways). What such files are read as is `../check_input_forms/tensor_format.sh`.
+half-integer, and S other than the qubit spin (both ways; `DefectTotSpin` until 2026-10-13). What such files are read as is `../check_input_forms/tensor_format.sh`.
 
 Since 2026-10-13 it also checks the `savemode` block (`docs/user/InputFile_Output.md#tag_savemode`), on
 `p1_cce2_single`: the old names `normal`, `info`, `all`, `allfull` (also as `{"mode": "all"}`) and the top-level
 `save_nodiv` are refused with the new form named (`savemode "all" is now "cluster_coherence"`, `save_nodiv is now
 savemode.nodiv`), and so are an unknown key of the block, a `savemode`, `mode` or `nodiv` of the wrong type and an unknown
 mode. The accepted block is `../check_input_forms/nodiv.sh`.
+
+Since 2026-10-13 (A47) it also checks the renamed input keys (`docs/user/InputFile.md#OldNames`): each case puts one old key,
+old value or old form back into a converted `check_numerics` input, and the run must stop naming the new key and the
+converter; gCCE with `cluster_mode` pcce, dsj, itb or dsjitb (from the input and from `-m`); a `hamiltonian.cCCE` setting in a
+gCCE run; the `adaptive` block outside `cluster_mode` pcce or bundle and the `pcce` block outside pcce; `delta_A` false with a
+Defect species or with `qubit_bath_mean_field` true; an unknown `bath_bath_mean_field` value; and both forms of a qubit
+state at once. What the two new settings compute is `../check_analytic/`.
 
 `../check_rotation/run.sh` refuses the same combinations on toy systems; this
 folder shows the guards fire on real inputs and before any file is interpreted.

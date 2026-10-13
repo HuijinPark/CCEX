@@ -1387,9 +1387,12 @@ int Driver::run_regroup() {
     if (geometry.size() != step->plan.site_dimensions.size())
         throw RuntimeError("the physics metadata and the plan disagree on the number of sites");
     // CCEX keeps both radii as floats (Config.rdip, Config.rdipcut) and compares a double
-    // distance with them: the same conversion here gives the same connections.
-    const float rdip = static_cast<float>(number_of(cfg_.at("rdip")));
-    const float rdipcut = cfg_.has("rdipcut") ? static_cast<float>(number_of(cfg_.at("rdipcut"))) : 0.f;
+    // distance with them: the same conversion here gives the same connections. rdip is
+    // the outer radius, or [inner, outer] (A47; the inner one was rdipcut).
+    const Value& radius = cfg_.at("rdip");
+    const bool both = radius.kind() == Value::Kind::Array;
+    const float rdip = static_cast<float>(number_of(both ? radius.at(1) : radius));
+    const float rdipcut = both ? static_cast<float>(number_of(radius.at(0))) : 0.f;
     const Adjacency links = distance_adjacency(geometry, rdip, rdipcut);
     // Item 6 against CCEX itself, at every run: the connections D works out from the
     // sites have to be the ones the binary planned with (adaptive-regroup-plan.md, the

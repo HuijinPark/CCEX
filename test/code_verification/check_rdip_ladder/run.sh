@@ -7,7 +7,7 @@
 # Cases (from check_numerics; rungs 200, 300, 450 below rdip 620 for P1 1 ppm, 100, 200, 300 below 330 for P1 10 ppm ZFS,
 # 4, 6, 8 below 10 for 13C, 3, 5, 6.5 below 8 for h-BN): cCCE p1_cce2_single (2 states) and natab_cce2_hahn (ensemble); gCCE
 # on 13C, h-BN and P1 10 ppm by its three paths - ensemble (nstate 0, evolution matrix), vector (states) and matrix (states,
-# evolution matrix); pCCE2 (sK 2) on 13C, h-BN (rbath 8) and P1 1 ppm with pcce_connections centers and spins
+# evolution matrix); pCCE2 (pcce.partition_size 2) on 13C, h-BN (rbath 8) and P1 1 ppm with pcce.connections centers and spins
 # (improvements.md A23). Criterion (registered): |difference| <= 1e-9 on wiDiv and noDiv at every point (2 ranks; the ladder
 # run re-adds zero-power single units, so the rank split and the order of products can differ from the separate runs; on a
 # curve that diverges to |L| ~ 1e9 and beyond that shows as a last-bit difference above 1e-9, as between 1 and 2 ranks of one
@@ -34,37 +34,42 @@ python3 - "$CASES" "$WORK" <<'PY'
 import json, os, sys
 cases, work = sys.argv[1:]
 P1, P1ZFS, C13, HBN = [200, 300, 450], [100, 200, 300], [4, 6, 8], [3, 5, 6.5]
-ENS = dict(nstate=0, statefile=None)                           # gCCE ensemble: the default evolution is then matrix
-PCCE = dict(method='pCCE', sK=2)
+ENS = dict(nstate=0, bath_state_file=None)                     # gCCE ensemble: the default evolution is then matrix
+PCCE = dict(method='cCCE', cluster_mode='pcce', pcce={'partition_size': 2})
 # name: (check_numerics case, changes, rungs)
 plan = {'p1_cce2_single': ('p1_cce2_single', {}, P1), 'natab_cce2_hahn': ('natab_cce2_hahn', {}, C13),
         'natab_gcce2_ensemble': ('natab_gcce2_hahn', {}, C13),
         'natab_gcce2_vector': ('natab_gcce2_hahn', dict(nstate=2), C13),
         'natab_gcce2_matrix': ('natab_gcce2_hahn', dict(nstate=2, evolution='matrix'), C13),
-        'natab_pcce2_centers': ('natab_cce2_hahn', dict(PCCE, pcce_connections='centers'), C13),
-        'natab_pcce2_spins': ('natab_cce2_hahn', dict(PCCE, pcce_connections='spins'), C13),
+        'natab_pcce2_centers': ('natab_cce2_hahn', dict(PCCE, pcce={'partition_size': 2, 'connections': 'centers'}), C13),
+        'natab_pcce2_spins': ('natab_cce2_hahn', dict(PCCE, pcce={'partition_size': 2, 'connections': 'spins'}), C13),
         'hbn_gcce2_ensemble': ('hbn_gcce2_oh', ENS, HBN),
         'hbn_gcce2_vector': ('hbn_gcce2_oh', {}, HBN),
         'hbn_gcce2_matrix': ('hbn_gcce2_oh', dict(evolution='matrix'), HBN),
-        'hbn_pcce2_centers': ('hbn_hfmedi', dict(PCCE, pcce_connections='centers', rbath=8), HBN),
-        'hbn_pcce2_spins': ('hbn_hfmedi', dict(PCCE, pcce_connections='spins', rbath=8), HBN),
+        'hbn_pcce2_centers': ('hbn_hfmedi', dict(PCCE, pcce={'partition_size': 2, 'connections': 'centers'}, rbath=8), HBN),
+        'hbn_pcce2_spins': ('hbn_hfmedi', dict(PCCE, pcce={'partition_size': 2, 'connections': 'spins'}, rbath=8), HBN),
         'p1_gcce2_ensemble': ('p1_gcce2_zfs', ENS, P1ZFS),
         'p1_gcce2_vector': ('p1_gcce2_zfs', {}, P1ZFS),
         'p1_gcce2_matrix': ('p1_gcce2_zfs', dict(evolution='matrix'), P1ZFS),
-        'p1_pcce2_centers': ('p1_pcce2_sk2', dict(pcce_connections='centers'), P1),
-        'p1_pcce2_spins': ('p1_pcce2_sk2', dict(pcce_connections='spins'), P1)}
+        'p1_pcce2_centers': ('p1_pcce2_sk2', dict(pcce={'connections': 'centers'}), P1),
+        'p1_pcce2_spins': ('p1_pcce2_sk2', dict(pcce={'connections': 'spins'}), P1)}
 runs = []
 for name, (case, change, rungs) in plan.items():
     c = json.load(open(f'{cases}/{case}/ccein.json'))
-    for k, v in list(c.items()):
-        if isinstance(v, str) and v.startswith('../'): c[k] = os.path.normpath(f'{cases}/{case}/{v}')
-        if k == 'bathfile': c[k] = [os.path.normpath(f'{cases}/{case}/{x}') for x in v]
+    def absolute(block):     # the case's relative paths, in the blocks too (Qubit.file, Defect.state_file, ...; A47)
+        for k, v in list(block.items()):
+            if isinstance(v, str) and v.startswith('../'): block[k] = os.path.normpath(f'{cases}/{case}/{v}')
+            elif isinstance(v, dict): absolute(v)
+    absolute(c)
+    c['bathfile'] = [os.path.normpath(f'{cases}/{case}/{x}') for x in c['bathfile']]
     for k, v in change.items():
         if v is None: c.pop(k, None)
+        elif isinstance(v, dict) and isinstance(c.get(k), dict): c[k] = dict(c[k], **v)    # a block: the keys changed
         else: c[k] = v
     if os.environ.get('CCEX_QUICK'):     # CI: what is checked (a rung = the separate run) holds at any size; the same cases, smaller
         c['nstep'] = min(int(c.get('nstep', 30)), 30)
-        if str(c.get('method', '')).lower() == 'pcce': c['max_trial'] = min(int(c.get('max_trial', 20)), 20)
+        if str(c.get('cluster_mode', '')).lower() == 'pcce':
+            c['pcce'] = dict(c['pcce'], trials=min(int(c['pcce'].get('trials', 20)), 20))
     d = f'{work}/{name}'; os.makedirs(d)
     jobs = {'base': dict(c), 'ladder': dict(c, rdip_ladder=rungs)}
     jobs.update({f'sep{r:g}': dict(c, rdip=r) for r in rungs})
@@ -74,12 +79,12 @@ for name, (case, change, rungs) in plan.items():
     # refusals: order 3, rung >= rdip, decreasing rungs, savemode cluster_coherence (cCCE); quantity dm (gCCE); pCCE order 3
     bad = {}
     if case == name:
-        bad = {'bad_order3': dict(c, order=3, nk=[0, 0, 0, 0], rdip_ladder=rungs[:1]), 'bad_above': dict(c, rdip_ladder=[c['rdip']]),
+        bad = {'bad_order3': dict(c, order=3, max_clusters_per_order=[0, 0, 0, 0], rdip_ladder=rungs[:1]), 'bad_above': dict(c, rdip_ladder=[c['rdip']]),
                'bad_order': dict(c, rdip_ladder=rungs[::-1]), 'bad_saveall': dict(c, savemode='cluster_coherence', rdip_ladder=rungs[:1])}
     elif name == 'natab_gcce2_vector':
         bad = {'bad_dm': dict(c, quantity='dm', rdip_ladder=rungs[:1])}
     elif name == 'natab_pcce2_centers':
-        bad = {'bad_order3': dict(c, order=3, nk=[0, 0, 0, 0], rdip_ladder=rungs[:1])}
+        bad = {'bad_order3': dict(c, order=3, max_clusters_per_order=[0, 0, 0, 0], rdip_ladder=rungs[:1])}
     for job, cfg in bad.items():
         cfg['outfile'] = f'{d}/{job}'; json.dump(cfg, open(f'{d}/{job}.json', 'w'), indent=1)
 open(f'{work}/runs', 'w').write('\n'.join(runs) + '\n')

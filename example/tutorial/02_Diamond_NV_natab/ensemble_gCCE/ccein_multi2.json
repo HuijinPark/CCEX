@@ -16,7 +16,6 @@
     # inside the 150 A bath cell. The coherence is between |+1,+1> and |0,0>; the two NVs interact by
     # their dipolar coupling (set from the positions).
     "Qubit"   : {
-                   "nqubit" : 2,
                    "qubit"  : [{
                                     "name"   : "qubit1",
                                     "spin"   : 1.0,
@@ -48,7 +47,7 @@
                 },
 
     # Pulse
-    "npulse"      : 1,
+    "pulse"         : {"count": 1},
 
     # Output
     "outfile"     : "./results/CCE2_Diamond_NV_natab_1"

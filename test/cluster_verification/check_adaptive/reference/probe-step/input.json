@@ -1,12 +1,11 @@
 {
-  "method": "cce",
+  "method": "cCCE",
   "quantity": "coherence",
   "gyrofile": "test/code_verification/regression/+cceHotPath/Diamond_NV_natab_cce/inputfiles/gyro_13C",
   "bathfile": [
     "test/clustering/bundle/bath_6"
   ],
   "Qubit": {
-    "nqubit": 1,
     "qubit": [
       {
         "name": "NV",
@@ -26,7 +25,7 @@
   "rbath": 15,
   "rdip": 30,
   "bfield": 300,
-  "npulse": 16,
+  "pulse": {"count": 16},
   "nstep": 9,
   "deltat": 0.2,
   "nstate": 0,
@@ -36,8 +35,9 @@
   "profile": true,
   "savemode": "coherence",
   "outfile": "<repo>/test/clustering/adaptive/reference/runs/merge-grow/0002-probe/coherence",
-  "cluster_mode": "adaptive",
-  "bundle_max_dim": 8,
-  "bundle_merge_cutoff": 1e+300,
-  "adaptive_work_file": "<repo>/test/clustering/adaptive/reference/runs/merge-grow/0002-probe/request.json"
+  "cluster_mode": "bundle",
+  "bundle": {"max_dim": 8, "merge_cutoff": 1e+300},
+  "adaptive": {
+    "work_file": "<repo>/test/clustering/adaptive/reference/runs/merge-grow/0002-probe/request.json"
+  }
 }

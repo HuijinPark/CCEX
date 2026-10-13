@@ -7,13 +7,14 @@ from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'gpu_verification/check_gpu'))
 from check_pcce import run_case
+from benchmark import get,put
 from check_baths import save,sha
 
 
 def resolve(config,fixture):
     config=dict(config)
-    for key in ['qubitfile','gyrofile']:
-        if config.get(key):config[key]=str(fixture/config[key])
+    for key in ['Qubit.file','gyrofile']:
+        if get(config,key):config=put(config,{key:str(fixture/get(config,key))})
     config['bathfile']=[str(fixture/p) for p in config['bathfile']]
     return config
 
@@ -33,7 +34,8 @@ def main():
             groups=None
             for order in [1,2,3]:
                 name=f"{family['name']}-o{order}-k{size}"
-                cfg=dict(resolve(family['config'],fixture),sK=size,order=order,nstep=33,deltat=family['end_ms']/32,backend='cpu')
+                cfg=put(resolve(family['config'],fixture),{'pcce.partition_size':size,'order':order,'nstep':33,
+                                                           'deltat':family['end_ms']/32,'backend':'cpu'})
                 execution,log=run_case(cfg,root/name,a.binary.resolve(),a.ranks,1800)
                 assert execution['returncode']==0,name
                 inv=json.loads((root/name/'coherence.inventory.json').read_text())

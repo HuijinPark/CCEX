@@ -68,9 +68,9 @@ each was cut to, and from what, is in the generator next to the numbers.
 |---|---|---|---|
 | S1a/b | NV + natural-abundance 13C, CCE-2, ensemble and sampled bath | the ordinary CCE path, point-dipole hyperfine | 0.3 s |
 | S2a | the same, gCCE-2 | gCCE | 0.35 s |
-| S2b/c | NV + P1 10 ppm, CCE-2 and gCCE-2 | `Defect` with `naddspin = 0`, `navaax = 12`, `avaaxfile` | 0.3 / 1.0 s |
-| S3 | P1 bath, `Defect` `naddspin = 1` (14N), `navaax = 4` | `gyros` `eqs` `hypf` `efg` `zfs` `detuning`, state and extra-state files | 1.4 s |
-| S4 | hBN V_B, `hf_readmode 3` + `qd_readmode 2` | both DFT tensor readers, the vertex boundary, `hf/qd_tensor_frame` | 0.44 s |
+| S2b/c | NV + P1 10 ppm, CCE-2 and gCCE-2 | `Defect` with `n_nuclear_spins = 0`, `n_configurations = 12`, `Defect.axis_file` | 0.3 / 1.0 s |
+| S3 | P1 bath, `Defect` `n_nuclear_spins = 1` (14N), `n_configurations = 4` | `gyros` `quadrupole_moments` `hyperfine` `efg` `zfs` `detuning`, state and extra-state files | 1.4 s |
+| S4 | hBN V_B, `hyperfine` `{"dipole": "dft", "contact": true}` + `quadrupole` `"plain"` | both DFT tensor readers, the vertex boundary, `hf/qd_tensor_frame` | 0.44 s |
 | S4b | the same over `Afile` instead of `Afile_vertex` | `CheckBD_Range`, the axis-aligned MinDif/MaxDif box | 0.43 s |
 | S5 | two NV, gCCE, explicit `intmap` self/ZFS tensors | `intmap` `tensor_frame`, `reference_qubit`, multi-qubit rotation | 0.29 s |
 
@@ -86,10 +86,10 @@ picks exactly one: `Afile_vertex` carries `v1..v8` vertices and reaches
 `CheckBD_Range`. Without S4b the axis-aligned box -- the one thing that makes a
 rotation of the tensor file's own coordinates impossible -- would never run.
 
-S4b needs `hf_ignore_oor = 1` and no quadrupole: both boxes are wider than the set
+S4b needs `hyperfine.missing_row = "point_dipole"` and no quadrupole: both boxes are wider than the set
 of atoms their files list, so a spin can sit inside the box with no row of its own.
 The HF reader has a flag for that and the QD reader does not, which leaves the QD
-range boundary uncovered. So are `qd_readmode` 3 and 4, which upstream also
+range boundary uncovered. So are the quadrupole structures `strained` and `bubble`, which upstream also
 records as untested rather than verified.
 
 ## What is compared

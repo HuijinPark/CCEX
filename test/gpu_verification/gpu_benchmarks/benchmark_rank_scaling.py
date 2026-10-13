@@ -6,7 +6,7 @@ from pathlib import Path
 import statistics
 import sys
 sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parents[1]/'check_gpu'))   # benchmark.py, the helper the checks share
-from benchmark import REPO,compare
+from benchmark import REPO,compare,put
 from check_pcce import run_case
 sys.path.insert(0,str(REPO/'test/cluster_verification/check_pcce'))
 from check_baths import sha,save,resolve
@@ -25,7 +25,7 @@ def main():
         if sha(fixture/name)!=want:raise ValueError(f'Fixture changed: {name}')
     case=next(c for c in manifest['cases'] if c['name']==args.case)
     config=resolve(case['config'],fixture)
-    config=dict(config,pcce_partition='deterministic',gpu_options=dict(config.get('gpu_options',{}),min_dim=256))
+    config=put(config,{'pcce.partition':'deterministic','gpu_options.min_dim':256})
     binaries=dict(cpu=REPO/'bin/main.out',cuda=REPO/'bin/main_gpu.out')
     summary=dict(status='running',case=args.case,config=config,repeats=args.repeats,rank_sweep=[],
         fixture_manifest_sha256=sha(fixture/'manifest.json'),binary_sha256={k:sha(v) for k,v in binaries.items()})

@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 import re
-from benchmark import REPO, compare
+from benchmark import REPO, compare, put
 from check_pcce import run_case
 
 
@@ -19,12 +19,12 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     config = json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
     config.pop('seed')
-    config.update(backend='cpu', pcce_cache_mode='readwrite',
-                  pcce_cache_file=str(args.output/'partition.cache'))
+    config = put(config, {'backend': 'cpu', 'pcce.cache.mode': 'readwrite',
+                          'pcce.cache.file': str(args.output/'partition.cache')})
     execution, log = run_case(config, args.output/'cache-generated', args.cpu.resolve(), ranks=2)
     assert execution['returncode'] == 0 and '[partition-cache] status=stored' in log, log[-2000:]
     seed = int(re.search(r'\[seed\].*shared with all ranks: (\d+);', log)[1])
-    config.update(seed=seed, pcce_cache_mode='read')
+    config = put(config, {'seed': seed, 'pcce.cache.mode': 'read'})
     for ranks in (1, 4):
         directory = args.output/f'cache-replay-{ranks}'
         execution, log = run_case(config, directory, args.cpu.resolve(), ranks=ranks)
@@ -37,9 +37,8 @@ def main():
         ('gcce', 'p1_gcce4_single.json', 3, 192),
     ):
         config = json.loads((REPO/'test/gpu_verification/check_gpu/examples'/fixture).read_text())
-        config.update(order=order, nstep=64, npulse=4,
-                      gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=64,
-                                       evolution_batch_size=8, cluster_batch_mb=64))
+        config = put(config, {'order': order, 'nstep': 64, 'pulse.count': 4, 'gpu_options.evolution_batch_steps': 64,
+                              'gpu_options.evolution_batch_size': 8, 'gpu_options.cluster_batch_mb': 64})
         entry = dict(method=method, dimension=dimension, order=order,
                      rbath=config['rbath'], rdip=config['rdip'], nstate=1, pulses=4,
                      steps=64, batch_budget_mib=64, executions={})

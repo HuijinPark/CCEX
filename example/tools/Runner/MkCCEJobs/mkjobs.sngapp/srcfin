@@ -24,19 +24,35 @@ elif [ ${VariableName} == "Pulse" ];then
     PulseFix=${var}
 fi
 
+# A47 (2026-10-13): the input keys of docs/user/InputFile.md. Method may be cCCE or gCCE, or a name of before (CCE,
+# pCCE, dsj, itb, dsjitb), which is written as method cCCE with that cluster_mode; HFOpt is hf_readmode 0-3 of before
+# (0 point dipole, 1 + Fermi contact from HFFile, 2 DFT dipole from HFFile, 3 both); switches given as 0/1 become false/true.
+case "${Method}" in
+    CCE|cce|cCCE|ccce) MethodKey=cCCE; ClusterMode=standard ;;
+    gCCE|gcce)         MethodKey=gCCE; ClusterMode=standard ;;
+    pCCE|pcce|dsj|itb|dsjitb) MethodKey=cCCE; ClusterMode=$(echo "${Method}" | tr 'A-Z' 'a-z') ;;
+    *)                 MethodKey=${Method}; ClusterMode=standard ;;
+esac
+case "${HFOpt}" in
+    1) Hyperfine="{\"dipole\": \"point\", \"contact\": true, \"file\": \"${HFFile}\"}" ;;
+    2) Hyperfine="{\"dipole\": \"dft\", \"contact\": false, \"file\": \"${HFFile}\"}" ;;
+    3) Hyperfine="{\"dipole\": \"dft\", \"contact\": true, \"file\": \"${HFFile}\"}" ;;
+    *) Hyperfine="{\"dipole\": \"point\", \"contact\": false}" ;;
+esac
+switch(){ case "$1" in 1|true) echo true ;; *) echo false ;; esac; }
+
 cat << EOF > ${fccein}
 {
     # Config - Method 
-    "method"        : "${Method}", 
+    "method"        : "${MethodKey}",
+    "cluster_mode"  : "${ClusterMode}",
     "quantity"      : "coherence",
     
     # Config - File
-    "qubitfile"     :  "${DefectFile}",
+    "Qubit"         :  {"file": "${DefectFile}", "alphams": ${alphaFix}, "betams": ${betaFix}},
     "gyrofile"      :  "${GyroFile}",
     "bathfile"      : ["${BathFile}"],
-  #"avaaxfile"     :  "${AvaaxFile}",
-  #"statefile"     :  "${StateFile}",
-  #"exstatefile"   :  "${ExStateFile}",
+    #"bath_state_file" :  "${StateFile}",
 
     # Config - General
     "order"         : ${OrderFix},
@@ -46,32 +62,31 @@ cat << EOF > ${fccein}
     "deltat"        : ${deltaTFix},
     "nstep"         : ${nStepFix},  
 
-    # Qubit 
-    "alphams"     : ${alphaFix},
-    "betams"      : ${betaFix},
-
     # Cluster
-    "addsubclus"  : ${addClus}, # true / false
-    "nk"          : ${NkFix}, # default : [0] (all) or [0,0,30,40,50]
+    "add_subclusters"        : $(switch ${addClus}), # true / false
+    "max_clusters_per_order" : ${NkFix}, # default : [0] (all) or [0,0,30,40,50]
 
     # Pulse
-    "npulse"      : ${PulseFix},
+    "pulse"       : {"count": ${PulseFix}},
 
     # Config - Spin tensor
-    "hf_readmode"   : ${HFOpt}, 
-#  "hf_tensorfile" : "${HFFile}",
-#  "hf_cutoff"     : ${HFCutoff}
-#  "qd_readmode"   : ${QuadOpt},
+    "hamiltonian"   : {"common": {"hyperfine": ${Hyperfine}}},
+#  quadrupole : "off" (default) or {"structure": "plain", "file": ...} in hamiltonian.common
 
     # Output
     "savemode"    : "coherence"
 
 EOF
 
+# CCEinFile holds the Defect species, written with the keys of docs/user/InputFile_Defect.md (name, n_nuclear_spins,
+# n_configurations, ...); the axis and state files of the defects sit beside the list
 if [ -f ${CCEinFile} ]; then
-    echo ",  \"Defect\"         : [" >> ${fccein}
+    echo ",  \"Defect\"         : {" >> ${fccein}
+    echo "  #\"axis_file\"     :  \"${AvaaxFile}\"," >> ${fccein}
+    echo "  #\"state_file\"    :  \"${ExStateFile}\"," >> ${fccein}
+    echo "       \"species\"      : [" >> ${fccein}
     cat ${CCEinFile} >> ${fccein}
-    echo "                       ]" >> ${fccein}
+    echo "                       ]}" >> ${fccein}
 else
     echo "   ! Warning. CCEinFile :  ${CCEinFile} doesn't exist"
 fi

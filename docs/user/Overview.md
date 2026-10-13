@@ -14,9 +14,9 @@ time:
 
 - the coherence function `L(t)` of the qubit under the pulse sequence, or with
   gCCE its density matrix (`quantity`);
-- by conventional CCE, generalized CCE (gCCE) or partition CCE (pCCE), with the
-  disjoint-cluster and inter-bath variants dsj, itb and dsjitb (`method`);
-- for a Hahn echo, a Ramsey experiment, CPMG (`npulse`) or any sequence written
+- by conventional CCE (cCCE) or generalized CCE (gCCE) (`method`), with partition CCE (pCCE), bundle
+  clustering and the disjoint-cluster and inter-bath variants dsj, itb and dsjitb (`cluster_mode`);
+- for a Hahn echo, a Ramsey experiment, CPMG (`pulse.count`) or any sequence written
   out pulse by pulse (`sequence`);
 - for one bath configuration or an ensemble of them, and for electron-spin baths
   with sampled bath states (`nstate`).
@@ -24,8 +24,8 @@ time:
 Baths can be nuclear spins with point-dipole or DFT tensors (hyperfine and
 quadrupole), electron-spin defects such as P1 centres with their own on-site
 spins and axes, or both. Beyond the standard clustering by order and distance
-CCEX has bundle clustering (`cluster_mode`, `bundle_max_dim`) and an adaptive
-refinement of the clusters (the `Adaptive` block), a CUDA backend for the
+CCEX has bundle clustering (`cluster_mode` bundle, `bundle.max_dim`) and an adaptive
+refinement of the clusters (the `adaptive` block), a CUDA backend for the
 cluster propagation (`backend`), and a coordinate frame rotation that lets the
 bath file stay in the crystal frame (`coordinate_frame_rotation`).
 
@@ -40,7 +40,11 @@ bash do_compile.sh <preset>                     # the group's machines: wsl-gnu,
 `backend` cuda or auto; the CMake line writes the same two files under `build/bin/`
 (pass `-DCCEX_BIN_DIR=$PWD/bin` to put them in `bin/` instead). The build needs a C++17 compiler behind an MPI wrapper
 and, for the GPU binary, the CUDA toolkit. Eigen, uthash and SQLite are
-bundled in `external/`, and nothing else is linked. `CMakeLists.txt` takes
+bundled in `external/`. Intel MKL is linked when the build finds it (`$MKLROOT` from setvars.sh or the intel
+module; the build prints `[build] MKL on/off`, the run log's header too): it takes the large cCCE/gCCE clusters
+(zgemm from bath dimension 21, zheevd from 63), which helps runs whose time is in such clusters (h-BN: 0.72–0.88 of
+the time on idm; P1 unchanged); the curves then differ in the last digits (up to 9e-8 at late times of h-BN gCCE).
+`CCEX_BLAS=off bash do_compile.sh <preset>` (CMake `-DCCEX_BLAS=OFF`) builds without it. `CMakeLists.txt` takes
 `-DCCEX_CUDA=OFF`, `-DCMAKE_CUDA_ARCHITECTURES=<cc>` and
 `-DMPI_CXX_COMPILER=<wrapper>`; `do_compile.sh` loads the modules of the
 group's machines itself, and its `generic` preset takes `CXX`, `CUDA_HOME` and
@@ -71,7 +75,7 @@ matrix) per bath configuration into text files, which the analyzer in
   makes the inputs (`example/analysis/`, `example/tools/`).
 - Data structures and Source files: the code itself, for developers.
 - Methods: [clustering terminology](../methods/clustering-terminology.md),
-  [adaptive cluster mode](../methods/adaptive-cluster-mode.md), [the `Adaptive` block](../methods/adaptive-input-block.md),
+  [adaptive cluster mode](../methods/adaptive-cluster-mode.md), [the `adaptive` block](../methods/adaptive-input-block.md),
   [GPU execution](../methods/gpu.md) and [the coordinate frame rotation](../methods/coordinate-frame-rotation.md),
   in detail (`docs/methods/` in the repository; partly in Korean).
 

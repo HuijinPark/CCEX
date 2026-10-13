@@ -3,6 +3,11 @@
 #include <float.h>  // FLT_EPSILON
 #include "mpi.h"
 #include <vector>
+#include <algorithm>
+#include <queue>
+#ifdef CCEX_BLAS_DIRECT
+#include "../../include/common/blas_option.h"   // the thresholds printBanner reports
+#endif
 
 /* utils ---------------------------------------------------*/
 MatrixXcd Double1dToMatrixXcd(double* val, int n){
@@ -883,116 +888,73 @@ int min(int x, int y)
 }
 
 
-// A31: the first row of each rank under a cost split. bounds[r] is the number of clusters before rank r: the
-// first k whose running cost reaches r/nprocs of the total (rows 1..k, in the list's order). Every rank computes
-// the same doubles in the same order, so all agree. Empty when the order is uniform (all costs equal) or has
-// no cluster: the equal-count split stays then, so a bath of one kind of spin is distributed as before.
-// A38: two passes over rowCost(0..m-1) instead of an array of m costs (8 B a cluster at the peak of clusterizePairs);
-// the same calls in the same order give the same doubles, so the same bounds.
-std::vector<int> costBounds(int m, const std::function<double(int)>& rowCost){
-    std::vector<int> bounds;
-    if (!rowCost || m <= 0) return bounds;
+// A31 + A45: the rows (1-based, ascending) of an order of m clusters that this rank takes. loads (nprocess entries) is
+// every rank's cost so far - carried from order to order (MPI_getLocalClusters goes from the highest order down), so
+// the orders together are split as one list, largest first. With a cost that is not the same for every cluster of
+// the order: every cluster, the largest cost first (equal costs: the earlier in the list first), goes to the rank with
+// the least load (equal: the lower rank) - longest first, so a rank holds a mix of sizes and the errors of the cost
+// formula average out (A44 step 0: the contiguous A31 split left 20-27 % end idle on h-BN). Every rank computes the
+// same doubles in the same order, so all agree. All costs equal, no cost, or no cluster: the equal-count contiguous
+// split (para_range), so a bath of one kind of spin is distributed as before (byte-identical); loads then grow by
+// each rank's count times that cost.
+std::vector<int> rankClusterRows(int m, const std::function<double(int)>& rowCost, std::vector<double>& loads){
+    std::vector<int> rows;
+    loads.resize(nprocess, 0.0);
     bool uniform = true;
-    double total = 0.0;
-    const double c0 = rowCost(0);
-    for (int i=0; i<m; i++){
-        const double c = i == 0 ? c0 : rowCost(i);
-        uniform = uniform && c == c0;
-        total += c;
+    double c0 = 0.0;
+    if (rowCost && m > 0){
+        // A38: no array for the test, so a uniform list (P1, 13C) costs nothing more at the peak of clusterizePairs
+        c0 = rowCost(0);
+        for (int i=1; i<m && uniform; i++) uniform = rowCost(i) == c0;
     }
-    if (uniform) return bounds;
-    bounds.assign(nprocess+1, m);
-    bounds[0] = 0;
-    double running = 0.0;
-    int k = 0;
-    for (int r=1; r<nprocess; r++){
-        const double target = total * r / nprocess;
-        while (k < m && running < target) running += rowCost(k++);
-        bounds[r] = k;
+    if (uniform){
+        for (int r=0; r<nprocess; r++){
+            int ista, iend;
+            para_range(2, m+1, nprocess, r, &(ista) ,&(iend));
+            // cluster : ista - 1 <= i < iend; none when ista - 1 >= iend
+            if (r == rank) for (int i=ista-1; i<iend; i++) rows.push_back(i);
+            if (iend > ista-1) loads[r] += c0*(iend-ista+1);
+        }
+        return rows;
     }
-    return bounds;
-}
-
-void clusterRowRange(int count, const std::vector<int>& bounds, int irank, int* first, int* end){
-    if (!bounds.empty()){
-        // rows bounds[irank]+1 .. bounds[irank+1]; end is one past the last row
-        *first = bounds[irank] + 1;
-        *end = bounds[irank+1] + 1;
-        return;
+    std::vector<double> cost(m);
+    for (int i=0; i<m; i++) cost[i] = rowCost(i);
+    std::vector<int> order(m);
+    for (int i=0; i<m; i++) order[i] = i;
+    std::stable_sort(order.begin(), order.end(), [&](int a, int b){ return cost[a] > cost[b]; });
+    std::priority_queue<std::pair<double,int>, std::vector<std::pair<double,int>>, std::greater<std::pair<double,int>>> least;
+    for (int r=0; r<nprocess; r++) least.push({loads[r], r});
+    for (int i : order){
+        std::pair<double,int> top = least.top();
+        least.pop();
+        if (top.second == rank) rows.push_back(i+1);
+        top.first += cost[i];
+        least.push(top);
     }
-    int ista, iend;
-    para_range(2, count+1, nprocess, irank, &(ista) ,&(iend));
-    // cluster : ista - 1 <= i < iend
-    // 9# , 0 , 1 ... , 8 , rank = 0 .. 7
-    // rank==0~7 then, sendcount = 1 ista=2, iend=1
-    // else, sendcount = 0
-    *first = ista - 1;
-    *end = iend;
-    // case : ista - 1 = iend
-    // case : ista - 1 > iend
-    if (ista-1 >= iend) *end = *first;
+    while (!least.empty()){ loads[least.top().second] = least.top().first; least.pop(); }
+    std::sort(rows.begin(), rows.end());
+    return rows;
 }
 
 int*** MPI_getLocalClusters(int order, int*** clusters, const std::function<double(int,const int*)>& cost,
-                            int givenOrder, const std::vector<int>* givenBounds){
-
-    MPI_Request req; 
-    MPI_Status status;
+                            int givenOrder, const std::vector<int>* givenRows,
+                            const std::vector<double>* givenLoads){
 
     MPI_Barrier(MPI_COMM_WORLD);
-    // get the number of clusters for each order
-    int MPI_size[order+1];
-
-    for (int n=0; n<order+1; n++){
-        if (n==0){
-            // The number of cluster = 1#
-            MPI_size[n] = 1;
+    // this rank's rows of each order (rankClusterRows: the cost split, or the equal-count one)
+    // A45: from the highest order down, the ranks' loads carried, so the large clusters are placed first
+    std::vector<std::vector<int>> rows(order+1);
+    std::vector<double> loads(nprocess, 0.0);
+    for (int n=order; n>=1; n--){
+        if (n == givenOrder){                       // A38: decided before the rows were dropped
+            rows[n] = *givenRows;
+            if (givenLoads) loads = *givenLoads;
+            continue;
         }
-        else{
-            // The number of cluster
-            MPI_size[n] = clusters[n][0][0];
-        }
+        std::function<double(int)> rowCost;
+        if (cost) rowCost = [&](int i){ return cost(n, clusters[n][i+1]); };
+        rows[n] = rankClusterRows(clusters[n][0][0]-1, rowCost, loads);
     }
-
-    MPI_Barrier(MPI_COMM_WORLD);
-    // get sendcount, ista, iend for each order and each rank
-    int MPI_sendcount[order+1][nprocess];
-    int MPI_ista[order+1][nprocess];
-    int MPI_iend[order+1][nprocess];
-    std::vector<std::vector<int>> bounds(order+1);
-    for (int n=1; n<order+1; n++){
-        if (n == givenOrder){ bounds[n] = *givenBounds; continue; }   // A38: decided before the rows were dropped
-        if (cost) bounds[n] = costBounds(clusters[n][0][0]-1, [&](int i){ return cost(n, clusters[n][i+1]); });
-    }
-
-    for (int irank=0; irank<nprocess; irank++){
-        for (int n=0; n<order+1; n++){
-            if (n==0){
-                MPI_sendcount[n][irank] = 1;
-                MPI_ista[n][irank] = 0;
-                MPI_iend[n][irank] = 0;
-            }
-            else{
-                int first, end;
-                clusterRowRange(MPI_size[n]-1, bounds[n], irank, &first, &end);
-                MPI_sendcount[n][irank] = end - first;
-                MPI_ista[n][irank] = first;
-                MPI_iend[n][irank] = end;
-            }
-        }
-    }
-
-    //if (rank==0){
-    //    printf("nprocess : %d\n",nprocess);
-    //    for (int n=0; n<order+1; n++){
-    //        printf("size[%d] : %d\n",n,MPI_size[n]);
-    //        for (int ir=0; ir<nprocess; ir++){
-    //            printf("ista[%d][%d] : %d\n",n,ir,MPI_ista[n][ir]);
-    //            printf("iend[%d][%d] : %d\n",n,ir,MPI_iend[n][ir]);
-    //            printf("sendcount[%d][%d] : %d\n",n,ir,MPI_sendcount[n][ir]);
-    //        }
-    //    }
-    //}
 
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -1000,38 +962,33 @@ int*** MPI_getLocalClusters(int order, int*** clusters, const std::function<doub
     // make local clusters for each rank
     int*** localClusters = (int***)calloc(order+1,sizeof(int**));
 
-    // zeroth cluster 
+    // zeroth cluster
     localClusters[0] = (int**)calloc(1,sizeof(int*));
     localClusters[0][0] = (int*)calloc(1,sizeof(int));
     localClusters[0][0][0] = clusters[0][0][0]; // = 1
     if (rank!=0){
         localClusters[0][0][0] = 0;
-    } 
+    }
     MPI_Barrier(MPI_COMM_WORLD);
 
     // n > 0 clusters
     for (int n=1; n<order+1; n++){
 
-        int size = MPI_sendcount[n][rank] + 1;
+        int size = (int)rows[n].size() + 1;
         localClusters[n] = (int**)allocArray2d(size,n+1,sizeof(int));
         localClusters[n][0][0] = size;
 
-        int rootClusterista = MPI_ista[n][rank];
-        int rootClusteriend = MPI_iend[n][rank];
-        int iroot = rootClusterista - 1;
         for (int i=1; i<size; i++){
-            iroot = rootClusterista + i - 1;
-            //printf("rank[%d] : iroot = %d\n",rank,iroot);
+            const int iroot = rows[n][i-1];
+            if (clusters[n][iroot] == NULL){   // A38: a pair row this rank did not keep
+                printf("rank[%d] : order %d, row %d was not kept\n",rank,n,iroot);
+                perror("local cluster row missing");
+                exit(1);
+            }
             for (int j=0; j<n+1; j++){
                 localClusters[n][i][j] = clusters[n][iroot][j];
             }
         }
-
-        if (iroot != rootClusteriend-1 ){
-            printf("rank[%d] : iroot = %d, rootClusteriend = %d\n",rank,iroot,rootClusteriend);
-            perror("iroot != rootClusteriend");
-            exit(1);
-        }        
     }
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -1114,6 +1071,12 @@ void printBanner(){
     printf("\n");
     printf("            Program CCEX starts on %s ", asctime(d1));
     printf("               The CCEX code has compiled at '%s' \n", __DATE__);
+    // A46: whether this build takes the large clusters to MKL (test/code_verification/check_numerics reads this line)
+#ifdef CCEX_BLAS_DIRECT
+    printf("               MKL for large clusters : on (zgemm from dim %d, zheevd from dim %d)\n", ccexBlas::gemmMin, ccexBlas::eigMin);
+#else
+    printf("               MKL for large clusters : off\n");
+#endif
     printf("    ======================================================================\n");
     printf("\n"); 
 

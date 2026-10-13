@@ -2,6 +2,7 @@
 #SBATCH --job-name=ccex-high-order
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu-long
+#SBATCH --export=NONE
 #SBATCH --nodes=1
 #SBATCH --ntasks=32
 #SBATCH --cpus-per-task=1

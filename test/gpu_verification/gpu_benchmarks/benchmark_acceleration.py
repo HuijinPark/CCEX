@@ -6,7 +6,7 @@ from pathlib import Path
 import statistics
 import sys
 sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parents[1]/'check_gpu'))   # benchmark.py, the helper the checks share
-from benchmark import compare
+from benchmark import compare, put
 from check_pcce import run_case
 from check_acceleration import config_for
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'cluster_verification/check_pcce'))
@@ -52,13 +52,13 @@ def main():
         record['median_s']={v:statistics.median(t['executions'][v]['wall_s'] for t in record['trials']) for v,_,_ in variants}
         save(root/'summary.json',summary)
     for name in selected:
-        c=resolve(cases[name]['config'],fixture);c['pcce_partition']='legacy'
+        c=put(resolve(cases[name]['config'],fixture),{'pcce.partition':'legacy'})
         measure(name,c,2,[('cpu',binaries['cpu'],dict(backend='cpu')),
             ('before_cuda',binaries['before_cuda'],dict(backend='cuda')),
             ('cuda_sequential',binaries['cuda'],dict(backend='cuda',gpu_options=dict(evolution_batch_size=1))),
             ('cuda_batch',binaries['cuda'],dict(backend='cuda',gpu_options=dict(evolution_batch_size=8))),
             ('auto',binaries['cuda'],dict(backend='auto',gpu_options=dict(min_dim=256)))],'stages')
-    sweep=[(name,dict(resolve(cases[name]['config'],fixture),pcce_partition='deterministic'))
+    sweep=[(name,put(resolve(cases[name]['config'],fixture),{'pcce.partition':'deterministic'}))
         for name in ['diamond_13c_sK3_state0_pulse4','diamond_p1_15n_sK2_state0_pulse4']]
     c=config_for('Diamond_NV_natab_gcce',0);c['order']=4;sweep.append(('gcce4_13c',c))
     for name,c in sweep:

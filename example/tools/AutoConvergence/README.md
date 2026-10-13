@@ -1,10 +1,10 @@
 # AutoConvergence — automatic convergence of a CCEX calculation
 
 An ordinary CCEX input with an `auto_convergence` block makes `main.out -f input.json` choose the time window, rdip, rbath
-and the number of configurations (and states) of a coherence calculation by itself - CCE and pCCE (order ≥ 2) or gCCE (order ≥ 1), fixed
-bundles (`cluster_mode` adaptive without an `Adaptive` block), CPU or GPU backends, DFT tensor files - then run the
-production (the order is the input's; Adaptive refinement is excluded). The rdip ladder (one run gives every smaller rdip)
-exists for order 2 of CCE, gCCE and pCCE with standard clusters; otherwise (order 3 and above, fixed bundles) each rdip
+and the number of configurations (and states) of a coherence calculation by itself - cCCE with `cluster_mode` standard or pcce (order ≥ 2) or gCCE (order ≥ 1), fixed
+bundles (`cluster_mode` bundle without an `adaptive` block), CPU or GPU backends, DFT tensor files - then run the
+production (the order is the input's; the adaptive refinement is excluded). The rdip ladder (one run gives every smaller rdip)
+exists for order 2 of cCCE, gCCE and pCCE with standard clusters; otherwise (order 3 and above, fixed bundles) each rdip
 candidate is its own run, which costs more but is judged alike. You
 prepare the bath files (and state files when `nstate` > 0); almost everything else is found. Every calculation is an
 ordinary CCEX run in its own folder. The rules and the decisions behind them are in (internal notes)
@@ -56,9 +56,9 @@ The runner does not make baths (user 2026-10-09; the `bath_generation` section o
 
 ```json
 {
-  "method": "CCE", "quantity": "coherence", "order": 2,
-  "qubitfile": "data/qubit", "gyrofile": "data/gyro_13C",
-  "bfield": 500, "npulse": 1, "nstate": 0,
+  "method": "cCCE", "quantity": "coherence", "order": 2,
+  "Qubit": {"file": "data/qubit"}, "gyrofile": "data/gyro_13C",
+  "bfield": 500, "pulse": {"count": 1}, "nstate": 0,
   "auto_convergence": {
     "workdir": "auto",
     "configurations": {"bathfile": "data/config_{k}"},
@@ -133,7 +133,7 @@ rdip and the configurations only:
 | | `floor` | only the points before \|mean\| falls below this are fitted | 0.05 |
 | | `n_range` | allowed stretching exponent n of exp(−(t/T2)^n); outside it the fit fails | [0.3, 4.0] |
 | `configurations` | `bathfile` | bath file pattern with `{k}` (found files are named with the plain number: `config_7`, not `config_07`) | required |
-| | `statefile` | state file prefix pattern (nstate > 0; left out: made per run and removed) | — |
+| | `statefile` | state file prefix pattern (nstate > 0; left out: made per run and removed), written into each run's input as `bath_state_file` | — |
 | | `test`, `production` | configuration IDs for the convergence tests and for the production (never the same) | found |
 | | `converge`, `number`, `states` | see above | true |
 | | `threshold` | SE(A)/A target of the sampling | 0.05 (2026-10-10; was 0.02) |
@@ -142,7 +142,7 @@ rdip and the configurations only:
 | | `test_number`, `test_states` | configurations and states of the test runs (nstate > 0 for the states) | 10, 5 |
 | | `states_threshold` | the states' share of the sampling error at which the state test stops | 0.05 |
 | | `max_states` | the most states the state test computes (nstate > 0; with state files, at most the files there) | 30 |
-| | `avaaxfile`, `exstatefile` | optional per-configuration file patterns | — |
+| | `avaaxfile`, `exstatefile` | optional per-configuration file patterns, written into each run's input as `Defect.axis_file` and `Defect.state_file` (these pattern names of the tool kept their names on 2026-10-13) | — |
 | `time_window` | `converge`, `value`, `unit` | see above; units `s`, `ms`, `us`, `ns` | true, —, ms |
 | | `threshold` | T_d is where the fit reaches this level | 0.01 |
 | | `revival_check_factor` | the test runs go to this × T_d to see a revival | 2.5 |
@@ -156,8 +156,8 @@ rdip and the configurations only:
 | | `num_candidates` | how many to start with when found | 4 |
 | | `threshold` | relative difference of A at which two rbath agree | 0.02 |
 
-pCCE partition cache (A17, 2026-10-11): the runner gives every pCCE run `pcce_cache_mode` `readwrite` and a file
-`<workdir>/pcce_cache/<key>.cache`, the key a hash of the child input without `rdip`, `nstate`, `statefile`, `exstatefile`,
+pCCE partition cache (A17, 2026-10-11): the runner gives every pCCE run `pcce.cache.mode` `readwrite` and a file
+`<workdir>/pcce_cache/<key>.cache`, the key a hash of the child input without `rdip`, `rdip_ladder`, `nstate`, `bath_state_file`, `Defect.state_file`,
 `nstep` and `deltat`, of the bath (and other) file contents and of the binary. Runs that differ only in rdip (or states and
 time grid) therefore search the k-means partition once and read it afterwards; CCEX itself compares the stored partition's
 inputs byte for byte and searches again on any difference. The key is part of the run key; `done.json` records whether the
@@ -165,11 +165,12 @@ run read (`hit`) or stored the file and its hash, and a cache file is read only 
 stored. Outputs are the same bytes as without the cache. Changing to this version recomputes the pCCE runs of an earlier
 workdir once (their keys changed); other methods' runs are reused.
 
-Refused: other methods or quantities, `rdip_ladder` in the input, an `Adaptive` block or `adaptive_work_file`, `pcce_cache_file`
-and `pcce_cache_mode` (the runner gives its own), `pcce_partition` legacy (its partitions depend on the MPI size), file inputs the runner does not hash
-(`avaaxfile`/`exstatefile` outside `configurations`; the tensor files `hf_tensorfile`, `qd_tensorfile`, `qd_tensorfile_woqubit`
-are hashed and allowed), `pilot_states`
-(use `nstate`), `bathadjust` and more than one qubit, a list together with its count, a fixed value with `converge` true,
+Refused: other methods, cluster modes (`dsj`, `itb`, `dsjitb`) or quantities, `rdip_ladder` in the input, an `adaptive` block, `pcce.cache`
+(the runner gives its own), `pcce.partition` legacy (its partitions depend on the MPI size), `cluster_contributions`, a nonzero
+`max_clusters_per_order`, file inputs the runner does not hash
+(`Defect.axis_file`/`Defect.state_file` outside `configurations`; the files `Qubit.file`, `gyrofile`, `hamiltonian.common.hyperfine.file`,
+`quadrupole.file` and `quadrupole.file_without_defect` are hashed and allowed), `pilot_states`
+(use `nstate`), `bath_shift` and more than one qubit, a list together with its count, a fixed value with `converge` true,
 options out of range, unknown keys, and the earlier flat names (`threshold_rdip`, `candi_rdip`, `rdip_rungs`, `se_target`,
 `time_window` as a number, ...) or removed keys (`max_spins`, `max_pairs`, `max_core_hours`, `cost_config`, `cost_state`,
 `margin_s`, `run_timeout_s`, `truncation_max_tol`, `truncation_area_tol`, `version`, `source_radius`, `max_nstep`,

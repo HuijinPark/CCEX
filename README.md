@@ -13,16 +13,17 @@ spin Hamiltonian, divides the bath into clusters, solves the dynamics of every
 cluster exactly and combines them into the coherence `L(t)` of the qubit or, with
 gCCE, its density matrix.
 
-- Methods (`method`): conventional CCE (`CCE`), generalized CCE (`gCCE`), partition
-  CCE (`pCCE`), and the disjoint-cluster and inter-bath variants (`dsj`, `itb`,
-  `dsjitb`); the names are read without regard to case.
-- Clustering (`cluster_mode`): `standard` (the default), clusters of spins by order and distance,
-  or `adaptive`: strongly coupled spins tied into bundles and clusters made of
-  bundles (`bundle_max_dim` and the other `bundle_*` keys), with an adaptive
-  refinement that rebuilds the bundles where the error is large (the `Adaptive`
-  block).
+- Methods (`method`): conventional CCE (`cCCE`) and generalized CCE (`gCCE`); the names are read
+  without regard to case.
+- Clustering (`cluster_mode`): `standard` (the default), clusters of spins by order and distance;
+  `pcce`, partition CCE (the `pcce` block); `dsj`, `itb`, `dsjitb`, the disjoint-cluster and inter-bath
+  variants (these four with cCCE only); or `bundle`: strongly coupled spins tied into bundles and
+  clusters made of bundles (the `bundle` block), with an adaptive refinement that rebuilds the bundles
+  where the error is large (the `adaptive` block).
+- Input keys were renamed and grouped on 2026-10-13; an older input is refused with the new name, and
+  `example/tools/InputKeys/convert_input_keys.py` rewrites it ([the table](docs/user/InputFile.md#OldNames)).
 - Sequences: Ramsey, Hahn echo, CPMG, WAHUHA, or any sequence written out pulse
-  by pulse (`npulse`, `sequence`).
+  by pulse (the `pulse` block, `sequence`).
 - Baths: nuclear spins with point-dipole or DFT tensors (hyperfine, quadrupole),
   electron-spin defects with sampled bath states; one configuration or an
   ensemble.
@@ -47,8 +48,12 @@ bash do_compile.sh <preset>                     # the group's machines: wsl-gnu,
 `backend` cuda or auto; CMake gives the same two in `build/bin/` (`-DCCEX_BIN_DIR=$PWD/bin`
 puts them in `bin/`). Needed: a C++17 compiler behind an MPI wrapper
 (`mpicxx`, `mpic++`, `mpiicpc`) and, for the GPU binary, the CUDA toolkit;
-Eigen, uthash and SQLite are bundled in `external/`, and nothing else is linked
-(MKL is not used). `CMakeLists.txt` takes `-DCCEX_CUDA=OFF`,
+Eigen, uthash and SQLite are bundled in `external/`. Intel MKL is linked when the build finds it (`$MKLROOT`
+from setvars.sh or the intel module, with its libraries there; the build prints `[build] MKL on (...)` or
+`MKL off (why)`, and every run log's header says which): it takes the large cCCE/gCCE clusters (zgemm from bath
+dimension 21, zheevd from 63). `CCEX_BLAS=off bash do_compile.sh <preset>` (CMake `-DCCEX_BLAS=OFF`) builds without
+it, `CCEX_BLAS=mkl` (`-DCCEX_BLAS=MKL`) stops when it is missing. On idm it ran h-BN 0.72–0.88 of the time and left
+P1 unchanged; the curves move in the last digits (up to 9e-8 at late times of h-BN gCCE). `CMakeLists.txt` takes `-DCCEX_CUDA=OFF`,
 `-DCMAKE_CUDA_ARCHITECTURES=<cc>`, `-DMPI_CXX_COMPILER=<wrapper>`,
 `-DCCEX_NATIVE=OFF`, `-DCCEX_SANITIZE=ON` and `-DCCEX_STRICT_WARNINGS=ON` (warnings on, format, sequence-point
 and misleading-indentation ones as errors; the CI builds with it); its objects stay in `build/`.
@@ -98,7 +103,7 @@ The tutorials run `bin/main.out`; after a CMake build give them the binary with
   then open `html/index.html` (Doxygen 1.9 and graphviz). GitHub Actions builds
   it from `.github/workflows/deploy_docs.yml`.
 - The methods this branch added, in detail: `docs/methods/` (clustering
-  terminology, bundle clustering, the `Adaptive` block, the GPU backend, the
+  terminology, bundle clustering, the `adaptive` block, the GPU backend, the
   frame rotation).
 
 ## Checks

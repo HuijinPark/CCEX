@@ -47,7 +47,7 @@ void computeBackendInit(const Config* config){
                           (!strcasecmp(config->method,"gcce") &&
                            !strcasecmp(config->propagator,"eigen"));
     if (!supported){
-        if (required) fail("backend=cuda supports method=CCE, method=pCCE, or method=gCCE with propagator=eigen");
+        if (required) fail("backend=cuda supports method cCCE (cluster_mode standard or pcce), or method gCCE with propagator=eigen");
         if (rank==0) fprintf(stdout,"[backend] auto: this method/propagator uses CPU\n");
         return;
     }

@@ -10,12 +10,13 @@ f(k) a configuration factor (spread SPREAD, larger for k >= 100). Hooks (environ
 per call), FAKE_NAN_IDS (configurations written as nan), FAKE_BIG_IDS (configurations whose first state reaches 1e5 at the middle point), FAKE_JUMP_IDS (wiDiv of the first state 5 at one point, noDiv not), FAKE_STATE_SPREAD (T2 of each state scaled by 1 + this x a normal draw), FAKE_SLOW_IDS (configurations 3 x slower), FAKE_FLOOR (states keep a random phasor of this size once decayed), FAKE_FAIL_ONCE (a marker path: the first call writes half its files
 and exits 1), FAKE_RANDOM (print the random-fallback message), FAKE_NONMONO (an rdip rung whose T2 is pushed off), FAKE_PLATEAU_BELOW (below this rbath the curve stays near 0.3).
 FAKE_NAN_RUNG (that rdip rung ends in nan), FAKE_SPIKE (one point at |L| = 3), FAKE_IDENTICAL (every configuration and state the same curve), FAKE_LATE_DROP (near 0.3 until t0, then gone).
-pcce_cache_file (pCCE): read when it holds this run's bath file and rbath (status=hit), else written (status=stored), as CCEX
+pcce.cache.file (pCCE): read when it holds this run's bath file and rbath (status=hit), else written (status=stored), as CCEX
 prints it; FAKE_AVAAX_SEEN (the same for the avaax file, one line per run), FAKE_STATES_SEEN (a file that gets, per state file read, configuration, state, rbath, its sha256 or 'missing' and the step).
 FAKE_KINK ("B0") from rbath B0 up, the third largest rdip of each run has T2 x 1.1 (a neighbour that fails only at a large
 rbath); FAKE_SHAPE ("B0:n2") from rbath B0 up, the exponent is n2 with T2 scaled to keep the area (the decay time moves, the
 area does not).
-nstate 0 (no statefile, the ensemble) writes out_wiDiv / out_noDiv.
+nstate 0 (no bath_state_file, the ensemble) writes out_wiDiv / out_noDiv. The input keys are CCEX's since A47 (2026-10-13):
+bath_state_file, Defect.axis_file, pcce.cache.file, rbath and rdip a number or [inner, outer].
 """
 from math import gamma
 import hashlib
@@ -63,8 +64,14 @@ def write(path, t, v):
     path.write_text("".join(f"{a:15g}\t{x.real:+.10f}{x.imag:+.10f}j\t\n" for a, x in zip(t, v)))
 
 
+def outer(v):
+    """rbath or rdip: a number, or [inner, outer]."""
+    return v[1] if isinstance(v, list) else v
+
+
 def main():
     inp = json.loads(Path(sys.argv[sys.argv.index("-f") + 1]).read_text())
+    inp["rbath"], inp["rdip"] = outer(inp["rbath"]), outer(inp["rdip"])
     if os.environ.get("FAKE_COUNT"):
         with open(os.environ["FAKE_COUNT"], "a") as f:
             f.write(os.getcwd() + "\n")
@@ -75,14 +82,15 @@ def main():
     if os.environ.get("FAKE_STATES_SEEN") and nstate:    # the state files this run reads: configuration, state, rbath, content hash
         with open(os.environ["FAKE_STATES_SEEN"], "a") as f:
             for st in range(1, nstate + 1):
-                p = Path(f"{inp['statefile']}{st}")
+                p = Path(f"{inp['bath_state_file']}{st}")
                 f.write(f"{k} {st} {inp['rbath']} {hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else 'missing'} {Path.cwd().parent.name}\n")
     if os.environ.get("FAKE_AVAAX_SEEN"):                # the avaax file this run reads: configuration, rbath, content hash
-        p = Path(inp.get("avaaxfile", "none"))
+        p = Path(inp.get("Defect", {}).get("axis_file", "none"))
         with open(os.environ["FAKE_AVAAX_SEEN"], "a") as f:
             f.write(f"{k} {inp['rbath']} {hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else 'missing'}\n")
-    if inp.get("pcce_cache_file"):                       # the partition cache: rbath and the bath file stand for the partition
-        c = Path(inp["pcce_cache_file"])
+    cache = inp.get("pcce", {}).get("cache", {}).get("file")
+    if cache:                                            # the partition cache: rbath and the bath file stand for the partition
+        c = Path(cache)
         mine = f"{inp['rbath']} {hashlib.sha256(Path(inp['bathfile'][0]).read_bytes()).hexdigest()}\n"
         if c.is_file() and c.read_text() == mine:
             print("[partition-cache] status=hit lookup_s=0 search_s=0 write_s=0 file=" + str(c))
@@ -108,7 +116,7 @@ def main():
         if str(k) in os.environ.get("FAKE_SLOW_IDS", "").split(","):
             T *= 3.0                                             # a configuration that decays three times more slowly
         for s in (range(1, nstate + 1) if nstate else [0]):          # nstate 0: the ensemble, out_wiDiv
-            sf = Path(f"{inp['statefile']}{s}") if nstate and "statefile" in inp else None
+            sf = Path(f"{inp['bath_state_file']}{s}") if nstate and "bath_state_file" in inp else None
             # the noise follows the state file's content when there is one, so a state computed in a later block (the state
             # test writes states s + 1 ... as 1, 2, ...) is the same state as in a run of all of them
             seed = int(hashlib.sha256(sf.read_bytes()).hexdigest()[:12], 16) + 10 ** 6 * k if sf is not None and sf.is_file() else 10 ** 6 * k + s

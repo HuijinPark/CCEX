@@ -3,17 +3,18 @@
 # tensor_format (2026-10-13, (internal notes) "텐서 파일 형식 정리"): hyperfine tensor files of format v3
 # (line 1 VASP / QUANTUMESPRESSO, line 2 "# CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = ...,
 # S = ...") are read x 1; files without the provenance line keep the rule before it (VASP line -> x 1, otherwise
-# x 0.5/DefectTotSpin) and say so in the log. On the five h-BN cases of check_numerics (2 ranks, as recorded there):
+# x 0.5/S with S the qubit spin, DefectTotSpin until A47) and say so in the log. On the five h-BN cases of check_numerics (2 ranks, as recorded there):
 # T1  the repository's v3 file (the tutorial's v1 numbers / 2, exactly) gives the bytes of the old untagged v1 file
 #     (hBN_VB_flat_ATensor_HSE_CellPBE, x 0.5 by the old rule): the new file is the old one read correctly;
 # T2  an old file is read as before: the VASP-tagged v1 file (the _tag file until 2026-10-13, made here as "VASP" + the
 #     untagged file) gives the bytes of a v3 file holding the same numbers (v3 x 2) - the old rule is x 1 for a VASP
-#     line - and, while reference/head-20261012-aa883d0d4 (recorded with that _tag file) exists, its bytes;
+#     line - and, while reference/head-20261012-aa883d0d4 (recorded with that _tag file) exists, its bytes (a binary
+#     built with MKL, A46: its _noDiv/dm within 1e-12 relative, as check_numerics judges such a binary);
 # T3  the log of an old file has the warning, the log of a v3 file the format-v3 line and SpinFactor = 1.
 # T4  values of 10 characters or more (1234.56789, -12345.6) in the A and Q files of SpinTensorReader's VASP and QE
 #     writers, in their format now and in the one before 2026-10-13 (tab-glued fields), are read as written
 #     (example/tools/SpinTensorReader/tests/check_wide_fields.py).
-# The refused files (a tag that contradicts the source, S other than DefectTotSpin, a malformed line) are in
+# The refused files (a tag that contradicts the source, S other than the qubit spin, a malformed line) are in
 # ../check_refusals/.
 #
 # Usage:  bash test/code_verification/check_input_forms/tensor_format.sh
@@ -48,7 +49,7 @@ PY
 
 run_case(){    # <case> <name> <tensor file>
     local d="$NUM/cases/$1" o="$W/$1/$2"; mkdir -p "$o"
-    python3 -c 'import json,sys; j=json.load(open(sys.argv[1])); j["hf_tensorfile"]=sys.argv[3]; json.dump(j,open(sys.argv[2],"w"),indent=1)' \
+    python3 -c 'import json,sys; j=json.load(open(sys.argv[1])); j["hamiltonian"]["common"]["hyperfine"]["file"]=sys.argv[3]; json.dump(j,open(sys.argv[2],"w"),indent=1)' \
         "$d/ccein.json" "$o.json" "$3"
     ( cd "$d" && "$MPIRUN" -n 2 "$BIN_DEV" -f "$o.json" -o "$o/out" > "$o.log" 2>&1 < /dev/null ) || { echo "    $1/$2 exited $?"; return 1; }
 }
@@ -62,7 +63,23 @@ for d in "$NUM"/cases/hbn_*/; do
     else echo "  FAIL  T1 $case (see $W/$case)"; FAIL=$((FAIL+1)); fi
     ok=1
     same_bytes "$W/$case/v1_tagged" "$W/$case/v3_double" || { echo "    $case: the VASP-tagged v1 file is not read x 1"; ok=0; }
-    if [ -d "$OLDREF/$case" ]; then
+    if [ -d "$OLDREF/$case" ] && grep -q "MKL for large clusters : on" "$W/$case/v1_tagged.log"; then
+        # A46: a binary built with MKL is held to the reference as check_numerics holds it (its README): the _noDiv
+        # and density-matrix files within 1e-12 of the reference relative to it (absolute where it is 0), _wiDiv not judged
+        python3 - "$OLDREF/$case" "$W/$case/v1_tagged" <<'PY' || ok=0
+import os, sys
+ref, run = sys.argv[1:3]
+bad = 0
+for f in sorted(os.listdir(ref)):
+    if f.endswith('_wiDiv'): continue
+    a = [complex(t) for l in open(os.path.join(run, f)) for t in l.split()]
+    b = [complex(t) for l in open(os.path.join(ref, f)) for t in l.split()]
+    w = max((abs(x - y) / (abs(y) or 1.0) for x, y in zip(a, b)), default=0.0) if len(a) == len(b) else float('inf')
+    if not w <= 1e-12: print(f'    {os.path.basename(ref)}: {f} differs from the reference by {w:.1e} (relative, MKL build)'); bad = 1
+sys.exit(bad)
+PY
+        what="and $(basename "$OLDREF") within 1e-12 relative on _noDiv/dm (MKL build)"
+    elif [ -d "$OLDREF/$case" ]; then
         for f in "$OLDREF/$case"/*; do cmp -s "$f" "$W/$case/v1_tagged/$(basename "$f")" || { echo "    $case: $(basename "$f") differs from $(basename "$OLDREF")"; ok=0; }; done
         what="and the bytes of $(basename "$OLDREF")"
     else what="($(basename "$OLDREF") is gone: only the self-contained half)"; fi

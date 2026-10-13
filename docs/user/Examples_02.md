@@ -23,9 +23,14 @@ table's value in a gyro file they are byte-identical). 4 to 60 s each.
 ```
 {
     # Config (General)
-    "method"        : "CCE", 
+    "method"        : "cCCE", 
     "quantity"      : "coherence",
-    "qubitfile"     : "../bath/bath_Diamond_NV_natab_defect",
+    "Qubit"         : {
+        "file"          : "../bath/bath_Diamond_NV_natab_defect",
+        # Qubit
+        "alphams"      : 1,
+        "betams"       : 0
+    },
     "gyrofile"      : "../bath/gyro_13C",
     "bathfile"      : ["../bath/bath_Diamond_NV_natab_1"],
     "order"         : 2,
@@ -35,12 +40,8 @@ table's value in a gyro file they are byte-identical). 4 to 60 s each.
     "deltat"        : 0.001,
     "nstep"         : 2000,
 
-    # Qubit 
-    "qalphams"     : 1,
-    "qbetams"      : 0,
-
     # Pulse
-    "npulse"      : 1,
+    "pulse"         : {"count": 1},
 
     # Output
     "outfile"     : "./results/CCE2_Diamond_NV_natab_1"

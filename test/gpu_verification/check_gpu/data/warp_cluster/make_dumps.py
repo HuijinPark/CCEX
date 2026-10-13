@@ -28,20 +28,20 @@ NATAB_G = ('Diamond_NV_natab_gcce', 'ccein_nstate1.json')
 P1_G = ('Diamond_NV_P1_10ppm_gcce', 'ccein_nstate1.json')
 NATAB_C = ('Diamond_NV_natab_cce', 'ccein_nstate1.json')
 CASES = {
-    'gcce_natab_single_hahn':        (NATAB_G, dict(order=3, npulse=1)),
-    'gcce_natab_single_cpmg2_dm':    (NATAB_G, dict(order=3, npulse=2, quantity='dm')),
-    'gcce_natab_single_ramsey_exact': (NATAB_G, dict(order=2, npulse=0, evolution_update='exact')),
-    'gcce_natab_ensemble_hahn':      (NATAB_G, dict(order=3, npulse=1, nstate=0)),
-    'gcce_natab_ensemble_cpmg3_dm':  (NATAB_G, dict(order=2, npulse=3, nstate=0, quantity='dm')),
-    'gcce_p1n14_single_hahn':        (P1_G, dict(order=1, npulse=1, p1n14=True)),
-    'gcce_p1n14_ensemble_cpmg2':     (P1_G, dict(order=1, npulse=2, nstate=0, p1n14=True)),
+    'gcce_natab_single_hahn':        (NATAB_G, dict(order=3, pulse={'count': 1})),
+    'gcce_natab_single_cpmg2_dm':    (NATAB_G, dict(order=3, pulse={'count': 2}, quantity='dm')),
+    'gcce_natab_single_ramsey_exact': (NATAB_G, dict(order=2, pulse={'count': 0}, evolution_update='exact')),
+    'gcce_natab_ensemble_hahn':      (NATAB_G, dict(order=3, pulse={'count': 1}, nstate=0)),
+    'gcce_natab_ensemble_cpmg3_dm':  (NATAB_G, dict(order=2, pulse={'count': 3}, nstate=0, quantity='dm')),
+    'gcce_p1n14_single_hahn':        (P1_G, dict(order=1, pulse={'count': 1}, p1n14=True)),
+    'gcce_p1n14_ensemble_cpmg2':     (P1_G, dict(order=1, pulse={'count': 2}, nstate=0, p1n14=True)),
     'gcce_hbn_single_hahn_dm':       ('hbn', dict(order=2, rbath=30, rdip=8, nstate=1, seed=20261012)),
     'gcce_hbn_ensemble_hahn':        ('hbn', dict(order=2, rbath=30, rdip=8, nstate=0, quantity='coherence')),
-    'cce_natab_single_hahn':         (NATAB_C, dict(order=4, npulse=1)),
-    'cce_natab_single_cpmg3':        (NATAB_C, dict(order=4, npulse=3)),
-    'cce_natab_ensemble_hahn':       (NATAB_C, dict(order=4, npulse=1, nstate=0)),
-    'cce_natab_ensemble_cpmg2_exact': (NATAB_C, dict(order=4, npulse=2, nstate=0, evolution_update='exact')),
-    'cce_natab_ensemble_ramsey':     (NATAB_C, dict(order=4, npulse=0, nstate=0)),
+    'cce_natab_single_hahn':         (NATAB_C, dict(order=4, pulse={'count': 1})),
+    'cce_natab_single_cpmg3':        (NATAB_C, dict(order=4, pulse={'count': 3})),
+    'cce_natab_ensemble_hahn':       (NATAB_C, dict(order=4, pulse={'count': 1}, nstate=0)),
+    'cce_natab_ensemble_cpmg2_exact': (NATAB_C, dict(order=4, pulse={'count': 2}, nstate=0, evolution_update='exact')),
+    'cce_natab_ensemble_ramsey':     (NATAB_C, dict(order=4, pulse={'count': 0}, nstate=0)),
 }
 
 
@@ -72,9 +72,9 @@ def fixture(binary, out):
             args = []
         cfg.update(change)
         if p1n14:
-            d = cfg['Defect'][0]
+            d = cfg['Defect']['species'][0]
             d['types'], d['spins'], d['gyros'] = ['14N'], [1.0], [1.9337792]
-            for h in d['hypf']: h[1] = '14N'
+            for h in d['hyperfine']: h[1] = '14N'
         cfg['nstep'] = 40
         cfg['outfile'] = './out'
         json.dump(cfg, open(os.path.join(run, 'in.json'), 'w'), indent=1)

@@ -7,99 +7,106 @@
    },
    "error": "missing MPI probe response",
    "input": {
-    "Defect": [
-     {
-      "apprx": true,
-      "detuning": {
-       "unit": "MHz",
-       "values": [
-        [
-         1,
-         "e",
-         84.946496
-        ],
-        [
-         2,
-         "e",
-         84.946496
-        ],
-        [
-         3,
-         "e",
-         84.946496
-        ],
-        [
-         4,
-         "e",
-         0.0
-        ],
-        [
-         5,
-         "e",
-         0.0
-        ],
-        [
-         6,
-         "e",
-         0.0
-        ],
-        [
-         7,
-         "e",
-         -84.946496
-        ],
-        [
-         8,
-         "e",
-         -84.946496
-        ],
-        [
-         9,
-         "e",
-         -84.946496
-        ],
-        [
-         10,
-         "e",
-         114.0264
-        ],
-        [
-         11,
-         "e",
-         0.0
-        ],
-        [
-         12,
-         "e",
-         -114.0264
+    "Defect": {
+     "species": [
+      {
+       "detuning": {
+        "unit": "MHz",
+        "values": [
+         [
+          1,
+          "e",
+          84.946496
+         ],
+         [
+          2,
+          "e",
+          84.946496
+         ],
+         [
+          3,
+          "e",
+          84.946496
+         ],
+         [
+          4,
+          "e",
+          0.0
+         ],
+         [
+          5,
+          "e",
+          0.0
+         ],
+         [
+          6,
+          "e",
+          0.0
+         ],
+         [
+          7,
+          "e",
+          -84.946496
+         ],
+         [
+          8,
+          "e",
+          -84.946496
+         ],
+         [
+          9,
+          "e",
+          -84.946496
+         ],
+         [
+          10,
+          "e",
+          114.0264
+         ],
+         [
+          11,
+          "e",
+          0.0
+         ],
+         [
+          12,
+          "e",
+          -114.0264
+         ]
         ]
-       ]
-      },
-      "dfname": "P1",
-      "naddspin": 0,
-      "navaax": 12
-     }
-    ],
+       },
+       "n_configurations": 12,
+       "n_nuclear_spins": 0,
+       "name": "P1"
+      }
+     ]
+    },
+    "Qubit": {
+     "alphams": -1,
+     "betams": 0,
+     "file": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect"
+    },
     "backend": "cpu",
     "bathfile": [
      "test/cluster_verification/check_adaptive/regression/inputs/bath_p1_6"
     ],
     "bfield": 292,
-    "bundle_max_dim": 4,
-    "bundle_merge_cutoff": 0,
-    "cluster_mode": "adaptive",
+    "bundle": {
+     "max_dim": 4,
+     "merge_cutoff": 0
+    },
+    "cluster_mode": "bundle",
     "deltat": 0.0005,
     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
-    "method": "CCE",
-    "npulse": 1,
+    "method": "cCCE",
     "nstate": 5,
     "nstep": 30,
     "order": 2,
     "outfile": "bin/adaptive_ensemble",
-    "qalphams": -1,
-    "qbetams": 0,
+    "pulse": {
+     "count": 1
+    },
     "quantity": "coherence",
-    "qubitfile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect",
     "rbath": 38,
     "rdip": 100,
     "savemode": "coherence",

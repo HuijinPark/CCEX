@@ -12,7 +12,7 @@ import threading
 import time
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'gpu_verification/check_gpu'))
-from benchmark import REPO,compare,parse_profiles
+from benchmark import REPO,compare,parse_profiles,get,put
 from check_baths import save,sha
 from inventory_sweep import resolve
 
@@ -125,7 +125,7 @@ def execute(config,directory,binary,ranks,timeout=1800,monitor=True):
             gnu_time_maxrss_kib=int(rss[1]) if rss else None,gpu_sampled_peak_mib=max(samples) if samples else None,
             gpu_baseline_mib=samples[0] if samples else None,gpu_samples=len(samples),sampling_interval_s=.1,
             note='cgroup RSS/anon and total usage include the Python runner/job step; total usage includes file cache. GNU time maxrss is not the summed simultaneous MPI RSS. GPU samples are whole-device usage.'))
-    result.update(cluster_data(log,config['sK']))
+    result.update(cluster_data(log,get(config,'pcce.partition_size')))
     result['raw_sha256']={p.name:sha(p) for suffix in ['*_noDiv','*_wiDiv'] for p in directory.glob(suffix)}
     save(existing,result)
     return result
@@ -141,8 +141,8 @@ def check(execution,inventory):
 
 
 def config_for(family,fixture,order,size,pulses,steps=129,seed=None,state=0):
-    return dict(resolve(family['config'],fixture),order=order,sK=size,npulse=pulses,nstep=steps,
-                deltat=family['end_ms']/(steps-1),seed=family['config']['seed'] if seed is None else seed,nstate=state)
+    return put(resolve(family['config'],fixture),{'order':order,'pcce.partition_size':size,'pulse.count':pulses,'nstep':steps,
+                'deltat':family['end_ms']/(steps-1),'seed':family['config']['seed'] if seed is None else seed,'nstate':state})
 
 
 def measure(config,directory,ranks,repeats,binaries,inventory=None):

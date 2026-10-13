@@ -29,19 +29,19 @@ $ mpirun -n 4 /usr/local/bin/mycode -f data/input.json
 - -m : Method (See [method](InputFile_General.md#tag_method))  
 - -q : Quantity (See [quantity](InputFile_General.md#tag_quantity))   
 - -I : File path to set the position of bath spins (See [bathfiles](InputFile_General.md#tag_bathfile))  
-- -s : File path to set the spin state of bath spins (See [statefile](InputFile_General.md#tag_statefile))   
-- -a : File path to set principal axies of the defects in the bath (See [avaaxfile](InputFile_General.md#tag_avaaxfile))  
-- -S : File path to set the spin state of on-site spins of the defects in the bath (See [exstatefile](InputFile_General.md#tag_exstatefile))  
+- -s : File path to set the spin state of bath spins (See [bath_state_file](InputFile_General.md#tag_bath_state_file))   
+- -a : File path to set principal axies of the defects in the bath (See [Defect.axis_file](InputFile_Defect.md#tag_df_axis_file))  
+- -S : File path to set the spin state of on-site spins of the defects in the bath (See [Defect.state_file](InputFile_Defect.md#tag_df_state_file))  
 - -N : The number of state configuration to do time ensemble average (See [nstate](InputFile_General.md#tag_nstate))  
 - -B : Magnetic field in z direction (Unit : G) (See [bfield](InputFile_General.md#tag_bfield))  
 - -o : Result file path (See [outfile](InputFile_Output.md#tag_outfile))  
 - -v : Verbose output (longer log)  
-- -P : Write the cluster plan to `<outfile>.clusters.json` and stop before the dynamics (CCE, gCCE and pCCE with explicit connections)  
+- -P : Write the cluster plan to `<outfile>.clusters.json` and stop before the dynamics (cCCE, gCCE and cCCE with `cluster_mode` pcce and explicit connections)  
 
 Three run modes take the input file and replace the ordinary calculation:
 - --auto_conv -f FILE : The automatic convergence; the same as `-f FILE` with an `auto_convergence` block (See [Automatic convergence tags](InputFile_AutoConvergence.md)). It takes no other option.  
 - --auto_status -f FILE : Where that automatic convergence is (running, interrupted, stopped or how it ended); nothing is computed.  
-- --adaptive ... : The adaptive refinement; every word after `--adaptive` goes to it (e.g. `--adaptive --input in.json --output DIR ...`). An `Adaptive` block in the input asks for the same; giving both is refused (See [the `Adaptive` block](../methods/adaptive-input-block.md)).  
+- --adaptive ... : The adaptive refinement; every word after `--adaptive` goes to it (e.g. `--adaptive --input in.json --output DIR ...`). An `adaptive` block in the input asks for the same; giving both is refused (See [the `adaptive` block](../methods/adaptive-input-block.md)).  
 
 **About** **options**
 

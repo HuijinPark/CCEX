@@ -160,10 +160,10 @@ void writeCache(const char* path,const std::string& head,const Partition_info* p
 
 void Config_validatePcceCache(const Config* cnf){
     if(!strcasecmp(cnf->pcce_cache_mode,"off"))return;
-    if(strcasecmp(cnf->method,"pcce"))abortCache("enabled cache requires method=pCCE");
+    if(strcasecmp(cnf->method,"pcce"))abortCache("enabled cache requires cluster_mode pcce");
     if(strcasecmp(cnf->pcce_partition,"deterministic"))
-        abortCache("enabled cache requires pcce_partition=deterministic; legacy consumes the bath-state RNG");
-    if(!cnf->pcce_cache_file[0])abortCache("enabled cache requires pcce_cache_file");
+        abortCache("enabled cache requires pcce.partition deterministic; legacy consumes the bath-state RNG");
+    if(!cnf->pcce_cache_file[0])abortCache("enabled cache requires pcce.cache.file");
 }
 
 std::string pccePartitionCacheIdentity(BathArray* ba,const Partition_info* p,const Cluster* cls,const Config* config){

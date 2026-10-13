@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # Environment validated on ssh gpu (idm4-gpu); source from the Slurm jobs.
+# The jobs run with --export=NONE (idm's login modules, intel/anaconda, are not passed to the GPU node; 2026-10-13, idm4-gpu
+# is the gpu partition of idm's Slurm), so the module function comes from modules.sh and the list starts empty.
 if ! type module >/dev/null 2>&1; then
     source /etc/profile.d/modules.sh
 fi
+module purge
 module load gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-12.8 python/python3.13.10
 # do_compile.sh gpu builds the C++ with icpx when oneAPI is installed, so the binaries need
 # its runtime libraries; setvars.sh also puts Intel MPI first on PATH, which is undone here

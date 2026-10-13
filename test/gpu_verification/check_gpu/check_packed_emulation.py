@@ -56,7 +56,7 @@ def main():
     binary = build(out)
     case = INPUTS/'Diamond_NV_natab_gcce'
     original = json.loads((case/'inputfiles/ccein_nstate0.json').read_text())
-    original.update(method='CCE', order=2, nstep=30, profile=True)
+    original.update(method='cCCE', order=2, nstep=30, profile=True)
     original['gyrofile'] = str((case/original['gyrofile']).resolve())
     original['bathfile'] = [str((case/p).resolve()) for p in original['bathfile']]
     mpirun = os.environ.get('CCEX_MPI', 'mpirun')

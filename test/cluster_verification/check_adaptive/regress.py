@@ -10,7 +10,9 @@ Each case in regression/cases.json is run for real by the C++ driver
 what it decided - its exit status and its summary, one per condition where there
 are several - has to be what regression/golden/ holds. A decision has to match
 exactly; a float may move by 1e-9, which is what was settled on 2026-09-18 for the
-comparison against Python that this replaces.
+comparison against Python that this replaces. A case whose bin/main.out runs came from a
+binary built with MKL (their run.log says "MKL for large clusters : on"; A46) keeps the
+decisions exact and lets a float move by 1e-5 of the golden value (close() below).
 
 What is measured rather than decided is left out before comparing: elapsed times,
 the seconds a policy records beside a D^3 price, and the hash of the binary (every
@@ -66,23 +68,44 @@ def timed_out_alike(x):
     return x
 
 
-def differences(a, b, at=''):
+MKL_ON = 'MKL for large clusters : on'      # the banner line of a binary built with MKL (A46)
+
+
+def built_with_mkl(out):
+    """Whether the bin/main.out runs of this case came from a binary built with MKL: their run logs say so."""
+    return any(MKL_ON in p.read_text(errors='replace') for p in out.rglob('*.log'))
+
+
+def close(a, b, mkl):
+    """A float of golden (a) against this run's (b). Without MKL: within 1e-9 relative (to max(1, |a|, |b|)). With MKL
+    (A46, user decision 2026-10-13): the library moves the last digits of the large clusters, and the policies' error
+    numbers (differences of nearly equal coherences) carry that up to 4.4e-6 relative (WSL, 8 of 33 cases); so within
+    1e-5 of |a|, and never tighter than 1e-12 absolute (a = 0, and round-off-sized values: regroup's
+    max_abs_difference_from_prediction is 1.0e-15 in golden and 8.9e-16 with MKL). Decisions - every int, bool and
+    string - stay exact either way."""
+    if a == b or (math.isnan(a) and math.isnan(b)):
+        return True
+    if mkl:
+        return abs(a-b) <= max(1e-5*abs(a), 1e-12)
+    return abs(a-b) <= 1e-9*max(1., abs(a), abs(b))
+
+
+def differences(a, b, at='', mkl=False):
     if isinstance(a, dict) and isinstance(b, dict):
         for k in sorted(set(a) | set(b)):
             if k not in a or k not in b:
                 yield f'{at}/{k}: only in {"golden" if k in a else "this run"}'
             else:
-                yield from differences(a[k], b[k], f'{at}/{k}')
+                yield from differences(a[k], b[k], f'{at}/{k}', mkl)
     elif isinstance(a, list) and isinstance(b, list):
         if len(a) != len(b):
             yield f'{at}: {len(a)} entries in golden, {len(b)} in this run'
         else:
             for i, (x, y) in enumerate(zip(a, b)):
-                yield from differences(x, y, f'{at}[{i}]')
+                yield from differences(x, y, f'{at}[{i}]', mkl)
     elif isinstance(a, float) or isinstance(b, float):
         ok = isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool) \
-            and not isinstance(b, bool) and (a == b or (math.isnan(a) and math.isnan(b)) or
-                                             abs(a-b) <= 1e-9*max(1., abs(a), abs(b)))
+            and not isinstance(b, bool) and close(a, b, mkl)
         if not ok:
             yield f'{at}: {a!r} in golden, {b!r} in this run'
     elif a != b or type(a) is not type(b):
@@ -109,7 +132,7 @@ def run(case, work):
     told = dict(returncode=done.returncode, summaries={})
     for path in sorted(out.rglob('summary.json')):
         told['summaries'][str(path.relative_to(out))] = normalized(json.loads(path.read_text()), swaps)
-    return told
+    return told, built_with_mkl(out)
 
 
 def main(argv):
@@ -126,15 +149,17 @@ def main(argv):
     failed = 0
     for case in cases:
         start = time.time()
-        told = run(case, work)
+        told, mkl = run(case, work)
         golden = SET/'golden'/f"{case['name']}.json"
         if update:
             golden.write_text(json.dumps(told, indent=1, sort_keys=True)+'\n')
             print(f"{case['name']:30} written   {time.time()-start:5.1f}s"); continue
         if not golden.is_file():
             print(f"{case['name']:30} NO GOLDEN FILE"); failed += 1; continue
-        found = list(differences(timed_out_alike(json.loads(golden.read_text())), timed_out_alike(json.loads(json.dumps(told)))))
-        print(f"{case['name']:30} {'ok' if not found else 'DIFFERS':8} {time.time()-start:5.1f}s")
+        found = list(differences(timed_out_alike(json.loads(golden.read_text())), timed_out_alike(json.loads(json.dumps(told))),
+                                 mkl=mkl))
+        print(f"{case['name']:30} {'ok' if not found else 'DIFFERS':8} {time.time()-start:5.1f}s"
+              + ('  (MKL build: floats within 1e-5 relative)' if mkl else ''))
         for line in found[:8]:
             print('    '+line)
         failed += bool(found)

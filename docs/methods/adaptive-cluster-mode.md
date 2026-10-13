@@ -10,15 +10,15 @@
 지금 없다: `order`는 입력 값 그대로이며, 차수를 올리던 auto-partition은 2026-10-10에 뺐다.
 아래의 초기 예제·검증 기록은 각 검사 당시 조건을 유지하며, 옛 옵션 이름을 그대로 둔다.
 일반 입력은 `rdip` 유무로 연결 방식을 선택한다. 생략하면 제한된 coherence 검사 후 약한 연결을 생략한다.
-차원 상한은 **`bundle_max_dim` 하나**이며 필수다. cluster 차원은 이 상한과
+차원 상한은 **`bundle.max_dim` 하나**이며 필수다. cluster 차원은 이 상한과
 `order`에서 따라 나오는 값이고 별도 옵션으로 받지 않는다.
 
-**계산 결과로 bundle을 다시 묶으려면** 입력에 `"Adaptive": {"policy": "merge", …}` 블록을 넣는다
-([`Adaptive` 블록](adaptive-input-block.md); `policy`는 생략해도 merge; 2026-09-20 전에는 `scripts/adaptive_refine.py`).
+**계산 결과로 bundle을 다시 묶으려면** 입력에 `"adaptive": {"policy": "merge", …}` 블록을 넣는다
+([`adaptive` 블록](adaptive-input-block.md); `policy`는 생략해도 merge; 2026-09-20 전에는 `scripts/adaptive_refine.py`).
 정책은 merge 하나다: bundle 쌍을 시험 계산해 국소 오차를 가장 많이 줄이는 합치기를 한 번에 하나씩 채택한다
 (선택: `prefer_physical`, `hub_candidates`). 정확도로 분할·차수를 자동 선택하던 auto-partition과
 error-gated, budgeted, cost-preserving은 2026-10-10에 뺐다((internal notes) B5).
-일반 `cluster_mode=adaptive`만으로 이 탐색이 시작되지는 않는다.
+일반 `cluster_mode=bundle`만으로 이 탐색이 시작되지는 않는다.
 
 ## 후속 정확도 검증의 시간 범위
 
@@ -36,7 +36,7 @@ error-gated, budgeted, cost-preserving은 2026-10-10에 뺐다((internal notes) 
 50점, `deltat=0.003 ms`, 즉 0–0.147 ms 전체를 사용했다.
 
 2026-09-15 사용자 결정(잠정): 후속 계산의 판정 허용오차는 절대 `atol=1e-3`, `rtol=0`이다.
-기록만 했으며, 실행할 때 `Adaptive` 블록에 `"atol": 1e-3, "rtol": 0`을 명시한다. 그 필수 키와
+기록만 했으며, 실행할 때 `adaptive` 블록에 `"atol": 1e-3, "rtol": 0`을 명시한다. 그 필수 키와
 rdip 생략 모드의 내부 상수(`include/adaptive_defaults.h`, `1e-7`/`1e-5`)는 바꾸지 않았다. 절단 민감도(`rbath`·`rdip`)가
 이 값보다 크면 분할보다 절단 수렴을 먼저 본다. 최종값은 나중에 다시 정한다.
 
@@ -50,18 +50,18 @@ rdip 생략 모드의 내부 상수(`include/adaptive_defaults.h`, `1e-7`/`1e-5`
 
 추가 기능: 계산 결과를 이용한 분할 개선 도구 (archive/adaptive-feedback-20260912.md)를 통해
 기존 초기 분할을 시험 계산으로 검사하고 병합할 수 있다(merge 정책). 일반 adaptive 실행 자체가
-자동으로 이 반복 탐색을 수행하는 것은 아니며 입력에 `Adaptive` 블록을 넣어야 시작된다.
+자동으로 이 반복 탐색을 수행하는 것은 아니며 입력에 `adaptive` 블록을 넣어야 시작된다.
 
-2026-09-12 첫 구현. `cluster_mode=adaptive`는 실제 결합과 스핀 양자수로 서로 다른
-크기의 그룹을 만든 뒤 그룹 단위 CCE를 계산한다. 기존 고정 `sK` pCCE와 독립된 경로다.
-현재 **group order 1·2·3·4·5 이상**, `method=cce/gcce`, `quantity=coherence`, ensemble/single,
+2026-09-12 첫 구현. `cluster_mode=bundle`는 실제 결합과 스핀 양자수로 서로 다른
+크기의 그룹을 만든 뒤 그룹 단위 CCE를 계산한다. 기존 고정 `pcce.partition_size` pCCE와 독립된 경로다.
+현재 **group order 1·2·3·4·5 이상**, `method=cCCE/gCCE`, `quantity=coherence`, ensemble/single,
 기존 CPU/CUDA/auto 실행을 지원한다. gCCE의 propagator/evolution 제약은 기존과 같다.
 고차 실행은 행렬 차원·전개 개수·탐색량 상한을 만족해야 한다.
 
 ## 입력: rdip를 쓰거나 생략하기
 
 일반 사용에서는 **`rdip`의 유무로 연결 방식을 선택**한다. bath·qubit·자기장·펄스·시간
-설정은 기존대로 사용하고, 가변 분할에는 `cluster_mode`, `order`, `bundle_max_dim`을 넣는다.
+설정은 기존대로 사용하고, 가변 분할에는 `cluster_mode`, `order`, `bundle.max_dim`을 넣는다.
 
 | 입력 | 연결 선택 | 추가 coherence 검사 |
 |---|---|---|
@@ -72,9 +72,9 @@ rdip 생략 모드의 내부 상수(`include/adaptive_defaults.h`, `1e-7`/`1e-5`
 
 ```json
 {
-  "cluster_mode": "adaptive",
+  "cluster_mode": "bundle",
   "order": 2,
-  "bundle_max_dim": 16,
+  "bundle": {"max_dim": 16},
   "rdip": 30
 }
 ```
@@ -83,9 +83,9 @@ rdip 생략 모드의 내부 상수(`include/adaptive_defaults.h`, `1e-7`/`1e-5`
 
 ```json
 {
-  "cluster_mode": "adaptive",
+  "cluster_mode": "bundle",
   "order": 2,
-  "bundle_max_dim": 16
+  "bundle": {"max_dim": 16}
 }
 ```
 
@@ -101,18 +101,17 @@ mpirun -n 2 bin/main.out -f test/cluster_verification/check_bundle/checked_ensem
 입력의 경로가 저장소 최상위 기준이므로 거기서 실행한다. 로그의 `[adaptive] algorithm=`이 거리 방식은
 `coupling-bound-v1`, rdip 생략 방식은 `coherence-checked-links-v1`이다. `checked_ensemble.json`은
 6 site가 bundle 하나에 다 들어가 `[adaptive-check] status=single_bundle_no_links`로 끝난다. 연결 생략 검사가
-실제로 도는 모습은 `bundle_max_dim`을 2로 줄이면 보인다(이 bath에서는 `status=base_unconverged_links_restored`,
+실제로 도는 모습은 `bundle.max_dim`을 2로 줄이면 보인다(이 bath에서는 `status=base_unconverged_links_restored`,
 2026-09-25 확인).
 
-`order`는 한 cluster에 들어가는 최대 **bundle 수**, `bundle_max_dim`은 **bundle 하나**의
+`order`는 한 cluster에 들어가는 최대 **bundle 수**, `bundle.max_dim`은 **bundle 하나**의
 최대 차원이다. 스핀 수를 고정하거나 차원 상한을 `order`로 균등 분할하지 않는다.
 cluster 차원은 bundle 차원의 곱(gCCE는 중심스핀 차원도 포함)으로 따라 나오며, 감당할 수
 없으면 실행 중에 거부된다. 이것은 차원 제한을 만족하는 분할이며 정확도 판정은 아니다.
 
 `rbath`는 전체 bath를 선택한다. `rdip`는 양의 유한한 거리이며 `null`이나 `0` 대신 **키를 생략**한다.
-거리 연결은 서로 다른 site의 실제 구성 스핀 중 `rdipcut < r < rdip`를 만족하는 쌍이 있으면
-유지한다. defect 부가 스핀도 포함하므로 pCCE의 그룹 중심 거리와 의미가 다르다.
-`rdipcut`만 지정하는 입력은 새 생략 방식에서 거절한다.
+거리 연결은 서로 다른 site의 실제 구성 스핀 중 `r < rdip`(`rdip`가 `[inner, outer]`이면 `inner < r < outer`)를
+만족하는 쌍이 있으면 유지한다. defect 부가 스핀도 포함하므로 pCCE의 그룹 중심 거리와 의미가 다르다.
 
 ### rdip 생략 시 무엇을 확인하나
 
@@ -156,23 +155,23 @@ cluster 차원은 bundle 차원의 곱(gCCE는 중심스핀 차원도 포함)으
 
 | 옵션 | 의미 및 기본값 |
 |---|---|
-| `bundle_max_dim` | **필수** 양의 정수. bundle 하나의 차원 상한 |
-| `bundle_merge_cutoff` | 병합 후보의 최소 결합 강도, 기본 0 rad/ms |
-| `expansion_max_clusters` | 전개 목록 한도, 기본 200,000 |
-| `expansion_max_work` | 전개/차원 탐색 작업량 한도, 기본 20,000,000 |
-| `bundle_connections=distance` | 기존 거리 방식, `rdip` 필수 |
-| `bundle_connections=auto` | 기존 수동 제외 예산 방식, `bundle_connection_budget` 필수 |
+| `bundle.max_dim` | **필수** 양의 정수. bundle 하나의 차원 상한 |
+| `bundle.merge_cutoff` | 병합 후보의 최소 결합 강도, 기본 0 rad/ms |
+| `bundle.max_clusters` | 전개 목록 한도, 기본 200,000 |
+| `bundle.max_work` | 전개/차원 탐색 작업량 한도, 기본 20,000,000 |
+| `bundle.connections=distance` | 기존 거리 방식, `rdip` 필수 |
+| `bundle.connections=auto` | 기존 수동 제외 예산 방식, `bundle.connection_budget` 필수 |
 
 명시적인 기존 `auto`는 **새 coherence 검사 방식과 다르다**. 위 두 일반 입력은
-`bundle_connections`를 생략한다. 내부 로그의 `checked`는 rdip 생략을 파서가 해석한 값이며
+`bundle.connections`를 생략한다. 내부 로그의 `checked`는 rdip 생략을 파서가 해석한 값이며
 사용자가 넣을 새 옵션이 아니다. explicit legacy 방식에 대해서는 아래 별도 설명을 참고한다.
 
-`adaptive_work_file`의 plan/probe/fixed-groups 프로토콜과 `Adaptive` 블록의 재분할 정책은
+`adaptive.work_file`의 plan/probe/fixed-groups 프로토콜과 `adaptive` 블록의 재분할 정책은
 별도 검증 정책을 사용한다. 여기에는 `rdip` 또는 기존 연결 설정을 명시해야 한다.
 새 rdip 생략 자동 검사는 CCEX를 직접 실행하면 된다.
 
-`sK`, `max_trial`, `max_iter`, `kmeans_pp`, `iter_detail`, `pcce_partition`, `pcce_connections`, `pcce_cache_file`은
-adaptive에서 거절하고 `pcce_cache_mode=off`, `nk=0`만 지원한다.
+`pcce` 블록(`partition_size`, `trials`, `max_iterations`, `kmeans_pp`, `print_trials`, `partition`, `connections`, `cache`)은
+`cluster_mode` pcce에만 속하므로 bundle에서는 거절하고, `max_clusters_per_order`는 0만 지원한다.
 
 </details>
 
@@ -210,19 +209,21 @@ group order 1에서는 모든 개별 그룹의 지수가 +1이다. 이 지수를
 
 ## 기존 명시 auto 방식: 수동 제외 예산
 
-`test/cluster_verification/check_bundle/auto_ensemble.json`은 기존 명시 `bundle_connections=auto`의 예제다.
+`test/cluster_verification/check_bundle/auto_ensemble.json`은 기존 명시 `bundle.connections=auto`의 예제다.
 새 rdip 생략 자동 검사에는 위의 `checked_ensemble.json`을 사용한다. 기존 bath·qubit·시간·pulse
 설정을 유지하면서 다음 옵션을 지정하고 `rdip`를 생략한다.
 
 ```json
 {
-  "cluster_mode": "adaptive",
-  "method": "cce",
+  "method": "cCCE",
+  "cluster_mode": "bundle",
   "order": 2,
-  "bundle_max_dim": 64,
-  "bundle_merge_cutoff": 1.0,
-  "bundle_connections": "auto",
-  "bundle_connection_budget": 0.01
+  "bundle": {
+    "max_dim": 64,
+    "merge_cutoff": 1.0,
+    "connections": "auto",
+    "connection_budget": 0.01
+  }
 }
 ```
 
@@ -232,13 +233,13 @@ group order 1에서는 모든 개별 그룹의 지수가 +1이다. 이 지수를
 
 ```text
 omitted_score = tmax * sum(w_AB for omitted group pairs)
-omitted_score <= bundle_connection_budget
+omitted_score <= bundle.connection_budget
 ```
 
 1. 모든 선택 site 쌍의 결합을 평가하고 강한 결합부터 차원 상한 안에서 병합한다.
    병합으로 이웃 그룹 쌍이 너무 커져 제외해야 하는 결합도 예산에 포함한다.
    그 때문에 새 예산 초과가 생기는 병합은 거절한다.
-2. 완성된 그룹 사이의 결합을 합산한다. `rdip`/`rdipcut` 거리 조건 또는 행렬 차원
+2. 완성된 그룹 사이의 결합을 합산한다. `rdip` 거리 조건(안쪽·바깥 반지름) 또는 행렬 차원
    상한 때문에 계산할 수 없는 그룹 쌍의 결합부터 제외 예산에 넣는다.
    그룹 쌍에 거리 조건을 만족하는 구성원 쌍이 하나라도 있으면 거리 후보로 인정한다.
    이 후보의 점수에는 거리 밖의 다른 교차 구성원 결합도 포함한다.
@@ -250,8 +251,8 @@ omitted_score <= bundle_connection_budget
 예산 0은 양의 결합을 제외하지 않는 엄격한 비교 기준이다. 차원이나 거리 제한으로
 이를 만족할 수 없으면 오류다. `tmax=0`인 계산에서는 제외 점수도 0이다.
 group order 1은 모든 잔여 그룹 간 연결을 제외하므로, 하나의 그룹으로 합쳐지지
-않으면 작은 예산에서 거절될 수 있다. `order`, 차원 상한 `bundle_max_dim`(필수, 별도 cluster 상한은 없다)과
-제외 예산은 사용자가 지정한다. 병합 cutoff `bundle_merge_cutoff`는 생략할 수 있다. 어떤 bath에도 적합한 예산 기본값을 넣지는 않았다.
+않으면 작은 예산에서 거절될 수 있다. `order`, 차원 상한 `bundle.max_dim`(필수, 별도 cluster 상한은 없다)과
+제외 예산은 사용자가 지정한다. 병합 cutoff `bundle.merge_cutoff`는 생략할 수 있다. 어떤 bath에도 적합한 예산 기본값을 넣지는 않았다.
 
 예제의 6스핀, pulse 1, 0–0.04 ms 조건은 3/2/1스핀 그룹을 만든다. 예산 0이면
 그룹 간 연결 3개를 유지하고, 예산 0.01이면 가장 강한 연결 1개를 유지한다.
@@ -277,11 +278,11 @@ group order 절단 오차와 곱·나눗셈의 수치 불안정성은 별개다.
 전파하는 비영 지수 항 수와 최대 site 수를 출력한다. `[profile]`의 차원은 defect
 및 gCCE qubit까지 반영한 실제 행렬 차원이다.
 
-기존 명시 `bundle_connections=auto`에서는 `[adaptive-connections]`에 유지/제외 그룹 쌍 수, 제외 점수, 예산,
+기존 명시 `bundle.connections=auto`에서는 `[adaptive-connections]`에 유지/제외 그룹 쌍 수, 제외 점수, 예산,
 거리·차원으로 제외한 점수와 예산 때문에 차단한 병합 수를 기록한다. `-v` 실행은
 `[adaptive-link]`에 선택된 그룹 ID 쌍과 결합 크기도 기록한다. 생략한 `rdip`는
 설정 출력에서 `unlimited`로 표시한다. `backend=auto`는 CPU/GPU 선택 옵션이며,
-`bundle_connections=auto`와 독립적이다.
+`bundle.connections=auto`와 독립적이다.
 
 초기 결합 기반 분할 자체는 아직 B·detuning·hyperfine·quadrupole에 따른 공명 특성을
 분할 중요도에 반영하지 않는다. 해당 항들의 기존 동역학 계산은 그대로 수행하며,
@@ -294,7 +295,7 @@ group order 절단 오차와 곱·나눗셈의 수치 불안정성은 별개다.
 
 ## 검증
 
-`bundle_connections=auto`의 추가 검사, 실제 bath 크기·연결 수·실행시간 및
+`bundle.connections=auto`의 추가 검사, 실제 bath 크기·연결 수·실행시간 및
 서버 작업 464/465 결과는 자동 연결 검증 보고서 (archive/adaptive-auto-connections-20260912.md)에 있다.
 아래 기록은 첫 거리 기반 adaptive 구현의 검증이다.
 
