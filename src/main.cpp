@@ -14,6 +14,7 @@
 // Simulators
 #include "../include/calculation/simulator.h"
 #include "../include/calculation/gpu/compute_backend.h"
+#include "../include/calculation/gpu/small_cluster_batch.h"
 #include "../include/clustering/bundle/bundle_cluster.h"
 #include "../include/clustering/bundle/bundle_work.h"
 #include "../include/clustering/bundle/bundle_connection_check.h"
@@ -152,14 +153,14 @@ void validatePulsesForMethod(Config* cnf, Pulse* pls) {
         if(rank==0) fprintf(stderr,"Error: method %s calculates every pulse as an ideal pi flip (X or Y, 180), "
                                    "but pulse %d of %s is %c %g. Use method gCCE for other rotations.\n",
                             cnf->method,i+1,pls->pulsename,axis,pls->pulse_angles[i]);
-        MPI_Abort(MPI_COMM_WORLD,1);
+        ccexRefuse();
     }
     // The CUDA ensemble path takes CPMG intervals the way the CPU one did.
     if(cnf->nstate==0 && !strcasecmp(pls->pulsename,"Manual") && strcasecmp(cnf->backend,"cpu")) {
         if(!strcasecmp(cnf->backend,"cuda")) {
             if(rank==0) fprintf(stderr,"Error: an ensemble (nstate 0) Manual sequence is calculated on the CPU only; "
                                        "set backend to cpu\n");
-            MPI_Abort(MPI_COMM_WORLD,1);
+            ccexRefuse();
         }
         if(rank==0) fprintf(stdout,"[backend] auto: an ensemble Manual sequence uses CPU\n");
         strcpy(cnf->backend,"cpu");
@@ -175,12 +176,12 @@ void validatePulsesForMethod(Config* cnf, Pulse* pls) {
 void validateHamiltonianForMethod(Config* cnf, QubitArray* qa, DefectArray* dfa) {
     if(!strcasecmp(cnf->method,"gcce") && cnf->hamiltonian_ccce_given) {
         if(rank==0) fprintf(stderr,"Error: hamiltonian.cCCE (knight, hfmedi, delta_A) belongs to method cCCE; this run is gCCE\n");
-        MPI_Abort(MPI_COMM_WORLD,1);
+        ccexRefuse();
     }
     if(!cnf->delta_A && (DefectArray_getNdefect(dfa) > 0 || QubitArray_getOverhaus(qa))) {
         if(rank==0) fprintf(stderr,"Error: hamiltonian.cCCE.delta_A false is for a bath of nuclear spins: not with Defect species "
                                    "or hamiltonian.common.qubit_bath_mean_field true\n");
-        MPI_Abort(MPI_COMM_WORLD,1);
+        ccexRefuse();
     }
     setClusterHyperfineMean(!cnf->delta_A);
 }
@@ -295,7 +296,7 @@ void applyStepConfig(const std::string& stepInput, const std::string& firstInput
     std::unique_ptr<cJSON,decltype(&cJSON_Delete)> a(cJSON_Parse(firstText),cJSON_Delete);
     std::unique_ptr<cJSON,decltype(&cJSON_Delete)> b(cJSON_Parse(stepText),cJSON_Delete);
     freeChar1d(&firstText); freeChar1d(&stepText);
-    if(!a || !b) { fprintf(stderr,"Error: refinement step input is not JSON\n"); exit(EXIT_FAILURE); }
+    if(!a || !b) { ccexRefusalPrint(stderr,"Error: refinement step input is not JSON\n"); ccexRefuse(); }
     for(cJSON* item=b->child; item; item=item->next) {
         bool allowed=false;
         for(const char* k : mutable_keys) if(!strcmp(item->string,k)) allowed=true;
@@ -305,9 +306,9 @@ void applyStepConfig(const std::string& stepInput, const std::string& firstInput
         const bool same = y && !strcmp(x,y);
         free(x); if(y) free(y);
         if(!same) {
-            fprintf(stderr,"Error: refinement step changed '%s', which the kept bath depends on\n",
+            ccexRefusalPrint(stderr,"Error: refinement step changed '%s', which the kept bath depends on\n",
                     item->string);
-            exit(EXIT_FAILURE);
+            ccexRefuse();
         }
     }
     cJSON* v;
@@ -333,8 +334,8 @@ static int commandLineInt(const char* text, const char* option){
     errno = 0; char* end = nullptr;
     const long value = std::strtol(text, &end, 10);
     if (end == text || *end != '\0' || errno == ERANGE || value < INT_MIN || value > INT_MAX){
-        fprintf(stderr, "Error: %s must be an integer, not \"%s\"\n", option, text);
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr, "Error: %s must be an integer, not \"%s\"\n", option, text);
+        ccexRefuse();
     }
     return (int)value;
 }
@@ -342,8 +343,8 @@ static double commandLineNumber(const char* text, const char* option){
     errno = 0; char* end = nullptr;
     const double value = std::strtod(text, &end);
     if (end == text || *end != '\0' || errno == ERANGE || !std::isfinite(value)){
-        fprintf(stderr, "Error: %s must be a finite number, not \"%s\"\n", option, text);
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr, "Error: %s must be a finite number, not \"%s\"\n", option, text);
+        ccexRefuse();
     }
     return value;
 }
@@ -659,8 +660,8 @@ int main(int argc, char* argv[]){
 
                 // check if the file exists
                 if (access(fccein, F_OK) == -1){
-                    fprintf(stderr, "Error: Option file does NOT exist\n\n");
-                    exit(EXIT_FAILURE);
+                    ccexRefusalPrint(stderr, "Error: Option file does NOT exist\n\n");
+                    ccexRefuse();
                 }
 
                 // read the input file
@@ -785,15 +786,15 @@ int main(int argc, char* argv[]){
                 exit(EXIT_SUCCESS);
                 break;
             default:
-                fprintf(stderr, "Error: unknown option\n");
-                exit(EXIT_FAILURE);
+                ccexRefusalPrint(stderr, "Error: unknown option\n");
+                ccexRefuse();
         }   
     }
     }
     
     if (fccein == NULL){
-        fprintf(stderr, "Error: input file is required\n");
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr, "Error: input file is required\n");
+        ccexRefuse();
     }
 
     // Every option source has been applied by here -- the input file (read from case 'f'
@@ -814,7 +815,12 @@ int main(int argc, char* argv[]){
          !strcasecmp(cnf->bundle_connections,"checked") || adaptiveWork(cnf).mode=="probe" ||
          adaptiveWork(cnf).mode=="factors" || adaptiveWork(cnf).mode=="except")) {
         if(rank==0)fprintf(stderr,"Error: -P supports cCCE, gCCE and cluster_mode pcce plans with explicit connections; rdip-omitted checked connections and probe, factors and except work require dynamics\n");
-        MPI_Abort(MPI_COMM_WORLD,1);
+        ccexRefuse();
+    }
+    // the plan is written next to the output name; without one the inventory writer was handed a null name (A55)
+    if (clusterPlanOnly && (!Output_getOutfile(op) || !Output_getOutfile(op)[0])) {
+        ccexRefusalPrint(stderr,"Error: -P needs an output name: give outfile in the input or -o\n");
+        ccexRefuse();
     }
     computeBackendInit(cnf,qa,pls,Output_getSavemode(op));
 
@@ -978,6 +984,7 @@ int main(int argc, char* argv[]){
         updateMainSpins_fromDefectArray(dfa,ba);
     }
     MPI_Barrier(MPI_COMM_WORLD);
+    smallClusterWarmUpAfterBath(cnf,ba,dfa);   // A55: the packed kernel's card, when the bath says the run reaches its threshold
 
     if (rank==0){
         printf("    ----------------------------------------------------------------------\n");

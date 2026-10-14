@@ -182,7 +182,31 @@ the results are byte-identical, or within the stated bound for `recursive`. For 
 | | CR0 | 31.0 s -> 29.9 s (assembly per rank 3.1 s -> 1.8 s) | 1.04x | code of 2026-10-12 |
 | `evolution_update: recursive` (default where it exists) | 16 inputs (NV-13C, h-BN, P1) | | 1.0-1.6x | `exact` |
 
+The work of 2026-10-13 (code of 2026-10-12, ccc16e507, against f9b0ba8f3), both built on the GPU server (idm4-gpu,
+Xeon 6731P + RTX PRO 6000, 32 ranks, MPS; `do_compile.sh gpu`, so the after build has MKL) in one job, median of 3
+(AB BA AB). CPU = `bin/main.out`, GPU = `bin/main_gpu.out` with `backend: auto`. Curves: the CPU build byte-identical
+(P1 gCCE2) or in the last printed digit (cCCE, 1e-10 to 8e-10), h-BN gCCE dm within 1.5e-8 relative; the GPU P1 gCCE2
+difference is the warp kernel against the CPU path (relative 1.3e-6, 1.6e-5 on the diverging CR60 curve).
+Data: (internal notes) (idm job 17452).
+
+| Case | CPU before -> after | CPU speed-up | GPU before -> after | GPU speed-up |
+|---|---|---|---|---|
+| P1 production cCCE2, 30 states, CR0 | 11.24 s -> 6.24 s | 1.8x | 8.22 s -> 6.46 s | 1.3x |
+| P1 production cCCE2, ensemble, CR0 | 1.63 s -> 1.20 s | 1.4x | 1.49 s -> 1.24 s | 1.2x |
+| P1 production cCCE2, 30 states, CR60 sigma 4 | 59.11 s -> 30.73 s | 1.9x | 27.11 s -> 27.45 s | 0.99x |
+| P1 production cCCE2, ensemble, CR60 sigma 4 | 5.72 s -> 2.93 s | 2.0x | 3.23 s -> 3.07 s | 1.05x |
+| P1 production gCCE2, 30 states, CR0 | 39.79 s -> 39.93 s | 1.0x | 39.69 s -> 22.34 s | 1.8x |
+| P1 production gCCE2, 30 states, CR60 sigma 4 | 219.59 s -> 220.29 s | 1.0x | 218.51 s -> 105.57 s | 2.1x |
+| h-BN cCCE2 ensemble Hahn | 14.28 s -> 10.70 s | 1.3x | 14.65 s -> 10.74 s | 1.4x |
+| h-BN gCCE2 dm, 10 states | 10.61 s -> 7.30 s | 1.5x | 10.71 s -> 7.62 s | 1.4x |
+| h-BN gCCE3 dm, 1 state | 17.97 s -> 10.56 s | 1.7x | 17.97 s -> 10.98 s | 1.6x |
+| NV-13C cCCE2 Hahn (rbath 70 A, rdip 15 A) | 1.49 s -> 1.43 s | 1.04x | 1.76 s -> 1.50 s | 1.2x |
+| h-BN cCCE2 ensemble Ramsey | 14.87 s -> 4.42 s | 3.4x | 15.15 s -> 4.60 s | 3.3x |
+| Geometric mean of the 11 | | 1.53x | | 1.47x |
+
 ### Fixed
+- `example/tools/InputKeys/convert_input_keys.py` also rewrites the savemode names before 2026-10-13 (`normal`, `info`, `all`,
+  `allfull`) and a top-level `save_nodiv` (into `"savemode": {"mode", "nodiv"}`); converted inputs with them were refused.
 - Ensemble cCCE: the conjugation of the coherence and the half interval computed in double precision.
 - Density-matrix output: a component that divides noise by zero is set to 0 and reported, instead of `nan`.
 - `seed` had no effect on sampled states when `nstate` > 0.
@@ -231,6 +255,13 @@ the results are byte-identical, or within the stated bound for `recursive`. For 
   case and two keys that differ only in case are refused (R4).
 - SpinTensorReader (VASP) read the defect spin for a Q file alone too, and stopped on an OUTCAR with magnetization 0 or
   none; the spin is read, and `--spin` checked, for the A file only (T1).
+- A refused input under several MPI ranks gave exit code 1 or 255 and zero, one or two messages at random (each rank wrote
+  the message and exited without MPI_Finalize). The refusals of the input reading (option, Config, file readers, command
+  line) now write the message once on rank 0 and stop all ranks together with exit code 1 (A55).
+- The Runner template `srcfin_Qubit` wrote `alphams`/`betams` at the top of the input, where nothing reads them; they are
+  the qubit's now (A55).
+- `-P` with neither `outfile` nor `-o` stopped with "basic_string: construction from null"; it is refused with
+  "-P needs an output name" (A55).
 
 ### Refused now (inputs that used to be accepted)
 - **The input keys before A47** (2026-10-13): an old name, value (`method` `CCE`, `pCCE`, `dsj`, ...; `cluster_mode`

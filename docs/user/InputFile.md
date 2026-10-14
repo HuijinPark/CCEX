@@ -311,4 +311,4 @@ names (`quantity`, `order`, `bfield`, `deltat`, `nstep`, `nstate`, `seed`, `rdip
 | Defect entry `hypf` | `hyperfine` |
 | `-m CCE`, `-m pCCE`, ... | `-m cCCE` or `-m gCCE`; the cluster shape is the input's `cluster_mode` |
 
-The names of savemode changed the same day and are in [savemode](InputFile_Output.md#tag_savemode).
+The names of savemode changed the same day and are in [savemode](InputFile_Output.md#tag_savemode). `convert_input_keys.py` rewrites them too (`normal`, `info`, `all`, `allfull` and a top-level `save_nodiv`; since 2026-10-14).

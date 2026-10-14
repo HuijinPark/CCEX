@@ -63,7 +63,7 @@ R111='{"enabled": True, "bath_axis": [0.0,0.0,1.0], "qubit_axis": [1.0,1.0,1.0]}
 reject_cli(){
     local sys="$1" name="$2" want="$3"; shift 3
     local w="$WORK/$sys"
-    ( cd "$w" && run_ccex "$BIN_DEV" legacy.json "proc_$name" "$@" )
+    ( cd "$w" && run_ccex "$BIN_DEV" "${CLI_INPUT:-legacy.json}" "proc_$name" "$@" )
     local rc=$?
     if [ $rc -eq 0 ]; then echo "  FAIL  $name : accepted (exit 0), expected refusal"; FAIL=$((FAIL+1)); return; fi
     if ! grep -qF -- "$want" "$w/proc_$name"; then
@@ -76,6 +76,14 @@ reject_cli S1a rj_cli_nstate_word "-N must be an integer" -N nope
 reject_cli S1a rj_cli_nstate_fraction "-N must be an integer" -N 1.5
 reject_cli S1a rj_cli_bfield_word "-B must be a finite number" -B nope
 reject_cli S1a rj_cli_bfield_trailing "-B must be a finite number" -B 500G
+# -P writes its plan under the output name: with neither outfile nor -o the inventory writer was handed a null name and
+# stopped with "basic_string: construction from null" (A55)
+python3 - "$WORK/S1a" <<'PY'
+import json, sys
+d = json.load(open(f"{sys.argv[1]}/legacy.json")); d.pop("outfile", None)
+json.dump(d, open(f"{sys.argv[1]}/no_outfile.json", "w"), indent=4)
+PY
+CLI_INPUT=no_outfile.json reject_cli S1a rj_cli_plan_no_outfile "-P needs an output name" -P
 # The command line wins over the input file whatever the order (review b9eb09 R1): -N before -f took nstate from the file.
 order_check(){
     local w="$WORK/S1a" a b

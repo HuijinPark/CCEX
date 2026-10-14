@@ -123,7 +123,17 @@ def main():
     print('PASS gcce-threshold-states log: 3 states, 3 times the evaluations of the ensemble',flush=True)
     # P3-01: a card that cannot be opened - auto leaves every cluster on the CPU (the packed kernel off), cuda refuses, and
     # an explicit packed_max_dim with backend cpu (its only GPU work) refuses too
-    for value in ('-1','99'):
+    # '-1' (and an empty value) never reach the driver: CCEX answers "no GPU" itself, here and on WSL alike. '99' (no such
+    # card) can only be told by the driver, and WSL's (577.00) crashes inside cuInit then, with or without CCEX (a three-line
+    # cuInit program does the same; A55, docs record wsl_cuinit/): run it where the driver is the ordinary Linux one.
+    try:
+        wsl = 'microsoft' in open('/proc/version').read().lower()
+    except OSError:
+        wsl = False
+    values = ('-1',) if wsl else ('-1','99')
+    if wsl:
+        print("SKIP cce-hidden-*-99 on WSL: its CUDA driver crashes inside cuInit for CUDA_VISIBLE_DEVICES=99 (not CCEX)",flush=True)
+    for value in values:
         tag=value.replace('-','m')
         run('cce-hidden-auto-'+tag,args.cuda,{'backend':'auto','method':'cCCE','gpu_options':{'packed_max_dim':4}},hidden=value,reference='cce-cpu')
         assert '[gpu-packed] off: the GPU could not be opened' in (args.output/('cce-hidden-auto-'+tag)/'run.log').read_text(), tag

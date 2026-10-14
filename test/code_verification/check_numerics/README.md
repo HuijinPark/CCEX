@@ -69,6 +69,12 @@ evolution of `simulator_cce.cpp` with the fixed-size types it uses for bath dime
 20261012-233058-452278 P1-04: the fixed size gave (1, +0) where the dynamic path gives (1, -0), and without -march=native
 other last bits too): the review's case and 2,000 random Hermitian pairs, Hahn and CPMG-2. `recursive` is not held to
 this: its fixed size keeps Eigen's unrolled products and may differ from the dynamic path in the last bits.
+The bits are held only on the builds where they were seen to agree (A56, 2026-10-14), chosen by compiler macros as the
+batched kernel's table chooses: icpx 2023.2 with AVX-512 (idm4, gpu), icpx 2026.1 with AVX2 (wsl-icpx), g++ 13 with AVX2
+tuned for the WSL machine (`__tune_alderlake__`: wsl-gnu, generic there). Any other build (the CI's generic preset on its
+runner gave 1-ulp differences, CI run 38487968260; the portable CMake build) holds each output within 1e-12 relative to
+the larger magnitude or 1e-15 absolute (the outputs are overlaps of unit vectors, so rounding leaves a few ulp of 1 on any
+value, near 0 included), and prints how many outputs have other bits and the largest difference.
 
 ## The batched small clusters, bit for bit
 

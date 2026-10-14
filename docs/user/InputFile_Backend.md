@@ -121,7 +121,11 @@ CPU batch does not take keeps the threshold of the paragraph above; the warp ker
 `packed_max_dim` is kept as given. The log says which: `[gpu-packed] on: one state, at least 40000 evaluations ...`,
 `[gpu-packed] off: one state, N evaluations ... fewer than 40000 - the CPU batch (A30, ...) computes them (A48)`,
 `[gpu-packed] off: the ensemble - the CPU batch ...`, or `[gpu-packed] the CPU batch (A30) does not take this run (why)`.
-Where the packed kernel is off this way, `main_gpu.out` writes the bytes `main.out` writes. <br>
+Where the packed kernel is off this way, `main_gpu.out` writes the bytes `main.out` writes. For one state in a standard
+cCCE run (not `cluster_mode` adaptive, no `rdip_ladder`), the card is not opened before the bath is read: once the bath
+is in, the bath spins and the pairs closer than `rdip` of bath dimension 2 and 4 (the clusters this threshold counts) are
+counted, and the card starts then only if they reach it (A55; P1 CR0 30 states had paid about 0.2 s for a card it did not
+use). Below it the log says `[gpu-packed] no early start: one state, N clusters ... (A55)`. <br>
 <b>The CPU batch checks itself (A51).</b> At the first run that could use it, each process computes a few made-up clusters
 (bath dimension 2 and 4, one state and ensemble, exact and recursive, Ramsey, Hahn echo and CPMG) through the CPU batch and
 one at a time; if any bit differs - a build with flags the batch cannot see, such as `CXXFLAGS_EXTRA=-ffp-contract=off`,

@@ -9,9 +9,12 @@
 #     the recurrence runs between steps 0, 16 and 32): cCCE2 and gCCE2 (evolution=vector) with one sampled state; since
 #     A18 (2026-10-11) also the ensemble cCCE2 (nstate 0: Hahn, CPMG-8, and a Manual sequence of unequal intervals) and
 #     gCCE2 evolution=matrix (the ensemble Hahn echo, and CPMG-8 with one state);
-# E3  without the key those paths run recursive: the bytes of an explicit "recursive", not those of "exact", and the log
-#     says it was the default. On check_numerics cases where the two differ in the written digits (the NV + P1 10 ppm
-#     inputs of E2 do not): single-state and ensemble cCCE2, gCCE2 vector and matrix;
+# E3  without the key those paths run recursive: the bytes of an explicit "recursive", and the log says recursive, chosen
+#     by default (the value every time evolution dispatches on: simulator_cce.cpp, simulator_gcce.cpp, cce_batch_window.cpp,
+#     small_cluster_batch.cpp read cnf->evolution_update and nothing else). Until A56 (2026-10-14) the path was judged
+#     by the bytes of "exact" differing too, which on another machine they need not (CI run 38487968260: gcce_vector);
+#     now that is only noted. Single-state and ensemble cCCE2, gCCE2 vector and matrix, on check_numerics cases where the
+#     two differ in the written digits on WSL (the NV + P1 10 ppm inputs of E2 do not);
 # E4  without the key the paths recursive does not cover run exact, silently (not refused): gCCE propagator expm gives
 #     the bytes of an explicit "exact";
 # E5  backend auto in this CPU-only binary computes every cluster on the CPU, so it takes the CPU default (A36,
@@ -73,9 +76,11 @@ while read -r name case change; do
     done
     d="$W/e3_$name"
     same_bytes "$d/default" "$d/recursive" || { echo "    $name: the default run is not an explicit recursive's bytes"; ok=0; }
-    same_bytes "$d/default" "$d/exact" && { echo "    $name: exact and recursive write the same bytes here, so this case cannot tell them apart"; ok=0; }
     grep -Eq '^ +evolution_update +: +recursive' "$d/default.log" &&
         grep -Eq '^ +chosen by +: +default \(supported path\)' "$d/default.log" || { echo "    $name: the log does not say recursive by default"; ok=0; }
+    grep -Eq '^ +evolution_update +: +exact' "$d/exact.log" || { echo "    $name: the log of the explicit exact does not say exact"; ok=0; }
+    same_bytes "$d/default" "$d/exact" &&
+        echo "    $name: exact and recursive write the same bytes on this machine (the path is judged by the log alone)"
     if [ $ok -eq 1 ]; then echo "  PASS  E3 $name ($case): without the key the run is recursive"; PASS=$((PASS+1))
     else echo "  FAIL  E3 $name (see $d)"; FAIL=$((FAIL+1)); fi
 done <<< "$SUPPORTED"

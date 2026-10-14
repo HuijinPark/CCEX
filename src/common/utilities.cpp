@@ -1,6 +1,8 @@
 #include "../../include/common/utilities.h"
 #include "../../include/common/memory.h"
 #include <float.h>  // FLT_EPSILON
+#include <cstdarg>
+#include <cstdio>
 #include "mpi.h"
 #include <vector>
 #include <algorithm>
@@ -1158,4 +1160,28 @@ void printHelp(){
     MPI_Initialized(&running); MPI_Finalized(&finished);
     if (running && !finished) MPI_Abort(MPI_COMM_WORLD, code);
     exit(code);
+}
+
+int ccexRefusalPrint(FILE* stream, const char* format, ...){
+    if (rank != 0) return 0;
+    va_list args;
+    va_start(args, format);
+    const int n = vfprintf(stream, format, args);
+    va_end(args);
+    return n;
+}
+
+void ccexRefusalPerror(const char* what){
+    if (rank == 0) perror(what);
+}
+
+[[noreturn]] void ccexRefuse(){
+    fflush(stdout); fflush(stderr);
+    int running = 0, finished = 0;
+    MPI_Initialized(&running); MPI_Finalized(&finished);
+    if (running && !finished){
+        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Finalize();
+    }
+    exit(EXIT_FAILURE);
 }

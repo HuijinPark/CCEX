@@ -370,6 +370,7 @@ class Converter:
         self.method_shape(R)
         self.radii(R)
         self.renames(R)
+        self.savemode(R, top)
         self.blocks(R, top)
         self.qubit(R, top)
         self.hamiltonian(R, top)
@@ -514,6 +515,40 @@ class Converter:
                 raise ValueError('CorrTotSpin is not 0: it served old-format VASP tensor files, which have to be remade '
                                  'with example/tools/SpinTensorReader (format v3); the input cannot be converted as it is')
             self.note(f'{name} removed ({v}; ' + ('the qubit spin is used)' if name == 'DefectTotSpin' else 'it was 0)'))
+
+    SAVEMODES = {'normal': 'coherence', 'info': 'coherence_tagged', 'all': 'cluster_coherence',
+                 'allfull': 'cluster_density_matrix'}
+
+    def savemode(self, R, top):
+        """The savemode names before 2026-10-13 (normal, info, all, allfull) and the top-level save_nodiv, which CCEX
+        refuses with their new form: "savemode": "<mode>", or {"mode": ..., "nodiv": ...} when save_nodiv was given."""
+        i, m = R.find('savemode')
+        if m is not None and not isinstance(m.value, Obj):
+            v = plain(m.value)
+            if isinstance(v, str) and v.lower() in self.SAVEMODES:
+                m.value = Scalar('"' + self.SAVEMODES[v.lower()] + '"')
+                R.dirty = True
+                self.note(f'savemode "{v}" -> "{self.SAVEMODES[v.lower()]}"')
+        j, n = R.find('save_nodiv')
+        if n is None:
+            return
+        if m is not None and isinstance(m.value, Obj):
+            raise ValueError('save_nodiv beside a savemode block: write nodiv inside the block')
+        if plain(n.value) not in (True, False):
+            raise ValueError('save_nodiv must be true or false')
+        mode = m.value.render() if m is not None else '"coherence"'
+        pos = i if i is not None else j
+        if m is not None:
+            R.take('savemode')
+        R.take('save_nodiv')
+        block = self.new_block(top)
+        self.put(block, top, 'mode', value=mode)
+        self.put(block, top, 'nodiv', value=n.value.render())
+        mem = self.new_member('savemode', block, top, moved=m) if m is not None else self.new_member('savemode', block, top)
+        mem.value, mem.shift = block, 0
+        R.insert(min(pos, len(R.items)), mem)
+        R.dirty = True
+        self.note('save_nodiv -> savemode {mode, nodiv}')
 
     def move(self, R, top, block_key, pairs, position_keys=None, values=None):
         """Move R[old] to R[block_key][new] for (old, new) in pairs; returns the block (None if nothing moved)."""

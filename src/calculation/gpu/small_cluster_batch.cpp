@@ -315,6 +315,7 @@ struct Warm {
     double openSeconds = 0, lockSeconds = 0, allocateSeconds = 0;
     bool locked = false;
     NodeMemory memory;
+    bool deferred = false;                     // A55: the packed start waits for the bath (smallClusterWarmUpAfterBath)
 };
 Warm warm;
 }
@@ -560,6 +561,10 @@ void SmallClusterBatch::Impl::wait(int slot){
 struct SmallClusterBatch::Impl {};
 #endif
 
+#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
+static void warmStart(const Config* cnf, bool packedLikely, unsigned long long mask);
+#endif
+
 void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const char* savemode){
     const bool packed = cnf->gpu_packed_max_dim > 0, warp = cnf->gpu_warp_max_dim > 0;
     if (!packed && !warp) return;
@@ -587,7 +592,7 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
     // or without a dimension for the qubit. A wrong guess here costs only time: the constructor starts the card itself.
     // Whether a run is short (its clusters) is known only after the bath is read; the early start stays for those
     // (deferring every start to the constructor slowed P1 CR0 cCCE2 8.63 -> 8.92 s, job 707).
-    bool packedLikely = packed, warpLikely = warp;
+    bool packedLikely = packed, warpLikely = warp, deferPacked = false;
     int qdim = 3;
     if (qa && pls){
         Config* c = const_cast<Config*>(cnf);
@@ -596,9 +601,16 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
             packedLikely = QubitArray_getNqubit(qa)==1 && !strcasecmp(cnf->quantity,"coherence") &&
                            smallClusterPlan(c,pls,plan,ensemble,recursive);
             ccebatch::Plan cpuPlan; bool cpuDims[2]; const char* cpuWhy = nullptr;
-            if (packedLikely && ensemble && strcmp(cnf->gpu_packed_source,"given") &&
-                ccebatchRunTakes(qa,c,pls,false,cpuPlan,cpuDims,&cpuWhy) && cpuDims[0] && (cnf->gpu_packed_max_dim < 4 || cpuDims[1]))
-                packedLikely = false;
+            if (packedLikely && strcmp(cnf->gpu_packed_source,"given") &&
+                ccebatchRunTakes(qa,c,pls,false,cpuPlan,cpuDims,&cpuWhy) && cpuDims[0] && (cnf->gpu_packed_max_dim < 4 || cpuDims[1])){
+                // A55 (user 2026-10-14): one state - the constructor's threshold (packedMinPerRankState) counts the
+                // clusters of bath dimension 2 and 4, which in a standard cCCE run are the bath spins and the pairs
+                // closer than rdip: counted right after the bath is read (smallClusterWarmUpAfterBath), and the card
+                // starts there only when they reach it (P1 CR0 30 states: +0.2 s for a card it did not use, job 17445)
+                if (ensemble) packedLikely = false;
+                else if (!strcasecmp(cnf->method,"cce") && strcasecmp(cnf->cluster_mode,"adaptive") && cnf->nrdip_ladder == 0)
+                    deferPacked = true;
+            }
         }
         if (warpLikely){
             warpcluster::Plan wp{}; const char* why = nullptr;
@@ -617,11 +629,31 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
             }
         }
         if (!packedLikely && !warpLikely) return;
+        if (deferPacked){ warm.deferred = true; return; }
     }
     // A40 follow-up (2026-10-13): with the packed kernel on, the early memory has no warp input region - most cCCE runs have
     // no cluster of a warp dimension (P1 CR0 cCCE2: +4.7 % from that region, job 708); the constructor adds it when some
     // rank has one (a new memory, the early CUDA context kept)
-    const unsigned long long mask = warpLikely && !packedLikely ? warpMask(cnf,qdim) : 0;
+    warmStart(cnf,packedLikely,warpLikely && !packedLikely ? warpMask(cnf,qdim) : 0);
+#else
+    if (rank==0) fprintf(stderr,"Error: gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
+                         packed ? "packed_max_dim" : "warp_max_dim");
+    ccexFatal();
+#endif
+}
+
+#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
+// the bath dimension of spin ibs: its own, times its defect's added spins, as createBathArray makes the cluster
+static int bathSpinDim(BathArray* ba, DefectArray* dfa, int ibs){
+    int d = BathSpin_dim(BathArray_getBath_i(ba,ibs));
+    const int idf = DefectArray_findDefectIndex(dfa,BathArray_getBath_i_name(ba,ibs));
+    if (idf >= 0)
+        for (int isp=0; isp<DefectArray_getDefect_idf_naddspin(dfa,idf); isp++) d *= BathSpin_dim(DefectArray_getSubbath_i_isp(dfa,ibs,isp));
+    return d;
+}
+
+// collective: the early shared memory, and on node rank 0 the CUDA context and that memory's page-lock in a thread
+static void warmStart(const Config* cnf, bool packedLikely, unsigned long long mask){
     if (warm.memory.allocated() || layoutFor(cnf,packedLikely,mask).windowSize == 0) return;
     const double start = MPI_Wtime();
     warm.memory.allocate(layoutFor(cnf,packedLikely,mask));
@@ -638,10 +670,40 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
         warm.openSeconds = std::chrono::duration<double>(t1-t0).count();
         warm.lockSeconds = std::chrono::duration<double>(std::chrono::steady_clock::now()-t1).count();
     });
+}
+#endif
+
+void smallClusterWarmUpAfterBath(const Config* cnf, BathArray* ba, DefectArray* dfa){
+#if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
+    if (!warm.deferred) return;
+    warm.deferred = false;
+    // the constructor's count before the clusters: the spins (order 1) and the pairs rdipcut < r < rdip (order 2,
+    // clusterizePairs and BathArray_connectivity) of bath dimension 2 and 4, rows shared between the ranks; a rank stops
+    // at the threshold. Above about 2e7 distances per rank (40 ms) the count is not made and the card starts as before.
+    constexpr long packedMinPerRankState = 40000;   // the constructor's (A48)
+    const long cap = packedMinPerRankState*long(nprocess);
+    const int nspin = BathArray_getNspin(ba), maxDim = cnf->gpu_packed_max_dim;
+    const float rdip = cnf->rdip, rdipcut = cnf->rdipcut;
+    if (0.5*nspin*double(nspin)/nprocess > 2e7){ warmStart(cnf,true,0); return; }
+    std::vector<int> dim(nspin);
+    for (int i=0; i<nspin; i++) dim[i] = bathSpinDim(ba,dfa,i);
+    long count = 0;
+    for (int i=rank; i<nspin && count<cap; i+=nprocess){
+        if (cnf->order >= 1 && (dim[i] == 2 || dim[i] == 4) && dim[i] <= maxDim) ++count;
+        if (cnf->order < 2 || dim[i] != 2 || maxDim < 4) continue;
+        for (int j=i+1; j<nspin; j++){
+            if (dim[j] != 2) continue;
+            const double r = BathArray_dist_i_j(ba,i,j);
+            if (r < rdip && r > rdipcut) ++count;
+        }
+    }
+    MPI_Allreduce(MPI_IN_PLACE,&count,1,MPI_LONG,MPI_SUM,MPI_COMM_WORLD);
+    if (count >= cap){ warmStart(cnf,true,0); return; }
+    if (rank==0) printf("[gpu-packed] no early start: one state, %.0f clusters of bath dimension 2 and 4 per rank in the bath "
+                        "read, fewer than %ld - the card starts only if the constructor finds more (A55)\n",
+                        double(count)/nprocess,packedMinPerRankState);
 #else
-    if (rank==0) fprintf(stderr,"Error: gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
-                         packed ? "packed_max_dim" : "warp_max_dim");
-    ccexFatal();
+    (void)cnf; (void)ba; (void)dfa;
 #endif
 }
 
@@ -670,6 +732,7 @@ void smallClusterWarmDown(){
     if (warm.locked){ gpuSmallUnregister(warm.memory.parts[0]); warm.locked = false; }
     gpuSmallClose(warm.device);
     warm.device = nullptr;
+    warm.deferred = false;
     warm.memory.release();                     // collective: every rank made it in smallClusterWarmUp, or none did
 #endif
 }

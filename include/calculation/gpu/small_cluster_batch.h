@@ -78,6 +78,11 @@ private:
 // With qa and pls (review 20261013-221715 X7) nothing starts for a kernel the input already rules out (the constructor's
 // checks that need no cluster: warpClusterRun, savemode, the packed plan, A48's ensemble rule).
 void smallClusterWarmUp(const Config* cnf, QubitArray* qa = nullptr, Pulse* pls = nullptr, const char* savemode = nullptr);
+// Collective, once the bath and the defects are read (A55): for a one-state standard cCCE run whose packed kernel the
+// constructor decides by its threshold, smallClusterWarmUp starts nothing; this counts the clusters of bath dimension 2
+// and 4 from the bath (the spins and the pairs closer than rdip) and starts the card only when they reach that threshold.
+// Nothing otherwise.
+void smallClusterWarmUpAfterBath(const Config* cnf, BathArray* ba, DefectArray* dfa);
 void smallClusterWarmDown();
 
 // The time plan of the run as the batch uses it (interval fractions, distinct slots); false if it has more than

@@ -69,6 +69,36 @@ class Fixtures(unittest.TestCase):
                 self.assertEqual(log, [])
 
 
+class SaveMode(unittest.TestCase):
+    """The savemode names before 2026-10-13 and the top-level save_nodiv (left unconverted until 2026-10-14, A57)."""
+
+    def conv(self, text):
+        return json.loads(strip_comments(convert_text(text)[0]))
+
+    def test_names(self):
+        for old, new in (('normal', 'coherence'), ('info', 'coherence_tagged'), ('all', 'cluster_coherence'),
+                         ('allfull', 'cluster_density_matrix')):
+            with self.subTest(old=old):
+                self.assertEqual(self.conv('{"method": "CCE", "savemode": "%s"}' % old)['savemode'], new)
+
+    def test_save_nodiv_into_the_block(self):
+        d = self.conv('{"method": "CCE", "savemode": "normal", "save_nodiv": false}')
+        self.assertEqual(d['savemode'], {'mode': 'coherence', 'nodiv': False})
+        self.assertNotIn('save_nodiv', d)
+        d = self.conv('{"method": "CCE", "save_nodiv": true}')
+        self.assertEqual(d['savemode'], {'mode': 'coherence', 'nodiv': True})
+
+    def test_new_names_left_alone(self):
+        new, log = convert_text('{"method": "cCCE", "savemode": "coherence"}')
+        self.assertEqual(json.loads(strip_comments(new))['savemode'], 'coherence')
+        self.assertFalse([l for l in log if 'savemode' in l])
+
+    def test_second_pass_changes_nothing(self):
+        new, _ = convert_text('{"method": "CCE", "savemode": "all", "save_nodiv": false}')
+        again, log = convert_text(new)
+        self.assertEqual(again, new)
+
+
 class OldAndNewKeyTogether(unittest.TestCase):
     """An old key beside its new name was written twice (`"count":1,"count":2`): CCEX reads the first, Python the last."""
 
