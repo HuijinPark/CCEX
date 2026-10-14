@@ -24,6 +24,13 @@ sys.path.insert(0, str(HERE.parent))
 PY = sys.executable
 
 
+def safe(env):
+    """python -m autoconv as main.cpp starts it: the tool on PYTHONPATH and PYTHONSAFEPATH=1, so the current folder is not put
+    first on sys.path (review 20261014 tools 5; Python 3.11+, and an older Python ignores the variable, where -P would stop it)."""
+    old = env.get("PYTHONPATH")
+    return dict(env, PYTHONSAFEPATH="1", PYTHONPATH=str(HERE.parent) + (os.pathsep + old if old else ""))
+
+
 def nest(flat):
     """The nested auto_convergence block (time_window / rdip / rbath / configurations) from the runner's flat names; names
     the runner does not know stay at the top (the refusal cases)."""
@@ -67,7 +74,7 @@ def call(inp, fake, env=None):
     e = dict(os.environ, **(env or {}))
     for v in ("PMI_RANK", "PMI_SIZE", "OMPI_COMM_WORLD_RANK", "MPI_LOCALRANKID"):
         if not (env and v in env): e.pop(v, None)
-    p = subprocess.run([PY, "-m", "autoconv", "run", str(inp), "--binary", str(fake)], cwd=HERE.parent, env=e,
+    p = subprocess.run([PY, "-m", "autoconv", "run", str(inp), "--binary", str(fake)], cwd=HERE.parent, env=safe(e),
                        capture_output=True, text=True)
     return p.returncode, p.stdout + p.stderr
 
@@ -253,7 +260,8 @@ class TestRunner(unittest.TestCase):
     def test_progress_interruption_status_and_fresh(self):   # plan "끊김 대비·진행 보기" R1-R4 (2026-10-08)
         inp, fake = make_case(self.tmp)
         cnt = Path(self.tmp) / "count"
-        status = lambda: subprocess.run([PY, "-m", "autoconv", "status", str(inp)], cwd=HERE.parent, capture_output=True, text=True).stdout
+        status = lambda: subprocess.run([PY, "-m", "autoconv", "status", str(inp)], cwd=HERE.parent, env=safe(os.environ),
+                                        capture_output=True, text=True).stdout
         self.assertIn("not started", status())
         code, out = call(inp, fake, dict(FAKE_COUNT=str(cnt)))
         self.assertEqual(code, 0, out)

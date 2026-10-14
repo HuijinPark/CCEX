@@ -126,10 +126,25 @@ for f in "$WORK"/*/bad_*.json; do
     else echo "  FAIL  $(basename "$d") $b was accepted (exit 0, no message): see $d/$b.log"; fail=1; fi
 done
 python3 - "$WORK" <<'PY' || fail=1
-import glob, os, sys
+import cmath, glob, math, os, sys
 work = sys.argv[1]; bad = 0
 def curve(f):
     return [complex(l.split(None, 1)[1].replace(' ', '')) for l in open(f) if l.strip()]
+# max() skips NaN (review 20261014 tools 3, as D42 in check_input_forms/lib.sh): a point that is not finite on one side only,
+# or a different non-finite value (nan against inf, +inf against -inf, in the real or the imaginary part), is counted as a
+# mismatch; the same non-finite value on both sides at the same point is the separate run reproduced, so it is not one
+# (at such a point a finite real or imaginary part beside it has to be equal exactly).
+# Points finite on both sides are judged by |difference|; none such is a failure.
+def compare(a, b):
+    if len(a) != len(b):
+        return float('inf'), 0, 0
+    diff, odd, finite = 0.0, 0, 0
+    for x, y in zip(a, b):
+        if cmath.isfinite(x) and cmath.isfinite(y):
+            diff = max(diff, abs(x - y)); finite += 1
+        elif not all(p == q or (math.isnan(p) and math.isnan(q)) for p, q in ((x.real, y.real), (x.imag, y.imag))):
+            odd += 1
+    return diff, odd, finite
 for d in sorted(glob.glob(f'{work}/*/')):
     case = os.path.basename(d.rstrip('/'))
     pairs = []
@@ -144,13 +159,14 @@ for d in sorted(glob.glob(f'{work}/*/')):
     for ref, got, what in pairs:
         if not os.path.exists(got):
             print(f'  FAIL  {case}: {os.path.basename(got)} missing'); bad = 1; continue
-        a, b = curve(ref), curve(got)
-        diff = max(abs(x - y) for x, y in zip(a, b)) if len(a) == len(b) else float('inf')
-        worst[what] = max(worst.get(what, 0), diff)
-    for what, diff in worst.items():
-        ok = diff <= 1e-9
+        diff, odd, finite = compare(curve(ref), curve(got))
+        w = worst.get(what, (0.0, 0, 0))
+        worst[what] = (max(w[0], diff), w[1] + odd, w[2] + finite)
+    for what, (diff, odd, finite) in worst.items():
+        ok = diff <= 1e-9 and odd == 0 and finite > 0
         bad |= not ok
-        print(f'  {"PASS" if ok else "FAIL"}  {case} {what}: max |difference| {diff:.2e} over wiDiv and noDiv, all states')
+        print(f'  {"PASS" if ok else "FAIL"}  {case} {what}: max |difference| {diff:.2e} over {finite} finite points of wiDiv and '
+              f'noDiv, all states; {odd} points non-finite on one side or differently')
 sys.exit(bad)
 PY
 [ $fail -eq 0 ] && echo "  rdip_ladder: all checks passed" || echo "  rdip_ladder: FAILED (the inputs and logs are kept in $WORK until the next run)"

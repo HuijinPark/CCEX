@@ -98,6 +98,28 @@ class SaveMode(unittest.TestCase):
         again, log = convert_text(new)
         self.assertEqual(again, new)
 
+    def test_save_nodiv_0_1_refused(self):     # CCEX refuses them (readStrictBool before A47, savemode.nodiv after)
+        for v in ('0', '1', '"true"'):
+            with self.subTest(v), self.assertRaisesRegex(ValueError, 'save_nodiv must be true or false'):
+                convert_text('{"method": "CCE", "save_nodiv": %s}' % v)
+
+
+class SwitchBlocks(unittest.TestCase):
+    """gcce_refinement and cluster_contributions: true|false -> {"enabled": ...}; CCEX took only a JSON boolean (A47)."""
+
+    def test_boolean_into_the_block(self):
+        for name in ('gcce_refinement', 'cluster_contributions'):
+            for v in (True, False):
+                with self.subTest(name=name, v=v):
+                    new, _ = convert_text('{"%s": %s}' % (name, json.dumps(v)))
+                    self.assertEqual(json.loads(new), {name: {'enabled': v}})
+
+    def test_0_1_refused(self):
+        for name in ('gcce_refinement', 'cluster_contributions'):
+            for v in ('0', '1'):
+                with self.subTest(name=name, v=v), self.assertRaisesRegex(ValueError, f'{name} must be true or false'):
+                    convert_text('{"%s": %s}' % (name, v))
+
 
 class OldAndNewKeyTogether(unittest.TestCase):
     """An old key beside its new name was written twice (`"count":1,"count":2`): CCEX reads the first, Python the last."""
@@ -187,6 +209,51 @@ class CommandLine(unittest.TestCase):
                 self.assertEqual(r.returncode, 2)
                 self.assertIn('pulse.count is written twice with different values', r.stderr)
                 self.assertEqual(read(path), text)
+
+    def test_unreadable_file_reported_and_the_others_converted(self):
+        missing = os.path.join(self.dir, 'missing.json')
+        latin = os.path.join(self.dir, 'latin.json')
+        with open(latin, 'wb') as f:
+            f.write(b'{"npulse": 1  # \xb0\xa1\n}\n')               # a cp949 comment: not UTF-8
+        path = self.copy(NAMES[0])
+        r = run(missing, latin, path)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn('missing.json: not converted', r.stderr)
+        self.assertIn('latin.json: not converted', r.stderr)
+        self.assertNotIn('Traceback', r.stderr)
+        self.assertEqual(read(path), read(os.path.join(FIX, NAMES[0] + '.new.json')))
+
+    def test_crlf_kept(self):
+        old = read(os.path.join(FIX, NAMES[0] + '.old.json')).replace('\n', '\r\n')
+        path = os.path.join(self.dir, 'crlf.json')
+        with open(path, 'w', newline='') as f:
+            f.write(old)
+        r = run(path)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        with open(path, 'rb') as f:
+            data = f.read()
+        self.assertEqual(data.count(b'\n'), data.count(b'\r\n'))          # no bare \n, also on the lines the converter added
+        self.assertEqual(data.decode().replace('\r\n', '\n'), read(os.path.join(FIX, NAMES[0] + '.new.json')))
+        r = run('--check', path)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn('already in the new form', r.stdout)
+
+    def test_write_is_atomic(self):
+        import convert_input_keys as tool
+        from unittest import mock
+        path = self.copy(NAMES[0])
+        os.chmod(path, 0o640)
+        before = read(path)
+        with mock.patch.object(tool.os, 'replace', side_effect=OSError('disk full')), \
+                mock.patch('sys.stdout'), mock.patch('sys.stderr'):
+            self.assertEqual(tool.main([path]), 2)
+        self.assertEqual(read(path), before)                                 # the original is whole
+        self.assertEqual(os.listdir(self.dir), [os.path.basename(path)])     # and no temporary file is left
+        with mock.patch('sys.stdout'):
+            self.assertEqual(tool.main([path]), 0)
+        self.assertEqual(read(path), read(os.path.join(FIX, NAMES[0] + '.new.json')))
+        self.assertEqual(os.stat(path).st_mode & 0o777, 0o640)              # the mode of the original
+        self.assertEqual(os.listdir(self.dir), [os.path.basename(path)])
 
 
 if __name__ == '__main__':

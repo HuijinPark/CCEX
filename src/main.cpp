@@ -209,8 +209,8 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
     freeChar1d(&text);
     cJSON* block = root ? cJSON_GetObjectItem(root.get(),"adaptive") : nullptr;
     const auto fail = [](const std::string& message) {
-        if(rank==0) fprintf(stderr,"Error: %s\n",message.c_str());
-        MPI_Finalize(); exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr,"Error: %s\n",message.c_str());
+        ccexRefuse();
     };
     // The block was called "Refine" until 2026-09-23. The old name is refused, not read:
     // a run that silently did no refinement would look like a finished one.
@@ -486,6 +486,9 @@ static int autoConvEntry(int argc, char* argv[], const char* mode = "run"){
         }
     }
     setenv("PYTHONDONTWRITEBYTECODE", "1", 1);   // no bytecode written into the tool folder (shared or not)
+    // python -m puts the working directory first on sys.path, ahead of the folder checked above: an autoconv/ or a
+    // module of the standard library's name there would run instead (review 20261014 F3; Python 3.11 and later)
+    setenv("PYTHONSAFEPATH", "1", 1);
     const char* old = getenv("PYTHONPATH");
     setenv("PYTHONPATH", (old && *old ? tool + ":" + old : tool).c_str(), 1);
     const char* python = getenv("CCEX_PYTHON") ? getenv("CCEX_PYTHON") : "python3";
@@ -632,8 +635,8 @@ int main(int argc, char* argv[]){
         const std::vector<std::string> fromInput = adaptiveArgsFromInput(const_cast<char*>(inputPath), self);
         if (!fromInput.empty()) {
             if (!adaptiveArgs.empty()) {
-                if (rank == 0) fprintf(stderr,"Error: the input has an adaptive block and the command line has --adaptive; use one\n");
-                MPI_Finalize(); exit(EXIT_FAILURE);
+                ccexRefusalPrint(stderr,"Error: the input has an adaptive block and the command line has --adaptive; use one\n");
+                ccexRefuse();
             }
             adaptiveArgs = fromInput;
         }

@@ -36,19 +36,22 @@ void fail(const char* message){
 }
 }
 
+bool computeBackendMethodSupported(const Config* config){
+    // pCCE changes the cluster partition, then uses the same conditional-bath
+    // coherence calculation as conventional CCE.
+    return !strcasecmp(config->method,"cce") ||
+           !strcasecmp(config->method,"pcce") ||
+           (!strcasecmp(config->method,"gcce") &&
+            !strcasecmp(config->propagator,"eigen"));
+}
+
 void computeBackendInit(const Config* config, QubitArray* qa, Pulse* pls, const char* savemode){
     cudaReady=false; cudaAttempted=false; cudaSupported=false;
     cpuFromDimension=INT_MAX; outOfMemoryClusters=0; recovering=false;
     smallClusterWarmUp(config,qa,pls,savemode);   // A26: the small-cluster batch's CUDA context, early (nothing unless asked for or ruled out, X7)
     if (!strcasecmp(config->backend,"cpu")) return;
     const bool required = !strcasecmp(config->backend,"cuda");
-    // pCCE changes the cluster partition, then uses the same conditional-bath
-    // coherence calculation as conventional CCE.
-    const bool supported = !strcasecmp(config->method,"cce") ||
-                          !strcasecmp(config->method,"pcce") ||
-                          (!strcasecmp(config->method,"gcce") &&
-                           !strcasecmp(config->propagator,"eigen"));
-    if (!supported){
+    if (!computeBackendMethodSupported(config)){
         if (required) fail("backend=cuda supports method cCCE (cluster_mode standard or pcce), or method gCCE with propagator=eigen");
         if (rank==0) fprintf(stdout,"[backend] auto: this method/propagator uses CPU\n");
         return;

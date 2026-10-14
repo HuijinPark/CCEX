@@ -1,4 +1,5 @@
 #include "../../include/calculation/gpu/accelerator_defaults.h"
+#include "../../include/calculation/gpu/compute_backend.h"
 #include "../../include/clustering/bundle/bundle_defaults.h"
 #include "../../include/input/general.h"
 
@@ -529,7 +530,7 @@ void Config_validateEvolutionUpdate(Config* cnf){
     // A36: may a cluster reach the GPU large-cluster path? The methods computeBackendInit sends to the GPU, with backend
     // cuda (refused there in the CPU build) or with auto in the GPU build
     const bool cuda = (strcasecmp(cnf->backend,"cuda")==0);
-    const bool gpuMethod = !strcasecmp(cnf->method,"cce") || !strcasecmp(cnf->method,"pcce") || (isGCCE && eigen);
+    const bool gpuMethod = computeBackendMethodSupported(cnf);
 #ifdef CCEX_USE_CUDA
     const bool gpuLarge = gpuMethod && (cuda || !strcasecmp(cnf->backend,"auto"));
 #else

@@ -1,10 +1,11 @@
 // A30: the batched small-cluster cCCE evolution on the CPU (cce_batch.h) against the scalar path, bit for bit, on clusters
 // CCEX dumped (CCEX_SMALL_CLUSTER_DUMP: Halpha, Hbeta, psi and the time plan of each cluster;
 // test/gpu_verification/check_gpu/data/small_cluster/*.bin, the A26 fixtures and the production P1 CR60 sigma4 clusters).
-// Both sides start from the dumped Hamiltonians: the scalar path is cceSetupSmallAlone (A42; cceSetup when off) + cceEvolve
-// (what calCoherenceCceInto runs after building them), the batched one the grouped eigensolves (A42) + cceSetupSmall +
-// ccebatchPackLane + the kernel, as CceBatchWindow runs it. The objects
-// are main.out's, so the check holds for the build it is compiled in - run it in every build (make cpu-test).
+// Both sides start from the dumped Hamiltonians and go through ccebatchBothPaths, the function the A51 self-check runs: the
+// scalar path is cceSetupSmallAlone (A42; cceSetup when off) + cceEvolve (what calCoherenceCceInto runs after building
+// them), the batched one CceBatchWindow's grouped eigensolves (CceEigenGroups) + ccebatchSetup + ccebatchPackLane + the
+// kernel. The objects are main.out's, so the check holds for the build it is compiled in - run it in every build (make cpu-test).
+// A dump that is empty, cut short or has a header that makes no sense fails (exit 2), as in test_small_eigensolver.
 // Each file is run as dumped and with the other evolution_update; a one-state file also as the ensemble Hahn echo.
 // Cases the build's kernel does not cover (lanes() 0, the ensemble CPMG/Ramsey) are counted as scalar and pass; a build
 // whose kernel fails the A51 self-check (ccebatchUsable) passes as "off on this machine".
@@ -33,10 +34,17 @@ struct Rec {
     std::vector<double> fraction; std::vector<int> same;
     MatrixXcd Ha, Hb, psi;
 };
+// false only at a clean end of the file, before the first byte of a header; anything else that is not a whole record stops
 bool readRec(FILE* f, Rec& r){
     int h[6];
-    if (fread(h,sizeof(int),6,f) != 6) return false;
+    const size_t got = fread(h,1,sizeof h,f);
+    if (got == 0 && feof(f) && !ferror(f)) return false;
+    if (got != sizeof h){ fprintf(stderr,"truncated dump\n"); exit(2); }
     r.d=h[0]; r.ens=h[1]; r.rec=h[2]; r.intervals=h[3]; r.distinct=h[4]; r.nstep=h[5];
+    if ((r.d != 2 && r.d != 4) || (r.ens != 0 && r.ens != 1) || (r.rec != 0 && r.rec != 1) || r.intervals < 1 ||
+        r.intervals > 65536 || r.distinct < 1 || r.distinct > 4 || r.nstep < 1 || r.nstep > (1<<26)){
+        fprintf(stderr,"broken dump: a record header that makes no sense\n"); exit(2);
+    }
     r.fraction.resize(r.distinct); r.same.resize(r.intervals);
     bool ok = fread(&r.deltat,sizeof(double),1,f)==1;
     ok = ok && fread(r.fraction.data(),sizeof(double),r.distinct,f)==size_t(r.distinct);
@@ -76,7 +84,7 @@ void runCase(const std::string& name, const std::vector<Rec>& cl, bool ensemble,
 
     ccebatch::Plan plan;
     const bool planned = ccebatchPlan(cnf,&pulse,plan);
-    const int nstep = r0.nstep, B = ccebatch::lanes();
+    const int nstep = r0.nstep;
     for (int D : {2,4}){
         long differ=0, same=0, scalar=0;
         std::vector<const Rec*> group;
@@ -84,55 +92,12 @@ void runCase(const std::string& name, const std::vector<Rec>& cl, bool ensemble,
         if (group.empty()) continue;
         if (!planned || !ccebatch::covers(plan,D)) scalar += long(group.size())*nstep;
         else {
-            CceWorkspace ws;
-            std::vector<MatrixXcd> res(nstep);
+            std::vector<const MatrixXcd*> Ha, Hb, psi;
+            for (const Rec* r : group){ Ha.push_back(&r->Ha); Hb.push_back(&r->Hb); psi.push_back(&r->psi); }
             std::vector<doublec> scalarOut(group.size()*size_t(nstep)), batchOut(group.size()*size_t(nstep));
-            std::vector<bool> batched(group.size(),false);
-            for (size_t c=0; c<group.size(); ++c){
-                ws.Halpha = group[c]->Ha; ws.Hbeta = group[c]->Hb;
-                if (!cceSetupSmallAlone(ws, ensemble ? nullptr : &group[c]->psi)) cceSetup(ws, ensemble ? nullptr : &group[c]->psi);
-                cceEvolve(cnf,&pulse,res.data(),ws);
-                for (int i=0; i<nstep; ++i) scalarOut[c*nstep+i] = res[i](0,0);
-            }
-            // A42: the batched side solves the eigensystems as CceBatchWindow does - smalleig::maxLanes matrices at a time,
-            // Halpha then Hbeta of each cluster in order - and the scalar side (cceSetup) one at a time
-            const bool jacobi = smalleig::on();
-            std::vector<double> eigW(group.size()*8); std::vector<doublec> eigV(group.size()*32);
-            std::vector<char> eigOk(group.size()*2,0);
-            if (jacobi){
-                std::vector<size_t> pending;
-                const doublec* h[smalleig::maxLanes]; double* w[smalleig::maxLanes]; doublec* V[smalleig::maxLanes];
-                bool ok[smalleig::maxLanes];
-                auto flush = [&](){
-                    if (pending.empty()) return;
-                    smalleig::solve(D,int(pending.size()),h,w,V,ok);
-                    for (size_t g=0; g<pending.size(); ++g) eigOk[pending[g]] = ok[g];
-                    pending.clear();
-                };
-                for (size_t c=0; c<group.size(); ++c) for (int t=0; t<2; ++t){
-                    const size_t m = 2*c+t;
-                    h[pending.size()] = (t == 0 ? group[c]->Ha : group[c]->Hb).data();
-                    w[pending.size()] = &eigW[m*4]; V[pending.size()] = &eigV[m*16];
-                    pending.push_back(m);
-                    if (int(pending.size()) == smalleig::maxLanes) flush();
-                }
-                flush();
-            }
-            static ccebatch::Pack pack;
-            std::complex<double>* out[ccebatch::maxLanes] = {};
-            int count = 0;
-            for (size_t c=0; c<group.size(); ++c){
-                ws.Halpha = group[c]->Ha; ws.Hbeta = group[c]->Hb;
-                const double* w[2] = {nullptr,nullptr}; const doublec* V[2] = {nullptr,nullptr};
-                for (int t=0; jacobi && t<2; ++t) if (eigOk[2*c+t]){ w[t] = &eigW[(2*c+t)*4]; V[t] = &eigV[(2*c+t)*16]; }
-                if (jacobi) cceSetupSmall(ws, ensemble ? nullptr : &group[c]->psi, w, V);
-                else cceSetup(ws, ensemble ? nullptr : &group[c]->psi);
-                if (!ccebatchPackLane(ws,ensemble,D,pack,count)) continue;
-                batched[c] = true;
-                out[count++] = &batchOut[c*nstep];
-                if (count == B){ ccebatchEvolvePadded(plan,D,pack,count,out); count = 0; }
-            }
-            if (count) ccebatchEvolvePadded(plan,D,pack,count,out);
+            std::vector<char> batched;
+            ccebatchBothPaths(cnf,&pulse,plan,D,int(group.size()),Ha.data(),Hb.data(),psi.data(),scalarOut.data(),
+                              batchOut.data(),batched);
             for (size_t c=0; c<group.size(); ++c){
                 if (!batched[c]){ scalar += nstep; continue; }
                 for (int i=0; i<nstep; ++i){
@@ -167,8 +132,9 @@ int main(int argc, char** argv){
         if (!f){ perror(argv[a]); return 2; }
         std::vector<Rec> cl; Rec r;
         while (readRec(f,r)) cl.push_back(r);
+        const bool readError = ferror(f);
         fclose(f);
-        if (cl.empty()) continue;
+        if (readError || cl.empty()){ fprintf(stderr,"%s: %s\n",argv[a],readError ? "read error" : "no record"); return 2; }
         std::string base = argv[a];
         base = base.substr(base.find_last_of('/')+1);
         const bool ens = cl[0].ens, rec = cl[0].rec;

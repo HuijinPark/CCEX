@@ -1,8 +1,9 @@
 #ifndef CCEX_SMALL_CLUSTER_BATCH_H
 #define CCEX_SMALL_CLUSTER_BATCH_H
 // A26 step 1: small cCCE clusters (bath dimension 2 and 4) computed on the GPU in large batches, one thread per cluster
-// (small_cluster_gpu.cu): the packed kernel, "gpu_options": {"packed_max_dim": 2 or 4} (0, the default: off, and nothing of
-// it runs). The rest of the run is unchanged.
+// (small_cluster_gpu.cu): the packed kernel, "gpu_options": {"packed_max_dim": 2 or 4} (0: off, and nothing of it runs; the
+// default is 4 in the GPU build with backend auto or cuda, method CCE and quantity coherence, else 0 -
+// Config_resolvePackedMaxDim). The rest of the run is unchanged.
 //
 // calculate() asks get(ic) for each local cluster. The first time a window of clusters is reached, the rank builds their
 // Hamiltonians (cceClusterHamiltonians, the CPU path's own function) and packs them into its part of a node shared-memory

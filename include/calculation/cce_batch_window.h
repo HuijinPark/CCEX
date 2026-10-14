@@ -9,6 +9,7 @@
 // bath array for the scalar path.
 #include "calculation/simulator.h"
 #include "calculation/cce_batch.h"
+#include "calculation/small_eigensolver.h"
 #include <climits>
 #include <complex>
 #include <vector>
@@ -20,6 +21,35 @@ bool ccebatchPlan(Config* cnf, Pulse* pls, ccebatch::Plan& plan);
 bool ccebatchPackLane(const CceWorkspace& ws, bool ensemble, int D, ccebatch::Pack& p, int l);
 // Evolves lanes 0..count-1 of p into out[0..count) (nstep values each); the other lanes repeat lane count-1.
 void ccebatchEvolvePadded(const ccebatch::Plan& plan, int D, ccebatch::Pack& p, int count, std::complex<double>* const* out);
+
+// A42: the eigensystems of the window's Hamiltonians (bath dimension D, 2 or 4), smalleig::maxLanes matrices at a time in
+// the order they are added (Halpha then Hbeta of each cluster): matrix m's values into w[m*4..], its vectors into
+// V[m*16..], whether it converged into ok[m]. solved, fallbacks: the counts so far (the caller hands them to smalleig::count).
+class CceEigenGroups {
+public:
+    CceEigenGroups(int D_, double* w_, std::complex<double>* V_, char* ok_) : D(D_), w(w_), V(V_), ok(ok_) {}
+    void add(int m, const MatrixXcd& H);          // solves the group when it is full
+    void flush();                                 // solves the last, partial group
+    long long solved = 0, fallbacks = 0;
+private:
+    int D; double* w; std::complex<double>* V; char* ok;
+    int n = 0, slot[smalleig::maxLanes];
+    const std::complex<double>* h[smalleig::maxLanes];
+    double* wl[smalleig::maxLanes];
+    std::complex<double>* Vl[smalleig::maxLanes];
+};
+// A42: the setup of cluster c from its grouped eigensystems (matrices 2c, 2c+1 of CceEigenGroups; one that did not
+// converge: Eigen) by cceSetupSmall, or cceSetup when the Jacobi is off (jacobi false)
+void ccebatchSetup(CceWorkspace& ws, const MatrixXcd* psi, bool jacobi, int c,
+                   const double* w, const std::complex<double>* V, const char* ok);
+// A51 self-check and test_cce_batch: n clusters of bath dimension D (Ha[c], Hb[c], psi[c]; psi not read for the ensemble)
+// through the scalar path of calCoherenceCceInto (cceSetupSmallAlone, else cceSetup, then cceEvolve) into scalarOut, and
+// through the window's (CceEigenGroups, ccebatchSetup, ccebatchPackLane, ccebatchEvolvePadded) into batchOut; nstep values
+// per cluster from c*nstep. batched[c] 0: cluster c's setup has a value that is not finite (the window leaves it to the
+// scalar path; its batchOut is not written). The scalar side counts its eigensolves (smalleig::count) as a run does.
+void ccebatchBothPaths(Config* cnf, Pulse* pls, const ccebatch::Plan& plan, int D, int n,
+                       const MatrixXcd* const* Ha, const MatrixXcd* const* Hb, const MatrixXcd* const* psi,
+                       std::complex<double>* scalarOut, std::complex<double>* batchOut, std::vector<char>& batched);
 
 // A51: whether the kernel may be used in this process: the build has one (ccebatch::lanes() > 0) and, checked once at the
 // first call, a few made-up clusters (bath dimension 2 and 4; one state - Ramsey, Hahn echo, a 3-interval CPMG - and the

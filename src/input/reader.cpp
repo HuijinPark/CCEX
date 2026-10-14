@@ -660,12 +660,10 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
     // Check the number of bath states if i is zero
     if (i == 0){
         // err
-        if (rank==0){
-            fprintf(stderr,"Error(setBathState): The index of the state file is zero\n");
-            fprintf(stderr,"This calculation is for the ensemble approach\n");
-            fprintf(stderr,"Therefore, the bath states shouldn't be set\n");
-        }
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr,"Error(setBathState): The index of the state file is zero\n");
+        ccexRefusalPrint(stderr,"This calculation is for the ensemble approach\n");
+        ccexRefusalPrint(stderr,"Therefore, the bath states shouldn't be set\n");
+        ccexRefuse();
     }
 
     // For print
@@ -717,8 +715,8 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
                     BathArray_setBath_i_state(ba, state, idx);
                     idx++;
                 }else{
-                    fprintf(stderr,"Error(readStateFile): StateFile format is NOT `float` \n");
-                    exit(EXIT_FAILURE);
+                    ccexRefusalPrint(stderr,"Error(readStateFile): StateFile format is NOT `float` \n");
+                    ccexRefuse();
                 }
             }
             if (idx == nspin){
@@ -860,12 +858,10 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
     // Check the number of bath states if i is zero
     if (i == 0){
         // err
-        if (rank==0){
-            fprintf(stderr,"Error(setBathState): The index of the state file is zero\n");
-            fprintf(stderr,"This calculation is for the ensemble approach\n");
-            fprintf(stderr,"Therefore, the bath states shouldn't be set\n");
-        }
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr,"Error(setBathState): The index of the state file is zero\n");
+        ccexRefusalPrint(stderr,"This calculation is for the ensemble approach\n");
+        ccexRefusalPrint(stderr,"Therefore, the bath states shouldn't be set\n");
+        ccexRefuse();
     }
 
     // For print
@@ -932,10 +928,10 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
                     }
 
                     if (isp != naddspin){
-                        fprintf(stderr,"Error(setSubbathStates): The number of subbath spins is not consistent\n");
-                        fprintf(stderr,"The number of subbath spins from the file line : %d\n",isp);
-                        fprintf(stderr,"The number of subbath spins from the defect array : %d\n",naddspin);
-                        exit(EXIT_FAILURE);
+                        ccexRefusalPrint(stderr,"Error(setSubbathStates): The number of subbath spins is not consistent\n");
+                        ccexRefusalPrint(stderr,"The number of subbath spins from the file line : %d\n",isp);
+                        ccexRefusalPrint(stderr,"The number of subbath spins from the defect array : %d\n",naddspin);
+                        ccexRefuse();
                     }
                 }
                 idx++;
@@ -953,8 +949,8 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
                 fprintf(stderr,"Error(setSubbathStates): The number of bath spins is not consistent\n");
                 fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
                 fprintf(stderr,"The number of bath spins from the file line : %d\n",nspin);
-                exit(EXIT_FAILURE);
             }
+            ccexRefuse();   // every rank reads the file; rank 0 alone used to exit (review 20261014 F2)
         }
     }
     return;
@@ -1385,12 +1381,6 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
     char* qd_tensorfile = Config_getQd_tensorfile(cnf);
     char* qd_tensorfile_woqubit = Config_getQd_tensorfile_woqubit(cnf);
     double* qd_cellpara = Config_getQd_cellpara(cnf);
-
-    // the defect's spin is the qubit's (the input key DefectTotSpin had to equal it until A47); CorrTotSpin, used for
-    // old-format VASP files only, was removed with it and is 0 here, as it was by default
-    double DefectTotSpin = QubitArray_getQubit_i_spin(qa,0);
-    double CorrTotSpin = 0.0;
-    double SpinFactor = 0.0;
 
     if (rank==0){
         printSubTitle("Read the Quadrupole interaction from DFT inputfile...");
@@ -2401,21 +2391,10 @@ int READ_Tensor_ver(const char* inputfile,double* SpinFactor, double DefectTotSp
                 if (rank==0){
                     printf("\t\t  Successfully, The version tag is read from Tensorfile (VASP)\n");
                 }
-                //calculate the spin factor with total spin & correlation
-                if (*CorrTotSpin != 0.0){
-                    //consider other central spin value
-                    (*SpinFactor) = (*CorrTotSpin) / DefectTotSpin;
-                    if (rank==0){
-                        printf("\t\t  Are you sure that the Central Spin is different from A-tensor file?\n");
-                        printf("\t\t  To check the detail option, set '-v' options\n");
-                    }
-                }else{
-                    //just use total spin written in A-tensor file
-                    //(*SpinFactor) = DefectTotSpin; 
-                    (*SpinFactor) = 1;
-                    if (rank==0){
-                        printf("\t\t  You will use the raw data of A-tensor file\n");
-                    }
+                //just use total spin written in A-tensor file (CorrTotSpin, which scaled it, was removed in A47)
+                (*SpinFactor) = 1;
+                if (rank==0){
+                    printf("\t\t  You will use the raw data of A-tensor file\n");
                 }
                 rewind(data);fclose(data);
                 return 1;   // VASP version
@@ -2459,17 +2438,12 @@ void printHfInfo_version(int version, double DefectTotSpin, double CorrTotSpin, 
 
     }else if (version == 1){    //VASP
         printf("\t\tYour Hyperfine file version is 'VASP'\n");
-        if (CorrTotSpin != 0.0){
-            printf("\t\tCentral Tot spin & Correlation spin = %lf & %lf\n",DefectTotSpin, CorrTotSpin);
-            printf("\t\t-->SpinFactor = (Correlation Spin) / (Central Tot spin) = %lf\n",SpinFactor);
-        }else{
-            printf("\t\tNow doesn't consider the SpinFactor(%lf) due to using raw data of A-file!!\n",SpinFactor);
-        }
+        printf("\t\tNow doesn't consider the SpinFactor(%lf) due to using raw data of A-file!!\n",SpinFactor);
 
     }else{
         printf("\tThe version option(%d) is weird!!\n",version);
         printf("\tNeed to check the reading version from A-tensor File");
-        exit(1);
+        ccexFatal(1);   // rank 0 alone prints this (readHftensorfile), so no barrier
     }
     printf("\n");
 }

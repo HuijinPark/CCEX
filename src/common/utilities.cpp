@@ -11,6 +11,7 @@
 #ifdef CCEX_BLAS_DIRECT
 #include "../../include/common/blas_option.h"   // the thresholds printBanner reports
 #endif
+#include "../../include/calculation/gpu/small_cluster_batch.h"   // smallClusterWarmDown (ccexRefuse)
 
 /* utils ---------------------------------------------------*/
 MatrixXcd Double1dToMatrixXcd(double* val, int n){
@@ -93,16 +94,16 @@ void normalizeAxisOrDie(const double v[3], double out[3], const char* what){
 
     for (int i=0; i<3; i++){
         if (!std::isfinite(v[i])){
-            fprintf(stderr,"Error: %s[%d] is not a finite number (%g)\n",what,i,v[i]);
-            exit(EXIT_FAILURE);
+            ccexRefusalPrint(stderr,"Error: %s[%d] is not a finite number (%g)\n",what,i,v[i]);
+            ccexRefuse();
         }
     }
 
     double norm = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     if (norm < ROT_ZERONORM_TOL){
-        fprintf(stderr,"Error: %s has zero norm ( [%g, %g, %g] )\n",what,v[0],v[1],v[2]);
-        fprintf(stderr,"An axis must be a non-zero direction vector.\n");
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr,"Error: %s has zero norm ( [%g, %g, %g] )\n",what,v[0],v[1],v[2]);
+        ccexRefusalPrint(stderr,"An axis must be a non-zero direction vector.\n");
+        ccexRefuse();
     }
 
     for (int i=0; i<3; i++){ out[i] = v[i]/norm; }
@@ -189,15 +190,15 @@ void buildQubitAlignedRotation(const double bath_axis[3], const double qubit_axi
             return;
         }
 
-        fprintf(stderr,"Error(coordinate_frame_rotation): bath_axis and qubit_axis are parallel or antiparallel\n");
-        fprintf(stderr,"  normalized bath_axis  : [ %g, %g, %g ]\n",b[0],b[1],b[2]);
-        fprintf(stderr,"  normalized qubit_axis : [ %g, %g, %g ]\n",q[0],q[1],q[2]);
-        fprintf(stderr,"  |qubit_axis x bath_axis| = %g\n",cross_norm);
-        fprintf(stderr,"The cross product fixes the azimuth of the new x axis, so collinear axes\n");
-        fprintf(stderr,"leave the frame undefined. Pick a bath_axis that is not along qubit_axis\n");
-        fprintf(stderr,"(the only accepted collinear input is bath_axis=[0,0,1] with qubit_axis=[0,0,1],\n");
-        fprintf(stderr," which is the identity transformation).\n");
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): bath_axis and qubit_axis are parallel or antiparallel\n");
+        ccexRefusalPrint(stderr,"  normalized bath_axis  : [ %g, %g, %g ]\n",b[0],b[1],b[2]);
+        ccexRefusalPrint(stderr,"  normalized qubit_axis : [ %g, %g, %g ]\n",q[0],q[1],q[2]);
+        ccexRefusalPrint(stderr,"  |qubit_axis x bath_axis| = %g\n",cross_norm);
+        ccexRefusalPrint(stderr,"The cross product fixes the azimuth of the new x axis, so collinear axes\n");
+        ccexRefusalPrint(stderr,"leave the frame undefined. Pick a bath_axis that is not along qubit_axis\n");
+        ccexRefusalPrint(stderr,"(the only accepted collinear input is bath_axis=[0,0,1] with qubit_axis=[0,0,1],\n");
+        ccexRefusalPrint(stderr," which is the identity transformation).\n");
+        ccexRefuse();
     }
 
     for (int i=0; i<3; i++){ ex[i] /= cross_norm; }
@@ -233,11 +234,11 @@ void buildQubitAlignedRotation(const double bath_axis[3], const double qubit_axi
     }
 
     if (ortho_err > ROT_ORTHO_TOL || fabs(det-1.0) > ROT_ORTHO_TOL || zcheck_err > ROT_ORTHO_TOL){
-        fprintf(stderr,"Error(coordinate_frame_rotation): the constructed matrix is not a valid rotation\n");
-        fprintf(stderr,"  max|R^T R - I|            = %g (tol %g)\n",ortho_err,ROT_ORTHO_TOL);
-        fprintf(stderr,"  det(R)                    = %.15g (must be +1)\n",det);
-        fprintf(stderr,"  max|R*qubit_axis - [001]| = %g (tol %g)\n",zcheck_err,ROT_ORTHO_TOL);
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): the constructed matrix is not a valid rotation\n");
+        ccexRefusalPrint(stderr,"  max|R^T R - I|            = %g (tol %g)\n",ortho_err,ROT_ORTHO_TOL);
+        ccexRefusalPrint(stderr,"  det(R)                    = %.15g (must be +1)\n",det);
+        ccexRefusalPrint(stderr,"  max|R*qubit_axis - [001]| = %g (tol %g)\n",zcheck_err,ROT_ORTHO_TOL);
+        ccexRefuse();
     }
 }
 
@@ -764,8 +765,8 @@ void printSubTitle(char* title){
 
 void copyBounded(char* dst, const char* src, size_t size, const char* what){
     if (strlen(src) >= size){
-        fprintf(stderr,"Error: %s \"%s\" is longer than it can be (%zu characters)\n",what,src,size-1);
-        exit(EXIT_FAILURE);
+        ccexRefusalPrint(stderr,"Error: %s \"%s\" is longer than it can be (%zu characters)\n",what,src,size-1);
+        ccexRefuse();
     }
     strcpy(dst,src);
 }
@@ -1180,6 +1181,10 @@ void ccexRefusalPerror(const char* what){
     int running = 0, finished = 0;
     MPI_Initialized(&running); MPI_Finalized(&finished);
     if (running && !finished){
+        // review 20261014 F1: the GPU early start (smallClusterWarmUp) may still run its thread on node rank 0, page-locking
+        // the shared window; exit() would destroy it joinable (std::terminate) after MPI_Finalize freed that window.
+        // Collective like this function (every rank refuses here); nothing when nothing was started.
+        smallClusterWarmDown();
         MPI_Barrier(MPI_COMM_WORLD);
         MPI_Finalize();
     }

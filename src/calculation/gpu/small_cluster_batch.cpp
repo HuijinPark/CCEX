@@ -563,6 +563,18 @@ struct SmallClusterBatch::Impl {};
 
 #if defined(CCEX_USE_CUDA) || defined(CCEX_SMALL_CLUSTER_EMULATE)
 static void warmStart(const Config* cnf, bool packedLikely, unsigned long long mask);
+
+// A48: one state, packed_max_dim not given and a run the CPU batch takes - the packed kernel only when the clusters of bath
+// dimension 2 and 4 reach this many per rank (the constructor; smallClusterWarmUpAfterBath counts them before the clusters)
+constexpr long packedMinPerRankState = 40000;
+
+// A48: whether the CPU batch (A30, CceBatchWindow) takes this run's clusters of the packed dimensions (both when
+// packed_max_dim is 4). Collective the first time (ccebatchRunTakes -> ccebatchUsable). The warm-up and the constructor
+// can get different answers: ccebatchRunTakes asks computeUseCuda, false in the warm-up (before the card is started).
+static bool cpuBatchTakesPacked(QubitArray* qa, Config* cnf, Pulse* pls, bool isGCCE, const char** why){
+    ccebatch::Plan cpuPlan; bool cpuDims[2];
+    return ccebatchRunTakes(qa,cnf,pls,isGCCE,cpuPlan,cpuDims,why) && cpuDims[0] && (cnf->gpu_packed_max_dim < 4 || cpuDims[1]);
+}
 #endif
 
 void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const char* savemode){
@@ -600,9 +612,8 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
             Plan plan{}; bool ensemble = false, recursive = false;
             packedLikely = QubitArray_getNqubit(qa)==1 && !strcasecmp(cnf->quantity,"coherence") &&
                            smallClusterPlan(c,pls,plan,ensemble,recursive);
-            ccebatch::Plan cpuPlan; bool cpuDims[2]; const char* cpuWhy = nullptr;
-            if (packedLikely && strcmp(cnf->gpu_packed_source,"given") &&
-                ccebatchRunTakes(qa,c,pls,false,cpuPlan,cpuDims,&cpuWhy) && cpuDims[0] && (cnf->gpu_packed_max_dim < 4 || cpuDims[1])){
+            const char* cpuWhy = nullptr;
+            if (packedLikely && strcmp(cnf->gpu_packed_source,"given") && cpuBatchTakesPacked(qa,c,pls,false,&cpuWhy)){
                 // A55 (user 2026-10-14): one state - the constructor's threshold (packedMinPerRankState) counts the
                 // clusters of bath dimension 2 and 4, which in a standard cCCE run are the bath spins and the pairs
                 // closer than rdip: counted right after the bath is read (smallClusterWarmUpAfterBath), and the card
@@ -680,7 +691,6 @@ void smallClusterWarmUpAfterBath(const Config* cnf, BathArray* ba, DefectArray* 
     // the constructor's count before the clusters: the spins (order 1) and the pairs rdipcut < r < rdip (order 2,
     // clusterizePairs and BathArray_connectivity) of bath dimension 2 and 4, rows shared between the ranks; a rank stops
     // at the threshold. Above about 2e7 distances per rank (40 ms) the count is not made and the card starts as before.
-    constexpr long packedMinPerRankState = 40000;   // the constructor's (A48)
     const long cap = packedMinPerRankState*long(nprocess);
     const int nspin = BathArray_getNspin(ba), maxDim = cnf->gpu_packed_max_dim;
     const float rdip = cnf->rdip, rdipcut = cnf->rdipcut;
@@ -757,7 +767,7 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
                                 smallcluster::maxIntervals-1);
         } else packedOn = true;
     }
-    // A40: the warp kernel (opt-in); what it cannot take stays on its usual path
+    // A40: the warp kernel (default 27 in the GPU build, Config_resolveWarpMaxDim); what it cannot take stays on its usual path
     bool warpOn = false;
     warpcluster::Plan wp{};
     unsigned long long mask = 0;
@@ -796,10 +806,8 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
     // packedMinPerRankState per rank (each state evaluates them all), else off; the ensemble - off (no gain at 25-178 k).
     // A run A30 does not take keeps the threshold below. Collective (the same on every rank: the input decides).
     if (packedOn && strcmp(cnf->gpu_packed_source,"given")){
-        constexpr long packedMinPerRankState = 40000;
-        ccebatch::Plan cpuPlan; bool cpuDims[2]; const char* cpuWhy = nullptr;
-        const bool cpuTakes = ccebatchRunTakes(qa,cnf,pls,isGCCE,cpuPlan,cpuDims,&cpuWhy) && cpuDims[0] &&
-                              (cnf->gpu_packed_max_dim < 4 || cpuDims[1]);
+        const char* cpuWhy = nullptr;
+        const bool cpuTakes = cpuBatchTakesPacked(qa,cnf,pls,isGCCE,&cpuWhy);
         if (!cpuTakes){
             if (rank==0) printf("[gpu-packed] the CPU batch (A30) does not take this run (%s): the packed kernel unless its "
                                 "cluster evaluations (clusters x states) are fewer than %ld per rank (A48)\n",

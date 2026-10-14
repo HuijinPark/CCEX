@@ -1277,8 +1277,6 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     Config_setRbathcut(cnf,rbathcut);
 
     float rdipcut = rdipInner ? readFloatItem(rdipInner,"rdip[0]") : 0.0f;
-    if(adaptive && rdipInner)
-        rdipcut=float(readFiniteNumber(rdipInner,"rdip[0]"));
     Config_setRdipcut(cnf,rdipcut);
 
     int nstate = cJSON_ReadInt(root,"nstate",true,0);

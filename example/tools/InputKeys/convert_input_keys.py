@@ -13,7 +13,10 @@ A key written twice (an old key beside its new name, or two spellings that diffe
 values are the same; different values stop the file before anything is written. Tests: tests/ (python3 -m unittest).
 """
 import json
+import os
+import shutil
 import sys
+import tempfile
 
 WS = ' \t\r\n'
 
@@ -534,7 +537,7 @@ class Converter:
             return
         if m is not None and isinstance(m.value, Obj):
             raise ValueError('save_nodiv beside a savemode block: write nodiv inside the block')
-        if plain(n.value) not in (True, False):
+        if not isinstance(plain(n.value), bool):     # 0/1 too: CCEX took only a JSON boolean, before and after A47
             raise ValueError('save_nodiv must be true or false')
         mode = m.value.render() if m is not None else '"coherence"'
         pos = i if i is not None else j
@@ -610,7 +613,7 @@ class Converter:
             if m is None and n is None:
                 continue
             on = m.value.render() if m is not None else 'false'
-            if m is not None and plain(m.value) not in (True, False):
+            if m is not None and not isinstance(plain(m.value), bool):   # 0/1 too, as CCEX (readStrictBool)
                 raise ValueError(f'{name} must be true or false')
             pos = i if i is not None else R.find(inner)[0]
             if m is not None:
@@ -847,15 +850,19 @@ def main(argv):
         return 0 if argv else 2
     status = 0
     for path in argv:
-        text = open(path).read()
-        try:
+        try:                   # a file that cannot be read (missing, not UTF-8, ...) is reported like one that cannot be converted
+            with open(path, newline='') as f:
+                raw = f.read()
+            crlf = '\r\n' in raw          # converted with \n and written back with \r\n (lines added by the converter too)
+            text = raw.replace('\r\n', '\n') if crlf else raw
             new, log = convert_text(text)
         except Exception as error:
             print(f'{path}: not converted: {error}', file=sys.stderr)
             status = 2
             continue
+        out = new.replace('\n', '\r\n') if crlf else new
         if mode == 'stdout':
-            sys.stdout.write(new)
+            sys.stdout.write(out)
             continue
         if new == text:
             print(f'{path}: already in the new form')
@@ -865,9 +872,27 @@ def main(argv):
             print(f'    {line}')
         if mode == 'check':
             status = max(status, 1)
-        else:
-            open(path, 'w').write(new)
+            continue
+        try:
+            write_atomically(path, out)
+        except Exception as error:
+            print(f'{path}: not written (the file is unchanged): {error}', file=sys.stderr)
+            status = 2
     return status
+
+
+def write_atomically(path, text):
+    """A temporary file beside the target, then os.replace: an interrupted write leaves the original whole."""
+    target = os.path.realpath(path)       # through a symbolic link, as open(path, 'w') did
+    fd, tmp = tempfile.mkstemp(dir=os.path.dirname(target), prefix='.' + os.path.basename(target) + '.')
+    try:
+        with os.fdopen(fd, 'w', newline='') as f:
+            f.write(text)
+        shutil.copymode(target, tmp)
+        os.replace(tmp, target)
+    except BaseException:
+        os.unlink(tmp)
+        raise
 
 
 if __name__ == '__main__':

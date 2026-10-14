@@ -162,10 +162,36 @@
 The coherence differs from v1.2.2 only where a fix in this release changes it (deltat read as a float in v1.2.2,
 the sampled states and `seed`, the ensemble half interval in double, the density-matrix `nan`, the pCCE partition).
 
+### Compared with v1.2.2 on the GPU node (idm4-gpu Xeon 6731P + one RTX PRO 6000, 32 ranks, one run each)
+
+v1.2.2 (CPU only) against 2.0.0 `main.out` (CPU) and `main_gpu.out` (GPU, `backend auto`), both built with icpx 2023.2 and
+OpenMPI 4.1.5, on the inputs of the October 2026 checks and the v1.2.2 examples (job 17453; one run per build, so small
+differences in time are within the noise). The last column is the
+largest difference of the coherence (`wiDiv`); an empty cell is not compared here.
+
+| Case | v1.2.2 | 2.0.0 CPU | 2.0.0 GPU | Largest coherence difference to v1.2.2 |
+|---|---|---|---|---|
+| P1 production cCCE2, CR0 | 90.4 s | 6.4 s (14.1x) | 6.4 s (14.2x) | 3e-7 |
+| P1 production cCCE2, CR60 | 526.4 s | 31.3 s (16.8x) | 27.4 s (19.2x) | 9e-6 |
+| P1 production ensemble cCCE2, CR0 | 12.7 s | 1.2 s (10.7x) | 1.2 s (10.4x) | 6e-8 |
+| P1 production ensemble cCCE2, CR60 | 80.5 s | 3.0 s (27.0x) | 3.0 s (26.5x) | 2e-8 |
+| P1 production gCCE2, CR0 | 117.0 s | 40.7 s (2.9x) | 22.3 s (5.3x) | |
+| P1 production gCCE2, CR60 | 681.7 s | 219.5 s (3.1x) | 108.2 s (6.3x) | |
+| P1 example cCCE2 e2n, 50 states | 480.8 s | 23.5 s (20.4x) | 23.7 s (20.3x) | |
+| P1 example pCCE2, sK 3 | 312.7 s | 8.8 s (35.7x) | 8.7 s (35.8x) | |
+| h-BN ensemble cCCE2 | 67.7 s | 10.8 s (6.3x) | 10.8 s (6.3x) | 4e-6 |
+| h-BN ensemble Ramsey | 31.9 s | 4.4 s (7.2x) | 4.7 s (6.8x) | |
+| h-BN gCCE3 | 78.3 s | 10.6 s (7.4x) | 11.0 s (7.1x) | |
+| 13C ensemble cCCE2 | 3.9 s | 2.0 s (1.9x) | 2.0 s (1.9x) | 8e-6 |
+
+Geometric mean of the speed-up over the 57 inputs (most of the v1.2.2 examples run in about a second, where start-up
+dominates): cCCE (18) 3.2x CPU / 3.1x GPU, gCCE (18) 1.9x / 1.7x, pCCE (3) 14.8x / 14.4x, ensemble (18) 2.8x / 2.5x,
+all 2.8x / 2.6x.
+
 ### Performance (measured during the October 2026 work)
 
 Each row compares the code before and after that change, on the same inputs and server (idm, 64 ranks unless noted);
-the results are byte-identical, or within the stated bound for `recursive`. For v1.2.2 see the table above.
+the results are byte-identical, or within the stated bound for `recursive`. For v1.2.2 see the tables above.
 
 | What | Case | Before -> after | Speed-up | Baseline |
 |---|---|---|---|---|

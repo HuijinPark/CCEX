@@ -85,63 +85,13 @@ bool selfCheckCase(int D, bool ensemble, bool recursive, int intervals, char* wh
             }
             psi[c] = MatrixXcd::Zero(D,1); psi[c](c % D,0) = 1.0;
         }
-        const bool jacobi = smalleig::on();
-        CceWorkspace ws;
-        std::vector<MatrixXcd> res(nstep);
+        std::vector<const MatrixXcd*> pa(n), pb(n), pp(n);
+        for (int c=0; c<n; ++c){ pa[c] = &Ha[c]; pb[c] = &Hb[c]; pp[c] = &psi[c]; }
         std::vector<std::complex<double>> scalarOut(size_t(n)*nstep), batchOut(size_t(n)*nstep);
-        // the scalar path: cceSetupSmallAlone (here without its [profile] count) or cceSetup, then cceEvolve
-        for (int c=0; c<n; ++c){
-            ws.Halpha = Ha[c]; ws.Hbeta = Hb[c];
-            const MatrixXcd* p = ensemble ? nullptr : &psi[c];
-            if (jacobi){
-                double w[2][4]; doublec V[2][16]; const double* wOk[2] = {nullptr,nullptr}; const doublec* VOk[2] = {nullptr,nullptr};
-                for (int s=0; s<2; ++s){
-                    const doublec* h = (s == 0 ? ws.Halpha : ws.Hbeta).data(); double* wp = w[s]; doublec* Vp = V[s]; bool ok = false;
-                    smalleig::solve(D,1,&h,&wp,&Vp,&ok);
-                    if (ok){ wOk[s] = w[s]; VOk[s] = V[s]; }
-                }
-                cceSetupSmall(ws,p,wOk,VOk);
-            } else cceSetup(ws,p);
-            cceEvolve(cnf,&pulse,res.data(),ws);
-            for (int i=0; i<nstep; ++i) scalarOut[size_t(c)*nstep+i] = res[i](0,0);
-        }
-        // the window's: the eigensystems smalleig::maxLanes matrices at a time (Halpha, Hbeta of each cluster in order)
-        std::vector<double> eigW(size_t(n)*8); std::vector<doublec> eigV(size_t(n)*32); std::vector<char> eigOk(size_t(n)*2,0);
-        if (jacobi){
-            std::vector<int> group;
-            const doublec* h[smalleig::maxLanes]; double* w[smalleig::maxLanes]; doublec* V[smalleig::maxLanes]; bool ok[smalleig::maxLanes];
-            auto flush = [&](){
-                if (group.empty()) return;
-                smalleig::solve(D,int(group.size()),h,w,V,ok);
-                for (size_t g=0; g<group.size(); ++g) eigOk[group[g]] = ok[g];
-                group.clear();
-            };
-            for (int c=0; c<n; ++c) for (int s=0; s<2; ++s){
-                const int m = 2*c+s;
-                h[group.size()] = (s == 0 ? Ha[c] : Hb[c]).data(); w[group.size()] = &eigW[size_t(m)*4]; V[group.size()] = &eigV[size_t(m)*16];
-                group.push_back(m);
-                if (int(group.size()) == smalleig::maxLanes) flush();
-            }
-            flush();
-        }
-        ccebatch::Pack pack;
-        std::complex<double>* out[ccebatch::maxLanes] = {};
-        int count = 0;
-        for (int c=0; c<n && same; ++c){
-            ws.Halpha = Ha[c]; ws.Hbeta = Hb[c];
-            const MatrixXcd* p = ensemble ? nullptr : &psi[c];
-            if (jacobi){
-                const double* w[2] = {nullptr,nullptr}; const doublec* V[2] = {nullptr,nullptr};
-                for (int s=0; s<2; ++s) if (eigOk[2*c+s]){ w[s] = &eigW[size_t(2*c+s)*4]; V[s] = &eigV[size_t(2*c+s)*16]; }
-                cceSetupSmall(ws,p,w,V);
-            } else cceSetup(ws,p);
-            if (!ccebatchPackLane(ws,ensemble,D,pack,count)){ snprintf(why,whySize,"a test cluster has a value that is not finite"); same = false; }
-            else {
-                out[count++] = &batchOut[size_t(c)*nstep];
-                if (count == B){ ccebatchEvolvePadded(plan,D,pack,count,out); count = 0; }
-            }
-        }
-        if (same && count) ccebatchEvolvePadded(plan,D,pack,count,out);
+        std::vector<char> batched;
+        ccebatchBothPaths(cnf,&pulse,plan,D,n,pa.data(),pb.data(),pp.data(),scalarOut.data(),batchOut.data(),batched);
+        for (int c=0; c<n && same; ++c)
+            if (!batched[c]){ snprintf(why,whySize,"a test cluster has a value that is not finite"); same = false; }
         for (size_t i=0; same && i<scalarOut.size(); ++i)
             if (std::memcmp(&scalarOut[i],&batchOut[i],sizeof(doublec))){
                 snprintf(why,whySize,"bath dimension %d, %s, %s, %s: test cluster %zu, step %zu differs (scalar %a%+ai, batched %a%+ai)",
@@ -162,12 +112,17 @@ bool ccebatchUsable(const char** why){
     if (state < 0){
         const bool kernel = ccebatch::lanes() > 0;
         bool ok = kernel;
+        long long solved = 0, fallbacks = 0;
+        smalleig::takeCounts(solved,fallbacks);       // the made-up clusters' eigensolves are not the run's [profile] count
         if (!kernel) snprintf(reason,sizeof reason,"no kernel for this build (a compiler, version or instruction set it was not checked on)");
         for (int D : {2, 4})
             for (int e=0; e<2 && ok; ++e)
                 for (int r=0; r<2 && ok; ++r)
                     for (int iv=1; iv<=3 && ok; ++iv)
                         if (!e || iv == 2) ok = selfCheckCase(D,e,r,iv,reason,sizeof reason);   // the ensemble: Hahn only
+        long long checkSolved = 0, checkFallbacks = 0;
+        smalleig::takeCounts(checkSolved,checkFallbacks);
+        smalleig::count(solved,fallbacks);
         int initialized = 0, finalized = 0;
         MPI_Initialized(&initialized);
         if (initialized) MPI_Finalized(&finalized);
@@ -295,34 +250,17 @@ void CceBatchWindow::fill(int ic, int end){
     const bool jacobi = smalleig::on();
     if (jacobi){
         for (int d : {2, 4}){
-            std::vector<int> group; group.reserve(smalleig::maxLanes);
-            const doublec* h[smalleig::maxLanes]; double* w[smalleig::maxLanes]; doublec* V[smalleig::maxLanes];
-            bool ok[smalleig::maxLanes];
             const double t0 = profile ? MPI_Wtime() : 0.0;
-            long long solved = 0, fallbacks = 0, matrices = 0;
-            auto flush = [&](){
-                if (group.empty()) return;
-                smalleig::solve(d,int(group.size()),h,w,V,ok);
-                for (size_t g=0; g<group.size(); ++g){
-                    eigOk[group[g]] = ok[g];
-                    if (ok[g]) ++solved; else ++fallbacks;
-                }
-                group.clear();
-            };
+            CceEigenGroups groups(d,eigW.data(),eigV.data(),eigOk.data());
+            long long matrices = 0;
             for (int at : mine){
                 if (dims[at] != d) continue;
-                for (int s=0; s<2; ++s){
-                    const int m = 2*at+s;
-                    h[group.size()] = (s == 0 ? Ha[at] : Hb[at]).data();
-                    w[group.size()] = &eigW[size_t(m)*4];
-                    V[group.size()] = &eigV[size_t(m)*16];
-                    group.push_back(m);
-                    ++matrices;
-                    if (int(group.size()) == smalleig::maxLanes) flush();
-                }
+                groups.add(2*at,Ha[at]);
+                groups.add(2*at+1,Hb[at]);
+                matrices += 2;
             }
-            flush();
-            smalleig::count(solved,fallbacks);
+            groups.flush();
+            smalleig::count(groups.solved,groups.fallbacks);
             if (profile && matrices) eigEach[d == 2 ? 0 : 1] = (MPI_Wtime()-t0)/double(matrices/2);
         }
     }
@@ -332,12 +270,7 @@ void CceBatchWindow::fill(int ic, int end){
         const double t1 = profile ? MPI_Wtime() : 0.0;
         ws.Halpha.swap(Ha[at]); ws.Hbeta.swap(Hb[at]);
         const MatrixXcd* psi = plan.ensemble ? nullptr : &psiAt[at];
-        if (jacobi){
-            const double* w[2] = {nullptr,nullptr};
-            const doublec* V[2] = {nullptr,nullptr};
-            for (int s=0; s<2; ++s) if (eigOk[2*at+s]){ w[s] = &eigW[size_t(2*at+s)*4]; V[s] = &eigV[size_t(2*at+s)*16]; }
-            cceSetupSmall(ws, psi, w, V);
-        } else cceSetup(ws, psi);
+        ccebatchSetup(ws,psi,jacobi,at,eigW.data(),eigV.data(),eigOk.data());
         ws.Halpha.swap(Ha[at]); ws.Hbeta.swap(Hb[at]);
         const int lane = filled[k];
         if (!ccebatchPackLane(ws,plan.ensemble,d,pack[k],lane)){ dims[at] = 0; continue; }   // the scalar path decides
@@ -347,6 +280,66 @@ void CceBatchWindow::fill(int ic, int end){
         if (++filled[k] == B) run(k);
     }
     for (int k=0; k<2; ++k) if (filled[k]) run(k);
+}
+
+void CceEigenGroups::add(int m, const MatrixXcd& H){
+    h[n] = H.data(); wl[n] = &w[size_t(m)*4]; Vl[n] = &V[size_t(m)*16]; slot[n] = m;
+    if (++n == smalleig::maxLanes) flush();
+}
+
+void CceEigenGroups::flush(){
+    if (!n) return;
+    bool converged[smalleig::maxLanes];
+    smalleig::solve(D,n,h,wl,Vl,converged);
+    for (int g=0; g<n; ++g){
+        ok[slot[g]] = converged[g];
+        if (converged[g]) ++solved; else ++fallbacks;
+    }
+    n = 0;
+}
+
+void ccebatchSetup(CceWorkspace& ws, const MatrixXcd* psi, bool jacobi, int c,
+                   const double* w, const std::complex<double>* V, const char* ok){
+    if (!jacobi){ cceSetup(ws,psi); return; }
+    const double* wc[2] = {nullptr,nullptr};
+    const doublec* Vc[2] = {nullptr,nullptr};
+    for (int s=0; s<2; ++s) if (ok[2*c+s]){ wc[s] = &w[size_t(2*c+s)*4]; Vc[s] = &V[size_t(2*c+s)*16]; }
+    cceSetupSmall(ws,psi,wc,Vc);
+}
+
+void ccebatchBothPaths(Config* cnf, Pulse* pls, const ccebatch::Plan& plan, int D, int n,
+                       const MatrixXcd* const* Ha, const MatrixXcd* const* Hb, const MatrixXcd* const* psi,
+                       std::complex<double>* scalarOut, std::complex<double>* batchOut, std::vector<char>& batched){
+    const int nstep = plan.nstep, B = ccebatch::lanes();
+    CceWorkspace ws;
+    std::vector<MatrixXcd> res(nstep);
+    for (int c=0; c<n; ++c){
+        const MatrixXcd* p = plan.ensemble ? nullptr : psi[c];
+        ws.Halpha = *Ha[c]; ws.Hbeta = *Hb[c];
+        if (!cceSetupSmallAlone(ws,p)) cceSetup(ws,p);
+        cceEvolve(cnf,pls,res.data(),ws);
+        for (int i=0; i<nstep; ++i) scalarOut[size_t(c)*nstep+i] = res[i](0,0);
+    }
+    const bool jacobi = smalleig::on();
+    std::vector<double> eigW(size_t(n)*8); std::vector<doublec> eigV(size_t(n)*32); std::vector<char> eigOk(size_t(n)*2,0);
+    if (jacobi){
+        CceEigenGroups groups(D,eigW.data(),eigV.data(),eigOk.data());
+        for (int c=0; c<n; ++c){ groups.add(2*c,*Ha[c]); groups.add(2*c+1,*Hb[c]); }
+        groups.flush();
+    }
+    ccebatch::Pack pack{};
+    std::complex<double>* out[ccebatch::maxLanes] = {};
+    int count = 0;
+    batched.assign(n,0);
+    for (int c=0; c<n; ++c){
+        ws.Halpha = *Ha[c]; ws.Hbeta = *Hb[c];
+        ccebatchSetup(ws,plan.ensemble ? nullptr : psi[c],jacobi,c,eigW.data(),eigV.data(),eigOk.data());
+        if (!ccebatchPackLane(ws,plan.ensemble,D,pack,count)) continue;
+        batched[c] = 1;
+        out[count++] = &batchOut[size_t(c)*nstep];
+        if (count == B){ ccebatchEvolvePadded(plan,D,pack,count,out); count = 0; }
+    }
+    if (count) ccebatchEvolvePadded(plan,D,pack,count,out);
 }
 
 void ccebatchEvolvePadded(const ccebatch::Plan& plan, int D, ccebatch::Pack& p, int count, std::complex<double>* const* out){
