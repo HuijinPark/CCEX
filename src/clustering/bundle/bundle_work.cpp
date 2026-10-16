@@ -129,8 +129,8 @@ const AdaptiveWork& adaptiveWork(const Config* c) {
             };
             require(integer(state) && integer(step),"factors work requires integer state and step");
             work.state=int(state->valuedouble);work.step=int(step->valuedouble);
-            // the states calculate() visits: 0 for the ensemble, 1..nstate for sampled states
-            require(c->nstate==0 ? work.state==0 : (work.state>=1 && work.state<=c->nstate),
+            // the states calculate() visits: 0 for the ensemble, s_range first..last for sampled states (A94)
+            require(c->nstate==0 ? work.state==0 : (work.state>=std::max(c->state_first,1) && work.state<=c->nstate),
                     "factors state is not a state of this run");
             require(work.step>=0 && work.step<c->nstep,"factors step is outside 0..nstep-1");
         }

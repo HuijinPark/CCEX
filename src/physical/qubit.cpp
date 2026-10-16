@@ -102,7 +102,8 @@ void QubitArray_setPsiaPsib_fromQubit(QubitArray* qa){
     QubitArray_setPsib(qa,psib);
 }
 
-// The m_s product state a qubit vector mostly is: each qubit's levels run from +S down to -S (as alphams/betams build them).
+// The m_s product state a qubit vector mostly is: each qubit's levels run from +S down to -S (as Qubit.alpha_state/beta_state
+// {"ms": ...} build them).
 static std::string describeMsState(const QubitArray* qa, const MatrixXcd& psi){
     Eigen::Index best = 0;
     double weight = psi.cwiseAbs2().col(0).maxCoeff(&best);
@@ -126,54 +127,19 @@ static std::string describeMsState(const QubitArray* qa, const MatrixXcd& psi){
     return label + tail;
 }
 
-// One qubit's sublevel vector as an m_s label
-static std::string describeMsState1(const QubitArray* qa, int i, const MatrixXcd& v){
-    Eigen::Index best = 0; v.cwiseAbs2().col(0).maxCoeff(&best);
-    double m = QubitArray_getQubit_i_spin(qa,i) - best;
-    char buf[16];
-    if (std::fabs(m) < 1e-9) snprintf(buf,sizeof(buf),"0");
-    else if (std::fabs(m - std::round(m)) < 1e-9) snprintf(buf,sizeof(buf),"%+d",(int)std::lround(m));
-    else snprintf(buf,sizeof(buf),"%+d/2",(int)std::lround(2*m));
-    return buf;
-}
-
-void QubitArray_checkIdxAgainstMs(const QubitArray* qa){
-    // alphaidx/betaidx count the qubit Hamiltonian's eigenstates by DESCENDING energy, an order that changes with the
-    // field (an NV at 500 G: +1, -1, 0), and they take precedence over alphams/betams. Written together, the two can
-    // silently name different transitions (the 2026-10-03 case: alphaidx 2 / betaidx 1 meant +1 <-> 0 but gave 0 <-> -1).
-    // Only what was written counts (review b467fe R1): a qubit or a side (alpha/beta) left to its default does not
-    // constrain the state. The weight of psia (psib) on the subspace the written sublevels allow:
-    // P = kron over qubits of (|m_i><m_i| when written, identity otherwise).
-    const int nqubit = QubitArray_getNqubit(qa);
-    std::string written;
-    auto weight = [&](const MatrixXcd& psi, const std::vector<char>& given, bool alpha, const char* side) {
-        MatrixXcd P; bool any = false;
-        for (int i=0; i<nqubit; i++){
-            const bool g = i < (int)given.size() && given[i];
-            MatrixXcd v = alpha ? QubitArray_getQubit_i_alpha(qa,i) : QubitArray_getQubit_i_beta(qa,i);
-            MatrixXcd Pi = g ? MatrixXcd(v*v.adjoint()) : MatrixXcd::Identity(v.rows(),v.rows());
-            P = (i==0) ? Pi : MatrixXcd(kron(P,Pi));
-            if (g){
-                any = true;
-                char buf[96]; snprintf(buf,sizeof(buf),"%s%s of qubit %d = m_s %s",written.empty() ? "" : ", ",side,i,
-                                        describeMsState1(qa,i,v).c_str());
-                written += buf;
-            }
+// A93 (2026-10-16): an eigenvector is defined up to a phase, which the eigensolver picks; psi0 = |alpha> + |beta> and so
+// gCCE with terms that do not conserve J_z (E != 0, A91) depend on it. The phase is fixed: the largest-magnitude component
+// (the first of those within 1e-12 relative of the largest) is made real and positive.
+static void fixEigenvectorPhase(MatrixXcd& v){
+    const double largest = v.cwiseAbs().maxCoeff();
+    if (!(largest > 0)) return;
+    for (Eigen::Index k = 0; k < v.rows(); ++k){
+        const double size = std::abs(v(k,0));
+        if (size >= largest*(1.0 - 1e-12)){
+            v *= std::conj(v(k,0)) / size;
+            v(k,0) = std::complex<double>(size,0.0);     // exactly real, not real up to rounding
+            return;
         }
-        return any ? (psi.adjoint()*P*psi)(0,0).real()/std::max(psi.squaredNorm(),1e-300) : 1.0;
-    };
-    // a side not picked by an index (Qubit.alpha_state/beta_state as a vector, or not given; A47) is not checked
-    const double wa = qa->_alphaidx ? weight(qa->psia, qa->_alphaGiven, true, "alphams") : 1.0;
-    const double wb = qa->_betaidx ? weight(qa->psib, qa->_betaGiven, false, "betams") : 1.0;
-    if (wa < 0.5 || wb < 0.5){
-        if (rank==0){
-            fprintf(stderr,"Error: Qubit.alpha_state/beta_state index pick psia = m_s %s and psib = m_s %s, but the input also writes\n"
-                           "       %s (weight of psia %.3f, of psib %.3f on what is written). The indices count the qubit\n"
-                           "       eigenstates by descending energy (an order that changes with the field) and would be used.\n"
-                           "       Keep one of the two.\n",
-                    describeMsState(qa,qa->psia).c_str(), describeMsState(qa,qa->psib).c_str(), written.c_str(), wa, wb);
-        }
-        ccexFatal();
     }
 }
 
@@ -216,11 +182,13 @@ void QubitArray_setPsiaPsib_fromIdx(QubitArray* qa, float* bfield){
     if (alphaidx != NULL){
         MatrixXcd psia = sortedEigenVectors.col(*alphaidx);
         res = normalize(&psia);
+        fixEigenvectorPhase(psia);
         QubitArray_setPsia(qa,psia);
     }
     if (betaidx != NULL){
         MatrixXcd psib = sortedEigenVectors.col(*betaidx);
         res = normalize(&psib);
+        fixEigenvectorPhase(psib);
         QubitArray_setPsib(qa,psib);
     }
     (void)res;
@@ -757,7 +725,7 @@ void QubitArray_reportIntmap(QubitArray* qa){
 void QubitArray_reportPsiaPsib(QubitArray* qa){
     printInlineMatrixXcd("psia",QubitArray_getPsia(qa));
     printInlineMatrixXcd("psib",QubitArray_getPsib(qa));
-    // which m_s product state each mostly is (D43): alphaidx/betaidx pick by energy order, which says nothing by itself
+    // which m_s product state each mostly is (D43): an index picks by energy order, which says nothing by itself
     if (qa->psia.size() > 0 && qa->psib.size() > 0){
         printf("      %-18s : m_s %s\n", "psia is mostly", describeMsState(qa, qa->psia).c_str());
         printf("      %-18s : m_s %s\n", "psib is mostly", describeMsState(qa, qa->psib).c_str());

@@ -2,7 +2,7 @@
 #
 # hamiltonian.common.bath_bath_mean_field "xyz" (vector_mean_field until A47, D45) against "z", where the answer is known.
 # ---------------------------------------------------------------------------
-# The p1_cce2e2n case (P1 with its 14N as a sub-spin, n_nuclear_spins 1, nstate 1, state 1) with every P1 moved out of rbath but
+# The p1_cce2e2n case (P1 with its 14N as a sub-spin, n_nuclear_spins 1, s_range [1, 1], state 1) with every P1 moved out of rbath but
 # the nearest one whose axis is not the NV axis and whose 14N is not at m = 0: no bath spin is outside the cluster, so the mean field is zero and the vector mode must give the
 # same curve as the z mode, byte for byte. Until review 158861 R1 the vector mode took the sub-spin's x, y field out of
 # the main spin although it had never been added, and the curves differed.
@@ -41,7 +41,7 @@ for i in range(1, len(rows)):
     out.append(rows[i] if i == near else ' %.5f\t %.5f\t %.5f\t        %s\t' % (float(p[0])+1e5, float(p[1])+1e5, float(p[2])+1e5, p[3]))
 open(f'{work}/bath_one', 'w').write('\n'.join(out)+'\n')
 c = flat(json.load(open(f'{case}/ccein.json')))
-for block, k in ((c['Qubit'], 'file'), (c['configuration'], 'gyrofile')):
+for block, k in ((c['Qubit']['qubit'][0], 'file'), (c['configuration'], 'gyrofile')):   # the qubit's position file (A94)
     block[k] = f'{case}/{block[k]}'
 for block, k in ((c['configuration'], 'defect_axis_file'), (c['configuration'], 'bath_state_file'), (c['configuration'], 'defect_state_file')):
     block[k] = [f'{case}/{x}' for x in block[k]]       # one per bath file (A64)

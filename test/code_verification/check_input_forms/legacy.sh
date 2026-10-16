@@ -44,12 +44,15 @@ for block, k in ((d.get("Qubit"),"file"),(c,"gyrofile"),(c,"bath_state_file"),(c
         block[k] = os.path.abspath(os.path.join(casedir, block[k]))
     elif isinstance(block, dict) and isinstance(block.get(k), list):
         block[k] = [os.path.abspath(os.path.join(casedir, x)) for x in block[k]]
+for e in (d.get("Qubit") or {}).get("qubit", []):          # A94: the position file of a Qubit.qubit entry
+    if isinstance(e, dict) and isinstance(e.get("file"), str):
+        e["file"] = os.path.abspath(os.path.join(casedir, e["file"]))
 baths = sorted(glob.glob(f"{casedir}/inputfiles/bath_*_1"))
 c["bathfile"] = [os.path.abspath(baths[0])]
 d["outfile"] = "./OUT"
 json.dump(nest(d), open(f"{work}/legacy.json","w"), indent=4)
 print(f"    {os.path.basename(casedir)}/{tag}: bath={os.path.basename(baths[0])} "
-      f"order={d.get('order')} rbath={d.get('rbath')} nstep={d.get('nstep')} nstate={c.get('nstate')}")
+      f"order={d.get('order')} rbath={d.get('rbath')} nstep={d.get('nstep')} s_range={c.get('s_range')}")
 PY
 }
 
@@ -121,7 +124,7 @@ H=f"{fix}/hexagonal_data"
 # rbath 20 -> 6 : 3897 spins -> 101, and 121 s -> 0.4 s on one core. The A/Q files
 # cover this region comfortably, so both readers stay on their file path.
 d = {"method":"cCCE","quantity":"coherence",
-     "Qubit":{"file":f"{H}/defect","alphams":1,"betams":0},
+     "Qubit":{"file":f"{H}/defect","alpha_state":{"ms":[1]},"beta_state":{"ms":[0]}},
      "configuration":{"gyrofile":f"{fix}/ensemble_data/Gyro_h_BN","bathfile":[f"{H}/bath_1"],"nstate":0},
      "order":2,"bfield":30000,"rbath":6,"rdip":4,"deltat":0.002,"nstep":20,
      "pulse":{"count":1},
@@ -147,17 +150,20 @@ PY
 import json, re, sys; from input_layout import flat, nest
 work, ex = sys.argv[1:3]
 E=f"{ex}/tutorial/05_multiNV/gCCE2_HahnRamsey_NV2"
-s=open(f"{E}/ccein_hahn.json").read()
-s=re.sub(r'#[^\n]*','',s); s=re.sub(r'!\S*','',s)
+s=open(f"{E}/ccein_hahn.jsonc").read()
+s=re.sub(r'#[^\n]*','',s); s=re.sub(r'!\S*','',s); s=re.sub(r"//[^\n]*","",s)
 d=flat(json.loads(s))
 # bathfile as a LIST. Given as a bare string it is read as zero bath files and the
 # run segfaults with "Total 1-Cluster # : 0" -- v1.1.0 behaves the same way, so this
 # is the example being stale, not anything this branch changed.
 d["configuration"].update(bathfile=[f"{E}/bath"], bath_state_file=[f"{E}/state"], gyrofile=f"{E}/gyro_13C")
 d["nstep"]=20; d["outfile"]="./OUT"; d["order"]=1     # order 1, as the tutorial input was until A66
-# the qubit keys the tutorial input wrote until A66 (their default values; check_refusals' S5 cases edit them)
+# the qubit keys the tutorial input wrote until A66 (their default values; check_refusals' S5 cases edit them); the
+# states per qubit (alphams 1, betams 0) are Qubit.alpha_state/beta_state since A93
 for q in d["Qubit"]["qubit"]:
-    for k, v in (("spin", 1.0), ("gyro", -17608.597050), ("alphams", 1), ("betams", 0)): q.setdefault(k, v)
+    for k, v in (("spin", 1.0), ("gyro", -17608.597050)): q.setdefault(k, v)
+d["Qubit"].setdefault("alpha_state", {"ms": [1]*len(d["Qubit"]["qubit"])})
+d["Qubit"].setdefault("beta_state", {"ms": [0]*len(d["Qubit"]["qubit"])})
 json.dump(nest(d), open(f"{work}/legacy.json","w"), indent=4)
 print(f"    2 NV: nqubit={len(d['Qubit']['qubit'])} intmap={len(d['Qubit']['intmap'])} method={d['method']}")
 PY

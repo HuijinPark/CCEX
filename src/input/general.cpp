@@ -10,11 +10,14 @@
 
 #include "../../include/common/memory.h"
 #include <string.h>
+#include <set>
+#include <string>
 #include <float.h>  // DBL_EPSILON
 
 // init
 Config* Config_init(){
     Config* cnf = (Config*)allocArray1d(1,sizeof(Config));
+    cnf->state_first = 1;   // configuration.s_range first (A94)
     cnf->method[0] = '\0';
     cnf->jump_operators = NULL;
     cnf->jump_operators_section[0] = '\0';
@@ -39,7 +42,7 @@ Config* Config_init(){
     cnf->vector_mean_field=false;
     cnf->bath_mean_field_off=false;
     cnf->hamiltonian_ccce_given=false;
-    cnf->delta_A=true;
+    cnf->delta_A=false;
     cnf->pcce_detail_limit=ccex::partitionDetailLimit;
     cnf->gpu_batch_clusters = 8;
     cnf->gpu_cluster_batch_mb = 64;
@@ -73,12 +76,9 @@ Config* Config_init(){
     // otherwise be [0,0,0] -- set them to +z so that "enabled" with no axis given is a
     // well-defined identity instead of a zero-norm error.
     cnf->rot_enabled = false;
-    cnf->rot_bath_axis[0]  = 0.0; cnf->rot_bath_axis[1]  = 0.0; cnf->rot_bath_axis[2]  = 1.0;
     cnf->rot_qubit_axis[0] = 0.0; cnf->rot_qubit_axis[1] = 0.0; cnf->rot_qubit_axis[2] = 1.0;
-    cnf->rot_reference_qubit[0] = '\0'; // empty : use Qubit[0]
-    cnf->rot_qubit_position_frame[0] = '\0'; // empty : "bath"
-    cnf->rot_hf_tensor_frame[0] = '\0'; // empty : not given
-    cnf->rot_qd_tensor_frame[0] = '\0';
+    cnf->hf_frame[0] = '\0'; // empty : not given
+    cnf->qd_frame[0] = '\0';
 
     cnf->defect_axis_reference = DEFECT_AXIS_REFERENCE_NONE;
 
@@ -105,10 +105,6 @@ void Config_reallocBathadjust(Config* cnf, int oldrow, int newrow){
 
 void Config_allocGyrofile(Config* cnf){
     cnf->gyrofile = allocChar1d(MAX_FILEPATH);
-}
-
-void Config_allocQubitfile(Config* cnf){
-    cnf->qubitfile = allocChar1d(MAX_FILEPATH);
 }
 
 void Config_allocHf_tensorfile(Config* cnf){
@@ -148,7 +144,6 @@ void Config_freeAll(Config* cnf){
     Config_freeBathfiles(cnf);
     Config_freeBathadjust(cnf);
     Config_freeGyrofile(cnf);
-    Config_freeQubitfile(cnf);
     Config_freeAvaaxfile(cnf);
     Config_freeStatefile(cnf);
     Config_freeExstatefile(cnf);
@@ -171,10 +166,6 @@ void Config_freeBathadjust(Config* cnf){
 
 void Config_freeGyrofile(Config* cnf){
     freeChar1d(&(cnf->gyrofile));
-}
-
-void Config_freeQubitfile(Config* cnf){
-    freeChar1d(&(cnf->qubitfile));
 }
 
 void Config_freeAvaaxfile(Config* cnf){
@@ -271,10 +262,6 @@ int   Config_getSeed(Config* cnf){
     return cnf->seed;
 }
 
-char*   Config_getQubitfile(Config* cnf){
-    return cnf->qubitfile;
-}
-
 char*   Config_getGyrofile(Config* cnf){
     return cnf->gyrofile;
 }
@@ -319,28 +306,16 @@ bool Config_getRot_enabled(Config* cnf){
     return cnf->rot_enabled;
 }
 
-double* Config_getRot_bath_axis(Config* cnf){
-    return cnf->rot_bath_axis;
-}
-
 double* Config_getRot_qubit_axis(Config* cnf){
     return cnf->rot_qubit_axis;
 }
 
-char* Config_getRot_reference_qubit(Config* cnf){
-    return cnf->rot_reference_qubit;
+char* Config_getHf_frame(Config* cnf){
+    return cnf->hf_frame;
 }
 
-char* Config_getRot_qubit_position_frame(Config* cnf){
-    return cnf->rot_qubit_position_frame;
-}
-
-char* Config_getRot_hf_tensor_frame(Config* cnf){
-    return cnf->rot_hf_tensor_frame;
-}
-
-char* Config_getRot_qd_tensor_frame(Config* cnf){
-    return cnf->rot_qd_tensor_frame;
+char* Config_getQd_frame(Config* cnf){
+    return cnf->qd_frame;
 }
 
 DefectAxisReference Config_getDefect_axis_reference(Config* cnf){
@@ -393,6 +368,24 @@ const char* inputMethodName(const char* m){
     if (!strcasecmp(m,"pmecce"))  return "meCCE";
     if (!strcasecmp(m,"pmegcce")) return "megCCE";
     return m;
+}
+
+void warnNotUsed(const char* key, const char* why){
+    static std::set<std::string> warned;
+    if (rank != 0 || !warned.insert(key).second) return;
+    printf("Warning: input key \"%s\" is not used by this run: %s\n", key, why);
+    fflush(stdout);
+}
+
+std::string stateFileName(const std::string& name, long s){
+    std::string out;
+    bool found = false;
+    for (size_t i = 0; i < name.size();){
+        if (!name.compare(i,5,"{{s}}")){ out += "{s}"; i += 5; }
+        else if (!name.compare(i,3,"{s}")){ out += std::to_string(s); i += 3; found = true; }
+        else out += name[i++];
+    }
+    return found ? out : out + std::to_string(s);
 }
 
 // set 
@@ -598,7 +591,7 @@ void Config_validateEvolutionUpdate(Config* cnf){
 /**
  * propagator: expm exists for gCCE only; sparse for the single-state cCCE (method CCE,
  * pCCE, dsj, itb or dsjitb with nstate > 0) and gCCE with evolution = vector and one qubit, on backend = cpu with
- * evolution_update = exact, without the knight and hfmedi terms. Everything else would run another path than the one
+ * evolution_update = exact, without the knight, hfmedi and delta_A terms. Everything else would run another path than the one
  * asked for, so it is refused. Call after Config_resolveEvolution (main.cpp), when the method and nstate are settled.
  */
 void Config_validatePropagator(const Config* cnf, int nqubit){
@@ -612,23 +605,24 @@ void Config_validatePropagator(const Config* cnf, int nqubit){
     if (strcasecmp(cnf->propagator,"sparse")!=0){ return; }
     char found[128] = "";
     if (cnf->nstate == 0)
-        snprintf(found,sizeof(found),"nstate=0 (the ensemble)");
+        snprintf(found,sizeof(found),"the ensemble (no configuration.s_range)");
     else if (isGCCE && strcasecmp(cnf->evolution,"vector")!=0)
         snprintf(found,sizeof(found),"method=gCCE with execution.evolution=%s",cnf->evolution);
     else if (strcasecmp(cnf->backend,"cpu")!=0)
         snprintf(found,sizeof(found),"execution.backend=%s",cnf->backend);
     else if (strcasecmp(cnf->evolution_update,"recursive")==0)   // given; without the key sparse takes exact (A29)
         snprintf(found,sizeof(found),"execution.evolution_update=%s",cnf->evolution_update);
-    else if (Config_getKnight((Config*)cnf) || Config_getHfmedi((Config*)cnf))
-        snprintf(found,sizeof(found),"the %s term",Config_getKnight((Config*)cnf) ? "knight" : "hfmedi");
+    else if (Config_getKnight((Config*)cnf) || Config_getHfmedi((Config*)cnf) || cnf->delta_A)
+        snprintf(found,sizeof(found),"the %s term",Config_getKnight((Config*)cnf) ? "knight" :
+                 Config_getHfmedi((Config*)cnf) ? "hfmedi" : "delta_A");
     else if (nqubit != 1)
         snprintf(found,sizeof(found),"nqubit=%d",nqubit);
     else if (!isGCCE && strcasecmp(cnf->quantity,"coherence")!=0)
         snprintf(found,sizeof(found),"quantity=%s",cnf->quantity);
     if (found[0] == '\0'){ return; }
     ccexRefusalPrint(stderr,"Error : execution.propagator=sparse is implemented on execution.backend=cpu with execution.evolution_update=exact for one sampled "
-                   "state (nstate > 0) of the cCCE and of gCCE with evolution=vector, one qubit, without knight and "
-                   "hfmedi, this run has %s. Use execution.propagator=eigen.\n",found);
+                   "state (configuration.s_range) of the cCCE and of gCCE with evolution=vector, one qubit, without knight, "
+                   "hfmedi and delta_A, this run has %s. Use execution.propagator=eigen.\n",found);
     ccexRefuse();
 }
 
@@ -769,16 +763,6 @@ void Config_setSeed(Config* cnf, int seed){
     cnf->seed = seed;
 }
 
-void Config_setQubitfile(Config* cnf, char* qubitfile){
-
-    if (cnf->qubitfile == NULL){
-        ccexRefusalPrint(stderr, "Error: the memory for qubitfile should be allocated\n");
-        ccexRefuse();
-    }
-
-    copyBounded(cnf->qubitfile,qubitfile,MAX_FILEPATH,"qubitfile");
-}
-
 void Config_setGyrofile(Config* cnf, char* gyrofile){
 
     if (cnf->gyrofile == NULL){
@@ -860,62 +844,17 @@ void Config_setRot_enabled(Config* cnf, bool rot_enabled){
     cnf->rot_enabled = rot_enabled;
 }
 
-void Config_setRot_bath_axis(Config* cnf, double* rot_bath_axis){
-    copyDouble1d(cnf->rot_bath_axis,rot_bath_axis,3);
-}
-
 void Config_setRot_qubit_axis(Config* cnf, double* rot_qubit_axis){
     copyDouble1d(cnf->rot_qubit_axis,rot_qubit_axis,3);
 }
 
-void Config_setRot_reference_qubit(Config* cnf, char* rot_reference_qubit){
-
-    if (strlen(rot_reference_qubit) >= MAX_CHARARRAY_LENGTH){
-        ccexRefusalPrint(stderr,"Error: reference_qubit \"%s\" is longer than a qubit name can be (%d characters)\n",
-                rot_reference_qubit,MAX_CHARARRAY_LENGTH-1);
-        ccexRefuse();
-    }
-    strcpy(cnf->rot_reference_qubit,rot_reference_qubit);
+// "file" or "qubit", checked where it is read (option.cpp readFrameKey)
+void Config_setHf_frame(Config* cnf, const char* frame){
+    snprintf(cnf->hf_frame,sizeof cnf->hf_frame,"%s",frame);
 }
 
-// "bath" or "qubit" and nothing else: an unrecognized string would otherwise be read
-// as "not bath", silently skipping a transformation the tensors needed.
-static void Config_setTensorFrame(char* dest, char* frame, const char* key){
-
-    if (strcasecmp(frame,"bath")!=0 && strcasecmp(frame,"qubit")!=0){
-        ccexRefusalPrint(stderr,"Error: %s must be \"bath\" or \"qubit\" (got \"%s\")\n",key,frame);
-        ccexRefusalPrint(stderr,"  \"bath\"  : tensor components are in the original bath Cartesian basis\n");
-        ccexRefusalPrint(stderr,"  \"qubit\" : tensor components are already in the qubit-aligned basis\n");
-        ccexRefuse();
-    }
-    strcpy(dest,frame);
-}
-
-void Config_setRot_hf_tensor_frame(Config* cnf, char* frame){
-    Config_setTensorFrame(cnf->rot_hf_tensor_frame,frame,"frame.rotation.hf_tensor_frame");
-}
-
-void Config_setRot_qd_tensor_frame(Config* cnf, char* frame){
-    Config_setTensorFrame(cnf->rot_qd_tensor_frame,frame,"frame.rotation.qd_tensor_frame");
-}
-
-// Only "bath" for now. "qubit" is refused rather than deferred: it would put the qubit
-// positions in the computational frame while the bath is still in the source frame, and
-// readBathfiles would then compare the two in its rbath / rbathcut selection, its mindist
-// and its point-dipole tensors.
-void Config_setRot_qubit_position_frame(Config* cnf, char* frame){
-
-    if (strcasecmp(frame,"bath") != 0){
-        ccexRefusalPrint(stderr,"Error: frame.rotation.qubit_position_frame must be \"bath\" (got \"%s\")\n",frame);
-        if (strcasecmp(frame,"qubit") == 0){
-            ccexRefusalPrint(stderr,"\"qubit\" is not supported in this version: the bath files are read in the\n");
-            ccexRefusalPrint(stderr,"source frame, so qubit positions already in the computational frame would be\n");
-            ccexRefusalPrint(stderr,"compared against them before anything is rotated.\n");
-        }
-        ccexRefusalPrint(stderr,"Write every Qubit.xyz in the same Cartesian basis and origin as the bath files.\n");
-        ccexRefuse();
-    }
-    strcpy(cnf->rot_qubit_position_frame,frame);
+void Config_setQd_frame(Config* cnf, const char* frame){
+    snprintf(cnf->qd_frame,sizeof cnf->qd_frame,"%s",frame);
 }
 
 void Config_setDefect_axis_reference(Config* cnf, DefectAxisReference reference){
@@ -1094,8 +1033,9 @@ void Config_report(Config* cnf, bool qubitBathMeanField){
     const char* mode = bundle ? "bundle" : pcce ? "pcce" :
         (!strcasecmp(cnf->method,"dsj") || !strcasecmp(cnf->method,"itb") || !strcasecmp(cnf->method,"dsjitb")) ? cnf->method : "standard";
     printStructElementChar("cluster.mode",(char*)mode);
+    if (bundle) printStructElementChar("cluster.bundle.connections",cnf->bundle_connections);   // A94 (G8): the mode chosen
     if (verbosity || pcce){
-        printStructElementInt("cluster.pcce.print_limit",cnf->pcce_detail_limit);
+        printStructElementInt("cluster.pcce.print_trials",cnf->pcce_detail_limit);
         printStructElementChar("cluster.pcce.partition",cnf->pcce_partition);
         printStructElementChar("cluster.pcce.connections",cnf->pcce_connections);
         printStructElementChar("cluster.pcce.cache.mode",cnf->pcce_cache_mode);
@@ -1124,11 +1064,15 @@ void Config_report(Config* cnf, bool qubitBathMeanField){
     if (verbosity || Config_getRdipcut(cnf)!=0) printStructElementFloat("rdip[0] (inner)",Config_getRdipcut(cnf));
     printStructElementFloat("deltat",Config_getDeltat(cnf));
     printStructElementInt("nstep",Config_getNstep(cnf));
-    printStructElementInt("configuration.nstate",Config_getNstate(cnf));
+    if (Config_getNstate(cnf) == 0) printStructElementChar("configuration.s_range","(absent: the ensemble)");
+    else {
+        char range[64];
+        snprintf(range,sizeof range,"[%d, %d]",cnf->state_first,Config_getNstate(cnf));
+        printStructElementChar("configuration.s_range",range);
+    }
     if (cnf->seed_used) printStructElementInt("configuration.seed",Config_getSeed(cnf));
     else printStructElementChar("configuration.seed","(not used)");
 
-    if (verbosity || Config_getQubitfile(cnf)) printStructElementChar("Qubit.file",Config_getQubitfile(cnf));
     printStructElementChar("configuration.gyrofile",Config_getGyrofile(cnf));
     for (int i = 0; i < Config_getNbathfiles(cnf); i++){
         printStructElementChar("configuration.bathfile",Config_getBathfiles_i(cnf,i));
@@ -1139,12 +1083,7 @@ void Config_report(Config* cnf, bool qubitBathMeanField){
 
     printStructElementBool("frame.rotation",Config_getRot_enabled(cnf));
     if (Config_getRot_enabled(cnf)){
-        printStructElementDouble1d("  bath_axis",Config_getRot_bath_axis(cnf),3);
         printStructElementDouble1d("  qubit_axis",Config_getRot_qubit_axis(cnf),3);
-        printStructElementChar("  reference_qubit",
-            Config_getRot_reference_qubit(cnf)[0] ? Config_getRot_reference_qubit(cnf) : (char*)"(first qubit)");
-        printStructElementChar("  qubit_position_frame",
-            Config_getRot_qubit_position_frame(cnf)[0] ? Config_getRot_qubit_position_frame(cnf) : (char*)"bath (default)");
     }
 
     {
@@ -1171,6 +1110,8 @@ void Config_report(Config* cnf, bool qubitBathMeanField){
         printStructElementChar("hamiltonian.common.hyperfine.missing_row",
                                Config_getHf_ignore_oor(cnf) ? (char*)"point_dipole" : (char*)"stop");
     }
+    if (Config_getRot_enabled(cnf) && Config_getHf_frame(cnf)[0])
+        printStructElementChar("hamiltonian.common.hyperfine.frame",Config_getHf_frame(cnf));
 
     // hamiltonian.common.quadrupole: qd_readmode 0 off, 2 plain, 3 strained, 4 bubble
     const int qd = Config_getQd_readmode(cnf);
@@ -1184,9 +1125,12 @@ void Config_report(Config* cnf, bool qubitBathMeanField){
         printStructElementChar("hamiltonian.common.quadrupole.file_without_defect",Config_getQd_tensorfile_woqubit(cnf));
         printStructElementDouble1d("hamiltonian.common.quadrupole.cell",Config_getQd_cellpara(cnf),3);
     }
+    if (Config_getRot_enabled(cnf) && Config_getQd_frame(cnf)[0])
+        printStructElementChar("hamiltonian.common.quadrupole.frame",Config_getQd_frame(cnf));
 
     if (verbosity || Config_getHfmedi(cnf)) printStructElementBool("hamiltonian.cCCE.hfmedi",Config_getHfmedi(cnf));
     if (verbosity || Config_getKnight(cnf)) printStructElementBool("hamiltonian.cCCE.knight",Config_getKnight(cnf));
+    if (verbosity || cnf->delta_A) printStructElementBool("hamiltonian.cCCE.delta_A",cnf->delta_A);
 
     if (cnf->jump_operators){
         char section[MAX_CHARARRAY_LENGTH + 16];

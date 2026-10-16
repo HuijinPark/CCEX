@@ -6,20 +6,20 @@
       "partition_size": 2,
       "trials": 8,
       "max_iterations": 20,
-      "kmeans_pp": true,
-      "print_trials": false
+      "kmeans_pp": true
     }
   },
   "quantity": "coherence",
   "configuration": {
     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
     "bathfile": ["test/gpu_verification/check_gpu/examples/bath_pcce_6"],
-    "nstate": 0,
     "seed": 19
   },
   "Qubit": {
     "qubit": [{"name": "NV", "spin": 1, "gyro": -17608.597050,
-               "xyz": [0, 0, 0], "alphams": 1, "betams": 0}]
+               "xyz": [0, 0, 0]}],
+    "alpha_state": {"ms": [1]},
+    "beta_state": {"ms": [0]}
   },
   "order": 2,
   "rbath": 15,

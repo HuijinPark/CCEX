@@ -4,7 +4,8 @@
 # P1 10 ppm cCCE2 system of inputs/Diamond_NV_P1_10ppm_cce (one bath state, random defect axes and nuclear states unless
 # files are given). Two bath configurations: cfg_1 (the bath file) and cfg_2 (every spin moved by 1 A in x).
 #   K1  k_range [1, 2] (configuration.path data, bathfile ["cfg_{k}"]): <outfile>_k1 and _k2, each byte for byte the run
-#       of that file alone - random axes and states drawn as in a run of its own
+#       of that file alone - random axes and states drawn as in a run of its own, configuration k with seed + (k - first)
+#       (A94; the same seed for every k before)
 #   K2  k_range [2, 2]: byte for byte the run of cfg_2 alone
 #   K3  k_range [1, 2] with bath_state_file, defect_axis_file and defect_state_file per k: each k byte for byte its run
 #       alone, and the two differ
@@ -15,15 +16,16 @@
 #       file's spins drawn from the seed; "" for every bath file is the key absent (byte for byte)
 #   K9  k_range [1, 2] without a seed (A73): each configuration has its own generated seed, printed per k in the log, and
 #       configuration k is byte for byte the run of its file alone with that seed (with a seed, K1: the same seed for all)
-#   K10 a file of a per-bath-file list that does not open (A73): a warning naming it, and only that bath file's spins drawn
-#       from the seed - byte for byte K8, where that entry is ""
+#   K10 a file of a per-bath-file list that does not open: refused before anything is calculated, naming the key and the
+#       file - a state, an axis and a defect state file each (A94; until then a warning, and that bath file's spins drawn
+#       from the seed as for "")
 #   K5  {{k}} is a literal {k} with k_range: a bath file named lit_{k} is read
 #   K6  without k_range {k} is literal: a bath file named cfg_{k} is read as it is
 #   K7  cluster_mode pcce with the partition cache, cache.file "cache_{k}": two cache files, each k byte for byte its run
 #       alone with a fresh cache
 #   R1-R9 refused before anything is calculated: k_range without {k}, a missing file of one k, k_range [2, 1], a list of
 #       the wrong length, a string where a list is, an enabled cache without {k}, the old top-level bathfile and nstate,
-#       Defect.axis_file (configuration.defect_axis_file since A64)
+#       Defect.axis_file (configuration.defect_axis_file since A64), configuration.nstate (configuration.s_range since A94)
 #   R10 two bath files with spins at the same position (the same file twice): refused, naming both files (A73: infinite
 #       coupling, nan)
 #   W10 two bath files with spins 0.3 A apart (cfg_1 and cfg_1 shifted by 0.3 A in x; A73, user 2026-10-16): calculated,
@@ -95,11 +97,13 @@ def inp(name, conf, defect=None, extra=None):
 inp("k1", {"path": "data", "k_range": [1, 2], "bathfile": ["cfg_{k}"]})
 inp("plain1", {"bathfile": ["data/cfg_1"]})
 inp("plain2", {"path": "data", "bathfile": ["cfg_2"]})
+seed = j["configuration"]["seed"]
+inp("plain2next", {"path": "data", "bathfile": ["cfg_2"], "seed": seed + 1})   # configuration 2 of [1, 2] (A94)
 inp("k2", {"path": "data", "k_range": [2, 2], "bathfile": ["cfg_{k}"]})
 inp("k3", {"path": "data", "k_range": [1, 2], "bathfile": ["cfg_{k}"], "bath_state_file": ["st{k}_"]},
     {"defect_axis_file": ["ax_{k}"], "defect_state_file": ["ds{k}_"]})
 for k in (1, 2):
-    inp(f"k3plain{k}", {"bathfile": [f"data/cfg_{k}"], "bath_state_file": [f"data/st{k}_"]},
+    inp(f"k3plain{k}", {"bathfile": [f"data/cfg_{k}"], "bath_state_file": [f"data/st{k}_"], "seed": seed + k - 1},
         {"defect_axis_file": [f"data/ax_{k}"], "defect_state_file": [f"data/ds{k}_"]})
 inp("k4two", {"path": "data", "bathfile": ["part_a", "part_b"], "bath_state_file": ["stp_a_", "stp_b_"],
               "bath_shift": [[0, 0, 0], [0, 0, 0]]},
@@ -111,9 +115,13 @@ inp("k8", {"path": "data", "bathfile": ["part_a", "part_b"], "bath_state_file": 
 inp("k8empty", {"path": "data", "bathfile": ["part_a", "part_b"], "bath_state_file": ["", ""],
                 "bath_shift": [[0, 0, 0], [0, 0, 0]]}, {"defect_axis_file": ["", ""], "defect_state_file": ["", ""]})
 inp("k8absent", {"path": "data", "bathfile": ["part_a", "part_b"], "bath_shift": [[0, 0, 0], [0, 0, 0]]})
-inp("k10", {"path": "data", "bathfile": ["part_a", "part_b"], "bath_state_file": ["stp_a_", "missing_st_"],
-            "bath_shift": [[0, 0, 0], [0, 0, 0]]},
-    {"defect_axis_file": ["axp_a", "missing_ax"], "defect_state_file": ["dsp_a_", "missing_ds_"]})
+# A94: a file that does not open is refused, one kind at a time
+inp("k10st", {"path": "data", "bathfile": ["part_a", "part_b"], "bath_state_file": ["stp_a_", "missing_st_"],
+              "bath_shift": [[0, 0, 0], [0, 0, 0]]}, {"defect_axis_file": ["axp_a", ""], "defect_state_file": ["dsp_a_", ""]})
+inp("k10ax", {"path": "data", "bathfile": ["part_a", "part_b"], "bath_state_file": ["stp_a_", ""],
+              "bath_shift": [[0, 0, 0], [0, 0, 0]]}, {"defect_axis_file": ["axp_a", "missing_ax"], "defect_state_file": ["dsp_a_", ""]})
+inp("k10ds", {"path": "data", "bathfile": ["part_a", "part_b"], "bath_state_file": ["stp_a_", ""],
+              "bath_shift": [[0, 0, 0], [0, 0, 0]]}, {"defect_axis_file": ["axp_a", ""], "defect_state_file": ["dsp_a_", "missing_ds_"]})
 inp("k9", {"path": "data", "k_range": [1, 2], "bathfile": ["cfg_{k}"]})
 d = json.load(open("k9.json")); d["configuration"].pop("seed"); json.dump(d, open("k9.json", "w"), indent=1)
 inp("r10", {"path": "data", "bathfile": ["cfg_1", "cfg_1"], "bath_shift": [[0, 0, 0], [0, 0, 0]]})
@@ -124,7 +132,7 @@ pcce = {"method": "cCCE", "cluster_mode": "pcce"}
 inp("k7", {"path": "data", "k_range": [1, 2], "bathfile": ["cfg_{k}"]}, None,
     dict(pcce, pcce={"partition_size": 2, "cache": {"mode": "readwrite", "file": "out/cache_{k}"}}))
 for k in (1, 2):
-    inp(f"k7plain{k}", {"bathfile": [f"data/cfg_{k}"]}, None,
+    inp(f"k7plain{k}", {"bathfile": [f"data/cfg_{k}"], "seed": seed + k - 1}, None,
         dict(pcce, pcce={"partition_size": 2, "cache": {"mode": "readwrite", "file": f"out/fresh_cache_{k}"}}))
 # refusals
 inp("r1", {"path": "data", "k_range": [1, 2], "bathfile": ["cfg_1"]})
@@ -136,17 +144,20 @@ inp("r6", {"path": "data", "k_range": [1, 2], "bathfile": ["cfg_{k}"]}, None,
     dict(pcce, pcce={"partition_size": 2, "cache": {"mode": "readwrite", "file": "out/cache"}}))
 d = json.loads(json.dumps(j)); d["bathfile"] = d["configuration"].pop("bathfile"); d["outfile"] = "out/r7"; d["__keep_old__"] = ["bathfile"]
 open("r7.json", "w").write(json.dumps(nest(d), indent=1))
-d = json.loads(json.dumps(j)); d["nstate"] = d["configuration"].pop("nstate"); d["outfile"] = "out/r8"; d["__keep_old__"] = ["nstate"]
+d = json.loads(json.dumps(j)); d["configuration"].pop("s_range"); d["nstate"] = 1; d["outfile"] = "out/r8"; d["__keep_old__"] = ["nstate"]
 open("r8.json", "w").write(json.dumps(nest(d), indent=1))
+d = json.loads(json.dumps(nest(json.loads(json.dumps(j))))); d["configuration"].pop("s_range"); d["configuration"]["nstate"] = 1
+d["output"] = {"file": "out/r11"}
+open("r11.json", "w").write(json.dumps(d, indent=1))   # A94: configuration.nstate
 d = json.loads(json.dumps(j)); d["Defect"]["axis_file"] = ["data/ax_1"]; d["outfile"] = "out/r9"; d["__keep_old__"] = ["axis_file"]
 open("r9.json", "w").write(json.dumps(nest(d), indent=1))
 PY
 
-for n in k1 plain1 plain2 k2 k3 k3plain1 k3plain2 k4two k4one k8 k8empty k8absent k10 k9 w10 k5 k6 k7 k7plain1 k7plain2; do
+for n in k1 plain1 plain2 plain2next k2 k3 k3plain1 k3plain2 k4two k4one k8 k8empty k8absent k9 w10 k5 k6 k7 k7plain1 k7plain2; do
     run_ccex "$BIN_DEV" $n.json $n.log || no "$n exited $? (see $W/$n.log)"
 done
 cmp_raw "K1 k_range: configuration 1 == its run alone" out/k1_k1_state1 out/plain1_state1
-cmp_raw "K1 k_range: configuration 2 == its run alone" out/k1_k2_state1 out/plain2_state1
+cmp_raw "K1 k_range: configuration 2 == its run alone with seed + 1" out/k1_k2_state1 out/plain2next_state1
 cmp_raw "K2 k_range [2, 2] == the run of cfg_2 alone" out/k2_k2_state1 out/plain2_state1
 cmp_raw "K3 state, axis and defect state files per k: configuration 1 == its run alone" out/k3_k1_state1 out/k3plain1_state1
 cmp_raw "K3 state, axis and defect state files per k: configuration 2 == its run alone" out/k3_k2_state1 out/k3plain2_state1
@@ -161,14 +172,11 @@ cmp_raw "K4 two bath files with their state, axis and defect state lists == the 
 if grep -q "Bath = data/part_a ([0-9]* spins) + data/part_b ([0-9]* spins)" k4two.log
 then ok "K4 the log names the merged bath files"; else no "K4 the merge line (see $W/k4two.log)"; fi
 if read_all k8.log "Read StateFile : data/stp_a_1" "Read AvaaxFile : data/axp_a" "Read ExstateFile : data/dsp_a_1" \
-   "bath states of the bath files without a state file" "paxes of the bath files without an axis file" \
-   "subbath states of the bath files without a state file" && [ -s out/k8_state1_wiDiv ]
+   'bath states of the bath files with "" in configuration.bath_state_file' \
+   'paxes of the bath files with "" in configuration.defect_axis_file' \
+   'subbath states of the bath files with "" in configuration.defect_state_file' && [ -s out/k8_state1_wiDiv ]
 then ok "K8 \"\" in a list: the first file's files read, the second file's spins drawn"; else no "K8 (see $W/k8.log)"; fi
 cmp_raw "K8 \"\" for every bath file == the keys absent" out/k8empty_state1 out/k8absent_state1
-if grep -qF "Cannot open the state file (data/missing_st_1)" k10.log && grep -qF "Cannot open the avaax file (data/missing_ax)" k10.log \
-   && grep -qF "Cannot open the exstate file (data/missing_ds_1)" k10.log && grep -qF "Read StateFile : data/stp_a_1" k10.log
-then ok "K10 a missing file of one bath file: warned by name, the other bath file's files read"; else no "K10 (see $W/k10.log)"; fi
-cmp_raw "K10 a missing file of one bath file == \"\" there (K8)" out/k10_state1 out/k8_state1
 # K9: the seeds of the two configurations, from the log; then each configuration alone with its seed
 s1=$(sed -n 's/^\[seed\] configuration k=1: seed \(-\{0,1\}[0-9]*\) .*/\1/p' k9.log)
 s2=$(sed -n 's/^\[seed\] configuration k=2: seed \(-\{0,1\}[0-9]*\) .*/\1/p' k9.log)
@@ -212,7 +220,11 @@ refused r4 "R4 a list of the wrong length" "configuration.bath_state_file must b
 refused r5 "R5 a string where the list is" "configuration.defect_axis_file must be a list of one name per bath file"
 refused r6 "R6 an enabled pcce cache without {k}" "pcce.cache.file \"out/cache\" needs {k}"
 refused r7 "R7 the top-level bathfile" "input key \"bathfile\" is now \"configuration.bathfile\""
-refused r8 "R8 the top-level nstate" "input key \"nstate\" is now \"configuration.nstate\""
+refused r8 "R8 the top-level nstate" "input key \"nstate\" is now \"configuration.s_range\""
+refused r11 "R11 configuration.nstate" "input key \"configuration.nstate\" is now \"configuration.s_range\""
+refused k10st "K10 a missing state file of one bath file: refused" 'configuration.bath_state_file[1]: cannot read "data/missing_st_1"'
+refused k10ax "K10 a missing axis file of one bath file: refused" 'configuration.defect_axis_file[1]: cannot read "data/missing_ax"'
+refused k10ds "K10 a missing defect state file of one bath file: refused" 'configuration.defect_state_file[1]: cannot read "data/missing_ds_1"' 
 refused r10 "R10 two bath files with spins at the same position" "two bath spins of different bath files are at the same position"
 refused r9 "R9 Defect.axis_file" "input key \"Defect.axis_file\" is now \"configuration.defect_axis_file\""
 echo "configuration: $PASS passed, $FAIL failed"

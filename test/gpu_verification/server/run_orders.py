@@ -10,7 +10,7 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'check_gpu'))  # benchmark.py
-from benchmark import INPUTS, REPO, compare, absolute_paths, get, put
+from benchmark import INPUTS, REPO, a94, compare, absolute_paths, get, put
 
 
 def prepare_config(source, directory, order, backend, batch):
@@ -96,7 +96,7 @@ def run_case(source, directory, order, backend, args):
     directory.mkdir(parents=True, exist_ok=False)
     config = prepare_config(source, directory, order, backend, args.batch)
     path = directory / 'input.json'
-    path.write_text(json.dumps(config, indent=2) + '\n')
+    path.write_text(json.dumps(a94(config), indent=2) + '\n')   # the A94 forms
     binary = REPO / ('bin/main.out' if backend == 'cpu' else 'bin/main_gpu.out')
     command = ['bash', str(REPO / 'test/gpu_verification/server/mpi_launch.sh'), '-n', str(args.ranks),
                str(binary), '-f', str(path)]

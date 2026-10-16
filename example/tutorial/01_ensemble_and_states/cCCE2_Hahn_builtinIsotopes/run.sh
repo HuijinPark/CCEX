@@ -7,7 +7,7 @@ PLOT=$ROOT/example/tutorial/plot_coherence.py
 NP=${NP:-4}
 mkdir -p results
 for name in gyrofile builtin; do
-  mpirun -n $NP $CCEX -f ccein_$name.json -o results > results/ccein_$name.log
+  mpirun -n $NP $CCEX -f ccein_$name.jsonc -o results > results/ccein_$name.log
 done
 # where the 13C spin and gamma came from (the run log says it per species)
 grep -H -E 'built-in isotope table|Read GyroFile' results/ccein_builtin.log results/ccein_gyrofile.log || true

@@ -1,0 +1,12 @@
+{
+    // one NV from a defect file with its ZFS, the frame rotation on (A90 keys, before A93)
+    "method"        : "gCCE",
+    "Qubit"         : {
+        "file"          : "defect",
+        "zfs"           : [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]],     // D = 2.88 GHz
+        "frame"         : "qubit",
+        "alphams"       : -1,   # ms -1
+        "betams"        : 0
+    },
+    "frame"         : {"rotation": {"qubit_axis": [1, 1, 1]}}
+}

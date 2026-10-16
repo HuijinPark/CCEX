@@ -4,9 +4,9 @@
 00_quickstart/bath/bath_Diamond_NV_natab_1 was generated in a cell whose z axis is
 the NV axis [111] (genbath/UnitCell_Dia_orth). This script rotates every position about
 the NV site so that the NV axis points along [111] instead, which is how a bath written
-in the conventional cubic cell would look. CCEX's coordinate_frame_rotation with
-qubit_axis [1,1,1] and bath_axis [0,0,1] undoes exactly this (R below is its matrix),
-so the rotated bath with the rotation on must reproduce the original bath.
+in the conventional cubic cell would look. CCEX's frame.rotation with qubit_axis [1,1,1]
+undoes exactly this (R below is its matrix), so the rotated bath with the rotation on must
+reproduce the original bath.
 
     python3 make_cubic_frame.py           # writes bath_Diamond_NV_natab_cubic_1 next to this script
 """
@@ -22,7 +22,7 @@ def unit(v):
 def cross(u, v):
     return [u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]]
 
-# CCEX's rotation for bath_axis b and qubit_axis q: rows ez = q, ex = q x b, ey = ez x ex.
+# CCEX's rotation for qubit_axis q: rows ez = q, ex = q x z, ey = ez x ex, with z = [0,0,1] of the bath file.
 b, q = unit([0, 0, 1]), unit([1, 1, 1])
 ez = q; ex = unit(cross(q, b)); ey = cross(ez, ex)
 R = [ex, ey, ez]

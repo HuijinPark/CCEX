@@ -2,16 +2,15 @@
   "method": "cCCE",
   "quantity": "coherence",
   "Qubit": {
-    "file": "test/gpu_verification/check_gpu/examples/qubit_p1",
-    "alphams": -1,
-    "betams": 0
+    "qubit": [{"file": "test/gpu_verification/check_gpu/examples/qubit_p1"}],
+    "alpha_state": {"ms": [-1]},
+    "beta_state": {"ms": [0]}
   },
   "configuration": {
     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
     "bathfile": [
       "test/gpu_verification/check_gpu/examples/bath_p1_5"
     ],
-    "nstate": 0,
     "seed": 1
   },
   "order": 5,

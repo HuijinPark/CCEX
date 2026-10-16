@@ -6,6 +6,7 @@
 #define __CCEX_SIMULATOR_GENERAL_H_
 
 #include "common/utilities.h"
+#include <string>
 
 /**
  * @enum DefectAxisReference
@@ -71,7 +72,7 @@ typedef struct {
     bool vector_mean_field;               /**< the static mean field of the other bath spins as the vector J . m_j, not its z part alone (off by default; hamiltonian.common.bath_bath_mean_field "xyz") */
     bool bath_mean_field_off;             /**< no static mean field of the other bath spins at all (hamiltonian.common.bath_bath_mean_field "off") */
     bool hamiltonian_ccce_given;          /**< hamiltonian.cCCE has a setting: refused in a gCCE run (validateHamiltonianForMethod, main.cpp) */
-    bool delta_A;                         /**< hamiltonian.cCCE.delta_A: false replaces the hyperfine tensors of a cluster's bath spins by their mean */
+    bool delta_A;                         /**< hamiltonian.cCCE.delta_A: the second-order term delta_A(m_s).I of each bath spin (Maze 2008 eq. A3, A83) */
     int pcce_detail_limit;                /**< rank-zero trial details, 0 disables */
     int gpu_cache_mb;                      /**< reusable device-buffer cache per rank; 0 disables */
     double probe_memory_gb;                /**< node budget for the probes running at once; 0: 80 % of RAM (and of the GPU) */
@@ -112,12 +113,12 @@ typedef struct {
     int   nstep;        /**< Time step                                           */
     float rbathcut;     /**< Cutoff to remove spins within rbathcut              */
     float rdipcut;      /**< Cutoff to remove spin pairs within rdipcut          */
-    int   nstate;       /**< Number of bath states (single and gcce method only) */
+    int   nstate;       /**< configuration.s_range last: the sampled states are state_first .. nstate (0: the ensemble) */
+    int   state_first;  /**< configuration.s_range first (A94): states 1 .. state_first-1 are drawn and not calculated */
     int   seed;         /**< Fixed random value (if none, time(null) )           */
     bool  seed_used;    /**< the run draws from seed: nstate > 0, Defect species or pCCE (the log reports the seed only then) */
 
     // Qubit and Bath file options
-    char* qubitfile; /**< Qubit file name */
     char* gyrofile; /**< Gyro file name */
     int nbathfiles; /**< Number of bath files */
     char** bathfiles; /**< Bath file names */
@@ -136,25 +137,27 @@ typedef struct {
      * @details The transform is PASSIVE : it puts rot_qubit_axis on the computational
      *          +z, so R * normalize(rot_qubit_axis) = [0,0,1].
      *
+     *          The origin is the first qubit's position. The computational x axis is
+     *          normalize(qubit_axis x [0,0,1]) (identity for qubit_axis = +z).
+     *
+     *          Each place that holds directional numbers states its "frame" (A90):
+     *          "file" = written in the bath file's frame, rotated with the positions;
+     *          "qubit" = written in the computational frame, used as written. Required
+     *          everywhere while the rotation is on (no default).
+     *
      *          Transformed:
-     *            - every Qubit.xyz, not just the reference one
-     *            - every bath-spin position
+     *            - every Qubit.xyz and every bath-spin position
      *            - intmap entries marked INTMAP_AUTO_SOURCE_GEOMETRY (the point-dipole
      *              tensor built from the source qubit geometry)
-     *            - explicit Qubit.intmap entries with tensor_frame = "bath", self/ZFS
-     *              entries included
-     *            - stored HF / QD tensors that are in the bath frame -- every
+     *            - Qubit.intmap entries with frame = "file"
+     *            - stored HF / QD tensors that are in the file frame -- every
      *              point-dipole tensor CCEX computed itself, plus the tensor-file ones
-     *              when hf_tensor_frame / qd_tensor_frame say "bath"
-     *            - each Defect entry whose coordinate_frame is "bath": its physical
-     *              axis, rxyzs displacement vectors, and hypf/efg/zfs tensors
+     *              when hamiltonian.common.hyperfine.frame / quadrupole.frame say "file"
+     *            - each Defect species whose frame is "file": its physical axis,
+     *              nuclear_positions, and hyperfine/efg/zfs tensors
      *
      *          Kept as written:
-     *            - explicit Qubit.intmap entries with tensor_frame = "qubit"
-     *            - the legacy top-level "qzfs", which belongs to the single-qubit
-     *              qubitfile path and has no tensor_frame to declare; it is read as a
-     *              computational-frame tensor for backward compatibility
-     *            - each Defect entry whose coordinate_frame is "qubit"
+     *            - Qubit.intmap entries and Defect species with frame = "qubit"
      *            - scalar Defect detuning values (frame independent)
      *            - bfield
      *
@@ -165,33 +168,21 @@ typedef struct {
      * @ref buildQubitAlignedRotation, applyCoordinateFrameRotation
     */
     bool rot_enabled;
-    double rot_bath_axis[3];  /**< Reference axis of the bath file frame; fixes the azimuth only (default [0,0,1]) */
     double rot_qubit_axis[3]; /**< Qubit symmetry axis, in the bath file frame (default [0,0,1]) */
-    char rot_reference_qubit[MAX_CHARARRAY_LENGTH]; /**< Qubit.name held fixed by the rotation; empty = Qubit[0] */
     /**
-     * @brief Frame every Qubit.xyz is written in : "bath"
-     * @details Applies to the whole QubitArray -- per-qubit frames are not a thing. Only
-     *          "bath" is supported: the qubit positions use the same Cartesian basis AND
-     *          the same origin as the bath files, so one R and one r0 move everything.
-     *          A "qubit" value would mean the qubit positions are already computational
-     *          while the bath is not, and readBathfiles would then mix frames in its
-     *          rbath / rbathcut selection, its mindist and its point-dipole tensors.
-     *          Required when nqubit > 1 and the rotation is on; empty means "bath".
-    */
-    char rot_qubit_position_frame[MAX_CHARARRAY_LENGTH];
-    /**
-     * @brief Basis the external HF tensor COMPONENTS are written in : "bath" | "qubit"
-     * @details "bath" means the 3x3 components are in the original bath Cartesian basis
-     *          and must be transformed as R*T*R^T; "qubit" means they are already in the
+     * @brief Frame the HF tensor-file COMPONENTS are written in : "file" | "qubit"
+     *        (hamiltonian.common.hyperfine.frame; frame.rotation.hf_tensor_frame until A90)
+     * @details "file" means the 3x3 components are in the bath file's Cartesian basis
+     *          and are transformed as R*T*R^T; "qubit" means they are already in the
      *          computational basis and are left alone. It says nothing about the POSITION
-     *          columns of the tensor file, which are always read in the original frame,
+     *          columns of the tensor file, which are always read in the file frame,
      *          because that is what the lookup matches against.
      *          Empty = not given; required when the rotation is on and hamiltonian.common.hyperfine
-     *          has "dipole": "dft". With "dipole": "point" and "contact": true the anisotropic part is rebuilt as a point dipole from the
+     *          has "dipole": "dft". With "dipole": "point" the anisotropic part is a point dipole from the
      *          source geometry, so a given frame is not used (only noted in the log).
     */
-    char rot_hf_tensor_frame[MAX_CHARARRAY_LENGTH];
-    char rot_qd_tensor_frame[MAX_CHARARRAY_LENGTH]; /**< Same, for the quadrupole tensors */
+    char hf_frame[MAX_CHARARRAY_LENGTH];
+    char qd_frame[MAX_CHARARRAY_LENGTH]; /**< Same, for the quadrupole tensors (hamiltonian.common.quadrupole.frame) */
 
     // Defect axis reference
     /**
@@ -253,7 +244,6 @@ float   Config_getRbathcut(Config* cnf);
 float   Config_getRdipcut(Config* cnf);
 int     Config_getNstate(Config* cnf);
 int     Config_getSeed(Config* cnf);
-char*   Config_getQubitfile(Config* cnf);
 char*   Config_getGyrofile(Config* cnf);
 int     Config_getNbathfiles(Config* cnf);
 char*   Config_getBathfiles_i(Config* cnf,int i);
@@ -265,12 +255,9 @@ int     Config_get_nflines(Config* cnf);
 int*    Config_get_flines(Config* cnf);
 int     Config_get_flines_i(Config* cnf, int i);
 bool    Config_getRot_enabled(Config* cnf);
-double* Config_getRot_bath_axis(Config* cnf);
 double* Config_getRot_qubit_axis(Config* cnf);
-char*   Config_getRot_reference_qubit(Config* cnf);
-char*   Config_getRot_qubit_position_frame(Config* cnf);
-char*   Config_getRot_hf_tensor_frame(Config* cnf);
-char*   Config_getRot_qd_tensor_frame(Config* cnf);
+char*   Config_getHf_frame(Config* cnf);
+char*   Config_getQd_frame(Config* cnf);
 DefectAxisReference Config_getDefect_axis_reference(Config* cnf);
 char*   Config_getHf_tensorfile(Config* cnf);
 int     Config_getHf_ignore_oor(Config* cnf);
@@ -291,6 +278,12 @@ const char* methodKernel(const char* m);
 // The method as the input writes it, for messages (A47): CCE, pCCE, dsj, itb, dsjitb are cCCE (the reader refuses them as
 // old method names); pgCCE, pmeCCE, pmegCCE are gCCE, meCCE, megCCE (refused as the adding_MECCE branch's names).
 const char* inputMethodName(const char* m);
+/** A94 (G3): a key the input wrote that this run reads but does not use, reported once per key on rank 0 (stdout):
+ *  "Warning: input key "<key>" is not used by this run: <why>" */
+void warnNotUsed(const char* key, const char* why);
+/** A94 (G14): the file of state s of a configuration.bath_state_file or defect_state_file name: "{s}" in it is s ("{{s}}" a
+ *  literal {s}); a name without {s} has s appended (the form before A94) */
+std::string stateFileName(const std::string& name, long s);
 
 // set 
 void Config_setMethod(Config* cnf, char* method);
@@ -314,7 +307,6 @@ void Config_setRdipcut(Config* cnf, float rdipcut);
 void Config_setNstate(Config* cnf, int nstate);
 void Config_setSeed(Config* cnf, int seed);
 void Config_validatePcceCache(const Config* cnf);
-void Config_setQubitfile(Config* cnf, char* qubitfile);
 void Config_setGyrofile(Config* cnf, char* gyrofile);
 void Config_setNbathfiles(Config* cnf, int nbathfiles);
 void Config_setBathfiles_i(Config* cnf, char* bathfiles, int i);
@@ -325,12 +317,9 @@ void Config_setExstatefile_i(Config* cnf, char* exstatefile, int i);
 void Config_set_nflines(Config* cnf, int nflines);
 void Config_set_flines_i(Config* cnf, int fline, int i);
 void Config_setRot_enabled(Config* cnf, bool rot_enabled);
-void Config_setRot_bath_axis(Config* cnf, double* rot_bath_axis);
 void Config_setRot_qubit_axis(Config* cnf, double* rot_qubit_axis);
-void Config_setRot_reference_qubit(Config* cnf, char* rot_reference_qubit);
-void Config_setRot_qubit_position_frame(Config* cnf, char* frame);
-void Config_setRot_hf_tensor_frame(Config* cnf, char* frame);
-void Config_setRot_qd_tensor_frame(Config* cnf, char* frame);
+void Config_setHf_frame(Config* cnf, const char* frame);
+void Config_setQd_frame(Config* cnf, const char* frame);
 void Config_setDefect_axis_reference(Config* cnf, DefectAxisReference reference);
 
 // With the rotation on, the computational z axis IS the qubit axis, so the field has to
@@ -353,7 +342,6 @@ void Config_reallocBathfiles(Config* cnf, int oldsize, int newsize);
 void Config_allocBathadjust(Config* cnf);
 void Config_reallocBathadjust(Config* cnf, int oldsize, int newsize);
 void Config_allocGyrofile(Config* cnf);
-void Config_allocQubitfile(Config* cnf);
 void Config_allocAvaaxfile(Config* cnf);
 void Config_allocStatefile(Config* cnf);
 void Config_allocExstatefile(Config* cnf);
@@ -367,7 +355,6 @@ void Config_allocQd_tensorfile_woqubit(Config* cnf);
 void Config_freeBathfiles(Config* cnf);
 void Config_freeBathadjust(Config* cnf);
 void Config_freeGyrofile(Config* cnf);
-void Config_freeQubitfile(Config* cnf);
 void Config_freeAvaaxfile(Config* cnf);
 void Config_freeStatefile(Config* cnf);
 void Config_freeExstatefile(Config* cnf);

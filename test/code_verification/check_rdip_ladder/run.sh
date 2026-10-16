@@ -36,12 +36,12 @@ python3 - "$CASES" "$WORK" <<'PY'
 import json, os, sys; from input_layout import flat, nest
 cases, work = sys.argv[1:]
 P1, P1ZFS, C13, HBN = [200, 300, 450], [100, 200, 300], [4, 6, 8], [3, 5, 6.5]
-ENS = dict(configuration=dict(nstate=0, bath_state_file=None))   # gCCE ensemble: the default evolution is then matrix
+ENS = dict(configuration=dict(s_range=None, bath_state_file=None))   # gCCE ensemble (no s_range): the default evolution is then matrix
 PCCE = dict(method='cCCE', cluster_mode='pcce', pcce={'partition_size': 2})
 # name: (check_numerics case, changes, rungs)
 plan = {'p1_cce2_single': ('p1_cce2_single', {}, P1), 'natab_cce2_hahn': ('natab_cce2_hahn', {}, C13),
         'natab_gcce2_ensemble': ('natab_gcce2_hahn', {}, C13),
-        'natab_gcce2_vector': ('natab_gcce2_hahn', dict(configuration=dict(nstate=2)), C13),
+        'natab_gcce2_vector': ('natab_gcce2_hahn', dict(configuration=dict(s_range=[1, 2])), C13),
         'natab_gcce2_matrix': ('natab_gcce2_hahn', dict(configuration=dict(nstate=2), evolution='matrix'), C13),
         'natab_pcce2_centers': ('natab_cce2_hahn', dict(PCCE, pcce={'partition_size': 2, 'connections': 'centers'}), C13),
         'natab_pcce2_spins': ('natab_cce2_hahn', dict(PCCE, pcce={'partition_size': 2, 'connections': 'spins'}), C13),
@@ -73,6 +73,9 @@ for name, (case, change, rungs) in plan.items():
             elif isinstance(v, dict): absolute(v)
             elif isinstance(v, list) and all(isinstance(x, str) for x in v):     # a list of file names (A64), bathfile too
                 block[k] = [os.path.normpath(f'{cases}/{case}/{x}') if x.startswith('../') else x for x in v]
+            elif isinstance(v, list):                                           # Qubit.qubit entries (A94: their "file")
+                for x in v:
+                    if isinstance(x, dict): absolute(x)
     absolute(c)
     for k, v in change.items():
         if v is None: c.pop(k, None)

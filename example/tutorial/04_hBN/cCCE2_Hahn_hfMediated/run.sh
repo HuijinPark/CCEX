@@ -7,6 +7,6 @@ PLOT=$ROOT/example/tutorial/plot_coherence.py
 NP=${NP:-4}
 mkdir -p results
 for name in wi_hfmedi wo_hfmedi; do
-  mpirun -n $NP $CCEX -f ccein_$name.json -o results > results/ccein_$name.log
+  mpirun -n $NP $CCEX -f ccein_$name.jsonc -o results > results/ccein_$name.log
 done
 python3 $PLOT results/coherence.png --unit us "with hfmedi=results/ccein_wi_hfmedi_wiDiv" "without=results/ccein_wo_hfmedi_wiDiv"

@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
-"""Rewrite CCEX inputs written with older input keys in the current ones: the names before 2026-10-13 (A47) and the
-places before 2026-10-15 (A64: the configuration block, with nstate and seed; one state or axis file per bath file;
-A65: the execution, cluster, output and frame blocks, n_onsite_spins and n_axis_states, the auto_convergence block's
-sampling).
+"""Rewrite CCEX inputs written with older input keys (v1.2.2 and before, and the development versions before 2.0.0) in
+the keys of 2.0.0: the names and values of the keys; the configuration, execution, cluster, output and frame blocks; one
+state or axis file per bath file; frame.rotation with qubit_axis and enabled only, and one key "frame" ("file" |
+"qubit") beside the numbers it describes, written out where the rotation is on and CCEX used to take a hidden default;
+the qubit states in Qubit.alpha_state/beta_state only ({"ms": [...]} for the old alphams/betams), a qubit from a file as
+a Qubit.qubit entry and its ZFS as a Qubit.intmap self entry; configuration.s_range for nstate and the seed of a k_range
+run; pulse.bath.levels, cluster.pcce.print_trials as a number, Defect zfs.axis, cluster.adaptive.workdir, the
+auto_convergence keys without converge; the hamiltonian sections by method (cCCE, meCCE/megCCE).
 
     python3 convert_input_keys.py FILE...            rewrite each file in place and list what changed
     python3 convert_input_keys.py --check FILE...    list only; exit 1 when a file still has old keys
     python3 convert_input_keys.py --stdout FILE      print the new text, leave the file alone
 
 The table of old and new names is docs/user/InputFile.md; (internal notes) has the decisions.
-Comments (# or ! to the end of a line, outside strings) stay: a key that moves into a block takes the comment lines
-above it and the comment after it on its line. A value is copied as written unless its form changes (method, a 0/1
-switch, hf_readmode, ...). An object nothing changed in is left byte for byte. A file in the new form is left alone.
+Comments (#, ! or // to the end of a line, outside strings; .json and .jsonc files alike) stay: a key that moves into
+a block takes the comment lines above it and the comment after it on its line. A value is copied as written unless its
+form changes (method, a 0/1 switch, hf_readmode, ...). An object nothing changed in is left byte for byte. A file in
+the new form is left alone.
 A key written twice (an old key beside its new name, or two spellings that differ in case only) is kept once when the
 values are the same; different values stop the file before anything is written. Tests: tests/ (python3 -m unittest).
 """
@@ -22,6 +27,11 @@ import sys
 import tempfile
 
 WS = ' \t\r\n'
+
+
+def comment_at(text, i):
+    """A comment starts at i (the caller knows i is outside a string): #, ! or //, to the end of the line."""
+    return i < len(text) and (text[i] in '#!' or text.startswith('//', i))
 
 
 class Node:
@@ -169,7 +179,7 @@ class Parser:
         while i < len(t):
             if t[i] in WS:
                 i += 1
-            elif t[i] in '#!':
+            elif comment_at(t, i):
                 while i < len(t) and t[i] != '\n':
                     i += 1
             else:
@@ -192,7 +202,7 @@ class Parser:
             k = j + 1                       # a comment after the comma on its line belongs to this member;
             while k < len(t) and t[k] in ' \t':   # the spaces before the next key on the same line, to that key
                 k += 1
-            if k < len(t) and t[k] in '#!':
+            if comment_at(t, k):
                 while k < len(t) and t[k] != '\n':
                     k += 1
             else:
@@ -236,7 +246,7 @@ class Parser:
             e = self.string_end(i)
         else:
             e = i
-            while e < len(t) and t[e] not in WS + ',}]#!':
+            while e < len(t) and t[e] not in WS + ',}]' and not comment_at(t, e):
                 e += 1
         node = Node(t, i, e)
         node.render = node.raw
@@ -260,7 +270,7 @@ def strip_comments(text):
                 esc = True
             elif c == '"':
                 in_str = False
-        elif c in '#!' or text.startswith('//', i):
+        elif comment_at(text, i):
             while i < len(text) and text[i] != '\n':
                 i += 1
             continue
@@ -385,9 +395,32 @@ class Converter:
         self.defect(R, top)
         self.defect_files(R, top)
         self.a65(R, top)
+        self.a90(R, top)
+        self.a93(R, top)
+        self.a94(R, top)
+        self.a94_sections(R)
         self.single_keys(R, '')
         self.compact(R)
         return self.prefix + R.render() + self.suffix
+
+    def a94_sections(self, R):
+        """2026-10-17 (A94 G1 reverted): the hamiltonian sections stay named by method. hamiltonian.corrections -> cCCE (meCCE
+        reads it too), hamiltonian.dissipation -> megCCE in a megCCE run, meCCE otherwise."""
+        H = self.obj(R.get('hamiltonian'))
+        if H is None:
+            return
+        _, m = R.find('method')
+        method = str(plain(m.value)).lower() if m is not None else ''
+        me = 'megCCE' if method == 'megcce' else 'meCCE'
+        for old, new in (('corrections', 'cCCE'), ('dissipation', me)):
+            o = H.get(old)
+            if o is None:
+                continue
+            if H.get(new) is not None:
+                raise ValueError(f'hamiltonian.{old} and hamiltonian.{new} are both written')
+            self.rename(o, new)
+            H.dirty = True
+            self.note(f'hamiltonian.{old} -> hamiltonian.{new}')
 
     def single_keys(self, node, path):
         """One member per key, case ignored as CCEX ignores it (review 20261013-180049 C1). An old key whose new name is
@@ -648,6 +681,459 @@ class Converter:
                         e.dirty = True
                         self.note(f'Defect.species[{n}].{old} -> {new}')
         self.auto_convergence(R, top)
+
+    # ---- A90 (2026-10-16): one key "frame" ("file" | "qubit") beside each set of directional numbers -------------------
+    def set_frame(self, obj, value, ind):
+        """obj.frame = value: written over an old value, or added at the end (on the line of an inline object)."""
+        m = obj.get('frame')
+        if m is not None:
+            m.value = Scalar(value)
+        elif self.member_indent(obj) is None and obj.items:            # {"a": 1, "b": 2}: stays on its line
+            last = obj.items[-1]
+            mid = last.mid.lstrip(' ') if last.mid.strip() == ':' else ': '
+            obj.items.append(Member(' ', '"frame"', mid, Scalar(value), ''))
+        else:
+            self.put(obj, ind, 'frame', value=value)
+        obj.dirty = True
+
+    def rename_frame(self, obj, old, path):
+        """obj[old] -> obj.frame, "bath" -> "file"; True when obj has a frame afterwards."""
+        m = obj.get(old) if old != 'frame' else None
+        if m is not None:
+            self.rename(m, 'frame')
+            obj.dirty = True
+            self.note(f'{path}.{old} -> {path}.frame')
+        m = obj.get('frame')
+        if m is None:
+            return False
+        v = plain(m.value)
+        if isinstance(v, str) and v.lower() == 'bath':
+            m.value = Scalar('"file"')
+            obj.dirty = True
+            self.note(f'{path}.frame "bath" -> "file"')
+        return True
+
+    def a90(self, R, top):
+        """A90 (2026-10-16): frame.rotation keeps qubit_axis and enabled. bath_axis, reference_qubit and
+        qubit_position_frame are removed; hf_tensor_frame -> hamiltonian.common.hyperfine.frame, qd_tensor_frame ->
+        hamiltonian.common.quadrupole.frame; Qubit.intmap[].tensor_frame and Defect.species[].coordinate_frame -> frame;
+        the value "bath" -> "file". With the rotation on every place that held directional numbers has to state its frame;
+        where CCEX took a hidden default the converter writes it: "qubit" for a Defect species without coordinate_frame, a
+        single qubit's Qubit.intmap entry without tensor_frame and Qubit.zfs (all read as written, never turned)."""
+        f = R.get('frame')
+        rot = f.value.get('rotation') if f is not None and isinstance(f.value, Obj) else None
+        rot = rot.value if rot is not None and isinstance(rot.value, Obj) else None
+        en = rot.get('enabled') if rot is not None else None
+        on = rot is not None and (en is None or plain(en.value) is not False)      # on when the block is given (A65)
+        h = R.get('hamiltonian')
+        common = h.value.get('common') if h is not None and isinstance(h.value, Obj) else None
+        common = common.value if common is not None and isinstance(common.value, Obj) else None
+        if rot is not None:
+            first = rot.items[0] if rot.items else None
+            first_pre = first.pre if first is not None else ''
+            m = rot.get('bath_axis')
+            if m is not None:
+                v = plain(m.value)
+                rot.drop('bath_axis')
+                if isinstance(v, list) and len(v) == 3 and v[0] == 0 and v[1] == 0 and v[2] > 0:
+                    self.note('frame.rotation.bath_axis removed (it was the default [0,0,1])')
+                else:
+                    self.note(f'frame.rotation.bath_axis {json.dumps(v)} removed: the computational x and y axes now turn '
+                              'about qubit_axis to qubit_axis x [0,0,1] (the old default): cCCE and systems symmetric '
+                              'about qubit_axis give the same results, a gCCE run with a qubit tensor that is not can '
+                              'change (A90)')
+            m = rot.get('reference_qubit')
+            if m is not None:
+                v = plain(m.value)
+                rot.drop('reference_qubit')
+                self.note(f'frame.rotation.reference_qubit {json.dumps(v)} removed (the rotation origin is the first qubit; '
+                          'another origin is a translation, which changes no result)')
+            if rot.drop('qubit_position_frame') is not None:
+                self.note('frame.rotation.qubit_position_frame removed (its one value was "bath")')
+            for old, block in (('hf_tensor_frame', 'hyperfine'), ('qd_tensor_frame', 'quadrupole')):
+                m = rot.get(old)
+                if m is None:
+                    continue
+                rot.drop(old)
+                b = common.get(block) if common is not None else None
+                if b is None or not isinstance(b.value, Obj):
+                    self.note(f'frame.rotation.{old} removed (there is no hamiltonian.common.{block} block, so it was '
+                              'not used)')
+                    continue
+                v = plain(m.value)
+                value = '"file"' if isinstance(v, str) and v.lower() == 'bath' else m.value.render()
+                self.set_frame(b.value, value, self.indent_of(common, top))
+                self.note(f'frame.rotation.{old} -> hamiltonian.common.{block}.frame'
+                          + (' ("bath" -> "file")' if value == '"file"' else ''))
+            if rot.items and rot.items[0] is not first and '\n' not in first_pre:
+                rot.items[0].pre = first_pre          # {"qubit_axis": ...} keeps the spacing the first key had
+        if common is not None:
+            for block in ('hyperfine', 'quadrupole'):
+                b = common.get(block)
+                if b is not None and isinstance(b.value, Obj):
+                    self.rename_frame(b.value, 'frame', f'hamiltonian.common.{block}')     # "bath" -> "file"
+        q = R.get('Qubit')
+        Q = q.value if q is not None and isinstance(q.value, Obj) else None
+        if Q is not None:
+            qind = self.indent_of(Q, top)
+            if Q.get('file') is not None:
+                has = self.rename_frame(Q, 'frame', 'Qubit')
+                if on and not has and Q.get('zfs') is not None:
+                    self.set_frame(Q, '"qubit"', top)
+                    self.note('Qubit.frame "qubit" written: Qubit.zfs was read as written (never turned) with the rotation on')
+            qubits = Q.get('qubit')
+            nqubit = len(qubits.value.items) if qubits is not None and isinstance(qubits.value, Arr) else None
+            im = Q.get('intmap')
+            if im is not None and isinstance(im.value, Arr):
+                for n, item in enumerate(im.value.items):
+                    e = item.value
+                    if not isinstance(e, Obj):
+                        continue
+                    has = self.rename_frame(e, 'tensor_frame', f'Qubit.intmap[{n}]')
+                    if on and not has and nqubit == 1:
+                        self.set_frame(e, '"qubit"', qind)
+                        self.note(f'Qubit.intmap[{n}].frame "qubit" written: a single qubit\'s entry without tensor_frame '
+                                  'was read as written with the rotation on')
+        d = R.get('Defect')
+        species = d.value.get('species') if d is not None and isinstance(d.value, Obj) else None
+        if species is not None and isinstance(species.value, Arr):
+            sind = self.indent_of(d.value, top)
+            for n, item in enumerate(species.value.items):
+                e = item.value
+                if not isinstance(e, Obj):
+                    continue
+                has = self.rename_frame(e, 'coordinate_frame', f'Defect.species[{n}]')
+                if on and not has:
+                    self.set_frame(e, '"qubit"', sind)
+                    self.note(f'Defect.species[{n}].frame "qubit" written: a species without coordinate_frame was read '
+                              'as written with the rotation on')
+
+    # ---- A93 (2026-10-16): the qubit states in Qubit.alpha_state/beta_state only; the Qubit.file ZFS in Qubit.intmap ------
+    @staticmethod
+    def inline(node):
+        """The value as one line: as written when it is on one line, else compact JSON."""
+        text = node.render()
+        return text if '\n' not in text else json.dumps(plain(node), separators=(', ', ': '))
+
+    def state_member(self, Q, key, text, comments):
+        """Q[key] = text after "qubit" (alpha_state before an existing beta_state), with the comments of what it replaces."""
+        ind = self.member_indent(Q)
+        first = Q.items[0]
+        keyraw = json.dumps(key)
+        if ind is None:
+            mem = Member(' ', keyraw, first.mid.lstrip(' ') if first.mid.strip() == ':' else ': ', Scalar(text), '')
+        else:
+            pre = '\n' + ''.join(ind + c + '\n' for c in comments) + ind
+            mem = Member(pre, keyraw, self.aligned(first.mid, len(first.keyraw), keyraw), Scalar(text), '')
+        if key == 'alpha_state' and Q.get('beta_state') is not None:
+            pos = Q.find('beta_state')[0]
+        elif key == 'beta_state' and Q.get('alpha_state') is not None:
+            pos = Q.find('alpha_state')[0] + 1
+        else:
+            pos = Q.find('qubit')[0] + 1
+        Q.insert(pos, mem)
+
+    def a93(self, R, top):
+        """A93: Qubit.qubit[].alphams/betams -> Qubit.alpha_state/beta_state {"ms": [one per qubit]} (a qubit that wrote none
+        takes the default, +1 or 0); Qubit.alphams/betams of the Qubit.file form -> {"ms": [m]}. Beside an alpha_state
+        (beta_state) already written, which CCEX used, the old keys are removed. Qubit.zfs of the Qubit.file form (kHz)
+        -> a Qubit.intmap self entry {"between": [name, name], "tensor": ..., "unit": "kHz"} with Qubit.frame as its
+        "frame" (A90 wrote "qubit" there with the rotation on); a Qubit.frame without zfs is removed."""
+        q = R.get('Qubit')
+        Q = q.value if q is not None and isinstance(q.value, Obj) else None
+        if Q is None or not Q.items:
+            return
+        if Q.get('file') is not None:
+            for side in ('alpha', 'beta'):
+                m = Q.get(side + 'ms')
+                if m is None:
+                    continue
+                if Q.get(side + '_state') is not None:
+                    Q.drop(side + 'ms')
+                    self.note(f'Qubit.{side}ms removed (Qubit.{side}_state is written, and CCEX used that)')
+                    continue
+                self.rename(m, side + '_state')
+                m.value = Scalar('{"ms": [' + self.inline(m.value) + ']}')
+                Q.dirty = True
+                self.note(f'Qubit.{side}ms -> Qubit.{side}_state {{"ms": [...]}}')
+            z, f = Q.get('zfs'), Q.get('frame')
+            if z is not None:
+                if Q.get('intmap') is not None:
+                    raise ValueError('the Qubit block has both "file" and "intmap" (CCEX refused it before too)')
+                n = Q.get('name')
+                name = json.dumps(plain(n.value)) if n is not None else '"q0"'
+                entry = (f'[{{"between": [{name}, {name}], "tensor": {self.inline(z.value)}, "unit": "kHz"'
+                         + (f', "frame": {f.value.render()}' if f is not None else '') + '}]')
+                self.rename(z, 'intmap')
+                z.value = Scalar(entry)
+                if f is not None:
+                    Q.drop('frame')
+                Q.dirty = True
+                self.note('Qubit.zfs' + (' and Qubit.frame' if f is not None else '') + ' -> Qubit.intmap self entry '
+                          f'(between [{name}, {name}], unit kHz)')
+            elif f is not None:
+                Q.drop('frame')
+                self.note('Qubit.frame removed (there is no Qubit.zfs, so it was not used)')
+            return
+        qubits = Q.get('qubit')
+        if qubits is None or not isinstance(qubits.value, Arr):
+            return
+        entries = [x.value for x in qubits.value.items]
+        for side, default in (('alpha', '1'), ('beta', '0')):
+            key = side + 'ms'
+            written = [e.get(key) if isinstance(e, Obj) else None for e in entries]
+            if all(m is None for m in written):
+                continue
+            keep = Q.get(side + '_state') is not None
+            values, comments = [], []
+            for e, m in zip(entries, written):
+                if m is None:
+                    values.append(default)
+                    continue
+                values.append(self.inline(m.value))
+                if m.tail.strip():
+                    comments.append(m.tail.strip())
+                e.drop(key)
+            qubits.value.dirty = True
+            if keep:
+                self.note(f'Qubit.qubit[].{key} removed: Qubit.{side}_state is written and CCEX used it for the state '
+                          f'(with pulse.per_qubit the level of each qubit is now the default m_s {default})')
+                continue
+            self.state_member(Q, side + '_state', '{"ms": [' + ', '.join(values) + ']}', comments)
+            self.note(f'Qubit.qubit[].{key} -> Qubit.{side}_state {{"ms": [{", ".join(values)}]}}')
+
+    # ---- A94 (2026-10-16): the input keys review ((internal review)) ----------------------------------
+    FREQ_UNITS = ('Hz', 'kHz', 'MHz', 'GHz')
+    GYRO_UNITS = ('radkHz/G', 'rad/ms/G', 'kHz/G', 'MHz/G', 'MHz/T', 'Hz/T', 'radMHz/T', 'rad/us/T', 'rad/s/T')
+    EQ_UNITS = ('1e-30 m^2', '1e-30m^2', '10^-30 m^2', '10^-30m^2', 'fm^2', 'fm2', '10 mbarn', 'm^2', 'm2', 'cm^2', 'cm2',
+                'barn', 'b', 'mbarn', 'millibarn', 'mb')
+    EFG_UNITS = ('Hartree/Bohr^2', 'Ha/Bohr^2', 'Ha/a0^2', 'a.u.', 'au', 'atomic_unit', 'V/m^2', 'V/m2', 'V/angstrom^2',
+                 'V/angstrom2', 'V/A^2', 'V/A2')
+
+    @staticmethod
+    def obj(member):
+        return member.value if member is not None and isinstance(member.value, Obj) else None
+
+    def unit_case(self, block, path, units):
+        """A94 (R3): units are case-sensitive now; a spelling that differs in case only is written as in the table."""
+        m = block.get('unit') if block is not None else None
+        if m is None:
+            return
+        v = plain(m.value)
+        if not isinstance(v, str) or v in units:
+            return
+        same = [u for u in units if u.lower() == v.lower()]
+        if same:
+            m.value = Scalar(json.dumps(same[0]))
+            block.dirty = True
+            self.note(f'{path}.unit "{v}" -> "{same[0]}" (units are case-sensitive)')
+
+    def a94(self, R, top):
+        """A94 (2026-10-16): configuration.nstate N -> s_range [1, N] (0: removed, the ensemble); a seed number of a k_range
+        run that draws -> a list of the same number (one per configuration: the seed number is now the first configuration's,
+        k taking seed + k - first); the Qubit.file form -> a Qubit.qubit entry {"file", "name", "spin"}; Qubit.qubit[].detuning
+        [x] -> x; pulse.bath.spin removed, alphams/betams -> levels; cluster.pcce.print_trials a number (print_limit gone);
+        Defect.species[].axis -> zfs.axis, zfs.E 0 removed, units in the table's case; cluster.adaptive.output -> workdir,
+        - in its keys -> _,
+        policy "merge" removed; auto_convergence: converge removed, time_window.unit into value, time_window.threshold ->
+        decay_level, sampling.number -> configurations, test_number -> test_configurations, output.path and output.file of the
+        base input removed (the runner never used them)."""
+        C = self.obj(R.get('configuration'))
+        A = self.obj(R.get('auto_convergence'))
+        autoconv = A is not None and (A.get('enabled') is None or plain(A.get('enabled').value) is not False)
+        d = self.obj(R.get('Defect'))
+        species = d.get('species') if d is not None else None
+        nspecies = len(species.value.items) if species is not None and isinstance(species.value, Arr) else 0
+        if C is not None:
+            m = C.get('nstate')
+            if m is not None:
+                v = plain(m.value)
+                if not isinstance(v, int) or isinstance(v, bool) or v < 0:
+                    raise ValueError(f'configuration.nstate {json.dumps(v)} is not a nonnegative integer')
+                if v == 0:
+                    C.drop('nstate')
+                    self.note('configuration.nstate 0 removed (the ensemble: no configuration.s_range)')
+                else:
+                    self.rename(m, 's_range')
+                    m.value = Scalar(f'[1, {v}]')
+                    C.dirty = True
+                    self.note(f'configuration.nstate {v} -> configuration.s_range [1, {v}]')
+            k, s = C.get('k_range'), C.get('seed')
+            kr = plain(k.value) if k is not None else None
+            sv = plain(s.value) if s is not None else None
+            cm = self.obj(R.get('cluster'))
+            mode = cm.get('mode') if cm is not None else None
+            pcce = self.shape == 'pcce' or (mode is not None and str(plain(mode.value)).lower() == 'pcce')
+            draws = C.get('s_range') is not None or nspecies > 0 or pcce
+            if (isinstance(kr, list) and len(kr) == 2 and kr[1] > kr[0] and isinstance(sv, int) and not isinstance(sv, bool)
+                    and draws and not autoconv):
+                n = kr[1] - kr[0] + 1
+                s.value = Scalar('[' + ', '.join([s.value.render()] * n) + ']')
+                C.dirty = True
+                self.note(f'configuration.seed {sv} -> a list of {n} times {sv}: until A94 one seed number was every '
+                          f'configuration\'s, now it is the first one\'s (k takes seed + k - first)')
+        q = R.get('Qubit')
+        Q = self.obj(q)
+        if Q is not None and Q.get('file') is not None:
+            f = Q.get('file')
+            parts = [f'"file": {f.value.render()}']
+            for key in ('name', 'spin'):
+                m = Q.get(key)
+                if m is not None:
+                    parts.append(f'{json.dumps(key)}: {self.inline(m.value)}')
+            self.rename(f, 'qubit')
+            f.value = Scalar('[{' + ', '.join(parts) + '}]')
+            for key in ('name', 'spin'):
+                if Q.get(key) is not None:
+                    Q.drop(key)
+            Q.dirty = True
+            self.note('Qubit.file' + ''.join(f' and Qubit.{k}' for k in ('name', 'spin') if f'"{k}"' in ''.join(parts))
+                      + ' -> Qubit.qubit [{"file": ...}] (an entry with the position from the file)')
+        if Q is not None:
+            qs = Q.get('qubit')
+            if qs is not None and isinstance(qs.value, Arr):
+                for n, item in enumerate(qs.value.items):
+                    e = item.value
+                    if not isinstance(e, Obj):
+                        continue
+                    m = e.get('detuning')
+                    if m is not None and isinstance(m.value, Arr):
+                        if len(m.value.items) != 1:
+                            raise ValueError(f'Qubit.qubit[{n}].detuning must be a number or [number]')
+                        m.value = m.value.items[0].value
+                        e.dirty = True
+                        self.note(f'Qubit.qubit[{n}].detuning [x] -> x')
+            im = Q.get('intmap')
+            if im is not None and isinstance(im.value, Arr):
+                for n, item in enumerate(im.value.items):
+                    if isinstance(item.value, Obj):
+                        self.unit_case(item.value, f'Qubit.intmap[{n}]', self.FREQ_UNITS)
+        p = self.obj(R.get('pulse'))
+        b = self.obj(p.get('bath')) if p is not None else None
+        if b is not None:
+            if b.drop('spin') is not None:
+                self.note('pulse.bath.spin removed (the spin of the driven bath spins is used; it had to be the same)')
+            a, z = b.get('alphams'), b.get('betams')
+            if a is not None or z is not None:
+                first = a if a is not None else z
+                text = (f'[{a.value.render() if a is not None else "0.5"}, '
+                        f'{z.value.render() if z is not None else "-0.5"}]')
+                self.rename(first, 'levels')
+                first.value = Scalar(text)
+                if a is not None and z is not None:
+                    b.drop('betams')
+                b.dirty = True
+                self.note(f'pulse.bath.alphams/betams -> pulse.bath.levels {text}')
+        c = self.obj(R.get('cluster'))
+        pc = self.obj(c.get('pcce')) if c is not None else None
+        if pc is not None:
+            t, lim = pc.get('print_trials'), pc.get('print_limit')
+            tv = plain(t.value) if t is not None else None
+            if t is not None and isinstance(tv, bool):
+                on = bool(tv)
+                if on:
+                    t.value = Scalar(lim.value.render() if lim is not None else '32')
+                    pc.dirty = True
+                    self.note(f'cluster.pcce.print_trials true -> {t.value.render()} (the number of trials printed, '
+                              'print_limit before)')
+                else:
+                    pc.drop('print_trials')
+                    self.note('cluster.pcce.print_trials false removed (0, the default)')
+            if lim is not None:
+                pc.drop('print_limit')
+                self.note('cluster.pcce.print_limit removed (it is the number of print_trials now)')
+        ad = self.obj(c.get('adaptive')) if c is not None else None
+        if ad is not None:
+            for m in list(ad.items):
+                if '-' in m.key:
+                    new = m.key.replace('-', '_')
+                    self.note(f'cluster.adaptive.{m.key} -> {new}')
+                    self.rename(m, new)
+                    ad.dirty = True
+            m = ad.get('output')
+            if m is not None:
+                self.rename(m, 'workdir')
+                ad.dirty = True
+                self.note('cluster.adaptive.output -> cluster.adaptive.workdir')
+            m = ad.get('policy')
+            if m is not None and str(plain(m.value)).lower() == 'merge':
+                ad.drop('policy')
+                self.note('cluster.adaptive.policy "merge" removed (the only policy, the default)')
+        if species is not None and isinstance(species.value, Arr):
+            for n, item in enumerate(species.value.items):
+                e = item.value
+                if not isinstance(e, Obj):
+                    continue
+                zm = e.get('zfs')
+                z = zm.value if zm is not None and isinstance(zm.value, Obj) else None
+                if z is not None and z.get('E') is not None:
+                    ev = plain(z.get('E').value)
+                    if ev != 0:
+                        raise ValueError(f'Defect.species[{n}].zfs.E is {ev}: CCEX refused an E other than 0 (write zfs.tensor)')
+                    z.drop('E')
+                    self.note(f'Defect.species[{n}].zfs.E 0 removed')
+                ax = e.get('axis')
+                if ax is not None:
+                    if z is not None and z.get('D') is not None:
+                        text = self.inline(ax.value)
+                        if self.member_indent(z) is None:
+                            mid = z.items[-1].mid.lstrip(' ') if z.items and z.items[-1].mid.strip() == ':' else ': '
+                            z.items.insert(1 if z.items else 0, Member(' ', '"axis"', mid, Scalar(text), ''))
+                            z.dirty = True
+                        else:
+                            self.put(z, self.indent_of(e, top), 'axis', value=text)
+                        e.drop('axis')
+                        self.note(f'Defect.species[{n}].axis -> Defect.species[{n}].zfs.axis')
+                    else:
+                        e.drop('axis')
+                        self.note(f'Defect.species[{n}].axis removed (only the D form of zfs used it)')
+                    e.dirty = True
+                for key, units in (('gyros', self.GYRO_UNITS), ('quadrupole_moments', self.EQ_UNITS),
+                                   ('hyperfine', self.FREQ_UNITS), ('efg', self.EFG_UNITS), ('zfs', self.FREQ_UNITS),
+                                   ('detuning', self.FREQ_UNITS)):
+                    self.unit_case(self.obj(e.get(key)), f'Defect.species[{n}].{key}', units)
+        if A is not None:
+            for block in ('time_window', 'rdip', 'rbath', 'sampling'):
+                B = self.obj(A.get(block))
+                if B is None:
+                    continue
+                cv = B.get('converge')
+                if cv is not None:
+                    fixed = 'configurations' if block == 'sampling' else 'value'
+                    has = B.get(fixed) is not None or (block == 'sampling' and B.get('number') is not None)
+                    if plain(cv.value) is True and has:
+                        raise ValueError(f'auto_convergence.{block}: converge true with a fixed value was refused')
+                    B.drop('converge')
+                    self.note(f'auto_convergence.{block}.converge removed (a value given is fixed, none is found)')
+                if block == 'time_window':
+                    u = B.get('unit')
+                    if u is not None:
+                        v = B.get('value')
+                        if v is None or isinstance(v.value, Obj):
+                            raise ValueError('auto_convergence.time_window.unit without a plain value (or beside a value '
+                                             'object) was refused')
+                        v.value = Scalar('{"value": ' + v.value.render() + ', "unit": ' + u.value.render() + '}')
+                        B.drop('unit')
+                        self.note('auto_convergence.time_window.unit -> time_window.value {"value", "unit"}')
+                    m = B.get('threshold')
+                    if m is not None:
+                        self.rename(m, 'decay_level')
+                        self.note('auto_convergence.time_window.threshold -> decay_level')
+                if block == 'sampling':
+                    for old, new in (('number', 'configurations'), ('test_number', 'test_configurations')):
+                        m = B.get(old)
+                        if m is not None:
+                            self.rename(m, new)
+                            self.note(f'auto_convergence.sampling.{old} -> {new}')
+                B.dirty = True
+            out = self.obj(R.get('output'))
+            if autoconv and out is not None:
+                for key in ('path', 'file'):
+                    if out.drop(key) is not None:
+                        self.note(f'output.{key} removed (the automatic convergence put its runs in auto_convergence.workdir '
+                                  'and never used it)')
+                if not out.items:
+                    R.drop('output')
 
     def auto_convergence(self, R, top):
         """A65: launcher removed (the runs use the mpirun -n N main.out was started with); configurations -> sampling; its

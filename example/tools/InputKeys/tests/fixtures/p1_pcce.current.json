@@ -13,17 +13,17 @@
             "trials"        : 1000, # int
             "max_iterations" : 1000,  # int
             "kmeans_pp"     : true, # true / false
-            "print_trials"  : true # true / false
+            "print_trials"  : 32 # true / false
         }
     }, 
     "quantity"      : "coherence",
     
     "Qubit"         : {
         # Config - File
-        "file"          :  "../bath/14N_1ppm/bath_DiaP1_1ppm_Defect",
+        "qubit"         :  [{"file": "../bath/14N_1ppm/bath_DiaP1_1ppm_Defect"}],
         # Qubit
-        "alphams"      : -1,
-        "betams"       : 0
+        "alpha_state"  : {"ms": [-1]},
+        "beta_state"   : {"ms": [0]}
     },
     "configuration" : {
         "gyrofile"      :  "../bath/DiaP1_gyro",

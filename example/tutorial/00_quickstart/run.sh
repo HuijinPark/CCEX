@@ -5,5 +5,5 @@ ROOT=$(git rev-parse --show-toplevel)
 CCEX=${CCEX_BIN:-$ROOT/bin/main.out}
 NP=${NP:-4}
 mkdir -p results
-mpirun -n $NP $CCEX -f ccein.json -o results > results/ccein.log      # writes results/ccein_wiDiv, ccein_noDiv
+mpirun -n $NP $CCEX -f ccein.jsonc -o results > results/ccein.log      # writes results/ccein_wiDiv, ccein_noDiv
 python3 $ROOT/example/tutorial/plot_coherence.py results/coherence.png "cCCE2 Hahn=results/ccein_wiDiv"

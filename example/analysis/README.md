@@ -11,7 +11,7 @@ call and what to write themselves.
 On WSL it needs `PATH=~/anaconda3/bin:$PATH` (the system python3 has no numpy)
 and, without a display, `MPLBACKEND=Agg`.
 
-Removed on 2026-10-16 (git history has them): `ConvTest/` (the convergence over
+Removed before 2.0.0 (git history has them): `ConvTest/` (the convergence over
 one variable, `do_convTest.py`; the automatic convergence of `tools/AutoConvergence/`
 and `configuration.k_range` took its place) and `AdaptiveStudy/` (the scripts of the
 adaptive-refinement study, now (internal notes)).
@@ -45,7 +45,7 @@ raw `_wiDiv` files, averaged over files, and a T2).
 
 ## How the tutorials use it
 
-Since 2026-10-16 a tutorial's `run.sh` runs CCEX and then
+A tutorial's `run.sh` runs CCEX and then
 `example/tutorial/plot_coherence.py` on the raw `_wiDiv` files; it does not call the
 analyzer. `test/code_verification/check_input_forms` (`errcorr.sh`) calls `run.py -err`;
 `test/code_verification/check_numerics/` compares raw outputs and does not call it.

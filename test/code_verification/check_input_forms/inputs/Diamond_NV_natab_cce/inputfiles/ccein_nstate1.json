@@ -3,14 +3,14 @@
     "quantity"      : "coherence",
 
     "Qubit"         : {
-        "file"          : "./inputfiles/bath_Diamond_NV_natab_defect",
-        "alphams"        : 1,
-        "betams"         : 0
+        "qubit"         : [{"file": "./inputfiles/bath_Diamond_NV_natab_defect"}],
+        "alpha_state"    : {"ms": [1]},
+        "beta_state"     : {"ms": [0]}
     },
     "configuration" : {
         "gyrofile"      : "./inputfiles/gyro_13C",
         "bathfile"      : ["./inputfiles/bath_Diamond_NV_natab_1"],
-        "nstate"        : 1,
+        "s_range"       : [1, 1],
         "seed"          : 1
     },
 

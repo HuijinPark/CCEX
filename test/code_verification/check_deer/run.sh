@@ -23,7 +23,7 @@ w = sys.argv[2]
 d = flat(json.load(open(sys.argv[1]))); d["outfile"] = f"{w}/bn_absent"; json.dump(nest(d), open(f"{w}/bn_absent.json", "w"), indent=1)
 d["pulse"]["bath"] = {"count": 0}; d["outfile"] = f"{w}/bn_zero"; json.dump(nest(d), open(f"{w}/bn0.json", "w"), indent=1)
 PY
-# nstate 1 with bath_state_file "../../inputs/p1_1ppm/state_" (until A63 given as -s as well), so the outputs are <o>_state1_*
+# s_range [1, 1] (nstate 1 until A94) with bath_state_file "../../inputs/p1_1ppm/state_" (until A63 given as -s as well), so the outputs are <o>_state1_*
 ( cd "$CASE" && "$MPIRUN" -n 1 "$BIN_DEV" -f "$W/bn_absent.json" > "$W/proc_bn_absent" 2>&1 < /dev/null )
 ( cd "$CASE" && "$MPIRUN" -n 1 "$BIN_DEV" -f "$W/bn0.json" > "$W/proc_bn_zero" 2>&1 < /dev/null )
 if [ -s "$W/bn_absent_state1_noDiv" ] && cmp -s "$W/bn_absent_state1_noDiv" "$W/bn_zero_state1_noDiv" \
@@ -50,10 +50,11 @@ def merge(d, extra):   # nested blocks (pulse, Qubit, hamiltonian) merge key by 
 # nk [0, 0], hf_readmode 0 and savemode normal are the defaults and are left out
 base = {
  "method": "gCCE", "quantity": "coherence",
- "configuration": {"gyrofile": gyro, "bathfile": [f"{inp}/bath_DEERtest_12spin.txt"], "nstate": 0, "seed": 3528,
+ "configuration": {"gyrofile": gyro, "bathfile": [f"{inp}/bath_DEERtest_12spin.txt"], "seed": 3528,
                    "defect_axis_file": [f"{inp}/avaax_DEERtest"]},
  "Qubit": {"qubit": [{"name": "qubit1", "spin": 1.0, "gyro": -17608.597050, "xyz": [0.0, 0.0, 0.0],
-            "alphams": -1, "betams": 0, "detuning": [0.0]}],
+            "detuning": 0.0}],
+           "alpha_state": {"ms": [-1]}, "beta_state": {"ms": [0]},
            "intmap": [{"between": ["qubit1", "qubit1"],
                        "tensor": [[-960000.0, 0, 0], [0, -960000.0, 0], [0, 0, 1920000.0]]}]},
  "hamiltonian": {"common": {"qubit_bath_mean_field": True}},
@@ -64,7 +65,7 @@ base = {
      [5, "e", -79.975539], [6, "e", -59.579552], [7, "e", -59.579552], [8, "e", -59.579552]]}]}}
 
 def pump(tones, seq):
-    return {"pulse": {"bath": {"count": 1, "defect": "P1", "spin": 0.5, "alphams": 0.5, "betams": -0.5,
+    return {"pulse": {"bath": {"count": 1, "defect": "P1", "levels": [0.5, -0.5],   # S is the P1's own (A94)
                                "energy_shift": tones, "sequence": seq}}}
 HAHN = [["0.50", "X", 180.0], ["0.50", "I", 0.0]]
 cases = {
@@ -75,9 +76,9 @@ cases = {
  "multi_miss": pump([200, 300], HAHN),
  "nearpulse":  pump([79.975539], [["0.505", "X", 180.0], ["0.495", "I", 0.0]]),
 }
-# the evolution paths on a pure state (nstate 1): matrix, vector, exact and recursive must agree with bath pulses.
+# the evolution paths on a pure state (s_range [1, 1]): matrix, vector, exact and recursive must agree with bath pulses.
 # evolution_update is written out: its default is recursive on these paths since 15a136555 (general.cpp:539-548)
-st = {"configuration": {"nstate": 1, "bath_state_file": [f"{inp}/state_"], "seed": 3528}}
+st = {"configuration": {"s_range": [1, 1], "bath_state_file": [f"{inp}/state_"], "seed": 3528}}
 paths = {"path_matrix":           {"evolution": "matrix", "evolution_update": "exact"},
          "path_matrix_recursive": {"evolution": "matrix", "evolution_update": "recursive"},
          "path_vector":           {"evolution": "vector", "evolution_update": "exact"},
@@ -85,11 +86,12 @@ paths = {"path_matrix":           {"evolution": "matrix", "evolution_update": "e
          "path_nopump":           {"evolution": "vector", "evolution_update": "exact"}}
 for path, extra in paths.items():
     cases[path] = merge(merge({}, cases["onres"] if path != "path_nopump" else {}), {**st, **extra})
-cases["bad_bspin"] = merge(merge({}, cases["onres"]), {"pulse": {"bath": {"spin": 1.0, "alphams": 1.0, "betams": 0.0}}})
+# levels of a spin 1 on the P1 (S = 1/2): pulse.bath.spin was written beside them until A94 and refused when it was not the P1's
+cases["bad_bspin"] = merge(merge({}, cases["onres"]), {"pulse": {"bath": {"levels": [1.0, 0.0]}}})
 # a defect name no spin has, and levels that are not two levels of S
 cases["bad_defect"]   = merge(merge({}, cases["onres"]), {"pulse": {"bath": {"defect": "P2"}}})
-cases["bad_ms_equal"] = merge(merge({}, cases["onres"]), {"pulse": {"bath": {"betams": 0.5}}})
-cases["bad_ms_range"] = merge(merge({}, cases["onres"]), {"pulse": {"bath": {"alphams": 1.5}}})
+cases["bad_ms_equal"] = merge(merge({}, cases["onres"]), {"pulse": {"bath": {"levels": [0.5, 0.5]}}})
+cases["bad_ms_range"] = merge(merge({}, cases["onres"]), {"pulse": {"bath": {"levels": [1.5, -0.5]}}})
 # --- megCCE (rate 0: no jump operators; evolution_update exact by default for ME) and cluster_mode pcce
 cases["meg_onres"] = merge(merge({}, cases["onres"]), {"method": "megCCE"})
 # the bath pi on an edge of its own (qubit identity there): megCCE follows the merged sequence, each pulse once
@@ -112,7 +114,7 @@ for tag, perm in (("rev", lambda l: l[::-1]), ("rot", lambda l: l[-5:] + l[:-5])
     reorder(f"{inp}/bath_DEERtest_12spin.txt", f"{w}/{tag}_bath.txt", perm)
     reorder(f"{inp}/avaax_DEERtest", f"{w}/{tag}_avaax", perm)
     reorder(f"{inp}/state_1", f"{w}/{tag}_state_1", perm)
-O2 = {"order": 2, "configuration": {"nstate": 1, "bath_state_file": [f"{inp}/state_"]}}
+O2 = {"order": 2, "configuration": {"s_range": [1, 1], "bath_state_file": [f"{inp}/state_"]}}
 def files(tag):
     return {"configuration": {"bathfile": [f"{w}/{tag}_bath.txt"], "bath_state_file": [f"{w}/{tag}_state_"],
                               "defect_axis_file": [f"{w}/{tag}_avaax"]}}
@@ -140,7 +142,7 @@ PY
 for c in nopulse onres offres multi_hit multi_miss nearpulse; do
     run_ccex "$BIN_DEV" "$W/$c.json" "$W/proc_$c" || { echo "  FAIL  $c : CCEX exit"; FAIL=$((FAIL+1)); }
 done
-for c in path_matrix path_matrix_recursive path_vector path_recursive path_nopump; do   # bath_state_file and nstate 1 in the input (also -s, -N 1 until A63)
+for c in path_matrix path_matrix_recursive path_vector path_recursive path_nopump; do   # bath_state_file and s_range [1, 1] in the input (also -s, -N 1 until A63)
     run_ccex "$BIN_DEV" "$W/$c.json" "$W/proc_$c" || { echo "  FAIL  $c : CCEX exit"; FAIL=$((FAIL+1)); }
 done
 # megCCE and cluster_mode pcce with bath pulses; the pure-state runs at order 2 and 3 and their reordered
@@ -166,11 +168,11 @@ refused(){
     if [ $rc -ne 0 ] && grep -qF "$2" "$W/proc_$1"; then echo "  PASS  $3"; PASS=$((PASS+1))
     else echo "  FAIL  $3 (exit $rc)"; grep -m1 -i error "$W/proc_$1"; FAIL=$((FAIL+1)); fi
 }
-# pulse.bath.spin that is not the driven spin's spin
-refused bad_bspin    "pulse.bath.spin 1 differs from the spin 0.5" "pulse.bath.spin mismatch refused"
+# levels that are not two levels of the driven spins' S (A94: S is theirs, pulse.bath.spin was removed)
+refused bad_bspin    "pulse.bath.levels [1, 0] must be two different levels of spin 0.5" "pulse.bath.levels of another spin refused"
 refused bad_defect   'pulse.bath.defect "P2" names no bath spin' "pulse.bath.defect naming no spin refused"
-refused bad_ms_equal "pulse.bath.alphams 0.5 and betams 0.5 must be two different levels" "pulse.bath alphams == betams refused"
-refused bad_ms_range "pulse.bath.alphams 1.5 and betams -0.5 must be two different levels" "pulse.bath |alphams| > spin refused"
+refused bad_ms_equal "pulse.bath.levels [0.5, 0.5] must be two different levels of spin 0.5" "pulse.bath.levels equal refused"
+refused bad_ms_range "pulse.bath.levels [1.5, -0.5] must be two different levels of spin 0.5" "pulse.bath.levels |m| > spin refused"
 # A67 pulse.bath.bandwidth and the unit form of energy_shift (bytes against onres)
 for c in units_onres bw_wide bw_default; do
     run_ccex "$BIN_DEV" "$W/$c.json" "$W/proc_$c" || { echo "  FAIL  $c : CCEX exit"; FAIL=$((FAIL+1)); }

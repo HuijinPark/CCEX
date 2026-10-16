@@ -15,9 +15,11 @@ prints it; FAKE_AVAAX_SEEN (the same for the avaax file, one line per run), FAKE
 FAKE_KINK ("B0") from rbath B0 up, the third largest rdip of each run has T2 x 1.1 (a neighbour that fails only at a large
 rbath); FAKE_SHAPE ("B0:n2") from rbath B0 up, the exponent is n2 with T2 scaled to keep the area (the decay time moves, the
 area does not).
-nstate 0 (no bath_state_file, the ensemble) writes out_wiDiv / out_noDiv. The input keys are CCEX's since A47 (2026-10-13):
+Without configuration.s_range (the ensemble) it writes out_wiDiv / out_noDiv; with s_range [first, last] (A94, in place of
+nstate, which is refused as CCEX refuses it) out_state<s>_... for s = first..last, the state file of s named as CCEX names it
+({s} in bath_state_file, else s appended). The input keys are CCEX's since A47 (2026-10-13):
 bath_state_file, Defect.axis_file, pcce.cache.file, rbath and rdip a number or [inner, outer]; since A64 (2026-10-15) the
-configuration block {bathfile, bath_state_file, defect_axis_file, defect_state_file, nstate, seed, ...}; since A65 the
+configuration block {bathfile, bath_state_file, defect_axis_file, defect_state_file, s_range, seed, ...}; since A65 the
 execution, cluster, output and frame blocks (output.file, output.savemode, cluster.pcce.cache.file read here); the file keys
 lists of one name per bath file - the old top-level keys are refused, as CCEX refuses them.
 """
@@ -63,6 +65,14 @@ def t2(k, rbath, rdip):
     return T0 * f * (1 + A_R * np.exp(-rdip / L_R) + A_B * np.exp(-rbath / L_B) + bump)
 
 
+def state_name(name, s):
+    """CCEX's name of the state file of state s (A94): {s} is s, {{s}} the literal {s}; without {s} s is appended."""
+    parts = name.split("{{s}}")
+    if not any("{s}" in x for x in parts):
+        return "{s}".join(parts) + str(s)
+    return "{s}".join(x.replace("{s}", str(s)) for x in parts)
+
+
 def write(path, t, v):
     path.write_text("".join(f"{a:15g}\t{x.real:+.10f}{x.imag:+.10f}j\t\n" for a, x in zip(t, v)))
 
@@ -88,6 +98,9 @@ def main():
     if "k_range" in inp.get("configuration", {}) or "path" in inp.get("configuration", {}):
         print("Error: the runner writes one configuration with absolute names (no k_range, no path)", file=sys.stderr)
         sys.exit(1)
+    if "nstate" in inp.get("configuration", {}):        # A94: CCEX refuses it
+        print("Error: configuration.nstate is now configuration.s_range: [1, N]", file=sys.stderr)
+        sys.exit(1)
     inp.update(inp.pop("configuration", {}))             # the configuration block (A64), read as the flat names below
     if any(k in inp.get("Defect", {}) for k in ("axis_file", "state_file")):   # A64: CCEX refuses them there
         print("Error: Defect.axis_file and Defect.state_file are now configuration.defect_axis_file and defect_state_file",
@@ -106,11 +119,13 @@ def main():
     if os.environ.get("FAKE_RANDOM"):
         print(os.environ["FAKE_RANDOM"] if os.environ["FAKE_RANDOM"] != "1" else "The bath state is randomly generated")
     k = int(re.search(r"(\d+)$", inp["bathfile"][0]).group(1))
-    nstep, dt, nstate = int(inp["nstep"]), float(inp["deltat"]), int(inp["nstate"])
+    sr = inp.get("s_range")
+    states = list(range(sr[0], sr[1] + 1)) if sr else []
+    nstep, dt, nstate = int(inp["nstep"]), float(inp["deltat"]), len(states)
     if os.environ.get("FAKE_STATES_SEEN") and nstate:    # the state files this run reads: configuration, state, rbath, content hash
         with open(os.environ["FAKE_STATES_SEEN"], "a") as f:
-            for st in range(1, nstate + 1):
-                p = Path(f"{inp['bath_state_file']}{st}")
+            for st in states:
+                p = Path(state_name(inp['bath_state_file'], st))
                 f.write(f"{k} {st} {inp['rbath']} {hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else 'missing'} {Path.cwd().parent.name}\n")
     if os.environ.get("FAKE_AVAAX_SEEN"):                # the avaax file this run reads: configuration, rbath, content hash
         p = Path(inp.get("defect_axis_file", "none"))
@@ -144,8 +159,8 @@ def main():
         T *= gamma(1 + 1 / N) / gamma(1 + 1 / n_exp)            # FAKE_SHAPE keeps the area T Gamma(1 + 1/n)
         if str(k) in os.environ.get("FAKE_SLOW_IDS", "").split(","):
             T *= 3.0                                             # a configuration that decays three times more slowly
-        for s in (range(1, nstate + 1) if nstate else [0]):          # nstate 0: the ensemble, out_wiDiv
-            sf = Path(f"{inp['bath_state_file']}{s}") if nstate and "bath_state_file" in inp else None
+        for s in (states if nstate else [0]):          # no s_range: the ensemble, out_wiDiv
+            sf = Path(state_name(inp['bath_state_file'], s)) if nstate and "bath_state_file" in inp else None
             # the noise follows the state file's content when there is one, so a state computed in a later block (the state
             # test writes states s + 1 ... as 1, 2, ...) is the same state as in a run of all of them
             seed = int(hashlib.sha256(sf.read_bytes()).hexdigest()[:12], 16) + 10 ** 6 * k if sf is not None and sf.is_file() else 10 ** 6 * k + s

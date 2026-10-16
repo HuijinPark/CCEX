@@ -9,9 +9,9 @@
 conventional CCE to order 2 (cCCE2), the bath in its unpolarised (ensemble) state. The fast ripple is the ¹³C
 precession at 500 G (ESEEM); the slow decay is the ¹³C flip-flops.
 
-**Keys that matter** (`ccein.json`; everything else is the default). `main.out -e` writes an input template,
+**Keys that matter** (`ccein.jsonc`; everything else is the default). `main.out -e` writes an input template,
 `ccex_example.jsonc`, with these settings and every other key a commented line; it runs once its `bathfile` names a
-bath file (`bath/bath_Diamond_NV_natab_1` here). Keys: `Qubit.file` (the
+bath file (`bath/bath_Diamond_NV_natab_1` here). Keys: `Qubit.qubit[].file` (the
 NV position; spin 1, ms +1 / 0 by default), `configuration.gyrofile` and `bathfile` (`bath/`: one 150 Å configuration
 made with `bath/genbath/`), `order` 2, `bfield` 500 G, `rbath` 50 Å, `rdip` 10 Å, `deltat` 1 µs × `nstep` 2000,
 `pulse.count` 1.
@@ -22,6 +22,10 @@ made with `bath/genbath/`), `order` 2, `bfield` 500 G, `rbath` 50 Å, `rdip` 10 
 
 **Expected result.** `expected.png`; T2 = 1.068 ms (the last time |L| ≥ 1/e, from `plot_coherence.py`).
 
-**What to change next.** `pulse.count` 2 or 8 (CPMG, `02_pulses`); `configuration.nstate` 20 for sampled bath states
-(`01_ensemble_and_states`); `rbath` and `rdip` larger to check convergence (or let `09_auto_convergence` choose them);
-`method` gCCE with the NV zero-field splitting (`06_cCCE_vs_gCCE`).
+![00_quickstart: expected result](expected.png)
+
+Input: [`ccein.jsonc`](ccein.jsonc)
+
+**What to change next.** `pulse.count` 2 or 8 (CPMG, [02_pulses](../02_pulses/README.md)); `configuration.s_range` [1, 20] for sampled bath states
+([01_ensemble_and_states](../01_ensemble_and_states/README.md)); `rbath` and `rdip` larger to check convergence (or let [09_auto_convergence](../09_auto_convergence/README.md) choose them);
+`method` gCCE with the NV zero-field splitting ([06_cCCE_vs_gCCE](../06_cCCE_vs_gCCE/README.md)).

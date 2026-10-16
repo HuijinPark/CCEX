@@ -16,9 +16,11 @@ def main():
         for state in (0, 1):
             path = case / 'inputfiles' / f'ccein_nstate{state}.json'
             config = json.loads(path.read_text())
-            for key, value in dict(expected, **{'configuration.nstate': state, 'configuration.seed': 1}).items():
+            # configuration.s_range [1, 1] for the sampled state, none for the ensemble (A94; nstate 1 / 0 before)
+            for key, value in dict(expected, **{'configuration.s_range': [1, 1] if state else None,
+                                                'configuration.seed': 1}).items():
                 got = config
-                for part in key.split('.'):   # nstate and seed are the configuration block's (A64)
+                for part in key.split('.'):   # s_range and seed are the configuration block's (A64)
                     got = got.get(part) if isinstance(got, dict) else None
                 if got != value:
                     raise ValueError(f'{path}: expected {key}={value}, got {got}')

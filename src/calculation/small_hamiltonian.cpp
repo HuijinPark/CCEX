@@ -244,14 +244,14 @@ void cceClusterHamiltonians(QubitArray* qa, BathArray* ba, Config* cnf, MatrixXc
     MatrixXcd** sigmas = spinOperators(ba);
     pairTensors(ba);
     bathInto(bath, ba, sigmas, cnf);
-    if (Config_getKnight(cnf) || Config_getHfmedi(cnf)){
-        // the general function for these two terms (not in the production inputs)
+    if (Config_getKnight(cnf) || Config_getHfmedi(cnf) || cnf->delta_A){
+        // the general function for these terms (not in the production inputs)
         std::unique_ptr<MatrixXcd[]> interaction(HamilQubitBathSecularApp(qa,ba,sigmas,cnf));
         Halpha = bath + interaction[0];
         Hbeta  = bath + interaction[1];
         return;
     }
-    // HamilQubitBathSecularApp without knight and hfmedi: ms * (sum of Azx X + Azy Y + Azz Z on each spin) + 0
+    // HamilQubitBathSecularApp without knight, hfmedi and delta_A: ms * (sum of Azx X + Azy Y + Azz Z on each spin) + 0
     if (QubitArray_getNqubit(qa) > 1){
         fprintf(stderr,"Error : nqubit > 1, current nqubit = %d\n",QubitArray_getNqubit(qa));
         ccexFatal();
@@ -382,8 +382,8 @@ void addTerm(LocalHamiltonian& H, int s0, int s1, MatrixXcd op){
 }
 
 void cceClusterTerms(QubitArray* qa, BathArray* ba, Config* cnf, LocalHamiltonian& Halpha, LocalHamiltonian& Hbeta){
-    if (Config_getKnight(cnf) || Config_getHfmedi(cnf) || QubitArray_getNqubit(qa) > 1){
-        fprintf(stderr,"Error : execution.propagator=sparse : knight, hfmedi and nqubit > 1 are not covered\n");
+    if (Config_getKnight(cnf) || Config_getHfmedi(cnf) || cnf->delta_A || QubitArray_getNqubit(qa) > 1){
+        fprintf(stderr,"Error : execution.propagator=sparse : knight, hfmedi, delta_A and nqubit > 1 are not covered\n");
         ccexFatal();
     }
     MatrixXcd** sigmas = spinOperators(ba);

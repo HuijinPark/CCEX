@@ -91,6 +91,7 @@ jobs:
           python3 test/gpu_verification/gpu_benchmarks/test_backend_check.py   # min_dim/gpu_sharing accept cpu-batch on backend=cpu (G3)
           (cd example/tools/AutoConvergence && python3 -m pytest -q -n auto tests)   # auto_convergence setup driver
           python3 -m unittest discover -s example/tools/InputKeys/tests   # the input-key converter (review 20261013-180049 C1)
+          python3 -m unittest discover -s example/tools/StateFiles/tests  # the state and axis file writer (A94; its CCEX run is skipped without a build)
 
   checks:
     runs-on: ubuntu-24.04

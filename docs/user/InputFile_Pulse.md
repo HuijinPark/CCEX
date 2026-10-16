@@ -17,16 +17,15 @@ The `pulse` block (older inputs had its keys at the top level under other names,
         - [defect](#tag_pulse_bath_defect)
         - [energy_shift](#tag_pulse_bath_energy_shift)
         - [bandwidth](#tag_pulse_bath_bandwidth)
-        - [spin](#tag_pulse_bath_spin)
-        - [alphams](#tag_pulse_bath_alphams)
-        - [betams](#tag_pulse_bath_betams)
+        - [levels](#tag_pulse_bath_levels)
 
 <a id="tag_pulse"></a>
 ## pulse
 <b>Description:</b><br>
 The pulse sequence of the run. Without it the run stops (`pulse is not found in the input file`). `method` meCCE and
-megCCE need `per_qubit` false and `detuning_factor` 1, and meCCE takes its pulses from `count` only (a `Manual`
-sequence is refused). <br>
+megCCE need `per_qubit` false, `detuning_factor` 1 and `duration` 0, and meCCE takes its pulses from `count` only (a
+`Manual` sequence is refused). cCCE needs `detuning_factor` 1 and `duration` 0 (ideal instantaneous pulses; the two
+keys were ignored there without a word). <br>
 <b>Data Type:</b> Object
 
 <b>Example:</b> ``` "pulse" : {"count": 2, "name": "Manual", "sequence": [["1/4", "I", 0], ["1/2", "X", 180], ["1/4", "X", 180]]} ```
@@ -51,16 +50,24 @@ X or Y; other angles need gCCE. Required. <br>
 <b>Description:</b><br>
 The name of the pulse sequence. Without it the run derives the sequence from
 [count](#tag_pulse_count) and reports the name it chose (`Ramsey`, `HahnEcho` or `CPMG`); the
-run log prints the sequence as a table of intervals, axes and angles. <br>
+run log prints the sequence as a table of intervals, axes and angles. A written name is one of the five below and has to
+fit `count` (an unknown name was kept and `count` decided without a word, so `"Hahn"` ran a Hahn echo and
+`{"count": 0, "name": "CPMG"}` a Ramsey): otherwise the run stops with `pulse.name X needs pulse.count Y`. <br>
 
 <b>Data Type:</b> String
 
 <b>Options:</b><br>
 | Option | Description |
 |---|---|
-| `Ramsey`, `HahnEcho`, `CPMG` | the default sequences; which one runs follows `count` |
-| `WAHUHA` | the four-pulse WAHUHA sequence (90° pulses; gCCE) |
-| `Manual` | the sequence written out in [sequence](#tag_sequence) |
+| `Ramsey` | free induction: `count` 0 |
+| `HahnEcho` | one π pulse: `count` 1 |
+| `CPMG` | n equally spaced π pulses: `count` 2 or more |
+| `WAHUHA` | the four-pulse WAHUHA sequence (90° pulses; gCCE): `count` must be 4 |
+| `Manual` | the sequence written out in [sequence](#tag_sequence), any `count` |
+
+`WAHUHA` is a fixed sequence of four pulses and five free intervals, in fractions of the total time: 1/6, X 90°, 1/6,
+Y 270°, 2/6, Y 90°, 1/6, X 270°, 1/6 (as a `Manual` sequence: [["1/6", "X", 90], ["1/6", "Y", 270], ["2/6", "Y", 90],
+["1/6", "X", 270], ["1/6", "I", 0]]). `count` must be 4: the run refuses `WAHUHA` with any other count.
 
 <b>Default:</b> - (derived from `count`)
 
@@ -73,7 +80,7 @@ The pulse sequence written out, one entry per pulse: `[fraction, axis, angle]`, 
 `fraction` is the free evolution before the pulse as a fraction of the total time (a string
 such as `"1/6"` or a number; the fractions must sum to 1), `axis` is `X`, `Y`, `Z` or `I` (no
 pulse) and `angle` is the rotation in degrees. Required, with `count` + 1 entries, when
-[name](#tag_pulse_name) = `Manual`; the last entry is the free evolution after the last pulse.
+[name](#tag_pulse_name) = `Manual`, and refused with any other name (or none); the last entry is the free evolution after the last pulse.
 Without it the run builds the default sequence of `count` equally spaced π pulses (Hahn echo,
 CPMG). `example/tutorial/02_pulses/cCCE2_Manual_ensemble/` writes a CPMG-2 this way and compares it with the built-in one. <br>
 
@@ -88,7 +95,9 @@ CPMG). `example/tutorial/02_pulses/cCCE2_Manual_ensemble/` writes a CPMG-2 this 
 <b>Description:</b><br>
 `false`: a pulse rotates the qubit array as a whole. `true`: the pulse is applied to each qubit
 separately and the rotations are combined. With a finite pulse ([detuning_factor](#tag_detuning_factor)
-other than 1) `true` is not implemented. <br>
+other than 1) `true` is not implemented. Each qubit is turned between its own two levels, the m<sub>s</sub> of
+[Qubit.alpha_state and beta_state](InputFile_Qubit.md#tag_alpha_state) `{"ms": [...]}`: `true` with `{"index"}` or
+`{"vector"}` is refused. <br>
 **Known defect (not fixed):** with gCCE, `true` also stops with an internal
 matrix error for ideal Hahn-echo and CPMG pulses (the per-qubit X operator is left empty) and for a `Manual` sequence (a
 matrix of the wrong size); Ramsey (no pulse) is not affected. Use the default `false` until it is fixed. <br>
@@ -102,8 +111,9 @@ matrix of the wrong size); Ramsey (no pulse) is not affected. Use the default `f
 <a id="tag_pulse_duration"></a>
 ## pulse.duration
 <b>Description:</b><br>
-The duration of a pulse. Used only by the finite-pulse propagation, i.e. with
-[detuning_factor](#tag_detuning_factor) other than 1. <br>
+The duration of a pulse. Used only by the finite-pulse propagation of gCCE, i.e. with
+[detuning_factor](#tag_detuning_factor) other than 1: with gCCE and `detuning_factor` 1 it is reported as not used,
+and cCCE, meCCE and megCCE refuse a value other than 0. <br>
 
 <b>Data Type:</b> Double, or `{"value": ..., "unit": ...}` with the unit `s`, `ms`, `us` or `ns` ([Units](InputFile.md#Units))
 
@@ -116,7 +126,8 @@ The duration of a pulse. Used only by the finite-pulse propagation, i.e. with
 <a id="tag_detuning_factor"></a>
 ## pulse.detuning_factor
 <b>Description:</b><br>
-gCCE. `1.0` applies every pulse as an ideal instantaneous rotation. Any other value propagates
+gCCE (cCCE, meCCE and megCCE refuse a value other than 1). `1.0` applies every pulse as an ideal instantaneous
+rotation. Any other value propagates
 each pulse as a finite drive of [duration](#tag_pulse_duration): the drive frequency is
 `detuning_factor` times the qubit transition frequency, the detuning is their difference, and the
 Rabi frequency follows from the angle and the duration. <br>
@@ -133,10 +144,14 @@ Rabi frequency follows from the angle and the duration. <br>
 DEER bath pulses: pump pulses on the bath spins of one species during the qubit's sequence, for `method` = `gCCE` or
 `megCCE` (`cluster.mode` standard or pcce) on the CPU (`execution.backend` `auto` is set to `cpu`, `cuda` is refused). What it does, what it supports
 and what it refuses is in [deer.md](../methods/deer.md). Without the block, or with `count` 0, no bath pulse is applied. Its
-keys are the eight below; any other key is refused (`pulse.bath has no key "..."`). The earlier key
-names are refused with their new names ([the old names](InputFile.md#OldNames)). <br>
+keys are the six below; any other key is refused (`pulse.bath has no key "..."`). The earlier key
+names are refused with their new names ([the old names](InputFile.md#OldNames)). Use it to measure the coupling of the qubit
+to one group of bath spins (a pumped line); `example/tutorial/03_P1/gCCE2_Hahn_DEER/` runs a pump on the central P1 line
+against the plain Hahn echo. <br>
 
 <b>Data Type:</b> Object
+
+<b>Default:</b> no block: no bath pulse.
 
 <b>Example:</b> ``` "pulse" : {"count": 1, "bath": {"count": 1, "defect": "P1", "energy_shift": [79.975539], "sequence": [["0.50", "X", 180.0], ["0.50", "I", 0.0]]}} ```
 
@@ -213,37 +228,16 @@ number that is not positive and finite is refused. <br>
 
 <b>Example:</b> ``` "bandwidth" : {"value": 5, "unit": "kHz"} ```
 
-<a id="tag_pulse_bath_spin"></a>
-## pulse.bath.spin
+<a id="tag_pulse_bath_levels"></a>
+## pulse.bath.levels
 <b>Description:</b><br>
-The spin S of the driven spins; it has to be their S (a different one is refused before any cluster is computed). <br>
+The two levels m the bath pulse rotates between, `[m_a, m_b]` (the |a> and |b> of the generalized Pauli operators in
+[deer.md](../methods/deer.md)): two different levels of the driven spins' S (m = -S, -S+1, ..., S). S is the driven
+spins' own; the spins named by [defect](#tag_pulse_bath_defect) all have to have one S. Before 2.0.0 `alphams` and `betams`
+were the two levels and `spin` repeated S (refused when it differed); the three are refused with this key. <br>
 
-<b>Data Type:</b> Double
+<b>Data Type:</b> List of two Double
 
-<b>Default:</b> `0.5`
+<b>Default:</b> `[0.5, -0.5]`
 
-<b>Example:</b> ``` "spin" : 0.5 ```
-
-<a id="tag_pulse_bath_alphams"></a>
-## pulse.bath.alphams
-<b>Description:</b><br>
-The first of the two levels m the bath pulse rotates between (the |a> of the generalized Pauli operators in
-[deer.md](../methods/deer.md)). It and [betams](#tag_pulse_bath_betams) must be two different levels of
-[spin](#tag_pulse_bath_spin) (m = -S, -S+1, ..., S). <br>
-
-<b>Data Type:</b> Double
-
-<b>Default:</b> `0.5`
-
-<b>Example:</b> ``` "alphams" : 0.5 ```
-
-<a id="tag_pulse_bath_betams"></a>
-## pulse.bath.betams
-<b>Description:</b><br>
-The second of the two levels m of the bath pulse; see [alphams](#tag_pulse_bath_alphams). <br>
-
-<b>Data Type:</b> Double
-
-<b>Default:</b> `-0.5`
-
-<b>Example:</b> ``` "betams" : -0.5 ```
+<b>Example:</b> ``` "levels" : [0.5, -0.5] ```

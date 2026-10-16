@@ -95,7 +95,7 @@ Prepared prepare_config(const adaptive::Value& given) {
         out.method = "cce";
     else if (out.method != "gcce")
         throw adaptive::ValueError("refinement supports method cCCE/gCCE");
-    // seed and nstate are the configuration block's (A64)
+    // seed and s_range are the configuration block's (A64, A94)
     const adaptive::Value* seed = adaptive::find_path(out.cfg, {"configuration", "seed"});
     if (!seed || seed->kind() != adaptive::Value::Kind::Int)
         throw adaptive::ValueError(
@@ -121,10 +121,11 @@ Prepared prepare_config(const adaptive::Value& given) {
     output.set(adaptive::key_of(output, "savemode"), savemode);
     out.cfg.set(output_key, output);
     out.states.push_back(0);
-    const adaptive::Value* nstate = adaptive::find_path(out.cfg, {"configuration", "nstate"});
-    if (nstate && nstate->as_int() != 0) {
+    // configuration.s_range [first, last] (A94; nstate N before, the states 1..N): the sampled states the run calculates
+    const adaptive::Value* range = adaptive::find_path(out.cfg, {"configuration", "s_range"});
+    if (range && range->kind() == adaptive::Value::Kind::Array && range->size() == 2) {
         out.states.clear();
-        for (long long s = 1; s <= static_cast<long long>(nstate->as_int()); ++s)
+        for (long long s = range->at(std::size_t(0)).as_int(); s <= static_cast<long long>(range->at(std::size_t(1)).as_int()); ++s)
             out.states.push_back(static_cast<int>(s));
     }
     return out;

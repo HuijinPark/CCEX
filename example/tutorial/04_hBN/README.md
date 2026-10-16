@@ -13,7 +13,7 @@ gyromagnetic ratios are `bath/hBN_natab_gyro`, beside the `do_*` scripts that sh
 ## cCCE2_Hahn_ensemble
 
 - **What it shows:** what the DFT tensors change: cCCE2 Hahn echo at 3 T over five configurations (`k_range`), with
-  the hyperfine and quadrupole tensors (`ccein_hf3_qd2.json`), the quadrupole only (the hyperfine a point dipole,
+  the hyperfine and quadrupole tensors (`ccein_hf3_qd2.jsonc`), the quadrupole only (the hyperfine a point dipole,
   `hf0_qd2`) and the hyperfine only (`hf3_qd0`).
 - **Keys that matter:** `hamiltonian.common.hyperfine` {`dipole` dft, `contact` true, `file`},
   `hamiltonian.common.quadrupole` {`structure` plain, `file`}, `bfield` 30000 G, `rbath` 20 Å, `rdip` 10 Å, `deltat`
@@ -22,24 +22,36 @@ gyromagnetic ratios are `bath/hBN_natab_gyro`, beside the `do_*` scripts that sh
 - **Expected result:** `expected.png`; T2 56.5 µs with both tensors, 56.6 µs quadrupole only, 34.0 µs hyperfine only.
 - **What to change next:** `k_range` [1, 50]; `rbath` 30 to check convergence.
 
+![cCCE2_Hahn_ensemble: expected result](cCCE2_Hahn_ensemble/expected.png)
+
+Inputs: [`ccein_hf0_qd2.jsonc`](cCCE2_Hahn_ensemble/ccein_hf0_qd2.jsonc), [`ccein_hf3_qd0.jsonc`](cCCE2_Hahn_ensemble/ccein_hf3_qd0.jsonc), [`ccein_hf3_qd2.jsonc`](cCCE2_Hahn_ensemble/ccein_hf3_qd2.jsonc)
+
 ## cCCE2_Hahn_hfMediated
 
 - **What it shows:** the hyperfine-mediated bath-bath coupling (`hamiltonian.cCCE.hfmedi`): at 1000 G with the
   V_B⁻ zero-field splitting, two nuclei coupled through the defect's transverse hyperfine; one configuration, ensemble.
-- **Keys that matter:** `hamiltonian.cCCE.hfmedi` true / absent, `Qubit.zfs` (kHz), `bfield` 1000, `rbath` 14 Å,
+- **Keys that matter:** `hamiltonian.cCCE.hfmedi` true / absent, the ZFS as a `Qubit.intmap` self entry (kHz), `bfield` 1000, `rbath` 14 Å,
   `rdip` 8 Å, `deltat` 5 ns × `nstep` 50.
 - **How to run:** `NP=4 bash run.sh`: 1.2 s, 0.05 GB per rank.
 - **Expected result:** `expected.png`; T2 86 ns with the term; without it |L| is still 0.66 at 245 ns.
 - **What to change next:** a higher `bfield` (the term falls off with the field).
 
+![cCCE2_Hahn_hfMediated: expected result](cCCE2_Hahn_hfMediated/expected.png)
+
+Inputs: [`ccein_wi_hfmedi.jsonc`](cCCE2_Hahn_hfMediated/ccein_wi_hfmedi.jsonc), [`ccein_wo_hfmedi.jsonc`](cCCE2_Hahn_hfMediated/ccein_wo_hfmedi.jsonc)
+
 ## gCCE2_Hahn_states
 
 - **What it shows:** gCCE2 of one sampled bath state, the qubit density matrix (`quantity` dm) over 1 µs in a small
   bath (`rbath` 5 Å); the plot shows the element between ms +1 and 0, divided by its value at t = 0.
-- **Keys that matter:** `method` gCCE, `quantity` dm, `nstate` 1, `seed` 1, the two tensor files.
+- **Keys that matter:** `method` gCCE, `quantity` dm, `s_range` [1, 1], `seed` 1, the two tensor files.
 - **How to run:** `NP=4 bash run.sh`: 0.6 s, 0.05 GB per rank.
 - **Expected result:** `expected.png`; T2 0.44 µs.
-- **What to change next:** `rbath` 10 and `nstate` 10.
+- **What to change next:** `rbath` 10 and `s_range` [1, 10].
+
+![gCCE2_Hahn_states: expected result](gCCE2_Hahn_states/expected.png)
+
+Input: [`ccein.jsonc`](gCCE2_Hahn_states/ccein.jsonc)
 
 ## gCCE2_Hahn_OH
 
@@ -51,3 +63,7 @@ gyromagnetic ratios are `bath/hBN_natab_gyro`, beside the `do_*` scripts that sh
 - **Expected result:** `expected.png`; in both a shallow dip to |L| 0.966 near 0.28 ns (about 1/D) and back to 0.998
   at 0.49 ns; they differ by 9e-5 in this short window.
 - **What to change next:** a longer window (`nstep` 1000) to see where the two separate.
+
+![gCCE2_Hahn_OH: expected result](gCCE2_Hahn_OH/expected.png)
+
+Inputs: [`ccein_wi_OH.jsonc`](gCCE2_Hahn_OH/ccein_wi_OH.jsonc), [`ccein_wo_OH.jsonc`](gCCE2_Hahn_OH/ccein_wo_OH.jsonc)

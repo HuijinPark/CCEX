@@ -298,7 +298,7 @@ int DefectArray_applyCoordinateFrameRotation(DefectArray* dfa, const double R[3]
 
     for (int idf=0; idf<dfa->ndefect; idf++){
         Defect* df = dfa->defect[idf];
-        if (df->coordinate_frame != DEFECT_COORDINATE_FRAME_BATH){ continue; }
+        if (df->coordinate_frame != DEFECT_COORDINATE_FRAME_FILE){ continue; }
 
         if (df->axis_set){ rotateDefectVector(df->axis,R); }
 
@@ -822,22 +822,23 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
     printSubTitle(subtitle);
     printStructElementChar("dfname",DefectArray_getDefect_idf_dfname(dfa,idf));
     printStructElementBool("apprx",DefectArray_getDefect_idf_apprx(dfa,idf));
-    printStructElementInt("naddspin",DefectArray_getDefect_idf_naddspin(dfa,idf));
-    printf("      %-18s : %d indexed configurations (1 ~ %d)\n", "navaax",
+    // the input's names (A94, G24: naddspin and navaax until A47)
+    printStructElementInt("n_onsite_spins",DefectArray_getDefect_idf_naddspin(dfa,idf));
+    printf("      %-18s : %d axis states (1 ~ %d)\n", "n_axis_states",
            DefectArray_getDefect_idf_navaax(dfa,idf)-1,
            DefectArray_getDefect_idf_navaax(dfa,idf)-1);
 
     DefectCoordinateFrame frame = DefectArray_getDefect_idf_coordinate_frame(dfa,idf);
-    printStructElementChar("coordinate_frame",
-        (frame == DEFECT_COORDINATE_FRAME_BATH) ? (char*)"bath" : (char*)"qubit");
+    printStructElementChar("frame",
+        (frame == DEFECT_COORDINATE_FRAME_FILE) ? (char*)"file" : (char*)"qubit");
     if (DefectArray_getDefect_idf_axis_set(dfa,idf)){
-        printStructElementDouble1d("axis",DefectArray_getDefect_idf_axis(dfa,idf),3);
+        printStructElementDouble1d("zfs.axis",DefectArray_getDefect_idf_axis(dfa,idf),3);
     }
 
     const char* zfs_mode = "none";
     switch (DefectArray_getDefect_idf_zfs_input_mode(dfa,idf)){
         case DEFECT_ZFS_INDEXED_LEGACY: zfs_mode = "indexed legacy list"; break;
-        case DEFECT_ZFS_SHARED_DE:       zfs_mode = "shared D/E object"; break;
+        case DEFECT_ZFS_SHARED_DE:       zfs_mode = "shared D object (with zfs.axis)"; break;
         case DEFECT_ZFS_SHARED_TENSOR:   zfs_mode = "shared tensor object"; break;
         default: break;
     }

@@ -4,7 +4,7 @@ CCEX computes the decoherence of spin qubits in a bath of nuclear and electron s
 expansion (CCE). From an input file that names the qubit(s), the bath and the pulse sequence, it builds the spin
 Hamiltonian, cuts the bath into clusters, solves each cluster exactly and combines them into the coherence L(t) of the
 qubit (or, with gCCE, its density matrix). It is a C++17/MPI code with an optional CUDA backend, by the CQML group at
-Sungkyunkwan University (<https://github.com/CQML-SKKU/CCEX>); this is version 2.0.0 (provisional, see `CITATION.cff`).
+Sungkyunkwan University (<https://github.com/CQML-SKKU/CCEX>); this is version 2.0.0, released 2026-10-17.
 
 ## Quick start
 
@@ -32,7 +32,7 @@ After a CMake build the binary is `build/bin/main.out`; the tutorials take it as
 | `megCCE` (gCCE + jumps on bath spins and the qubit) | CPU | CPU | refused | refused |
 
 ¹ with `execution.propagator` `eigen` (the default); `expm` runs on the CPU. Also CPU only: DEER bath pulses
-(`pulse.bath`, gCCE and megCCE with `standard` or `pcce`) and an ensemble (`nstate` 0) `Manual` sequence. `quantity`
+(`pulse.bath`, gCCE and megCCE with `standard` or `pcce`) and an ensemble (no `s_range`) `Manual` sequence. `quantity`
 `dm` is for gCCE; meCCE and megCCE compute `coherence` only. The GPU needs the CUDA binary `bin/main_gpu.out`. Details:
 [method](docs/user/InputFile_General.md#tag_method), [cluster.mode](docs/user/InputFile_Cluster.md#tag_cluster_mode),
 [backend](docs/user/InputFile_Backend.md#tag_backend), [GPU](docs/methods/gpu.md),
@@ -50,15 +50,15 @@ Top level: `method`, `quantity` (`coherence` or `dm`), `order`, `bfield`, `rbath
 
 | Block | What it holds | Page |
 |---|---|---|
-| `configuration` | bath and gyro files, sampled states and defect axes, `nstate`, `seed`, several configurations (`k_range`) | [General](docs/user/InputFile_General.md#tag_configuration) |
-| `Qubit` | the qubit(s): from a file, or written out with positions, spins, states, interactions | [Qubit](docs/user/InputFile_Qubit.md) |
+| `configuration` | bath and gyro files, sampled states and defect axes, `s_range`, `seed`, several configurations (`k_range`) | [General](docs/user/InputFile_General.md#tag_configuration) |
+| `Qubit` | the qubit(s) (`qubit`: positions or a file, spins), their states (`alpha_state`, `beta_state`), interactions and zero-field splittings (`intmap`) | [Qubit](docs/user/InputFile_Qubit.md) |
 | `Defect` | the species of a paramagnetic-defect bath (P1, ...) | [Defect](docs/user/InputFile_Defect.md) |
-| `hamiltonian` | mean fields, hyperfine and quadrupole tensors, method terms, jump operators | [General](docs/user/InputFile_General.md#tag_hamiltonian) |
+| `hamiltonian` | `common` (mean fields, hyperfine and quadrupole tensors) and one section per method: `cCCE` (`knight`, `hfmedi`, `delta_A`), `meCCE` / `megCCE` (`jump_operators`) | [General](docs/user/InputFile_General.md#tag_hamiltonian) |
 | `pulse` | the sequence: Ramsey, Hahn, CPMG, WAHUHA or written out; DEER bath pulses | [Pulse](docs/user/InputFile_Pulse.md) |
 | `cluster` | `mode`, the cluster selection, and the `pcce`, `bundle`, `adaptive` blocks | [Cluster](docs/user/InputFile_Cluster.md) |
 | `execution` | `backend`, GPU options, propagator and evolution choices, profiling | [Backend](docs/user/InputFile_Backend.md) |
 | `output` | the output folder and name, what is saved | [Output](docs/user/InputFile_Output.md) |
-| `frame` | rotation from the crystal frame of the bath file to the qubit frame | [General](docs/user/InputFile_General.md#tag_frame) |
+| `frame` | `rotation` (`qubit_axis`) from the frame of the bath file to the qubit frame; each tensor says its own `frame` (`"file"` or `"qubit"`) | [General](docs/user/InputFile_General.md#tag_frame) |
 | `auto_convergence` | chooses rbath, rdip, the time window and the number of configurations, then runs | [AutoConvergence](docs/user/InputFile_AutoConvergence.md) |
 
 Inputs written for version 1.2.2 or earlier use old key names; they are refused with the new name, and
@@ -84,12 +84,14 @@ the key that replaces them ([Getting started](docs/user/GettingStarted.md#HowToR
 |---|---|
 | `<name>_wiDiv` | the CCE result: a time column (ms), then the coherence (or, with `dm`, the density matrix) as complex numbers |
 | `<name>_noDiv` | the same product without the division by the sub-clusters; the analyzer uses it to repair diverged points (`output.savemode.nodiv` false leaves it out) |
-| `<name>_state<s>_wiDiv`, `_noDiv` | one per sampled state, s = 1 … `nstate` (`nstate` > 0); the ensemble (`nstate` 0) has no `_state` |
+| `<name>_state<s>_wiDiv`, `_noDiv` | one per sampled state s of `s_range` [first, last]; the ensemble (no `s_range`) has no `_state` |
 | `<name>_k<k>_...` | one set per configuration with `configuration.k_range` (no average) |
 
 `output.savemode` adds per-cluster files ([Output](docs/user/InputFile_Output.md#tag_savemode)). Averaging over
 configurations and states, error correction and T2 fits are done by `example/analysis/` ([Analysis](docs/user/Analysis.md)).
 The run log (stdout) starts with a `Build :` line: CPU or GPU, compiler, MPI, MKL on/off, preset and commit.
+Every output file and its columns: [Output files](docs/user/OutputFiles.md); what the run log says:
+[the run log](docs/user/GettingStarted.md#RunLog).
 
 ## Build
 
@@ -157,5 +159,6 @@ What keeps the results trustworthy:
 
 ## Changes and citing
 
-- What changed since v1.2.2, with the measured speed-ups and the results that move: [CHANGELOG.md](CHANGELOG.md).
+- What changed in 2.0.0 since v1.2.2, how to update old inputs, the measured speed-ups and the results that move:
+  [CHANGELOG.md](CHANGELOG.md).
 - The authors and the version to cite: [CITATION.cff](CITATION.cff).

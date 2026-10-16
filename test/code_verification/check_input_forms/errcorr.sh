@@ -52,6 +52,25 @@ assert np.array_equal(error_correct(same.copy(), same.copy()), same)
 PYEOF
 then echo "  ok    error_correct boundary inputs"
 else echo "  FAIL  error_correct boundary inputs"; sed 's/^/        /' "$WORK/errcorr_unit.log"; FAIL=$((FAIL+1)); fi
+# -ea with -fit_w (IndexError until A89, 2026-10-16): the fit is of the average, one row whose value is the number of
+# curves. Three curves exp(-(t/T2)^2) with T2 0.9, 1.0, 1.1 ms: the row is 3, a T2 near 1 and a power near 2.
+fw="$WORK/errcorr_fitw"; rm -rf "$fw"; mkdir -p "$fw"
+"$PY" - "$fw" <<'PYEOF'
+import sys, numpy as np
+t = np.arange(0, 3.0001, 0.01)
+for i, T2 in enumerate((0.9, 1.0, 1.1), 1):
+    with open(f"{sys.argv[1]}/c{i}_wiDiv", "w") as f:
+        for ti, L in zip(t, np.exp(-(t / T2) ** 2)): f.write(f"{ti:15g}\t  {L:+.10f}+0.0000000000j\t\n")
+PYEOF
+"$PY" "$RUN" -d "$fw/" -fi cVV_wiDiv -vn VV -v 1 2 3 -uc ms -ea -fo "$fw/avg" -fit_w > "$fw/run.log" 2>&1
+if [ $? -eq 0 ] && "$PY" - "$fw/avg_params" >> "$fw/run.log" 2>&1 <<'PYEOF'
+import sys
+rows = [l.split() for l in open(sys.argv[1]) if l.strip()]
+assert len(rows) == 1 and float(rows[0][0]) == 3, rows
+assert abs(float(rows[0][1]) - 1) < 0.02 and abs(float(rows[0][2]) - 2) < 0.1, rows
+PYEOF
+then echo "  ok    -ea with -fit_w fits the average ($(tr '\t' ' ' < "$fw/avg_params"))"
+else echo "  FAIL  -ea with -fit_w (see $fw/run.log)"; tail -3 "$fw/run.log" | sed 's/^/        /'; FAIL=$((FAIL+1)); fi
 for sys in S1a S1b S2a S2b S2c S3 S4; do
     w="$WORK/$sys"
     # prefer the axis-2 baseline where it exists, else the axis-1 dev run

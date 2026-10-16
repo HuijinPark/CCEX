@@ -138,8 +138,11 @@ void ClusterContributions::finish(const MatrixXcd* zero,int state,const Output* 
     if(rank==0)try {
         std::ofstream out(std::string(output->outfile)+".contributions.state-"+std::to_string(state)+".tsv");
         out<<std::setprecision(17);
+        // seed= only for a run that draws from it (A76, Config::seed_used): otherwise a new value each run (A86)
         out<<"# schema=ccex-contributions-v1 full_time_window=1 nstep="<<nt<<" deltat_ms="<<config->deltat
-           <<" method="<<config->method<<" seed="<<config->seed<<" normalization="
+           <<" method="<<config->method;
+        if(config->seed_used)out<<" seed="<<config->seed;
+        out<<" normalization="
            <<(!strcasecmp(config->method,"gcce") ? "factor_t0" : "none")<<"\n";
         out<<"sites\tbundles\tproduction_power\tdimension\tmax_abs_log_tilde\tundefined_points\tworst_step\n";
         std::map<Sites,size_t> byBundle;
@@ -169,7 +172,7 @@ void ClusterContributions::finish(const MatrixXcd* zero,int state,const Output* 
             out<<'\t'<<undefined<<'\t'<<worst<<'\n';
         }
         out.close();if(!out)throw std::runtime_error("cannot write complete contribution table");
-        if(state==(config->nstate ? 1 : 0)) {
+        if(state==(config->nstate ? std::max(config->state_first,1) : 0)) {   // the first state of the run (A94: s_range first)
             std::ofstream metadata(std::string(output->outfile)+".contributions.sites.tsv");
             metadata<<std::setprecision(17)<<"site\tname\tspin\tgyro\tx_A\ty_A\tz_A\n";
             for(int s=0;s<bath->nspin;++s) {

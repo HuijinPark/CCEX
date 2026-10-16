@@ -172,7 +172,7 @@ def main():
         for method in ('cce','gcce'):
             q = 3 if method=='gcce' else 1
             cfg = dict(base, method=method, bathfile=[str(bath)], gyrofile=str(stored/'Gyro_h_BN'),
-                       Qubit=dict(nqubit=1, qubit=[dict(name='VB',spin=1,gyro=-17608.59705,xyz=xyz,alphams=1,betams=0)]),
+                       Qubit=dict(nqubit=1, qubit=[dict(name='VB',spin=1,gyro=-17608.59705,xyz=xyz)], alpha_state=dict(ms=[1]), beta_state=dict(ms=[0])),
                        deltat=.0001, npulse=4)
             ref,_ = run('hbn-'+method+'-reference', standard(cfg,4), old=True)
             for cap in (36,108):

@@ -97,9 +97,21 @@
      ]
     },
     "Qubit": {
-     "alphams": -1,
-     "betams": 0,
-     "file": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect"
+     "alpha_state": {
+      "ms": [
+       -1
+      ]
+     },
+     "beta_state": {
+      "ms": [
+       0
+      ]
+     },
+     "qubit": [
+      {
+       "file": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect"
+      }
+     ]
     },
     "bfield": 292,
     "cluster": {
@@ -114,7 +126,10 @@
       "test/cluster_verification/check_adaptive/regression/inputs/bath_p1_6"
      ],
      "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
-     "nstate": 5,
+     "s_range": [
+      1,
+      5
+     ],
      "seed": 1
     },
     "deltat": 0.0005,

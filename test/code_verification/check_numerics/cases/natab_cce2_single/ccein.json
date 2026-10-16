@@ -2,9 +2,9 @@
   "method": "cCCE",
   "quantity": "coherence",
   "Qubit": {
-    "file": "../../inputs/natab/bath_Diamond_NV_natab_defect",
-    "alphams": 1,
-    "betams": 0
+    "qubit": [{"file": "../../inputs/natab/bath_Diamond_NV_natab_defect"}],
+    "alpha_state": {"ms": [1]},
+    "beta_state": {"ms": [0]}
   },
   "configuration": {
     "gyrofile": "../../inputs/natab/gyro_13C",
@@ -12,7 +12,7 @@
       "../../inputs/natab/bath_Diamond_NV_natab_1"
     ],
     "bath_state_file": ["../../inputs/natab/state_"],
-    "nstate": 2,
+    "s_range": [1, 2],
     "seed": 19
   },
   "order": 2,

@@ -10,7 +10,7 @@
 #include <vector>
 
 namespace {
-// exp(-i theta sigma / 2) in the {balphams, bbetams} subspace of spin bspin (adding_MECCE cal_Upulse_when_pulseiter_isFalse)
+// exp(-i theta sigma / 2) in the {levels[0], levels[1]} subspace of the driven spins' S (adding_MECCE cal_Upulse_when_pulseiter_isFalse)
 MatrixXcd bathRotation(const Pulse* pls, int row) {
     MatrixXcd* s = getGeneralPauliOperators(getSpinor(pls->bspin, pls->balphams), getSpinor(pls->bspin, pls->bbetams));
     const char axis = pls->tot_bpulse_axes[row];
@@ -39,7 +39,7 @@ MatrixXcd bathPulseOperator(BathArray* ba, const Pulse* pls, int row) {
         MatrixXcd Uj;
         if (driven(ba->bath[j], pls)) {
             if (std::fabs(S - pls->bspin) > 1e-6) {   // validateBathPulseTargets stops this before any cluster
-                fprintf(stderr, "Error: bath pulse on %s: pulse.bath.spin %g differs from the spin %g of that bath spin\n",
+                fprintf(stderr, "Error: bath pulse on %s: the driven spin S %g differs from the spin %g of that bath spin\n",
                         ba->bath[j]->name, pls->bspin, (double)S);
                 ccexFatal(1);
             }
@@ -66,7 +66,7 @@ void applyBathPulsesGcce(GcceWork* w, MatrixXcd* Upulses, BathArray* ba, const P
     if (changed) w->pulseBdim = 0;   // applyPulseGcce's block path assumes kron(U, 1)
 }
 
-void validateBathPulseTargets(BathArray* ba, DefectArray* dfa, const Pulse* pls) {
+void validateBathPulseTargets(BathArray* ba, DefectArray* dfa, Pulse* pls) {
     if (!Pulse_hasBathPulses(pls)) return;
     auto refuse = [](const char* msg) { if (rank == 0) fprintf(stderr, "Error: %s\n", msg); ccexRefuse(); };
     // every spin a cluster can hold: the bath file's, and the Defect sub-spins createBathArray adds to them
@@ -78,12 +78,15 @@ void validateBathPulseTargets(BathArray* ba, DefectArray* dfa, const Pulse* pls)
             for (int k = 0; k < DefectArray_getNaddspins_i(dfa, j); ++k) spins.push_back(DefectArray_getSubbath_i_isp(dfa, j, k));
     char msg[512];
     int nnamed = 0, nhit = 0;
+    // A94 (G6): the spin S the rotation acts in is the driven spins' own (pulse.bath.spin, which had to equal it, is gone);
+    // the spins of one name all have one S
     for (const BathSpin* bs : spins) {
         if (!named(bs, pls)) continue;
+        if (nnamed == 0) pls->bspin = bs->spin;
         ++nnamed; nhit += inWindow(bs, pls);
         if (std::fabs(bs->spin - pls->bspin) > 1e-6) {   // the rotation would not fit the spin's space (kron size)
-            snprintf(msg, sizeof msg, "pulse.bath.spin %g differs from the spin %g of the bath spins named %s "
-                     "(pulse.bath.defect)", pls->bspin, (double)bs->spin, pls->bpulse_defect);
+            snprintf(msg, sizeof msg, "the bath spins named %s (pulse.bath.defect) have different spins, %g and %g",
+                     pls->bpulse_defect, pls->bspin, (double)bs->spin);
             refuse(msg);
         }
     }
@@ -96,8 +99,8 @@ void validateBathPulseTargets(BathArray* ba, DefectArray* dfa, const Pulse* pls)
     const double S = pls->bspin;
     auto level = [S](double m) { return std::fabs(m) <= S + 1e-6 && std::fabs(std::remainder(S - m, 1.0)) < 1e-6; };
     if (std::fabs(pls->balphams - pls->bbetams) < 1e-6 || !level(pls->balphams) || !level(pls->bbetams)) {
-        snprintf(msg, sizeof msg, "pulse.bath.alphams %g and betams %g must be two different levels of spin %g "
-                 "(m = -S, -S+1, ..., S)", pls->balphams, pls->bbetams, S);
+        snprintf(msg, sizeof msg, "pulse.bath.levels [%g, %g] must be two different levels of spin %g, the spin of the "
+                 "bath spins named %s (m = -S, -S+1, ..., S)", pls->balphams, pls->bbetams, S, pls->bpulse_defect);
         refuse(msg);
     }
     if (nhit == 0 && rank == 0) {   // spins of that name, none in reach of a tone: the pulses act as identity

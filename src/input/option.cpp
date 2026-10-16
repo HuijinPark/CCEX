@@ -5,6 +5,7 @@
 #include "../../include/input/mpi_seed.h"
 #include "../../include/input/option.h"
 #include "../../include/input/json.h"
+#include "../../include/input/reader.h"
 #include "../../include/common/memory.h"
 #include "../../include/calculation/superoperator.h"
 #include "../../include/auto_convergence/rdip_ladder.h"
@@ -121,6 +122,8 @@ static bool readStrictBool(cJSON* section, const char* section_name, const char*
 }
 
 static void refuseWrongType(cJSON* item, const char* key, bool right, const char* what);
+static int integerValue(cJSON* item, const char* key);
+static void refuseUnreadable(const std::string& key, const std::string& file);
 static double finiteNumber(cJSON* item, const char* key, int i, int j, bool asFloat);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,6 +149,9 @@ static cJSON* untrackedItem(const cJSON* object, const char* key){
 // operation: a multiplication by an exact power of ten going to a smaller unit, a division by one going to a larger
 // (1/1000 has no exact binary form; x/1000 is the double nearest the decimal x/1000, so "5" us is 0.005 ms bit for bit).
 // The key's own unit, written out, leaves the value untouched.
+// the keys the input wrote with a unit object (shown path), for the note on a plain number in a unit that is easy to
+// mistake (A94, R4: Qubit.qubit[].detuning is kHz, Defect.species[].detuning MHz)
+static std::set<std::string>& unitWritten(){ static std::set<std::string> keys; return keys; }
 namespace {
 struct UnitFactor { const char* unit; double times; double over; };
 struct UnitKind { const char* what; std::vector<UnitFactor> units; };
@@ -155,6 +161,7 @@ const UnitKind kFieldG   {"G",   {{"G",1,1}, {"mT",10,1}, {"T",1e4,1}}};
 const UnitKind kLengthA  {"A",   {{"A",1,1}, {"nm",10,1}}};
 const UnitKind kFreqMHz  {"MHz", {{"Hz",1,1e6}, {"kHz",1,1e3}, {"MHz",1,1}, {"GHz",1e3,1}}};
 const UnitKind kFreqKHz  {"kHz", {{"Hz",1,1e3}, {"kHz",1,1}, {"MHz",1e3,1}, {"GHz",1e6,1}}};
+const UnitKind kRateRadMs{"rad/ms", {{"rad/s",1,1e3}, {"rad/ms",1,1}, {"rad/us",1e3,1}}};   // A94 (G20): angular frequency
 
 std::string allowedUnits(const UnitKind& kind){
     std::string out;
@@ -199,6 +206,7 @@ void applyUnit(cJSON* parent, const char* key, const std::string& shown, const U
                          shown.c_str(), unit->valuestring, allowed.c_str(), kind.what);
         ccexRefuse();
     }
+    unitWritten().insert(shown);
     cJSON* plain = cJSON_Duplicate(value, 1);
     scaleNumbers(plain, *factor);
     const std::string name = item->string;              // the key as written: the replacement keeps it
@@ -237,6 +245,11 @@ static void applyInputUnits(cJSON* root){
             applyUnit(bath, "bandwidth", "pulse.bath.bandwidth", kFreqMHz);
         }
     }
+    // A94 (G20): cluster.bundle.merge_cutoff (rad/ms) and hamiltonian.common.quadrupole.cell (A) take a unit too
+    cJSON* bundle = untrackedItem(untrackedItem(root, "cluster"), "bundle");
+    if (cJSON_IsObject(bundle)) applyUnit(bundle, "merge_cutoff", "cluster.bundle.merge_cutoff", kRateRadMs);
+    cJSON* quadrupole = untrackedItem(untrackedItem(untrackedItem(root, "hamiltonian"), "common"), "quadrupole");
+    if (cJSON_IsObject(quadrupole)) applyUnit(quadrupole, "cell", "hamiltonian.common.quadrupole.cell", kLengthA);
     cJSON* hamiltonian = untrackedItem(root, "hamiltonian");
     if (cJSON_IsObject(hamiltonian))
         for (cJSON* section = hamiltonian->child; section; section = section->next){
@@ -253,28 +266,32 @@ static void applyInputUnits(cJSON* root){
 static void refuseOldInputKeys(cJSON* root){
     struct Renamed { const char* block; const char* key; const char* now; };
     static const Renamed renamed[] = {
-        {"", "qubitfile", "is now \"Qubit.file\" (\"Qubit\": {\"file\": ...})"},
-        {"", "qspin", "is now \"Qubit.spin\" (with Qubit.file)"},
-        {"", "qzfs", "is now \"Qubit.zfs\" (with Qubit.file)"},
-        {"", "qalphams", "is now \"Qubit.alphams\" (with Qubit.file)"},
-        {"", "qbetams", "is now \"Qubit.betams\" (with Qubit.file)"},
+        {"", "qubitfile", "is now an entry of Qubit.qubit: \"Qubit\": {\"qubit\": [{\"file\": ...}]}"},
+        {"", "qspin", "is now the \"spin\" of the Qubit.qubit entry: [{\"file\": ..., \"spin\": ...}]"},
+        {"", "qzfs", "is now a Qubit.intmap self entry: \"intmap\": [{\"between\": [\"q0\", \"q0\"], "
+                     "\"tensor\": ..., \"unit\": \"kHz\"}]"},
+        {"", "qalphams", "is now \"Qubit.alpha_state\": {\"ms\": [m]}"},
+        {"", "qbetams", "is now \"Qubit.beta_state\": {\"ms\": [m]}"},
         {"", "rbathcut", "is now the inner radius of \"rbath\": [inner, outer]"},
         {"", "rdipcut", "is now the inner radius of \"rdip\": [inner, outer]"},
         {"", "bathadjust", "is now \"configuration.bath_shift\""},
-        {"", "statefile", "is now \"configuration.bath_state_file\": [one prefix per bath file]"},
+        {"", "statefile", "is now \"configuration.bath_state_file\": [one name per bath file]"},
         // A64: the bath configuration's files are one block, "configuration" {path, k_range, gyrofile, bathfile, bath_shift,
         // bath_state_file}
         {"", "gyrofile", "is now \"configuration.gyrofile\" (\"configuration\": {\"gyrofile\": ...})"},
         {"", "bathfile", "is now \"configuration.bathfile\" (\"configuration\": {\"bathfile\": [...]})"},
         {"", "bath_shift", "is now \"configuration.bath_shift\""},
-        {"", "bath_state_file", "is now \"configuration.bath_state_file\": [one prefix per bath file]"},
-        {"", "nstate", "is now \"configuration.nstate\""},
+        {"", "bath_state_file", "is now \"configuration.bath_state_file\": [one name per bath file]"},
+        {"", "nstate", "is now \"configuration.s_range\": [1, N] (the sampled states 1 .. N), leave it out for the ensemble"},
+        // A94 (2026-10-16): the sampled states are a range, as the configurations are
+        {"configuration", "nstate", "is now \"configuration.s_range\": [first, last] (nstate N: [1, N]; nstate 0, the "
+                                    "ensemble: leave s_range out)"},
         {"", "seed", "is now \"configuration.seed\""},
-        {"", "exstatefile", "is now \"configuration.defect_state_file\": [one prefix per bath file]"},
+        {"", "exstatefile", "is now \"configuration.defect_state_file\": [one name per bath file]"},
         {"", "avaaxfile", "is now \"configuration.defect_axis_file\": [one file per bath file]"},
         // A64: the Defect block holds the species (the model) alone; the files of a configuration are the configuration's
         {"Defect", "axis_file", "is now \"configuration.defect_axis_file\": [one file per bath file]"},
-        {"Defect", "state_file", "is now \"configuration.defect_state_file\": [one prefix per bath file]"},
+        {"Defect", "state_file", "is now \"configuration.defect_state_file\": [one name per bath file]"},
         {"", "addsubclus", "is now \"cluster.selection.add_subclusters\" (true or false)"},
         {"", "nk", "is now \"cluster.selection.max_per_order\""},
         {"", "vector_mean_field", "is now \"hamiltonian.common.bath_bath_mean_field\" (\"xyz\" for true, \"z\" for false)"},
@@ -296,8 +313,8 @@ static void refuseOldInputKeys(cJSON* root){
         {"", "max_trial", "is now \"cluster.pcce.trials\""},
         {"", "max_iter", "is now \"cluster.pcce.max_iterations\""},
         {"", "kmeans_pp", "is now \"cluster.pcce.kmeans_pp\""},
-        {"", "iter_detail", "is now \"cluster.pcce.print_trials\""},
-        {"", "pcce_detail_limit", "is now \"cluster.pcce.print_limit\""},
+        {"", "iter_detail", "is now \"cluster.pcce.print_trials\" (the number of trials printed, 0 none)"},
+        {"", "pcce_detail_limit", "is now \"cluster.pcce.print_trials\" (the number of trials printed)"},
         {"", "pcce_partition", "is now \"cluster.pcce.partition\""},
         {"", "pcce_connections", "is now \"cluster.pcce.connections\""},
         {"", "pcce_cache_mode", "is now \"cluster.pcce.cache.mode\""},
@@ -360,6 +377,17 @@ static void refuseOldInputKeys(cJSON* root){
         {"Qubit", "betaidx", "is now \"Qubit.beta_state\": {\"index\": n}"},
         {"Qubit", "psia", "is now \"Qubit.alpha_state\": {\"vector\": [...]}"},
         {"Qubit", "psib", "is now \"Qubit.beta_state\": {\"vector\": [...]}"},
+        {"Qubit", "zfs", "is now a Qubit.intmap self entry: \"intmap\": [{\"between\": [\"q0\", \"q0\"], "
+                         "\"tensor\": ..., \"unit\": \"kHz\"}] (\"q0\" is the qubit's name, its default), with \"frame\" there "
+                         "when frame.rotation is on (\"qubit\": as Qubit.zfs was read)"},                                   // A93
+        {"Qubit", "frame", "was removed: the frame of the ZFS is the \"frame\" of its Qubit.intmap self entry"},
+        {"Qubit", "alphams", "is now \"Qubit.alpha_state\": {\"ms\": [m]}"},        // A93
+        {"Qubit", "betams", "is now \"Qubit.beta_state\": {\"ms\": [m]}"},
+        // A94 (G12): the Qubit.file form is an entry of Qubit.qubit, the position read from the file in place of "xyz"
+        {"Qubit", "file", "is now an entry of Qubit.qubit: \"qubit\": [{\"file\": ..., \"spin\": ...}] (\"file\" in place of "
+                          "\"xyz\", with the entry's name, spin, gyro, detuning)"},
+        {"Qubit", "spin", "is now the \"spin\" of the Qubit.qubit entry: \"qubit\": [{\"file\": ..., \"spin\": ...}]"},
+        {"Qubit", "name", "is now the \"name\" of the Qubit.qubit entry: \"qubit\": [{\"file\": ..., \"name\": ...}]"},
     };
     static const Renamed species[] = {
         {"", "dfname", "is now \"name\""},
@@ -371,12 +399,50 @@ static void refuseOldInputKeys(cJSON* root){
         {"", "eqs", "is now \"quadrupole_moments\""},
         {"", "rxyzs", "is now \"nuclear_positions\""},
         {"", "hypf", "is now \"hyperfine\""},
+        {"", "coordinate_frame", "is now \"frame\" (\"bath\" is now \"file\")"},     // A90
+        {"", "axis", "is now \"zfs.axis\": \"zfs\": {\"D\": ..., \"axis\": [...], \"unit\": ...} (only the D form of zfs used "
+                     "it)"},                                                                // A94 (G5)
+    };
+    // A90 (2026-10-16): frame.rotation keeps qubit_axis and enabled; the frame of a set of directional numbers is the key
+    // "frame" beside them ("file" | "qubit")
+    static const Renamed rotation[] = {
+        {"", "bath_axis", "was removed: it only turned the computational x and y axes about qubit_axis (x is now "
+                          "qubit_axis x [0,0,1], the old default)"},
+        {"", "reference_qubit", "was removed: it only chose the rotation origin, a translation no result depends on (the "
+                                "origin is the first qubit)"},
+        {"", "qubit_position_frame", "was removed: its one value was \"bath\" (Qubit.qubit[].xyz is always in the bath "
+                                     "file's frame)"},
+        {"", "hf_tensor_frame", "is now \"hamiltonian.common.hyperfine.frame\" (\"bath\" is now \"file\")"},
+        {"", "qd_tensor_frame", "is now \"hamiltonian.common.quadrupole.frame\" (\"bath\" is now \"file\")"},
     };
     std::vector<std::string> found;
     for (const Renamed& r : renamed){
         cJSON* block = *r.block ? untrackedItem(root,r.block) : root;
         if (untrackedItem(block,r.key))
             found.push_back(std::string("input key \"") + (*r.block ? std::string(r.block) + "." : "") + r.key + "\" " + r.now);
+    }
+    if (cJSON* rot = untrackedItem(untrackedItem(root,"frame"),"rotation"))
+        for (const Renamed& r : rotation)
+            if (untrackedItem(rot,r.key))
+                found.push_back(std::string("input key \"frame.rotation.") + r.key + "\" " + r.now);
+    // A93 (2026-10-16): the qubit states are Qubit.alpha_state/beta_state only
+    if (cJSON* qubits = untrackedItem(untrackedItem(root,"Qubit"),"qubit")){
+        int i = 0;
+        for (cJSON* entry = cJSON_IsArray(qubits) ? qubits->child : NULL; entry; entry = entry->next, ++i)
+            for (const char* side : {"alpha", "beta"})
+                if (untrackedItem(entry,(std::string(side) + "ms").c_str()))
+                    found.push_back("input key \"Qubit.qubit[" + std::to_string(i) + "]." + side + "ms\" is now \"Qubit." + side
+                                    + "_state\": {\"ms\": [m_1, m_2, ...]}, one m_s per qubit in the order of Qubit.qubit");
+    }
+    static const Renamed intmapEntry[] = {
+        {"", "tensor_frame", "is now \"frame\" (\"bath\" is now \"file\")"},
+    };
+    if (cJSON* intmap = untrackedItem(untrackedItem(root,"Qubit"),"intmap")){
+        int i = 0;
+        for (cJSON* entry = cJSON_IsArray(intmap) ? intmap->child : NULL; entry; entry = entry->next, ++i)
+            for (const Renamed& r : intmapEntry)
+                if (untrackedItem(entry,r.key))
+                    found.push_back("input key \"Qubit.intmap[" + std::to_string(i) + "]." + r.key + "\" " + r.now);
     }
     if (cJSON* method = untrackedItem(root,"method")){
         const char* v = cJSON_IsString(method) ? method->valuestring : "";
@@ -500,30 +566,54 @@ static bool configurationFile(cJSON* block, const char* key, const std::string& 
         return false;
     }
     *out = configurationPath(folder,item->valuestring,ranged,k);
-    if (access(out->c_str(), R_OK) != 0 && rank==0)
-        fprintf(stderr,"Warning: %s : cannot read \"%s\" -- continuing with defaults\n", shownName.c_str(), out->c_str());
+    if (!out->empty()) refuseUnreadable(shownName,*out);   // A94: refused, not "continuing with defaults"; "" is no file
     return true;
 }
-// configuration.k_range: [first, last], two nonnegative integers, first <= last; false without k_range
-static bool readConfigurationRange(cJSON* block, long* first, long* last){
-    cJSON* range = block ? cJSON_GetObjectItem(block,"k_range") : NULL;
+// configuration.k_range or s_range: [first, last], two integers >= lowest, first <= last; false when the key is absent
+static bool readIndexRange(cJSON* block, const char* key, long lowest, long* first, long* last){
+    cJSON* range = block ? cJSON_GetObjectItem(block,key) : NULL;
     if (!range) return false;
     long value[2] = {0, 0};
     bool ok = cJSON_IsArray(range) && cJSON_GetArraySize(range) == 2;
     for (int i = 0; ok && i < 2; ++i){
         cJSON* item = cJSON_GetArrayItem(range,i);
-        ok = cJSON_IsNumber(item) && std::isfinite(item->valuedouble) && item->valuedouble >= 0 &&
+        ok = cJSON_IsNumber(item) && std::isfinite(item->valuedouble) && item->valuedouble >= lowest &&
              item->valuedouble <= INT_MAX && std::floor(item->valuedouble) == item->valuedouble;
         if (ok) value[i] = (long)item->valuedouble;
     }
     if (!ok || value[0] > value[1]){
-        ccexRefusalPrint(stderr,"Error: configuration.k_range must be [first, last], two nonnegative integers with first <= last "
-                       "(both included)\n");
+        if (lowest == 0)
+            ccexRefusalPrint(stderr,"Error: configuration.%s must be [first, last], two nonnegative integers with first <= last "
+                           "(both included)\n",key);
+        else
+            ccexRefusalPrint(stderr,"Error: configuration.%s must be [first, last], two integers of %ld or more with first <= "
+                           "last (both included)%s\n",key,lowest,cJSON_IsNumber(range) ? ", a list also for one ([n, n])" : "");
         ccexRefuse();
     }
     *first = value[0];
     *last = value[1];
     return true;
+}
+// configuration.k_range: [first, last], two nonnegative integers, first <= last; false without k_range
+static bool readConfigurationRange(cJSON* block, long* first, long* last){
+    return readIndexRange(block,"k_range",0,first,last);
+}
+// configuration.s_range (A94; nstate before): [first, last] of the sampled bath states, 1 <= first <= last; false (the
+// ensemble) without s_range
+static bool readStateRange(cJSON* block, long* first, long* last){
+    return readIndexRange(block,"s_range",1,first,last);
+}
+// the input has Defect species (their axes and on-site states are read from the configuration's files)
+static bool inputHasDefectSpecies(cJSON* root){
+    cJSON* species = untrackedItem(untrackedItem(root,"Defect"),"species");
+    return cJSON_IsArray(species) && cJSON_GetArraySize(species) > 0;
+}
+// A94: a file the input names and the run reads has to open; there is no fallback any more (a missing state or axis file
+// was drawn from the seed, a missing tensor file was a warning here and an error later). "" is no file (A64): passed.
+static void refuseUnreadable(const std::string& key, const std::string& file){
+    if (file.empty() || access(file.c_str(),R_OK) == 0) return;
+    ccexRefusalPrint(stderr,"Error: %s: cannot read \"%s\" (%s)\n",key.c_str(),file.c_str(),strerror(errno));
+    ccexRefuse();
 }
 // the pcce partition cache (A64): its file takes {k} like the configuration's files; NULL when there is no enabled cache
 static cJSON* enabledPcceCacheFile(cJSON* pcce){
@@ -573,16 +663,19 @@ bool cJSON_readConfigurationRange(char* fccein, long* first, long* last){
             ccexRefuse();
         }
     }
-    // every file of every k, before anything is calculated; a state file is the prefix and the state number 1..nstate
-    cJSON* nstateItem = untrackedItem(block,"nstate");
-    const long nstate = cJSON_IsNumber(nstateItem) && nstateItem->valuedouble > 0 ? (long)nstateItem->valuedouble : 0;
+    // every file of every k, before anything is calculated; a state file is its name with the state s of configuration.
+    // s_range ({s}, or appended, A94). The state files are read with s_range only, the Defect files with Defect species.
+    long sFirst = 0, sLast = 0;
+    const bool sampled = readStateRange(block,&sFirst,&sLast);
+    const bool defects = inputHasDefectSpecies(root);
     for (long k = *first; k <= *last; ++k)
         for (const Named& n : names){
             bool found = false;
             const std::string name = inFolder(n.folder,configurationName(n.name,true,k,&found));
             if (!found) continue;               // the same file for every k: the ordinary reader checks it
-            for (long s = n.prefix ? 1 : 0; s <= (n.prefix ? nstate : 0); ++s){
-                const std::string file = n.prefix ? name + std::to_string(s) : name;
+            if ((n.prefix && !sampled) || (n.key.rfind("configuration.defect",0) == 0 && !defects)) continue;   // not read
+            for (long s = n.prefix ? sFirst : 0; s <= (n.prefix ? sLast : 0); ++s){
+                const std::string file = n.prefix ? stateFileName(name,s) : name;
                 if (access(file.c_str(),R_OK) != 0){
                     ccexRefusalPrint(stderr,"Error: configuration k = %ld: cannot read %s (%s \"%s\")\n",k,file.c_str(),
                                      n.key.c_str(),n.name.c_str());
@@ -705,31 +798,65 @@ static float readFloatItem(cJSON* item, const char* label){
     return finiteNumber(item,label,-1,-1,true);
 }
 
-static DefectCoordinateFrame readDefectCoordinateFrame(cJSON* defect, const char* dfname,
-                                                       bool* was_explicit){
+////////////////////////////////////////////////////////////////////////////////////////////////
+// A90 (2026-10-16): every place that holds directional numbers says which frame they are written in, with the one key
+// "frame": "file" (the bath file's frame, before the rotation: turned with the positions) or "qubit" (the computational
+// frame, qubit_axis = z: used as written). With frame.rotation on it is required (no default); with the rotation off it
+// is not used, and a written one is warned about once per key.
+enum FrameValue { FRAME_ABSENT, FRAME_FILE, FRAME_QUBIT };
+static bool frameRotationOn = false;   // frame.rotation, set by cJSON_readOptionConfig before the other readers run
+static const char* const kFrameValues =
+    "\"file\" (written in the bath file's frame, before the rotation: turned with the positions) or \"qubit\" (written in "
+    "the computational frame, qubit_axis = z: used as written)";
 
-    cJSON* item = cJSON_GetObjectItem(defect,"coordinate_frame");
-    *was_explicit = (item != NULL);
+// parent.frame, checked: absent, "file" or "qubit" (case ignored); "bath" (the value until A90) is refused with "file"
+static FrameValue readFrameKey(cJSON* parent, const std::string& shown){
+    cJSON* item = cJSON_GetObjectItem(parent,"frame");
+    if (item == NULL) return FRAME_ABSENT;
+    const char* v = (cJSON_IsString(item) && item->valuestring) ? item->valuestring : NULL;
+    if (v && !strcasecmp(v,"file")) return FRAME_FILE;
+    if (v && !strcasecmp(v,"qubit")) return FRAME_QUBIT;
+    if (v && !strcasecmp(v,"bath"))
+        ccexRefusalPrint(stderr,"Error: %s.frame \"bath\" is now \"file\" (written in the bath file's frame, turned with the "
+                         "positions)\n%s\n",shown.c_str(),kConvertHint);
+    else
+        ccexRefusalPrint(stderr,"Error: %s.frame must be %s\n",shown.c_str(),kFrameValues);
+    ccexRefuse();
+}
 
-    // Backward compatibility: legacy Defect tensors were consumed as already being in
-    // the computational frame, because there was no Defect frame conversion at all.
-    if (item == NULL){ return DEFECT_COORDINATE_FRAME_QUBIT; }
+// A frame given while the rotation is off: once per key (generic, e.g. "Defect.species[].frame")
+static void warnFrameUnused(FrameValue f, const char* generic){
+    static std::set<std::string> warned;
+    if (f == FRAME_ABSENT || frameRotationOn || !warned.insert(generic).second) return;
+    warnNotUsed(generic,"frame.rotation is off, so the numbers are used as written");   // A94 (G3): one wording
+}
 
-    if (!cJSON_IsString(item) || item->valuestring == NULL){
-        ccexRefusalPrint(stderr,"Error: Defect.species[%s].coordinate_frame must be \"bath\" or \"qubit\"\n",dfname);
+// parent.frame of numbers that need it: required with the rotation on, warned about with it off
+static FrameValue frameOf(cJSON* parent, const std::string& shown, const char* generic, const char* what){
+    const FrameValue f = readFrameKey(parent,shown);
+    if (!frameRotationOn){ warnFrameUnused(f,generic); return f; }
+    if (f == FRAME_ABSENT){
+        ccexRefusalPrint(stderr,"Error: frame.rotation is on, so %s.frame must say the frame of %s: %s\n",
+                         shown.c_str(),what,kFrameValues);
         ccexRefuse();
     }
-    if (strcasecmp(item->valuestring,"bath") == 0){ return DEFECT_COORDINATE_FRAME_BATH; }
-    if (strcasecmp(item->valuestring,"qubit") == 0){ return DEFECT_COORDINATE_FRAME_QUBIT; }
+    return f;
+}
 
-    ccexRefusalPrint(stderr,"Error: Defect.species[%s].coordinate_frame = \"%s\" is not supported\n",
-            dfname,item->valuestring);
-    ccexRefusalPrint(stderr,"Use \"bath\" for crystal/bath-file components or \"qubit\" for computational-frame components.\n");
+// A94 (R3): a unit is spelled as written in the table, case and all, as the A67 units are (mHz is not MHz, mb not Mb).
+// Until A94 the Defect and Qubit.intmap units were compared without regard to case; a spelling that differs in case only
+// is refused with the table's.
+static bool unitIs(const char* given, const char* name, const std::string& where){
+    if (!strcmp(given,name)) return true;
+    if (strcasecmp(given,name)) return false;
+    ccexRefusalPrint(stderr,"Error: %s.unit \"%s\" is written \"%s\" (units are case-sensitive, as mHz and MHz differ)\n",
+                     where.c_str(),given,name);
     ccexRefuse();
 }
 
 static double readDefectFrequencyScaleToMHz(cJSON* object, const char* dfname,
                                             const char* field_name){
+    const std::string where = std::string("Defect.species[") + dfname + "]." + field_name;
 
     cJSON* item = cJSON_GetObjectItem(object,"unit");
     if (item == NULL){ return 1.0; } // documented default
@@ -738,10 +865,10 @@ static double readDefectFrequencyScaleToMHz(cJSON* object, const char* dfname,
         ccexRefuse();
     }
 
-    if (strcasecmp(item->valuestring,"Hz")  == 0){ return 1.0e-6; }
-    if (strcasecmp(item->valuestring,"kHz") == 0){ return 1.0e-3; }
-    if (strcasecmp(item->valuestring,"MHz") == 0){ return 1.0; }
-    if (strcasecmp(item->valuestring,"GHz") == 0){ return 1.0e3; }
+    if (unitIs(item->valuestring,"Hz",where)){ return 1.0e-6; }
+    if (unitIs(item->valuestring,"kHz",where)){ return 1.0e-3; }
+    if (unitIs(item->valuestring,"MHz",where)){ return 1.0; }
+    if (unitIs(item->valuestring,"GHz",where)){ return 1.0e3; }
 
     ccexRefusalPrint(stderr,"Error: Defect.species[%s].%s.unit = \"%s\" is not supported\n",
             dfname,field_name,item->valuestring);
@@ -751,6 +878,7 @@ static double readDefectFrequencyScaleToMHz(cJSON* object, const char* dfname,
 
 static double readIntmapFrequencyScaleToKHz(cJSON* intmap, const char* qubit1_name,
                                             const char* qubit2_name){
+    const std::string where = std::string("Qubit.intmap[\"") + qubit1_name + "\",\"" + qubit2_name + "\"]";
 
     cJSON* item = cJSON_GetObjectItem(intmap,"unit");
     if (item == NULL){ return 1.0; } // legacy Qubit.intmap tensors are in kHz
@@ -760,15 +888,27 @@ static double readIntmapFrequencyScaleToKHz(cJSON* intmap, const char* qubit1_na
         ccexRefuse();
     }
 
-    if (strcasecmp(item->valuestring,"Hz")  == 0){ return 1.0e-3; }
-    if (strcasecmp(item->valuestring,"kHz") == 0){ return 1.0; }
-    if (strcasecmp(item->valuestring,"MHz") == 0){ return 1.0e3; }
-    if (strcasecmp(item->valuestring,"GHz") == 0){ return 1.0e6; }
+    if (unitIs(item->valuestring,"Hz",where)){ return 1.0e-3; }
+    if (unitIs(item->valuestring,"kHz",where)){ return 1.0; }
+    if (unitIs(item->valuestring,"MHz",where)){ return 1.0e3; }
+    if (unitIs(item->valuestring,"GHz",where)){ return 1.0e6; }
 
     ccexRefusalPrint(stderr,"Error: Qubit.intmap[\"%s\",\"%s\"].unit = \"%s\" is not supported\n",
             qubit1_name,qubit2_name,item->valuestring);
     ccexRefusalPrint(stderr,"Supported frequency units are Hz, kHz, MHz and GHz.\n");
     ccexRefuse();
+}
+
+// A94 (R3): a Defect value object takes "values" (its key until A94) or "value" (the A67 keys' word), one of the two
+static cJSON* defectValues(cJSON* object, const char* dfname, const char* field){
+    cJSON* values = cJSON_GetObjectItem(object,"values");
+    cJSON* value = cJSON_GetObjectItem(object,"value");
+    if (values && value){
+        ccexRefusalPrint(stderr,"Error: Defect.species[%s].%s has both \"value\" and \"values\" (one key, either spelling)\n",
+                         dfname,field);
+        ccexRefuse();
+    }
+    return values ? values : value;
 }
 
 static double readFiniteNumber(cJSON* item, const char* what){
@@ -818,8 +958,7 @@ static MatrixXcd readDefectTensor3x3(cJSON* item, const char* what, double scale
     ccexRefuse();
 }
 
-static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
-                          bool coordinate_frame_explicit){
+static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig){
 
     Defect* df = dfa->defect[idf];
     cJSON* item = cJSON_GetObjectItem(defect,"zfs");
@@ -840,27 +979,43 @@ static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
         ccexRefusalPrint(stderr,"Error: Defect.species[%s].zfs must be an object or the legacy indexed array\n",df->dfname);
         ccexRefuse();
     }
-    if (!coordinate_frame_explicit){
-        ccexRefusalPrint(stderr,"Error: Defect.species[%s] uses an object-form zfs but has no coordinate_frame\n",df->dfname);
-        ccexRefusalPrint(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the tensor basis is explicit.\n");
-        ccexRefuse();
-    }
     if (nconfig < 1){
         ccexRefusalPrint(stderr,"Error: Defect.species[%s] has an object-form zfs but n_axis_states = %d\n",df->dfname,nconfig);
-        ccexRefusalPrint(stderr,"At least one indexed configuration is required.\n");
+        ccexRefusalPrint(stderr,"At least one axis state (n_axis_states) is required.\n");
         ccexRefuse();
     }
 
     cJSON* D_item = cJSON_GetObjectItem(item,"D");
-    cJSON* E_item = cJSON_GetObjectItem(item,"E");
     cJSON* tensor_item = cJSON_GetObjectItem(item,"tensor");
+    cJSON* axis_item = cJSON_GetObjectItem(item,"axis");
     if ((D_item != NULL) == (tensor_item != NULL)){
         ccexRefusalPrint(stderr,"Error: Defect.species[%s].zfs must contain exactly one of D or tensor\n",df->dfname);
         ccexRefuse();
     }
-    if (tensor_item != NULL && E_item != NULL){
-        ccexRefusalPrint(stderr,"Error: Defect.species[%s].zfs.E cannot be combined with zfs.tensor\n",df->dfname);
+    // A94 (G5): E took 0 only (an axis fixes z, not the x and y an E needs), so it was removed; the axis belongs to the D
+    // form (Defect.species[].axis until A94, refused by refuseOldInputKeys)
+    if (untrackedItem(item,"E")){
+        ccexRefusalPrint(stderr,"Error: Defect.species[%s].zfs.E was removed (only 0 was taken): leave it out of the D form, or "
+                         "write zfs.tensor for an E other than 0\n%s\n",df->dfname,kConvertHint);
         ccexRefuse();
+    }
+    if (tensor_item != NULL && axis_item != NULL){
+        ccexRefusalPrint(stderr,"Error: Defect.species[%s].zfs.axis belongs to the D form (zfs.tensor has its own axes)\n",df->dfname);
+        ccexRefuse();
+    }
+    if (D_item != NULL){
+        char section_label[160];
+        snprintf(section_label,sizeof(section_label),"Defect.species[%s].zfs",df->dfname);
+        double axis_raw[3] = {0.0,0.0,0.0};
+        double axis_normalized[3];
+        if (axis_item == NULL){
+            ccexRefusalPrint(stderr,"Error: Defect.species[%s].zfs uses the D form but zfs.axis is missing (the symmetry axis "
+                             "D is along)\n",df->dfname);
+            ccexRefuse();
+        }
+        readAxis3(item,section_label,"axis",axis_raw,true);
+        normalizeAxisOrDie(axis_raw,axis_normalized,(std::string(section_label) + ".axis").c_str());
+        DefectArray_setDefect_idf_axis(dfa,idf,axis_normalized);
     }
 
     double scale_to_mhz = readDefectFrequencyScaleToMHz(item,df->dfname,"zfs");
@@ -868,26 +1023,9 @@ static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
     DefectZfsInputMode mode;
 
     if (D_item != NULL){
-        if (!df->axis_set){
-            ccexRefusalPrint(stderr,"Error: Defect.species[%s].zfs uses D/E form but Defect.species[%s].axis is missing\n",
-                    df->dfname,df->dfname);
-            ccexRefusalPrint(stderr,"The symmetry axis is required to construct the Cartesian ZFS tensor.\n");
-            ccexRefuse();
-        }
-
         char what[160];
         snprintf(what,sizeof(what),"Defect.species[%s].zfs.D",df->dfname);
         double D_mhz = scale_to_mhz * readFiniteNumber(D_item,what);
-        double E_mhz = 0.0;
-        if (E_item != NULL){
-            snprintf(what,sizeof(what),"Defect.species[%s].zfs.E",df->dfname);
-            E_mhz = scale_to_mhz * readFiniteNumber(E_item,what);
-        }
-        if (fabs(E_mhz) > 1.0e-12){
-            ccexRefusalPrint(stderr,"Error: Defect.species[%s].zfs.E is non-zero (%g MHz)\n",df->dfname,E_mhz);
-            ccexRefusalPrint(stderr,"An axis fixes z but not the transverse x/y directions needed by E. Use zfs.tensor instead.\n");
-            ccexRefuse();
-        }
 
         // H_ZFS = S . [D (n n^T - I/3)] . S. For n=[1,1,1]/sqrt(3),
         // D=2870 MHz gives the familiar +/-956.6667 MHz off-diagonal tensor.
@@ -927,7 +1065,7 @@ static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nco
         ccexRefuse();
     }
 
-    cJSON* values = cJSON_GetObjectItem(item,"values");
+    cJSON* values = defectValues(item,df->dfname,"detuning");
     if (!cJSON_IsArray(values)){
         ccexRefusalPrint(stderr,"Error: Defect.species[%s].detuning.values must be an indexed array\n",df->dfname);
         ccexRefusalPrint(stderr,"Example: \"detuning\": {\"values\": [[1,\"e\",-2.14]], \"unit\": \"MHz\"}\n");
@@ -941,7 +1079,7 @@ static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nco
     for (int i=0; i<nentry; i++){
         cJSON* entry = cJSON_GetArrayItem(values,i);
         if (!cJSON_IsArray(entry) || cJSON_GetArraySize(entry) != 3){
-            ccexRefusalPrint(stderr,"Error: Defect.species[%s].detuning.values[%d] must be [configuration, \"e\", value]\n",
+            ccexRefusalPrint(stderr,"Error: Defect.species[%s].detuning.values[%d] must be [axis state, \"e\", value]\n",
                     df->dfname,i);
             ccexRefuse();
         }
@@ -950,7 +1088,7 @@ static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nco
         if (!cJSON_IsNumber(iax_item)
             || iax_item->valuedouble != (double)iax_item->valueint
             || iax_item->valueint < 1 || iax_item->valueint > nconfig){
-            ccexRefusalPrint(stderr,"Error: Defect.species[%s].detuning.values[%d] configuration must be an integer in 1..%d\n",
+            ccexRefusalPrint(stderr,"Error: Defect.species[%s].detuning.values[%d] axis state must be an integer in 1..%d\n",
                     df->dfname,i,nconfig);
             ccexRefuse();
         }
@@ -970,7 +1108,23 @@ static void readDefectDetuning(cJSON* defect, DefectArray* dfa, int idf, int nco
     }
 }
 
+// the gyromagnetic ratio units of Defect.species[].gyros and (A94, G20) Qubit.qubit[].gyro, to rad kHz/G
+static double gyroScaleToRadkHzPerG(const char* unit, const std::string& where){
+    if (unitIs(unit,"radkHz/G",where) || unitIs(unit,"rad/ms/G",where)){ return 1.0; }
+    if (unitIs(unit,"kHz/G",where)){ return 2.0*M_PI; }
+    if (unitIs(unit,"MHz/G",where)){ return 2.0*M_PI*1.0e3; }
+    if (unitIs(unit,"MHz/T",where)){ return 2.0*M_PI*1.0e-1; }
+    if (unitIs(unit,"Hz/T",where)){ return 2.0*M_PI*1.0e-7; }
+    if (unitIs(unit,"radMHz/T",where) || unitIs(unit,"rad/us/T",where)){ return 1.0e-1; }
+    if (unitIs(unit,"rad/s/T",where)){ return 1.0e-7; }
+
+    ccexRefusalPrint(stderr,"Error: %s.unit = \"%s\" is not supported\n",where.c_str(),unit);
+    ccexRefusalPrint(stderr,"Supported gyro units are radkHz/G, rad/ms/G, kHz/G, MHz/G, MHz/T, Hz/T, radMHz/T and rad/s/T.\n");
+    ccexRefuse();
+}
+
 static double readDefectGyroScaleToRadkHzPerG(cJSON* object, const char* dfname){
+    const std::string where = std::string("Defect.species[") + dfname + "].gyros";
 
     cJSON* item = cJSON_GetObjectItem(object,"unit");
     if (item == NULL){ return 1.0; }
@@ -978,22 +1132,33 @@ static double readDefectGyroScaleToRadkHzPerG(cJSON* object, const char* dfname)
         ccexRefusalPrint(stderr,"Error: Defect.species[%s].gyros.unit must be a string\n",dfname);
         ccexRefuse();
     }
+    return gyroScaleToRadkHzPerG(item->valuestring,where);
+}
 
-    const char* unit = item->valuestring;
-    if (strcasecmp(unit,"radkHz/G") == 0 || strcasecmp(unit,"rad/ms/G") == 0){ return 1.0; }
-    if (strcasecmp(unit,"kHz/G") == 0){ return 2.0*M_PI; }
-    if (strcasecmp(unit,"MHz/G") == 0){ return 2.0*M_PI*1.0e3; }
-    if (strcasecmp(unit,"MHz/T") == 0){ return 2.0*M_PI*1.0e-1; }
-    if (strcasecmp(unit,"Hz/T") == 0){ return 2.0*M_PI*1.0e-7; }
-    if (strcasecmp(unit,"radMHz/T") == 0 || strcasecmp(unit,"rad/us/T") == 0){ return 1.0e-1; }
-    if (strcasecmp(unit,"rad/s/T") == 0){ return 1.0e-7; }
-
-    ccexRefusalPrint(stderr,"Error: Defect.species[%s].gyros.unit = \"%s\" is not supported\n",dfname,unit);
-    ccexRefusalPrint(stderr,"Supported gyro units are radkHz/G, rad/ms/G, kHz/G, MHz/G, MHz/T, Hz/T, radMHz/T and rad/s/T.\n");
-    ccexRefuse();
+// Qubit.qubit[].gyro (A94, G20): a number in rad kHz/G as before, or {"value": number, "unit": ...} with the units of
+// Defect.species[].gyros (the unit rad kHz/G leaves the number as written)
+static double readQubitGyro(cJSON* qubit, int iqubit, double gyroDefault){
+    cJSON* item = cJSON_GetObjectItem(qubit,"gyro");
+    if (!cJSON_IsObject(item)) return cJSON_ReadDouble(qubit,(char*)"gyro",true,gyroDefault);
+    const std::string where = "Qubit.qubit[" + std::to_string(iqubit) + "].gyro";
+    cJSON* value = NULL; cJSON* unit = NULL;
+    int n = 0;
+    for (cJSON* c = item->child; c; c = c->next, ++n){
+        if (!strcasecmp(c->string,"value")) value = c;
+        else if (!strcasecmp(c->string,"unit")) unit = c;
+    }
+    if (n != 2 || !cJSON_IsNumber(value) || !cJSON_IsString(unit)){
+        ccexRefusalPrint(stderr,"Error: %s must be a number (rad kHz/G) or {\"value\": number, \"unit\": \"...\"}\n",where.c_str());
+        ccexRefuse();
+    }
+    cJSON_GetObjectItem(item,"value"); cJSON_GetObjectItem(item,"unit");   // read (cJSON_checkInputKeys)
+    const double scale = gyroScaleToRadkHzPerG(unit->valuestring,where);
+    const double v = readFiniteNumber(value,(where + ".value").c_str());
+    return scale == 1.0 ? v : scale * v;
 }
 
 static double readDefectEqScaleTo1eMinus30m2(cJSON* object, const char* dfname){
+    const std::string where = std::string("Defect.species[") + dfname + "].quadrupole_moments";
 
     cJSON* item = cJSON_GetObjectItem(object,"unit");
     if (item == NULL){ return 1.0; }
@@ -1003,15 +1168,15 @@ static double readDefectEqScaleTo1eMinus30m2(cJSON* object, const char* dfname){
     }
 
     const char* unit = item->valuestring;
-    if (strcasecmp(unit,"1e-30 m^2") == 0 || strcasecmp(unit,"1e-30m^2") == 0
-        || strcasecmp(unit,"10^-30 m^2") == 0 || strcasecmp(unit,"10^-30m^2") == 0
-        || strcasecmp(unit,"fm^2") == 0 || strcasecmp(unit,"fm2") == 0
-        || strcasecmp(unit,"10 mbarn") == 0){ return 1.0; }
-    if (strcasecmp(unit,"m^2") == 0 || strcasecmp(unit,"m2") == 0){ return 1.0e30; }
-    if (strcasecmp(unit,"cm^2") == 0 || strcasecmp(unit,"cm2") == 0){ return 1.0e26; }
-    if (strcasecmp(unit,"barn") == 0 || strcasecmp(unit,"b") == 0){ return 1.0e2; }
-    if (strcasecmp(unit,"mbarn") == 0 || strcasecmp(unit,"millibarn") == 0
-        || strcasecmp(unit,"mb") == 0){ return 1.0e-1; }
+    if (unitIs(unit,"1e-30 m^2",where) || unitIs(unit,"1e-30m^2",where)
+        || unitIs(unit,"10^-30 m^2",where) || unitIs(unit,"10^-30m^2",where)
+        || unitIs(unit,"fm^2",where) || unitIs(unit,"fm2",where)
+        || unitIs(unit,"10 mbarn",where)){ return 1.0; }
+    if (unitIs(unit,"m^2",where) || unitIs(unit,"m2",where)){ return 1.0e30; }
+    if (unitIs(unit,"cm^2",where) || unitIs(unit,"cm2",where)){ return 1.0e26; }
+    if (unitIs(unit,"barn",where) || unitIs(unit,"b",where)){ return 1.0e2; }
+    if (unitIs(unit,"mbarn",where) || unitIs(unit,"millibarn",where)
+        || unitIs(unit,"mb",where)){ return 1.0e-1; }
 
     ccexRefusalPrint(stderr,"Error: Defect.species[%s].quadrupole_moments.unit = \"%s\" is not supported\n",dfname,unit);
     ccexRefusalPrint(stderr,"Supported quadrupole-moment units are 1e-30 m^2, fm^2, m^2, cm^2, barn and mbarn.\n");
@@ -1019,6 +1184,7 @@ static double readDefectEqScaleTo1eMinus30m2(cJSON* object, const char* dfname){
 }
 
 static double readDefectEfgScaleToHartreePerBohr2(cJSON* object, const char* dfname){
+    const std::string where = std::string("Defect.species[") + dfname + "].efg";
 
     cJSON* item = cJSON_GetObjectItem(object,"unit");
     if (item == NULL){ return 1.0; }
@@ -1028,9 +1194,9 @@ static double readDefectEfgScaleToHartreePerBohr2(cJSON* object, const char* dfn
     }
 
     const char* unit = item->valuestring;
-    if (strcasecmp(unit,"Hartree/Bohr^2") == 0 || strcasecmp(unit,"Ha/Bohr^2") == 0
-        || strcasecmp(unit,"Ha/a0^2") == 0 || strcasecmp(unit,"a.u.") == 0
-        || strcasecmp(unit,"au") == 0 || strcasecmp(unit,"atomic_unit") == 0){ return 1.0; }
+    if (unitIs(unit,"Hartree/Bohr^2",where) || unitIs(unit,"Ha/Bohr^2",where)
+        || unitIs(unit,"Ha/a0^2",where) || unitIs(unit,"a.u.",where)
+        || unitIs(unit,"au",where) || unitIs(unit,"atomic_unit",where)){ return 1.0; }
 
     // Keep these constants identical to BathSpin_setQuad_fromEFG. Numerically, one
     // eV of electron potential energy per m^2 corresponds to one V/m^2; the electron
@@ -1039,11 +1205,11 @@ static double readDefectEfgScaleToHartreePerBohr2(cJSON* object, const char* dfn
     const double bohr_to_m = 0.5291772e-10;
     const double volt_per_m2_to_au = bohr_to_m*bohr_to_m/hartree_to_ev;
 
-    if (strcasecmp(unit,"V/m^2") == 0 || strcasecmp(unit,"V/m2") == 0){
+    if (unitIs(unit,"V/m^2",where) || unitIs(unit,"V/m2",where)){
         return volt_per_m2_to_au;
     }
-    if (strcasecmp(unit,"V/angstrom^2") == 0 || strcasecmp(unit,"V/angstrom2") == 0
-        || strcasecmp(unit,"V/A^2") == 0 || strcasecmp(unit,"V/A2") == 0){
+    if (unitIs(unit,"V/angstrom^2",where) || unitIs(unit,"V/angstrom2",where)
+        || unitIs(unit,"V/A^2",where) || unitIs(unit,"V/A2",where)){
         return 1.0e20*volt_per_m2_to_au;
     }
 
@@ -1055,7 +1221,7 @@ static double readDefectEfgScaleToHartreePerBohr2(cJSON* object, const char* dfn
 static cJSON* readDefectObjectValues(cJSON* object, const char* dfname,
                                      const char* field_name, int expected_count){
 
-    cJSON* values = cJSON_GetObjectItem(object,"values");
+    cJSON* values = defectValues(object,dfname,field_name);
     if (!cJSON_IsArray(values) || cJSON_GetArraySize(values) != expected_count){
         ccexRefusalPrint(stderr,"Error: Defect.species[%s].%s.values must be an array of exactly %d numbers\n",
                 dfname,field_name,expected_count);
@@ -1130,8 +1296,7 @@ static int findDefectSpinType(Defect* df, const char* spin_name){
 
 static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int idf,
                                             const char* field_name, MatrixXcd*** target,
-                                            int nconfig, int naddspin,
-                                            bool coordinate_frame_explicit){
+                                            int nconfig, int naddspin){
 
     Defect* df = dfa->defect[idf];
     cJSON* item = cJSON_GetObjectItem(defect,field_name);
@@ -1146,14 +1311,8 @@ static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int
                 df->dfname,field_name);
         ccexRefuse();
     }
-    if (!coordinate_frame_explicit){
-        ccexRefusalPrint(stderr,"Error: Defect.species[%s] uses object-form %s but has no coordinate_frame\n",
-                df->dfname,field_name);
-        ccexRefusalPrint(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the tensor basis is explicit.\n");
-        ccexRefuse();
-    }
 
-    cJSON* values = cJSON_GetObjectItem(item,"values");
+    cJSON* values = defectValues(item,df->dfname,field_name);
     if (!cJSON_IsArray(values)){
         ccexRefusalPrint(stderr,"Error: Defect.species[%s].%s.values must be an indexed tensor array\n",
                 df->dfname,field_name);
@@ -1172,7 +1331,7 @@ static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int
     for (int i=0; i<nentry; i++){
         cJSON* entry = cJSON_GetArrayItem(values,i);
         if (!cJSON_IsArray(entry) || cJSON_GetArraySize(entry) != 3){
-            ccexRefusalPrint(stderr,"Error: Defect.species[%s].%s.values[%d] must be [configuration, spin, tensor]\n",
+            ccexRefusalPrint(stderr,"Error: Defect.species[%s].%s.values[%d] must be [axis state, spin, tensor]\n",
                     df->dfname,field_name,i);
             ccexRefuse();
         }
@@ -1181,7 +1340,7 @@ static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int
         if (!cJSON_IsNumber(iax_item)
             || iax_item->valuedouble != (double)iax_item->valueint
             || iax_item->valueint < 1 || iax_item->valueint > nconfig){
-            ccexRefusalPrint(stderr,"Error: Defect.species[%s].%s.values[%d] configuration must be an integer in 1..%d\n",
+            ccexRefusalPrint(stderr,"Error: Defect.species[%s].%s.values[%d] axis state must be an integer in 1..%d\n",
                     df->dfname,field_name,i,nconfig);
             ccexRefuse();
         }
@@ -1297,7 +1456,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         printf("        execution : [ backend, propagator, evolution, evolution_update, profile,\n");
         printf("          gpu_options { min_dim, packed_max_dim, warp_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb },\n");
         printf("          gcce_refinement { enabled, max_sweeps }, column_evolution { enabled, min_dim, columns } ]\n");
-        printf("        cluster : [ mode, pcce { partition, connections, print_limit, cache { mode, file } },\n");
+        printf("        cluster : [ mode, pcce { partition, connections, print_trials, cache { mode, file } },\n");
         printf("          bundle { max_dim, merge_cutoff, connections, connection_budget, max_clusters, max_work }, adaptive { probe_memory_gb } ]\n");
         printf("        output : [ cluster_only, cluster_contributions { enabled, max_mb } ]\n\n");
     }
@@ -1398,6 +1557,10 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             ccexRefuse();
         }
     if (cJSON* block = cJSON_GetObjectItem(execution,"gpu_options")){
+#ifndef CCEX_USE_CUDA
+        // A94 (G3): main.out is built without CUDA (main_gpu.out reads them); the values are still checked
+        warnNotUsed("execution.gpu_options","this main.out is built without CUDA, every cluster runs on the CPU (main_gpu.out uses them)");
+#endif
         if (!cJSON_IsObject(block)){
             ccexRefusalPrint(stderr,"Error: execution.gpu_options must be an object, e.g. \"gpu_options\": {\"min_dim\": 256}\n");
             ccexRefuse();
@@ -1538,9 +1701,11 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     }
     cJSON* connections=bundle ? cJSON_GetObjectItem(bundle,"connections") : NULL;
     if(connections) {
+        // A94 (G8): checked, the mode a bundle input without rdip and connections runs, can be written too
         if(!cJSON_IsString(connections) || !connections->valuestring ||
-           (strcasecmp(connections->valuestring,"distance") && strcasecmp(connections->valuestring,"auto"))) {
-            ccexRefusalPrint(stderr,"Error: cluster.bundle.connections must be distance or auto\n");ccexRefuse();
+           (strcasecmp(connections->valuestring,"distance") && strcasecmp(connections->valuestring,"auto") &&
+            strcasecmp(connections->valuestring,"checked"))) {
+            ccexRefusalPrint(stderr,"Error: cluster.bundle.connections must be distance, auto or checked\n");ccexRefuse();
         }
         strcpy(cnf->bundle_connections,connections->valuestring);
     }
@@ -1572,10 +1737,22 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
                 || !strcasecmp(cnf->method,"mecce") || !strcasecmp(cnf->method,"megcce") ? "standard" : cnf->method);
         ccexRefuse();
     }
-    if(auto* item=pcce ? cJSON_GetObjectItem(pcce,"print_limit") : NULL) {
-        const double value=readFiniteNumber(item,"cluster.pcce.print_limit");
+    // A94 (G7): print_trials is the number of rank 0's trials printed (0, the default: none). It was a switch beside
+    // print_limit, the most printed, two keys for one thing (print_trials false and print_limit 0 both printed none).
+    if(untrackedItem(pcce,"print_limit")) {
+        ccexRefusalPrint(stderr,"Error: cluster.pcce.print_limit is now cluster.pcce.print_trials: the number of trials printed "
+                       "(0: none)\n%s\n",kConvertHint);
+        ccexRefuse();
+    }
+    if(auto* item=pcce ? cJSON_GetObjectItem(pcce,"print_trials") : NULL) {
+        if(cJSON_IsBool(item)) {
+            ccexRefusalPrint(stderr,"Error: cluster.pcce.print_trials is a number, the trials printed (0: none; true with the "
+                           "old default print_limit is 32)\n%s\n",kConvertHint);
+            ccexRefuse();
+        }
+        const double value=readFiniteNumber(item,"cluster.pcce.print_trials");
         if(value<0 || value>INT_MAX || std::floor(value)!=value) {
-            ccexRefusalPrint(stderr,"Error: cluster.pcce.print_limit must be a nonnegative 32-bit integer\n");
+            ccexRefusalPrint(stderr,"Error: cluster.pcce.print_trials must be a nonnegative 32-bit integer (0: none)\n");
             ccexRefuse();
         }
         cnf->pcce_detail_limit=int(value);
@@ -1627,6 +1804,8 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             ccexRefuse();
         }
         strcpy(cnf->pcce_cache_file,name.c_str());
+        // A94: read mode takes the stored partition only, so its file has to be there (readwrite makes a missing one)
+        if (!strcasecmp(cnf->pcce_cache_mode,"read")) refuseUnreadable("cluster.pcce.cache.file",name);
     }
 
     int order = cJSON_ReadInt(root,"order",false,1);
@@ -1682,6 +1861,11 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     // Simple inputs select the policy by the presence of rdip. Explicit old
     // distance/auto controls retain their existing semantics and validation.
     if(adaptive && !radius && !connections)strcpy(cnf->bundle_connections,"checked");
+    if(adaptive && radius && !strcasecmp(cnf->bundle_connections,"checked")) {
+        ccexRefusalPrint(stderr,"Error: cluster.bundle.connections checked takes no rdip (the run checks the links itself), "
+                       "remove rdip or write connections distance or auto\n");
+        ccexRefuse();
+    }
     const bool autoConnections=adaptive && ( !strcasecmp(cnf->bundle_connections,"auto") ||
                                              !strcasecmp(cnf->bundle_connections,"checked"));
     cnf->adaptive_rdip_is_set=radius!=nullptr;
@@ -1708,20 +1892,47 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     float rdipcut = rdipInner ? readFloatItem(rdipInner,"rdip[0]") : 0.0f;
     Config_setRdipcut(cnf,rdipcut);
 
-    // nstate and seed: the configuration's (A64)
-    int nstate = configuration ? cJSON_ReadInt(configuration,"nstate",true,0) : 0;
+    // the sampled states and the seed: the configuration's (A64). A94: configuration.s_range [first, last] (nstate N until
+    // A94 was [1, N]); absent: the ensemble. Inside, nstate is last and state_first first: the states 1 .. first-1 are
+    // drawn (simulator.cpp) and not calculated, so state s is the same state as in a run of [1, last].
+    long stateFirst = 0, stateLast = 0;
+    const bool sampled = readStateRange(configuration,&stateFirst,&stateLast);
+    int nstate = sampled ? int(stateLast) : 0;
     Config_setNstate(cnf,nstate);
+    cnf->state_first = sampled ? int(stateFirst) : 1;
 
-    const int requestedSeed=configuration ? cJSON_ReadInt(configuration,"seed",true,-1) : -1;
-    // A64: an explicit seed is the seed of every configuration of configuration.k_range (configuration k is then the
-    // run of its files alone with that seed). A73: a generated seed is generated once, for the first configuration, and
-    // configuration k takes generated + (k - first): a different, reproducible sequence of states for every k (one
-    // shared sequence made the configurations' state samples the same draws)
+    // configuration.seed (A94): a number, the seed of the first configuration, configuration k of k_range taking seed +
+    // (k - first) as a generated seed does (A73); or a list of one seed per configuration (k_range last - first + 1 of
+    // them, one without k_range). Until A94 one number was the seed of every configuration (the converter writes such an
+    // input as a list of the same number). A73: a generated seed is generated once, for the first configuration, and
+    // configuration k takes generated + (k - first): a different, reproducible sequence of states for every k.
+    cJSON* seedItem=configuration ? cJSON_GetObjectItem(configuration,"seed") : NULL;
+    int requestedSeed=-1;
+    bool seedListed=false;
+    if(cJSON_IsArray(seedItem)) {
+        const long count=ranged ? rangeLast-rangeFirst+1 : 1;
+        if(cJSON_GetArraySize(seedItem)!=count) {
+            ccexRefusalPrint(stderr,"Error: configuration.seed as a list has one seed per configuration, %ld here (%s), it has %d\n",
+                             count,ranged ? "configuration.k_range last - first + 1" : "one configuration without k_range",
+                             cJSON_GetArraySize(seedItem));
+            ccexRefuse();
+        }
+        cJSON* entry=cJSON_GetArrayItem(seedItem,int(configurationIndex-rangeFirst));
+        if(!cJSON_IsNumber(entry)) {
+            ccexRefusalPrint(stderr,"Error: configuration.seed[%ld] must be an integer\n",configurationIndex-rangeFirst);
+            ccexRefuse();
+        }
+        requestedSeed=integerValue(entry,"configuration.seed[]");
+        seedListed=true;
+    } else if(seedItem) {
+        refuseWrongType(seedItem,"configuration.seed",cJSON_IsNumber(seedItem),"an integer or a list of one integer per configuration");
+        requestedSeed=integerValue(seedItem,"configuration.seed");
+    }
     static int generatedSeed=-1;
-    const bool reuse=requestedSeed==-1 && generatedSeed!=-1;
+    const bool reuse=requestedSeed==-1 && generatedSeed!=-1 && !seedListed;
     const int base=reuse ? generatedSeed : resolveMpiSeed(requestedSeed,MPI_COMM_WORLD);
-    if(requestedSeed==-1) generatedSeed=base;
-    const int seed=requestedSeed==-1 && ranged ? int(unsigned(base)+unsigned(configurationIndex-rangeFirst)) : base;
+    if(requestedSeed==-1 && !seedListed) generatedSeed=base;
+    const int seed=!seedListed && ranged ? int(unsigned(base)+unsigned(configurationIndex-rangeFirst)) : base;
     // A76: the seed is reported only for a run that draws from it: sampled bath states (nstate > 0), the axes and onsite-spin
     // states of Defect species (drawn when their files are absent), the pCCE partition (its trials and its cache key). An
     // ensemble run of a bath without Defect species draws nothing.
@@ -1742,16 +1953,8 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     if (rank==0 && verbosity){
         printf("\n");
         printf("      - File-related keys :\n");
-        printf("        [ Qubit.file, configuration { path, k_range, gyrofile, bathfile, bath_shift, bath_state_file,\n");
-        printf("          defect_axis_file, defect_state_file, nstate, seed }, frame.rotation ]\n\n");
-    }
-
-    // Qubit.file (the qubit of a defect file; the Qubit block reader checks the rest of the block)
-    cJSON* qubitBlock = readBlock(root,"Qubit");
-    char* qubitfile = qubitBlock ? cJSON_ReadFilePath(qubitBlock,(char*)"file",true,NULL) : NULL;
-    if (qubitfile != NULL) {
-        Config_allocQubitfile(cnf);
-        Config_setQubitfile(cnf,qubitfile);
+        printf("        [ configuration { path, k_range, gyrofile, bathfile, bath_shift, bath_state_file,\n");
+        printf("          defect_axis_file, defect_state_file, s_range, seed }, frame.rotation ]\n\n");
     }
 
     // the configuration block (A64): gyrofile, bathfile, bath_shift and bath_state_file, the names in configuration.path
@@ -1770,6 +1973,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         Config_allocBathadjust(cnf);
         for (int i = 0; i < length; i++){
             const std::string name = configurationPath(folder,bathfiles[i],ranged,configurationIndex);
+            refuseUnreadable(shownKey(configuration,"bathfile") + "[" + std::to_string(i) + "]",name);   // A94
             Config_setBathfiles_i(cnf,const_cast<char*>(name.c_str()),i);
         }
         freeChar2d(&bathfiles,length);
@@ -1803,7 +2007,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         // silently WITHOUT the rotation the input clearly asked for.
         if (!cJSON_IsObject(RotSection)){
             ccexRefusalPrint(stderr,"Error: %s must be an object, e.g.\n",ROTKEY);
-            ccexRefusalPrint(stderr,"  \"%s\" : { \"enabled\" : true, \"bath_axis\" : [0,0,1], \"qubit_axis\" : [1,1,1] }\n",ROTKEY);
+            ccexRefusalPrint(stderr,"  \"%s\" : { \"qubit_axis\" : [1,1,1] }\n",ROTKEY);
             ccexRefuse();
         }
 
@@ -1811,64 +2015,14 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         Config_setRot_enabled(cnf,rot_enabled);
 
         if (rot_enabled){
-            double bath_axis[3]  = {0.0,0.0,1.0};
+            // A90: qubit_axis only (bath_axis, reference_qubit and qubit_position_frame were removed; the frames of the
+            // tensors are the "frame" keys beside them: refuseOldInputKeys)
             double qubit_axis[3] = {0.0,0.0,1.0};
-
-            readAxis3(RotSection,ROTKEY,"bath_axis" ,bath_axis ,false);
             readAxis3(RotSection,ROTKEY,"qubit_axis",qubit_axis,false);
-
-            Config_setRot_bath_axis(cnf,bath_axis);
             Config_setRot_qubit_axis(cnf,qubit_axis);
-
-            // Which qubit the rotation is taken about. Optional while nqubit is
-            // restricted to 1, where there is nothing to disambiguate; when given it
-            // must name an existing qubit exactly (resolved in readBathfiles, where
-            // the QubitArray exists).
-            // Which basis the external tensor COMPONENTS are written in. No silent
-            // default: reading a bath-frame tensor as if it were already rotated (or
-            // the reverse) is a double / missing rotation that nothing downstream can
-            // detect, so it has to be stated. Required only where it has an effect --
-            // enforced below, once hf_readmode and qd_readmode have been read too.
-            cJSON* hfFrame = cJSON_GetObjectItem(RotSection,"hf_tensor_frame");
-            if (hfFrame != NULL){
-                if (!cJSON_IsString(hfFrame) || hfFrame->valuestring == NULL){
-                    ccexRefusalPrint(stderr,"Error: %s.hf_tensor_frame must be \"bath\" or \"qubit\"\n",ROTKEY);
-                    ccexRefuse();
-                }
-                Config_setRot_hf_tensor_frame(cnf,hfFrame->valuestring);
-            }
-
-            cJSON* qdFrame = cJSON_GetObjectItem(RotSection,"qd_tensor_frame");
-            if (qdFrame != NULL){
-                if (!cJSON_IsString(qdFrame) || qdFrame->valuestring == NULL){
-                    ccexRefusalPrint(stderr,"Error: %s.qd_tensor_frame must be \"bath\" or \"qubit\"\n",ROTKEY);
-                    ccexRefuse();
-                }
-                Config_setRot_qd_tensor_frame(cnf,qdFrame->valuestring);
-            }
-
-            // Which frame every Qubit.xyz is written in. One value for the whole
-            // QubitArray -- per-qubit frames are not supported, and would not make
-            // sense: a single R and r0 move every qubit and every bath spin together.
-            cJSON* posFrame = cJSON_GetObjectItem(RotSection,"qubit_position_frame");
-            if (posFrame != NULL){
-                if (!cJSON_IsString(posFrame) || posFrame->valuestring == NULL){
-                    ccexRefusalPrint(stderr,"Error: %s.qubit_position_frame must be the string \"bath\"\n",ROTKEY);
-                    ccexRefuse();
-                }
-                Config_setRot_qubit_position_frame(cnf,posFrame->valuestring);
-            }
-
-            cJSON* refItem = cJSON_GetObjectItem(RotSection,"reference_qubit");
-            if (refItem != NULL){
-                if (!cJSON_IsString(refItem) || refItem->valuestring == NULL){
-                    ccexRefusalPrint(stderr,"Error: %s.reference_qubit must be a qubit name (a string)\n",ROTKEY);
-                    ccexRefuse();
-                }
-                Config_setRot_reference_qubit(cnf,refItem->valuestring);
-            }
         }
     }
+    frameRotationOn = Config_getRot_enabled(cnf);   // A90: the frame keys of this reader and the Qubit and Defect readers
 
     // configuration.defect_axis_file and defect_state_file (avaaxfile, exstatefile until A47, then Defect.axis_file and
     // Defect.state_file until A64)
@@ -1878,9 +2032,29 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         {"defect_axis_file",  Config_allocAvaaxfile,   Config_setAvaaxfile_i},
         {"bath_state_file",   Config_allocStatefile,   Config_setStatefile_i},
         {"defect_state_file", Config_allocExstatefile, Config_setExstatefile_i}};
+    const bool defects = inputHasDefectSpecies(root);
     for (const auto& f : perBath) {
         const std::vector<std::string> names = perBathFileNames(configuration,f.key,nbath,folder,ranged,configurationIndex);
         if (names.empty()) continue;
+        // A94: the files the run reads have to open (the states of s_range, the axes with Defect species); a key the
+        // run does not read is reported (G3) and left unread
+        const bool stateFile = strcmp(f.key,"defect_axis_file") != 0;
+        const bool defectFile = strcmp(f.key,"bath_state_file") != 0;
+        const std::string shown = shownKey(configuration,f.key);
+        if (stateFile && !sampled){
+            warnNotUsed(shown.c_str(),"the ensemble (no configuration.s_range) reads no state files");
+            continue;
+        }
+        if (defectFile && !defects){
+            warnNotUsed(shown.c_str(),"the input has no Defect species");
+            continue;
+        }
+        for (int i = 0; i < nbath; i++){
+            if (names[i].empty()) continue;           // "": this bath file's states or axes are drawn from the seed
+            const std::string key = shown + "[" + std::to_string(i) + "]";
+            if (!stateFile) refuseUnreadable(key,names[i]);
+            else for (long st = stateFirst; st <= stateLast; ++st) refuseUnreadable(key,stateFileName(names[i],st));
+        }
         f.alloc(cnf);
         for (int i = 0; i < nbath; i++) f.set(cnf,const_cast<char*>(names[i].c_str()),i);
     }
@@ -1898,6 +2072,17 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         printf("        hamiltonian.meCCE / megCCE : [ jump_operators ]\n\n");
     }
     cJSON* hamiltonian = readBlock(root,"hamiltonian");
+    // A94 (G1) named the sections by role, corrections and dissipation; reverted 2026-10-17, the sections stay by method
+    if (hamiltonian){
+        static const char* const renamed[][2] = {{"corrections", "\"hamiltonian.cCCE\" (knight, hfmedi, delta_A; meCCE reads it too)"},
+                                                 {"dissipation", "\"hamiltonian.meCCE\" or \"hamiltonian.megCCE\" (jump_operators, "
+                                                                 "the section of the run's method)"}};
+        for (const auto& o : renamed)
+            if (untrackedItem(hamiltonian,o[0])){
+                ccexRefusalPrint(stderr,"Error: hamiltonian.%s is now %s\n%s\n",o[0],o[1],kConvertHint);
+                ccexRefuse();
+            }
+    }
     cJSON* common = hamiltonian ? readBlock(hamiltonian,"common") : NULL;
     cJSON* cCCE = hamiltonian ? readBlock(hamiltonian,"cCCE") : NULL;
     // gCCE and the reserved method noise (A49) have no settings yet: an empty section is allowed
@@ -1925,6 +2110,9 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         }
         cnf->vector_mean_field = !strcasecmp(v,"xyz");
         cnf->bath_mean_field_off = !strcasecmp(v,"off");
+        if (nstate == 0)   // A94 (G2, G3)
+            warnNotUsed("hamiltonian.common.bath_bath_mean_field","the ensemble (no configuration.s_range) has no sampled bath "
+                        "state to make a static field from");
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -1958,6 +2146,22 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         Config_setHf_ignore_oor(cnf,strcasecmp(missing,"stop") ? 1 : 0);
     }
 
+    // hamiltonian.common.hyperfine.frame (frame.rotation.hf_tensor_frame until A90): the frame of the tensor COMPONENTS
+    // in hyperfine.file (its position columns are always read in the file frame). Needed with "dipole": "dft" only; with
+    // "point" the tensors are point dipoles from the positions, turned with them, and the contact term has no direction.
+    if (hyperfine){
+        const FrameValue f = (frameRotationOn && hf_readmode >= 2)
+            ? frameOf(hyperfine,"hamiltonian.common.hyperfine","hamiltonian.common.hyperfine.frame",
+                      "the tensor components of hamiltonian.common.hyperfine.file")
+            : readFrameKey(hyperfine,"hamiltonian.common.hyperfine");
+        warnFrameUnused(f,"hamiltonian.common.hyperfine.frame");
+        if (f != FRAME_ABSENT) Config_setHf_frame(cnf,f == FRAME_FILE ? "file" : "qubit");
+        if (f != FRAME_ABSENT && frameRotationOn && hf_readmode < 2 && rank==0){
+            printMessage("  Note: hamiltonian.common.hyperfine.frame is not used with dipole \"point\": the tensors are point");
+            printMessage("        dipoles from the positions, turned with them, and the contact term has no direction.\n");
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////
     // DFT Quadrupole tensor: hamiltonian.common.quadrupole is "off" or {structure: plain | strained | bubble, ...}, the
     // readmode of the code 0, or 2, 3, 4
@@ -1979,6 +2183,13 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         }
     }
     Config_setQd_readmode(cnf,qd_readmode);
+    // hamiltonian.common.quadrupole.frame (frame.rotation.qd_tensor_frame until A90): the frame of the tensor components
+    // in quadrupole.file (and file_without_defect)
+    if (qd_readmode != 0){
+        const FrameValue f = frameOf(quadrupole,"hamiltonian.common.quadrupole","hamiltonian.common.quadrupole.frame",
+                                     "the tensor components of hamiltonian.common.quadrupole.file");
+        if (f != FRAME_ABSENT) Config_setQd_frame(cnf,f == FRAME_FILE ? "file" : "qubit");
+    }
 
     char* qd_tensorfile = NULL;
     char* qd_tensorfile_woqubit = NULL;
@@ -2015,51 +2226,175 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     }
 
     ////////////////////////////////////////////////////////////////////////
-    // hamiltonian.cCCE: knight, hfmedi, and delta_A (false: the hyperfine tensors of a cluster's spins are replaced by
-    // their mean, so their Knight fields no longer differ; A47)
+    // hamiltonian.cCCE: knight, hfmedi, and delta_A (the second-order delta_A(m_s).I of Maze 2008 eq. A3, A83)
     ////////////////////////////////////////////////////////////////////////
     Config_setHfmedi(cnf, cCCE ? readStrictBool(cCCE,"hamiltonian.cCCE","hfmedi",false) : false);
     Config_setKnight(cnf, cCCE ? readStrictBool(cCCE,"hamiltonian.cCCE","knight",false) : false);
-    cnf->delta_A = cCCE ? readStrictBool(cCCE,"hamiltonian.cCCE","delta_A",true) : true;
-
-    ////////////////////////////////////////////////////////////////////////
-    // Cross-checks that need both the rotation section and the readmodes
-    ////////////////////////////////////////////////////////////////////////
-    if (Config_getRot_enabled(cnf)){
-
-        // readmode 1 discards the file's anisotropic tensor and rebuilds it as a
-        // point-dipole tensor from the source geometry, keeping only the isotropic
-        // Fermi-contact term, which has no frame. So hf_tensor_frame decides nothing
-        // there -- not required, and said out loud if it is given anyway.
-        if (Config_getHf_readmode(cnf) == 1 && Config_getRot_hf_tensor_frame(cnf)[0] != '\0' && rank==0){
-            printMessage("  Note: hf_tensor_frame is not applicable to hyperfine dipole point with contact true.");
-            printMessage("        Only the isotropic Fermi-contact term is taken from the file, and the");
-            printMessage("        point-dipole tensor is transformed from the bath frame regardless.\n");
-        }
-
-        if ((Config_getHf_readmode(cnf) == 2 || Config_getHf_readmode(cnf) == 3)
-            && Config_getRot_hf_tensor_frame(cnf)[0] == '\0'){
-            ccexRefusalPrint(stderr,"Error: hamiltonian.common.hyperfine dipole \"dft\" with the coordinate frame rotation on, but\n");
-            ccexRefusalPrint(stderr,"frame.rotation.hf_tensor_frame is not set.\n");
-            ccexRefusalPrint(stderr,"State the basis the tensor COMPONENTS in hamiltonian.common.hyperfine.file are written in:\n");
-            ccexRefusalPrint(stderr,"  \"bath\"  : the original bath Cartesian basis -- they get transformed\n");
-            ccexRefusalPrint(stderr,"  \"qubit\" : already the qubit-aligned basis -- they are left alone\n");
-            ccexRefusalPrint(stderr,"(The POSITION columns of that file are always read in the original frame.)\n");
-            ccexRefuse();
-        }
-        if (Config_getQd_readmode(cnf) != 0 && Config_getRot_qd_tensor_frame(cnf)[0] == '\0'){
-            ccexRefusalPrint(stderr,"Error: hamiltonian.common.quadrupole (structure %s) with the coordinate frame rotation on, but\n",
-                    Config_getQd_readmode(cnf) == 2 ? "plain" : Config_getQd_readmode(cnf) == 3 ? "strained" : "bubble");
-            ccexRefusalPrint(stderr,"frame.rotation.qd_tensor_frame is not set.\n");
-            ccexRefusalPrint(stderr,"State the basis the tensor COMPONENTS in hamiltonian.common.quadrupole.file are written in:\n");
-            ccexRefusalPrint(stderr,"  \"bath\"  : the original bath Cartesian basis -- they get transformed\n");
-            ccexRefusalPrint(stderr,"  \"qubit\" : already the qubit-aligned basis -- they are left alone\n");
-            ccexRefuse();
-        }
-    }
+    cnf->delta_A = cCCE ? readStrictBool(cCCE,"hamiltonian.cCCE","delta_A",false) : false;
 
     cJSON_Delete(root);    
     freeChar1d(&data);
+}
+
+// Qubit.intmap: the qubit-qubit tensors, a self entry (the same name twice) is the zero-field splitting. Both forms of
+// the Qubit block read it (A93, 2026-10-16: Qubit.zfs of the Qubit.file form, fixed kHz, and its Qubit.frame are now
+// a self entry of the Qubit.file qubit, named by Qubit.name).
+static void readQubitIntmap(cJSON* QubitSection, QubitArray* qa){
+    cJSON* intmapArray = cJSON_GetObjectItem(QubitSection,"intmap");
+    cJSON* intmap;
+    cJSON_ArrayForEach(intmap, intmapArray){
+
+        int qubit1_idx; char* qubit1_name;
+        int qubit2_idx; char* qubit2_name;
+        cJSON* between = cJSON_GetObjectItem(intmap,"between");
+
+        // read which qubits are interacting
+        if (cJSON_IsArray(between)) {
+            qubit1_name = cJSON_GetStringValue(cJSON_GetArrayItem(between,0));
+            qubit2_name = cJSON_GetStringValue(cJSON_GetArrayItem(between,1));
+            qubit1_idx = QubitArray_getQubitIdx_fromName(qa,qubit1_name);
+            qubit2_idx = QubitArray_getQubitIdx_fromName(qa,qubit2_name);
+            // check if the qubit name exists
+            if (qubit1_idx == -1 || qubit2_idx == -1 ) {
+                ccexRefusalPrint(stderr, "Error: The qubit name is not found in the input file\n");
+                ccexRefuse();
+            }
+            if (qubit1_idx > qubit2_idx){
+                ccexRefusalPrint(stderr, "Error: First qubit index is greater than second qubit index\n");
+                ccexRefusalPrint(stderr, "       qubit1_name = %s, qubit2_name = %s\n", qubit1_name, qubit2_name);
+                ccexRefusalPrint(stderr, "       qubit1_idx = %d, qubit2_idx = %d\n", qubit1_idx, qubit2_idx);
+                ccexRefusalPrint(stderr, "       qubit1_idx should be less than qubit2_idx\n");
+                ccexRefuse();
+            }
+        }else{
+            ccexRefusalPrint(stderr, "Error: \"between\" is not found in the input file\n");
+            ccexRefuse();
+        }
+
+        // read tensor properties from the input file
+        // Read tensor properties from the input file. The absent-unit path is
+        // intentionally kHz for backward compatibility; explicit units are
+        // normalized to kHz here and then to CCEX's internal rad*kHz below.
+        MatrixXcd tensor = cJSON_ReadTensor(intmap,"tensor",true,MatrixXcd::Zero(3,3));
+        // A94 (R4): without "unit" the tensor is kHz (a Defect zfs is MHz); the log says so for a tensor that is not zero
+        if (!cJSON_GetObjectItem(intmap,"unit") && !tensor.isZero(0.0) && rank==0)
+            printf("      Note: Qubit.intmap[\"%s\",\"%s\"].tensor has no unit and is read in kHz (a Defect zfs is MHz), "
+                   "\"unit\" names it\n",qubit1_name,qubit2_name);
+        tensor *= readIntmapFrequencyScaleToKHz(intmap,qubit1_name,qubit2_name);
+        tensor = KHZ_TO_RADKHZ(tensor);
+
+        // Which frame the components are written in (frame, tensor_frame until A90). Recorded, never guessed: a ZFS
+        // tensor and a pair tensor look the same, and so does one that has already been turned. Required with the
+        // rotation on (A90; until then a single qubit's entry without it was read as written).
+        const std::string where = std::string("Qubit.intmap[\"") + qubit1_name + "\",\"" + qubit2_name + "\"]";
+        const FrameValue f = frameOf(intmap,where,"Qubit.intmap[].frame","its tensor");
+        const IntmapProvenance frame = f == FRAME_FILE ? INTMAP_EXPLICIT_FILE : f == FRAME_QUBIT ? INTMAP_EXPLICIT_QUBIT
+                                                                                  : INTMAP_EXPLICIT_UNSPECIFIED;
+
+        // set Interaction map
+        QubitArray_setIntmap_i_j(qa,tensor,qubit1_idx,qubit2_idx);
+        QubitArray_setIntmap_i_j_frame(qa,frame,qubit1_idx,qubit2_idx);
+    }
+}
+
+// A93 (2026-10-16): the qubit states are Qubit.alpha_state and Qubit.beta_state only, each exactly one of
+//   {"ms": [m_1, m_2, ...]}  one m_s per qubit in the order of Qubit.qubit ([m] for the qubit of Qubit.file): the product
+//                            of the |m_s> states (Qubit.qubit[].alphams/betams, Qubit.alphams/betams with Qubit.file
+//                            until A93)
+//   {"index": n}             the n-th eigenstate of the qubit Hamiltonian by descending energy (not with Qubit.file)
+//   {"vector": [...]}        the state itself (not with Qubit.file)
+// Absent, a side is the product of m_s +1 (alpha) or 0 (beta) on every qubit, as before. The m_s of each qubit (used by
+// cCCE, the mean fields, knight/hfmedi/delta_A, DEER, ...) are the "ms" list, or the defaults +1 and 0 when the side is
+// an index or a vector (as before, when alphams/betams were not written beside one).
+// A94 (G13): a state vector, dim components, each a number (real) or [re, im]
+static MatrixXcd readStateVector(cJSON* parent, const char* key, const std::string& shown, int dim){
+    cJSON* item = cJSON_GetObjectItem(parent,key);
+    if (!cJSON_IsArray(item) || cJSON_GetArraySize(item) != dim){
+        ccexRefusalPrint(stderr,"Error: %s must be a list of %d components (the qubit dimension), each a number or [re, im]\n",
+                         shown.c_str(),dim);
+        ccexRefuse();
+    }
+    MatrixXcd vector = MatrixXcd::Zero(dim,1);
+    for (int i = 0; i < dim; ++i){
+        cJSON* c = cJSON_GetArrayItem(item,i);
+        const std::string label = shown + "[" + std::to_string(i) + "]";
+        if (cJSON_IsArray(c)){
+            if (cJSON_GetArraySize(c) != 2){
+                ccexRefusalPrint(stderr,"Error: %s must be a number or [re, im]\n",label.c_str());
+                ccexRefuse();
+            }
+            vector(i,0) = doublec(readFiniteNumber(cJSON_GetArrayItem(c,0),(label + "[0]").c_str()),
+                                  readFiniteNumber(cJSON_GetArrayItem(c,1),(label + "[1]").c_str()));
+        }else{
+            vector(i,0) = doublec(readFiniteNumber(c,label.c_str()),0.0);
+        }
+    }
+    return vector;
+}
+
+static void readQubitStates(cJSON* QubitSection, QubitArray* qa){
+    const int nqubit = QubitArray_getNqubit(qa);
+    const int dim = QubitArray_dim(qa);
+    const char* sides[] = {"alpha_state", "beta_state"};
+    const float msDefault[] = {1.0f, 0.0f};
+    for (int side=0; side<2; ++side){
+        std::vector<float> ms(nqubit, msDefault[side]);
+        MatrixXcd vector;                   // the 0 dimension matrix: not given
+        cJSON* state = readBlock(QubitSection,sides[side]);
+        if (state){
+            cJSON* msItem = cJSON_GetObjectItem(state,"ms");
+            cJSON* indexItem = cJSON_GetObjectItem(state,"index");
+            cJSON* vectorItem = cJSON_GetObjectItem(state,"vector");
+            const int given = (msItem != NULL) + (indexItem != NULL) + (vectorItem != NULL);
+            if (given != 1){
+                ccexRefusalPrint(stderr,"Error: Qubit.%s must have exactly one of \"ms\", \"index\" and \"vector\" (%s)\n",
+                                 sides[side], given == 0 ? "it has none" : "it has more than one");
+                ccexRefuse();
+            }
+            if (msItem){
+                const bool listOk = cJSON_IsArray(msItem) && cJSON_GetArraySize(msItem) == nqubit;
+                if (!listOk){
+                    ccexRefusalPrint(stderr,"Error: Qubit.%s.ms must be a list of one m_s per qubit, %d numbers in the "
+                                     "order of Qubit.qubit%s\n", sides[side], nqubit,
+                                     cJSON_IsArray(msItem) ? (std::string(" (it has ") + std::to_string(cJSON_GetArraySize(msItem))
+                                                              + ")").c_str() : " (a list also for one qubit)");
+                    ccexRefuse();
+                }
+                for (int i=0; i<nqubit; ++i){
+                    const std::string label = std::string("Qubit.") + sides[side] + ".ms[" + std::to_string(i) + "]";
+                    ms[i] = (float)readFiniteNumber(cJSON_GetArrayItem(msItem,i),label.c_str());
+                }
+            }else if (indexItem){
+                const int index = cJSON_ReadInt(state,(char*)"index",false,0);
+                if (index < 0 || index >= dim){
+                    ccexRefusalPrint(stderr,"Error: Qubit.%s.index must be 0 to %d (the qubit eigenstates by descending energy)\n",
+                            sides[side],dim-1);
+                    ccexRefuse();
+                }
+                int*& slot = side == 0 ? qa->_alphaidx : qa->_betaidx;
+                slot = (int*)allocArray1d(1,sizeof(int));
+                *slot = index;
+            }else{
+                vector = readStateVector(state,"vector",std::string("Qubit.") + sides[side] + ".vector",dim);   // G13: [re, im] too
+            }
+        }
+        // with {"index"} or {"vector"} nothing names a level per qubit: a placeholder level is stored, the default, or,
+        // where the default is no level of the qubit's spin (a half-integer spin), +1/2 (alpha) and -1/2 (beta).
+        // pulse.per_qubit, which turns each qubit between these levels, refuses {"index"} and {"vector"} (A94).
+        if (state && !cJSON_GetObjectItem(state,"ms"))
+            for (int i=0; i<nqubit; ++i){
+                const double S = QubitArray_getQubit_i_spin(qa,i);
+                const double m = ms[i];
+                const bool level = std::fabs(m) <= S + 1e-9 && std::fabs((S - m) - std::round(S - m)) < 1e-9;
+                if (!level) ms[i] = side == 0 ? 0.5f : -0.5f;
+            }
+        for (int i=0; i<nqubit; ++i){
+            if (side == 0) QubitArray_setQubit_i_alpha_fromMs(qa,ms[i],i);
+            else           QubitArray_setQubit_i_beta_fromMs(qa,ms[i],i);
+        }
+        if (side == 0) QubitArray_setPsia(qa,vector);
+        else           QubitArray_setPsib(qa,vector);
+    }
 }
 
 /**
@@ -2072,11 +2407,11 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         printf("\n");
         printf("    >> Read Qubit Options\n\n");
         printf("      - Read values of main-key 'Qubit'\n");
-        printf("        sub-key of 'Qubit' : [ qubit, intmap, alpha_state, beta_state, psi0 ] or [ file, spin, zfs, alphams, betams ]\n\n");
+        printf("        sub-key of 'Qubit' : [ qubit, intmap, alpha_state, beta_state, psi0 ]\n\n");
         printf("      - Read values of sub-key 'qubit'\n");
-        printf("        sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ]\n\n");
+        printf("        sub-sub-key : [ name, spin, gyro, xyz or file, detuning ]\n\n");
         printf("      - Read values of sub-key 'intmap'\n");
-        printf("        sub-sub-key : [ between, tensor, unit, tensor_frame ]\n\n");
+        printf("        sub-sub-key : [ between, tensor, unit, frame ]\n\n");
         printf("      - Read hamiltonian.common.qubit_bath_mean_field\n");
     }
 
@@ -2091,16 +2426,11 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         freeChar1d(&data);
     }
 
-    int nqubitDefault = 1;
-
     char nameDefault[MAX_CHARARRAY_LENGTH] = "q";
     float spinDefault = 1.0;
     double gyroDefault = GAMMA_ELECTRON;
     double detuningDefault = 0.0;
-    float alphaMsDefault = 1.0;
-    float betaMsDefault = 0.0;
-    
-    MatrixXcd intmapDefault = MatrixXcd::Zero(3,3);
+
     MatrixXcd psiDefault;
     // the Overhauser field of the bath on the qubits (Qubit.overhaus until A47); both forms of the Qubit block read it
     cJSON* hamiltonian = readBlock(root,"hamiltonian");
@@ -2108,76 +2438,10 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
     const bool overhaus = common ? readStrictBool(common,"hamiltonian.common","qubit_bath_mean_field",false) : false;
     QubitArray_setOverhaus(qa,overhaus);
 
-    // Qubit.file and Qubit.qubit are two descriptions of the qubits (qubitfile and the Qubit block until A47); one was
-    // ignored without a word when both were given (review 20261013-readme R01: a "two-qubit" tutorial ran one qubit)
+    // the qubits are the entries of Qubit.qubit (A94, G12: the Qubit.file form, one qubit from a defect file, is an entry
+    // {"file": ...} in place of "xyz"; its old keys are refused by refuseOldInputKeys)
     cJSON* QubitSection = readBlock(root,"Qubit");
-    if (QubitSection && cJSON_GetObjectItem(QubitSection,"file") != NULL){
-        for (const char* key : {"qubit", "intmap", "alpha_state", "beta_state", "psi0"})
-            if (cJSON_GetObjectItem(QubitSection,key) != NULL){
-                if (rank==0){
-                    ccexRefusalPrint(stderr,"Error: the Qubit block has both \"file\" and \"%s\", keep one form (\"file\" for one "
-                                   "qubit from a defect file, \"qubit\" for one or more qubits written out)\n",key);
-                }
-                ccexRefuse();
-            }
-    }
-
-    // read Qubit.file
-    char* _qubitfile = QubitSection ? cJSON_ReadFilePath(QubitSection,(char*)"file",true,NULL) : NULL;
-    
-    if (_qubitfile != NULL) {
-        // when the qubitfile exist : doesn't read "Qubit section"
-        // It is possible to read only one qubit
-
-        ////////////////////////////////////////////////////////////////////////
-        // set nqubit
-        ////////////////////////////////////////////////////////////////////////
-        // set one qubit
-        QubitArray_setNqubit(qa,nqubitDefault);
-        QubitArray_allocQubit(qa);
-        
-        ////////////////////////////////////////////////////////////////////////
-        // set qubit properties by nqubit
-        ////////////////////////////////////////////////////////////////////////
-        // set qubit properties
-        snprintf(nameDefault,MAX_CHARARRAY_LENGTH,"q%d",0);
-        QubitArray_setQubit_i_name(qa,nameDefault,0);
-        QubitArray_setQubit_i_gyro(qa,gyroDefault,0);
-        QubitArray_setQubit_i_detuning(qa,detuningDefault,0);
-        float spin = cJSON_ReadFloat(QubitSection,(char*)"spin",true,spinDefault);
-        QubitArray_setQubit_i_spin(qa,spin,0);
-
-        // set the qubit state (alpha, beta)
-        float alphams = cJSON_ReadFloat(QubitSection,(char*)"alphams",true,alphaMsDefault);
-        float betams = cJSON_ReadFloat(QubitSection,(char*)"betams",true,betaMsDefault);
-        QubitArray_setQubit_i_alpha_fromMs(qa,alphams,0);
-        QubitArray_setQubit_i_beta_fromMs(qa,betams,0);
-
-        ////////////////////////////////////////////////////////////////////////
-        //  Intmap
-        ////////////////////////////////////////////////////////////////////////
-        // set the options of qubit-related Hamiltonian tensor
-        //
-        // alloc Interaction map
-        QubitArray_allocIntmap(qa);
-
-        // read interaction map
-        MatrixXcd tensor = cJSON_ReadTensor(QubitSection,(char*)"zfs",true,intmapDefault);
-        tensor = KHZ_TO_RADKHZ(tensor);
-
-        // Set ZFS in qubit intmap
-        QubitArray_setIntmap_i_j(qa,tensor,0,0); // qubit index:0,0
-        // Qubit.zfs (qzfs until A47) has no tensor_frame sub-key, and this path is single-qubit only, so it
-        // stays where the legacy code left it: read as written, never rotated.
-        QubitArray_setIntmap_i_j_frame(qa,INTMAP_EXPLICIT_UNSPECIFIED,0,0);
-
-        // mediatedTerm IO
-        cJSON_Delete(root);
-        freeChar1d(&data);
-        return;
-    }else{
-        // without Qubit.file : the qubits are written out in Qubit.qubit
-        // It is possible to read multiple qubits
+    {
         int iqubit = 0;
 
         ////////////////////////////////////////////////////////////////////////
@@ -2185,8 +2449,8 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         ////////////////////////////////////////////////////////////////////////
         cJSON* qubitArray = QubitSection ? cJSON_GetObjectItem(QubitSection,"qubit") : NULL;
         if (!cJSON_IsArray(qubitArray) || cJSON_GetArraySize(qubitArray) < 1){
-            ccexRefusalPrint(stderr, "Error: Qubit.qubit must be an array of one entry per qubit (or Qubit.file for one qubit from a "
-                            "defect file)\n");
+            ccexRefusalPrint(stderr, "Error: Qubit.qubit must be an array of one entry per qubit, each with \"xyz\" or \"file\" "
+                            "(a defect file whose first line is the position)\n");
             ccexRefuse();
         }
         int nqubit = cJSON_GetArraySize(qubitArray);
@@ -2207,27 +2471,36 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             snprintf(nameDefault,MAX_CHARARRAY_LENGTH,"q%d",iqubit);
             char* name = cJSON_ReadString(qubit,"name",true,nameDefault);
             float spin = cJSON_ReadFloat(qubit,"spin",true,spinDefault);
-            double gyro = cJSON_ReadDouble(qubit,"gyro",true,gyroDefault);
-            double* xyz = cJSON_ReadDouble1d(qubit,"xyz",false,NULL,3);
+            double gyro = readQubitGyro(qubit,iqubit,gyroDefault);
+            // the position: "xyz", or the first line of "file" (A94, G12)
+            double* xyz = NULL;
+            if (cJSON_GetObjectItem(qubit,"file")){
+                if (cJSON_GetObjectItem(qubit,"xyz")){
+                    ccexRefusalPrint(stderr,"Error: Qubit.qubit[%d] has both \"file\" and \"xyz\", the position is one of them\n",iqubit);
+                    ccexRefuse();
+                }
+                const char* path = cJSON_ReadString(qubit,(char*)"file",false,NULL);   // opened below, refused with its index
+                xyz = allocDouble1d(3);
+                readQubitPositionFile(path,xyz,iqubit);
+            }else{
+                xyz = cJSON_ReadDouble1d(qubit,"xyz",false,NULL,3);
+            }
             // detuning: a number, or the one-element array [x] the Defect form suggests
             // (13 tutorial and check_numerics inputs write [0.0]); it used to be ignored for
             // the default, so [x] with x != 0 was silently 0 before 2026-10-02 (D18)
+            // A94 (G21): a number only ([x] was a second form of the same value)
             cJSON* detuningItem = cJSON_GetObjectItem(qubit,"detuning");
             if (cJSON_IsArray(detuningItem)){
-                if (cJSON_GetArraySize(detuningItem) != 1 || !cJSON_IsNumber(cJSON_GetArrayItem(detuningItem,0))){
-                    ccexRefusalPrint(stderr,"Error: Qubit.qubit[%d].detuning must be a number (or [number])\n",iqubit);
-                    ccexRefuse();
-                }
+                ccexRefusalPrint(stderr,"Error: Qubit.qubit[%d].detuning is a number (kHz) or {\"value\": ..., \"unit\": ...}, "
+                                 "not a list: write [x] as x\n%s\n",iqubit,kConvertHint);
+                ccexRefuse();
             }
-            double detuning = cJSON_IsArray(detuningItem) ? cJSON_GetArrayItem(detuningItem,0)->valuedouble
-                                                          : cJSON_ReadDouble(qubit,"detuning",true,detuningDefault); //kHz
-            float alphams = cJSON_ReadFloat(qubit,"alphams",true,alphaMsDefault); 
-            float betams = cJSON_ReadFloat(qubit,"betams",true,betaMsDefault); 
-            // written, not defaulted, per qubit and side: alphaidx/betaidx would override them, and the run checks that what
-            // was written agrees (D43; review b467fe R1)
-            if ((int)qa->_alphaGiven.size() <= iqubit){ qa->_alphaGiven.resize(iqubit+1,0); qa->_betaGiven.resize(iqubit+1,0); }
-            qa->_alphaGiven[iqubit] = cJSON_GetObjectItem(qubit,"alphams") != NULL;
-            qa->_betaGiven[iqubit]  = cJSON_GetObjectItem(qubit,"betams") != NULL;
+            double detuning = cJSON_ReadDouble(qubit,"detuning",true,detuningDefault); //kHz
+
+            // A94 (R4): a plain number is kHz here and MHz in Defect.species[].detuning; the log says which was read
+            if (detuning != 0.0 && rank==0 && !unitWritten().count("Qubit.qubit[" + std::to_string(iqubit) + "].detuning"))
+                printf("      Note: Qubit.qubit[%d].detuning %g is read in kHz (= %g MHz; a Defect detuning is MHz), "
+                       "{\"value\": ..., \"unit\": ...} names the unit\n",iqubit,detuning,detuning*1e-3);
 
             // set qubit properties
             QubitArray_setQubit_i_name(qa,name,iqubit);
@@ -2235,8 +2508,6 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
             QubitArray_setQubit_i_xyz(qa,xyz,iqubit);
             QubitArray_setQubit_i_gyro(qa,gyro,iqubit);
             QubitArray_setQubit_i_detuning(qa,KHZ_TO_RADKHZ(detuning),iqubit); // radkHz
-            QubitArray_setQubit_i_alpha_fromMs(qa,alphams,iqubit);
-            QubitArray_setQubit_i_beta_fromMs(qa,betams,iqubit);
             iqubit++;
             freeDouble1d(&xyz);
         }
@@ -2253,121 +2524,22 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         QubitArray_setIntmap_dipAuto(qa);
 
         // read interaction map
-        cJSON* intmapArray = cJSON_GetObjectItem(QubitSection,"intmap");
-        cJSON* intmap;
-        cJSON_ArrayForEach(intmap, intmapArray){
-
-            int qubit1_idx; char* qubit1_name;
-            int qubit2_idx; char* qubit2_name;
-            cJSON* between = cJSON_GetObjectItem(intmap,"between");
-            
-            // read which qubits are interacting
-            if (cJSON_IsArray(between)) {
-                qubit1_name = cJSON_GetStringValue(cJSON_GetArrayItem(between,0));
-                qubit2_name = cJSON_GetStringValue(cJSON_GetArrayItem(between,1));
-                qubit1_idx = QubitArray_getQubitIdx_fromName(qa,qubit1_name);
-                qubit2_idx = QubitArray_getQubitIdx_fromName(qa,qubit2_name);
-                // check if the qubit name exists
-                if (qubit1_idx == -1 || qubit2_idx == -1 ) {
-                    ccexRefusalPrint(stderr, "Error: The qubit name is not found in the input file\n");
-                    ccexRefuse();
-                }
-                if (qubit1_idx > qubit2_idx){
-                    ccexRefusalPrint(stderr, "Error: First qubit index is greater than second qubit index\n");
-                    ccexRefusalPrint(stderr, "       qubit1_name = %s, qubit2_name = %s\n", qubit1_name, qubit2_name);
-                    ccexRefusalPrint(stderr, "       qubit1_idx = %d, qubit2_idx = %d\n", qubit1_idx, qubit2_idx);
-                    ccexRefusalPrint(stderr, "       qubit1_idx should be less than qubit2_idx\n");
-                    ccexRefuse();
-                }
-            }else{
-                ccexRefusalPrint(stderr, "Error: \"between\" is not found in the input file\n");
-                ccexRefuse();
-            }
-
-            // read tensor properties from the input file
-            // Read tensor properties from the input file. The absent-unit path is
-            // intentionally kHz for backward compatibility; explicit units are
-            // normalized to kHz here and then to CCEX's internal rad*kHz below.
-            MatrixXcd tensor = cJSON_ReadTensor(intmap,"tensor",true,intmapDefault);
-            tensor *= readIntmapFrequencyScaleToKHz(intmap,qubit1_name,qubit2_name);
-            tensor = KHZ_TO_RADKHZ(tensor);
-
-            // Which basis the components are written in. Recorded, never guessed: a ZFS
-            // tensor and a pair tensor look the same, and so does one that has already
-            // been rotated. Whether the omission is fatal depends on nqubit and on
-            // whether the rotation is on, which validateCoordinateFrameRotationInputs
-            // decides once the whole input is in.
-            IntmapProvenance frame = INTMAP_EXPLICIT_UNSPECIFIED;
-            cJSON* tframe = cJSON_GetObjectItem(intmap,"tensor_frame");
-            if (tframe != NULL){
-                if (!cJSON_IsString(tframe) || tframe->valuestring == NULL){
-                    ccexRefusalPrint(stderr,"Error: Qubit.intmap[\"%s\",\"%s\"].tensor_frame must be \"bath\" or \"qubit\"\n",
-                            qubit1_name,qubit2_name);
-                    ccexRefuse();
-                }
-                if (strcasecmp(tframe->valuestring,"bath") == 0){
-                    frame = INTMAP_EXPLICIT_BATH;
-                }else if (strcasecmp(tframe->valuestring,"qubit") == 0){
-                    frame = INTMAP_EXPLICIT_QUBIT;
-                }else{
-                    ccexRefusalPrint(stderr,"Error: Qubit.intmap[\"%s\",\"%s\"].tensor_frame = \"%s\" is not available\n",
-                            qubit1_name,qubit2_name,tframe->valuestring);
-                    ccexRefusalPrint(stderr,"  \"bath\"  : components are in the original bath Cartesian basis\n");
-                    ccexRefusalPrint(stderr,"  \"qubit\" : components are already in the common computational basis\n");
-                    ccexRefusalPrint(stderr,"            (reference-qubit-aligned, NOT an individual local frame)\n");
-                    ccexRefuse();
-                }
-            }
-
-            // set Interaction map
-            QubitArray_setIntmap_i_j(qa,tensor,qubit1_idx,qubit2_idx);
-            QubitArray_setIntmap_i_j_frame(qa,frame,qubit1_idx,qubit2_idx);
-        }
+        readQubitIntmap(QubitSection,qa);
 
         ////////////////////////////////////////////////////////////////////////
         //  psia, psib, psi0
         ////////////////////////////////////////////////////////////////////////
-        // Qubit.alpha_state and beta_state (alphaidx/betaidx and psia/psib until A47): {"index": n}, the n-th eigenstate
-        // of the qubit Hamiltonian by descending energy, or {"vector": [...]}, the state itself. A side not given is the
-        // product of the qubits' alphams (betams); each side is decided on its own (QubitArray_setPsiaPsib), with no
-        // order of precedence between the forms. Not both in one state.
+        // Qubit.alpha_state and beta_state (alphaidx/betaidx and psia/psib until A47; the qubits' alphams/betams until A93)
+        readQubitStates(QubitSection,qa);
         int dim = QubitArray_dim(qa);
-        const char* sides[] = {"alpha_state", "beta_state"};
-        for (int side=0; side<2; ++side){
-            cJSON* state = readBlock(QubitSection,sides[side]);
-            MatrixXcd vector = psiDefault;   // psiDefault is the 0 dimension matrix: not given
-            if (state){
-                cJSON* indexItem = cJSON_GetObjectItem(state,"index");
-                cJSON* vectorItem = cJSON_GetObjectItem(state,"vector");
-                if ((indexItem != NULL) == (vectorItem != NULL)){
-                    ccexRefusalPrint(stderr,"Error: Qubit.%s must have one of \"index\" and \"vector\" (%s)\n",sides[side],
-                            indexItem ? "it has both" : "it has neither");
-                    ccexRefuse();
-                }
-                if (indexItem){
-                    const int index = cJSON_ReadInt(state,(char*)"index",false,0);
-                    if (index < 0 || index >= dim){
-                        ccexRefusalPrint(stderr,"Error: Qubit.%s.index must be 0 to %d (the qubit eigenstates by descending energy)\n",
-                                sides[side],dim-1);
-                        ccexRefuse();
-                    }
-                    int*& slot = side == 0 ? qa->_alphaidx : qa->_betaidx;
-                    slot = (int*)allocArray1d(1,sizeof(int));
-                    *slot = index;
-                }else{
-                    double* values = cJSON_ReadDouble1d(state,(char*)"vector",false,NULL,dim);
-                    vector = Double1dToMatrixXcd(values,dim);
-                    freeDouble1d(&values);
-                }
-            }
-            if (side == 0) QubitArray_setPsia(qa,vector);
-            else           QubitArray_setPsib(qa,vector);
-        }
-        double* psi0mat = cJSON_ReadDouble1d(QubitSection,"psi0",true,NULL,dim);
-
-        if (psi0mat != NULL) {
-            QubitArray_setPsi0(qa,Double1dToMatrixXcd(psi0mat,dim));
-            freeDouble1d(&psi0mat);
+        if (cJSON_GetObjectItem(QubitSection,"psi0")){
+            QubitArray_setPsi0(qa,readStateVector(QubitSection,"psi0","Qubit.psi0",dim));
+            // A94 (G3): cCCE and meCCE take the qubit's two levels only
+            char method[MAX_CHARARRAY_LENGTH], mode[16];
+            readMethod(root,method,mode);
+            const char* kernel = methodKernel(method);
+            if (!strcmp(kernel,"cce") || !strcmp(kernel,"mecce"))
+                warnNotUsed("Qubit.psi0","cCCE and meCCE use alpha_state and beta_state only (the qubit is projected out)");
         }else{
             QubitArray_setPsi0(qa,psiDefault);
         }
@@ -2424,7 +2596,21 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     int* nk = cJSON_ReadInt1d(selection,(char*)"max_per_order",true,NULL,order+1);
     if (nk!=NULL){
         Cluster_setNk(clus,nk);
-    }else{;} 
+        // A89: only entries 3 and up cut anything (makeHashClusterOn, standard and pcce). Entries 0-2 are never compared
+        // (1 and 2 are overwritten by the counts), and dsj, itb, dsjitb never read the list. A nonzero entry that is not
+        // applied is reported once.
+        const char* m = Cluster_getMethod(clus);
+        const bool noneApplied = !strcasecmp(m,"dsj") || !strcasecmp(m,"itb") || !strcasecmp(m,"dsjitb");
+        std::string unused;
+        for (int i=0; i<=order; ++i)
+            if (nk[i] != 0 && (i < 3 || noneApplied)) unused += (unused.empty() ? "" : ", ") + std::to_string(i);
+        if (!unused.empty() && strcmp(clusterMode,"adaptive") != 0){   // bundle refuses a nonzero entry
+            const bool one = unused.find(',') == std::string::npos;
+            const std::string why = std::string(one ? "entry " : "entries ") + unused + (one ? " is" : " are") + " ignored, "
+                                  + (noneApplied ? "this cluster.mode keeps every cluster" : "only orders 3 and up are cut");
+            warnNotUsed("cluster.selection.max_per_order",why.c_str());   // A94 (G3): one wording
+        }
+    }
     freeInt1d(&nk);
     // all element would be "0" in which we consider all pairs within rdip
 
@@ -2459,7 +2645,9 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
         }
         int sK = values[0], max_trial = values[1], max_iter = values[2];
         bool kmeans_pp   = pcce ? readStrictBool(pcce,"cluster.pcce","kmeans_pp",true) : true;
-        bool iter_detail = pcce ? readStrictBool(pcce,"cluster.pcce","print_trials",false) : false;
+        // print_trials N > 0 (A94, read with the limit in cJSON_readOptionConfig): the first N trials of rank 0
+        cJSON* printTrials = pcce ? cJSON_GetObjectItem(pcce,"print_trials") : NULL;
+        bool iter_detail = cJSON_IsNumber(printTrials) && printTrials->valuedouble > 0;
 
         Cluster_setSk(clus,sK);
         Cluster_setMax_trial(clus,max_trial);
@@ -2579,6 +2767,20 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
 
     bool pulseiter = readStrictBool(block,"pulse","per_qubit",false);
     Pulse_setPulseiter(pulse, pulseiter);
+    // A94 (user, 2026-10-16): pulse.per_qubit turns each qubit between its own two levels, the m_s of Qubit.alpha_state and
+    // beta_state {"ms": [...]}. With {"index"} or {"vector"} no level per qubit is given (A93 took a default for it).
+    if (pulseiter) {
+        cJSON* qubitBlock = untrackedItem(root,"Qubit");
+        for (const char* side : {"alpha_state", "beta_state"}) {
+            cJSON* state = untrackedItem(qubitBlock,side);
+            if (cJSON_IsObject(state) && !untrackedItem(state,"ms")) {
+                ccexRefusalPrint(stderr,"Error: pulse.per_qubit true needs Qubit.alpha_state and Qubit.beta_state as {\"ms\": "
+                                 "[m_1, m_2, ...]} (the two levels each qubit is turned between), Qubit.%s is {\"%s\"}\n",
+                                 side, untrackedItem(state,"index") ? "index" : "vector");
+                ccexRefuse();
+            }
+        }
+    }
 
     bool made = false;
 
@@ -2599,12 +2801,41 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
     char* pulsename = cJSON_ReadString(block,(char*)"name",true,(char*)"None");
     Pulse_setPulsename(pulse,pulsename);
 
+    // A94 (R1): pulse.name is one of five names, and a name that fixes the number of pulses has to agree with pulse.count
+    // (an unknown name was kept, and the count decided without a word: {"count": 1, "name": "Hahn"} ran a Hahn echo,
+    // {"count": 0, "name": "CPMG"} a Ramsey). Checked before the arrays (count + 1 rows) are allocated: WAHUHA always
+    // writes five rows (A86).
+    if (cJSON_GetObjectItem(block,"name")) {
+        static const char* const names[] = {"Ramsey", "HahnEcho", "CPMG", "WAHUHA", "Manual"};
+        const char* known = nullptr;
+        for (const char* n : names) if (!strcasecmp(pulse->pulsename, n)) known = n;
+        if (!known) {
+            ccexRefusalPrint(stderr, "Error: pulse.name must be Ramsey, HahnEcho, CPMG, WAHUHA or Manual (not \"%s\"), or left "
+                             "out: pulse.count alone gives Ramsey (0), HahnEcho (1) or CPMG (more)\n", pulse->pulsename);
+            ccexRefuse();
+        }
+        const char* needs = !strcmp(known,"Ramsey") && npulse != 0   ? "0"
+                          : !strcmp(known,"HahnEcho") && npulse != 1 ? "1"
+                          : !strcmp(known,"CPMG") && npulse <= 1     ? "2 or more"
+                          : !strcmp(known,"WAHUHA") && npulse != 4   ? "4 (the four-pulse sequence)" : nullptr;
+        if (needs) {
+            ccexRefusalPrint(stderr, "Error: pulse.name %s needs pulse.count %s (this input has %d)\n", known, needs, npulse);
+            ccexRefuse();
+        }
+    }
+    // a sequence is read only for Manual, with another name it left the arrays zero (A86)
+    cJSON* sequence_array = cJSON_GetObjectItem(block, "sequence");
+    if (sequence_array != NULL && strcasecmp(pulse->pulsename, "Manual") != 0) {
+        ccexRefusalPrint(stderr, "Error: pulse.sequence is read only with pulse.name Manual (pulse.name %s), write "
+                         "\"name\": \"Manual\" or leave the sequence out\n", pulse->pulsename);
+        ccexRefuse();
+    }
+
     Pulse_allocSequence(pulse);
     Pulse_allocAxes(pulse);
     Pulse_allocAngles(pulse);
     Pulse_allocSequenceIndices(pulse);
 
-    cJSON* sequence_array = cJSON_GetObjectItem(block, "sequence");
     if (sequence_array == NULL){
         allocateDefaultSequence(pulse);
         made = true;
@@ -2617,7 +2848,9 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
 
         int count = cJSON_GetArraySize(sequence_array);
         if (count != (pulse->npulse) + 1) {
-            throw std::runtime_error("Mismatch between pulse.sequence length and pulse.count + 1");
+            ccexRefusalPrint(stderr, "Error: pulse.sequence has %d rows, pulse.count + 1 = %d (one row per pulse and the last "
+                             "free interval)\n", count, (pulse->npulse) + 1);
+            ccexRefuse();
         }
 
         double total_frac = 0.0;
@@ -2652,25 +2885,40 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
 
     // DEER bath pulses, the block pulse.bath (adding_MECCE src/option.cpp:677-730 had them as top-level keys)
     if (cJSON* bath = readBlock(block,"bath")) {
+        // A94 (G6): spin was the S of the driven spins written again (refused when it differed), it is taken from them;
+        // alphams and betams are one key, levels
+        if (untrackedItem(bath,"spin")) {
+            ccexRefusalPrint(stderr,"Error: pulse.bath.spin was removed: the spin of the driven bath spins (pulse.bath.defect) is "
+                             "used, remove it\n%s\n",kConvertHint);
+            ccexRefuse();
+        }
+        if (untrackedItem(bath,"alphams") || untrackedItem(bath,"betams")) {
+            ccexRefusalPrint(stderr,"Error: pulse.bath.alphams and betams are now pulse.bath.levels: [alphams, betams] (default "
+                             "[0.5, -0.5])\n%s\n",kConvertHint);
+            ccexRefuse();
+        }
         for (cJSON* key = bath->child; key; key = key->next)
             if (strcmp(key->string,"count") && strcmp(key->string,"sequence") && strcmp(key->string,"defect") &&
-                strcmp(key->string,"energy_shift") && strcmp(key->string,"bandwidth") && strcmp(key->string,"spin") &&
-                strcmp(key->string,"alphams") && strcmp(key->string,"betams")){
-                ccexRefusalPrint(stderr,"Error: pulse.bath has no key \"%s\" (count, sequence, defect, energy_shift, bandwidth, spin, "
-                        "alphams, betams)\n", key->string);
+                strcmp(key->string,"energy_shift") && strcmp(key->string,"bandwidth") && strcmp(key->string,"levels")){
+                ccexRefusalPrint(stderr,"Error: pulse.bath has no key \"%s\" (count, sequence, defect, energy_shift, bandwidth, "
+                        "levels)\n", key->string);
                 ccexRefuse();
             }
         cJSON* jseq = cJSON_GetObjectItem(bath, "sequence");     // every key looked up, so the input check knows them
         cJSON* jdef = cJSON_GetObjectItem(bath, "defect");
         cJSON* jsh  = cJSON_GetObjectItem(bath, "energy_shift");
-        cJSON* jbs  = cJSON_GetObjectItem(bath, "spin");
-        cJSON* jba  = cJSON_GetObjectItem(bath, "alphams");
-        cJSON* jbb  = cJSON_GetObjectItem(bath, "betams");
+        cJSON* jlv  = cJSON_GetObjectItem(bath, "levels");
         pulse->bnpulse = cJSON_ReadInt(bath, (char*)"count", true, 0);    // type and integer checks as pulse.count
         if (pulse->bnpulse < 0) { ccexRefusalPrint(stderr, "Error: pulse.bath.count must be >= 0\n"); ccexRefuse(); }
-        if (jbs) pulse->bspin    = readFiniteNumber(jbs, "pulse.bath.spin");
-        if (jba) pulse->balphams = readFiniteNumber(jba, "pulse.bath.alphams");
-        if (jbb) pulse->bbetams  = readFiniteNumber(jbb, "pulse.bath.betams");
+        if (jlv) {
+            if (!cJSON_IsArray(jlv) || cJSON_GetArraySize(jlv) != 2) {
+                ccexRefusalPrint(stderr, "Error: pulse.bath.levels must be [m_a, m_b], the two levels the bath pulse turns "
+                                 "between\n");
+                ccexRefuse();
+            }
+            pulse->balphams = readFiniteNumber(cJSON_GetArrayItem(jlv,0), "pulse.bath.levels[0]");
+            pulse->bbetams  = readFiniteNumber(cJSON_GetArrayItem(jlv,1), "pulse.bath.levels[1]");
+        }
         // A67: the half width of the window around a tone (MHz); absent: kBathPulseBandwidthRadkHz itself, not a round trip
         if (cJSON* jbw = cJSON_GetObjectItem(bath, "bandwidth")) {
             const double mhz = readFiniteNumber(jbw, "pulse.bath.bandwidth");
@@ -2829,7 +3077,7 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         printf("\n");
         printf("    >> Read Defect Options\n\n");
         printf("      - Read values of main-key 'Defect' { species }\n");
-        printf("        Defect.species[] : [ name, n_onsite_spins, n_axis_states, coordinate_frame, ( type : single value)\n");
+        printf("        Defect.species[] : [ name, n_onsite_spins, n_axis_states, frame, ( type : single value)\n");
         printf("                    axis, types, spins, gyros, quadrupole_moments,    ( type : array )\n");
         printf("                    nuclear_positions, hyperfine, efg, zfs, detuning ]  ( type : [ axis, spname, array ] )\n\n");
     }
@@ -2888,28 +3136,24 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
 
         DefectArray_setDefect_idf_apprx(dfa,idf,apprxDefault);
 
-        bool coordinate_frame_explicit = false;
-        DefectCoordinateFrame coordinate_frame =
-            readDefectCoordinateFrame(defect,dfname,&coordinate_frame_explicit);
-        DefectArray_setDefect_idf_coordinate_frame(dfa,idf,coordinate_frame);
+        // Defect.species[].frame (coordinate_frame until A90): the frame of nuclear_positions, hyperfine, efg and zfs (with
+        // its axis); required with the rotation on (until A90 an absent one was "qubit"). A94 (G4): only for a species
+        // that writes one of them, as Qubit.intmap and hyperfine ask only where numbers have a direction (a P1 of
+        // detunings alone has none)
+        bool directional = false;
+        for (const char* key : {"nuclear_positions", "hyperfine", "efg", "zfs"})
+            directional = directional || untrackedItem(defect,key) != NULL;
+        const FrameValue frame = directional
+            ? frameOf(defect,std::string("Defect.species[") + dfname + "]","Defect.species[].frame",
+                      "its nuclear_positions, tensors and zfs axis")
+            : readFrameKey(defect,std::string("Defect.species[") + dfname + "]");
+        if (!directional && frame != FRAME_ABSENT)
+            warnNotUsed("Defect.species[].frame","a species without nuclear_positions, hyperfine, efg or zfs has no direction to "
+                        "turn");
+        DefectArray_setDefect_idf_coordinate_frame(dfa,idf,frame == FRAME_FILE ? DEFECT_COORDINATE_FRAME_FILE
+                                                                                : DEFECT_COORDINATE_FRAME_QUBIT);
 
-        cJSON* axis_item = cJSON_GetObjectItem(defect,"axis");
-        if (axis_item != NULL){
-            if (!coordinate_frame_explicit){
-                ccexRefusalPrint(stderr,"Error: Defect.species[%s].axis is present but coordinate_frame is missing\n",dfname);
-                ccexRefusalPrint(stderr,"Set coordinate_frame to \"bath\" or \"qubit\" so the axis basis is explicit.\n");
-                ccexRefuse();
-            }
-            double axis_raw[3] = {0.0,0.0,0.0};
-            double axis_normalized[3];
-            char section_label[160];
-            char axis_label[160];
-            snprintf(section_label,sizeof(section_label),"Defect.species[%s]",dfname);
-            snprintf(axis_label,sizeof(axis_label),"Defect.species[%s].axis",dfname);
-            readAxis3(defect,section_label,"axis",axis_raw,true);
-            normalizeAxisOrDie(axis_raw,axis_normalized,axis_label);
-            DefectArray_setDefect_idf_axis(dfa,idf,axis_normalized);
-        }
+        // the symmetry axis is zfs.axis of the D form (A94, G5; Defect.species[].axis before), read with the zfs
 
         ////////////////////////////////////////////////////////////////////////
         // Spin information
@@ -2940,15 +3184,14 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         cJSON_ReadDefectInfo_IntCharDoubleArray(defect,(char*)"nuclear_positions",3,&(dfa->defect[idf]->rxyzs),dfa->defect[idf]->types,navaax+1,naddspin);
 
         // Unit-aware objects are converted to the legacy internal units while parsing.
-        // Their tensor basis is explicit for the same reason as object-form zfs.
         readDefectIndexedTensorWithUnit(defect,dfa,idf,"hyperfine",&(dfa->defect[idf]->hypf),
-                                        navaax,naddspin,coordinate_frame_explicit);
+                                        navaax,naddspin);
         readDefectIndexedTensorWithUnit(defect,dfa,idf,"efg",&(dfa->defect[idf]->efg),
-                                        navaax,naddspin,coordinate_frame_explicit);
+                                        navaax,naddspin);
 
         // Object forms provide one physical tensor shared by every indexed
         // configuration. The legacy list remains per-index and is unchanged.
-        readDefectZfs(defect,dfa,idf,navaax,coordinate_frame_explicit);
+        readDefectZfs(defect,dfa,idf,navaax);
 
         // The object form adds an explicit frequency unit; the legacy array stays MHz.
         readDefectDetuning(defect,dfa,idf,navaax);
@@ -3031,18 +3274,10 @@ char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_va
     refuseWrongType(item, name, cJSON_IsString(item), "a string (a file path)");
 
     if (cJSON_IsString(item) && (item->valuestring != NULL)) {
-        if (access(item->valuestring, R_OK) == 0) {
-            return item->valuestring;
-        }else{
-            // The path is returned anyway, so an unreadable file does not stop the run --
-            // whatever the caller meant to fill from it just keeps its default. Silence
-            // here is how a qubit ends up at the cell origin and the run still "works".
-            if (rank==0){
-                fprintf(stderr,"Warning: %s : cannot read \"%s\" -- continuing with defaults\n",
-                        name, item->valuestring);
-            }
-            return item->valuestring;
-        }
+        // A94: a file the input names has to open (it was a warning, "continuing with defaults", and the readers refused
+        // it later or took a default)
+        refuseUnreadable(shownName,item->valuestring);
+        return item->valuestring;
     }else{
         if(_default){
             if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}

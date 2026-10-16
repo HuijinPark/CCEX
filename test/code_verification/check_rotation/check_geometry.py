@@ -7,11 +7,11 @@ Both logs must come from `-v` runs of the SAME system, differing only in the
 bath_coordinate_rotation section. Positions are read out of the BathArray report,
 which prints 3 decimals -- that sets the tolerances below, nothing else.
 
-R is rebuilt here from the convention (ez = q, ex = q x b, ey = ez x ex, as ROWS)
+R is rebuilt here from the convention (ez = q, ex = q x z, ey = ez x ex, as ROWS)
 rather than being hard-coded, so this is an independent check of the C++ and not a
 copy of its output.
 
-  ./check_geometry.py norot.log rot.log --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 10 20 30
+  ./check_geometry.py norot.log rot.log --qubit-axis 1 1 1 --r0 10 20 30
 """
 
 import argparse
@@ -72,17 +72,17 @@ def cross(u, v):
             u[0] * v[1] - u[1] * v[0]]
 
 
-def build_R(bath_axis, qubit_axis):
-    b, q = normalize(bath_axis), normalize(qubit_axis)
+def build_R(qubit_axis):
+    """The rows ex, ey, ez of R: ez = q, ex = normalize(q x z) with z = [0,0,1] of the bath file (the azimuth rule;
+    the input bath_axis that could change it was removed in A90), ey = ez x ex."""
+    b, q = [0.0, 0.0, 1.0], normalize(qubit_axis)
     c = cross(q, b)
-    # Collinear axes leave the azimuth of the new x undefined. The C++ accepts exactly
-    # one such case -- both axes on +z, which is the identity -- and refuses the rest;
+    # q along z leaves the azimuth of the new x undefined. The C++ accepts +z -- the identity -- and refuses -z;
     # mirror that here so the checkers agree with what they are checking.
     if math.sqrt(sum(x * x for x in c)) < 1e-12:
-        if abs(q[0]) < 1e-12 and abs(q[1]) < 1e-12 and q[2] > 0 and \
-           abs(b[0]) < 1e-12 and abs(b[1]) < 1e-12 and b[2] > 0:
+        if q[2] > 0:
             return [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        raise SystemExit("bath_axis and qubit_axis are collinear; R is undefined")
+        raise SystemExit("qubit_axis is along -z; R is undefined")
     ez = q
     ex = normalize(c)
     ey = cross(ez, ex)
@@ -102,7 +102,6 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("before")
     ap.add_argument("after")
-    ap.add_argument("--bath-axis", nargs=3, type=float, required=True)
     ap.add_argument("--qubit-axis", nargs=3, type=float, required=True)
     ap.add_argument("--r0", nargs=3, type=float, required=True)
     ap.add_argument("--expect-nspin", type=int, default=None)
@@ -167,7 +166,7 @@ def main():
           % (worst, len(a) * (len(a) - 1) // 2))
 
     # the positions themselves : r_new = r0 + R*(r_old - r0), R rebuilt here
-    R = build_R(args.bath_axis, args.qubit_axis)
+    R = build_R(args.qubit_axis)
     worst, worst_i = 0.0, -1
     for i, (x, y) in enumerate(zip(a, b)):
         exp = apply_R(R, x["xyz"], r0)

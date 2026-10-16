@@ -33,7 +33,7 @@ def prepare(work):
                                                     for r in rows))
     probes = [[i] for i in range(14)]+[[i, i+1] for i in range(0, 13, 2)]+LARGE
     base = json.loads(TEMPLATE.read_text())
-    base['configuration'].update(gyrofile=str(FIXTURE/'gyro_13C'), bathfile=[str(work/'bath')], nstate=3)   # A64
+    base['configuration'].update(gyrofile=str(FIXTURE/'gyro_13C'), bathfile=[str(work/'bath')], s_range=[1, 3])   # A64, A94
     base.update(rbath=40, rdip=40, nstep=6, pulse={'count': 1})
     base['cluster']['bundle'] = dict(base['cluster']['bundle'], max_dim=2048)   # the A65 blocks
     base['execution'] = dict(base.get('execution', {}), profile=False, backend='cpu')

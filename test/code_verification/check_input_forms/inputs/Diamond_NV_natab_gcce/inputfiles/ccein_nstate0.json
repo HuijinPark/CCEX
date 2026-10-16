@@ -4,7 +4,6 @@
     "configuration" : {
         "gyrofile"      : "./inputfiles/gyro_13C",
         "bathfile"      : ["./inputfiles/bath_Diamond_NV_natab_1"],
-        "nstate"        : 0,
         "seed"          : 1
     },
 
@@ -24,11 +23,11 @@
                 "name"    : "NV",
                 "xyz"     : [73.73895, 75.72808, 73.97033],
                 "spin"    : 1.0,
-                "gyro"    : -17608.59705,
-                "alphams" : 1,
-                "betams"  : 0
+                "gyro"    : -17608.59705
             }
         ],
+        "alpha_state" : {"ms": [1]},
+        "beta_state" : {"ms": [0]},
         "intmap" : [
             {
                 "between" : ["NV", "NV"],

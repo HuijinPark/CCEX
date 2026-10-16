@@ -1,7 +1,7 @@
 # IsotopeTable
 
 `make_isotope_table.py` writes `src/input/isotope_table.cpp`, the nuclear isotopes CCEX uses for a bath species the
-gyrofile does not name (or for every species when the input has no gyrofile; `docs/user/InputFile_General.md#gyrofile`).
+gyrofile does not name (or for every species when the input has no gyrofile; `docs/user/InputFile_General.md#tag_gyrofile`).
 The source is the EasySpin isotope database already in the repository
 (`example/tools/SpinTensorReader/spHamilReader/spin_database/isotopedata.txt`; magnetic moments from N. Stone,
 IAEA INDC(NDS)-0658, 2014); γ = g_n μ_N / ħ in rad/ms/G (CODATA 2018), 154 isotopes (mass number > 0, positive spin; the database's element rows with mass number 0 and spin -1 are left out).

@@ -1,6 +1,6 @@
 """The closed-form coherence of one nuclear spin 1/2 beside the NV, against CCEX's output.
 usage: analytic.py OUT_PREFIX --npulse 0|1 --nstep N --deltat MS [--tol 2e-10]
-With one bath spin, order 1 is exact. For NV branch m (alphams 1, betams 0) the spin precesses about
+With one bath spin, order 1 is exact. For NV branch m (alpha_state ms [1], beta_state ms [0]) the spin precesses about
 w_m = m A_z - gamma_n B z, A the point-dipole tensor H_BAR gamma_e gamma_n / r^3 (1 - 3 r r) written out here
 independently of CCEX; n_m = w_m / |w_m|. Ensemble average over the nuclear state, t the total time:
   free induction  L(t) = cos(|w0| t/2) cos(|w1| t/2) + (n0 . n1) sin(|w0| t/2) sin(|w1| t/2)

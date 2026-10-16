@@ -41,35 +41,37 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(s.steps, {"time_window": True, "rdip": False, "rbath": False, "sampling": True})
 
     def test_refusals(self):
-        bad = [{"tau": 1e-3}, {"steps": {"rdip": True}}, {"rdip_start": 200}, {"error_norm": "l2"},
-               {"tolerance": -1}, {"decay_threshold": 1.5}, {"window_margin": 0.5}, {"steps": {"time_window": 1}},
-               {"tolerance": 0.01, "sampling_tolerance": 0.02}]
+        """The runner's block and keys (A94, G19): the old driver keys and the old names of the block are refused."""
+        bad = [{"tau": 1e-3}, {"steps": {"rdip": True}}, {"tolerance": 0.01}, {"error_norm": "l2"},
+               {"decay_threshold": 0.01}, {"window_margin": 1.5}, {"time_window": {"converge": False, "value": 1.0}},
+               {"time_window": {"threshold": 0.01}}, {"time_window": {"value": 1.0, "unit": "ms"}},
+               {"time_window": {"decay_level": 1.5}}, {"time_window": {"production_factor": 0.5}},
+               {"t2_fit": {"points": "envelope"}}, {"sampling": {"number": 3}}, {"sampling": {"threshold": 2}}]
         for b in bad:
             with self.subTest(b=b), self.assertRaises(config.ConfigError):
                 config.parse_auto_convergence(b)
 
-    def test_base_input_consistency(self):
-        good = {"rdip": 300, "rbath": 288, "deltat": 1e-4, "nstep": 151}
-        config.parse_auto_convergence({}, good)
-        for drop in ("rdip", "rbath", "deltat"):
-            with self.subTest(drop=drop), self.assertRaises(config.ConfigError):
-                config.parse_auto_convergence({}, {k: v for k, v in good.items() if k != drop})
+    def test_the_block_sets_the_steps_and_values(self):
+        s = config.parse_auto_convergence({"time_window": {"value": {"value": 2, "unit": "ms"}, "decay_level": 0.02,
+                                                           "production_factor": 2.0},
+                                           "t2_fit": {"points": "all"}, "sampling": {"configurations": 5, "threshold": 0.1}})
+        self.assertEqual(s.steps, {"time_window": False, "rdip": False, "rbath": False, "sampling": False})
+        self.assertEqual((s.decay_threshold, s.window_margin, s.t2_fit_points, s.t2_se_target), (0.02, 2.0, "all", 0.1))
+        d = config.parse_auto_convergence({})
+        self.assertEqual((d.decay_threshold, d.window_margin, d.t2_fit_points, d.t2_se_target), (0.01, 1.5, "peaks", 0.05))
 
     def test_load_config(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)
-            (tmp / "ccein.json").write_text('{"rdip": 300, "rbath": 288, # comment\n "deltat": 1e-4, "nstep": 151}')
-            drv = {"base_input": "ccein.json", "auto_convergence": {"tolerance": 0.02},
-                   "bath_source": {"files": "b*"}, "state_source": {"files": "s{k}"}}
-            (tmp / "drv.json").write_text(json.dumps(drv))
-            s = config.load_config(tmp / "drv.json")
-            self.assertEqual(s.tolerance, 0.02)
-            self.assertEqual(s.base_input["rbath"], 288)
-            for broken in ({**drv, "bath_source": {}}, {**drv, "state_source": {}}, {**drv, "extra": 1},
-                           {**drv, "bath_source": {"files": "b*", "generator": "g.py"}}):
-                (tmp / "drv.json").write_text(json.dumps(broken))
-                with self.subTest(broken=broken), self.assertRaises(config.ConfigError):
-                    config.load_config(tmp / "drv.json")
+            (tmp / "in.jsonc").write_text('{"rdip": 300, "rbath": 288, // comment\n "deltat": {"value": 100, "unit": "ns"}, "nstep": 151,\n'
+                                          ' "configuration": {"bathfile": ["b{k}"], "s_range": [3, 7]},\n'
+                                          ' "auto_convergence": {"workdir": "auto", "time_window": {"decay_level": 0.02}}}')
+            s = config.load_config(tmp / "in.jsonc")
+            self.assertEqual((s.decay_threshold, s.base_input["rbath"], s.base_input["deltat"]), (0.02, 288, 1e-4))
+            self.assertEqual(config.expected_run_shape(s), (5, 151))
+            (tmp / "in.jsonc").write_text('{"rdip": 300}')
+            with self.assertRaises(config.ConfigError):
+                config.load_config(tmp / "in.jsonc")
 
 
 class TestCurves(unittest.TestCase):
@@ -215,7 +217,7 @@ class TestReviewFixes(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             write_run(Path(tmp) / "c1", t, a)
             write_run(Path(tmp) / "c2", t, b)
-            rep = analyze([str(Path(tmp) / "c1"), str(Path(tmp) / "c2")], config.parse_auto_convergence({"steps": {"time_window": False}}, None))
+            rep = analyze([str(Path(tmp) / "c1"), str(Path(tmp) / "c2")], config.parse_auto_convergence({"time_window": {"value": 1.0}}))
         s = rep["sampling"]
         self.assertEqual((s["C"], s["S"], s["states_excluded"]), (2, 2, 1))
         self.assertEqual(s["bootstrap"]["quantile"], 0.0)                # bootstrap on the same 2 + 2 states as the proxy
@@ -303,7 +305,7 @@ class TestReview20261007d(unittest.TestCase):
             t = np.linspace(0, 1, 5)
             write_run(Path(tmp) / "a", t, [np.full(5, 1e286 + 0j), np.full(5, -1e286 + 0j)])
             write_run(Path(tmp) / "b", t, [np.full(5, 0.5 + 0j), np.full(5, 0.4 + 0j)])
-            rep = analyze([str(Path(tmp) / "a"), str(Path(tmp) / "b")], config.parse_auto_convergence({"steps": {"time_window": False}}))
+            rep = analyze([str(Path(tmp) / "a"), str(Path(tmp) / "b")], config.parse_auto_convergence({"time_window": {"value": 1.0}}))
         self.assertEqual(rep["status"], "numerical-failure")
         self.assertEqual(rep["validity"]["configurations"][0]["U"], 2)
 
@@ -319,7 +321,7 @@ class TestReview20261007d(unittest.TestCase):
 
     def test_extra_states_used_for_the_within_check(self):              # R4
         with tempfile.TemporaryDirectory() as tmp:
-            rep = analyze(self.runs(tmp, extra=7), config.parse_auto_convergence({"steps": {"time_window": False}}))
+            rep = analyze(self.runs(tmp, extra=7), config.parse_auto_convergence({"time_window": {"value": 1.0}}))
         s = rep["sampling"]
         self.assertEqual((s["S"], s["states_excluded"]), (3, 7))
         self.assertIn("within_sd_mean_all_states", s)
@@ -341,10 +343,10 @@ class TestReview20261007d(unittest.TestCase):
             tmp = Path(tmp)
             for k in range(4):
                 (tmp / f"bath{k}").write_text("x")
-            (tmp / "ccein.json").write_text('{"rdip": 300, "rbath": 288, "deltat": 1e-4, "nstep": 151, "configuration": {"nstate": 30}}')
-            (tmp / "drv.json").write_text(json.dumps({"base_input": "ccein.json", "bath_source": {"files": "bath*"},
-                                                      "state_source": {"files": "s{k}"}}))
-            s = config.load_config(tmp / "drv.json")
+            (tmp / "in.json").write_text(json.dumps({"rdip": 300, "rbath": 288, "deltat": 1e-4, "nstep": 151,
+                                                     "configuration": {"bathfile": ["bath{k}"], "s_range": [1, 30]},
+                                                     "auto_convergence": {"workdir": "auto"}}))
+            s = config.load_config(tmp / "in.json")
             self.assertEqual(config.source_capacity(s), 4)
             self.assertEqual(config.expected_run_shape(s), (30, 151))
 
@@ -395,7 +397,7 @@ class TestReview20261007e(unittest.TestCase):
             t = np.linspace(0, 1, 3)
             write_run(Path(tmp) / "a", t, [np.full(3, 0.5 + 0j), np.full(3, 0.5 + 0j), np.full(3, 1e286 + 0j)])
             write_run(Path(tmp) / "b", t, [np.full(3, 0.4 + 0j), np.full(3, 0.4 + 0j)])
-            rep = analyze([str(Path(tmp) / "a"), str(Path(tmp) / "b")], config.parse_auto_convergence({"steps": {"time_window": False}}))
+            rep = analyze([str(Path(tmp) / "a"), str(Path(tmp) / "b")], config.parse_auto_convergence({"time_window": {"value": 1.0}}))
         self.assertEqual((rep["status"], rep["failed_stage"]), ("numerical-failure", "sampling"))
 
     def test_window_overflow_with_sampling_off(self):                   # F4, F9
@@ -403,12 +405,12 @@ class TestReview20261007e(unittest.TestCase):
             t = np.linspace(0, 1, 3)
             write_run(Path(tmp) / "a", t, [np.full(3, 1e286 + 0j), np.full(3, 1e286 + 0j)])
             write_run(Path(tmp) / "b", t, [np.full(3, -1e286 + 0j), np.full(3, -1e286 + 0j)])
-            rep = analyze([str(Path(tmp) / "a"), str(Path(tmp) / "b")], config.parse_auto_convergence({"steps": {"sampling": False}}))
+            rep = analyze([str(Path(tmp) / "a"), str(Path(tmp) / "b")], config.parse_auto_convergence({"sampling": {"configurations": 2}}))
         self.assertEqual((rep["status"], rep["failed_stage"]), ("numerical-failure", "time_window"))
 
     def test_sampling_off_listed_as_unmeasured(self):                   # F9
         with tempfile.TemporaryDirectory() as tmp:
-            rep = analyze(self.make(tmp, [3, 3]), config.parse_auto_convergence({"steps": {"sampling": False}}))
+            rep = analyze(self.make(tmp, [3, 3]), config.parse_auto_convergence({"sampling": {"configurations": 2}}))
         self.assertIn("sampling (fixed, not assessed)", rep["total"]["unmeasured"])
 
     def test_window_uses_the_balanced_sample(self):                     # F6
@@ -416,8 +418,9 @@ class TestReview20261007e(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             write_run(Path(tmp) / "a", t, [np.array([1, 0, 0], complex)] * 2)
             write_run(Path(tmp) / "b", t, [np.array([1, 0, 0], complex)] * 2 + [np.array([1, 1, 1], complex)])
-            rep = analyze([str(Path(tmp) / "a"), str(Path(tmp) / "b")],
-                          config.parse_auto_convergence({"window_method": "envelope"}))   # 3 points: nothing to fit
+            st = config.parse_auto_convergence({})
+            st.window_method = "envelope"                                # 3 points: nothing to fit (an internal setting)
+            rep = analyze([str(Path(tmp) / "a"), str(Path(tmp) / "b")], st)
         self.assertEqual(rep["time_window"]["status"], "resolved")       # the extra [1,1,1] state does not move the decision
 
     def test_allocation_boundaries(self):                                # F3, F5
@@ -439,16 +442,15 @@ class TestReview20261007e(unittest.TestCase):
         self.assertLessEqual(max(r["S"] for r in capped["table"]), 30)
         self.assertLessEqual(capped["best"]["S"], 30)
 
-    def test_capacity_counts_existing_files_absolute_globs(self):       # F5
+    def test_capacity_counts_existing_bath_files(self):                # F5; A94: the input's configuration.bathfile
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)
-            (tmp / "b1").write_text("x"); (tmp / "b2").write_text("x"); (tmp / "bdir").mkdir()
-            s = config.parse_auto_convergence({})
-            s.root = tmp
-            s.bath_source = {"files": str(tmp / "b*")}
+            (tmp / "b1").write_text("x"); (tmp / "b2").write_text("x"); (tmp / "b3").mkdir()
+            s = config.parse_auto_convergence({}, {"configuration": {"bathfile": ["b{k}"]}}, tmp)
             self.assertEqual(config.source_capacity(s), 2)
-            s.bath_source = {"files": ["b1", "./b1", "missing"]}
+            s = config.parse_auto_convergence({}, {"configuration": {"bathfile": [str(tmp / "b{k}")], "k_range": [2, 5]}}, tmp)
             self.assertEqual(config.source_capacity(s), 1)
+            self.assertIsNone(config.source_capacity(config.parse_auto_convergence({})))
 
     def test_cli_with_manifest(self):
         with tempfile.TemporaryDirectory() as tmp:

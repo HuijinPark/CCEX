@@ -300,12 +300,22 @@ if __name__ == "__main__":
         print(f"\t\ttime unit : {args.unit_conversion}")
         print(f"\t\tFitting with space : {args.fit_space} , initial_power : {args.fit_initp}")
         print("\t\tFormat : variable in order, T2, power\n")
-        if len(args.variable_names) == 1:
-            Dsp.do_fitting_coherence_complex(space=args.fit_space, init_fitPower=args.fit_initp)
+        if len(args.variable_names) == 1 or args.ensemble_average:
+            if args.ensemble_average:
+                # A89: with -ea the fit is of the average alone, one row whose value is N, the number of curves
+                # averaged (as a separate call on <-fo>_conv<N> with -v N). Fitting every entry of data_dict gave
+                # one T2 more than there are values ("avg" is added to it), and the rows ran past the values (IndexError).
+                read = Dsp.data_dict
+                Dsp.data_dict = {"avg": read["avg"]}
+                Dsp.do_fitting_coherence_complex(space=args.fit_space, init_fitPower=args.fit_initp)
+                Dsp.data_dict = read
+                var = np.asarray([ens_count]).astype(float)
+            else:
+                Dsp.do_fitting_coherence_complex(space=args.fit_space, init_fitPower=args.fit_initp)
+                var = np.asarray(args.variable_values[0]).astype(float)
 
             t2s = list(Dsp.t2_dict.values())
             ps  = list(Dsp.power_dict.values())
-            var = np.asarray(args.variable_values[0]).astype(float)
 
             # Check none
             t2s_new = []

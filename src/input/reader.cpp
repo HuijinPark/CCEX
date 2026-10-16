@@ -16,67 +16,35 @@
 
 static int addIsotopeSpecies(BathArray* ba, const char* name);   // below readGyrofile
 
-void readQubitfile(QubitArray* qa, Config* cnf){
-
-    char* fname = Config_getQubitfile(cnf);
-    double* xyz = QubitArray_getQubit_i_xyz(qa,0); // only add the info to 0-th qubit
-
-    // file open
-    FILE* data;
-
-    data    =   fopen(fname,"r");
-
-    // A qubitfile the input names has to be read: a typo in its path used to fall through to "already set" and run
-    // the qubit at (0,0,0) (review 4dd5fd R1). Only without the key (an empty name) does the Qubit block stand alone.
-    if (data == NULL && fname != NULL && fname[0] != '\0'){
-        ccexRefusalPrint(stderr,"Error(readQubitFile): cannot open the qubit file '%s': %s\n",fname,strerror(errno));
+// A94 (G12): the position of a Qubit.qubit entry written as {"file": ...} (the Qubit.file form until A94): the first line
+// of the file that holds three numbers, x y z in Angstrom, as readQubitfile read it
+void readQubitPositionFile(const char* fname, double xyz[3], int iqubit){
+    FILE* data = fopen(fname,"r");
+    if (data == NULL){
+        ccexRefusalPrint(stderr,"Error: Qubit.qubit[%d].file: cannot read \"%s\" (%s)\n",iqubit,fname,strerror(errno));
         ccexRefuse();
     }
-    if (data == NULL && QubitArray_getNqubit(qa) == 0){
-        ccexRefusalPerror("Error(readQubitFile): Cannot open the qubit file\n");
-        ccexRefusalPrint(stdout,"Current WRONG qubitfile name : %s\n",fname);
-        ccexRefusalPrint(stdout,"Check if the qubit file exists\n");
-        ccexRefuse();
-    }else if (data == NULL && QubitArray_getNqubit(qa) != 0){
-        if (rank==0){printMessage("QubitArray already set with option ...\n");}
-        return;
-    }else{
-        if (rank==0){
-            char message[MAX_FILEPATH];
-            snprintf(message,sizeof message,"Read QubitFile : %s ... ",fname);
-            printMessage(message);
-        }
-        
+    if (rank==0 && verbosity){
+        char message[MAX_FILEPATH];
+        snprintf(message,sizeof message,"Read QubitFile : %s ... ",fname);
+        printMessage(message);
     }
-
-    // read xyz from QubitFile
     size_t max = 1000;
     char lline[max];
-    int count = 0;
-    while(!feof(data)){
-        fgets(lline, max, data);
-        count = sscanf(lline, "%lf %lf %lf\n", &(xyz[0]), &(xyz[1]), &(xyz[2]));
-        if (count == 3){
+    while(fgets(lline, max, data)){
+        if (sscanf(lline, "%lf %lf %lf\n", &(xyz[0]), &(xyz[1]), &(xyz[2])) == 3){
             fclose(data);
-
-            if (rank==0){
-                printStructElementDouble1d("  Qubit[0].xyz ", xyz, 3);
-                printf("\n");
-            }
             return;
         }
     }
     fclose(data);
-
-    // if no data
-    ccexRefusalPerror("Error(readQubitFile): Cannot read the qubit file\n");
-    ccexRefusalPrint(stdout,"Current WRONG qubitfile name : %s\n",fname);
-    ccexRefusalPrint(stdout,"Check if your qubit file has 'xyz' values in a right form : x y z\n");
+    ccexRefusalPrint(stderr,"Error: Qubit.qubit[%d].file \"%s\" has no line \"x y z\" (the qubit position, Angstrom)\n",
+                     iqubit,fname);
     ccexRefuse();
 }
 
 /**
- * @brief Stops when two qubits share a name, since reference_qubit resolves by exact name
+ * @brief Stops when two qubits share a name, since Qubit.intmap "between" resolves by exact name
 */
 static void checkQubitNamesUnique(QubitArray* qa){
 
@@ -86,7 +54,7 @@ static void checkQubitNamesUnique(QubitArray* qa){
             if (strcmp(QubitArray_getQubit_i_name(qa,i),QubitArray_getQubit_i_name(qa,j)) == 0){
                 ccexRefusalPrint(stderr,"Error(frame.rotation): qubit[%d] and qubit[%d] share the name \"%s\"\n",
                         i,j,QubitArray_getQubit_i_name(qa,i));
-                ccexRefusalPrint(stderr,"reference_qubit resolves by exact name, so the names must be unique.\n");
+                ccexRefusalPrint(stderr,"Qubit.intmap \"between\" resolves by exact name, so the names must be unique.\n");
                 ccexRefuse();
             }
         }
@@ -94,40 +62,10 @@ static void checkQubitNamesUnique(QubitArray* qa){
 }
 
 /**
- * @brief Index of the qubit the rotation is taken about
- * @details "reference_qubit" names it; without the key the first qubit is used, which
- *          is unambiguous for as long as nqubit is restricted to 1. The lookup is by
- *          exact name, so duplicate names are refused first -- otherwise a name would
- *          silently resolve to whichever qubit happened to be listed earlier.
- *
- *          Written to survive the nqubit=1 restriction being lifted: nothing here
- *          assumes there is only one qubit.
-*/
-static int resolveReferenceQubit(QubitArray* qa, Config* cnf){
-
-    int nqubit = QubitArray_getNqubit(qa);
-    checkQubitNamesUnique(qa);
-
-    char* refname = Config_getRot_reference_qubit(cnf);
-    if (refname[0] == '\0'){ return 0; } // not given : the first qubit
-
-    int iref = QubitArray_getQubitIdx_fromName(qa,refname);
-    if (iref < 0){
-        ccexRefusalPrint(stderr,"Error(frame.rotation): reference_qubit \"%s\" is not one of the qubits\n",refname);
-        ccexRefusalPrint(stderr,"Defined qubit names are :");
-        for (int i=0; i<nqubit; i++){ ccexRefusalPrint(stderr," \"%s\"",QubitArray_getQubit_i_name(qa,i)); }
-        ccexRefusalPrint(stderr,"\n");
-        ccexRefusalPrint(stderr,"A single qubit given through \"Qubit.file\" is named \"q0\" by default.\n");
-        ccexRefuse();
-    }
-    return iref;
-}
-
-/**
  * @brief Check the frame.rotation input against the QubitArray
  * @details PURE VALIDATION. It opens nothing, reads no file and changes no state; it
  *          only compares what the input file and the command line have already produced.
- *          Called from main once every option source is in but before readQubitfile,
+ *          Called from main once every option source is in,
  *          readBathfiles, readHftensorfile and readQdtensorfile -- so an unsupported
  *          combination stops the run before a single tensor file is opened.
  *
@@ -157,38 +95,10 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
 
     checkQubitNamesUnique(qa);
 
-    ////////////////////////////////////////////////////////////////////////
-    // Single qubit : everything below is optional, exactly as before
-    ////////////////////////////////////////////////////////////////////////
+    // A90: the rotation is about the first qubit (reference_qubit and qubit_position_frame were removed), and every
+    // Qubit.intmap entry has stated its frame where it was read (option.cpp), so a single qubit has nothing more to check.
     if (nqubit == 1){
-        // reference_qubit and qubit_position_frame may both be omitted -- there is one
-        // qubit to rotate about and one frame it can be in. An explicit reference_qubit
-        // is still resolved (and still has to match) when the rotation runs.
         return;
-    }
-
-    ////////////////////////////////////////////////////////////////////////
-    // Several qubits : nothing may be left to a default
-    ////////////////////////////////////////////////////////////////////////
-    if (Config_getRot_reference_qubit(cnf)[0] == '\0'){
-        ccexRefusalPrint(stderr,"Error(frame.rotation): nqubit = %d, so reference_qubit is required\n",nqubit);
-        ccexRefusalPrint(stderr,"It names the qubit the rotation is taken about, and with more than one qubit\n");
-        ccexRefusalPrint(stderr,"there is no sensible default. Defined qubit names are :");
-        for (int i=0; i<nqubit; i++){ ccexRefusalPrint(stderr," \"%s\"",QubitArray_getQubit_i_name(qa,i)); }
-        ccexRefusalPrint(stderr,"\n");
-        ccexRefuse();
-    }
-
-    // Resolves by exact name and is fatal if it does not match; the index is discarded
-    // here because this function only validates.
-    (void)resolveReferenceQubit(qa,cnf);
-
-    if (Config_getRot_qubit_position_frame(cnf)[0] == '\0'){
-        ccexRefusalPrint(stderr,"Error(frame.rotation): nqubit = %d, so qubit_position_frame is required\n",nqubit);
-        ccexRefusalPrint(stderr,"State the frame every Qubit.xyz is written in. The only supported value is\n");
-        ccexRefusalPrint(stderr,"\"bath\": the same Cartesian basis and the same origin as the bath files, so that\n");
-        ccexRefusalPrint(stderr,"one rotation moves every qubit and every bath spin together.\n");
-        ccexRefuse();
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -208,24 +118,6 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
         ccexRefusalPrint(stderr,"readQdtensorfile already refuses more than one qubit with a quadrupole tensor file,\n");
         ccexRefusalPrint(stderr,"for the same reason. Use quadrupole \"off\", or run one qubit at a time.\n");
         ccexRefuse();
-    }
-
-    ////////////////////////////////////////////////////////////////////////
-    // Every explicit intmap tensor has to say which frame it is in
-    ////////////////////////////////////////////////////////////////////////
-    for (int i=0; i<nqubit; i++){
-        for (int j=i; j<nqubit; j++){
-            if (QubitArray_getIntmap_i_j_frame(qa,i,j) != INTMAP_EXPLICIT_UNSPECIFIED){ continue; }
-            ccexRefusalPrint(stderr,"Error(frame.rotation): the intmap tensor between \"%s\" and \"%s\"\n",
-                    QubitArray_getQubit_i_name(qa,i),QubitArray_getQubit_i_name(qa,j));
-            ccexRefusalPrint(stderr,"has no \"tensor_frame\", and with nqubit = %d it cannot be guessed.\n",nqubit);
-            ccexRefusalPrint(stderr,"  \"bath\"  : components are in the original bath Cartesian basis, and are\n");
-            ccexRefusalPrint(stderr,"            transformed as R*T*R^T\n");
-            ccexRefusalPrint(stderr,"  \"qubit\" : components are already in the common computational basis --\n");
-            ccexRefusalPrint(stderr,"            reference-qubit-aligned, NOT an individual local frame -- and\n");
-            ccexRefusalPrint(stderr,"            are left as written\n");
-            ccexRefuse();
-        }
     }
 }
 
@@ -457,13 +349,12 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
 /**
  * @brief Print the whole coordinate frame, including every qubit, once per run
  * @details Wraps the pure-geometry report in utilities.cpp and adds what only the
- *          QubitArray can say: which qubit the rotation was taken about, where every
+ *          QubitArray can say: where every
  *          qubit sits in each frame, and how the interaction tensors were handled.
  * @param qa   the qubits, already transformed to the computational frame
  * @param cnf  the run's settings (axes, frames, field)
  * @param R    the rotation, original frame -> computational frame
  * @param r0   the point held fixed, in the original frame
- * @param iref index of the reference qubit the rotation was taken about
  * @param qsrc qubit positions BEFORE the rotation; the QubitArray already holds the
  *             transformed ones by the time this runs
  * @param defect_axis_reference name of the recorded reference axis, or NULL if none
@@ -472,32 +363,22 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
  * @param nprov        count of intmap tensors by IntmapProvenance (five kinds)
 */
 static void reportCoordinateFrame(QubitArray* qa, Config* cnf, const double R[3][3],
-                                  const double r0[3], int iref, double** qsrc,
+                                  const double r0[3], double** qsrc,
                                   const char* defect_axis_reference,
                                   int nint_rotated, int nint_kept, const int nprov[5]){
 
     int nqubit = QubitArray_getNqubit(qa);
 
-    reportQubitAlignedRotation(Config_getRot_bath_axis(cnf),Config_getRot_qubit_axis(cnf),
-                               R,r0,Config_getBfield(cnf),defect_axis_reference);
+    reportQubitAlignedRotation(Config_getRot_qubit_axis(cnf),R,r0,Config_getBfield(cnf),defect_axis_reference);
 
-    char* posframe = Config_getRot_qubit_position_frame(cnf);
-    printf("      %-32s : %s\n","Qubit position frame",posframe[0] ? posframe : "bath (default)");
-    printf("      %-32s  all Qubit.xyz values use the same Cartesian basis and\n","Meaning:");
-    printf("      %-32s  origin as the bath files\n","");
-    printf("      %-32s  the physical axis of reference_qubit in the source frame\n","Qubit axis:");
-    printf("      %-32s  common reference-qubit-aligned computational frame,\n","tensor_frame = \"qubit\":");
-    printf("      %-32s  not an individual local frame\n","");
-    printf("\n");
-    printf("      %-32s : \"%s\"  (index %d of %d)\n","Reference qubit",
-           QubitArray_getQubit_i_name(qa,iref),iref,nqubit);
+    printf("      %-32s : \"%s\"  (the first of %d)\n","Rotation origin, qubit",QubitArray_getQubit_i_name(qa,0),nqubit);
     printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","r0, source frame",r0[0],r0[1],r0[2]);
     printf("\n");
 
     for (int iq=0; iq<nqubit; iq++){
         double* now = QubitArray_getQubit_i_xyz(qa,iq);
         printf("      qubit[%d] \"%s\"%s\n",iq,QubitArray_getQubit_i_name(qa,iq),
-               (iq==iref) ? "   (reference)" : "");
+               (iq==0) ? "   (origin)" : "");
         printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","  source frame",
                qsrc[iq][0],qsrc[iq][1],qsrc[iq][2]);
         printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","  computational frame",
@@ -509,8 +390,8 @@ static void reportCoordinateFrame(QubitArray* qa, Config* cnf, const double R[3]
            "Qubit intmap tensors",nint_rotated,nint_kept);
     printf("      %-32s : %d default-zero, %d auto (source geometry),\n",
            "  by provenance",nprov[INTMAP_DEFAULT_ZERO],nprov[INTMAP_AUTO_SOURCE_GEOMETRY]);
-    printf("      %-32s  %d explicit bath, %d explicit qubit, %d explicit unspecified\n","",
-           nprov[INTMAP_EXPLICIT_BATH],nprov[INTMAP_EXPLICIT_QUBIT],nprov[INTMAP_EXPLICIT_UNSPECIFIED]);
+    printf("      %-32s  %d explicit file, %d explicit qubit, %d explicit unspecified\n","",
+           nprov[INTMAP_EXPLICIT_FILE],nprov[INTMAP_EXPLICIT_QUBIT],nprov[INTMAP_EXPLICIT_UNSPECIFIED]);
     printf("\n");
 }
 
@@ -523,14 +404,14 @@ static void reportCoordinateFrame(QubitArray* qa, Config* cnf, const double R[3]
  *          that are still in the bath frame are transformed in the same pass, so
  *          positions and the tensors beside them never disagree.
  *
- *          Tensor COMPONENTS are not all in one frame beforehand: hf_tensor_frame and
- *          qd_tensor_frame say which basis the tensor FILES use, and a point-dipole
- *          tensor CCEX computed itself is in the bath frame whatever they say. This
- *          step normalizes them, transforming the bath-frame ones and leaving the
+ *          Tensor COMPONENTS are not all in one frame beforehand: hamiltonian.common.hyperfine.frame and
+ *          quadrupole.frame say which basis the tensor FILES use, and a point-dipole
+ *          tensor CCEX computed itself is in the file frame whatever they say. This
+ *          step normalizes them, transforming the file-frame ones and leaving the
  *          qubit-frame ones alone. hypf_bathframe is what tells the two apart.
  *
- *          Defect entries carry their own coordinate_frame. Their axis and rxyzs are
- *          vectors, while hypf/efg/zfs are rank-2 tensors; bath-frame entries receive
+ *          Defect species carry their own frame. Their axis and rxyzs are
+ *          vectors, while hypf/efg/zfs are rank-2 tensors; "file" species receive
  *          the same R here before Defect construction. Scalar detuning does not move.
  *
  *          The tensor-file lookups happen before this, against un-moved coordinates,
@@ -541,7 +422,7 @@ static void reportCoordinateFrame(QubitArray* qa, Config* cnf, const double R[3]
  *          along the computational z axis.
  *
  *          rbath / rbathcut selection happens earlier, in the source frame, which is
- *          equivalent: the rotation is taken about the reference qubit and an
+ *          equivalent: the rotation is taken about the first qubit and an
  *          orthogonal transformation about that point leaves every distance to it
  *          unchanged. mindist is recomputed here anyway, so the value stored on each
  *          spin describes the coordinates actually stored next to it.
@@ -554,15 +435,15 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     if (!Config_getRot_enabled(cnf)){ return; }
 
     double R[3][3];
-    buildQubitAlignedRotation(Config_getRot_bath_axis(cnf),Config_getRot_qubit_axis(cnf),R);
+    buildQubitAlignedRotation(Config_getRot_qubit_axis(cnf),R);
 
-    int iref = resolveReferenceQubit(qa,cnf);
     int nqubit = QubitArray_getNqubit(qa);
 
-    // COPY the origin before anything moves: r0 aliases Qubit[iref].xyz otherwise, and
+    // The origin is the first qubit (A90; reference_qubit chose it until then, a translation that changed no result).
+    // COPY it before anything moves: r0 aliases Qubit[0].xyz otherwise, and
     // the first rotateAboutPoint would rewrite the very point it rotates about.
     double r0[3];
-    copyDouble1d(r0,QubitArray_getQubit_i_xyz(qa,iref),3);
+    copyDouble1d(r0,QubitArray_getQubit_i_xyz(qa,0),3);
 
     // Kept for the report, which shows every qubit in both frames.
     double** qsrc = allocDouble2d(nqubit,3);
@@ -571,7 +452,7 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     }
 
     // Qubits first, bath second. mindist is the distance to the NEAREST qubit, so it can
-    // only be recomputed once every qubit has moved. The reference qubit has r_old = r0
+    // only be recomputed once every qubit has moved. The first qubit has r_old = r0
     // and therefore does not move at all.
     for (int iq=0; iq<nqubit; iq++){
         rotateAboutPoint(QubitArray_getQubit_i_xyz(qa,iq),R,r0);
@@ -581,7 +462,7 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     // Which stored tensors are in the bath frame and therefore have to move with it.
     //
     // For the hyperfine tensors this is decided PER SPIN, not per run, because a single
-    // run can hold both kinds. hf_tensor_frame describes only what came out of the
+    // run can hold both kinds. hyperfine.frame describes only what came out of the
     // tensor file; anything readHftensorfile computed itself -- a point-dipole tensor,
     // whether as the whole answer (readmode 0), as the anisotropic part next to an
     // isotropic Fermi contact (readmode 1), or as the fallback for a spin the file did
@@ -593,9 +474,9 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     //
     // The quadrupole side stays a single flag: readQdtensorfile has no computed-here
     // fallback to distinguish, and qd_readmode = 0 leaves every quad at zero.
-    bool hf_file_is_bathframe = (strcasecmp(Config_getRot_hf_tensor_frame(cnf),"bath") == 0);
+    bool hf_file_is_bathframe = (strcasecmp(Config_getHf_frame(cnf),"file") == 0);
     bool rotate_qd = (Config_getQd_readmode(cnf) == 0)
-                  || (strcasecmp(Config_getRot_qd_tensor_frame(cnf),"bath") == 0);
+                  || (strcasecmp(Config_getQd_frame(cnf),"file") == 0);
 
     if (hypf_bathframe == NULL){
         ccexRefusalPrint(stderr,"Error(frame.rotation): the hyperfine provenance is missing.\n");
@@ -609,7 +490,7 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     // Decided per entry from its recorded provenance, never from what kind of tensor it
     // is: a self/ZFS tensor and a pair tensor are both 3x3 and both can be given in
     // either frame. A qubit whose crystallographic orientation differs from the
-    // reference qubit is expressed by ITS OWN ZFS tensor, transformed by the same global
+    // first qubit is expressed by ITS OWN ZFS tensor, transformed by the same global
     // R as everything else; off-diagonal elements surviving that is normal and correct.
     int nint_rotated = 0, nint_kept = 0;
     int nprov[5] = {0,0,0,0,0};
@@ -624,19 +505,13 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
             switch (frame){
                 case INTMAP_DEFAULT_ZERO:         rotate_this = false; break; // zero either way
                 case INTMAP_AUTO_SOURCE_GEOMETRY: rotate_this = true;  break;
-                case INTMAP_EXPLICIT_BATH:        rotate_this = true;  break;
+                case INTMAP_EXPLICIT_FILE:        rotate_this = true;  break;
                 case INTMAP_EXPLICIT_QUBIT:       rotate_this = false; break;
                 case INTMAP_EXPLICIT_UNSPECIFIED:
-                    // validateCoordinateFrameRotationInputs makes this unreachable for
-                    // nqubit > 1. At nqubit == 1 it is the legacy "qzfs" case, which was
-                    // never rotated and must keep not being rotated.
-                    if (nqubit > 1){
-                        ccexRefusalPrint(stderr,"Error(frame.rotation): intmap[%d][%d] has no tensor_frame\n",i,j);
-                        ccexRefusalPrint(stderr,"and nqubit = %d. This should have been caught before any file was read.\n",nqubit);
-                        ccexRefuse();
-                    }
-                    rotate_this = false;
-                    break;
+                    // The reader refuses an explicit tensor without a frame while the rotation is on (A90).
+                    ccexRefusalPrint(stderr,"Error(frame.rotation): intmap[%d][%d] has no frame\n",i,j);
+                    ccexRefusalPrint(stderr,"This should have been caught when the input was read.\n");
+                    ccexRefuse();
                 default:
                     ccexRefusalPrint(stderr,"Error(frame.rotation): intmap[%d][%d] has an unusable\n",i,j);
                     ccexRefusalPrint(stderr,"provenance (state %d).\n",(int)frame);
@@ -655,16 +530,15 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     int ndefect_rotated = DefectArray_applyCoordinateFrameRotation(dfa,R);
 
     if (rank==0){
-        const char* defaxis =
-            (Config_getDefect_axis_reference(cnf) == DEFECT_AXIS_REFERENCE_QUBIT_AXIS) ? "qubit_axis" : NULL;
+        // A94 (G24): the reference of the Defect axis (defect_axis_reference) was removed in A65, so none is named
         logAlignBegin();   // A76: the ':' of each table in one column, up to the tensors below
-        reportCoordinateFrame(qa,cnf,R,r0,iref,qsrc,defaxis,nint_rotated,nint_kept,nprov);
-        printf("      %-28s : %d transformed from bath to qubit frame\n",
+        reportCoordinateFrame(qa,cnf,R,r0,qsrc,NULL,nint_rotated,nint_kept,nprov);
+        printf("      %-28s : %d transformed from file to qubit frame\n",
                "Defect templates",ndefect_rotated);
         for (int idf=0; idf<DefectArray_getNdefect(dfa); idf++){
             if (DefectArray_getDefect_idf_axis_set(dfa,idf)){
                 double* axis = DefectArray_getDefect_idf_axis(dfa,idf);
-                printf("      Defect[%s].axis, calc frame : [ %12.8lf, %12.8lf, %12.8lf ]\n",
+                printf("      Defect[%s].zfs.axis, calc frame : [ %12.8lf, %12.8lf, %12.8lf ]\n",
                        DefectArray_getDefect_idf_dfname(dfa,idf),axis[0],axis[1],axis[2]);
             }
         }
@@ -715,7 +589,7 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
         printf("      %-28s : %d transformed as R*T*R^T, %d left as written\n",
                "hyperfine tensors",nhf_rotated,nhf_kept);
         printf("      %-28s : %s\n","quadrupole tensors",
-               rotate_qd ? "transformed as R*T*R^T" : "left as written (qd_tensor_frame = qubit)");
+               rotate_qd ? "transformed as R*T*R^T" : "left as written (quadrupole.frame = qubit)");
         printf("\n");
 
         // readHftensorfile and readQdtensorfile each print their tensors when they finish,
@@ -731,37 +605,34 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     }
 }
 
-// names[j], with the state number appended when state > 0
+// names[j] of state `state` (> 0: {s} in the name, or appended, A94 G14), or names[j] itself (state 0: an axis file)
 static std::string perBathFileName(char** names, int j, int state){
-    char fname[MAX_FILEPATH];
-    if (state > 0) snprintf(fname,sizeof fname,"%s%d",names[j],state);
-    else snprintf(fname,sizeof fname,"%s",names[j]);
-    return fname;
+    return state > 0 ? stateFileName(names[j],state) : std::string(names[j]);
 }
-// A64: the per-bath-file files of one kind - bath states, defect axes, defect states - opened together: names[j] (with the
-// state number appended when state > 0) belongs to bath file j; "" is a bath file without such a file (nullptr here: its
-// spins are drawn from the seed, as without the key). A73: a name that does not open is the same - nullptr, its bath
-// file's spins drawn from the seed, the name added to *failed (", "-separated) for the caller's warning - as a single
-// missing file always was (warn, draw from the seed); it used to discard the files of the other bath files too. False
-// when names is NULL (the key is absent) or no file opens (every name "" or missing): the caller draws the whole bath.
-static bool openPerBathFile(Config* cnf, char** names, int state, std::vector<FILE*>* files, std::string* failed){
-    files->clear();
-    failed->clear();
-    if (!names){ *failed = "(null)"; return false; }
-    bool opened = false;
+// A64: the per-bath-file files of one kind - bath states, defect axes, defect states - one name per bath file, "" for a
+// bath file without such a file. The spins are drawn from the seed when the key is absent (names NULL) or a bath file has
+// "", for the whole bath as before (the files then overwrite their bath files' spins), so a run draws the same numbers
+// as before A94. A94: a name that does not open is refused (option.cpp checks every one before the run; this is the
+// last guard). Until A94 it was a warning and that bath file's spins were drawn from the seed.
+static bool drawsFromSeed(Config* cnf, char** names){
+    if (!names) return true;
+    for (int j = 0; j < Config_getNbathfiles(cnf); j++) if (names[j][0] == '\0') return true;
+    return false;
+}
+static std::vector<FILE*> openPerBathFiles(Config* cnf, char** names, int state, const char* key){
+    std::vector<FILE*> files;
+    if (!names) return files;
     for (int j = 0; j < Config_getNbathfiles(cnf); j++){
-        if (names[j][0] == '\0'){ files->push_back(nullptr); continue; }
+        if (names[j][0] == '\0'){ files.push_back(nullptr); continue; }
         const std::string fname = perBathFileName(names,j,state);
         FILE* data = fopen(fname.c_str(),"r");
-        if (!data) *failed += std::string(failed->empty() ? "" : ", ") + fname;
-        opened = opened || data;
-        files->push_back(data);
+        if (!data){
+            ccexRefusalPrint(stderr,"Error: configuration.%s[%d]: cannot read \"%s\" (%s)\n",key,j,fname.c_str(),strerror(errno));
+            ccexRefuse();
+        }
+        files.push_back(data);
     }
-    if (!opened){
-        files->clear();
-        if (failed->empty()) *failed = "\"\" for every bath file";
-    }
-    return opened;
+    return files;
 }
 
 void setBathStates(BathArray* ba, Config* cnf, int i){
@@ -769,8 +640,8 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
     /**
      * @param ba : BathArray
      * @param cnf : Config
-     * @param i : index of the state file ( 1 <= i <= nstate )
-     * @details 
+     * @param i : the state ( configuration.s_range first <= i <= last )
+     * @details
      *  If i is zero, this calculation is for the ensemble approach
      *  Therefore, the bath states shouldn't be set
     */
@@ -788,27 +659,20 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
     char message[MAX_FILEPATH];
 
     // Read the state files: one per bath file (A64), each of the lines of its bath file
-    std::vector<FILE*> files;
-    std::string failed;
-    if(!openPerBathFile(cnf,Config_getStatefile(cnf),i,&files,&failed)){
-
+    char** names = Config_getStatefile(cnf);
+    if (drawsFromSeed(cnf,names)){
         if (rank==0){
-            snprintf(message,sizeof message,"Warning(readStateFile): Cannot open the state file (%s)",failed.c_str()); printMessage(message);
-            snprintf(message,sizeof message,"The bath state is randomly generated\n"); printMessage(message);
+            snprintf(message,sizeof message,names ? "The bath states of the bath files with \"\" in configuration.bath_state_file "
+                                                    "are randomly generated" : "The bath state is randomly generated\n");
+            printMessage(message);
         }
         BathArray_setBathStatesRandom(ba);
-        return;
-
     }
-    if (std::find(files.begin(),files.end(),nullptr) != files.end()){   // "" or not opened: these bath files' states from the seed
-        if (rank==0 && !failed.empty()){ snprintf(message,sizeof message,"Warning(readStateFile): Cannot open the state file (%s)",failed.c_str()); printMessage(message); }
-        if (rank==0){ snprintf(message,sizeof message,"The bath states of the bath files without a state file (\"\" or not opened) are randomly generated"); printMessage(message); }
-        BathArray_setBathStatesRandom(ba);
-    }
+    const std::vector<FILE*> files = openPerBathFiles(cnf,names,i,"bath_state_file");
     for (int j = 0; j < (int)files.size(); j++){
         FILE* data = files[j];
         if (!data) continue;
-        const std::string fnameText = perBathFileName(Config_getStatefile(cnf),j,i);
+        const std::string fnameText = perBathFileName(names,j,i);
         const char* fname = fnameText.c_str();
 
         // Read the number of lines
@@ -857,6 +721,15 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
     return;
 }
 
+// A94: a state below configuration.s_range first is not calculated, but its random numbers are drawn as setBathStates and
+// setSubbathStates draw them (the whole bath when a key is absent or has ""; nothing for files), so that state s is the
+// same state as in a run of [1, last]
+void drawSkippedState(BathArray* ba, DefectArray* dfa, Config* cnf){
+    if (drawsFromSeed(cnf,Config_getStatefile(cnf))) BathArray_setBathStatesRandom(ba);
+    if (DefectArray_getNdefect(dfa) > 0 && drawsFromSeed(cnf,Config_getExstatefile(cnf)))
+        DefectArray_setSubbathStatesRandom(dfa, ba);
+}
+
 int compare_dist(const void *a, const void *b){
     BathSpin* s1 = *(BathSpin**)a;
     BathSpin* s2 = *(BathSpin**)b;
@@ -871,23 +744,16 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
     char message[MAX_FILEPATH];
 
     // Read the axis files: one per bath file (A64), each of the lines of its bath file
-    std::vector<FILE*> files;
-    std::string failed;
-    if(!openPerBathFile(cnf,Config_getAvaaxfile(cnf),0,&files,&failed)){
-
+    char** names = Config_getAvaaxfile(cnf);
+    if (drawsFromSeed(cnf,names)){   // the key absent, or "" for a bath file: drawn from the seed (A94: a missing file is refused)
         if (rank==0){
-            snprintf(message,sizeof message,"Warning(setPaxes): Cannot open the avaax file (%s)",failed.c_str()); printMessage(message);
-            snprintf(message,sizeof message,"The paxes is randomly generated\n"); printMessage(message);
+            snprintf(message,sizeof message,names ? "The paxes of the bath files with \"\" in configuration.defect_axis_file are "
+                                                    "randomly generated" : "The paxes is randomly generated\n");
+            printMessage(message);
         }
         DefectArray_setPaxesRandom(dfa, ba);
-        return;
     }
-
-    if (std::find(files.begin(),files.end(),nullptr) != files.end()){   // "" or not opened: these bath files' axes from the seed
-        if (rank==0 && !failed.empty()){ snprintf(message,sizeof message,"Warning(setPaxes): Cannot open the avaax file (%s)",failed.c_str()); printMessage(message); }
-        if (rank==0){ snprintf(message,sizeof message,"The paxes of the bath files without an axis file (\"\" or not opened) are randomly generated"); printMessage(message); }
-        DefectArray_setPaxesRandom(dfa, ba);
-    }
+    const std::vector<FILE*> files = openPerBathFiles(cnf,names,0,"defect_axis_file");
     for (int j = 0; j < (int)files.size(); j++){
     FILE* data = files[j];
     if (!data) continue;
@@ -915,10 +781,21 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
                 char* dfname = BathArray_getBath_i_name(ba,idx);
                 int idf = DefectArray_findDefectIndex(dfa,dfname);
                 if (idf == -1){
-                    // err if the defect name is not found
-                    ccexRefusalPrint(stderr,"Error(setPaxes): Cannot find the defect name in the defect array\n");
-                    ccexRefusalPrint(stderr,"The bath spin[%d] is : %s\n",idx,dfname);
-                    ccexRefuse();
+                    // A94: a spin that is not a Defect species has no axis state: 0, as the draw from the seed gives it
+                    // (DefectArray_setPaxesRandom). Until A94 any such line was refused, so an axis file could not
+                    // describe a bath with Defect species and other spins.
+                    if (paxes != 0){
+                        ccexRefusalPrint(stderr,"Error(setPaxes): %s line %d: bath spin %d (%s) is not a Defect species, its "
+                                         "axis state is 0 (it is %d)\n",fname,fline,idx,dfname,paxes);
+                        ccexRefuse();
+                    }
+                    DefectArray_setPaxes_i(dfa, idx, 0);
+                    idx++;
+                    if (end == idx){
+                        if (rank==0){ snprintf(message,sizeof message,"Read AvaaxFile : %s\n",fname); printMessage(message); }
+                        break;
+                    }
+                    continue;
                 }
                 // stored as the input's navaax + 1 (index 0 is the main spin, option.cpp): the axes are 1 .. navaax-1;
                 // `paxes > navaax` let navaax itself through and the tables were read one past their end (2026-10-09)
@@ -969,7 +846,7 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
      * @param ba : BathArray
      * @param dfa : DefectArray
      * @param cnf : Config
-     * @param i : index of the state file ( 1 <= i <= nstate )
+     * @param i : the state ( configuration.s_range first <= i <= last )
      * @details 
      *  If i is zero, this calculation is for the ensemble approach
      *  Therefore, the bath states shouldn't be set
@@ -988,22 +865,16 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
     char message[MAX_FILEPATH];
 
     // Read the defect state files: one per bath file (A64), each of the lines of its bath file
-    std::vector<FILE*> files;
-    std::string failed;
-    if (!openPerBathFile(cnf,Config_getExstatefile(cnf),i,&files,&failed)){
-
+    char** names = Config_getExstatefile(cnf);
+    if (drawsFromSeed(cnf,names)){   // the key absent, or "" for a bath file: drawn from the seed (A94: a missing file is refused)
         if (rank==0){
-            snprintf(message,sizeof message,"Warning(setSubbathStates): Cannot open the exstate file (%s)",failed.c_str()); printMessage(message);
-            snprintf(message,sizeof message,"The subbath states are randomly generated\n"); printMessage(message);
+            snprintf(message,sizeof message,names ? "The subbath states of the bath files with \"\" in configuration."
+                                                    "defect_state_file are randomly generated" : "The subbath states are randomly generated\n");
+            printMessage(message);
         }
         DefectArray_setSubbathStatesRandom(dfa, ba);
-        return;
     }
-    if (std::find(files.begin(),files.end(),nullptr) != files.end()){   // "" or not opened: these bath files' defect states from the seed
-        if (rank==0 && !failed.empty()){ snprintf(message,sizeof message,"Warning(setSubbathStates): Cannot open the exstate file (%s)",failed.c_str()); printMessage(message); }
-        if (rank==0){ snprintf(message,sizeof message,"The subbath states of the bath files without a state file (\"\" or not opened) are randomly generated"); printMessage(message); }
-        DefectArray_setSubbathStatesRandom(dfa, ba);
-    }
+    const std::vector<FILE*> files = openPerBathFiles(cnf,names,i,"defect_state_file");
     for (int j = 0; j < (int)files.size(); j++){
         FILE* data = files[j];
         if (!data) continue;
@@ -1021,26 +892,32 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
             // Read the bath state from the file
             // We will get the bath state at the same line of bathfile that we get the bath spins
             fline++;
-            // Read the bath state
+            // Read the bath state: the whole line, the m of each on-site spin separated by spaces (A94: it was read as one
+            // token, so a line of two or more on-site spins was refused); blank lines are skipped, as the token read did
             const int max = 1000;
-            char lline[max];
-            count = fscanf(data, "%999s\n", lline);
+            char lline[max] = "";
+            while (fgets(lline, max, data) && strspn(lline," \t\r\n") == strlen(lline)) lline[0] = '\0';
 
             if (fline == Config_get_flines_i(cnf,idx)){
                 int naddspin = DefectArray_getNaddspins_i(dfa,idx);
 
                 if (naddspin != 0){
 
-                    char* ptr = strtok(lline," ");
+                    char* ptr = strtok(lline," \t\r\n");
                     int isp=0;
                      
                     while (ptr !=NULL){
+                        if (isp >= naddspin){
+                            ccexRefusalPrint(stderr,"Error(setSubbathStates): line %d of %s has more values than the %d on-site "
+                                             "spins of its defect\n",fline,fname,naddspin);
+                            ccexRefuse();
+                        }
                         //state add & check
                         float ms = float(atof(ptr));
                         BathSpin* bs = DefectArray_getSubbath_i_isp(dfa,idx,isp);
                         float  S  = BathSpin_getSpin(bs);
                         BathSpin_setState(bs,ms); // Check if the state is valid in this function
-                        ptr = strtok(NULL," ");
+                        ptr = strtok(NULL," \t\r\n");
                         isp++;
                     }
 
@@ -1384,7 +1261,7 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
                         // overwritten by a point-dipole tensor built from the source
                         // geometry, and only the isotropic fc survives from the file. So
                         // what gets stored is a bath-frame tensor no matter what
-                        // hf_tensor_frame says -- fc is a scalar and has no frame.
+                        // hyperfine.frame says -- fc is a scalar and has no frame.
                         Adip = calPointDipoleTensor(qxyz, spxyz, qgyro, spgyro);
                         Atot = Adip + fc * MatrixXcd::Identity(3,3);
                         (*hypf_bathframe)[ispin][iqubit] = HYPF_SOURCE_GEOMETRY;

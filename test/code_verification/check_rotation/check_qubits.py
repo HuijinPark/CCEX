@@ -6,7 +6,7 @@ Reads the per-qubit source/computational positions and the intmap tensors out of
 the coordinate-frame report, and checks what the rotation must do to them. R is
 rebuilt here from the convention, so this is an independent check of the C++.
 
-  ./check_qubits.py rot.log --bath-axis 0 0 1 --qubit-axis 1 1 1 --reference NV0
+  ./check_qubits.py rot.log --qubit-axis 1 1 1 --origin NV0
   ./check_qubits.py norot.log rot.log --kind intmap --expect rotated ...
 """
 
@@ -15,7 +15,7 @@ import math
 import re
 import sys
 
-QNAME = re.compile(r'^\s*qubit\[(\d+)\] "([^"]+)"(\s+\(reference\))?\s*$')
+QNAME = re.compile(r'^\s*qubit\[(\d+)\] "([^"]+)"(\s+\(origin\))?\s*$')
 QSRC = re.compile(r"^\s*source frame\s*:\s*\[(.+)\]\s*$")
 QCALC = re.compile(r"^\s*computational frame\s*:\s*\[(.+)\]\s*$")
 INTMAP = re.compile(r"^\s*intmap\[(\d+)\]\[(\d+)\]\s*:\s*\[(.+)\]\s*$")
@@ -60,17 +60,17 @@ def cross(u, v):
     return [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]
 
 
-def build_R(bath_axis, qubit_axis):
-    b, q = normalize(bath_axis), normalize(qubit_axis)
+def build_R(qubit_axis):
+    """The rows ex, ey, ez of R: ez = q, ex = normalize(q x z) with z = [0,0,1] of the bath file (the azimuth rule;
+    the input bath_axis that could change it was removed in A90), ey = ez x ex."""
+    b, q = [0.0, 0.0, 1.0], normalize(qubit_axis)
     c = cross(q, b)
-    # Collinear axes leave the azimuth of the new x undefined. The C++ accepts exactly
-    # one such case -- both axes on +z, which is the identity -- and refuses the rest;
+    # q along z leaves the azimuth of the new x undefined. The C++ accepts +z -- the identity -- and refuses -z;
     # mirror that here so the checkers agree with what they are checking.
     if math.sqrt(sum(x * x for x in c)) < 1e-12:
-        if abs(q[0]) < 1e-12 and abs(q[1]) < 1e-12 and q[2] > 0 and \
-           abs(b[0]) < 1e-12 and abs(b[1]) < 1e-12 and b[2] > 0:
+        if q[2] > 0:
             return [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        raise SystemExit("bath_axis and qubit_axis are collinear; R is undefined")
+        raise SystemExit("qubit_axis is along -z; R is undefined")
     ez = q
     ex = normalize(c)
     ey = cross(ez, ex)
@@ -95,9 +95,8 @@ def distance(a, b):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("log")
-    ap.add_argument("--bath-axis", nargs=3, type=float, required=True)
     ap.add_argument("--qubit-axis", nargs=3, type=float, required=True)
-    ap.add_argument("--reference", required=True, help="expected reference qubit name")
+    ap.add_argument("--origin", required=True, help="expected name of the rotation origin (the first qubit)")
     ap.add_argument("--expect-nqubit", type=int, default=None)
     ap.add_argument("--tol", type=float, default=3e-3)
     args = ap.parse_args()
@@ -118,21 +117,21 @@ def main():
               "nqubit = %d as expected" % args.expect_nqubit)
 
     refs = [i for i in qubits if qubits[i]["ref"]]
-    check(len(refs) == 1 and qubits[refs[0]]["name"] == args.reference,
-          'the reference qubit is "%s" (index %s)' % (args.reference, refs))
+    check(len(refs) == 1 and refs[0] == 0 and qubits[refs[0]]["name"] == args.origin,
+          'the rotation origin is the first qubit "%s" (index %s)' % (args.origin, refs))
     if len(refs) != 1:
         return 1
     iref = refs[0]
     r0 = qubits[iref]["src"]
 
-    # The reference qubit is the fixed point: it must not have moved at all.
+    # The origin qubit is the fixed point: it must not have moved at all.
     moved = max(abs(a - b) for a, b in zip(qubits[iref]["src"], qubits[iref]["calc"]))
     check(moved < args.tol,
-          'the reference qubit "%s" stays at %s (moved %.2e)'
-          % (args.reference, qubits[iref]["src"], moved))
+          'the origin qubit "%s" stays at %s (moved %.2e)'
+          % (args.origin, qubits[iref]["src"], moved))
 
     # Every qubit follows r0 + R(r - r0), with the SAME R and r0.
-    R = build_R(args.bath_axis, args.qubit_axis)
+    R = build_R(args.qubit_axis)
     worst, worst_i = 0.0, -1
     for i in qubits:
         want = apply_R(R, qubits[i]["src"], r0)

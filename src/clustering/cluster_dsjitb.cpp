@@ -352,7 +352,6 @@ void clusterizeDsjItb(Cluster* cls, int*** cmap, float*** stmap, BathArray* ba){
         // update cls->clusinfo[order] with InterBathPairs
         for (int i=1; i<InterBathPairs[0][0]; i++){
 
-            printf("-- %d\n",i);
             int spin1 = InterBathPairs[i][0] - 1; // actual index need "-1"
             int spin2 = InterBathPairs[i][1] - 1; // actual index need "-1"
 	    

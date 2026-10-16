@@ -64,10 +64,10 @@ def main():
     run('invalid-refinement',args.cpu,{'gcce_refinement':{'enabled':'false'}},'must be a boolean')
     run('zero-refinement-sweeps',args.cpu,{'gcce_refinement':{'enabled':False,'max_sweeps':0}},'positive 32-bit integer')
     run('fractional-refinement-sweeps',args.cpu,{'gcce_refinement':{'enabled':False,'max_sweeps':1.5}},'positive 32-bit integer')
-    # pcce.print_limit, pcce.partition and pcce.connections are read with cluster_mode pcce only (A47); they are checked
+    # pcce.print_trials (print_limit until A94), pcce.partition and pcce.connections are read with cluster_mode pcce only (A47); they are checked
     # while the input is read, before the missing pcce.partition_size would stop the run
     PCCE={'method':'cCCE','cluster_mode':'pcce'}
-    run('negative-detail-limit',args.cpu,dict(PCCE,pcce={'print_limit':-1}),'nonnegative 32-bit integer')
+    run('negative-detail-limit',args.cpu,dict(PCCE,pcce={'print_trials':-1}),'nonnegative 32-bit integer')
     run('extended-refinement',args.cpu,{'gcce_refinement':{'enabled':False,'max_sweeps':64}})
     run('cpu-refinement-off',args.cpu,{'gcce_refinement':{'enabled':False}},reference=None)
     run('cuda-refinement-off',args.cuda,{'backend':'cuda','gcce_refinement':{'enabled':False}},reference='cpu-refinement-off',actual_backend='cuda')

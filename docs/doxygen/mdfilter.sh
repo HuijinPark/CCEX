@@ -1,27 +1,54 @@
 #!/bin/sh
-# Doxygen input filter for the Markdown pages (docs/user and docs/methods).
-# Only POSIX sed and awk features: the CI action runs it with busybox.
+# Doxygen input filter for the Markdown pages (docs/user, docs/methods and the tutorial
+# README.md files of example/tutorial/NN_*/).
+# Only POSIX sh, sed and awk features: the CI action runs it with busybox.
 #  - A link to a file that is not part of the site (docs/validation, docs/development)
 #    becomes its text followed by the repository path in code, so the site has no dead
-#    link while GitHub keeps the real one.
-#  - A link ../../<path> into the repository becomes a link to that path in the public
-#    repository on GitHub.
+#    link while GitHub keeps the real one. A link ../../<path> from docs/ into the
+#    rest of the repository is treated the same way.
 #  - A link written as [text](Page.md#anchor) or [text](../user/Page.md#anchor) works on
 #    GitHub, but Doxygen cannot turn it into a page link; it can resolve the bare anchor,
 #    which is global. So the path and page part are dropped before Doxygen reads the file.
+#  - A link to a tutorial README (../../example/tutorial/NN_name/README.md from docs/,
+#    ../NN_name/README.md from another tutorial) becomes a link to its page, tutorial_NN.
 #  - An image written as ![text](../images/<dir>/file.png) is found by GitHub through
 #    that path, but Doxygen copies an image into the site only when it is named bare
 #    and found in IMAGE_PATH. So the directory part is dropped too.
+#  - In a tutorial README: the title gets the page label tutorial_NN; every figure is
+#    called expected.png in its calculation folder, so ![..](calc/expected.png) becomes
+#    ![..](tNN_calc.png) (and ![..](expected.png) tNN.png), the names of the links in
+#    docs/images/tutorials/; a line "Input: [..](calc/file.jsonc)" or "Inputs: [..](..),
+#    [..](..)" is replaced by the input files themselves, one code block each.
 #  - Math is written for GitHub, $...$ inline and $$...$$ displayed (on one line or over
 #    several). Doxygen reads \f$...\f$ and \f[...\f], so the delimiters are rewritten,
 #    outside code blocks and code spans only. A $ that does not open math (no closing $
 #    on the line, a space after it) is left alone, as GitHub does.
-sed -E \
-  -e 's#\[([^]]*)\]\(\.\./(validation|development)/([^)]*)\)#\1 (`docs/\2/\3`)#g' \
-  -e 's#\]\(\.\./\.\./([^)]*)\)#](https://github.com/CQML-SKKU/CCEX/tree/main/\1)#g' \
+nn=""
+case "$1" in
+    */example/tutorial/[0-9][0-9]_*/README.md)
+        nn=$(basename "$(dirname "$1")"); nn=${nn%%_*} ;;
+esac
+dir=$(dirname "$1")
+tutorial() {
+    if [ -n "$nn" ]; then
+        sed -E \
+          -e "1s/^# .*/& {#tutorial_$nn}/" \
+          -e "s#\]\(([A-Za-z0-9_]+)/expected\.png\)#](t${nn}_\1.png)#g" \
+          -e "s#\]\(expected\.png\)#](t${nn}.png)#g" \
+          -e 's#\]\(\.\./([0-9][0-9])_[A-Za-z0-9_]*/(README\.md)?\)#](@ref tutorial_\1)#g' \
+          -e 's#\]\((\.\./)+docs/(user|methods)/([A-Za-z0-9_-]+\.md)?\##](\##g' \
+          "$1"
+    else
+        cat "$1"
+    fi
+}
+tutorial "$1" | sed -E \
+  -e 's#\[([^]]*)\]\((\.\./)+(docs/)?(validation|development)/([^)]*)\)#\1 (`docs/\4/\5`)#g' \
+  -e 's#\]\((\.\./)+example/tutorial/([0-9][0-9])_[A-Za-z0-9_]*/(README\.md)?\)#](@ref tutorial_\2)#g' \
+  -e 's#\[([^]]*)\]\(\.\./\.\./([^.)][^)]*)\)#\1 (`\2`)#g' \
   -e 's#\]\((\.\./(user|methods)/)?[A-Za-z0-9_-]+\.md\##](\##g' \
   -e 's#\]\(\.\./images/([A-Za-z0-9_]+/)*#](#g' \
-  "$1" | awk '
+  | awk -v dir="$dir" '
 BEGIN { fence = ""; disp = 0 }
 function conv(s,    out, i, n, c, j, k, run, rl, body) {
     out = ""; i = 1; n = length(s)
@@ -63,8 +90,20 @@ function conv(s,    out, i, n, c, j, k, run, rl, body) {
     }
     return out
 }
+function inputs(s,    p, f, name, l, n) {   # Input: [..](calc/file.jsonc), ... -> the files
+    while (match(s, /\]\([^)]*\.jsonc\)/)) {
+        p = substr(s, RSTART + 2, RLENGTH - 3); s = substr(s, RSTART + RLENGTH)
+        f = dir "/" p; n = 0
+        print "`" p "`:"; print ""; print "```js"
+        while ((getline l < f) > 0) { print l; n++ }
+        close(f)
+        if (n == 0) print "mdfilter.sh: input file " f " not found or empty" > "/dev/stderr"
+        print "```"; print ""
+    }
+}
 {
     line = $0
+    if (fence == "" && line ~ /^Inputs?: .*\.jsonc\)/) { inputs(line); next }
     if (fence == "" && (line ~ /^[ ]*```[^`]*$/ || line ~ /^[ ]*~~~/)) { fence = (line ~ /^[ ]*```/) ? "```" : "~~~"; print; next }
     if (fence != "") { if (index(line, fence) > 0 && line ~ /^[ ]*(```|~~~)[ ]*$/) fence = ""; print; next }
     print conv(line)

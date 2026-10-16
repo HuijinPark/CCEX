@@ -19,5 +19,5 @@ void applyBathPulsesGcce(GcceWork* w, MatrixXcd* Upulses, BathArray* ba, const P
 // when no bath spin (bath file or Defect sub-spin) has the name pulse.bath.defect, when such a spin's S is not
 // pulse.bath.spin, or when pulse.bath.alphams/betams are not two different levels of that S. When none of those spins
 // is within the window of a tone, rank 0 warns once and the run goes on (an off-resonant pump is a control).
-void validateBathPulseTargets(BathArray* ba, DefectArray* dfa, const Pulse* pls);
+void validateBathPulseTargets(BathArray* ba, DefectArray* dfa, Pulse* pls);   // A94: also sets pls->bspin, the S of the driven spins
 #endif

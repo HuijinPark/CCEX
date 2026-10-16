@@ -1,4 +1,4 @@
-# coordinate_frame_rotation tests
+# frame.rotation tests
 
     bash test/code_verification/check_rotation/run.sh        # needs bin/main.out (bash do_compile.sh wsl-gnu)
 
@@ -31,13 +31,13 @@ keyed by position in the original frame.
 Per (bath spin, qubit), not per run. `readHftensorfile` records whether each
 tensor it stored was computed here from the source geometry or read from the
 file; `applyCoordinateFrameRotation` transforms the first kind always, and the
-second kind only when `hf_tensor_frame` says `bath`. The two occur together:
+second kind only when `hamiltonian.common.hyperfine.frame` says `file`. The two occur together:
 
 | `hyperfine` (hf_readmode until 2026-10-13) | what is stored | transformed? |
 |---|---|---|
 | `point` (0) | point dipole | always |
-| `point` + `contact` (1) | point dipole + isotropic FC (the file's tensor is discarded) | always; `hf_tensor_frame` does not apply |
-| `dft` (2 / 3), matched | DFT tensor from the file | only when `hf_tensor_frame = bath` |
+| `point` + `contact` (1) | point dipole + isotropic FC (the file's tensor is discarded) | always; `hyperfine.frame` is not used (a note says so) |
+| `dft` (2 / 3), matched | DFT tensor from the file | only when `hyperfine.frame = "file"` |
 | `dft` (2 / 3), fallback | point dipole (spin not covered by the file) | always |
 
 The quadrupole keeps a single flag: `readQdtensorfile` has no computed-here
@@ -87,8 +87,9 @@ Per-spin detuning is `detuning[paxes[i]]`, so those two together pin it down;
 CCEX does not print the per-spin value anywhere reachable at `n_nuclear_spins = 0`.
 
 `n_nuclear_spins = 0` is deliberate. `nuclear_positions`, `hyperfine` and `efg` only exist for added
-subspins. This legacy P1 entry has no `axis` or `coordinate_frame`, so it keeps
-the backward-compatible `qubit` default; its scalar detuning is frame-independent.
+subspins. This P1 entry has no `axis`; with the rotation on it states `frame: "qubit"`
+(A90 asks for it; until then an absent frame was the hidden `qubit` default), and its scalar detuning is
+frame-independent. Without the frame and with the rotation on it is refused (`defect_legacy_missing_frame`).
 
 **NV defect bath.** Six spin-1 `NV_0` bath spins use three deterministically
 selected frozen configurations. One physical `axis` belongs to `NV_0`; the three
@@ -127,6 +128,13 @@ says `"enabled": false`, which the suite checks against `"enabled": true` (byte-
 and against no block (`[disabled]`). The generators write the old flat names and
 `configuration_block.py` (`../input_layout.py`) puts them into the blocks.
 
+Since A90 (2026-10-16) `frame.rotation` holds `qubit_axis` and `enabled` only. `bath_axis` (it turned the computational
+x and y about qubit_axis; x is now `qubit_axis x [0,0,1]`, the old default), `reference_qubit` (the origin, now the first
+qubit) and `qubit_position_frame` (one value) are refused as removed; the frames of the numbers are the key `frame`
+(`"file"` | `"qubit"`) beside them, and the old names and the old value `"bath"` are refused with the new ones. Every
+case of the suite gave byte-identical outputs before and after A90 (128 of 128 files; the four of the removed
+`refq0` and `mq_ref1` cases are gone).
+
 ## The A/B equivalence test
 
 The strongest check here, and the only one that can catch a frame-dependent
@@ -144,21 +152,10 @@ for the point-dipole system and for the DFT-tensor one alike.
 ## Multi-qubit
 
 The rotation moves every qubit and every bath spin with one R about one r0 -- the
-position of `reference_qubit`, which therefore does not move. That is what makes
+position of the first qubit, which therefore does not move. That is what makes
 the source-frame rbath selection valid for several qubits too: nothing
-changes any relative distance.
-
-MQ/C holds `bath_axis` and `qubit_axis` fixed -- so `R` is the same in both runs --
-and moves only the rotation ORIGIN, from NV0 to NV1. The two coordinate sets then
-differ by the rigid translation `(I-R)(r0-r1)`, so distances, tensors and
-coherence are unchanged while the printed coordinates are not. The test checks
-both halves: the first would break if the key were ignored, the second if the
-index were hard-coded to 0.
-
-This is not a general claim that changing `reference_qubit` never changes the
-answer. If the new reference qubit has a different physical axis, `qubit_axis`
-has to change with it; `R` is then different and the translation relation does
-not apply.
+changes any relative distance. (Until A90 `reference_qubit` could name another qubit as the origin; that only
+translated every position by `(I-R)(r0-r1)`, and the suite checked that the coherence did not move.)
 
 `Qubit.intmap` tensors carry their own provenance, and the rotation reads it
 rather than guessing from what kind of tensor it is:
@@ -167,9 +164,9 @@ rather than guessing from what kind of tensor it is:
 |---|---|---|
 | `INTMAP_DEFAULT_ZERO` | never written | no (zero either way) |
 | `INTMAP_AUTO_SOURCE_GEOMETRY` | `setIntmap_dipAuto`, from the source qubit positions | always |
-| `INTMAP_EXPLICIT_BATH` | explicit, `tensor_frame: "bath"` | always |
-| `INTMAP_EXPLICIT_QUBIT` | explicit, `tensor_frame: "qubit"` | never |
-| `INTMAP_EXPLICIT_UNSPECIFIED` | explicit, no `tensor_frame` | fatal with more than one qubit; kept with one (`Qubit.zfs` of the `Qubit.file` form, `qzfs` until 2026-10-13) |
+| `INTMAP_EXPLICIT_FILE` | explicit, `frame: "file"` (`Qubit.intmap[]`, the ZFS of the `Qubit.file` form included since A93) | always |
+| `INTMAP_EXPLICIT_QUBIT` | explicit, `frame: "qubit"` | never |
+| `INTMAP_EXPLICIT_UNSPECIFIED` | explicit, no `frame`: only with the rotation off (with it on the reader refuses it, A90) | - |
 
 Each explicit `Qubit.intmap` entry may also carry `unit: "Hz"`, `"kHz"`,
 `"MHz"`, or `"GHz"`. An absent unit retains the legacy kHz interpretation.
@@ -189,11 +186,25 @@ External HF/QD tensor files stay single-qubit. That restriction is **not new**:
 both guards are still there. The rotation just reports it before a file is
 opened.
 
+## Turning about the qubit axis, and the qubit state (A91)
+
+A rotation about the computational z axis is a symmetry of the Hamiltonian, but CCEX keeps |α⟩, |β⟩ and
+psi0 = (|α⟩ + |β⟩)/norm in the computational frame: turned with the system they would pick up the relative phase
+exp(−iφ(m<sub>β</sub> − m<sub>α</sub>)), another preparation phase. With a non-axial ZFS (E ≠ 0; the non-secular hyperfine
+too, far more weakly) gCCE depends on that phase, so a run whose system is turned about z and whose m<sub>s</sub> states
+are kept is a different experiment and differs (4.3e-4 in |L| for the free induction below; it is also why the x axis of
+`frame.rotation`, a convention, matters there). cCCE keeps only the secular part and does not. `check_zrot_gcce.py` turns
+the system by hand and the state with it where that phase is real (φ = 180° for +1/0, 90° for +1/−1 and for two qubits
+(+1,+1)/(0,0)), as `alpha_state`/`beta_state` vectors, and requires the same |L| within 5e-8 (rounding amplified by the GHz
+phase; 360° gives the same 6e-10 to 8e-9): free induction, a Hahn echo (a π pulse about −x is the one about x up to a sign)
+and two qubits with the pair dipole from the turned positions. check_analytic compares the turned run with the
+exact answer.
+
 ## What is still refused
 
 Multi-qubit runs with an external HF or QD tensor file (a pre-existing
-restriction, see above), `qubit_position_frame: "qubit"`, an explicit intmap
-tensor with no `tensor_frame` with more than one qubit, and a tilted magnetic field
+restriction, see above), any directional input without its `frame` (A90: a `Qubit.intmap`
+entry (the `Qubit.file` ZFS is one since A93), a `Defect` species, a DFT hyperfine file, a quadrupole file), and a tilted magnetic field
 alongside the rotation. cCCE remains single-qubit -- `simulator_cce.cpp` is
 untouched -- so multi-qubit coherence is tested with gCCE.
 
@@ -203,21 +214,15 @@ Four different things get lumped together as "the ZFS"; they are not the same:
 
 | input | frame | transformed? |
 |---|---|---|
-| `Defect` entry with `coordinate_frame: "bath"` | source bath/crystal frame | axis/nuclear_positions and hyperfine/efg/zfs transformed |
-| `Defect` entry with `coordinate_frame: "qubit"` (also the legacy default) | computational frame | no |
+| `Defect` species with `frame: "file"` | the bath file frame | axis/nuclear_positions and hyperfine/efg/zfs transformed |
+| `Defect` species with `frame: "qubit"` | computational frame | no |
 | `Defect.detuning` | scalar frequency | never |
 | `bfield` | computational-frame input | never |
-| `Qubit.zfs` of the `Qubit.file` form (top-level `qzfs` until 2026-10-13) | read as written, for backward compatibility | never |
-| `Qubit.intmap` self/ZFS tensor | whatever its `tensor_frame` says | `"bath"` yes, `"qubit"` no |
+| the ZFS of the `Qubit.file` form (a `Qubit.intmap` self entry since A93; `Qubit.zfs` with `Qubit.frame` A90 to A93) | whatever its `frame` says (until A90: read as written, never turned) | `"file"` yes, `"qubit"` no |
+| `Qubit.intmap` self/ZFS tensor | whatever its `frame` says | `"file"` yes, `"qubit"` no |
 
-`Qubit.zfs` belongs to the single-qubit `Qubit.file` form and has no `tensor_frame`
-sub-key to declare, which is why it is kept rather than transformed. A ZFS given
-through `Qubit.intmap` does have one, and is transformed when it says `"bath"` --
-so "the ZFS is not rotated" is only true of `Qubit.zfs`.
-
-A `Defect` section written in the crystal frame must declare
-`coordinate_frame: "bath"`. `applyCoordinateFrameRotation` then transforms its
-normalized axis and relative `nuclear_positions` with R, and its `hyperfine`, `efg`, and `zfs`
-with R T R^T before Defect construction. Scalar `detuning` is unchanged. A
-legacy entry without either a new `axis` or object-form `zfs` defaults to
-`"qubit"`, preserving its old result.
+With the rotation on each of these states its frame (A90); with it off a written `frame` is not used and is warned
+about once. A `Defect` section written in the crystal frame says `frame: "file"`. `applyCoordinateFrameRotation`
+then transforms its normalized axis and relative `nuclear_positions` with R, and its `hyperfine`, `efg`, and `zfs`
+with R T R^T before Defect construction. Scalar `detuning` is unchanged. `example/tools/InputKeys/convert_input_keys.py`
+writes `"qubit"` where an older input with the rotation on relied on the hidden default.

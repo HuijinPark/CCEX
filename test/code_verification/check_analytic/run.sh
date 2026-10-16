@@ -16,11 +16,11 @@ source "$HERE/../check_input_forms/lib.sh"
 W="$HERE/_work"; rm -rf "${W:?}"; mkdir -p "$W"
 cp "$HERE"/inputs/{qubit,bath,gyro} "$W/"
 NSTEP=400; DELTAT=0.0005
-# Qubit.file form: the branch is Qubit.alphams/betams beside the file
+# the qubit of a position file, a Qubit.qubit entry (A94; the Qubit.file form before): the branch is Qubit.alpha_state/beta_state {"ms": [m]}
 input(){ # input <npulse> <gyro file> <outfile>
     cat <<JSON
-{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0},
- "configuration": {"gyrofile": "$2", "bathfile": ["bath"], "nstate": 0, "seed": 1},
+{"method": "cCCE", "quantity": "coherence", "Qubit": {"qubit": [{"file": "qubit"}], "alpha_state": {"ms": [1]}, "beta_state": {"ms": [0]}},
+ "configuration": {"gyrofile": "$2", "bathfile": ["bath"], "seed": 1},
  "order": 1, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": $DELTAT, "nstep": $NSTEP,
  "pulse": {"count": $1}, "output": {"file": "$3"}}
 JSON
@@ -50,10 +50,10 @@ else echo "  FAIL  self-test : $(cat "$W/selftest.log")"; FAIL=$((FAIL+1)); fi
 # ZFS the levels 0 and +1 are degenerate and coupled, where the second-order term does not exist (refused). Review
 # 20261012-233058-452278: P1-02, the same degenerate levels with a zero hyperfine (gyro 0) have no coupling and are
 # accepted; P1-03, a ZFS shifted by 1e13 I (an energy shift) is decided as the unshifted one.
-hfmedi(){ # hfmedi <name> <Qubit.zfs> [gyro file]
+hfmedi(){ # hfmedi <name> <ZFS tensor (kHz), the Qubit.intmap self entry> [gyro file]
     cat > "$W/$1.json" <<JSON
-{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0, "zfs": $2},
- "configuration": {"gyrofile": "${3:-gyro}", "bathfile": ["bath"], "nstate": 0, "seed": 1},
+{"method": "cCCE", "quantity": "coherence", "Qubit": {"qubit": [{"file": "qubit"}], "alpha_state": {"ms": [1]}, "beta_state": {"ms": [0]}, "intmap": [{"between": ["q0", "q0"], "tensor": $2}]},
+ "configuration": {"gyrofile": "${3:-gyro}", "bathfile": ["bath"], "seed": 1},
  "order": 1, "bfield": 0, "rbath": 20, "rdip": 10, "deltat": 0.001,
  "nstep": 3, "hamiltonian": {"cCCE": {"hfmedi": true}}, "pulse": {"count": 1}, "output": {"file": "out_$1"}}
 JSON
@@ -87,54 +87,61 @@ rh=$?
 if [ $rs -eq 0 ] && [ $rh -eq 0 ] && finite hfmedi_small && finite hfmedi_shift; then
     echo "  PASS  hfmedi B=0 ZFS diag(0,0,1) and + 1e13 I : both accepted, finite"; PASS=$((PASS+1))
 else echo "  FAIL  hfmedi B=0 ZFS diag(0,0,1) exit $rs, + 1e13 I exit $rh : expected the same decision (accepted, finite)"; FAIL=$((FAIL+1)); fi
-# hamiltonian.cCCE.delta_A false (A47): the hyperfine tensors of a cluster's bath spins are replaced by their mean, so their
-# Knight fields no longer differ (Zhao 2011 SI eq. 23, Maze 2008 eq. 8). Two 13C on the NV axis, 1.54 A apart at 14.5 A
-# (inputs/bath_pair): their hyperfine tensors are axial (no x z, y z part), so one spin alone gives L = 1 in a Hahn echo and
-# the pair decays only through the flip-flop the Knight-field difference (26 rad/ms, the size of the pair's coupling) lets
-# through. delta_A false makes the cluster's two tensors equal: the flip-flop commutes with what is left and the pair gives
-# L = 1 exactly (to the 10 decimals written); with delta_A true (the default) the same pair decays. Order 1 (a cluster of
-# one spin keeps its own tensor) is byte for byte the run without the key.
-pair(){ # pair <name> <order> <delta_A json value or "">
-    local h=""; [ -n "$3" ] && h=", \"hamiltonian\": {\"cCCE\": {\"delta_A\": $3}}"
+# hamiltonian.cCCE.delta_A (A83): the second-order delta_A(m_s).I = -m_s/(2 Delta) (A_x x A_y).I of each bath spin. One 13C
+# 2.55 A from the NV (inputs/bath_dA, |A| up to 9.4e3 rad/ms, |A_x x A_y|/(2 Delta) = 2.5 rad/ms), order 1, ensemble,
+# 400 points to 1 ms: the cCCE against gCCE order 1, which keeps the whole S.A.I and is exact for one spin. Hahn echo:
+# max |L - L_gCCE|; free induction: max ||L| - |L_gCCE|| (the second order also shifts the qubit frequency by a constant,
+# which the cCCE leaves out, so the phase of L is not compared). B = 5 G along z (knight is 0 there): without delta_A
+# 0.81 (echo) and 0.65 (free induction), with it 4.8e-3 and 5.3e-3. B = (2, 0, 5) G: knight alone 0.56 and 0.81, knight
+# with delta_A 2.0e-2 and 2.9e-2. What is left is the qubit Zeeman energy b left out of the denominators (Delta, not
+# Delta + m_s b, as for knight; b/Delta = 0.5 % at 5 G) and, across the axis, knight's own higher orders. The tolerances,
+# 1e-2 and 5e-2, are about twice the measured residual; without delta_A the deviation has to be at least ten times the one with it
+# (measured 27 to 170 times).
+dArun(){ # dArun <name> <method> <npulse> <bfield> <hamiltonian.cCCE json or "">
+    local h=""; [ -n "$5" ] && h=", \"hamiltonian\": {\"cCCE\": $5}"
     cat > "$W/$1.json" <<JSON
-{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0},
- "configuration": {"gyrofile": "gyro", "bathfile": ["bath_pair"], "nstate": 0, "seed": 1},
- "order": $2, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": 0.005, "nstep": 400,
- "pulse": {"count": 1}, "output": {"file": "out_$1"}$h}
+{"method": "$2", "quantity": "coherence",
+ "Qubit": {"qubit": [{"file": "qubit"}], "alpha_state": {"ms": [1]}, "beta_state": {"ms": [0]}, "intmap": [{"between": ["q0", "q0"], "tensor": [[-956666.6666666666,0,0],[0,-956666.6666666666,0],[0,0,1913333.3333333333]]}]},
+ "configuration": {"gyrofile": "gyro", "bathfile": ["bath_dA"], "seed": 1},
+ "order": 1, "bfield": $4, "rbath": 20, "rdip": 10, "deltat": 0.0025, "nstep": 400,
+ "pulse": {"count": $3}, "output": {"file": "out_$1"}$h}
 JSON
     ( cd "$W" && run_ccex "$BIN_DEV" "$1.json" "proc_$1" )
 }
-cp "$HERE"/inputs/bath_pair "$W/"
-farthest(){ # farthest <name>: the largest |L - 1| of the noDiv output
-    python3 -c '
+cp "$HERE"/inputs/bath_dA "$W/"
+dAcase(){ # dAcase <label> <bfield> <tolerance> <hamiltonian.cCCE without delta_A> <with delta_A>
+    local rc=0 np
+    for np in 0 1; do
+        dArun "dA_${1}_g$np" gCCE $np "$2" "" || rc=1
+        dArun "dA_${1}_off$np" cCCE $np "$2" "$4" || rc=1
+        dArun "dA_${1}_on$np" cCCE $np "$2" "$5" || rc=1
+    done
+    if [ $rc -ne 0 ]; then echo "  FAIL  delta_A $1 : CCEX exit"; FAIL=$((FAIL+1)); return; fi
+    for np in 0 1; do
+        read -r doff don < <(python3 -c '
 import sys
-print(max(abs(complex(l.split()[1].replace("+-", "-")) - 1) for l in open(sys.argv[1]) if l.strip()))' "$W/out_$1_noDiv"
+def read(p): return [complex(l.split()[1].replace("+-", "-")) for l in open(p) if l.strip()]
+g, off, on = (read(f"{sys.argv[1]}/out_dA_{sys.argv[2]}_{n}{sys.argv[3]}_wiDiv") for n in ("g", "off", "on"))
+d = (lambda x, y: abs(abs(x)-abs(y))) if sys.argv[3] == "0" else (lambda x, y: abs(x-y))
+print(max(d(x, y) for x, y in zip(off, g)), max(d(x, y) for x, y in zip(on, g)))' "$W" "$1" $np)
+        local what="Hahn echo max |L - L_gCCE|"; [ $np -eq 0 ] && what="free induction max ||L| - |L_gCCE||"
+        if python3 -c "import sys; sys.exit(0 if float('$don') <= $3 and float('$doff') >= 10*float('$don') else 1)"; then
+            echo "  PASS  delta_A $1 : $what $don with delta_A, $doff without"; PASS=$((PASS+1))
+        else echo "  FAIL  delta_A $1 : $what $don with delta_A (expected <= $3), $doff without (expected >= 10 x the one with)"
+             FAIL=$((FAIL+1)); fi
+    done
 }
-pair dA_true 2 ""; r1=$?
-pair dA_false 2 false; r2=$?
-pair dA_true_o1 1 ""; r3=$?
-pair dA_false_o1 1 false; r4=$?
-if [ $r1 -ne 0 ] || [ $r2 -ne 0 ] || [ $r3 -ne 0 ] || [ $r4 -ne 0 ]; then
-    echo "  FAIL  delta_A : CCEX exit ($r1 $r2 $r3 $r4)"; FAIL=$((FAIL+1))
-else
-    dt=$(farthest dA_true); df=$(farthest dA_false)
-    if python3 -c "import sys; sys.exit(0 if float('$dt') > 1e-2 and float('$df') < 1e-9 else 1)"; then
-        echo "  PASS  delta_A : the 13C pair on the axis decays with delta_A true (max |L-1| $dt), L = 1 with false (max |L-1| $df)"
-        PASS=$((PASS+1))
-    else echo "  FAIL  delta_A : max |L-1| $dt with delta_A true (expected > 1e-2), $df with false (expected < 1e-9)"; FAIL=$((FAIL+1)); fi
-    if cmp -s "$W/out_dA_true_o1_noDiv" "$W/out_dA_false_o1_noDiv" && cmp -s "$W/out_dA_true_o1_wiDiv" "$W/out_dA_false_o1_wiDiv"; then
-        echo "  PASS  delta_A : order 1 (clusters of one spin) is byte for byte the same with delta_A false"; PASS=$((PASS+1))
-    else echo "  FAIL  delta_A : order 1 changes with delta_A false"; FAIL=$((FAIL+1)); fi
-fi
-# hamiltonian.common.bath_bath_mean_field "off" (A47): with nstate > 0 the static field of the bath spins outside a cluster
+dAcase "B=5G_z" "[0, 0, 5]" 1e-2 "" '{"delta_A": true}'
+dAcase "B=(2,0,5)G" "[2, 0, 5]" 5e-2 '{"knight": true}' '{"knight": true, "delta_A": true}'
+# hamiltonian.common.bath_bath_mean_field "off" (A47): with sampled states (s_range) the static field of the bath spins outside a cluster
 # is left out. Two electron-like spins (gyro e, inputs/bath_off, a fixed state each) off the NV axis, order 1: with "off"
 # the coherence is the product of the two spins each alone in its bath (no other spin, so no field), point for point; with
 # "z" (the default) the other spin's field moves it.
 offrun(){ # offrun <name> <bath> <state file prefix> <bath_bath_mean_field or "">
     local h=""; [ -n "$4" ] && h=", \"hamiltonian\": {\"common\": {\"bath_bath_mean_field\": \"$4\"}}"
     cat > "$W/$1.json" <<JSON
-{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0},
- "configuration": {"gyrofile": "gyro_e", "bathfile": ["$2"], "bath_state_file": ["$3"], "nstate": 1, "seed": 1},
+{"method": "cCCE", "quantity": "coherence", "Qubit": {"qubit": [{"file": "qubit"}], "alpha_state": {"ms": [1]}, "beta_state": {"ms": [0]}},
+ "configuration": {"gyrofile": "gyro_e", "bathfile": ["$2"], "bath_state_file": ["$3"], "s_range": [1, 1], "seed": 1},
  "order": 1, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": 0.00002, "nstep": 200,
  "pulse": {"count": 1}, "output": {"file": "out_$1"}$h}
 JSON
@@ -160,5 +167,15 @@ print(max(abs(x-y) for x, y in zip(off, prod)), max(abs(x-y) for x, y in zip(z, 
     else echo "  FAIL  bath_bath_mean_field off : off - product $doff (expected < 1e-9), z - product $dz (expected > 1e-6)"
          FAIL=$((FAIL+1)); fi
 fi
+# gCCE with a non-axial ZFS (E != 0) against the exact 6 x 6 answer (A91), the system as written and turned by 30 degrees
+# about z (gcce_zfs_exact.py): the turned run keeps the m_s states, so its coherence differs (up to 3.6e-5), and CCEX has to
+# follow the exact answer in both.
+for phi in 0 30; do
+    python3 "$HERE/gcce_zfs_exact.py" write $phi "$W/zfs$phi.json" "$W/bath_zfs$phi"
+    ( cd "$W" && run_ccex "$BIN_DEV" "zfs$phi.json" "proc_zfs$phi" )
+    if [ $? -ne 0 ]; then echo "  FAIL  gCCE ZFS E phi $phi : CCEX exit"; FAIL=$((FAIL+1)); continue; fi
+    if r=$(python3 "$HERE/gcce_zfs_exact.py" check $phi "$W/zfs$phi"); then echo "  PASS  gCCE ZFS E phi $phi : $r"; PASS=$((PASS+1))
+    else echo "  FAIL  gCCE ZFS E phi $phi : $r"; FAIL=$((FAIL+1)); fi
+done
 echo " closed-form checks : PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]

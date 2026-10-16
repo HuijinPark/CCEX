@@ -17,18 +17,20 @@ Tags in this section are about the simulation parameters: the method, the number
     - [gyrofile](#tag_gyrofile), [bathfile](#tag_bathfile), [bath_shift](#tag_bath_shift),
       [bath_state_file](#tag_bath_state_file)
     - [defect_axis_file](#tag_defect_axis_file), [defect_state_file](#tag_defect_state_file)
-    - [nstate](#tag_nstate), [seed](#tag_seed)
-- [frame](#tag_frame): [rotation](#tag_coordinate_frame_rotation)
+    - [s_range](#tag_s_range), [seed](#tag_seed), [files that do not open](#tag_configuration_missing)
+- [frame](#tag_frame): [rotation](#tag_frame_rotation)
 - [hamiltonian](#tag_hamiltonian)
     - common: [qubit_bath_mean_field](#tag_qubit_bath_mean_field), [bath_bath_mean_field](#tag_bath_bath_mean_field),
-      [hyperfine](#tag_hyperfine) (`dipole`, `contact`, [file](#tag_hyperfine_file), [missing_row](#tag_hyperfine_missing_row)),
+      [hyperfine](#tag_hyperfine) (`dipole`, `contact`, [file](#tag_hyperfine_file), [missing_row](#tag_hyperfine_missing_row),
+      [frame](#tag_hyperfine_frame)),
       [quadrupole](#tag_quadrupole) (`structure`, [file](#tag_quadrupole_file),
-      [file_without_defect](#tag_quadrupole_file_without_defect), [cell](#tag_quadrupole_cell))
+      [file_without_defect](#tag_quadrupole_file_without_defect), [cell](#tag_quadrupole_cell), [frame](#tag_quadrupole_frame))
     - cCCE: [knight](#tag_knight), [hfmedi](#tag_hfmedi), [delta_A](#tag_delta_A) (meCCE reads them too)
     - meCCE, megCCE: [jump_operators](#tag_jump_operators)
     - gCCE, noise: no settings yet (noise is a reserved method)
+- [keys read and not used](#tag_not_used), [turning a part off](#tag_turn_off)
 
-The qubit file (`Qubit.file`) is on the [Qubit page](InputFile_Qubit.md#tag_Qubit_file); the files of the defect bath
+The qubit's position file (`Qubit.qubit[].file`) is on the [Qubit page](InputFile_Qubit.md#tag_Qubit_file); the files of the defect bath
 are configuration keys ([defect_axis_file](#tag_defect_axis_file), [defect_state_file](#tag_defect_state_file), one per
 bath file like `configuration.bath_state_file`), and the defect species are on the [Defect page](InputFile_Defect.md).
 
@@ -63,7 +65,9 @@ Old values are refused with their current form ([old names](InputFile.md#OldName
 <a id="tag_quantity"></a>
 ## quantity
 <b>Description:</b><br>
-Quantity to calculate the dynamics of the system.
+Quantity to calculate the dynamics of the system. `coherence`, the decay curve L(t) between |α⟩ and |β⟩, is the
+usual one; `dm` (gCCE) follows the whole qubit density matrix, for populations or several qubit levels
+(`example/tutorial/03_P1/gCCE2_Ramsey_population/`). meCCE and megCCE compute `coherence` only.
 
 <b>Data Type:</b> String
 
@@ -104,6 +108,9 @@ Order of the CCE method: the largest cluster, in bath spins (`cluster.mode` stan
 Magnetic field.
 
 The key must be in the input file; for no field, write `"bfield": 0`. A number here is Bz. <br>
+The field is read in the computational frame. With [frame.rotation](#tag_frame_rotation) on, its z axis is
+`qubit_axis`, so `[0, 0, B]` (or the number B) is a field of B along `qubit_axis` in the lab (the frame of the bath file);
+a transverse part is refused then. <br>
 <b>Data Type:</b> Float or Float List, or `{"value": ..., "unit": ...}` with the unit `G`, `mT` or `T` ([Units](InputFile.md#Units))
 
 <b>Unit:</b> gauss (G)
@@ -151,7 +158,8 @@ With `cluster.mode` bundle it may be left out (the connections are then chosen b
 <a id="tag_deltat"></a>
 ## deltat
 <b>Description:</b><br>
-Time interval.
+Time interval: the step of the time axis. The outputs hold the times 0, `deltat`, ..., (`nstep` − 1) × `deltat`,
+each the total time of the whole pulse sequence (a Hahn echo of time t has its π pulse at t/2).
 
 <b>Data Type:</b> Float, or `{"value": ..., "unit": ...}` with the unit `s`, `ms`, `us` or `ns` ([Units](InputFile.md#Units))
 
@@ -164,7 +172,7 @@ Time interval.
 <a id="tag_nstep"></a>
 ## nstep
 <b>Description:</b><br>
-Number of time steps.
+Number of time steps: the number of time points of the outputs (from t = 0, see [deltat](#tag_deltat)).
 
 <b>Data Type:</b> Integer
 
@@ -193,10 +201,10 @@ The bath configuration: the files of the bath, its states and the random seed, i
     "gyrofile": "gyro_13C",
     "bathfile": ["config_{k}"],
     "bath_shift": [[0, 0, 0]],
-    "bath_state_file": ["state_{k}_"],
-    "defect_axis_file": ["axis_{k}"],     # with Defect species in the bath
-    "defect_state_file": ["stateEx_{k}_"],
-    "nstate": 5,
+    "bath_state_file": ["cfg{k}_state{s}"],
+    "defect_axis_file": ["cfg{k}_axis"],      # with Defect species in the bath
+    "defect_state_file": ["cfg{k}_onsite{s}"],
+    "s_range": [1, 5],                        # optional: sampled states; absent: the ensemble
     "seed": 1
 }
 ```
@@ -209,7 +217,12 @@ The keys of the block:
 - [gyrofile](#tag_gyrofile), [bathfile](#tag_bathfile), [bath_shift](#tag_bath_shift),
   [bath_state_file](#tag_bath_state_file)
 - [defect_axis_file](#tag_defect_axis_file), [defect_state_file](#tag_defect_state_file)
-- [nstate](#tag_nstate), [seed](#tag_seed)
+- [s_range](#tag_s_range), [seed](#tag_seed)
+
+Every file the block names and the run reads has to open ([files that do not open](#tag_configuration_missing)).
+
+<b>Default:</b> none: the block names the bath, and [bathfile](#tag_bathfile) has no default (the other keys of the
+block have their own).
 
 <b>Related tags:</b> [Defect.species](InputFile_Defect.md#tag_df_species) (the defect model)
 
@@ -218,7 +231,7 @@ The keys of the block:
 <b>Description:</b><br>
 The folder of the block's file names: it is put in front of `gyrofile` and of every entry of `bathfile`,
 `bath_state_file`, `defect_axis_file` and `defect_state_file`. Relative to the working directory, or absolute. A file
-name that is itself absolute is used as it is. It does not apply to files of other blocks (`Qubit.file`, the tensor
+name that is itself absolute is used as it is. It does not apply to files of other blocks (`Qubit.qubit[].file`, the tensor
 files of `hamiltonian`), which stay relative to the working directory.
 
 <b>Data Type:</b> String (folder)
@@ -235,13 +248,14 @@ Several bath configurations in one run: every k from `first` to `last` (both inc
 calculated one after another in the same CCEX execution, with [{k}](#tag_configuration_k) in the file names replaced by
 k. Each configuration writes its own outputs, `<output.file>_k<k>_...` (e.g. `out_k3_wiDiv`, `out_k3_state1_noDiv`); no
 average over configurations is written. The log has a "Configuration k = ..." header before each one. <br>
-With `seed` given, each configuration gives, byte for byte, the result of running its files alone with that `seed`
-(every k uses it). Without `seed`, a seed is generated once and configuration k uses that seed + (k - first): each
-configuration draws its own states, and the log prints its seed ("[seed] configuration k=...: seed S"); the run of its
-files alone with `seed` S gives it byte for byte. <br>
+Configuration k uses the seed + (k - first): a given [seed](#tag_seed) number is the first configuration's, a
+generated one is generated once; a [seed](#tag_seed) list gives each configuration its own. Each configuration draws its
+own states, and the run of its files alone with its seed S gives it byte for byte (without `seed` the log prints it,
+"[seed] configuration k=...: seed S"). Before 2.0.0 a given seed number was every configuration's seed; the converter
+writes such an input as a list of the same number. <br>
 Checked before anything is calculated, and refused: `k_range` with no `{k}` in any of the names it applies to, a file of
-any k that cannot be read (every bath file and axis file with `{k}`, and `<prefix>1` ... `<prefix><nstate>` of every state
-file prefix with `{k}`), a `k_range` that is not two nonnegative integers with first &le; last, and an enabled pCCE
+any k that cannot be read (every bath file and axis file with `{k}`, and the files of the states of
+[s_range](#tag_s_range) of every state file name with `{k}`), a `k_range` that is not two nonnegative integers with first &le; last, and an enabled pCCE
 partition cache ([pcce.cache](InputFile_Cluster.md) `mode` read or readwrite) whose `file` has no `{k}` (one cache file per
 configuration, e.g. `"partition_{k}.cache"`). `k_range` together with a [cluster.adaptive](InputFile_Cluster.md#tag_adaptive) block is
 refused (refine one configuration at a time).
@@ -259,7 +273,12 @@ With [k_range](#tag_configuration_k_range), `{k}` in the entries of `bathfile`, 
 `defect_state_file` and in `pcce.cache.file` is replaced by the configuration's k. An entry without `{k}` is the same
 for every k: a bath file without `{k}` is merged into every configuration (`["nv1_{k}", "common"]` is, for each k, the
 bath of `nv1_<k>` and `common` together). `{{k}}` gives a literal `{k}`. <br>
-Without `k_range` nothing is replaced: a file actually named `config_{k}` is read as it is.
+Without `k_range` nothing is replaced: a file actually named `config_{k}` is read as it is. <br>
+`{s}` in the entries of [bath_state_file](#tag_bath_state_file) and [defect_state_file](#tag_defect_state_file) is the
+state s of [s_range](#tag_s_range), by the same rule (`{{s}}` a literal `{s}`); a name without `{s}` has the state
+appended (`"state_"` reads `state_1`, `state_2`, ...). <br>
+<b>Example:</b> ``` "bathfile" : ["config_{k}"], "bath_state_file" : ["cfg{k}_state{s}"] ``` with `k_range` [1, 2] and
+`s_range` [1, 3] reads `cfg1_state1` ... `cfg2_state3`
 
 <a id="tag_gyrofile"></a>
 ## configuration.gyrofile
@@ -346,58 +365,69 @@ as `bathfile` has entries, each with three numbers. A flat `[1.0, 2.0, 3.0]` is 
 <a id="tag_bath_state_file"></a>
 ## configuration.bath_state_file
 <b>Description:</b><br>
-Prefixes of the files of the bath states, one per
-bath file, in the order of `bathfile`: with [nstate](#tag_nstate) &gt; 0 the state s of the spins of bath file j is
-read from `<prefix j>s`, one sublevel per line of bath file j, in its order; the files are read one after another in
-the merged bath's spin order. <br>
+The files of the bath states, one name per
+bath file, in the order of `bathfile`: with [s_range](#tag_s_range) the state s of the spins of bath file j is
+read from name j with `{s}` replaced by s (or s appended, [{s}](#tag_configuration_k)), one sublevel per line of bath
+file j, in its order; the files are read one after another in the merged bath's spin order. Without `s_range` (the
+ensemble) the key is not used (the run says so). <br>
 Without it the states are drawn from [seed](#tag_seed). An entry `""` is a bath file
 without a state file (e.g. a bath file beside the one the states were made for): the whole bath is drawn from the seed
 first, and the files given then set the states of their own bath files; `""` for every bath file is the key left out.
-A file that does not open is taken as `""` for its bath file, with a warning naming it (the files of the other bath
-files are still read).
+A file that does not open stops the run, naming the key and the file (before 2.0.0 it was taken as `""` with a warning;
+[files that do not open](#tag_configuration_missing)).
 The same `""` rule holds for [defect_axis_file](#tag_defect_axis_file) and
 [defect_state_file](#tag_defect_state_file). <br>
 
+<a id="tag_configuration_files"></a>
+<b>File formats</b> (the three keys): a first line that is not read (by convention the bath file's own first line, its
+line count), then one line per line of the bath file after its first, in its order - line i belongs to the spin of line i
+of the bath file:
+
 <pre>
-    File format is the following :
-    [SpinSubLevel]
+    bath_state_file      m of the spin (one of S, S-1, ..., -S)
+    defect_axis_file     the axis state, 1 .. n_axis_states (every line has to be a spin of a Defect species with axis
+                         states: CCEX refuses a line of another species)
+    defect_state_file    the m of each on-site spin of a Defect spin, space-separated, in the order of the species'
+                         types (any number for a line of another species)
 </pre>
 <pre>
-    example)
-     5.0   - The number of total line
-    -0.5   - Spin sublevel when S=1/2
+    example) bath_state_file of a 13C bath (S = 1/2)
+     5.0   - the first line (not read)
+    -0.5   - m of the spin of the bath file's second line
      0.5   -    :
     -0.5
     -0.5
 </pre>
 
-<b>Data Type:</b> String List (file path prefixes, one per bath file, in [configuration.path](#tag_configuration_path);
-`{k}` with [k_range](#tag_configuration_k_range)). A list of another length, or a bare string, is refused.
+`example/tools/StateFiles/make_state_files.py INPUT` writes the files of all three keys an input names, for every k of
+`k_range` and every state, drawn by a fixed rule ([Tools](Tools.md#tag_tool_statefiles)); the automatic convergence makes
+its files with the same rule.
 
-<b>Default:</b> -
+<b>Data Type:</b> String List (file names, one per bath file, in [configuration.path](#tag_configuration_path);
+`{k}` with [k_range](#tag_configuration_k_range), `{s}` the state). A list of another length, or a bare string, is
+refused.
 
-<b>Example:</b> ``` "bath_state_file" : ["./state"] ``` (reads `./state1`, `./state2`, ...);
-``` "bath_state_file" : ["./stateA_", "./stateB_"] ``` with two bath files
+<b>Default:</b> - (the states are drawn from `seed`)
 
-<b>Related tags:</b> [nstate](#tag_nstate), [defect_state_file](#tag_defect_state_file)
+<b>Example:</b> ``` "bath_state_file" : ["./state{s}"] ``` (reads `./state1`, `./state2`, ... for `s_range` [1, 2]; `["./state"]`
+reads the same files); ``` "bath_state_file" : ["./stateA_{s}", "./stateB_{s}"] ``` with two bath files
+
+<b>Related tags:</b> [s_range](#tag_s_range), [defect_state_file](#tag_defect_state_file)
 
 <a id="tag_defect_axis_file"></a>
 ## configuration.defect_axis_file
 <b>Description:</b><br>
-File paths of the configuration index (the principal axis) of each bath spin that is a
+File paths of the axis state (the principal axis) of each bath spin that is a
 [Defect species](InputFile_Defect.md#tag_df_species), one per bath file in the order of [bathfile](#tag_bathfile): file j holds
 the lines of bath file j, and the files are read one after another in the merged bath's spin order. Without it (or, for
-its bath file alone, when a file does not open, as for `bath_state_file`) the configurations of the defect spins are
-assigned at random (from `seed`). The names are in [configuration.path](#tag_configuration_path);
+its bath file alone, with `""`) the axis states of the defect spins are drawn from `seed`; a file that does not open
+stops the run. Without Defect species the key is not used (the run says so). The names are in [configuration.path](#tag_configuration_path);
 `{k}` is the configuration with [k_range](#tag_configuration_k_range). <br>
 <pre>
-    File format is the following :
-    [Principal axis index]
-</pre>
-<pre>
+    File format ([file formats](#tag_configuration_files)): a first line (not read), then per bath-file line the axis state
     example)
-    5.0 - The number of total line
-    1.0 - principal axis index
+    5.0 - the first line (not read)
+    1.0 - the axis state of the spin of the bath file's second line
     2.0 -  :
     3.0
     3.0
@@ -414,103 +444,137 @@ length, or a bare string, is refused.
 ## configuration.defect_state_file
 <b>Description:</b><br>
 Prefix of the files of the states of the defects' on-site nuclear spins, as [bath_state_file](#tag_bath_state_file)
-for the main bath spins: one prefix per bath file, and with [nstate](#tag_nstate) &gt; 0 the state s of the spins of
-bath file j is read from `<prefix j>s`. Without it the states are drawn from `seed`. The names are in
+for the main bath spins: one name per bath file, and with [s_range](#tag_s_range) the state s of the spins of
+bath file j is read from name j with `{s}` replaced by s (or s appended). Without it (or with `""`) the states are drawn
+from `seed`; a file that does not open stops the run. In the ensemble, or without Defect species, it is not used. The names are in
 `configuration.path`; `{k}` is the configuration with `k_range`. <br>
 
 <pre>
-    File format is the following :
-    [SpinSubLevel]
-</pre>
-<pre>
-    example)
-     5.0   - The number of total line
-    -1.0   - Spin sublevel when S=1
+    File format ([file formats](#tag_configuration_files)): a first line (not read), then per bath-file line the m of
+    each on-site spin of that Defect spin, space-separated (any number for a line of another species)
+    example) one on-site 14N (I = 1) per P1
+     5.0   - the first line (not read)
+    -1.0   - m of the 14N of the P1 on the bath file's second line
      0.0   -    :
      1.0
     -1.0
 </pre>
 
-<b>Data Type:</b> String List (file path prefixes, one per bath file). A list of another length, or a bare string, is
-refused.
+<b>Data Type:</b> String List (file names, one per bath file; `{k}`, `{s}`). A list of another length, or a bare string,
+is refused.
 
 <b>Default:</b> -
 
-<b>Example:</b> ``` "configuration" : {"bathfile": ["bath_1"], "defect_state_file": ["./stateEx_"], ...} ```
+<b>Example:</b> ``` "configuration" : {"bathfile": ["bath_1"], "s_range": [1, 4], "defect_state_file": ["./onsite{s}"], ...} ```
 
-<a id="tag_nstate"></a>
-## configuration.nstate
+<a id="tag_s_range"></a>
+## configuration.s_range
 <b>Description:</b><br>
-Number of state templates to be generated. <br>
-<b>Data Type:</b> Integer
+The sampled bath states, `[first, last]` (`nstate` N before 2.0.0 is `[1, N]`). <br>
+Without it the run averages over the unpolarised bath (the ensemble), one output. With it each state s from first to last
+is a pure bath state, each spin in one sublevel read from [bath_state_file](#tag_bath_state_file) or drawn from
+[seed](#tag_seed); each state writes its own `_state<s>` output, and their average is left to the analysis. Use states
+for an electron-spin bath (P1), where one bath state differs much from another, or for the spread between single
+centres. <br>
+States drawn from the seed are drawn for 1 .. last and calculated for first .. last, so state s is the same state as in
+a run of `[1, last]`: `[11, 20]` and `[1, 10]` together are `[1, 20]`, split over two runs. With state files only the
+files of first .. last are read (and have to be there). <br>
+<b>Data Type:</b> `[first, last]`, two integers, 1 &le; first &le; last (a list also for one state: `[3, 3]`)
 
 <b>Options:</b><br>
 | Option | Description |
 |--------|-------------------------------------|
-| `0`    | No state template will be generated (Ensemble approach) |
-| `>0`   | State template will be generated (Single-sample approach) <br> The static field of the other bath spins is added (see [bath_bath_mean_field](#tag_bath_bath_mean_field)) |
+| absent | the ensemble: the average over the unpolarised bath, one output |
+| `[first, last]` | the sampled states first .. last, each its own `_state<s>` output <br> The static field of the other bath spins is added (see [bath_bath_mean_field](#tag_bath_bath_mean_field)) |
 
-<b>Default:</b> 0
+<b>Default:</b> - (the ensemble)
 
-<b>Example:</b> ``` "configuration" : {"nstate" : 10, ...} ```
+<b>Example:</b> ``` "configuration" : {"s_range" : [1, 10], ...} ```
 
-<b>Related Tags:</b> [seed](#tag_seed), [bath_state_file](#tag_bath_state_file)
+<b>Related Tags:</b> [seed](#tag_seed), [bath_state_file](#tag_bath_state_file), [{s}](#tag_configuration_k)
 
 <a id="tag_seed"></a>
 ## configuration.seed
 <b>Description:</b><br>
 Seed for random number generator. <br>
-If you want to generate the same state templates, you should set the same seed value. With
-[k_range](#tag_configuration_k_range) every configuration uses a given seed; without one, the seed generated for the
-first configuration + (k - first), printed per k in the log.
+If you want to draw the same states again, give the same seed. A number is the seed of the first configuration of
+[k_range](#tag_configuration_k_range): configuration k uses seed + (k - first), the rule a generated seed follows too
+(without k_range it is the run's seed). A list gives one seed per configuration (as many as `k_range` has, one
+without it). Before 2.0.0 a number was every configuration's seed; the converter writes such an input as a list of the
+same number.
 
-<b>Data Type:</b> Integer
+<b>Data Type:</b> Integer, or Integer List (one per configuration)
 
 <b>Default:</b> generated on rank 0 and reported in the log (`[seed] ...`) when the run draws random numbers
-(`nstate` &gt; 0, Defect species in the bath, a pCCE partition); otherwise the seed is not used
+([s_range](#tag_s_range), Defect species in the bath, a pCCE partition); otherwise the seed is not used
 
-<b>Example:</b> ``` "configuration" : {"seed" : 1241798, ...} ```
+<b>Example:</b> ``` "configuration" : {"seed" : 1241798, ...} ```, ``` "configuration" : {"k_range": [1, 3], "seed" : [7, 7, 9], ...} ```
 
-<b>Related Tags:</b> [nstate](#tag_nstate)
+<b>Related Tags:</b> [s_range](#tag_s_range)
+
+<a id="tag_configuration_missing"></a>
+## Files that do not open
+<b>Description:</b><br>
+A file the input names and the run reads has to open: otherwise the run stops before anything is calculated, naming the
+key and the file. Before 2.0.0 a state or axis file that did not open was a warning and its spins were drawn from the
+seed, and a tensor or gyro file was a warning first ("continuing with defaults") and an error later. The keys:
+`configuration.bathfile`, `gyrofile`, `bath_state_file` and `defect_state_file` (every state of `s_range`),
+`defect_axis_file` (with Defect species), `Qubit.qubit[].file`, `hamiltonian.common.hyperfine.file`,
+`hamiltonian.common.quadrupole.file` and `file_without_defect`, `cluster.pcce.cache.file` in mode `read`. `""` in a list of
+per-bath-file names is still no file: that bath file's states or axes are drawn from the seed. A file the run does not
+read (a state file in the ensemble) is not opened; the key is reported as not used.
 
 <a id="tag_frame"></a>
 ## frame
 <b>Description:</b><br>
-The frame block: its one key is [rotation](#tag_coordinate_frame_rotation). <br>
+The frame block: its one key is [rotation](#tag_frame_rotation). <br>
 
 <b>Example:</b> ``` "frame" : {"rotation": {"qubit_axis": [1, 1, 1]}} ```
 
-<a id="tag_coordinate_frame_rotation"></a>
+<a id="tag_frame_rotation"></a>
 ## frame.rotation
 <b>Description:</b><br>
-Re-express the qubits and the bath in the frame whose z axis is the reference qubit's
-symmetry axis. <br>
-Use it when the bath file is written in the crystal frame (e.g. diamond [001]) but the
-qubit is quantized along another direction (e.g. an NV along [111]). <br>
-More than one qubit is supported: every Qubit.xyz and every bath-spin position receives
-the same R and the same r<sub>0</sub>. <br>
-<b>On when the block is given</b>: `enabled` defaults to `true`; `"enabled":
-false` turns a written block off, and no block is no rotation. <br>
-The seven keys of the block are "enabled", "bath_axis", "qubit_axis", "reference_qubit",
-"qubit_position_frame", "hf_tensor_frame" and "qd_tensor_frame" (the last two: the basis of the components of
-[hyperfine.file](#tag_hyperfine_file) and [quadrupole.file](#tag_quadrupole_file)). What is transformed,
-what is refused and what each key means are in [The coordinate frame rotation](../methods/coordinate-frame-rotation.md). <br>
+Turn the frame of the bath file (the lab or crystal frame) so that `qubit_axis` becomes the computational z axis. Use it
+when the bath file is written in a crystal frame (e.g. the cubic axes of diamond) and the qubit is quantized along
+another direction (e.g. an NV along [111]). <br>
+Every position -- the bath spins and the qubits -- is turned about the first qubit; every tensor written in the file
+frame is turned with them. The [bfield](#tag_bfield) is read in the computational frame, so `[0, 0, B]` is a field
+along `qubit_axis` in the lab. <br>
+The qubit states (|α⟩, |β⟩, psi0) and the pulse axes stay in the computational frame, so the choice of x (the computational
+x is `qubit_axis` × [0, 0, 1]) sets the preparation phase relative to the system. With gCCE and a non-axial qubit ZFS
+(E ≠ 0) the coherence depends on that phase (the check's system turned by 180°: 4.3e-4 in |L| for the free
+induction, 3.9e-2 for a Hahn echo); cCCE and an axial ZFS do not (gCCE: about 1e-8, from the non-secular hyperfine). <br>
+<b>Each set of directional numbers says which frame it is written in</b>, with a key `frame` beside it: `"file"`
+(written in the bath file's frame, before the rotation: turned with the positions) or `"qubit"` (written in the
+computational frame, z = `qubit_axis`: used as written). With the rotation on it is required wherever such numbers are
+written: [hyperfine.frame](#tag_hyperfine_frame) (with `"dipole": "dft"`), [quadrupole.frame](#tag_quadrupole_frame),
+[Qubit.intmap[].frame](InputFile_Qubit.md#tag_intmap_frame) (a qubit's ZFS is a self entry there)
+and [Defect.species[].frame](InputFile_Defect.md#tag_df_frame) (a species with `nuclear_positions`, `hyperfine`, `efg` or
+`zfs`). With it off a written `frame` is not used (reported, [keys not used](#tag_not_used)). <br>
+<b>On when the block is given</b>: `enabled` defaults to `true`; `"enabled": false` turns a written block off, and no
+block is no rotation. The rotation, the frames and what is turned are explained in
+[The coordinate frame rotation](../methods/coordinate-frame-rotation.md). <br>
+Before 2.0.0 the block also had `bath_axis` (it turned x and y about `qubit_axis`; x is now
+`qubit_axis` x [0, 0, 1], the old default), `reference_qubit` (the origin, now the first qubit), `qubit_position_frame`
+(one value) and `hf_tensor_frame`, `qd_tensor_frame` (now
+[hyperfine.frame](#tag_hyperfine_frame), [quadrupole.frame](#tag_quadrupole_frame)); they are refused
+([old names](InputFile.md#OldNames)). <br>
 
-<b>Data Type:</b> Object { Boolean, Double List(3), Double List(3), String x4 }
+| Key | Type | Values | Default |
+|---|---|---|---|
+| `enabled` | Boolean | `true`, `false` | `true` (in a given block) |
+| `qubit_axis` | Double List(3) | the qubit's quantization axis in the bath file's frame, any nonzero vector except along [0, 0, -1] | [0, 0, 1] |
 
-<b>Default:</b> no rotation (no block). In a given block: ``` {"enabled": true, "bath_axis": [0,0,1], "qubit_axis": [0,0,1]} ```
-No block, or "enabled" : false, leaves the run numerically identical to a build without this option.
+<b>Data Type:</b> Object { Boolean, Double List(3) }
 
-<b>Example:</b>
+<b>Default:</b> no rotation (no block). No block, or "enabled" : false, leaves the run numerically identical to a build
+without this option.
+
+<b>Example:</b> an NV along [111] in a cubic diamond bath, with a DFT hyperfine file written in the same frame
     ```
-    "frame" : {"rotation" : {
-        "bath_axis"       : [0.0, 0.0, 1.0],
-        "qubit_axis"      : [1.0, 1.0, 1.0],
-        "reference_qubit" : "q0",
-        "qubit_position_frame" : "bath",
-        "hf_tensor_frame" : "bath",
-        "qd_tensor_frame" : "bath"
-    }}
+    "frame"       : {"rotation": {"qubit_axis": [1.0, 1.0, 1.0]}},
+    "bfield"      : 500,
+    "hamiltonian" : {"common": {"hyperfine": {"dipole": "dft", "file": "Afile", "frame": "file"}}}
     ```
 
 <a id="tag_hamiltonian"></a>
@@ -525,6 +589,9 @@ method (an empty section is allowed, a key in it is refused). Every key has a de
 
 <b>Data Type:</b> Object `{"common": {...}, "cCCE": {...}, "gCCE": {}, "meCCE": {...}, "megCCE": {...}}`
 
+<b>Default:</b> no block: every key at its default (no mean field on the qubit, the z mean field between bath spins,
+point-dipole hyperfine, no quadrupole, no knight, hfmedi or delta_A, no jump operators).
+
 <b>Example:</b>
     ```
     "hamiltonian" : {
@@ -535,18 +602,18 @@ method (an empty section is allowed, a key in it is refused). Every key has a de
                             "missing_row": "stop"},
             "quadrupole" : {"structure": "plain", "file": "../bath/flat/hBN_VB_flat_QTensor_HSE_CellPBE"}
         },
-        "cCCE" : {"knight": false, "hfmedi": false, "delta_A": true}
+        "cCCE" : {"knight": false, "hfmedi": false, "delta_A": false}
     }
     ```
 
 <a id="tag_qubit_bath_mean_field"></a>
 ## qubit_bath_mean_field
 <b>Description:</b><br>
-`hamiltonian.common`. With [nstate](#tag_nstate) &gt; 0, add the Overhauser field of the bath on the qubit (the static
+`hamiltonian.common`. With [s_range](#tag_s_range) (sampled states), add the Overhauser field of the bath on the qubit (the static
 hyperfine field of the sampled bath states): in each cluster the field of every bath spin outside the cluster, since the
 cluster's own spins act on the qubit through their coupling. With `false` the qubit feels the spins of the cluster only.
-It enters the qubit Hamiltonian, which gCCE and megCCE build: with cCCE and meCCE it has no effect (the run warns). Read with both forms of the [Qubit](InputFile_Qubit.md#tag_Qubit)
-block. <br>
+It enters the qubit Hamiltonian, which gCCE and megCCE build: with cCCE and meCCE, and in the ensemble (no sampled state,
+the field is zero), it is not used (reported, [keys not used](#tag_not_used)). (Before 2.0.0 the qubit lost the static field of the spins in its cluster when false.) <br>
 <b>Data Type:</b> Boolean
 
 <b>Default:</b> `false`
@@ -556,8 +623,9 @@ block. <br>
 <a id="tag_bath_bath_mean_field"></a>
 ## bath_bath_mean_field
 <b>Description:</b><br>
-`hamiltonian.common`. With [nstate](#tag_nstate) &gt; 0 each cluster feels the static field of every bath spin outside it,
-from that spin's sampled state m<sub>j</sub>; this key says how (with `nstate` 0 it is not used). <br>
+`hamiltonian.common`. With [s_range](#tag_s_range) each cluster feels the static field of every bath spin outside it,
+from that spin's sampled state m<sub>j</sub>; this key says how (in the ensemble it is not used, and a written one is
+reported). <br>
 `"z"` keeps only the z part: J<sub>zz</sub> m<sub>j</sub> I<sub>z</sub>. <br>
 `"xyz"` uses the whole vector J·(0, 0, m<sub>j</sub>) = J[:, z] m<sub>j</sub>, so the x and y parts enter too; a cluster removes its own members' field (all three parts) and keeps their full
 coupling tensor instead. The x and y parts matter at first order for a bath spin whose own z field nearly cancels (a close
@@ -566,7 +634,7 @@ there the z-only field can make the cluster expansion diverge. The
 transverse field is added and removed only between main bath spins: every mean-field term involving a defect sub-spin
 (e.g. a P1's <sup>14</sup>N) stays z only, while the couplings inside a cluster keep their full tensors. Against exact
 10-spin subsystems it removed the divergence of a broken state but was not more accurate in every normal region, so it is
-not the default. <br>
+not the default. `example/tutorial/03_P1/cCCE2_Hahn_meanField/` runs `"off"`, `"z"` and `"xyz"` on a P1 bath. <br>
 `"off"` leaves the field of the spins outside the cluster out altogether: a cluster is then the cluster
 alone in its sampled state. `test/code_verification/check_analytic` checks that two spins at order 1 then give the product of
 each spin alone in its bath, which `"z"` does not. <br>
@@ -583,7 +651,7 @@ each spin alone in its bath, which `"z"` does not. <br>
 
 <b>Example:</b> ``` "hamiltonian" : {"common": {"bath_bath_mean_field": "xyz"}} ```
 
-<b>Related Tags:</b> [nstate](#tag_nstate)
+<b>Related Tags:</b> [s_range](#tag_s_range)
 
 <a id="tag_hyperfine"></a>
 ## hyperfine
@@ -591,9 +659,10 @@ each spin alone in its bath, which `"z"` does not. <br>
 `hamiltonian.common`. Where the hyperfine tensors between the qubit and the bath spins come from. `dipole` is the anisotropic part: `"point"` computes the point-dipole tensor from the positions, `"dft"`
 takes the DFT dipolar tensor of [file](#tag_hyperfine_file). `contact` adds the isotropic Fermi-contact term of `file`.
 `file` is required when `dipole` is `"dft"` or `contact` is `true`, and [missing_row](#tag_hyperfine_missing_row) is read
-then too. <br>
+then too. With [frame.rotation](#tag_frame_rotation) on, [frame](#tag_hyperfine_frame) says the frame of the
+file's tensor components. <br>
 
-<b>Data Type:</b> Object `{"dipole": "point"|"dft", "contact": true|false, "file": ..., "missing_row": "stop"|"point_dipole"}`
+<b>Data Type:</b> Object `{"dipole": "point"|"dft", "contact": true|false, "file": ..., "missing_row": "stop"|"point_dipole", "frame": "file"|"qubit"}`
 
 <b>Options:</b><br>
 | dipole | contact | Description |
@@ -628,8 +697,8 @@ x 2) is right only untagged and for S = 1; with a `VASP` line it is read 2x.
 Remake old files with SpinTensorReader. <br>
 A bath spin is matched to a row by its position relative to the qubit. A spin outside the
 range gets a point-dipole tensor; a spin inside the range with no row is decided by
-[missing_row](#tag_hyperfine_missing_row). The positions are in the bath frame; the frame of the
-components is `hf_tensor_frame` of [frame.rotation](#tag_coordinate_frame_rotation). One qubit only. <br>
+[missing_row](#tag_hyperfine_missing_row). The positions are in the bath file's frame; the frame of the
+components is [hyperfine.frame](#tag_hyperfine_frame). One qubit only. <br>
 <pre>
 VASP                                         the DFT code (format v3)
 # CCEX-tensor v3: values = hyperfine of the spin-S defect (MHz), source = VASP OUTCAR, S = 1
@@ -666,6 +735,28 @@ always get a point-dipole tensor. <br>
 
 <b>Example:</b> ``` "missing_row" : "point_dipole" ``` (inside `hyperfine`)
 
+<a id="tag_hyperfine_frame"></a>
+## hyperfine.frame
+<b>Description:</b><br>
+The frame the tensor components of [hyperfine.file](#tag_hyperfine_file) are written in, read with
+[frame.rotation](#tag_frame_rotation) on (`frame.rotation.hf_tensor_frame` before 2.0.0). The position columns
+of the file are always in the bath file's frame. <br>
+Required with the rotation on and `dipole` `"dft"`. With `dipole` `"point"` the tensors are point dipoles from the
+positions and are always turned (with `contact` `true` the file gives only the isotropic term, which has no direction), so
+a written frame is not used (the log notes it). With the rotation off a written frame is not used (a warning). <br>
+
+<b>Data Type:</b> String
+
+<b>Options:</b><br>
+| Option | Description |
+|---|---|
+| `"file"` | the components are in the bath file's frame: turned with the positions, R T R<sup>T</sup> (`"bath"` before 2.0.0) |
+| `"qubit"` | the components are already in the computational frame (z = `qubit_axis`): used as written; a spin the file does not cover still gets a turned point-dipole tensor |
+
+<b>Default:</b> none (required with the rotation on and `dipole` `"dft"`)
+
+<b>Example:</b> ``` "frame" : "file" ``` (inside `hyperfine`)
+
 <a id="tag_quadrupole"></a>
 ## quadrupole
 <b>Description:</b><br>
@@ -674,9 +765,11 @@ inside the range the file covers takes the row at its position relative to the d
 stops the run); a spin outside the range takes the species default of the file (`etc`) with `structure` `"plain"`, or, with
 `"strained"` and `"bubble"`, the tensor of the structure without the defect from
 [file_without_defect](#tag_quadrupole_file_without_defect), with the relative position folded by
-[cell](#tag_quadrupole_cell) along every axis whose cell parameter is not zero. One qubit only. <br>
+[cell](#tag_quadrupole_cell) along every axis whose cell parameter is not zero. One qubit only. With
+[frame.rotation](#tag_frame_rotation) on, [frame](#tag_quadrupole_frame) says the frame of the files' tensor
+components. <br>
 
-<b>Data Type:</b> `"off"`, or Object `{"structure": ..., "file": ..., "file_without_defect": ..., "cell": [a, b, c]}`
+<b>Data Type:</b> `"off"`, or Object `{"structure": ..., "file": ..., "file_without_defect": ..., "cell": [a, b, c], "frame": "file"|"qubit"}`
 
 <b>Options:</b><br>
 | structure | Description |
@@ -723,13 +816,34 @@ tensors of the spins outside the range of the file with the defect. <br>
 Lattice parameters of the strained or bubble structure. Read with `structure`
 `"strained"` or `"bubble"`. <br>
 
-<b>Data Type:</b> Double List (3)
+<b>Data Type:</b> Double List (3), or `{"value": [a, b, c], "unit": ...}` with the unit `A` or `nm`
+([Units](InputFile.md#Units))
 
 <b>Default:</b> - (required with `"strained"` and `"bubble"`)
 
 <b>Unit:</b> angstrom
 
 <b>Example:</b> ``` "cell" : [1.0, 2.0, 3.0] ``` (inside `quadrupole`)
+
+<a id="tag_quadrupole_frame"></a>
+## quadrupole.frame
+<b>Description:</b><br>
+The frame the tensor components of [quadrupole.file](#tag_quadrupole_file) (and
+[file_without_defect](#tag_quadrupole_file_without_defect)) are written in, read with
+[frame.rotation](#tag_frame_rotation) on (`frame.rotation.qd_tensor_frame` before 2.0.0). Required with the
+rotation on and a quadrupole structure; with the rotation off a written frame is not used (a warning). <br>
+
+<b>Data Type:</b> String
+
+<b>Options:</b><br>
+| Option | Description |
+|---|---|
+| `"file"` | the components are in the bath file's frame: turned with the positions (`"bath"` before 2.0.0) |
+| `"qubit"` | the components are already in the computational frame: used as written |
+
+<b>Default:</b> none (required with the rotation on and a quadrupole structure)
+
+<b>Example:</b> ``` "frame" : "file" ``` (inside `quadrupole`)
 
 <a id="tag_hfmedi"></a>
 ## hfmedi
@@ -755,9 +869,10 @@ Expanded, it holds both orders of every pair (i, j) and the i = j terms of each 
 `hamiltonian.cCCE`. Add the Knight-field shift of the bath spins that the qubit induces under a
 transverse magnetic field (same reference as [hfmedi](#tag_hfmedi), SI Eq. 14):
 H_K^(α) = −γ_n B·(g − 1)·I = −(3|m_s| − 2) (γ_e/Δ) B·Ã·I for each bath spin, with Δ = 3/2 of the zz entry of
-the qubit's zero-field splitting (`Qubit.zfs`, or the qubit's self term in `Qubit.intmap`), Ã the hyperfine tensor with its z row set to zero, and |m_s| = ⟨S_z²⟩ of the branch's eigenstate.
-It is zero when the field is along z. (Before 2.0.0 the term used the bare field B instead of −γ_n B and |m_s| = 1
-for both branches.)
+the qubit's zero-field splitting (the qubit's self term in `Qubit.intmap`), Ã the hyperfine tensor with its z row set to zero, and |m_s| = ⟨S_z²⟩ of the branch's eigenstate.
+It is zero when the field is along z. A qubit without a zero-field splitting (Δ = 0) is refused, since the term divides
+by Δ (`Error: hamiltonian.cCCE.knight divides by the zero-field splitting of the qubit ...`). (Before 2.0.0 the term
+used the bare field B instead of −γ_n B and |m_s| = 1 for both branches.)
 `example/tutorial/06_cCCE_vs_gCCE/cCCE2_Hahn_knightShift/` runs with and without it in a tilted field. <br>
 
 <b>Data Type:</b> Boolean
@@ -769,22 +884,53 @@ for both branches.)
 <a id="tag_delta_A"></a>
 ## delta_A
 <b>Description:</b><br>
-`hamiltonian.cCCE`. `false` replaces, in every cluster of more than one bath spin and for each qubit, the
-hyperfine tensors of the cluster's spins by their mean, so the Knight fields of the spins no longer differ (the pair term
-Z<sub>jk</sub> = A<sub>j,z</sub> − A<sub>k,z</sub> of Zhao 2011, the reference of [hfmedi](#tag_hfmedi), SI eq. 23;
-ΔΩ<sub>nm</sub> of Maze 2008, eq. 8). A cluster of one spin keeps its own tensor, so the single-spin (ESEEM) terms
-are unchanged and only the flip-flop contribution of pairs and larger clusters goes: a comparison calculation that shows
-how much of the decoherence comes from the hyperfine-field difference. `true` (the default) is the ordinary calculation.
-It is defined for a bath of nuclear spins: `false` is refused with Defect species and with
-[qubit_bath_mean_field](#tag_qubit_bath_mean_field) true (the Overhauser field is computed from the tensors before they are
-averaged). `test/code_verification/check_analytic` checks it on two <sup>13</sup>C on the NV axis: with `false` their
-Hahn echo is 1, with `true` it is not, and order 1 is the same either way. <br>
+`hamiltonian.cCCE`. Add the second-order hyperfine correction δA of each bath spin (J. R. Maze, J. M. Taylor and
+M. D. Lukin, PRB 78, 094303 (2008), Appendix, eqs. A3 and A4; the same family as [knight](#tag_knight), Maze's δg, and
+[hfmedi](#tag_hfmedi)). For each qubit branch α and each bath spin n, CCEX adds δA<sub>n</sub>(m<sub>s</sub>)·I<sub>n</sub> to the branch's bath Hamiltonian, with
+
+δA<sub>n</sub>(m<sub>s</sub>) = −m<sub>s</sub> / (2Δ) · (A<sub>x</sub> × A<sub>y</sub>),  (A<sub>x</sub> × A<sub>y</sub>)<sub>k</sub> = Σ<sub>ij</sub> ε<sub>ijk</sub> A<sub>xi</sub> A<sub>yj</sub>,
+
+A<sub>x</sub>, A<sub>y</sub> the x and y rows of the spin's hyperfine tensor (row = qubit component, the qubit axis is z),
+Δ = 3/2 of the zz entry of the qubit's zero-field splitting (as for knight) and m<sub>s</sub> the branch's
+m<sub>s</sub> (`Qubit.alpha_state`/`beta_state`).
+
+Where it comes from: for a spin-1 qubit, H = Δ S<sub>z</sub><sup>2</sup> + S·A·I, the transverse part
+S<sub>x</sub> a<sub>x</sub> + S<sub>y</sub> a<sub>y</sub> (a<sub>k</sub> = A<sub>k</sub>·I) changes m<sub>s</sub> by ±1. To second order the branch
+m<sub>s</sub> = ±1 gets (1/2Δ) V<sub>±</sub>V<sub>∓</sub>, V<sub>±</sub> = a<sub>x</sub> ∓ i a<sub>y</sub>, and m<sub>s</sub> = 0 gets
+−(1/2Δ)(V<sub>+</sub>V<sub>−</sub> + V<sub>−</sub>V<sub>+</sub>). Since [a<sub>x</sub>, a<sub>y</sub>] = i (A<sub>x</sub> × A<sub>y</sub>)·I,
+V<sub>±</sub>V<sub>∓</sub> = a<sub>x</sub><sup>2</sup> + a<sub>y</sub><sup>2</sup> ∓ (A<sub>x</sub> × A<sub>y</sub>)·I: the part linear in I is
+∓(A<sub>x</sub> × A<sub>y</sub>)·I/(2Δ) for m<sub>s</sub> = ±1 and cancels for m<sub>s</sub> = 0, i.e. −m<sub>s</sub>(A<sub>x</sub> × A<sub>y</sub>)/(2Δ).
+(The a<sub>x</sub><sup>2</sup> + a<sub>y</sub><sup>2</sup> part is a constant for a spin 1/2, a quadrupole-like term otherwise; it is not added.)
+The term has to be odd in m<sub>s</sub>: S and I both change sign under time reversal, which takes m<sub>s</sub> to −m<sub>s</sub>.
+This differs from the coefficient (2 − 3|m<sub>s</sub>|) of Maze, PRB 78, 094303 (2008), Eq. (A4); a direct derivation,
+time-reversal symmetry and exact diagonalization give −m<sub>s</sub>. Whether this is a misprint or a difference of
+convention is not settled. (The two agree for m<sub>s</sub> = +1; for m<sub>s</sub> = ±1 one virtual path fixes the
+operator order and sign, for m<sub>s</sub> = 0 the two paths cancel.) Exact diagonalization of an NV with one <sup>13</sup>C
+(|A| up to 1.5 MHz, B = 5 G along z): the nuclear splitting in each branch is off by 2.0 rad/ms without the term, by 0.01
+with −m<sub>s</sub>, and with (2 − 3|m<sub>s</sub>|) by 1.9 (m<sub>s</sub> = 0) and 4.0 (m<sub>s</sub> = −1).
+
+Limits: the derivation takes the qubit levels as the |m<sub>s</sub>⟩ states, a field along the qubit axis with
+γ<sub>e</sub>B ≪ Δ (secular). The qubit Zeeman energy is left out of the denominators, as in knight, so the next correction is
+of relative size γ<sub>e</sub>B<sub>z</sub>/Δ (0.5 % at 5 G, 10 % at 100 G). With a field across the axis the levels mix; CCEX
+warns when the qubit eigenstate closest to |α⟩ or |β⟩ has less than 0.99 of its weight on that |m<sub>s</sub>⟩.
+
+When it matters: the term is of size |A|<sup>2</sup>/Δ, so for nuclei close to the defect, with transverse hyperfine
+components of a MHz or more (≈ 2.5 rad/ms for a <sup>13</sup>C 2.5 Å from an NV, a phase of order one in a millisecond).
+For the bulk of a bath it is small, as Maze notes, because Δ is large.
+[hfmedi](#tag_hfmedi) already contains it: its sum holds every ordered pair i ≠ j and the i = j (same-nucleus) terms, the
+complete second order of the same coupling with the qubit's own level energies, so the two together are refused. Use
+delta_A for the same-nucleus δA correction without the full hyperfine-mediated term (for that <sup>13</sup>C at 5 G hfmedi
+alone deviates by 3.7e-4 from the exact echo, delta_A by 4.8e-3). delta_A needs a single spin-1 qubit with a zero-field splitting (refused otherwise), and it is not on
+`execution.propagator` sparse. `test/code_verification/check_analytic` compares it with gCCE order 1 (exact for one spin)
+for that <sup>13</sup>C: the Hahn-echo deviation from the exact curve goes from 0.81 to 4.8e-3 at 5 G along z.
+(In development versions before 2.0.0, a `delta_A` key of another meaning replaced the hyperfine tensors of a
+cluster's spins by their mean; that comparison is gone.) <br>
 
 <b>Data Type:</b> Boolean
 
-<b>Default:</b> `true`
+<b>Default:</b> `false`
 
-<b>Example:</b> ``` "hamiltonian" : {"cCCE": {"delta_A": false}} ```
+<b>Example:</b> ``` "hamiltonian" : {"cCCE": {"delta_A": true}} ```
 
 <a id="tag_jump_operators"></a>
 ## jump_operators
@@ -796,9 +942,10 @@ the Defect sub-spins, case not significant), or `"qubit"` / the qubit's name for
 takes (one qubit; meCCE refuses it and names megCCE). A `bath_name` that is neither, checked against the whole bath once
 it is read, is refused with the names the bath has (a cluster without that species simply gets no jump from it), and so
 is a `bath_name` that is both the qubit's name and a bath spin's (megCCE would apply it to the qubit only). The
-section must belong to the run's method, and holds `jump_operators` only. Without the key, or with an empty
+section belongs to meCCE and megCCE (another method's run refuses it), and holds `jump_operators` only. Without the key, or with an empty
 list, the run is the rate-0 limit: the cCCE (meCCE) or the gCCE (megCCE). The equations, what is supported and the
-checks are in [master-equation.md](../methods/master-equation.md). <br>
+checks are in [master-equation.md](../methods/master-equation.md); `example/tutorial/06_cCCE_vs_gCCE/meCCE2_Hahn_bathRelaxation/`
+runs S₋ and S₊ on the ¹³C against cCCE. <br>
 
 <b>Data Type:</b> Array of objects `{"bath_name": string, "operator": string, "rate": number}`; `rate` may also be
 `{"value": ..., "unit": ...}` with the unit `Hz`, `kHz`, `MHz` or `GHz` ([Units](InputFile.md#Units))
@@ -815,3 +962,44 @@ checks are in [master-equation.md](../methods/master-equation.md). <br>
         {"bath_name": "e",     "operator": "+", "rate": 1.5915e-4},
         {"bath_name": "qubit", "operator": "z", "rate": 1.5915e-4}]}}
     ```
+
+<a id="tag_not_used"></a>
+## Keys read and not used
+<b>Description:</b><br>
+A key this run reads but does not use is reported once, with the same line for every such key:
+`Warning: input key "<key>" is not used by this run: <why>`. The calculation goes on; the result is the one without
+the key. The cases:
+
+| Key | Not used when |
+|---|---|
+| `Qubit.psi0` | cCCE, meCCE (the qubit is projected out: alpha and beta only) |
+| `hamiltonian.common.qubit_bath_mean_field` | cCCE, meCCE, and the ensemble (no sampled state) |
+| `hamiltonian.common.bath_bath_mean_field` | the ensemble |
+| `configuration.bath_state_file`, `defect_state_file` | the ensemble (no `s_range`) |
+| `configuration.defect_axis_file`, `defect_state_file` | no Defect species |
+| `pulse.duration` | gCCE with `pulse.detuning_factor` 1 (cCCE, meCCE and megCCE refuse it) |
+| `frame` (any) | `frame.rotation` off; a Defect species' `frame` without directional numbers |
+| `cluster.selection.max_per_order` | an entry 0-2 other than 0, or every entry with dsj, itb, dsjitb |
+| `execution.gpu_options` | `main.out` (built without CUDA; `main_gpu.out` uses them) |
+| `cluster.adaptive.policy` | always: `merge` is the only policy |
+
+A key no part of the run reads at all is reported as `Warning: input key "<key>" is not read by this run and is ignored`,
+and one that looks like a typo of a key that is read stops the run.
+
+<a id="tag_turn_off"></a>
+## Turning a part off
+<b>Description:</b><br>
+How each part that can be switched off is switched off (leaving the key out gives the default in the last column):
+
+| Key | Off | Without the key |
+|---|---|---|
+| `hamiltonian.common.quadrupole` | `"off"` | off |
+| `hamiltonian.common.bath_bath_mean_field` | `"off"` | `"z"` |
+| `cluster.pcce.cache` | `{"mode": "off"}` | off |
+| `frame.rotation` | `{"enabled": false}` | off |
+| `execution.gcce_refinement` | `{"enabled": false}` | off |
+| `execution.column_evolution` | `{"enabled": false}` | on |
+| `output.cluster_contributions` | `{"enabled": false}` | off |
+| `auto_convergence` | `{"enabled": false}` | off |
+
+A block written with no `"enabled"` is on.

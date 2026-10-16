@@ -6,5 +6,5 @@ CCEX=${CCEX_BIN:-$ROOT/bin/main.out}
 PLOT=$ROOT/example/tutorial/plot_coherence.py
 NP=${NP:-4}
 mkdir -p results
-mpirun -n $NP $CCEX -f ccein.json -o results > results/ccein.log
+mpirun -n $NP $CCEX -f ccein.jsonc -o results > results/ccein.log
 python3 $PLOT results/coherence.png --free-y "ms = 0 population=results/ccein_wiDiv"

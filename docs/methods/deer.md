@@ -18,8 +18,8 @@ principal axis), stored in rad·kHz like the tones ($2\pi\cdot10^3$ per MHz). Th
 pulse bandwidth: set `pulse.bath.bandwidth` to the excitation width of the pump in question. A tone either hits a line or misses it: there
 is no partial excitation and no pulse shape.
 
-**The pulse on a driven spin.** In the two levels $\vert a\rangle,\vert b\rangle$ given by `pulse.bath.alphams` and
-`pulse.bath.betams` of a spin of size `pulse.bath.spin`, with the generalized Pauli operators
+**The pulse on a driven spin.** In the two levels $\vert a\rangle,\vert b\rangle$ given by `pulse.bath.levels` of the driven spins (of
+their own S), with the generalized Pauli operators
 
 $$\sigma_x = \vert a\rangle\langle b\vert + \vert b\rangle\langle a\vert,\quad
 \sigma_y = -i\vert a\rangle\langle b\vert + i\vert b\rangle\langle a\vert,\quad
@@ -64,13 +64,13 @@ which `check_deer` compares with the run (within $2\times10^{-4}$; at $f=0.5$ th
 | `execution.evolution` × `execution.evolution_update` | gCCE: `matrix`, `vector` × `exact`, `recursive`; megCCE: its own Liouville-space step (`exact`) | megCCE: `vector`, `recursive` (as without bath pulses) |
 | GPU warp kernel | — | `execution.gpu_options.warp_max_dim` > 0 |
 | pulses | ideal (`pulse.detuning_factor` 1), `pulse.per_qubit` false, any qubit sequence | `detuning_factor` ≠ 1, `per_qubit` true |
-| `pulse.bath` | its eight keys | an unknown key; `count` < 0; a sequence with other than `count`+1 rows, fractions not summing to 1, a last row that is not identity, two pulses of one channel on one edge; `count` > 0 without `defect` or `energy_shift` |
-| driven spins | | a `defect` no spin has (bath file and Defect sub-spins); a `spin` other than that spin's S; `alphams`/`betams` equal or not levels of S |
+| `pulse.bath` | its six keys | an unknown key; `count` < 0; a sequence with other than `count`+1 rows, fractions not summing to 1, a last row that is not identity, two pulses of one channel on one edge; `count` > 0 without `defect` or `energy_shift` |
+| driven spins | | a `defect` no spin has (bath file and Defect sub-spins); driven spins of different S; `levels` equal or not levels of S; the old `spin`, `alphams`, `betams` |
 | old keys | | the earlier flat keys (each named with its new key, [old names](../user/InputFile.md#OldNames)) |
 
 **Untested.** `check_deer` drives S = ½ spins (P1, levels ½ and −½) with X 180 pulses only (gCCE with propagator
 eigen and expm, megCCE, `cluster.mode` standard and pcce). A driven spin with S > ½ (two of its levels as
-`alphams`/`betams`) and bath pulses about Y or Z (or by another angle) take the same code (`bathRotation` in
+`levels`) and bath pulses about Y or Z (or by another angle) take the same code (`bathRotation` in
 `src/calculation/simulator_gcce_bath.cpp`), but no check runs CCEX with them: they are accepted and untested.
 
 When spins of the `defect` exist but no tone reaches any of them, the run goes on with one warning
@@ -89,7 +89,7 @@ the echo centre on the line of configuration 1 (79.975539 MHz):
         "count": 1,
         "defect": "P1",
         "energy_shift": [79.975539],
-        "spin": 0.5, "alphams": 0.5, "betams": -0.5,
+        "levels": [0.5, -0.5],
         "sequence": [["0.50", "X", 180.0], ["0.50", "I", 0.0]]
     }
 },

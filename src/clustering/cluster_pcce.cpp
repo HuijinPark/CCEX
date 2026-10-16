@@ -21,7 +21,7 @@
 #include "../../include/clustering/pcce_partition_cache.h"
 
 
-void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
+void clusterizePcce(Cluster* cls, BathArray* ba, Config* config, QubitArray* qa){
 
     ////////////////////////////////////////////////////
     // About pCCE method :
@@ -58,6 +58,7 @@ void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
     // Cut the # of spins (pcce bundleing)
     // Total number of spins : ba.nspin -> NK
     ////////////////////////////////////////////////////
+    if (rank==0 && pinfo.rest_nspin > 0) print_pcce_rest(ba, &pinfo, qa);
     shrink_restspins(ba, pinfo.rest_nspin);
 
     ////////////////////////////////////////////////////
@@ -525,14 +526,21 @@ double calc_dist(double* arr1, double* arr2){
     return dist;
 }
 
-void print_pcce_info(int bath_nspin, int nqubit, int ncenter, int pcce_nspin, int rest_nspin){
-    print_BD("-", 30);
-    printf("Total Bath Spin: %d\n", bath_nspin);
-    printf("Qubit #: %d\n", nqubit);
-    printf("ncenter: %d\n", ncenter);
-    printf("pcce_nspin: %d\n", pcce_nspin);
-    printf("rest_nspin: %d\n", rest_nspin);
-    print_BD("-", 30);
+// A89: the spins shrink_restspins is about to drop (the last rest_nspin of the bath list), one line in the default log:
+// how many, and each one's bath index, species and distance to the nearest qubit (the first 8, then a count).
+void print_pcce_rest(const BathArray* ba, const Partition_info* pinfo, QubitArray* qa){
+    const int nspin = ba->nspin, first = nspin - pinfo->rest_nspin, shown = std::min(pinfo->rest_nspin, 8);
+    std::string spins;
+    for (int i = first; i < first + shown; i++){
+        char one[200];
+        if (qa) snprintf(one, sizeof one, "%s%d %s %.2f A", spins.empty() ? "" : ", ", i, ba->bath[i]->name,
+                         QubitArray_mindist(ba->bath[i]->xyz, qa));
+        else    snprintf(one, sizeof one, "%s%d %s", spins.empty() ? "" : ", ", i, ba->bath[i]->name);
+        spins += one;
+    }
+    if (pinfo->rest_nspin > shown) spins += ", and " + std::to_string(pinfo->rest_nspin - shown) + " more";
+    printf("      pCCE spins left out : %d of %d (partition_size %d), the last read (index species%s): %s\n",
+           pinfo->rest_nspin, nspin, pinfo->sK, qa ? " distance" : "", spins.c_str());
 }
 
 ///////////////////////////////////////////////

@@ -7,7 +7,7 @@ PLOT=$ROOT/example/tutorial/plot_coherence.py
 NP=${NP:-4}
 mkdir -p results
 # exit status 0: physical (every |L| <= 1.01); 2: stopped first (no culprit, no candidate, budget or change limit)
-mpirun -n $NP $CCEX -f ccein.json > results/ccein.log || echo "regroup stopped with status $?"
+mpirun -n $NP $CCEX -f ccein.jsonc > results/ccein.log || echo "regroup stopped with status $?"
 # the bundles before and after, the unphysical states (U) and the culprit pairs of each round, and the end
 python3 -c 'import json; s = json.load(open("results/adaptive/summary.json")); g = s["regroup"]
 for r in g["rounds"]:

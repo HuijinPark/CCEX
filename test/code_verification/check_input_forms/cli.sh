@@ -9,6 +9,8 @@
 #       space before the ':' of the longest key and one after (objects whose '{' ends its line)
 #   X2  -e -o DIR writes the same file into DIR (made when missing)
 #   X3  the example names every input key the readers accept (example_keys.py: the contract on the source)
+#   X6  the example's auto_convergence lines, uncommented, are accepted by the runner, for every choice of the alternative
+#       lines (a key written more than once: the line that finds a value and the one that fixes it; example_autoconv.py)
 #   O1  no output.file, no -o: the outputs are <input name without .json> in the working directory
 #   O2  no output.file, -o DIR (two levels, missing): DIR/<input name>, byte for byte O1's curves
 #   O3  a relative output.file with -o DIR: DIR/<output.file>; -o before -f is the same
@@ -97,6 +99,11 @@ then ok "X2 -e -o DIR writes the same file into DIR"; else no "X2 -e -o DIR (see
 
 if python3 "$HERE/example_keys.py" "$W/e1/ccex_example.jsonc" "$REPO" | sed 's/^/    /'; [ "${PIPESTATUS[0]}" -eq 0 ]
 then ok "X3 the example names every input key the readers accept"; else no "X3 the example misses input keys (above)"; fi
+
+# A94 (review 20261016 R6): the template's auto_convergence lines, uncommented, are accepted by the runner (every choice of
+# the alternative lines; example_autoconv.py)
+if python3 "$HERE/example_autoconv.py" "$W/e1/ccex_example.jsonc" "$REPO" | sed 's/^/    /'; [ "${PIPESTATUS[0]}" -eq 0 ]
+then ok "X6 the template's auto_convergence lines are accepted by the runner"; else no "X6 the runner refuses the template's auto_convergence lines (above)"; fi
 
 # O1-O5 on the template with its bath (run.jsonc of X1)
 E="$W/e1"

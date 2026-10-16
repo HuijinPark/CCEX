@@ -117,9 +117,8 @@ static void reportBathPulses(Pulse* pulse){
     printSubTitle((char*)"Bath pulses (pulse.bath)");
     printStructElementInt((char*)"bath pulse count", pulse->bnpulse);
     printStructElementChar((char*)"bath spin driven", pulse->bpulse_defect);
-    printStructElementDouble((char*)"bath spin S", pulse->bspin);
-    printStructElementDouble((char*)"bath alphams", pulse->balphams);
-    printStructElementDouble((char*)"bath betams", pulse->bbetams);
+    // A94 (G6): the levels (alphams, betams until A94); S is the driven spins' own, set when the bath is read
+    printf("%27s   bath levels : [%g, %g]\n"," ",pulse->balphams,pulse->bbetams);
     for (int k=0; k<pulse->n_bpulse_shift; k++)
         printf("%27s   pump tone [%d] : %.9g MHz\n"," ",k,RADKHZ_TO_MHZ(pulse->bpulse_energy_shifts[k]));
     printf("%27s   bandwidth : %.9g MHz (half width of the window around a tone)\n"," ",RADKHZ_TO_MHZ(pulse->bpulse_bandwidth));

@@ -61,12 +61,12 @@ typedef struct{
     int rest_nspin;
 } Partition_info;
 
-void clusterizePcce(Cluster* cls, BathArray* ba, Config* config);
+void clusterizePcce(Cluster* cls, BathArray* ba, Config* config, QubitArray* qa=nullptr);
 void simulator_cluster_partition(BathSpin** bath, Partition_info* pinfo, Cluster* cls, Point* best_centers, int* best_assigned_idx, const Config* config);
 void shrink_restspins(BathArray* ba, int rest_nspin);
 void update_global_best(int index, double *inertia, double *sil, int *trial, double *global_best_inertia, double *global_best_sil, int *global_best_trial);
 bool pcce_better_partition(double inertia, double silhouette, double best_inertia, double best_silhouette, bool deterministic=true);
-void print_pcce_info(int bath_nspin, int nqubit, int ncenter, int pcce_nspin, int rest_nspin);
+void print_pcce_rest(const BathArray* ba, const Partition_info* pinfo, QubitArray* qa);
 void initializeCentroids(Point* spins, Point* centers, int ncenter, int pcce_nspin, PcceRandom* rng=nullptr);
 void choose_initial_method(bool kmeans_pp, Point* spins, Point* centers, int pcce_nspin, int ncenter, PcceRandom* rng=nullptr);
 void kMeansPlusPlus(Point *spins, Point *centers, int pcce_nspin, int ncenter, PcceRandom* rng=nullptr);

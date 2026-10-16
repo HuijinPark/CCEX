@@ -3,10 +3,10 @@
     "method"        : "cCCE",
     "quantity"      : "coherence",
     "Qubit"         : {
-        "file"          : "../bath/bath_Diamond_NV_natab_defect",
+        "qubit"         : [{"file": "../bath/bath_Diamond_NV_natab_defect"}],
         # Qubit : ms = +1 / 0 of the NV, one pi pulse (Hahn echo)
-        "alphams"        : 1,
-        "betams"         : 0
+        "alpha_state"    : {"ms": [1]},
+        "beta_state"     : {"ms": [0]}
     },
     "configuration" : {
         "gyrofile"      : "../bath/gyro_13C",
@@ -31,8 +31,7 @@
         #            policy : merge, the only one (the default; four others were removed on 2026-10-10)
         #            Everything goes to "output": one folder per step (0001-run, 0002-probe, ...) and summary.json.
         "adaptive" : {
-            "policy"     : "merge",
-            "output"     : "./results/adaptive",
+            "workdir"    : "./results/adaptive",
             "atol"       : 1e-3,
             "rtol"       : 0,
             "max_rounds" : 4

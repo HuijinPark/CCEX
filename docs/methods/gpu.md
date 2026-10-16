@@ -9,11 +9,12 @@ The keys on this page (`backend`, `gpu_options`, `propagator`, `evolution`, `evo
 The original CPU backend remains the default. gCCE with `propagator=expm` and
 other method names still run on the CPU.
 
-| Method | Ensemble (`configuration.nstate=0`) | Single (`configuration.nstate>0`) |
+| Method | Ensemble (no `configuration.s_range`) | Single (`configuration.s_range`) |
 | --- | --- | --- |
 | Conventional CCE, also called cCCE | GPU normalized bath trace | GPU conditional state vectors |
 | Partitioned CCE, `cluster.mode=pcce` | GPU normalized bath trace | GPU conditional state vectors |
 | gCCE, `propagator=eigen` | GPU density-matrix evolution | GPU vector or density-matrix evolution |
+| Bundle clustering, `cluster.mode=bundle` (cCCE, or gCCE with `propagator=eigen`) | as cCCE or gCCE above, per cluster of bundles | as cCCE or gCCE above |
 
 For cCCE and pCCE, `propagator` and `evolution` do not select an algorithm: the existing
 cCCE method diagonalizes two conditional Hamiltonians, and its GPU single path
@@ -78,8 +79,8 @@ Compensated phase products and scaled coherence accumulation are active either w
 apply only to gCCE with `propagator=eigen`.
 
 An omitted `configuration.seed` is generated on MPI rank 0, broadcast to every rank, and
-printed for replay. pCCE `pcce.print_trials=true` prints at most `pcce.print_limit`
-trial details from rank 0 per partition search (default 32; 0 suppresses them).
+printed for replay. pCCE `pcce.print_trials=N` prints at most N
+trial details from rank 0 per partition search (default 0, none).
 The global partition summary still aggregates every rank. `cluster.pcce.partition` = `legacy`
 preserves the original asymmetric tie rule: larger silhouette within a rank,
 smaller silhouette between ranks at equal inertia. Deterministic mode uses
@@ -131,7 +132,7 @@ combinations are available; run them from the repository root:
 ./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/p1_gcce4.json
 ./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/p1_gcce4_single.json
 ./bin/main_gpu.out -f test/gpu_verification/check_gpu/examples/pcce_ensemble.json
-# one state: a copy of pcce_ensemble.json with "configuration.nstate": 1 and "output.file": "pcce_gpu_single"
+# one state: a copy of pcce_ensemble.json with "configuration.s_range": [1, 1] and "output.file": "pcce_gpu_single"
 ./bin/main_gpu.out -f pcce_single.json -o bin
 ```
 
@@ -157,11 +158,11 @@ The complete list of these keys, with their types and defaults, is
 | `execution.gpu_options.cluster_batch_mb` | Positive integer, default 64 MiB per rank; estimated active evolution-buffer budget used when grouping clusters |
 | `execution.gpu_options.cache_mb` | Nonnegative integer, default 64 MiB per rank; reusable free GPU allocations; 0 disables the cache |
 | `execution.propagator` | gCCE: `eigen` (default; one eigendecomposition per cluster, required for CUDA) or `expm` (a matrix exponential per step, CPU only) |
-| `execution.evolution` | gCCE: `vector` (pure initial state, `nstate>0`, `propagator=eigen`) or `matrix` (density matrix); default `vector` where it can run, else `matrix` |
+| `execution.evolution` | gCCE: `vector` (pure initial state, `s_range`, `propagator=eigen`) or `matrix` (density matrix); default `vector` where it can run, else `matrix` |
 | `execution.gcce_refinement` | Block, off by default; `enabled` (true when the block is given) turns on the compensated refinement of the eigensystem, CPU and CUDA (below) |
 | `execution.gcce_refinement.max_sweeps` | Positive integer, default 32; a cluster not converged within it stops the run |
 | `cluster.adaptive.probe_memory_gb` | Nonnegative, default 0 (automatic: 80 % of the job's node memory and, when clusters may go to the GPU, of the smallest GPU); memory the adaptive probes running at once on a node may hold |
-| `cluster.pcce.print_trials`, `cluster.pcce.print_limit` | pCCE: rank 0 prints the details of at most `pcce.print_limit` (default 32) partition trials |
+| `cluster.pcce.print_trials` | pCCE: rank 0 prints the details of at most this many partition trials (default 0) |
 | `cluster.pcce.connections` | pCCE: `centers` (default; distance between partition centroids) or `spins` (any spin pair within `rdip`) |
 | `cluster.pcce.partition` | `deterministic` (default) or `legacy`; pCCE partition RNG and trial distribution policy |
 | `cluster.pcce.cache.mode` | `off` (default), `readwrite` (reuse or compute/store), `read` (require a matching stored partition); deterministic pCCE only |

@@ -36,12 +36,12 @@ class SetInputKeys(unittest.TestCase):
         return subprocess.run([sys.executable, TOOL, self.src, out or self.out, *args], capture_output=True, text=True)
 
     def test_values_and_dotted_keys(self):
-        p = self.run_tool('nstate=50', 'bathfile=["../bath/bath_1"]', 'defect.axis_file=Random3', 'outfile=name_1',
+        p = self.run_tool('s_range=[1, 50]', 'bathfile=["../bath/bath_1"]', 'defect.axis_file=Random3', 'outfile=name_1',
                           'cluster_only=true')
         self.assertEqual(p.returncode, 0, p.stderr)
         with open(self.out) as f:
             d = json.load(f)                 # plain JSON: the comments are gone
-        self.assertEqual(d['nstate'], 50)
+        self.assertEqual(d['s_range'], [1, 50])
         self.assertEqual(d['bathfile'], ['../bath/bath_1'])
         self.assertEqual(d['Defect']['axis_file'], 'Random3')   # the block's own spelling kept
         self.assertNotIn('defect', d)
@@ -62,12 +62,21 @@ class SetInputKeys(unittest.TestCase):
         self.assertFalse(os.path.exists(self.out))
 
     def test_out_is_in(self):
-        p = self.run_tool('nstate=1', out=self.src)
+        p = self.run_tool('s_range=[1, 1]', out=self.src)
         self.assertEqual(p.returncode, 2)
         self.assertIn('OUT is IN', p.stderr)
 
     def test_not_key_value(self):
-        self.assertEqual(self.run_tool('nstate').returncode, 2)
+        self.assertEqual(self.run_tool('s_range').returncode, 2)
+
+    def test_null_removes(self):
+        """null leaves a key out (A94: configuration.s_range=null is the ensemble)."""
+        p = self.run_tool('outfile=null', 'missing_key=null')
+        self.assertEqual(p.returncode, 0, p.stderr)
+        with open(self.out) as f:
+            d = json.load(f)
+        self.assertNotIn('outfile', d)
+        self.assertNotIn('missing_key', d)
 
 
 if __name__ == '__main__':

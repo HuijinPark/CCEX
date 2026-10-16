@@ -1,8 +1,8 @@
 # Execution tags
 Where and how the cluster dynamics is computed, and what the run reports
-about it: the CPU or CUDA backend, the gCCE propagation, the timing and the
-per-cluster diagnostics. These keys are the `execution` block (at the top level they are refused with
-their place), except `probe_memory_gb` (in `cluster.adaptive`) and `cluster_contributions` (in `output`):
+about it: the CPU or CUDA backend, the gCCE propagation and the timing. These keys are the `execution` block (at the top level they are refused with
+their place), except `probe_memory_gb` (in `cluster.adaptive`); `output.cluster_contributions` is with the
+[Output tags](InputFile_Output.md#tag_cluster_contributions):
 
 ```
 "execution": {"backend": "auto", "gpu_options": {"min_dim": 768}, "propagator": "eigen", "evolution": "vector",
@@ -19,7 +19,7 @@ their place), except `probe_memory_gb` (in `cluster.adaptive`) and `cluster_cont
 - [execution.gcce_refinement](#tag_gcce_refinement) (writing the block turns it on; `enabled`, [max_sweeps](#tag_gcce_refinement_max_sweeps))
 - [execution.profile](#tag_profile)
 - [cluster.adaptive.probe_memory_gb](#tag_probe_memory_gb)
-- [output.cluster_contributions](#tag_cluster_contributions) (`enabled`, [max_mb](#tag_cluster_contribution_max_mb))
+- [output.cluster_contributions](InputFile_Output.md#tag_cluster_contributions) (in [Output tags](InputFile_Output.md))
 - [The memory check](#memory_check) (no key)
 
 <a id="memory_check"></a>
@@ -30,7 +30,7 @@ the qubit for gCCE and megCCE) and one dense complex matrix 16 D² bytes:
 
 | Path | Matrices at the peak |
 |---|---|
-| cCCE, one state (nstate > 0) | 15, and with `column_evolution` (D ≥ its `min_dim`) the column blocks: 2 per distinct interval and 4 more, D × `columns` each |
+| cCCE, one state (`s_range`) | 15, and with `column_evolution` (D ≥ its `min_dim`) the column blocks: 2 per distinct interval and 4 more, D × `columns` each |
 | cCCE ensemble | Ramsey 16, Hahn echo 18, CPMG 25, `Manual` 19 + 4 (n + 1) |
 | gCCE | `evolution` `matrix` 18 + n + (n + 1), `vector` 11 + n; `savemode` `cluster_density_matrix` nstep + 2 more |
 | meCCE, megCCE | 14 and 10 + n + (distinct intervals) Liouville-space matrices of 16 D⁴ bytes |
@@ -75,7 +75,7 @@ is refused. <br>
 | `auto` | of the clusters the packed kernel does not take, CUDA for those whose Hilbert dimension is at least [gpu_options](#tag_gpu_options).`min_dim`, the CPU for the rest; the CPU also when the GPU cannot be opened, and when it runs out of memory (that cluster and, on that rank, every later one of its dimension or larger; a `[gpu-memory-fallback]` line in the log) |
 
 The packed kernel ([gpu_options](#tag_gpu_options).`packed_max_dim`) takes its small cCCE clusters first, whatever the
-backend; the table is the choice for the clusters left. An ensemble (`nstate` 0) `Manual` sequence is refused with
+backend; the table is the choice for the clusters left. An ensemble (no `s_range`) `Manual` sequence is refused with
 `cuda` and runs as `cpu` with `auto`; this is decided before the packed plan.
 
 <b>Default:</b> `cpu`
@@ -134,7 +134,7 @@ run against the CPU binary on the same node, median of AB BA AB): CR60 σ4 30 st
 up and ran entirely on the CPU. <br>
 <b>When they stay off.</b> With neither `packed_max_dim` nor `warp_max_dim` given, the packed
 and warp kernels are not started at all when the cluster evaluations they would take (clusters × states: each cluster
-once per state, `nstate` states or 1 for the ensemble), counted over all ranks from order 1 up, are fewer than 20000 per
+once per state, the states of `s_range` or 1 for the ensemble), counted over all ranks from order 1 up, are fewer than 20000 per
 rank (640000 for 32 ranks): on a full node starting the card costs about 0.5 s, and the card saves about 4.4 rank-µs per
 packed evaluation and 21 per warp one, so such runs gain little or lose (the reasoning and the numbers:
 (internal notes)). The log says so (`[gpu-packed] off: N cluster evaluations
@@ -212,8 +212,8 @@ exponential is a Lanczos (Krylov) expansion of dimension 30 (the whole space up 
 error estimate per substep; the interval is split into as many substeps as the estimate requires. It runs for clusters of
 Hilbert dimension `min_dim` and above (gCCE: qubit times bath dimension); smaller clusters keep the `eigen` path, so
 `"sparse"` with the default `min_dim` gives the bytes of `eigen` with `evolution_update` = `exact` wherever no cluster reaches 4096. It covers one sampled
-state (`nstate` > 0) of the cCCE and gCCE with `evolution` = `vector` and one qubit, with `backend` = `cpu` and
-`evolution_update` = `exact`, without `hamiltonian.cCCE.knight` and `hfmedi`; the ensemble (`nstate` = 0), gCCE `evolution` = `matrix`,
+state (`s_range`) of the cCCE and gCCE with `evolution` = `vector` and one qubit, with `backend` = `cpu` and
+`evolution_update` = `exact`, without `hamiltonian.cCCE.knight` and `hfmedi`; the ensemble (no `s_range`), gCCE `evolution` = `matrix`,
 `backend` = `cuda` or `auto`, `evolution_update` = `recursive`, `knight`, `hfmedi` and more than one qubit are refused at
 the start. <br>
 **When `sparse` pays:** only when the dense eigendecomposition of a cluster does not fit in memory. Memory is O(dim)
@@ -249,7 +249,7 @@ refused. Must be a JSON string or an object. <br>
 <a id="tag_evolution"></a>
 ## execution.evolution
 <b>Description:</b><br>
-gCCE only. What is propagated. `vector` needs a pure initial state (`nstate` > 0),
+gCCE only. What is propagated. `vector` needs a pure initial state (`s_range`),
 `propagator` = `eigen` or `sparse` and `method` = `gCCE`. When the key is absent the run picks `vector`
 where those hold and `matrix` otherwise; an explicit `vector` that cannot run stops with an
 error, and with any other method an explicit `vector` is refused (an explicit `matrix` is accepted and
@@ -276,7 +276,7 @@ computes them with sin and cos at every point. `recursive` does so at points 0, 
 previous point's phases by one step's factor exp(-i E f `deltat`) (f the interval's fraction of the sequence), so the
 rounding of at most 15 products accumulates before the next exact point. <br>
 `recursive` exists on the CPU time evolution of cCCE (`method` cCCE, any `cluster.mode`; one
-sampled state, `nstate` > 0, and the ensemble, `nstate` = 0), in the packed kernel of
+sampled state, `s_range`, and the ensemble, no `s_range`), in the packed kernel of
 `bin/main_gpu.out` (`gpu_options.packed_max_dim`, cCCE clusters of bath dimension 2 and 4) and on the CPU time evolution
 of gCCE with `propagator` = `eigen` (`evolution` = `vector` and `matrix`). Every pulse sequence these paths
 run is covered: the ensemble cCCE carries over the phases of its τ = t/2 (Hahn), t (Ramsey), t/(2 `pulse.count`) and 2τ
@@ -325,9 +325,9 @@ phases follow the usual path's rule, `exact` and `recursive` alike (`recursive`:
 products carried across the blocks; the carried products may differ in the last bit where the compiler fuses the complex
 multiplication otherwise), and every
 pulse sequence of the one-state cCCE (Ramsey, Hahn echo, CPMG, `Manual`) is covered. <br>
-Read on the CPU only, for one sampled state (`nstate` > 0) of `method` cCCE (every `cluster.mode`), clusters of bath
+Read on the CPU only, for one sampled state (`s_range`) of `method` cCCE (every `cluster.mode`), clusters of bath
 dimension `min_dim` and above. Bath dimension 2 and 4 (the fixed-size path and the CPU batch), the ensemble
-(`nstate` 0), `propagator` `sparse`, gCCE and the clusters on the GPU are unchanged whatever the block says; with the block
+(no `s_range`), `propagator` `sparse`, gCCE and the clusters on the GPU are unchanged whatever the block says; with the block
 `enabled` false every output is the bytes of the run without it. Extra memory per rank: the phases of one block
 for each distinct interval and four D × `columns` matrices, (2 × intervals + 4) × D × `columns` × 16 bytes (D 2048,
 CPMG-8, 64 columns: about 12 MB). <br>
@@ -427,34 +427,3 @@ Must be a JSON boolean. <br>
 <b>Default:</b> `false`
 
 <b>Example:</b> ``` "execution" : {"profile": true} ```
-
-<a id="tag_cluster_contributions"></a>
-## output.cluster_contributions
-<b>Description:</b><br>
-In the `output` block. Record the contribution of every cluster to the coherence
-over all time points (cCCE and gCCE, `quantity` = `coherence`). For each bath state the run writes
-`<output.file>.contributions.state-<s>.tsv` (one row per cluster: sites, bundles, production
-power, dimension, the largest |log L̃|, undefined points, worst step) and once
-`<output.file>.contributions.sites.tsv` (site, name, spin, gyromagnetic ratio, position).
-A diagnostic; the raw table per rank is bounded by
-[max_mb](#tag_cluster_contribution_max_mb). A block `{"enabled": true|false, "max_mb": n}` (a plain boolean is refused); a block without `enabled` is on. <br>
-
-<b>Data Type:</b> Object `{"enabled": Boolean, "max_mb": Integer}`
-
-<b>Default:</b> off (absent)
-
-<b>Example:</b> ``` "output" : {"cluster_contributions": {"enabled": true}} ```
-
-<a id="tag_cluster_contribution_max_mb"></a>
-## output.cluster_contributions.max_mb
-<b>Description:</b><br>
-The memory per rank the contribution table of `output.cluster_contributions` may take. The run
-stops before the propagation if the table would exceed it. <br>
-
-<b>Data Type:</b> Integer (positive)
-
-<b>Unit:</b> MiB per rank
-
-<b>Default:</b> `256`
-
-<b>Example:</b> ``` "output" : {"cluster_contributions": {"enabled": true, "max_mb": 512}} ```

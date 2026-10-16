@@ -4,7 +4,7 @@ Compare the two sides of the A/B equivalence test.
 
     A   the same physical system written out by hand in the qubit-aligned frame,
         run with no rotation option
-    B   the original input, run with coordinate_frame_rotation on
+    B   the original input, run with frame.rotation on
 
 Both should describe the same physics in the same frame, so everything below is
 compared directly -- no transformation is applied here.

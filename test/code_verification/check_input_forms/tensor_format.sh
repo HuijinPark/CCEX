@@ -8,8 +8,8 @@
 #     (hBN_VB_flat_ATensor_HSE_CellPBE, x 0.5 by the old rule): the new file is the old one read correctly;
 # T2  an old file is read as before: the VASP-tagged v1 file (the _tag file until 2026-10-13, made here as "VASP" + the
 #     untagged file) gives the bytes of a v3 file holding the same numbers (v3 x 2) - the old rule is x 1 for a VASP
-#     line - and, while reference/head-20261012-aa883d0d4 (recorded with that _tag file) exists, its bytes (a binary
-#     built with MKL, A46: its _noDiv/dm within 1e-12 relative, as check_numerics judges such a binary); on a CI runner
+#     line - and, while reference/head-20261012-aa883d0d4 (recorded with that _tag file) exists, its _noDiv/dm within
+#     1e-12 relative (as check_numerics judges a binary built with MKL, A46; without MKL too since A93); on a CI runner
 #     (CI set) the reference half is skipped and says so (A56: the reference is one machine's digits);
 # T3  the log of an old file has the warning, the log of a v3 file the format-v3 line and SpinFactor = 1.
 # T4  values of 10 characters or more (1234.56789, -12345.6) in the A and Q files of SpinTensorReader's VASP and QE
@@ -83,9 +83,12 @@ for d in "$NUM"/cases/hbn_*/; do
         # its numbers moved after the reference was recorded (check_numerics README); only the self-contained half is judged
         echo "  SKIP  T2 $case: the bytes of $(basename "$OLDREF") (A81 changed this case's input after it was recorded)"
         what="(the bytes of $(basename "$OLDREF") skipped: A81 changed this case's input)"
-    elif [ -d "$OLDREF/$case" ] && grep -q "MKL for large clusters : on" "$W/$case/v1_tagged.log"; then
+    elif [ -d "$OLDREF/$case" ]; then
         # A46: a binary built with MKL is held to the reference as check_numerics holds it (its README): the _noDiv
-        # and density-matrix files within 1e-12 of the reference relative to it (absolute where it is 0), _wiDiv not judged
+        # and density-matrix files within 1e-12 of the reference relative to it (absolute where it is 0), _wiDiv not judged.
+        # A93 (2026-10-17): a build without MKL too - removing two unused QubitArray members moved the rounding of this
+        # reference's digits (the sign of a zero imaginary part in hbn_cce2_hf3_qd0's _wiDiv), and the newer references
+        # were recorded with the v3 file (other numbers), so this one cannot be re-recorded in their place
         python3 - "$OLDREF/$case" "$W/$case/v1_tagged" <<'PY' || ok=0
 import os, sys
 ref, run = sys.argv[1:3]
@@ -95,13 +98,10 @@ for f in sorted(os.listdir(ref)):
     a = [complex(t) for l in open(os.path.join(run, f)) for t in l.split()]
     b = [complex(t) for l in open(os.path.join(ref, f)) for t in l.split()]
     w = max((abs(x - y) / (abs(y) or 1.0) for x, y in zip(a, b)), default=0.0) if len(a) == len(b) else float('inf')
-    if not w <= 1e-12: print(f'    {os.path.basename(ref)}: {f} differs from the reference by {w:.1e} (relative, MKL build)'); bad = 1
+    if not w <= 1e-12: print(f'    {os.path.basename(ref)}: {f} differs from the reference by {w:.1e} (relative)'); bad = 1
 sys.exit(bad)
 PY
-        what="and $(basename "$OLDREF") within 1e-12 relative on _noDiv/dm (MKL build)"
-    elif [ -d "$OLDREF/$case" ]; then
-        for f in "$OLDREF/$case"/*; do cmp -s "$f" "$W/$case/v1_tagged/$(basename "$f")" || { echo "    $case: $(basename "$f") differs from $(basename "$OLDREF")"; ok=0; }; done
-        what="and the bytes of $(basename "$OLDREF")"
+        what="and $(basename "$OLDREF") within 1e-12 relative on _noDiv/dm"
     else what="($(basename "$OLDREF") is gone: only the self-contained half)"; fi
     if [ $ok -eq 1 ]; then echo "  PASS  T2 $case: the VASP-tagged v1 file is read as before (x 1), $what"; PASS=$((PASS+1))
     else echo "  FAIL  T2 $case (see $W/$case)"; FAIL=$((FAIL+1)); fi

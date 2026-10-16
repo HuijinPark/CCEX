@@ -142,7 +142,7 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config,QubitArray* 
         // Clusterize for all order 
         // and Solve tilde (Division) of coherence function
         // Args Returns : cls->clusinfo (new address)
-        clusterizePcce(cls, ba, config); 
+        clusterizePcce(cls, ba, config, qa);
     }
     else if (  strcmp(method, "dsj")==0 
              || strcmp(method, "itb")==0

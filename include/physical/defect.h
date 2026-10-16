@@ -14,7 +14,7 @@
 */
 typedef enum {
     DEFECT_COORDINATE_FRAME_QUBIT = 0, /**< common computational/qubit-aligned frame */
-    DEFECT_COORDINATE_FRAME_BATH  = 1  /**< source bath/crystal frame */
+    DEFECT_COORDINATE_FRAME_FILE  = 1  /**< the bath file frame, before the rotation (frame "file"; "bath" until A90) */
 } DefectCoordinateFrame;
 
 typedef enum {
@@ -30,8 +30,8 @@ typedef struct{
     char dfname[MAX_CHARARRAY_LENGTH];
     bool apprx;
     bool axis_set;              /**< whether an explicit physical symmetry axis was supplied */
-    double axis[3];             /**< normalized axis in coordinate_frame */
-    DefectCoordinateFrame coordinate_frame; /**< frame of axis and all frame-dependent data */
+    double axis[3];             /**< normalized axis in the frame of coordinate_frame */
+    DefectCoordinateFrame coordinate_frame; /**< Defect.species[].frame: frame of axis and all frame-dependent data */
     DefectZfsInputMode zfs_input_mode;
     
     /* Defect' spin information */

@@ -25,15 +25,15 @@
  *          computational frame. Nothing about a 3x3 tensor says which it is, so it is
  *          recorded when the tensor is stored.
  *
- *          "qubit" here means the COMMON reference-qubit-aligned computational frame,
+ *          "qubit" here means the COMMON computational frame (qubit_axis = z),
  *          not any individual qubit's local frame.
 */
 typedef enum {
     INTMAP_DEFAULT_ZERO         = 0, /**< never written to; the zero tensor from allocation */
     INTMAP_AUTO_SOURCE_GEOMETRY = 1, /**< point dipole computed from the source qubit geometry */
-    INTMAP_EXPLICIT_BATH        = 2, /**< explicit input, tensor_frame = "bath" */
-    INTMAP_EXPLICIT_QUBIT       = 3, /**< explicit input, tensor_frame = "qubit" */
-    INTMAP_EXPLICIT_UNSPECIFIED = 4  /**< explicit input with no tensor_frame given */
+    INTMAP_EXPLICIT_FILE        = 2, /**< explicit input, frame = "file" (tensor_frame "bath" until A90) */
+    INTMAP_EXPLICIT_QUBIT       = 3, /**< explicit input, frame = "qubit" */
+    INTMAP_EXPLICIT_UNSPECIFIED = 4  /**< explicit input with no frame given (the rotation is off) */
 } IntmapProvenance;
 
 typedef struct {
@@ -87,16 +87,16 @@ typedef struct {
 
     /**
      * @brief The projected state of a qubit (alpha)
-     * @details Built from Qubit.qubit[i].alphams, the z-basis sublevel (S, S-1, ..., -S; default : 1),
-     *          or Qubit.alphams with Qubit.file. Dimension : 2*spin+1.
-     *          The whole-register states Qubit.alpha_state/beta_state ({"vector": ...} or {"index": n}) are separate (QubitArray).
+     * @details Built from the i-th entry of Qubit.alpha_state {"ms": [...]}, the z-basis sublevel (S, S-1, ..., -S;
+     *          default, and with {"index"} or {"vector"} : 1). Dimension : 2*spin+1.
+     *          The whole-register states of {"vector": ...} or {"index": n} are separate (QubitArray psia, psib).
     */
     MatrixXcd alpha; 
 
     /**
      * @brief The projected state of a qubit (beta)
-     * @details Built from Qubit.qubit[i].betams, the z-basis sublevel (default : 0),
-     *          or Qubit.betams with Qubit.file. Dimension : 2*spin+1.
+     * @details Built from the i-th entry of Qubit.beta_state {"ms": [...]}, the z-basis sublevel (default, and with
+     *          {"index"} or {"vector"} : 0). Dimension : 2*spin+1.
     */
     MatrixXcd beta;
     
@@ -132,8 +132,6 @@ typedef struct {
     // QubitArray
     int* _alphaidx;      /**< Eigen state alpha index (default : NULL)             */
     int* _betaidx;       /**< Eigen state beta index (default : NULL)              */
-    std::vector<char> _alphaGiven;  /**< per qubit: alphams written in the Qubit block                          */
-    std::vector<char> _betaGiven;   /**< per qubit: betams written in the Qubit block                         */
     /*-----------------------------------------------------------------------------*/
     /* Use during simulation                                                       */
     /*-----------------------------------------------------------------------------*/
@@ -172,9 +170,6 @@ int         QubitArray_dim(QubitArray* qa);
 int         QubitArray_dimQubit_i(QubitArray* qa, int i);
 double      QubitArray_mindist(double* xyz, QubitArray* qa);
 void        QubitArray_setPsiaPsib_fromQubit(QubitArray* qa); // psia = kron(qubit_i_alpha,qubit_j_alpha, ...)
-// D43 (2026-10-03): after the states were picked by alphaidx/betaidx, a stop when the input also wrote alphams/betams
-// and those name other states (QubitArray_reportPsiaPsib also prints which m_s state psia/psib mostly are)
-void        QubitArray_checkIdxAgainstMs(const QubitArray* qa);
 void        QubitArray_setPsiaPsib_fromIdx(QubitArray* qa, float* bfield); // psia, psib : eigenstate of Hq (idx)
 void        QubitArray_setPsi0_fromPsiaPsib(QubitArray* qa); // psi0 = Normalize(psia + psib)
 

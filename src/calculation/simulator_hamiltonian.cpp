@@ -336,6 +336,36 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
 
 
     //////////////////////////////////////////////////////////////////////////////////////
+    // delta_A (A83; Maze, Taylor, Lukin, PRB 78, 094303 (2008), eqs. A3, A4): the part of the second order in the
+    // transverse hyperfine rows that is linear in I_n, from [A_x.I, A_y.I] = i (A_x x A_y).I,
+    //   delta_A_n(m_s) = -m_s / (2 Delta) * (A_x x A_y),   (A_x x A_y)_k = sum_ij eps_ijk A_xi A_yj,
+    // rows 0 and 1 of the tensor (row = qubit component), Delta = 3/2 D_zz as for knight (the qubit Zeeman energy left
+    // out of the denominators, as there). Maze prints (2 - 3|m_s|) where a direct derivation, time reversal and exact
+    // diagonalization give -m_s (docs/user/InputFile_General.md#tag_delta_A).
+    MatrixXcd Hqb_dA_a;
+    MatrixXcd Hqb_dA_b;
+
+    if (cnf->delta_A){
+        Hqb_dA_a = MatrixXcd::Zero(bdim,bdim);
+        Hqb_dA_b = MatrixXcd::Zero(bdim,bdim);
+        const double Delta = QubitArray_getIntmap_i_j(qa,iq,iq)(2,2).real() * 3.0 / 2.0;
+        const double ms_dA[2] = {findZbasisSubLevel(QubitArray_getPsia(qa)), findZbasisSubLevel(QubitArray_getPsib(qa))};
+        MatrixXcd* Hqb_dA[2] = {&Hqb_dA_a, &Hqb_dA_b};
+        for (int ib = 0; ib < nspin; ib++){
+            const MatrixXcd tensor = BathArray_getBath_i_hypf_j(ba,ib,iq);
+            const Eigen::Vector3d ax = tensor.row(0).real().transpose();
+            const Eigen::Vector3d ay = tensor.row(1).real().transpose();
+            const Eigen::Vector3d w = ax.cross(ay);
+            for (int k = 0; k < 2; k++){
+                MatrixXcd vector = MatrixXcd::Zero(3,1);
+                for (int c = 0; c < 3; c++) vector(c,0) = -ms_dA[k] / (2.0 * Delta) * w(c);
+                MatrixXcd Hqb_dA_tmp = calHamiltonianSingleInt(vector, bsigmas[ib]);
+                addExpandedHamiltonian(*Hqb_dA[k], bsigmas, Hqb_dA_tmp, nspin, ib);
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////
     // HF mediated term (second order in the hyperfine coupling)
     MatrixXcd Hqb_medi_a;
     MatrixXcd Hqb_medi_b;
@@ -378,7 +408,7 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
     double ms_a = findZbasisSubLevel(psia);
     double ms_b = findZbasisSubLevel(psib);
 
-    // Calculate all Hqb : ms * Hqb + Hqb_medi + Hqb_knight, in that order.
+    // Calculate all Hqb : ms * Hqb + Hqb_medi + Hqb_knight + Hqb_dA, in that order.
     // A term that is off used to be a zero matrix. Adding +0 only turns a -0 of
     // ms * Hqb into +0, so the first one is kept as a scalar +0 and the second,
     // which then changes nothing, is left out - the same bits without the matrices.
@@ -386,6 +416,7 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
     const double ms[2] = {ms_a, ms_b};
     const MatrixXcd* medi[2] = {&Hqb_medi_a, &Hqb_medi_b};
     const MatrixXcd* knight[2] = {&Hqb_knight_a, &Hqb_knight_b};
+    const MatrixXcd* dA[2] = {&Hqb_dA_a, &Hqb_dA_b};
     for (int k=0; k<2; k++){
         if (Config_getHfmedi(cnf)){
             Hqb_PsiaPsib[k] = ms[k] * Hqb + *medi[k];
@@ -394,6 +425,9 @@ MatrixXcd* HamilQubitBathSecularApp(QubitArray* qa, BathArray* ba, MatrixXcd** b
         }
         if (Config_getKnight(cnf)){
             Hqb_PsiaPsib[k] += *knight[k];
+        }
+        if (cnf->delta_A){
+            Hqb_PsiaPsib[k] += *dA[k];
         }
     }
 

@@ -36,7 +36,7 @@ def main():
             config=put(json.loads(source.read_text()),{'pcce.partition':'legacy'})
             # the configuration block (A64): a baseline input written before it is put through
             # example/tools/InputKeys/convert_input_keys.py first
-            assert get(config,'cluster_mode')=='pcce' and get(config,'configuration.nstate',0)==0 and config['order']==2
+            assert get(config,'cluster_mode')=='pcce' and get(config,'configuration.s_range') is None and config['order']==2
             data=[get(config,'configuration.gyrofile'),*get(config,'configuration.bathfile')]
             if get(config,'Qubit.file'):data.append(get(config,'Qubit.file'))
             record=dict(case=name,source_input=str(source),source_input_sha256=sha(source),

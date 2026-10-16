@@ -63,7 +63,7 @@ def prepare(output):
     root = REPO/'test/code_verification/bath_data/ensemble_data'
     config = dict(method='cCCE', cluster_mode='pcce', quantity='coherence', order=2, bfield=500,
         rbath=10, rdip=10, deltat=0.01, nstep=13)
-    config['Qubit'] = dict(file=stage(root/'bath_MoS2_1L_Cimpurity_Defect', 'mos2-qubit'), alphams=1, betams=0)
+    config['Qubit'] = dict(qubit=[dict(file=stage(root/'bath_MoS2_1L_Cimpurity_Defect', 'mos2-qubit'))], alpha_state=dict(ms=[1]), beta_state=dict(ms=[0]))
     config['configuration'] = dict(gyrofile=stage(root/'Gyro_MoS2', 'mos2-gyro'),
                                    bathfile=[stage(root/'bath_MoS2_1L_Cimpurity_1', 'mos2-bath')], seed=113)
     families.append(dict(name='mos2_nuclear', config=config, sizes=[1, 2],
@@ -88,7 +88,7 @@ def prepare(output):
         ' '.join(map(str, row))+'\n' for row in points))
     (output/'mixed-qubit').write_text('0 0 0\n')
     config = dict(method='cCCE', cluster_mode='pcce', quantity='coherence', order=2,
-        Qubit=dict(file='mixed-qubit', alphams=1, betams=0), gyrofile='mixed-gyro', bathfile=['mixed-bath'],
+        Qubit=dict(qubit=[dict(file='mixed-qubit')], alpha_state=dict(ms=[1]), beta_state=dict(ms=[0])), gyrofile='mixed-gyro', bathfile=['mixed-bath'],
         rbath=20, rdip=50, bfield=300,
         deltat=0.004, nstep=13, seed=211)
     families.append(dict(name='synthetic_mixed', config=config, sizes=[1, 2, 3],
@@ -97,7 +97,7 @@ def prepare(output):
     cases = []
     for family in families:
         config = family['config']
-        origin = list(map(float, (output/config['Qubit']['file']).read_text().split()[:3]))
+        origin = list(map(float, (output/config['Qubit']['qubit'][0]['file']).read_text().split()[:3]))
         inner, outer = config['rbath'] if isinstance(config['rbath'], list) else (0, config['rbath'])
         rows = [row for row in bath_rows(output/config['configuration']['bathfile'][0])
                 if inner <= math.dist(list(map(float, row[:3])), origin) <= outer]

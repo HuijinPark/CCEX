@@ -21,7 +21,7 @@ def cases():
         for state in (0, 1, 3):
             yield f'p1-{method}-state{state}', put(config, {'configuration.nstate': state})
         if method == 'gcce':
-            # One side's state given as a vector, the other from alphams/betams (Qubit.alpha_state/beta_state, A47;
+            # One side's state given as a vector, the other from its m_s (Qubit.alpha_state/beta_state, A47 and A93;
             # an unpaired psia/psib was ignored before): its parsed temporary must still be released.
             for key in ('alpha_state', 'beta_state'):
                 yield f'p1-gcce-unpaired-{key}', dict(config, Qubit=dict(config['Qubit'], **{key: {'vector': [1, 0, 0]}}))

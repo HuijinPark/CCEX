@@ -7,7 +7,6 @@
       "trials": 8,
       "max_iterations": 20,
       "kmeans_pp": true,
-      "print_trials": false,
       "partition": "deterministic",
       "cache": {"mode": "readwrite", "file": "bin/pcce_ensemble.partition"}
     }
@@ -18,7 +17,6 @@
     "bathfile": [
       "test/gpu_verification/check_gpu/examples/bath_pcce_6"
     ],
-    "nstate": 0,
     "seed": 19
   },
   "Qubit": {
@@ -31,11 +29,11 @@
           0,
           0,
           0
-        ],
-        "alphams": 1,
-        "betams": 0
+        ]
       }
-    ]
+    ],
+    "alpha_state": {"ms": [1]},
+    "beta_state": {"ms": [0]}
   },
   "order": 2,
   "rbath": 15,

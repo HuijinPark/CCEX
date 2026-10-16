@@ -90,26 +90,24 @@ int main(){
     printf("\n=== bath-coordinate rotation : geometry ===\n\n");
 
     ////////////////////////////////////////////////////////////////////////
-    // [3] bath_axis=[001], qubit_axis=[001] : identity
+    // [3] qubit_axis=[001] : identity
     ////////////////////////////////////////////////////////////////////////
-    printf("[3] identity transformation, bath_axis=[001] qubit_axis=[001]\n");
+    printf("[3] identity transformation, qubit_axis=[001]\n");
     {
-        double b[3] = {0.0,0.0,1.0};
         double q[3] = {0.0,0.0,1.0};
         double R[3][3];
         double I[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
 
-        buildQubitAlignedRotation(b,q,R);
+        buildQubitAlignedRotation(q,R);
         check(matClose(R,I,0.0),"R is exactly the identity matrix");
     }
 
     ////////////////////////////////////////////////////////////////////////
-    // [4] bath_axis=[001], qubit_axis=[111] : the required sign convention
+    // [4] qubit_axis=[111] : the required sign convention (x = qubit_axis x [0,0,1], A90)
     // [5] R * normalize([111]) = [001]
     ////////////////////////////////////////////////////////////////////////
-    printf("\n[4] bath_axis=[001] qubit_axis=[111] : expected matrix\n");
+    printf("\n[4] qubit_axis=[111] : expected matrix\n");
     {
-        double b[3] = {0.0,0.0,1.0};
         double q[3] = {1.0,1.0,1.0};
         double R[3][3];
 
@@ -120,7 +118,7 @@ int main(){
             { 1.0/s3,  1.0/s3,  1.0/s3 }    // ez = [ 1, 1, 1]/sqrt(3)
         };
 
-        buildQubitAlignedRotation(b,q,R);
+        buildQubitAlignedRotation(q,R);
         printMat("R",R);
         check(matClose(R,E,1e-14),"R matches ex=[1,-1,0]/sqrt2, ey=[1,1,-2]/sqrt6, ez=[1,1,1]/sqrt3");
 
@@ -129,37 +127,35 @@ int main(){
 
         // The axes are directions, so a rescaled input must give the same frame.
         double q2[3] = {5.0,5.0,5.0};
-        double b2[3] = {0.0,0.0,7.0};
         double R2[3][3];
-        buildQubitAlignedRotation(b2,q2,R2);
-        check(matClose(R,R2,1e-15),"unnormalized input [0,0,7] / [5,5,5] gives the same R");
+        buildQubitAlignedRotation(q2,R2);
+        check(matClose(R,R2,1e-15),"unnormalized input [5,5,5] gives the same R");
     }
 
     ////////////////////////////////////////////////////////////////////////
     // Proper rotation for a range of axis pairs (R^T R = I, det = +1, R q = z)
     ////////////////////////////////////////////////////////////////////////
-    printf("\n[*] R is a proper rotation for several axis pairs\n");
+    printf("\n[*] R is a proper rotation for several qubit axes\n");
     {
-        double pairs[5][2][3] = {
-            {{0.0,0.0,1.0},{1.0,1.0,1.0}},
-            {{0.0,0.0,1.0},{1.0,1.0,0.0}},
-            {{0.0,1.0,0.0},{1.0,1.0,1.0}},
-            {{1.0,2.0,3.0},{3.0,-1.0,2.0}},
-            {{0.0,0.0,1.0},{0.0,0.0,1.0}}
+        double axes[5][3] = {
+            {1.0,1.0,1.0},
+            {1.0,1.0,0.0},
+            {3.0,-1.0,2.0},
+            {-1.0,-1.0,1.0},
+            {0.0,0.0,1.0}
         };
 
         for (int k=0; k<5; k++){
             double R[3][3];
-            buildQubitAlignedRotation(pairs[k][0],pairs[k][1],R);
+            buildQubitAlignedRotation(axes[k],R);
 
             char what[160];
             snprintf(what,sizeof(what),
-                     "b=[%g,%g,%g] q=[%g,%g,%g] : |R^T R - I| = %.1e, det = %.15g, |Rq-z| = %.1e",
-                     pairs[k][0][0],pairs[k][0][1],pairs[k][0][2],
-                     pairs[k][1][0],pairs[k][1][1],pairs[k][1][2],
-                     orthoErr(R),det3(R),zAxisErr(R,pairs[k][1]));
+                     "q=[%g,%g,%g] : |R^T R - I| = %.1e, det = %.15g, |Rq-z| = %.1e",
+                     axes[k][0],axes[k][1],axes[k][2],
+                     orthoErr(R),det3(R),zAxisErr(R,axes[k]));
 
-            check(orthoErr(R) < 1e-14 && fabs(det3(R)-1.0) < 1e-14 && zAxisErr(R,pairs[k][1]) < 1e-14, what);
+            check(orthoErr(R) < 1e-14 && fabs(det3(R)-1.0) < 1e-14 && zAxisErr(R,axes[k]) < 1e-14, what);
         }
     }
 
@@ -170,11 +166,10 @@ int main(){
     ////////////////////////////////////////////////////////////////////////
     printf("\n[6,7,8] fixed point and preserved distances (r0 = [10,20,30])\n");
     {
-        double b[3]  = {0.0,0.0,1.0};
         double q[3]  = {1.0,1.0,1.0};
         double r0[3] = {10.0,20.0,30.0};
         double R[3][3];
-        buildQubitAlignedRotation(b,q,R);
+        buildQubitAlignedRotation(q,R);
 
         const int n = 6;
         double p0[n][3] = {   // bath positions, as r0 + offset
@@ -239,10 +234,9 @@ int main(){
     ////////////////////////////////////////////////////////////////////////
     printf("\n[13,14] non-diagonal tensor : T_new = R * T * R^T\n");
     {
-        double b[3] = {0.0,0.0,1.0};
         double q[3] = {1.0,1.0,1.0};
         double R[3][3];
-        buildQubitAlignedRotation(b,q,R);
+        buildQubitAlignedRotation(q,R);
 
         // A real quadrupole tensor, lifted from the h-BN V_B run in
         // test/code_verification/ -- symmetric, and genuinely non-diagonal.
@@ -310,11 +304,10 @@ int main(){
     ////////////////////////////////////////////////////////////////////////
     printf("\n[16] point-dipole tensor : recomputing after the rotation == rotating the tensor\n");
     {
-        double b[3] = {0.0,0.0,1.0};
         double q[3] = {1.0,1.0,1.0};
         double r0[3] = {10.0,20.0,30.0};
         double R[3][3];
-        buildQubitAlignedRotation(b,q,R);
+        buildQubitAlignedRotation(q,R);
 
         double gq = -17608.597050;  // electron
         double gb =   6.728284;     // 13C
@@ -356,16 +349,14 @@ int main(){
     }
 
     ////////////////////////////////////////////////////////////////////////
-    // [1] Config defaults : rotation off, both axes on +z
+    // [1] Config defaults : rotation off, qubit_axis on +z
     ////////////////////////////////////////////////////////////////////////
     printf("\n[1] Config defaults\n");
     {
         Config* cnf = Config_init();
-        double* ba  = Config_getRot_bath_axis(cnf);
         double* qax = Config_getRot_qubit_axis(cnf);
 
         check(Config_getRot_enabled(cnf) == false,"rotation is off by default");
-        check(ba[0]==0.0  && ba[1]==0.0  && ba[2]==1.0 ,"default bath_axis  = [0,0,1]");
         check(qax[0]==0.0 && qax[1]==0.0 && qax[2]==1.0,"default qubit_axis = [0,0,1]");
         // Config_freeAll would free members this test never allocated; the leak of one
         // Config in a test binary that is about to exit is not worth guarding against.

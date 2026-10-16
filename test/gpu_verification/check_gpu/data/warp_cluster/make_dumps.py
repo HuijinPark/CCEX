@@ -47,7 +47,7 @@ CASES = {
 
 def lenient(text):
     import re
-    text = re.sub(r'#[^\n]*', '', text)
+    text = re.sub(r'(#|//)[^\n]*', '', text)
     return json.loads(re.sub(r',\s*([}\]])', r'\1', text))
 
 
@@ -62,7 +62,7 @@ def fixture(binary, out):
             os.makedirs(run)
             shutil.copytree(os.path.join(HBN, 'bath/flat'), os.path.join(work, name, 'bath/flat'))
             shutil.copy(os.path.join(HBN, 'bath/hBN_natab_gyro'), os.path.join(work, name, 'bath'))
-            cfg = lenient(open(os.path.join(HBN, 'gCCE2_Hahn_states/ccein.json')).read())
+            cfg = lenient(open(os.path.join(HBN, 'gCCE2_Hahn_states/ccein.jsonc')).read())
             cfg['configuration']['bathfile'] = ['../bath/flat/bath_hBN_VB_flat_1']   # -I on the command line until A63
         else:
             folder, file = where
@@ -72,6 +72,8 @@ def fixture(binary, out):
         cfg.update(change)
         for key in ('nstate', 'seed'):   # the configuration block's (A64)
             if key in change: cfg['configuration'][key] = cfg.pop(key)
+        n = cfg['configuration'].pop('nstate', None)   # configuration.s_range [1, N] (A94)
+        if n: cfg['configuration']['s_range'] = [1, n]
         if 'evolution_update' in change:   # the execution block's (A65)
             cfg.setdefault('execution', {})['evolution_update'] = cfg.pop('evolution_update')
         if p1n14:

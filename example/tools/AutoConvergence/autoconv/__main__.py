@@ -1,28 +1,34 @@
 """Command line: analyse existing CCEX runs (one run directory per bath configuration).
 
     python -m autoconv status INPUT.json      (where an automatic convergence is; nothing computed)
-    python -m autoconv analyze RUN_DIR [RUN_DIR ...] [--config DRIVER.json] [--cost-config A --cost-state B] [--prefix out]
+    python -m autoconv analyze RUN_DIR [RUN_DIR ...] [--config INPUT] [--cost-config A --cost-state B] [--prefix out]
                                 [--expect-states N] [--expect-points N] [--report-dir DIR]
     python -m autoconv judge --setting RUN_DIR ... --reference RUN_DIR ... [--setting-prefix P] [--reference-prefix P]
-                             [--decay-time T] [--name NAME] [--config DRIVER.json] [--report-dir DIR]
+                             [--decay-time T] [--name NAME] [--config INPUT] [--report-dir DIR]
+
+--config INPUT is a CCEX input with an auto_convergence block, the one `main.out -f INPUT` runs (A94, G19: the same block
+and keys as the runner; the driver file of its own was removed). From it: the time window is judged unless
+time_window.value is given, the sampling unless sampling.configurations is; time_window.decay_level (default 0.01),
+time_window.production_factor (1.5), t2_fit.points (peaks) and sampling.threshold (the SE(A)/A target, 0.05); the run shape
+from configuration.s_range (the states) and nstep; the bath files available from configuration.bathfile ({k}, k_range).
+Without --config these defaults are used.
 
 analyze: time window and sampling. The sampling step is judged on T2 (2026-10-07): T2 and n from exp(-(t/T2)^n) fitted to
-|mean|, its relative SE by linearization (and a two-stage bootstrap), and the cheapest (C, S) for t2_se_target (default 6 %,
-the SE scaled by bootstrap/linearized when that is above 1); the curve proxy below stays as a diagnostic.
+|mean|, the relative SE of the fit's area by linearization (and a two-stage bootstrap), and the cheapest (C, S) for the
+target, the SE scaled by bootstrap/linearized when that is above 1; the curve proxy below stays as a diagnostic.
 judge: a truncation setting against a reference (e.g. an rdip_ladder rung, --setting-prefix out_rdip251.359, against the main
 output of the same runs), paired by configuration, on [0, T_d] (T_d of the reference unless given, in the output unit):
-fit-line difference max <= truncation_max_tol and area <= truncation_area_tol, with the fit check and the smoothed fallback
-(autoconv/truncation.py). --report-dir writes PNG figures and text summaries (autoconv/report.py).
+fit-line difference max <= 0.01 and area <= 0.005 (the analysis's own tolerances), with the fit check and the smoothed
+fallback (autoconv/truncation.py). --report-dir writes PNG figures and text summaries (autoconv/report.py).
 
 Every RUN_DIR is one independent configuration: the same directory or identical outputs twice are refused, and so is a run
-with fewer states or time points than expected (from nstate/nstep of base_input with --config, or the options). States
+with fewer states or time points than expected (from s_range/nstep of the input with --config, or the options). States
 that are non-finite make the report `numerical-failure` (nothing is estimated, no configuration is dropped); finite states
 with |L| > 1.01 are listed as warnings. Prints a JSON report: the validity per configuration, the time window (status, decay time, recommended window, per-configuration decay times as
-diagnostics), the variance components, sampling_rms_proxy at the present (C, S), the bootstrap norm error
-of the present mean, and the cheapest (C, S) for sampling_tolerance when costs are given (bounded by the number of bath files of a fixed
-source), and the parts of the total error that are not measured yet. Without --config the defaults of
-the auto_convergence specification are used (tolerance 0.01, area norm, decay threshold 0.01, margin 1.5); the sampling error is
-judged on [0, T_d] when the time-window step finds a decay time.
+diagnostics), the variance components, sampling_rms_proxy at the present (C, S) against the analysis's own budget (2/3 of
+0.01, area norm), the bootstrap norm error of the present mean, and the cheapest (C, S) when costs are given (bounded by the
+bath files available), and the parts of the total error that are not measured yet; the sampling error is judged on
+[0, T_d] when the time-window step finds a decay time.
 """
 import argparse
 import json
@@ -247,12 +253,12 @@ def main(argv=None):
     a = sub.add_parser("analyze")
     a.add_argument("runs", nargs="*")
     a.add_argument("--manifest", help="JSON manifest: configuration IDs, run folders, state counts, available configurations, grid")
-    a.add_argument("--config")
+    a.add_argument("--config", help="a CCEX input with an auto_convergence block (its settings, run shape and bath files)")
     a.add_argument("--cost-config", type=float)
     a.add_argument("--cost-state", type=float)
     a.add_argument("--prefix", default="out")
-    a.add_argument("--expect-states", type=int, help="states every run must have (default: nstate of base_input)")
-    a.add_argument("--expect-points", type=int, help="time points every run must have (default: nstep of base_input)")
+    a.add_argument("--expect-states", type=int, help="states every run must have (default: configuration.s_range of --config)")
+    a.add_argument("--expect-points", type=int, help="time points every run must have (default: nstep of --config)")
     a.add_argument("--report-dir", help="write sampling.png and sampling.txt here")
     j = sub.add_parser("judge")
     j.add_argument("--setting", nargs="+", required=True)
@@ -261,7 +267,7 @@ def main(argv=None):
     j.add_argument("--reference-prefix", default="out")
     j.add_argument("--decay-time", type=float, help="T_d in the output unit (default: from the reference)")
     j.add_argument("--name", default="setting")
-    j.add_argument("--config")
+    j.add_argument("--config", help="a CCEX input with an auto_convergence block (its time_window.decay_level, t2_fit.points)")
     j.add_argument("--report-dir", help="write truncation_<name>.png and .txt here")
     j.add_argument("--unverified-pairs", action="store_true", help="accept runs without input.json, paired by order (warned)")
     args = ap.parse_args(argv)

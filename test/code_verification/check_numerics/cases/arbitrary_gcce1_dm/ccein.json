@@ -7,7 +7,7 @@
       "../../inputs/arbitrary/bath"
     ],
     "bath_state_file": ["../../inputs/arbitrary/state_"],
-    "nstate": 1,
+    "s_range": [1, 1],
     "seed": 19
   },
   "order": 1,
@@ -27,13 +27,11 @@
           0.0,
           0.0
         ],
-        "alphams": 0,
-        "betams": 1,
-        "detuning": [
-          0.0
-        ]
+        "detuning": 0.0
       }
-    ]
+    ],
+    "alpha_state": {"ms": [0]},
+    "beta_state": {"ms": [1]}
   },
   "pulse": {"count": 1},
   "output": {"savemode": "cluster_density_matrix"}

@@ -2,26 +2,10 @@
   "method": "cCCE",
   "quantity": "coherence",
   "Qubit": {
-    "file": "../../inputs/natab/bath_Diamond_NV_natab_defect",
-    "zfs": [
-      [
-        -960000,
-        0,
-        0
-      ],
-      [
-        0,
-        -960000,
-        0
-      ],
-      [
-        0,
-        0,
-        1920000
-      ]
-    ],
-    "alphams": 1,
-    "betams": 0
+    "qubit": [{"file": "../../inputs/natab/bath_Diamond_NV_natab_defect"}],
+    "intmap": [{"between": ["q0", "q0"], "tensor": [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]], "unit": "kHz"}],
+    "alpha_state": {"ms": [1]},
+    "beta_state": {"ms": [0]}
   },
   "configuration": {
     "gyrofile": "../../inputs/natab/gyro_13C",

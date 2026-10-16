@@ -7,7 +7,7 @@ PLOT=$ROOT/example/tutorial/plot_coherence.py
 NP=${NP:-4}
 mkdir -p results
 for ppm in 10 12 50; do
-  mpirun -n $NP $CCEX -f ccein_${ppm}ppm.json -o results > results/ccein_${ppm}ppm.log
+  mpirun -n $NP $CCEX -f ccein_${ppm}ppm.jsonc -o results > results/ccein_${ppm}ppm.log
 done
 python3 $PLOT results/coherence.png --unit us "10 ppm=results/ccein_10ppm_state1_wiDiv" "12 ppm=results/ccein_12ppm_state1_wiDiv" \
   "50 ppm=results/ccein_50ppm_state1_wiDiv"

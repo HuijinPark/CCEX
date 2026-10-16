@@ -3,14 +3,13 @@
     "quantity"      : "coherence",
 
     "Qubit"         : {
-        "file"          : "./inputfiles/bath_DiaP1_10ppm_defect",
-        "alphams"        : -1,
-        "betams"         : 0
+        "qubit"         : [{"file": "./inputfiles/bath_DiaP1_10ppm_defect"}],
+        "alpha_state"    : {"ms": [-1]},
+        "beta_state"     : {"ms": [0]}
     },
     "configuration" : {
         "gyrofile"      : "./inputfiles/gyro_P1",
         "bathfile"      : ["./inputfiles/bath_DiaP1_10ppm_1"],
-        "nstate"        : 0,
         "seed"          : 1
     },
 

@@ -4,7 +4,7 @@
     "configuration" : {
         "gyrofile"      : "./inputfiles/gyro_P1",
         "bathfile"      : ["./inputfiles/bath_DiaP1_10ppm_1"],
-        "nstate"        : 1,
+        "s_range"       : [1, 1],
         "seed"          : 1
     },
 
@@ -24,11 +24,11 @@
                 "name"    : "NV",
                 "xyz"     : [523.336, 524.936, 521.003],
                 "spin"    : 1.0,
-                "gyro"    : -17608.59705,
-                "alphams" : -1,
-                "betams"  : 0
+                "gyro"    : -17608.59705
             }
         ],
+        "alpha_state" : {"ms": [-1]},
+        "beta_state" : {"ms": [0]},
         "intmap" : [
             {
                 "between" : ["NV", "NV"],

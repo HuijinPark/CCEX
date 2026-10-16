@@ -1676,8 +1676,9 @@ def PrintFinal(args):
 ####################################################
 if __name__ == "__main__":
     
-    #0. Prepare the MPI option
-    comm = MPI.COMM_WORLD
+    #0. Prepare the MPI option (a caller running this file with runpy may pass its own communicator as bathgen_comm,
+    #   e.g. MPI.COMM_SELF to make one bath per process; example/tutorial/make_natab_baths.py does)
+    comm = globals().get("bathgen_comm", MPI.COMM_WORLD)
     myrank = comm.Get_rank()
     world_size = comm.Get_size()
     

@@ -1,6 +1,6 @@
 # 02_pulses
 
-The NV of `00_quickstart` under different pulse sequences: Hahn echo (one π pulse), CPMG-N (N equally spaced π pulses)
+The NV of [00_quickstart](../00_quickstart/README.md) under different pulse sequences: Hahn echo (one π pulse), CPMG-N (N equally spaced π pulses)
 and a sequence written out (`Manual`). Each folder: `cd <folder> && NP=4 bash run.sh`, then compare
 `results/coherence.png` with `expected.png`. Every key not written in an input has its default (`main.out -e`).
 Times: i7-14700K, WSL, 4 ranks.
@@ -12,7 +12,11 @@ Times: i7-14700K, WSL, 4 ranks.
   `deltat` 4 µs × `nstep` 2000 (8 ms, long enough for CPMG-8).
 - **How to run:** `NP=4 bash run.sh`: 3.6 s, 0.05 GB per rank.
 - **Expected result:** `expected.png`; T2 Hahn 1.068 ms, CPMG-2 1.36 ms, CPMG-8 7.9 ms.
-- **What to change next:** `pulse.count` 16 or 32 (with a longer window); the same on the P1 bath of `03_P1`.
+- **What to change next:** `pulse.count` 16 or 32 (with a longer window); the same on the P1 bath of [03_P1](../03_P1/README.md).
+
+![cCCE2_CPMG_ensemble: expected result](cCCE2_CPMG_ensemble/expected.png)
+
+Input: [`ccein.jsonc`](cCCE2_CPMG_ensemble/ccein.jsonc)
 
 ## cCCE2_Manual_ensemble
 
@@ -26,3 +30,7 @@ Times: i7-14700K, WSL, 4 ranks.
 - **Expected result:** `expected.png`; the two curves are identical (difference 0), T2 1.37 ms.
 - **What to change next:** uneven spacings (UDD), or pulses that are not π flips (90° about X and Y, as in WAHUHA):
   those need `method` gCCE, since cCCE treats every pulse as a π flip and refuses others.
+
+![cCCE2_Manual_ensemble: expected result](cCCE2_Manual_ensemble/expected.png)
+
+Input: [`ccein.jsonc`](cCCE2_Manual_ensemble/ccein.jsonc)

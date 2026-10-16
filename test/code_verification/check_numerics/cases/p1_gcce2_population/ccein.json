@@ -7,7 +7,7 @@
       "../../inputs/p1_10ppm/bath_DiaP1_10ppm_1"
     ],
     "bath_state_file": ["../../inputs/p1_10ppm/state_"],
-    "nstate": 1,
+    "s_range": [1, 1],
     "seed": 19,
     "defect_axis_file": ["../../inputs/p1_10ppm/avaax_nav12"]
   },
@@ -28,13 +28,11 @@
           524.936,
           521.003
         ],
-        "alphams": 0,
-        "betams": 0,
-        "detuning": [
-          0.0
-        ]
+        "detuning": 0.0
       }
     ],
+    "alpha_state": {"ms": [0]},
+    "beta_state": {"ms": [0]},
     "intmap": [
       {
         "between": [

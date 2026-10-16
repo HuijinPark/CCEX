@@ -135,7 +135,7 @@ folder under `reference/`, but only the newest `head-*` by name decides the exit
 **2026-10-02: eight cases re-recorded in the three folders of that date** (`p1_cce2_ensemble`, `p1_cce2_single`,
 `p1_cce2e2n`, `p1_cce4`, `p1_cpmg8_manual`, `p1_manual_hahn`, `p1_pcce2_sk2`, `vp_cce2`). Their inputs
 wrote `"alphams": -1` at the top of the qubitfile form, which reads `qalphams`: every version ran
-them with the NV branch +1. The inputs then said `"qalphams": -1` (`"Qubit": {"file": ..., "alphams": -1}` since 2026-10-13) and the references were run again
+them with the NV branch +1. The inputs then said `"qalphams": -1` (`"Qubit": {"file": ..., "alphams": -1}` since 2026-10-13, `"alpha_state": {"ms": [-1]}` since A93) and the references were run again
 with the same command (NP 2; the tags built from the tag), so they hold the branch the inputs
 meant. The change against the old references was up to 1.26 (`p1_cce2_single`), 8e-6 for the
 ensemble case. Since then CCEX refuses such a key (D24).

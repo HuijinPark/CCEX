@@ -42,8 +42,8 @@ def make_auto(tmp, ids=tuple(range(1, 31)), nspin=NSPIN, flat=False, species=("1
     fake.write_text(f"#!/bin/sh\nexec {PY} {HERE / 'fake_ccex.py'} \"$@\"\n"); fake.chmod(0o755)
     blk = dict(workdir="auto", configurations=dict(bathfile=str(data / "bath_{k}")), threshold_config=0.06, min_configurations=8)
     blk.update(block)
-    conf = dict(gyrofile=str(data / "gyro"), nstate=0)       # the configuration block (A64; the bath pattern in it A65)
-    inp = dict(method="cCCE", quantity="coherence", order=2, Qubit=dict(file=str(data / "qubit")),
+    conf = dict(gyrofile=str(data / "gyro"))       # the configuration block (A64; the bath pattern in it A65); the ensemble
+    inp = dict(method="cCCE", quantity="coherence", order=2, Qubit=dict(qubit=[dict(file=str(data / "qubit"))]),
                configuration=conf, bfield=500, auto_convergence=nest(blk, conf), **(base or {}))
     (tmp / "input.json").write_text(json.dumps(inp, indent=1))
     return tmp / "input.json", fake
@@ -302,7 +302,7 @@ class TestAutostartRuns(unittest.TestCase):
         d = Path(self.tmp) / "states"; d.mkdir()
         inp, fake = make_auto(d, nspin=300)
         j = json.loads(inp.read_text())
-        j["configuration"]["nstate"] = 2
+        j["configuration"]["s_range"] = [1, 2]
         j["configuration"]["bath_state_file"] = [str(d / "data/cfg{k}_state")]
         inp.write_text(json.dumps(j))
         for k in range(1, 31):

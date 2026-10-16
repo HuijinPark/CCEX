@@ -13,8 +13,8 @@ run CCEX). It needs numpy; the plots and fits also scipy and matplotlib (on WSL:
 One line per time step: the time in ms, a tab, the complex coherence as
 `+re+imj` (two real columns are read too). CCEX writes `_noDiv`, the product of
 the cluster coherences before the division by the sub-clusters, and `_wiDiv`,
-after it; the analyzer writes `_ErrCorr` and `<name>_EnsAvg_conv<N>`. A density
-matrix comes as blocks of rows, the first row of a block starting with the time.
+after it; the analyzer writes `_ErrCorr` and `<name>_EnsAvg_conv<N>`. Every file and
+its columns are in [Output files](OutputFiles.md).
 
 ## The analyzer
 
@@ -30,8 +30,8 @@ and do not call it):
    there), a bad first point is set to 0, and any other bad point becomes the
    mean of the previous corrected value and the next good one. Every recorded
    result was made with it; call it, do not rewrite it.
-2. **Ensemble average** (`-ea`) over the values of a variable (`-vn`, `-v`): one
-   `EnsAvg_conv<N>` file per remaining variable.
+2. **Ensemble average** (`-ea`) over the values of the variables (`-vn`, `-v`): one
+   `<-fo>_conv<N>` file, the mean of the N curves read, as complex numbers.
 3. **Plots and fits**: `-pl` one figure per file, `-pl_m` all curves in one, `-fit`
    a stretched-exponential fit with T2 and the power (`-fit_initp`, `-fit_space`),
    `-pl_i` an intensity plot of coherence against time and a variable.
@@ -50,6 +50,44 @@ python3 $ANALYZER -d results/ -fi ccein_kCONF_wiDiv -err_d results/ -err_fi ccei
 # ensemble average, then a plot with a fit
 python3 $ANALYZER -d results/ -fi ccein_kCONF_ErrCorr -vn "CONF" -v 1 2 3 4 -uc "ms" -ea -ntn -fo results/ccein_EnsAvg -pl -fit -fit_initp 2 -fit_space 5
 ```
+
+**Sampled bath states.** With `configuration.s_range` CCEX writes one file per state, `ccein_state<s>_wiDiv` and
+`_noDiv` (s = first ... last of `s_range`; with `k_range`, `ccein_k<k>_state<s>_...`). The states are averaged like the configurations,
+as complex numbers; for the 20 states of `example/tutorial/01_ensemble_and_states/cCCE2_Hahn_states`:
+
+```
+python3 $ANALYZER -d results/ -fi ccein_stateST_wiDiv -err_d results/ -err_fi ccein_stateST_noDiv -vn "ST" -v $(seq 1 20) -uc "ms" -err -ntn -fo results/ccein_stateST_ErrCorr
+python3 $ANALYZER -d results/ -fi ccein_stateST_ErrCorr -vn "ST" -v $(seq 1 20) -uc "ms" -ea -ntn -fo results/ccein_StateAvg
+```
+
+The second call writes `results/ccein_StateAvg_conv20`. `-ea` averages every file the pattern and the values name, so
+configurations and states together are one call with two variables
+(`-fi ccein_kCONF_stateST_ErrCorr -vn CONF ST -v 1 2 3 4 -v $(seq 1 20)`), each curve with the same weight.
+
+**Density matrices** (`quantity` dm) are written as blocks of rows ([The density matrix](OutputFiles.md#out_dm)), which
+`read_coherence` and `run.py` do not read. Read them with the `read` function of `example/tutorial/plot_coherence.py`,
+which returns the element between the two levels that are coherent at t = 0 divided by its value there, or, when the
+qubit starts in one level, that level's population (as in `example/tutorial/03_P1/gCCE2_Ramsey_population`), or parse the
+blocks yourself: the first field of a block's first line is the time, and the D² complex values that follow, over the
+block's lines, are ρ row by row. A population is the real part of a diagonal element; average states and
+configurations element by element.
+
+**The fit.** `-fit` draws the fit on the `-pl` figure; `-fit_w` writes it, for one variable (`-vn` with one name), to
+`<-fo>_params`: one row per value of the variable, sorted by it, with the columns value, T2 and the power n (ten
+decimals, tab-separated; T2 in the `-uc` unit), and `-pl_T` / `-pl_p` plot T2 and n against the variable
+(`<-fo>_T2.png`, `<-fo>_Power.png`). The fitted function is exp(−(t/T2)ⁿ), fitted to the real part of the curve at the
+points of its upper envelope (`-fit_space` sets how many points ahead the envelope looks, default 1) by least squares,
+starting from the time where the curve is closest to 1/e and n = `-fit_initp` (default 2). A fit with n outside
+(0.1, 4] or T2 beyond the last time is rejected (the next start is tried); a value it cannot fit is reported and left out
+of `_params`. With `-ea`, `-fit_w` fits the average alone (with any number of variables): one row whose value is N,
+the number of curves averaged. The same row comes from a call of its own on the average file, with a variable name
+that does not occur in the file name and one value:
+
+```
+python3 $ANALYZER -d results/ -fi ccein_StateAvg_conv20 -vn "XX" -v 20 -uc "ms" -fo results/ccein_StateAvg_fit -fit_w -fit_space 5
+```
+
+writes `results/ccein_StateAvg_fit_params` (the value 20, T2 in ms, n).
 
 `python3 run.py -h` lists every option. For a new figure, reading the curves
 with `coherence.py` and drawing them yourself is simpler than the plot classes:

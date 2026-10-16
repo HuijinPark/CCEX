@@ -8,7 +8,7 @@ NP=${NP:-4}
 mkdir -p results
 SIZES=${SIZES:-1 2 3}      # partition_size values to run; 4 takes much longer
 for k in $SIZES; do
-  python3 $ROOT/example/tools/InputKeys/set_input_keys.py ccein.json results/sK$k.json cluster.pcce.partition_size=$k
+  python3 $ROOT/example/tools/InputKeys/set_input_keys.py ccein.jsonc results/sK$k.json cluster.pcce.partition_size=$k
   mpirun -n $NP $CCEX -f results/sK$k.json -o results > results/sK$k.log
 done
 set -- ; for k in $SIZES; do set -- "$@" "partition_size $k=results/sK${k}_state*_wiDiv"; done

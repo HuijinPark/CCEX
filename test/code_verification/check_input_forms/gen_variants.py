@@ -29,9 +29,9 @@ def emit(name, d, baseline="legacy", mode="byte", desc=""):
     rows.append((name, baseline, mode, desc))
 
 # ---------------------------------------------------------------- rotation keys
-ROT_OFF = {"enabled": False, "bath_axis": [0.0,0.0,1.0], "qubit_axis": [1.0,1.0,1.0]}
-ROT_ID  = {"enabled": True,  "bath_axis": [0.0,0.0,1.0], "qubit_axis": [0.0,0.0,1.0]}
-ROT_111 = {"enabled": True,  "bath_axis": [0.0,0.0,1.0], "qubit_axis": [1.0,1.0,1.0]}
+ROT_OFF = {"enabled": False, "qubit_axis": [1.0,1.0,1.0]}
+ROT_ID  = {"enabled": True,  "qubit_axis": [0.0,0.0,1.0]}
+ROT_111 = {"enabled": True,  "qubit_axis": [1.0,1.0,1.0]}
 
 def with_rot(section, key="coordinate_frame_rotation", **extra):
     d = copy.deepcopy(legacy); d[key] = dict(section); d[key].update(extra); return d
@@ -44,15 +44,19 @@ emit("rot_disabled", with_rot(ROT_OFF), "base", "byte",
      'coordinate_frame_rotation.enabled=false must be a no-op')
 
 # The bare identity variant is only valid where no further key is REQUIRED. S4 reads
-# a DFT tensor file, so hf/qd_tensor_frame has to be stated; S5 has two qubits, so
-# reference_qubit has to be. Both refusals are the point of those keys, and each of
+# DFT tensor files, so hamiltonian.common.hyperfine.frame and quadrupole.frame have to be stated; S5 writes
+# Qubit.intmap tensors, so each entry's frame has to be (A90). Both refusals are the point of those keys, and each of
 # those systems emits its own identity case below with them supplied.
 if sysname == "S4":
     pass
 elif sysname == "S5":
     pass
 else:
-    emit("rot_identity", with_rot(ROT_ID), "base", "byte",
+    d = with_rot(ROT_ID)
+    # with the rotation on every Defect species states its frame (A90): "qubit", the default it had until then
+    for sp in d.get("Defect", {}).get("species", []):
+        sp["frame"] = "qubit"
+    emit("rot_identity", d, "base", "byte",
          'identity rotation (qubit_axis=[0,0,1]) must be a no-op')
 
 # ---------------------------------------------------------------- per system
@@ -74,14 +78,14 @@ elif sysname == "S3":
     def mk(**defect_changes):
         d = copy.deepcopy(legacy)
         nd = d["Defect"]["species"][0]
-        # object forms all require the frame to be explicit; "qubit" is the legacy
-        # default, so stating it must not move a number
-        nd["coordinate_frame"] = "qubit"
+        # frame "qubit" (coordinate_frame until A90) was the legacy default, so stating it must not move a number
+        # (with the rotation off it is not used, A90)
+        nd["frame"] = "qubit"
         nd.update(defect_changes)
         return d
 
     emit("df_frame_only", mk(), "base", "byte",
-         'Defect.coordinate_frame="qubit" is the legacy default')
+         'Defect.species[].frame="qubit" is the legacy default')
 
     # canonical units : the scale factor is exactly 1, so byte identity is required
     emit("df_gyro_canon", mk(gyros={"values":[gyro], "unit":"radkHz/G"}),
@@ -126,56 +130,51 @@ elif sysname == "S3":
     # defect_axis_reference changed no number and was removed on 2026-10-15 (A65): refused, ../check_rotation
 
 elif sysname == "S4":
-    # With the rotation ON but R = I, "bath" and "qubit" must both reduce to the
+    # With the rotation ON but R = I, "file" and "qubit" must both reduce to the
     # unrotated answer. This pins the PARSING and the no-op path; the [111] case for
     # these same keys is what test/code_verification/check_rotation/run.sh [13,14,15] and its A/B section do.
-    emit("tf_bath_identity",
-         with_rot(ROT_ID, hf_tensor_frame="bath", qd_tensor_frame="bath"),
-         "base", "byte", 'identity rotation with hf/qd_tensor_frame="bath"')
-    emit("tf_qubit_identity",
-         with_rot(ROT_ID, hf_tensor_frame="qubit", qd_tensor_frame="qubit"),
-         "base", "byte", 'identity rotation with hf/qd_tensor_frame="qubit"')
+    def with_tensor_frames(frame):
+        d = with_rot(ROT_ID)
+        for block in ("hyperfine", "quadrupole"):
+            d["hamiltonian"]["common"][block]["frame"] = frame
+        return d
+    emit("tf_file_identity", with_tensor_frames("file"),
+         "base", "byte", 'identity rotation with hyperfine/quadrupole.frame="file"')
+    emit("tf_qubit_identity", with_tensor_frames("qubit"),
+         "base", "byte", 'identity rotation with hyperfine/quadrupole.frame="qubit"')
 
 elif sysname == "S5":
     def with_intmap_frame(frame):
         d = copy.deepcopy(legacy)
         for e in d["Qubit"]["intmap"]:
-            e["tensor_frame"] = frame
+            e["frame"] = frame
         return d
     emit("intmap_qubit_frame", with_intmap_frame("qubit"), "base", "byte",
-         'intmap tensor_frame="qubit", rotation off : declaring the frame changes nothing')
+         'intmap frame="qubit", rotation off : the frame is not used, nothing changes')
 
-    # The identity case needs both keys nqubit>1 makes mandatory: reference_qubit, and
-    # a tensor_frame on every explicit intmap entry. Refusing it without them is the
-    # behaviour the [10] refusal tests cover; here it is supplied and must be a no-op.
-    d = with_intmap_frame("bath")
-    d["coordinate_frame_rotation"] = dict(ROT_ID, reference_qubit="q1",
-                                          qubit_position_frame="bath")
+    # The identity case needs the frame of every explicit intmap entry (A90; with nqubit > 1 also before). Refusing it
+    # without them is what ../check_refusals covers; here it is supplied and must be a no-op.
+    d = with_intmap_frame("file")
+    d["coordinate_frame_rotation"] = dict(ROT_ID)
     emit("rot_identity", d, "base", "byte",
-         'identity rotation (reference_qubit=q1, intmap frames given) must be a no-op')
-    emit("intmap_bath_frame", with_intmap_frame("bath"), "base", "byte",
-         'intmap tensor_frame="bath", rotation off : same')
+         'identity rotation (intmap frames given) must be a no-op')
+    emit("intmap_file_frame", with_intmap_frame("file"), "base", "byte",
+         'intmap frame="file", rotation off : same')
 
-    # reference_qubit moves the rotation ORIGIN only. R is the same in both, so the two
-    # coordinate sets differ by the rigid translation (I-R)(r0-r1) and the coherence
-    # must not move. The first run would break if the key were ignored.
-    for q in ("q1", "q2"):
-        d = with_intmap_frame("bath")
-        d["coordinate_frame_rotation"] = dict(ROT_111,
-                                              reference_qubit=q,
-                                              qubit_position_frame="bath")
-        emit(f"refq_{q}", d, "refq_q1", "num",
-             f'[111] rotation about {q}')
+    # [111] about the first qubit (the origin since A90; reference_qubit chose it until then, a translation)
+    d = with_intmap_frame("file")
+    d["coordinate_frame_rotation"] = dict(ROT_111)
+    emit("rot111", d, "rot111", "num", '[111] rotation about the first qubit')
 
-    # A qubit's detuning may be written [x] (D18, 2026-10-02: 13 inputs write [0.0]). It has to
-    # be read as x, not ignored for the default 0: x != 0 must change the result ("differ"),
-    # and [x] must be byte-identical to x.
+    # A qubit's detuning has to be read, not ignored for the default 0 (D18, 2026-10-02): x != 0 must change the result
+    # ("differ"); its unit form must be byte-identical to the number in kHz ([x] was a second form until A94, refused now).
     def with_detuning(value):
         d = copy.deepcopy(legacy); d["Qubit"]["qubit"][0]["detuning"] = value; return d
     emit("qdet_number", with_detuning(1000.0), "base", "differ",
          'qubit detuning 1000 kHz : read, so the result moves')
-    emit("qdet_array", with_detuning([1000.0]), "qdet_number", "byte",
-         'qubit detuning [1000] == 1000')
+    # A94 (G21): [x] is refused (check_refusals); {"value", "unit"} is the other form of the number
+    emit("qdet_unit", with_detuning({"value": 1.0, "unit": "MHz"}), "qdet_number", "byte",
+         'qubit detuning {"value": 1, "unit": "MHz"} == 1000 (kHz)')
 
     # hamiltonian.common.qubit_bath_mean_field (Qubit.overhaus until A47) true has to change the result. (Qubit.overhaus
     # could be written 1 for true; the switches of A47 are true or false only, so ovh_one went with it.)

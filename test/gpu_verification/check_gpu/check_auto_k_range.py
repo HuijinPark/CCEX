@@ -34,7 +34,7 @@ def main():
         (out / f"bath_{k}").write_text("\n".join(lines) + "\n")
     config = {
         "method": "cCCE", "quantity": "coherence",
-        "Qubit": {"qubit": [{"name": "NV", "spin": 1.0, "xyz": [0.0, 0.0, 0.0], "alphams": 1, "betams": 0}]},
+        "Qubit": {"qubit": [{"name": "NV", "spin": 1.0, "xyz": [0.0, 0.0, 0.0]}], "alpha_state": {"ms": [1]}, "beta_state": {"ms": [0]}},
         "configuration": {"bathfile": ["bath_{k}"], "k_range": [1, 2], "seed": 1},
         "order": 3, "bfield": 500, "rbath": 30, "rdip": 3, "deltat": 0.005, "nstep": 50, "pulse": {"count": 1},
         "execution": {"backend": "auto", "gpu_options": {"min_dim": 8, "packed_max_dim": 0, "warp_max_dim": 0}},

@@ -2,9 +2,9 @@
   "method": "gCCE",
   "quantity": "dm",
   "Qubit": {
-    "file": "../../inputs/hbn/bath_hBN_VB_flat_Defect",
-    "alphams": 1,
-    "betams": 0
+    "qubit": [{"file": "../../inputs/hbn/bath_hBN_VB_flat_Defect"}],
+    "alpha_state": {"ms": [1]},
+    "beta_state": {"ms": [0]}
   },
   "configuration": {
     "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
@@ -12,7 +12,7 @@
       "../../inputs/hbn/bath_hBN_VB_flat_1"
     ],
     "bath_state_file": ["../../inputs/hbn/state_"],
-    "nstate": 1,
+    "s_range": [1, 1],
     "seed": 19
   },
   "order": 2,

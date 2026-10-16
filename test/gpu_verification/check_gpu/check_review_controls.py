@@ -17,8 +17,7 @@ def main():
     args.cpu, args.output = args.cpu.resolve(), args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=False)
     config = json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
-    config = put(config, {'backend': 'cpu', 'configuration.nstate': 2, 'pcce.trials': 12, 'pcce.print_trials': True,
-                          'pcce.print_limit': 2, 'configuration.seed': None})
+    config = put(config, {'backend': 'cpu', 'configuration.nstate': 2, 'pcce.trials': 12, 'pcce.print_trials': 2, 'configuration.seed': None})
     first, log = run_case(config, args.output/'generated', args.cpu, ranks=2)
     assert first['returncode'] == 0, log[-2000:]
     seeds = re.findall(r'\[seed\] generated on rank 0 and shared with all ranks: (\d+),', log)
@@ -30,7 +29,7 @@ def main():
     check_stream(states, random_reference(config['configuration']['seed'], 6, 2))
     for ranks in (1, 2, 4):
         directory = args.output/f'replay-{ranks}'
-        replay, output = run_case(put(config, {'pcce.print_limit': 0}), directory, args.cpu, ranks=ranks)
+        replay, output = run_case(put(config, {'pcce.print_trials': 0}), directory, args.cpu, ranks=ranks)
         assert replay['returncode'] == 0, output[-2000:]
         assert '[partition-iteration]' not in output
         assert replay['cluster_listing_sha256'] == first['cluster_listing_sha256']

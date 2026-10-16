@@ -77,14 +77,17 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
     // The Overhauser term reaches the Hamiltonian only through QubitArray_SingleHamil
     // -> HamilQubit (simulator_hamiltonian.cpp:4), and calCoherenceGcce is its only
-    // caller. Under CCE the qubit is frozen into the classical labels alphams/betams, so
+    // caller. Under CCE the qubit is frozen into the classical m_s labels of Qubit.alpha_state/beta_state, so
     // its own Hamiltonian never enters -- the field is still parsed, stored and printed,
     // which reads exactly like it took effect.
-    if (!qubitInMatrix && QubitArray_getOverhaus(qa) && rank==0){
-        fprintf(stderr,"Warning: hamiltonian.common.qubit_bath_mean_field has no effect with method=%s.\n"
-                       "         CCE projects the qubit out, so the qubit Hamiltonian --\n"
-                       "         where the Overhauser field lives -- is never built.\n"
-                       "         Use method=gCCE for mean-field.\n", inputMethodName(method));
+    // A94 (G3): reported as every key a run reads and does not use; also in the ensemble, whose bath states are all 0
+    if (QubitArray_getOverhaus(qa)){
+        if (!qubitInMatrix)
+            warnNotUsed("hamiltonian.common.qubit_bath_mean_field",(std::string("method ") + inputMethodName(method) + " projects "
+                        "the qubit out, so the qubit Hamiltonian, where the Overhauser field lives, is never built (use gCCE)").c_str());
+        else if (nstate == 0)
+            warnNotUsed("hamiltonian.common.qubit_bath_mean_field","the ensemble (no configuration.s_range) has no sampled bath "
+                        "state, the Overhauser field is zero");
     }
 
 
@@ -118,10 +121,18 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     // clusters of every rank and its time. The bath states, mean fields, qubit states and the steps of a state are
     // printed with -v only; the qubit states also for the first state of the run.
     long long localClusters=0,allClusters=0;
-    for (int n=1; n<=order; n++) localClusters+=localclusters[n][0][0]-1;
+    // the "checked" connection audit (bundle_connection_check.cpp) calls this without clusters: it never reaches them
+    if (localclusters) for (int n=1; n<=order; n++) localClusters+=localclusters[n][0][0]-1;
     MPI_Allreduce(&localClusters,&allClusters,1,MPI_LONG_LONG,MPI_SUM,MPI_COMM_WORLD);
     static bool qubitStatesShown=false;   // once per process: the next configurations of k_range set the same qubit
     for (int istate=0; istate<=nstate; istate++){
+
+        // A94: configuration.s_range [first, last]: the states below first are drawn, not calculated, so that every state
+        // is the one a run of [1, last] calculates
+        if (istate>0 && istate<cnf->state_first){
+            drawSkippedState(ba,dfa,cnf);
+            continue;
+        }
 
         // wall time
         double time_start_step = MPI_Wtime();
@@ -242,8 +253,8 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             const bool showQubit = rank==0 && (verbosity || !qubitStatesShown);   // A68: the first state of the run, or -v
             qubitStatesShown = true;
 
-            // Qubit.alpha_state and beta_state (A47): each side is its vector, the eigenstate of its index, or the
-            // product of the qubits' alphams (betams). Two sides given the same way take the paths they always took.
+            // Qubit.alpha_state and beta_state (A47, A93): each side is its vector, the eigenstate of its index, or the
+            // product of the qubits' m_s (its "ms" list). Two sides given the same way take the paths they always took.
             const bool vectorA = psia.size() > 0, vectorB = psib.size() > 0;
             if (vectorA && vectorB){
                 if (showQubit){
@@ -254,7 +265,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     printSubTitle("Set psia, psib from qubit index...");
                 }
                 QubitArray_setPsiaPsib_fromIdx(qa,bfield);
-                QubitArray_checkIdxAgainstMs(qa);
             }else if (!vectorA && !vectorB && alphaidx==NULL && betaidx==NULL){
                 if (showQubit){
                     printSubTitle("Set psia, psib from qubit alpha, beta...");
@@ -262,19 +272,33 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 QubitArray_setPsiaPsib_fromQubit(qa);
             }else{
                 if (showQubit){
-                    printSubTitle("Set psia, psib side by side (vector, index, or alphams/betams)...");
+                    printSubTitle("Set psia, psib side by side (vector, index, or ms)...");
                 }
                 QubitArray_setPsiaPsib_fromQubit(qa);
                 if (alphaidx!=NULL || betaidx!=NULL) QubitArray_setPsiaPsib_fromIdx(qa,bfield);
                 if (vectorA) QubitArray_setPsia(qa,psia);
                 if (vectorB) QubitArray_setPsib(qa,psib);
-                if (alphaidx!=NULL || betaidx!=NULL) QubitArray_checkIdxAgainstMs(qa);
             }
 
             if (showQubit){
                 logAlignBegin();   // A76: the four rows in one column
                 QubitArray_reportPsiaPsib(qa);
                 logAlignEnd();
+            }
+            // hamiltonian.cCCE.delta_A (A83) is derived for qubit levels that are the |m_s> states (a field along the
+            // qubit axis): warn once when the eigenstate of the qubit Hamiltonian closest to psia or psib has less than
+            // 0.99 of its weight there
+            if (showQubit && cnf->delta_A){
+                MatrixXcd** qsigmas = QubitArray_PauliOperators(qa);
+                Eigen::SelfAdjointEigenSolver<MatrixXcd> es(QubitArray_TotalHamil(qa,qsigmas,bfield));
+                for (int i=0; i<QubitArray_getNqubit(qa); i++) delete[] qsigmas[i];
+                delete[] qsigmas;
+                const double wa = (QubitArray_getPsia(qa).adjoint() * es.eigenvectors()).cwiseAbs2().maxCoeff();
+                const double wb = (QubitArray_getPsib(qa).adjoint() * es.eigenvectors()).cwiseAbs2().maxCoeff();
+                if (wa < 0.99 || wb < 0.99)
+                    fprintf(stderr,"Warning: hamiltonian.cCCE.delta_A assumes qubit levels that are |m_s> states (a field along "
+                                   "the qubit axis); here the eigenstates closest to psia and psib have weight %.4f and %.4f "
+                                   "on them (the field across the axis mixes the levels)\n", wa, wb);
             }
             
             // Qubit initial state
@@ -859,12 +883,6 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     }
 }
 
-// hamiltonian.cCCE.delta_A false (A47): every cluster of more than one bath spin takes, for each qubit, the mean of its
-// spins' hyperfine tensors, so the Knight fields of its spins no longer differ (Zhao 2011 SI eq. 23, Z_jk = A_j,z - A_k,z;
-// Maze 2008 eq. 8) and a pair's flip-flop leaves the coherence alone. A cluster of one spin (ESEEM) keeps its own tensor.
-static bool clusterHyperfineMean = false;
-void setClusterHyperfineMean(bool on){ clusterHyperfineMean = on; }
-
 BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* dfa, int nqubit){
 
     // Initialize  ba_cluster
@@ -921,15 +939,6 @@ BathArray* createBathArray(int* cluster, int nspin, BathArray* ba, DefectArray* 
                 // Add the additional spin to the cluster
                 addedspin++;
             }
-        }
-    }
-
-    if (clusterHyperfineMean && nspin_cluster > 1){
-        for (int iq=0; iq<nqubit; iq++){
-            MatrixXcd mean = MatrixXcd::Zero(3,3);
-            for (int i=0; i<nspin_cluster; i++) mean += BathArray_getBath_i_hypf_j(ba_cluster,i,iq);
-            mean /= double(nspin_cluster);
-            for (int i=0; i<nspin_cluster; i++) BathArray_setBath_i_hypf_j(ba_cluster,mean,i,iq);
         }
     }
 

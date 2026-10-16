@@ -16,7 +16,7 @@
 #                            combinations really are refused.
 #
 # The rotated positions are not compared against a hard-coded table. The checker
-# rebuilds R from the convention in the spec (ez = q, ex = q x b, ey = ez x ex,
+# rebuilds R from the convention in the spec (ez = q, ex = q x z, ey = ez x ex,
 # as ROWS) and requires CCEX to agree -- so a sign flip anywhere in the C++ shows
 # up here rather than being copied into the expected values.
 #
@@ -130,7 +130,6 @@ cfg = {
     "deltat"   : 0.1,
     "nstep"    : 2,
     "pulse"    : {"count": 1},
-    "nstate"   : 0,
     "seed"     : 1,
 }
 # literal_eval, not eval: the overrides are plain dict/list/bool literals written
@@ -150,15 +149,15 @@ run_case(){
     RC=$?
 }
 
-ROT111="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}"
+ROT111="'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0]}"
 
 echo
 echo "--- [1,2,3] a disabled or identity rotation must change nothing ---"
 run_case norot    ""
 [ $RC -eq 0 ] || fail "norot run failed (rc=$RC, see $WORK/norot.log)"
-run_case disabled "'coordinate_frame_rotation': {'enabled': False, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}"
+run_case disabled "'coordinate_frame_rotation': {'enabled': False, 'qubit_axis': [1.0,1.0,1.0]}"
 [ $RC -eq 0 ] || fail "disabled run failed (rc=$RC)"
-run_case identity "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [0.0,0.0,1.0]}"
+run_case identity "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [0.0,0.0,1.0]}"
 [ $RC -eq 0 ] || fail "identity run failed (rc=$RC)"
 
 for tag in disabled identity; do
@@ -197,16 +196,16 @@ nrotmsg=$(grep -c "Coordinate frame rotation \.\.\." "$WORK/rot111.log")
 echo
 echo "--- [6,7,8,9] geometry and bookkeeping across the rotation ---"
 python3 check_geometry.py "$WORK/norot.log" "$WORK/rot111.log" \
-    --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 10 20 30
+    --qubit-axis 1 1 1 --r0 10 20 30
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 echo
 echo "--- [9] the sampled bath states are unchanged ---"
 # Same seed, same spin order, same number of spins -> the RNG must hand out exactly
 # the same states. This is what makes a rotated run comparable to an unrotated one.
-run_case norot_st1  "'nstate': 1"
+run_case norot_st1  "'s_range': [1, 1]"
 [ $RC -eq 0 ] || fail "norot_st1 run failed (rc=$RC)"
-run_case rot111_st1 "'nstate': 1, $ROT111"
+run_case rot111_st1 "'s_range': [1, 1], $ROT111"
 [ $RC -eq 0 ] || fail "rot111_st1 run failed (rc=$RC)"
 
 if diff -q <(grep -E "^\s+bath\[[0-9]+\]\.state" "$WORK/norot_st1.log") \
@@ -230,16 +229,19 @@ echo "--- [P1] a defect bath : avaax assignments and per-axis detuning ---"
 #   [111] rotation   vs no rotation   -> the geometry DOES move, so the coherence must
 #                                        differ; what may not differ is paxes[i] and
 #                                        the detuning[iax] table they index into.
-P1DEF="'gyrofile': './inputfiles/gyro_P1', 'bathfile': ['./inputfiles/bath_p1'],
-       'Defect': {'axis_file': './inputfiles/avaax_p1',
-                  'species': [{'name': 'P1', 'n_nuclear_spins': 0, 'n_configurations': 12,
+P1DEF_SPECIES="'name': 'P1', 'n_nuclear_spins': 0, 'n_configurations': 12,
                    'detuning': [[1,'e',1.0],[2,'e',2.0],[3,'e',3.0],[4,'e',4.0],
                                 [5,'e',5.0],[6,'e',6.0],[7,'e',7.0],[8,'e',8.0],
-                                [9,'e',9.0],[10,'e',10.0],[11,'e',11.0],[12,'e',12.0]]}]}"
+                                [9,'e',9.0],[10,'e',10.0],[11,'e',11.0],[12,'e',12.0]]"
+P1DEF_NOFRAME="'gyrofile': './inputfiles/gyro_P1', 'bathfile': ['./inputfiles/bath_p1'],
+       'Defect': {'axis_file': './inputfiles/avaax_p1', 'species': [{$P1DEF_SPECIES}]}"
+# frame "qubit": the species is read as written (A90 asks for it with the rotation on; it was the hidden default)
+P1DEF="'gyrofile': './inputfiles/gyro_P1', 'bathfile': ['./inputfiles/bath_p1'],
+       'Defect': {'axis_file': './inputfiles/avaax_p1', 'species': [{$P1DEF_SPECIES, 'frame': 'qubit'}]}"
 
 run_case p1_norot    "$P1DEF"
 [ $RC -eq 0 ] || fail "p1_norot run failed (rc=$RC, see $WORK/p1_norot.log)"
-run_case p1_identity "$P1DEF, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [0.0,0.0,1.0]}"
+run_case p1_identity "$P1DEF, 'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [0.0,0.0,1.0]}"
 [ $RC -eq 0 ] || fail "p1_identity run failed (rc=$RC)"
 run_case p1_rot111   "$P1DEF, $ROT111"
 [ $RC -eq 0 ] || fail "p1_rot111 run failed (rc=$RC, see $WORK/p1_rot111.log)"
@@ -280,7 +282,7 @@ else
 fi
 
 python3 check_geometry.py "$WORK/p1_norot.log" "$WORK/p1_rot111.log" \
-    --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 10 20 30
+    --qubit-axis 1 1 1 --r0 10 20 30
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 # defect_axis_reference only named the rotation's qubit axis in the log; it was removed on 2026-10-15 (A65) and is refused,
@@ -311,26 +313,26 @@ NVTENSOR_FLAT="[0.0,956.6666666666666,956.6666666666666,
                 956.6666666666666,956.6666666666666,0.0]"
 
 NV_DE_BATH="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-    'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET}]}"
+    'axis':[1.0,1.0,1.0], 'frame':'file',
+    'zfs':{'D':2870.0,'unit':'MHz'}, $NVDET}]}"
 NV_TENSOR_BATH="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-    'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
+    'axis':[1.0,1.0,1.0], 'frame':'file',
     'zfs':{'tensor':$NVTENSOR,'unit':'MHz'}, $NVDET}]}"
 NV_LEGACY_BATH="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-    'coordinate_frame':'bath',
+    'frame':'file',
     'zfs':[[1,'e',$NVTENSOR_FLAT],[2,'e',$NVTENSOR_FLAT],[3,'e',$NVTENSOR_FLAT]], $NVDET}]}"
 NV_DE_GHZ="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-    'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'D':2.87,'E':0.0,'unit':'GHz'}, $NVDET}]}"
+    'axis':[1.0,1.0,1.0], 'frame':'file',
+    'zfs':{'D':2.87,'unit':'GHz'}, $NVDET}]}"
 NV_DE_QUBIT="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-    'axis':[0.0,0.0,1.0], 'coordinate_frame':'qubit',
-    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET}]}"
+    'axis':[0.0,0.0,1.0], 'frame':'qubit',
+    'zfs':{'D':2870.0,'unit':'MHz'}, $NVDET}]}"
 NV_DE_DET_MHZ="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-    'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET_MHZ_OBJ}]}"
+    'axis':[1.0,1.0,1.0], 'frame':'file',
+    'zfs':{'D':2870.0,'unit':'MHz'}, $NVDET_MHZ_OBJ}]}"
 NV_DE_DET_GHZ="$NVBASE, 'Defect': {$NVAX, 'species': [{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-    'axis':[1.0,1.0,1.0], 'coordinate_frame':'bath',
-    'zfs':{'D':2870.0,'E':0.0,'unit':'MHz'}, $NVDET_GHZ_OBJ}]}"
+    'axis':[1.0,1.0,1.0], 'frame':'file',
+    'zfs':{'D':2870.0,'unit':'MHz'}, $NVDET_GHZ_OBJ}]}"
 
 run_case nv_de_bath     "$NV_DE_BATH, $ROT111"
 [ $RC -eq 0 ] || fail "[NV ZFS] D/E bath-frame run failed (rc=$RC, see $WORK/nv_de_bath.log)"
@@ -375,7 +377,7 @@ compare_numeric_outputs nv_de_bath nv_de_qubit "[NV ZFS] bath-frame [111] and qu
 compare_numeric_outputs nv_de_bath nv_det_mhz "[NV ZFS] legacy and unit-aware MHz detuning are numerically equivalent"
 compare_numeric_outputs nv_de_bath nv_det_ghz "[NV ZFS] -2.14 MHz and -0.00214 GHz detuning are numerically equivalent"
 
-grep -q "Defect templates.*1 transformed from bath to qubit frame" "$WORK/nv_de_bath.log" \
+grep -q "Defect templates.*1 transformed from file to qubit frame" "$WORK/nv_de_bath.log" \
     && pass "[NV ZFS] bath-frame Defect template is transformed" \
     || fail "[NV ZFS] no transformed Defect template in the diagnostic"
 grep -q "zfs\[shared\]" "$WORK/nv_de_bath.log" \
@@ -388,7 +390,7 @@ UNITBASE="'gyrofile':'./inputfiles/gyro_unit_defect',
           'bathfile':['./inputfiles/bath_unit_defect'], 'order':1"
 UNITAX="'axis_file':'./inputfiles/avaax_unit_defect'"
 UNITPREFIX="$UNITBASE, 'Defect':{$UNITAX, 'species':[{'name':'DUT','n_nuclear_spins':1,
-    'types':['14N'],'spins':[1.0],'n_configurations':1,'coordinate_frame':'qubit',
+    'types':['14N'],'spins':[1.0],'n_configurations':1,'frame':'qubit',
     'nuclear_positions':[[1,'14N',[0.1,0.0,0.0]]],"
 HYPF_MHZ="'hyperfine':{'values':[[1,'14N',[[81.312,0.0,0.0],[0.0,81.312,0.0],[0.0,0.0,114.0264]]]],'unit':'MHz'}"
 HYPF_GHZ="'hyperfine':{'values':[[1,'14N',[[0.081312,0.0,0.0],[0.0,0.081312,0.0],[0.0,0.0,0.1140264]]]],'unit':'GHz'}"
@@ -429,7 +431,7 @@ run_case rot111_two "'bathfile': ['./inputfiles/bath_a','./inputfiles/bath_b'], 
 [ $RC -eq 0 ] || fail "rot111_two run failed (rc=$RC)"
 
 python3 check_geometry.py "$WORK/norot_two.log" "$WORK/rot111_two.log" \
-    --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 10 20 30 --expect-nspin 9
+    --qubit-axis 1 1 1 --r0 10 20 30 --expect-nspin 9
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 echo
@@ -447,11 +449,11 @@ import ast, json, sys
 dest, hexdir, outfile, hf, qd, extra = sys.argv[1:7]
 cfg = {
     "method": "cCCE", "quantity": "coherence",
-    "Qubit": {"file": hexdir + "/defect", "alphams": 1, "betams": 0},
+    "Qubit": {"file": hexdir + "/defect", "alpha_state": {"ms": [1]}, "beta_state": {"ms": [0]}},
     "gyrofile" : hexdir + "/../ensemble_data/Gyro_h_BN",
     "bathfile" : [hexdir + "/bath_1"],
     "order": 1, "bfield": 30000, "rbath": 8, "rdip": 8,
-    "deltat": 0.002, "nstep": 2, "pulse": {"count": 1}, "nstate": 0, "seed": 1,
+    "deltat": 0.002, "nstep": 2, "pulse": {"count": 1}, "seed": 1,
     "outfile": outfile,
 }
 # the readmodes of the code: hyperfine 0 point/no contact, 1 point+contact, 2 dft, 3 dft+contact; quadrupole 0 off,
@@ -483,9 +485,10 @@ PYEOF
 }
 
 # The h-BN defect sits at [23.75635, 25.71802, 23.38568]; the rotation is taken about it.
-HEXROT_HF="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'bath'}"
-HEXROT_QD="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'qd_tensor_frame': 'bath'}"
-HEXROT_HFQ="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'qubit'}"
+HEXROT="'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0]}"
+HEXROT_HF="$HEXROT, 'hamiltonian': {'common': {'hyperfine': {'frame': 'file'}}}"
+HEXROT_QD="$HEXROT, 'hamiltonian': {'common': {'quadrupole': {'frame': 'file'}}}"
+HEXROT_HFQ="$HEXROT, 'hamiltonian': {'common': {'hyperfine': {'frame': 'qubit'}}}"
 
 hex_case hex_hf2_norot 2 0 ""            ; [ $RC -eq 0 ] || fail "hex_hf2_norot failed (rc=$RC)"
 hex_case hex_hf2_rot   2 0 "$HEXROT_HF"  ; [ $RC -eq 0 ] || fail "hex_hf2_rot failed (rc=$RC, see $WORK/hex_hf2_rot.log)"
@@ -540,33 +543,33 @@ PYEOF
     fi
 done
 
-echo "  [hf_readmode=2, hf_tensor_frame=bath]"
+echo "  [hf_readmode=2, hyperfine.frame=file]"
 python3 check_tensors.py "$WORK/hex_hf2_norot.log" "$WORK/hex_hf2_rot.log" \
-    --kind hypf --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect rotated
+    --kind hypf --qubit-axis 1 1 1 --expect rotated
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
-echo "  [qd_readmode=2, qd_tensor_frame=bath]"
+echo "  [qd_readmode=2, quadrupole.frame=file]"
 python3 check_tensors.py "$WORK/hex_qd2_norot.log" "$WORK/hex_qd2_rot.log" \
-    --kind quad --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect rotated
+    --kind quad --qubit-axis 1 1 1 --expect rotated
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
-# hf_tensor_frame = "qubit" is NOT "leave every tensor alone". The file's tensors are
+# hyperfine.frame = "qubit" is NOT "leave every tensor alone". The file's tensors are
 # already in the computational basis and are kept; the point-dipole fallback that
 # readHftensorfile builds for a spin the file does not cover was computed from the
 # source geometry and still has to be transformed. Both live in the same BathArray.
-echo "  [hf_tensor_frame=qubit : file tensors kept, point-dipole fallbacks transformed]"
+echo "  [hyperfine.frame=qubit : file tensors kept, point-dipole fallbacks transformed]"
 python3 check_tensors.py "$WORK/hex_hf2_norot.log" "$WORK/hex_hf2_rotq.log" \
-    --kind hypf --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect mixed
+    --kind hypf --qubit-axis 1 1 1 --expect mixed
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 # ... while the POSITIONS moved in that run all the same, which is what separates
 # "the frame flag was honoured" from "the rotation never ran".
 python3 check_geometry.py "$WORK/hex_hf2_norot.log" "$WORK/hex_hf2_rotq.log" \
-    --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 23.75635 25.71802 23.38568 > "$WORK/hex_rotq_geom.txt" 2>&1
+    --qubit-axis 1 1 1 --r0 23.75635 25.71802 23.38568 > "$WORK/hex_rotq_geom.txt" 2>&1
 if [ $? -eq 0 ]; then
-    pass "[hf_tensor_frame=qubit] the bath positions were still rotated"
+    pass "[hyperfine.frame=qubit] the bath positions were still rotated"
 else
-    fail "[hf_tensor_frame=qubit] the positions did NOT move -- see $WORK/hex_rotq_geom.txt"
+    fail "[hyperfine.frame=qubit] the positions did NOT move -- see $WORK/hex_rotq_geom.txt"
 fi
 
 echo
@@ -586,27 +589,44 @@ expect_fail(){
 
 expect_fail defect_zfs_nonzero_E \
     "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-      'axis':[1,1,1],'coordinate_frame':'bath','zfs':{'D':2870,'E':5,'unit':'MHz'}}]}" \
-    "zfs.E is non-zero"
+      'axis':[1,1,1],'frame':'file','zfs':{'D':2870,'E':5,'unit':'MHz'}}]}" \
+    "zfs.E was removed (only 0 was taken)"
 expect_fail defect_zfs_missing_axis \
     "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-      'coordinate_frame':'bath','zfs':{'D':2870,'unit':'MHz'}}]}" \
+      'frame':'file','zfs':{'D':2870,'unit':'MHz'}}]}" \
     "axis is missing"
+# A90: with the rotation on every species states its frame (until then an absent one was "qubit"); with it off the frame
+# is not used, so it is not asked for
 expect_fail defect_zfs_missing_frame \
+    "$NVBASE, $ROT111, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'axis':[1,1,1],'zfs':{'D':2870,'unit':'MHz'}}]}" \
+    "frame.rotation is on, so Defect.species\[NV_0\].frame must say"
+# A94 (G4): a species with no nuclear_positions, hyperfine, efg or zfs (a P1 of detunings) has nothing a frame turns, so
+# none is asked for with the rotation on
+run_case defect_nodirection_noframe "$P1DEF_NOFRAME, $ROT111"
+[ $RC -eq 0 ] \
+    && pass "[defect, rotation on] a species of detunings alone runs without a frame (A94)" \
+    || fail "[defect, rotation on] a species of detunings alone was refused without a frame (rc=$RC)"
+expect_fail defect_old_name \
     "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-      'zfs':{'D':2870,'unit':'MHz'}}]}" \
-    "object-form zfs but has no coordinate_frame"
-expect_fail defect_axis_missing_frame \
-    "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-      'axis':[1,1,1]}]}" \
-    "axis is present but coordinate_frame is missing"
+      'axis':[1,1,1],'coordinate_frame':'bath','zfs':{'D':2870,'unit':'MHz'}}]}" \
+    '"Defect.species\[0\].coordinate_frame" is now "frame"'
+expect_fail defect_old_value \
+    "$NVBASE, $ROT111, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'axis':[1,1,1],'frame':'bath','zfs':{'D':2870,'unit':'MHz'}}]}" \
+    'Defect.species\[NV_0\].frame "bath" is now "file"'
+run_case defect_axis_norot_noframe "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
+      'axis':[0,0,1],'zfs':{'D':2870,'unit':'MHz'}}]}"
+[ $RC -eq 0 ] \
+    && pass "[defect, rotation off] axis and object-form zfs without a frame run (the frame is not used)" \
+    || fail "[defect, rotation off] a species without frame was refused with the rotation off (rc=$RC)"
 expect_fail defect_zfs_bad_unit \
     "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-      'axis':[1,1,1],'coordinate_frame':'bath','zfs':{'D':2870,'unit':'cm-1'}}]}" \
+      'axis':[1,1,1],'frame':'file','zfs':{'D':2870,'unit':'cm-1'}}]}" \
     "Supported frequency units are Hz, kHz, MHz and GHz"
 expect_fail defect_zfs_bad_tensor \
     "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
-      'coordinate_frame':'bath','zfs':{'tensor':[[1,0],[0,1]],'unit':'MHz'}}]}" \
+      'frame':'file','zfs':{'tensor':[[1,0],[0,1]],'unit':'MHz'}}]}" \
     "must be a flat 9-number or nested 3x3 array"
 expect_fail defect_detuning_bad_unit \
     "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
@@ -619,7 +639,7 @@ expect_fail defect_detuning_missing_values \
 expect_fail defect_detuning_bad_index \
     "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
       'detuning':{'values':[[4,'e',1.0]],'unit':'MHz'}}]}" \
-    "configuration must be an integer in 1..3"
+    "axis state must be an integer in 1..3"
 expect_fail defect_detuning_bad_spin \
     "$NVBASE, 'Defect':{$NVAX, 'species':[{'name':'NV_0','n_nuclear_spins':0,'n_configurations':3,
       'detuning':{'values':[[1,'n',1.0]],'unit':'MHz'}}]}" \
@@ -640,63 +660,80 @@ expect_fail defect_efg_bad_unit \
     "$UNITPREFIX $GYRO_INTERNAL, 'efg':{'values':[[1,'14N',[1,0,0,0,1,0,0,0,1]]],'unit':'MHz'}}]}" \
     "efg.unit"
 expect_fail defect_hypf_missing_frame \
-    "$UNITBASE, 'Defect':{$UNITAX, 'species':[{'name':'DUT','n_nuclear_spins':1,'types':['14N'],'spins':[1.0],
+    "$UNITBASE, $ROT111, 'Defect':{$UNITAX, 'species':[{'name':'DUT','n_nuclear_spins':1,'types':['14N'],'spins':[1.0],
       'gyros':[1.9337792],'n_configurations':1,
       'hyperfine':{'values':[[1,'14N',[1,0,0,0,1,0,0,0,1]]],'unit':'MHz'}}]}" \
-    "object-form hyperfine but has no coordinate_frame"
+    "frame.rotation is on, so Defect.species\[DUT\].frame must say"
 
 expect_fail zeronorm \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [0.0,0.0,0.0]}" \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [0.0,0.0,0.0]}" \
     "qubit_axis has zero norm"
-expect_fail zeronorm_bath \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,0.0], 'qubit_axis': [1.0,1.0,1.0]}" \
-    "bath_axis has zero norm"
-expect_fail collinear \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [1.0,1.0,0.0], 'qubit_axis': [1.0,1.0,0.0]}" \
-    "parallel or antiparallel"
+# A90: bath_axis (it only turned x and y about qubit_axis), reference_qubit (the origin, a translation) and
+# qubit_position_frame (one value) were removed, and are refused whatever their value
+expect_fail bath_axis_removed \
+    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [1.0,1.0,0.0], 'qubit_axis': [1.0,1.0,1.0]}" \
+    '"frame.rotation.bath_axis" was removed'
+expect_fail bath_axis_default_removed \
+    "'coordinate_frame_rotation': {'enabled': False, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}" \
+    '"frame.rotation.bath_axis" was removed'
 expect_fail antiparallel \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [0.0,0.0,-1.0]}" \
-    "parallel or antiparallel"
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [0.0,0.0,-1.0]}" \
+    "antiparallel to z"
 expect_fail shortaxis \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0]}" \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0]}" \
     "qubit_axis must be an array of exactly 3 numbers"
 expect_fail longaxis \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0,0.0], 'qubit_axis': [1.0,1.0,1.0]}" \
-    "bath_axis must be an array of exactly 3 numbers"
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0,0.0]}" \
+    "qubit_axis must be an array of exactly 3 numbers"
 expect_fail notarray \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': 1.0}" \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': 1.0}" \
     "qubit_axis must be an array of exactly 3 numbers"
 # A non-number element is the dangerous one: it used to read as 0.0, turning the axis
 # into a DIFFERENT but perfectly valid-looking direction, and the run went on silently.
 expect_fail strelement \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,'1',1.0]}" \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,'1',1.0]}" \
     "qubit_axis\[1\] is not a number"
 expect_fail nullelement \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,None,1.0]}" \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,None,1.0]}" \
     "qubit_axis\[1\] is not a number"
 expect_fail boolelement \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,True,1.0]}" \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,True,1.0]}" \
     "qubit_axis\[1\] is not a number"
 expect_fail notobject \
     "'coordinate_frame_rotation': True" \
     "frame.rotation must be an object"
 expect_fail notbool \
-    "'coordinate_frame_rotation': {'enabled': 'true', 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}" \
+    "'coordinate_frame_rotation': {'enabled': 'true', 'qubit_axis': [1.0,1.0,1.0]}" \
     "must be a boolean"
 # The tensor frame has no default: not saying it is the one mistake that cannot be
 # caught downstream, because a missed or doubled rotation still looks like a tensor.
 expect_fail hfmode_noframe \
     "'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C'}}}, $ROT111" \
-    "hf_tensor_frame is not set"
+    "frame.rotation is on, so hamiltonian.common.hyperfine.frame must say"
 expect_fail qdmode_noframe \
     "'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C'}}}, $ROT111" \
-    "qd_tensor_frame is not set"
+    "frame.rotation is on, so hamiltonian.common.quadrupole.frame must say"
 expect_fail hfmode_badframe \
-    "'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'crystal'}" \
-    "hf_tensor_frame must be .bath. or .qubit."
+    "'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C', 'frame': 'crystal'}}}, $ROT111" \
+    "hamiltonian.common.hyperfine.frame must be .file."
 expect_fail qdmode_badframe \
-    "'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'qd_tensor_frame': 'lab'}" \
-    "qd_tensor_frame must be .bath. or .qubit."
+    "'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C', 'frame': 'lab'}}}, $ROT111" \
+    "hamiltonian.common.quadrupole.frame must be .file."
+# the old value and the old place, refused with the new ones (A90)
+expect_fail hfmode_oldvalue \
+    "'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C', 'frame': 'bath'}}}, $ROT111" \
+    'hamiltonian.common.hyperfine.frame "bath" is now "file"'
+expect_fail hfmode_oldplace \
+    "'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'bath'}" \
+    '"frame.rotation.hf_tensor_frame" is now "hamiltonian.common.hyperfine.frame"'
+expect_fail qdmode_oldplace \
+    "'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'qubit_axis': [1.0,1.0,1.0], 'qd_tensor_frame': 'qubit'}" \
+    '"frame.rotation.qd_tensor_frame" is now "hamiltonian.common.quadrupole.frame"'
+# with the rotation off a written frame is not used, and said so once
+run_case hf_frame_norot "'hamiltonian': {'common': {'hyperfine': {'dipole': 'point', 'frame': 'file'}}}"
+[ $RC -eq 0 ] && [ "$(grep -c 'input key "hamiltonian.common.hyperfine.frame" is not used by this run: frame.rotation is off' "$WORK/hf_frame_norot.log")" -eq 1 ] \
+    && pass "[frame, rotation off] a written hyperfine.frame runs and is warned about once" \
+    || fail "[frame, rotation off] no single warning for an unused hyperfine.frame (rc=$RC)"
 
 # An unknown hyperfine.dipole is caught where it is read, before any file is opened. (The out-of-range
 # hf_readmode of the old keys cannot be written since A47; the HYPF_UNSET sweep at the end of readHftensorfile stays
@@ -722,26 +759,11 @@ grep -q "Read the Quadrupole interaction" "$WORK/qd_value_bad.log" \
     && fail "[qd_value_bad] the run reached readQdtensorfile before failing" \
     || pass "[qd_value_bad] an unknown quadrupole value rejected before readQdtensorfile ran"
 
-# Two qubits: given through Qubit.qubit, which replaces the base's Qubit.file.
-write_ccein "$WORK/multiqubit.json" "{'outfile': '$WORK/multiqubit', $ROT111,
-    'Qubit': {'qubit': [
-        {'name':'q0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},
-        {'name':'q1','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,40.0],'alphams':1.0,'betams':0.0}]}}"
-"$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/multiqubit.json" -v > "$WORK/multiqubit.log" 2>&1
-rc=$?
-if [ $rc -eq 0 ]; then
-    fail "[multiqubit] run SUCCEEDED, expected a fatal error"
-elif grep -q "so reference_qubit is required" "$WORK/multiqubit.log"; then
-    pass "[multiqubit] nqubit=2 without reference_qubit is refused (rc=$rc)"
-else
-    fail "[multiqubit] failed (rc=$rc) but without the expected message"
-fi
-
 echo
-echo "--- [S1] option surface : new name, alias, reference_qubit ---"
+echo "--- [S1] option surface : new name, alias, removed keys ---"
 run_case newname "$ROT111"
 [ $RC -eq 0 ] || fail "newname run failed (rc=$RC)"
-ALIAS111="'bath_coordinate_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}"
+ALIAS111="'bath_coordinate_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0]}"
 # the old names (bath_coordinate_rotation, accepted with a warning until A65; coordinate_frame_rotation) are refused with
 # the new place frame.rotation
 run_case aliased "$ALIAS111"
@@ -753,7 +775,7 @@ fi
 
 # frame.rotation is on when the block is given (A65): without "enabled" it is the run with "enabled": true (newname);
 # "enabled": false is the run without the block (the [disabled] case above)
-run_case noenabled "'coordinate_frame_rotation': {'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}"
+run_case noenabled "'coordinate_frame_rotation': {'qubit_axis': [1.0,1.0,1.0]}"
 same=1; for suf in _noDiv _wiDiv; do cmp -s "$WORK/newname$suf" "$WORK/noenabled$suf" || same=0; done
 [ $RC -eq 0 ] && [ $same -eq 1 ] \
     && pass "[frame.rotation] a block without \"enabled\" is on: byte-identical to \"enabled\": true" \
@@ -763,24 +785,15 @@ grep -q "is deprecated" "$WORK/newname.log" \
     && fail "[newname] the new name wrongly warns about deprecation" \
     || pass "[newname] the new name warns about nothing"
 
-# The reference qubit: a single qubit from "Qubit.file" is named q0, so naming it
-# explicitly must change nothing at all.
-run_case refq0 "$ROT111, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'q0'}"
-[ $RC -eq 0 ] || fail "refq0 run failed (rc=$RC)"
-same=1; for suf in _noDiv _wiDiv; do cmp -s "$WORK/rot111$suf" "$WORK/refq0$suf" || same=0; done
-[ $same -eq 1 ] \
-    && pass "[reference_qubit] naming the only qubit \"q0\" changes nothing" \
-    || fail "[reference_qubit] naming q0 CHANGED the result"
-
 expect_fail bothnames \
-    "$ROT111, 'bath_coordinate_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}" \
+    "$ROT111, 'bath_coordinate_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0]}" \
     "\"bath_coordinate_rotation\" is now \"frame.rotation\""
-expect_fail refmissing \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'central_NV'}" \
-    "reference_qubit \"central_NV\" is not one of the qubits"
-expect_fail refnotstring \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 7}" \
-    "reference_qubit must be a qubit name"
+expect_fail refq_removed \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'q0'}" \
+    '"frame.rotation.reference_qubit" was removed'
+expect_fail posframe_removed \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0], 'qubit_position_frame': 'bath'}" \
+    '"frame.rotation.qubit_position_frame" was removed'
 
 echo
 echo "--- [S2] bfield with the rotation on ---"
@@ -868,12 +881,12 @@ cfg = {
     "method": "gCCE", "quantity": "coherence",
     "gyrofile": "./inputfiles/gyro_13C", "bathfile": ["./inputfiles/bath_a"],
     "order": 1, "bfield": [0.0, 0.0, 500.0], "rbath": 10, "rdip": 10,
-    "deltat": 0.1, "nstep": 2, "pulse": {"count": 1}, "nstate": 1, "seed": 1,
+    "deltat": 0.1, "nstep": 2, "pulse": {"count": 1}, "s_range": [1, 1], "seed": 1,
     "Qubit": {"qubit": [
         {"name": "NV0", "spin": 1.0, "gyro": -17608.597050,
-         "xyz": [10.0, 20.0, 30.0], "alphams": 1.0, "betams": 0.0},
+         "xyz": [10.0, 20.0, 30.0]},
         {"name": "NV1", "spin": 1.0, "gyro": -17608.597050,
-         "xyz": [17.0, 23.0, 41.0], "alphams": 1.0, "betams": 0.0}]},
+         "xyz": [17.0, 23.0, 41.0]}]},
     "outfile": outfile,
 }
 if extra.strip():
@@ -886,9 +899,9 @@ PYEOF
     RC=$?
 }
 
-MQROT="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath'}"
-MQID="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [0.0,0.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath'}"
-MQREF1="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV1', 'qubit_position_frame': 'bath'}"
+# the rotation is about the first qubit, NV0 (A90; reference_qubit chose it until then)
+MQROT="'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0]}"
+MQID="'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [0.0,0.0,1.0]}"
 
 echo "  [A] two-qubit identity rotation changes nothing"
 mq_case mq_norot ""      ; [ $RC -eq 0 ] || fail "mq_norot run failed (rc=$RC, see $WORK/mq_norot.log)"
@@ -904,47 +917,23 @@ same=1; for suf in _state1_noDiv _state1_wiDiv; do cmp -s "$WORK/mq_norot$suf" "
 # occurrence, which is the state that actually reaches the Hamiltonian.
 for what in intmap hypf; do
     python3 check_tensors.py "$WORK/mq_norot.log" "$WORK/mq_ident.log" \
-        --kind $what --bath-axis 0 0 1 --qubit-axis 0 0 1 --expect unchanged | sed 's/^/  /'
+        --kind $what --qubit-axis 0 0 1 --expect unchanged | sed 's/^/  /'
     if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 done
 
-echo "  [B] two-qubit [001] -> [111], reference NV0"
+echo "  [B] two-qubit [001] -> [111], about the first qubit NV0"
 mq_case mq_rot "$MQROT" ; [ $RC -eq 0 ] || fail "mq_rot run failed (rc=$RC, see $WORK/mq_rot.log)"
-python3 check_qubits.py "$WORK/mq_rot.log" --bath-axis 0 0 1 --qubit-axis 1 1 1 \
-    --reference NV0 --expect-nqubit 2
+python3 check_qubits.py "$WORK/mq_rot.log" --qubit-axis 1 1 1 \
+    --origin NV0 --expect-nqubit 2
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 python3 check_geometry.py "$WORK/mq_norot.log" "$WORK/mq_rot.log" \
-    --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 10 20 30 --skip-qubit-check
+    --qubit-axis 1 1 1 --r0 10 20 30 --skip-qubit-check
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 python3 check_tensors.py "$WORK/mq_norot.log" "$WORK/mq_rot.log" \
-    --kind hypf --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect rotated
+    --kind hypf --qubit-axis 1 1 1 --expect rotated
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
-
-echo "  [C] reference qubit at a non-zero index (NV1)"
-mq_case mq_ref1 "$MQREF1" ; [ $RC -eq 0 ] || fail "mq_ref1 run failed (rc=$RC, see $WORK/mq_ref1.log)"
-python3 check_qubits.py "$WORK/mq_ref1.log" --bath-axis 0 0 1 --qubit-axis 1 1 1 \
-    --reference NV1 --expect-nqubit 2
-if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
-
-# Rotating about NV1 instead of NV0 moves the whole system by the constant vector
-# (I-R)(r0-r1) -- a rigid TRANSLATION. Every distance, the field and every tensor are
-# untouched by that, so the physics must come out the same while the printed coordinates
-# must not. Both halves are checked; the first is what would break if the reference were
-# quietly ignored, the second is what would break if it were hard-coded to index 0.
-if cmp -s "$WORK/mq_rot_state1_noDiv" "$WORK/mq_ref1_state1_noDiv"; then
-    pass "[MQ/C] the choice of reference qubit is a translation: coherence is unchanged"
-else
-    fail "[MQ/C] changing the reference qubit CHANGED the coherence (it is only a translation)"
-fi
-
-if diff -q <(grep -E '^[[:space:]]+(source|computational) frame' "$WORK/mq_rot.log") \
-           <(grep -E '^[[:space:]]+(source|computational) frame' "$WORK/mq_ref1.log") > /dev/null; then
-    fail "[MQ/C] reference NV0 and NV1 report identical coordinates -- index 0 may be hard-coded"
-else
-    pass "[MQ/C] the two references put the qubits at different absolute coordinates"
-fi
 
 echo "  [E,F] explicit and automatic intmap tensors"
 # NV0 gets a ZFS written in the source frame; NV1 gets a DIFFERENT one, standing for an
@@ -956,32 +945,32 @@ ZFS1="[[1900.0,120.0,-80.0],[120.0,2100.0,45.0],[-80.0,45.0,-4000.0]]"
 PAIR="[[12.0,3.0,-5.0],[3.0,-7.0,2.0],[-5.0,2.0,-5.0]]"
 
 MQ_QUBITS_PREFIX="'Qubit': {'qubit': [
-    {'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},
-    {'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]"
+    {'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0]},
+    {'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0]}]"
 
-IM_BATH="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'bath','tensor':$ZFS0},
-                    {'between':['NV1','NV1'],'tensor_frame':'bath','tensor':$ZFS1},
-                    {'between':['NV0','NV1'],'tensor_frame':'bath','tensor':$PAIR}]"
-IM_QUBIT="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','tensor':$ZFS0},
-                     {'between':['NV1','NV1'],'tensor_frame':'qubit','tensor':$ZFS1},
-                     {'between':['NV0','NV1'],'tensor_frame':'qubit','tensor':$PAIR}]"
+IM_BATH="'intmap': [{'between':['NV0','NV0'],'frame':'file','tensor':$ZFS0},
+                    {'between':['NV1','NV1'],'frame':'file','tensor':$ZFS1},
+                    {'between':['NV0','NV1'],'frame':'file','tensor':$PAIR}]"
+IM_QUBIT="'intmap': [{'between':['NV0','NV0'],'frame':'qubit','tensor':$ZFS0},
+                     {'between':['NV1','NV1'],'frame':'qubit','tensor':$ZFS1},
+                     {'between':['NV0','NV1'],'frame':'qubit','tensor':$PAIR}]"
 
-mq_case mq_im_norot   "'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
+mq_case mq_im_norot   "'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0]},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0]}], $IM_BATH}"
 [ $RC -eq 0 ] || fail "mq_im_norot run failed (rc=$RC)"
-mq_case mq_im_bath    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
+mq_case mq_im_bath    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0]},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0]}], $IM_BATH}"
 [ $RC -eq 0 ] || fail "mq_im_bath run failed (rc=$RC, see $WORK/mq_im_bath.log)"
-mq_case mq_im_qubit   "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_QUBIT}"
+mq_case mq_im_qubit   "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0]},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0]}], $IM_QUBIT}"
 [ $RC -eq 0 ] || fail "mq_im_qubit run failed (rc=$RC, see $WORK/mq_im_qubit.log)"
 
 # Qubit.intmap historically means kHz when unit is absent. Exercise every supported
 # explicit unit against that legacy path using the same non-zero self tensor.
-IM_ONE_LEGACY="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','tensor':$ZFS0}]"
-IM_ONE_KHZ="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'kHz','tensor':$ZFS0}]"
-IM_ONE_MHZ="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'MHz',
+IM_ONE_LEGACY="'intmap': [{'between':['NV0','NV0'],'frame':'qubit','tensor':$ZFS0}]"
+IM_ONE_KHZ="'intmap': [{'between':['NV0','NV0'],'frame':'qubit','unit':'kHz','tensor':$ZFS0}]"
+IM_ONE_MHZ="'intmap': [{'between':['NV0','NV0'],'frame':'qubit','unit':'MHz',
     'tensor':[[2.87,0.0,0.0],[0.0,2.87,0.0],[0.0,0.0,-5.74]]}]"
-IM_ONE_GHZ="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'GHz',
+IM_ONE_GHZ="'intmap': [{'between':['NV0','NV0'],'frame':'qubit','unit':'GHz',
     'tensor':[[0.00287,0.0,0.0],[0.0,0.00287,0.0],[0.0,0.0,-0.00574]]}]"
-IM_ONE_HZ="'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'Hz',
+IM_ONE_HZ="'intmap': [{'between':['NV0','NV0'],'frame':'qubit','unit':'Hz',
     'tensor':[[2870000.0,0.0,0.0],[0.0,2870000.0,0.0],[0.0,0.0,-5740000.0]]}]"
 
 for spec in legacy kHz MHz GHz Hz; do
@@ -998,19 +987,19 @@ done
 
 for spec in kHz MHz GHz Hz; do
     python3 check_tensors.py "$WORK/mq_im_unit_legacy.log" "$WORK/mq_im_unit_$spec.log" \
-        --kind intmap --bath-axis 0 0 1 --qubit-axis 0 0 1 --expect unchanged --tol 1e-6 \
+        --kind intmap --qubit-axis 0 0 1 --expect unchanged --tol 1e-6 \
         | sed 's/^/  /'
     if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 done
 
-echo "    tensor_frame=bath : ZFS of both qubits and the explicit pair tensor"
+echo "    frame=file : ZFS of both qubits and the explicit pair tensor"
 python3 check_tensors.py "$WORK/mq_im_norot.log" "$WORK/mq_im_bath.log" \
-    --kind intmap --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect rotated --tol 0.5 | sed 's/^/  /'
+    --kind intmap --qubit-axis 1 1 1 --expect rotated --tol 0.5 | sed 's/^/  /'
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
-echo "    tensor_frame=qubit : already computational, left alone"
+echo "    frame=qubit : already computational, left alone"
 python3 check_tensors.py "$WORK/mq_im_norot.log" "$WORK/mq_im_qubit.log" \
-    --kind intmap --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect unchanged --tol 0.5 | sed 's/^/  /'
+    --kind intmap --qubit-axis 1 1 1 --expect unchanged --tol 0.5 | sed 's/^/  /'
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 # NV1's ZFS is not axially symmetric about the new z, so it must still carry off-diagonal
@@ -1035,11 +1024,11 @@ if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 # The automatic pair tensor: no explicit intmap at all, so intmap[0][1] is the
 # point-dipole tensor setIntmap_dipAuto built from the source qubit positions.
 python3 check_tensors.py "$WORK/mq_norot.log" "$WORK/mq_rot.log" \
-    --kind intmap --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect mixed | sed 's/^/  /'
+    --kind intmap --qubit-axis 1 1 1 --expect mixed | sed 's/^/  /'
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 echo "  [D,G,H] validation"
-MQ2="'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]"
+MQ2="'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0]},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0]}]"
 
 # mq_expect_fail <name> <extra> <needle>
 mq_expect_fail(){
@@ -1059,52 +1048,42 @@ mq_expect_fail(){
     fi
 }
 
-ROTNOFRAME="'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0'}"
-
 mq_expect_fail mq_xyz_string \
-    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,'41'],'alphams':1.0,'betams':0.0}]}" \
+    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0]},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,'41']}]}" \
     "must be a number"
 
-mq_expect_fail mq_noposframe "$ROTNOFRAME" \
-    "qubit_position_frame is required"
-mq_expect_fail mq_posframe_qubit \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'qubit'}" \
-    "qubit_position_frame must be .bath."
-mq_expect_fail mq_posframe_bad \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'lab'}" \
-    "qubit_position_frame must be .bath."
-mq_expect_fail mq_posframe_notstring \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': [1.0,0.0,0.0]}" \
-    "qubit_position_frame must be the string"
-mq_expect_fail mq_refmissing \
-    "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV9', 'qubit_position_frame': 'bath'}" \
-    "is not one of the qubits"
+mq_expect_fail mq_refq_removed \
+    "'coordinate_frame_rotation': {'enabled': True, 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV1'}" \
+    '"frame.rotation.reference_qubit" was removed'
 mq_expect_fail mq_dupname \
-    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}]}" \
+    "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0]},{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0]}]}" \
     "share the name"
 
 mq_expect_fail mq_im_noframe \
     "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor':$ZFS0}]}" \
-    "has no .tensor_frame."
+    "frame.rotation is on, so Qubit.intmap\[\"NV0\",\"NV0\"\].frame must say"
 mq_expect_fail mq_im_badframe \
-    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor_frame':'lab','tensor':$ZFS0}]}" \
-    "tensor_frame = .lab. is not available"
+    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'frame':'lab','tensor':$ZFS0}]}" \
+    "\].frame must be .file."
 mq_expect_fail mq_im_frame_notstring \
-    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor_frame':7,'tensor':$ZFS0}]}" \
-    "tensor_frame must be .bath. or .qubit."
+    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'frame':7,'tensor':$ZFS0}]}" \
+    "\].frame must be .file."
+mq_expect_fail mq_im_old_name \
+    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor_frame':'bath','tensor':$ZFS0}]}" \
+    '"Qubit.intmap\[0\].tensor_frame" is now "frame"'
 
 mq_expect_fail mq_im_badunit \
-    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':'radkHz','tensor':$ZFS0}]}" \
+    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'frame':'qubit','unit':'radkHz','tensor':$ZFS0}]}" \
     "Supported frequency units are Hz, kHz, MHz and GHz"
 mq_expect_fail mq_im_unit_notstring \
-    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'tensor_frame':'qubit','unit':7,'tensor':$ZFS0}]}" \
+    "$MQROT, $MQ2, 'intmap': [{'between':['NV0','NV0'],'frame':'qubit','unit':7,'tensor':$ZFS0}]}" \
     ".unit must be a string"
 
 mq_expect_fail mq_hfmode \
-    "$MQROT, 'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath', 'hf_tensor_frame': 'bath'}" \
+    "$MQROT, 'hamiltonian': {'common': {'hyperfine': {'dipole': 'dft', 'contact': False, 'file': './inputfiles/gyro_13C', 'frame': 'file'}}}" \
     "a hyperfine tensor file (hamiltonian.common.hyperfine) with 2 qubits is not supported"
 mq_expect_fail mq_qdmode \
-    "$MQROT, 'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C'}}}, 'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'NV0', 'qubit_position_frame': 'bath', 'qd_tensor_frame': 'bath'}" \
+    "$MQROT, 'hamiltonian': {'common': {'quadrupole': {'structure': 'plain', 'file': './inputfiles/gyro_13C', 'frame': 'file'}}}" \
     "a quadrupole tensor file (hamiltonian.common.quadrupole) with 2 qubits is not supported"
 
 echo
@@ -1121,7 +1100,7 @@ echo "--- [A/B] hand-transformed input vs automatic rotation ---"
 mkdir -p "$WORK/ab"
 
 echo "  [A/B-1] point-dipole system (hf_readmode=0)"
-python3 make_manual_frame.py --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 10 20 30 \
+python3 make_manual_frame.py --qubit-axis 1 1 1 --r0 10 20 30 \
     --bath inputfiles/bath_a "$WORK/ab/bath_a_qframe" | sed 's/^/  /'
 
 # A : pre-rotated bath, no rotation, field written directly in the computational frame
@@ -1142,16 +1121,16 @@ if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 echo
 echo "  [A/B-2] DFT hyperfine and quadrupole tensors (hf_readmode=2, qd_readmode=2)"
 QR0="23.75635 25.71802 23.38568"
-python3 make_manual_frame.py --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 $QR0 \
+python3 make_manual_frame.py --qubit-axis 1 1 1 --r0 $QR0 \
     --bath "$HEX/bath_1" "$WORK/ab/bath_1_qframe" \
-    --tensor 13 bath "$HEX/Afile_vertex" "$WORK/ab/Afile_qframe" \
-    --tensor 12 bath "$HEX/Qfile_vertex" "$WORK/ab/Qfile_qframe" | sed 's/^/  /'
+    --tensor 13 file "$HEX/Afile_vertex" "$WORK/ab/Afile_qframe" \
+    --tensor 12 file "$HEX/Qfile_vertex" "$WORK/ab/Qfile_qframe" | sed 's/^/  /'
 
 hex_case ab/A2 2 2 "'bathfile': ['$WORK/ab/bath_1_qframe'],
     'hamiltonian': {'common': {'hyperfine': {'file': '$WORK/ab/Afile_qframe'},
                                'quadrupole': {'file': '$WORK/ab/Qfile_qframe'}}}"
 rcA=$RC
-hex_case ab/B2 2 2 "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'bath', 'qd_tensor_frame': 'bath'}"
+hex_case ab/B2 2 2 "$HEXROT, 'hamiltonian': {'common': {'hyperfine': {'frame': 'file'}, 'quadrupole': {'frame': 'file'}}}"
 rcB=$RC
 [ $rcA -eq 0 ] && [ $rcB -eq 0 ] || fail "[A/B-2] a run failed (A=$rcA B=$rcB)"
 
@@ -1163,48 +1142,48 @@ echo
 echo "  [A/B-3] hf_readmode=1 : the file supplies only the isotropic Fermi contact"
 # readmode 1 throws the file's anisotropic tensor away and rebuilds it as a point-dipole
 # tensor from the SOURCE geometry, keeping only the scalar fc. So the stored tensor is
-# bath-frame whatever hf_tensor_frame says, and both spellings below must give the same
+# file-frame whatever hyperfine.frame says, and both spellings below must give the same
 # answer as the hand-transformed input.
-python3 make_manual_frame.py --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 $QR0 \
+python3 make_manual_frame.py --qubit-axis 1 1 1 --r0 $QR0 \
     --tensor 13 qubit "$HEX/Afile_vertex" "$WORK/ab/Afile_poskept" | sed 's/^/  /'
 
 hex_case ab/A3 1 0 "'bathfile': ['$WORK/ab/bath_1_qframe'], 'hamiltonian': {'common': {'hyperfine': {'file': '$WORK/ab/Afile_qframe'}}}"
 rcA=$RC
-hex_case ab/B3 1 0 "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}"
+hex_case ab/B3 1 0 "$HEXROT"
 rcB=$RC
 [ $rcA -eq 0 ] && [ $rcB -eq 0 ] || fail "[A/B-3] a run failed (A=$rcA B=$rcB)"
 
-grep -q "is not applicable to hyperfine dipole point with contact true" "$WORK/ab/B3.log" \
-    && fail "[A/B-3] hf_tensor_frame was reported as given, but it was omitted" \
-    || pass "[A/B-3] hf_tensor_frame is not required at hf_readmode = 1"
+grep -q "hyperfine.frame is not used with dipole" "$WORK/ab/B3.log" \
+    && fail "[A/B-3] hyperfine.frame was reported as given, but it was omitted" \
+    || pass "[A/B-3] hyperfine.frame is not required at hf_readmode = 1"
 
-echo "    hf_tensor_frame omitted:"
+echo "    hyperfine.frame omitted:"
 python3 check_ab.py "$WORK/ab/A3.log" "$WORK/ab/B3.log" \
     --a-out "$WORK/ab/A3" --b-out "$WORK/ab/B3" --kind hypf | sed 's/^/  /'
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 # Spelling it out must change nothing, and must say so.
-hex_case ab/B3q 1 0 "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'qubit'}"
-[ $RC -eq 0 ] || fail "[A/B-3] the hf_tensor_frame=qubit run failed (rc=$RC)"
+hex_case ab/B3q 1 0 "$HEXROT_HFQ"
+[ $RC -eq 0 ] || fail "[A/B-3] the hyperfine.frame=qubit run failed (rc=$RC)"
 
-grep -q "is not applicable to hyperfine dipole point with contact true" "$WORK/ab/B3q.log" \
-    && pass "[A/B-3] hf_tensor_frame=qubit at readmode 1 is reported as not applicable" \
-    || fail "[A/B-3] no note that hf_tensor_frame does not apply at readmode 1"
+grep -q "hyperfine.frame is not used with dipole" "$WORK/ab/B3q.log" \
+    && pass "[A/B-3] hyperfine.frame=qubit at readmode 1 is reported as not used" \
+    || fail "[A/B-3] no note that hyperfine.frame does not apply at readmode 1"
 
-echo "    hf_tensor_frame=qubit:"
+echo "    hyperfine.frame=qubit:"
 python3 check_ab.py "$WORK/ab/A3.log" "$WORK/ab/B3q.log" \
     --a-out "$WORK/ab/A3" --b-out "$WORK/ab/B3q" --kind hypf | sed 's/^/  /'
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 echo
-echo "  [A/B-4] hf_readmode=2 and 3 with hf_tensor_frame=qubit"
+echo "  [A/B-4] hf_readmode=2 and 3 with hyperfine.frame=qubit"
 # The A side declares the same thing the B side does: the file's components are already
 # computational, so they are copied across unrotated -- only the position columns and
 # the boundary vertices move, because A's bath has moved.
 for M in 2 3; do
     hex_case "ab/A4m$M" $M 0 "'bathfile': ['$WORK/ab/bath_1_qframe'], 'hamiltonian': {'common': {'hyperfine': {'file': '$WORK/ab/Afile_poskept'}}}"
     rcA=$RC
-    hex_case "ab/B4m$M" $M 0 "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'hf_tensor_frame': 'qubit'}"
+    hex_case "ab/B4m$M" $M 0 "$HEXROT_HFQ"
     rcB=$RC
     [ $rcA -eq 0 ] && [ $rcB -eq 0 ] || fail "[A/B-4] hf_readmode=$M failed (A=$rcA B=$rcB)"
 
@@ -1216,7 +1195,7 @@ for M in 2 3; do
     # ... and the split really is a split, for readmode 3 as well as 2.
     hex_case "ab/N4m$M" $M 0 ""
     python3 check_tensors.py "$WORK/ab/N4m$M.log" "$WORK/ab/B4m$M.log" \
-        --kind hypf --bath-axis 0 0 1 --qubit-axis 1 1 1 --expect mixed | sed 's/^/  /'
+        --kind hypf --qubit-axis 1 1 1 --expect mixed | sed 's/^/  /'
     if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 done
 
@@ -1225,7 +1204,7 @@ echo "  [A/B-5] multi-qubit : hand-transformed input vs automatic rotation"
 # A : qubit positions, bath positions and intmap tensors all transformed by hand into
 #     the computational frame, run with no rotation option.
 # B : the same system left in the source frame, with the rotation doing the work.
-python3 make_manual_frame.py --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 10 20 30 \
+python3 make_manual_frame.py --qubit-axis 1 1 1 --r0 10 20 30 \
     --bath inputfiles/bath_a "$WORK/ab/bath_a_mq" | sed 's/^/  /'
 
 python3 - "$WORK/ab/A5.json" "$WORK/ab/A5" "$WORK/ab/bath_a_mq" <<'PYEOF'
@@ -1256,12 +1235,12 @@ cfg = {
     "method": "gCCE", "quantity": "coherence",
     "gyrofile": "./inputfiles/gyro_13C", "bathfile": [bathfile],
     "order": 1, "bfield": [0.0, 0.0, 500.0], "rbath": 10, "rdip": 10,
-    "deltat": 0.1, "nstep": 2, "pulse": {"count": 1}, "nstate": 1, "seed": 1,
+    "deltat": 0.1, "nstep": 2, "pulse": {"count": 1}, "s_range": [1, 1], "seed": 1,
     "Qubit": {"qubit": [
         {"name": "NV0", "spin": 1.0, "gyro": -17608.597050,
-         "xyz": rot_pos([10.0,20.0,30.0]), "alphams": 1.0, "betams": 0.0},
+         "xyz": rot_pos([10.0,20.0,30.0])},
         {"name": "NV1", "spin": 1.0, "gyro": -17608.597050,
-         "xyz": rot_pos([17.0,23.0,41.0]), "alphams": 1.0, "betams": 0.0}],
+         "xyz": rot_pos([17.0,23.0,41.0])}],
         "intmap": [
             {"between": ["NV0","NV0"], "tensor": rot_T(ZFS0)},
             {"between": ["NV1","NV1"], "tensor": rot_T(ZFS1)},
@@ -1274,13 +1253,20 @@ json.dump(cfg, open(dest, "w"), indent=4)
 PYEOF
 "$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/ab/A5.json" -v > "$WORK/ab/A5.log" 2>&1
 rcA=$?
-mq_case ab/B5 "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0],'alphams':1.0,'betams':0.0},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0],'alphams':1.0,'betams':0.0}], $IM_BATH}"
+mq_case ab/B5 "$MQROT, 'Qubit': {'qubit': [{'name':'NV0','spin':1.0,'gyro':-17608.597050,'xyz':[10.0,20.0,30.0]},{'name':'NV1','spin':1.0,'gyro':-17608.597050,'xyz':[17.0,23.0,41.0]}], $IM_BATH}"
 rcB=$RC
 [ $rcA -eq 0 ] && [ $rcB -eq 0 ] || fail "[A/B-5] a run failed (A=$rcA B=$rcB)"
 
 python3 check_ab.py "$WORK/ab/A5.log" "$WORK/ab/B5.log" \
     --a-out "$WORK/ab/A5_state1" --b-out "$WORK/ab/B5_state1" \
     --kind hypf --kind intmap --nqubit 2 --tensor-tol 0.5 | sed 's/^/  /'
+if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
+
+echo
+echo "--- [Z] gCCE with E != 0 turned about z, the qubit state turned too (A91) ---"
+# The rotation about the qubit axis is a symmetry once psi0 turns with the system; with the m_s states kept the run is
+# another preparation phase and differs (physically, check_analytic has the exact answer). check_zrot_gcce.py says how.
+python3 check_zrot_gcce.py "$CCEX_BIN" "$MPIRUN" "$WORK/zrot"
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 echo

@@ -19,7 +19,7 @@ it decides with the exit status (0 = every check passed).
 5. `cce_single`, `me_r0_single`: `check_numerics/cases/p1_cce2_single` (NV, P1 1 ppm, CCE2, Hahn) as cCCE and as
    meCCE on its first pure bath state (`configuration.bath_state_file` key and `nstate` 1, also `-s <prefix> -N 1` until A63; the log must read `<prefix>1`).
 6. `gcce_2nv`, `meg_r0_2nv`: `check_refusals`' S5 system (two NV with their ZFS as `intmap` tensors, two 13C,
-   `example/tutorial/05_multiNV/gCCE2_HahnRamsey_NV2` (`ccein_hahn.json`), order 1, one state, the state file as in 5) as gCCE and as
+   `example/tutorial/05_multiNV/gCCE2_HahnRamsey_NV2` (`ccein_hahn.jsonc`), order 1, one state, the state file as in 5) as gCCE and as
    megCCE, quantity coherence, deltat 1e-4 ms × 20 (S5's 1e-7 keeps the curve within 7e-7 of 1; here |L| reaches 0.43).
 
 | case | method | differences from the template |

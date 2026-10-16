@@ -118,7 +118,7 @@ def count_seeds(configs, rbathcut, r_cov, props, qubit_gamma, dm, rdipcut, n_rdi
             notes.append(f"species {n} has spin {S:g}: its coupling is scaled by spin moments, not calibrated")
     if not (math.isfinite(omega) and omega > 0):
         raise ValueError(f"no coupling clock (qubit gamma {qubit_gamma:g}, m_alpha - m_beta {dm:g}, species {species}): "
-                         "give time_window.value (converge false) or a deltat")
+                         "give time_window.value or a deltat")
     t_seed = K_CLOCK / omega
     r_seed = max((d["d_ss"] * t_seed / PAIR_PHASE) ** (1 / 3) for d in per.values())
     top = round(min(1.25 ** 2 * r_seed, 2 * b_start), 3)

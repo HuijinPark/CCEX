@@ -19,8 +19,8 @@ REPO = Path(__file__).resolve().parents[3]
 INPUTS = REPO / 'test/code_verification/check_input_forms/inputs'
 # the input keys that name files, as dotted paths into the input's blocks (A47, 2026-10-13; the configuration block and
 # one state or axis file per bath file, A64)
-FILE_KEYS = ('Qubit.file', 'configuration.gyrofile', 'configuration.defect_axis_file', 'configuration.bath_state_file',
-             'configuration.defect_state_file')
+FILE_KEYS = ('configuration.gyrofile', 'configuration.defect_axis_file', 'configuration.bath_state_file',
+             'configuration.defect_state_file')   # and Qubit.qubit[].file (absolute_paths; Qubit.file until A94)
 # A65 (2026-10-15): the keys of the execution, cluster, output and frame blocks by their names before, and their places
 # now (A64: the Defect files in the configuration block). get and put read an old first name as its place, and blocks()
 # moves a flat key a script set into its block (replacing what was there), just before an input is written.
@@ -46,10 +46,42 @@ def place(path):
 
 
 def blocks(config):
-    """config with every flat key of MOVED at its top level put into its block (A65)."""
+    """config with every flat key of MOVED at its top level put into its block (A65), in the forms of A94 (a94)."""
     out = json.loads(json.dumps(config))
     for old in [k for k in out if k in MOVED]:
         out = put(out, {old: out.pop(old)})
+    return a94(out)
+
+
+def a94(config):
+    """The A94 forms (2026-10-16) of what a check wrote in the earlier ones: configuration.nstate N (or a flat nstate) as
+    configuration.s_range [1, N] (0: left out, the ensemble); cluster.pcce.print_trials true/false and print_limit as the
+    number print_trials (true: print_limit, default 32; false: left out); the Qubit.file form ({"file", "spin", "name"})
+    as a Qubit.qubit entry."""
+    out = json.loads(json.dumps(config))
+    conf = out.setdefault('configuration', {}) if 'nstate' in out else out.get('configuration')
+    if 'nstate' in out:
+        conf['nstate'] = out.pop('nstate')
+    if isinstance(conf, dict) and 'nstate' in conf:
+        n = conf.pop('nstate')
+        if n:
+            conf['s_range'] = [1, n]
+    pcce = get(out, 'pcce')
+    if isinstance(pcce, dict):
+        limit = pcce.pop('print_limit', None)
+        trials = pcce.get('print_trials')
+        if isinstance(trials, bool):
+            if trials:
+                pcce['print_trials'] = 32 if limit is None else limit
+            else:
+                pcce.pop('print_trials')
+    qubit = out.get('Qubit')
+    if isinstance(qubit, dict) and 'file' in qubit:
+        entry = {'file': qubit.pop('file')}
+        for key in ('name', 'spin'):
+            if key in qubit:
+                entry[key] = qubit.pop(key)
+        qubit['qubit'] = [entry]
     return out
 
 
@@ -61,12 +93,26 @@ def absolute_paths(config, base):
         given = get(config, key)
         if given:
             config = put(config, {key: [here(p) for p in given] if isinstance(given, list) else here(given)})
+    for entry in (config.get('Qubit') or {}).get('qubit', []):     # A94: the position file of a qubit entry
+        if isinstance(entry, dict) and entry.get('file'):
+            entry['file'] = here(entry['file'])
     return config
+
+
+def qubit_entry(config):
+    """The one Qubit.qubit entry with a position file (the Qubit.file form until A94), or None."""
+    q = config.get('Qubit') if isinstance(config, dict) else None
+    entries = q.get('qubit') if isinstance(q, dict) else None
+    if isinstance(entries, list) and len(entries) == 1 and isinstance(entries[0], dict) and 'file' in entries[0]:
+        return entries[0]
+    return None
 
 
 def get(config, path, default=None):
     """config at a dotted path ('cluster.pcce.cache.mode'; an old first name such as 'pcce' is read as its place), or
-    default."""
+    default. 'Qubit.file' is the position file of the one Qubit.qubit entry (A94)."""
+    if path == 'Qubit.file' and qubit_entry(config) is not None:
+        return qubit_entry(config)['file']
     for key in place(path).split('.'):
         if not isinstance(config, dict) or key not in config:
             return default
@@ -78,6 +124,9 @@ def put(config, changes):
     """A deep copy of config with each dotted path set to its value (None removes it); an old first name is its place."""
     out = json.loads(json.dumps(config))
     for path, value in changes.items():
+        if path == 'Qubit.file' and qubit_entry(out) is not None and value is not None:   # A94: the entry's file
+            qubit_entry(out)['file'] = value
+            continue
         *parents, last = place(path).split('.')
         here = out
         for key in parents:
@@ -162,7 +211,7 @@ def run(binary, source, directory, backend, args):
         if get(config, 'Qubit.qubit'):
             origin = config['Qubit']['qubit'][0]['xyz']
         else:
-            origin = [float(v) for v in Path(config['Qubit']['file']).read_text().split()[:3]]
+            origin = [float(v) for v in Path(get(config, 'Qubit.file')).read_text().split()[:3]]
             if len(origin)!=3:
                 raise ValueError('Cannot read qubit origin')
         rows = Path(bath['bathfile'][0]).read_text().splitlines()[1:]

@@ -3,7 +3,7 @@
  * @brief Adaptive refinement: the table of every option, its type and default.
  */
 // Every option the refinement takes, on the command line (--name) or as a key of
-// the input file's "Adaptive" object (name with _ for -). This table is the one
+// the input file's cluster.adaptive block (name with _ for -; "workdir" for output). This table is the one
 // place an option is declared: add a row here to add an option. 27 options (20 that
 // only the removed policies read went with them on 2026-10-10; the three regroup ones
 // came on 2026-10-11, and regroup-factors and regroup-whole later that day).

@@ -129,7 +129,7 @@ around) into rotated, not reversed, order, and that $U_b$ then moves the curve. 
 | `npulse` | `pulse.count` |
 | `addsubclus` 0 | `add_subclusters` false |
 | `bnpulse`, `bsequence`, `bpulse_defect`, `bpulse_energy_shift`, `bspin`, `balphams`, `bbetams` | `pulse.bath.count`, `.sequence`, `.defect`, `.energy_shift`, `.spin`, `.alphams`, `.betams` |
-| top-level `alphams`, `betams` | removed (the same values are in the `Qubit.qubit` entry) |
+| top-level `alphams`, `betams` | removed (the same values were in the `Qubit.qubit` entry; `Qubit.alpha_state`/`beta_state` `{"ms": [-1]}`/`{"ms": [0]}` since A93) |
 | `nk` [0, 0], `hf_readmode` 0, `savemode` normal | left out (the defaults) |
 | `-I bath_DEERtest_12spin.txt`, `-N 0`, `-S Random` | `configuration.bathfile`, `configuration.nstate` 0, `configuration.seed` 3528 (the input's) |
 

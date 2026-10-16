@@ -28,8 +28,8 @@ cCCE2 and gCCE2, and the log shows the values read; A26, 2026-10-12), `propagato
 within 1e-8 of eigen `exact` in the raw `_noDiv` and in `_wiDiv` at |L| <= 1 (P1 and NV-13C cCCE2, P1 gCCE2 with zero-field
 splitting); malformed values are refused), `tensor_format` (2026-10-13: on the five h-BN cases of `../check_numerics`, the hyperfine
 file of format v3 - tag line and provenance line, read x 1 - gives the bytes of the old untagged v1 file read x 0.5; the
-VASP-tagged v1 file of the tutorial until then is read as before, x 1, and gives the bytes of `head-20261012-aa883d0d4`, recorded
-with it - skipped on a CI runner, since that reference is one machine's digits (A56); old files warn in the log; values of 10 characters or more, written by SpinTensorReader's VASP and QE writers in
+VASP-tagged v1 file of the tutorial until then is read as before, x 1, and gives `head-20261012-aa883d0d4`, recorded
+with it (_noDiv/dm within 1e-12 relative, A46/A93) - skipped on a CI runner, since that reference is one machine's digits (A56); old files warn in the log; values of 10 characters or more, written by SpinTensorReader's VASP and QE writers in
 their format and in the tab-glued one before 2026-10-13, are read as written: `example/tools/SpinTensorReader/tests/check_wide_fields.py`;
 and a VASP Q file alone from an OUTCAR with magnetization 0 or none is written, while an A file from it is refused:
 `example/tools/SpinTensorReader/tests/check_qfile_spin.py`), `cli` (A63, 2026-10-15, A77 2026-10-16: `-e` writes the template
@@ -40,7 +40,7 @@ comments are read and `.jsonc` leaves the output name); every trailing comment o
 input readers' source - every key `option.cpp` and `main.cpp` look up with `cJSON_GetObjectItem`/`readBlock` is written as
 `"key":`, every other identifier-like literal of `option.cpp` appears in it except the refused old names and a short list of
 internal names, every option of the refinement and every key of the automatic convergence is written as `"key":`, and every
-`"key":` of the example is one of those names; then the `-o` rules: no `output.file` gives the input name, `-o DIR` (made, two
+`"key":` of the example is one of those names; `example_autoconv.py` (A94) uncomments the example's `auto_convergence` lines and has the runner read every choice of the alternative lines (a key written twice: found or fixed), all accepted but the one with every section fixed; then the `-o` rules: no `output.file` gives the input name, `-o DIR` (made, two
 levels) holds it, a relative `output.file` goes inside `DIR` with `-o` before or after `-f`, an absolute one without `-o` is
 that path, `output.cluster_only` true writes `DIR/<name>.clusters.json` and no curve, `output.path` (A65; made, two levels)
 holds the outputs, and `-o DIR` wins over it), `configuration` (A64, 2026-10-15:
@@ -98,9 +98,9 @@ each was cut to, and from what, is in the generator next to the numbers.
 | S2a | the same, gCCE-2 | gCCE | 0.35 s |
 | S2b/c | NV + P1 10 ppm, CCE-2 and gCCE-2 | `Defect` with `n_nuclear_spins = 0`, `n_configurations = 12`, `Defect.axis_file` | 0.3 / 1.0 s |
 | S3 | P1 bath, `Defect` `n_nuclear_spins = 1` (14N), `n_configurations = 4` | `gyros` `quadrupole_moments` `hyperfine` `efg` `zfs` `detuning`, state and extra-state files | 1.4 s |
-| S4 | hBN V_B, `hyperfine` `{"dipole": "dft", "contact": true}` + `quadrupole` `"plain"` | both DFT tensor readers, the vertex boundary, `hf/qd_tensor_frame` | 0.44 s |
+| S4 | hBN V_B, `hyperfine` `{"dipole": "dft", "contact": true}` + `quadrupole` `"plain"` | both DFT tensor readers, the vertex boundary, `hyperfine.frame` / `quadrupole.frame` | 0.44 s |
 | S4b | the same over `Afile` instead of `Afile_vertex` | `CheckBD_Range`, the axis-aligned MinDif/MaxDif box | 0.43 s |
-| S5 | two NV, gCCE, explicit `intmap` self/ZFS tensors | `intmap` `tensor_frame`, `reference_qubit`, multi-qubit rotation | 0.29 s |
+| S5 | two NV, gCCE, explicit `intmap` self/ZFS tensors | `intmap` `frame`, multi-qubit rotation (about the first qubit) | 0.29 s |
 
 S3's fixture is written for 24 ranks at `rbath` 850 (469 spins, 80 s). At
 `rbath` 360 it keeps 45 spins and 518 pair clusters, which still reaches every

@@ -83,7 +83,7 @@ def as_block(args, out, name):
                 except ValueError:
                     pass
         block[key[2:].replace('-', '_')] = value          # given twice, the last wins, as on the command line
-    block['output'] = str(out)
+    block['workdir'] = str(out)                           # the driver's --output (cluster.adaptive.workdir, A94)
     cfg = json.loads(Path(args[args.index('--input')+1]).read_text())
     cfg.setdefault('cluster', {})['adaptive'] = block
     path = WORK/f'{name}.block.json'

@@ -61,7 +61,7 @@ def main():
             if event=='hit':
                 check_cache_hit(log)
             elif get(config,'pcce.partition')!='legacy':
-                record['trial_audit']=check_search(log,get(config,'pcce.trials'),ranks,get(config,'pcce.print_limit',32))
+                record['trial_audit']=check_search(log,get(config,'pcce.trials'),ranks,get(config,'pcce.print_trials',32))
             if reference:
                 ref=json.loads((reference/'execution.json').read_text())
                 for key in ['cluster_listing_sha256','cluster_counts_by_dimension']:

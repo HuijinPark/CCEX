@@ -1,20 +1,22 @@
 {
  "method": "gCCE",
  "quantity": "coherence",
- "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
- "bathfile": [
-  "../../inputs/hbn/bath_hBN_VB_flat_1"
- ],
+ "configuration": {
+  "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
+  "bathfile": [
+   "../../inputs/hbn/bath_hBN_VB_flat_1"
+  ],
+  "bath_state_file": ["../../inputs/hbn/state_"],
+  "s_range": [1, 1],
+  "seed": 19
+ },
  "order": 2,
  "bfield": 0,
  "rbath": 14,
  "rdip": 8,
  "deltat": 1e-08,
  "nstep": 50,
- "nstate": 1,
- "seed": 19,
  "Qubit": {
-  "nqubit": 1,
   "qubit": [
    {
     "name": "VB",
@@ -52,31 +54,35 @@
     ]
    }
   ],
-  "overhaus": true,
-  "psia": [
-   1,
-   0,
-   1
-  ],
-  "psib": [
-   0,
-   1,
-   0
-  ]
+  "alpha_state": {
+   "vector": [
+    1,
+    0,
+    1
+   ]
+  },
+  "beta_state": {
+   "vector": [
+    0,
+    1,
+    0
+   ]
+  }
  },
- "npulse": 1,
- "hf_readmode": 3,
- "hf_tensorfile": "../../inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
- "hf_ignore_oor": 0,
- "DefectTotSpin": 1.0,
- "CorrTotSpin": 0.0,
- "qd_readmode": 2,
- "qd_tensorfile": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE",
- "qd_tensorfile_woqubit": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE",
- "qd_cellpara": [
-  0.0,
-  0.0,
-  0.0
- ],
- "statefile": "../../inputs/hbn/state_"
+ "pulse": {"count": 1},
+ "hamiltonian": {
+  "common": {
+   "qubit_bath_mean_field": true,
+   "hyperfine": {
+    "dipole": "dft",
+    "contact": true,
+    "file": "../../inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
+    "missing_row": "stop"
+   },
+   "quadrupole": {
+    "structure": "plain",
+    "file": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE"
+   }
+  }
+ }
 }

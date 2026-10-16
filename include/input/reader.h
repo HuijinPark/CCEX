@@ -11,7 +11,7 @@
 #include "input/general.h"
 
 
-void readQubitfile(QubitArray* qa, Config* cnf);
+void readQubitPositionFile(const char* fname, double xyz[3], int iqubit); // Qubit.qubit[].file (A94)
 void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf);
 
 // Pure validation of the frame.rotation input against the QubitArray.
@@ -29,7 +29,7 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf);
 */
 typedef enum {
     HYPF_UNSET           = -1, /**< not yet decided; must not survive readHftensorfile */
-    HYPF_FILE_TENSOR     =  0, /**< read from the tensor file, so in the hf_tensor_frame basis */
+    HYPF_FILE_TENSOR     =  0, /**< read from the tensor file, so in the basis hamiltonian.common.hyperfine.frame says */
     HYPF_SOURCE_GEOMETRY =  1  /**< computed here from the source geometry, so bath frame */
 } HypfProvenanceState;
 
@@ -54,6 +54,7 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* config);
 void setBathStates(BathArray* ba, Config* cnf, int i); // read or random set
 void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf); // read or random set
 void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i); // read or random set
+void drawSkippedState(BathArray* ba, DefectArray* dfa, Config* cnf); // A94: the random draws of a state below s_range first
 
 int compare_dist(const void *a, const void *b);
 

@@ -5,7 +5,7 @@
 
 KEY is a key or a dotted path into a block (configuration.defect_axis_file); the block has to exist in IN, the key itself may be new.
 Keys are matched without regard to case, as CCEX reads them. VALUE is read as JSON when it is JSON (50, true,
-["bath_1"]) and as a string otherwise (Random3). OUT is plain JSON (the comments of IN are not kept) and may not be IN.
+["bath_1"], [1, 20]) and as a string otherwise (Random3); null removes the key (configuration.s_range=null: the ensemble). OUT is plain JSON (the comments of IN are not kept) and may not be IN.
 File paths in an input are relative to the working directory of the run, not to the input, so OUT may be anywhere.
 Any error: a message and exit 2.
 """
@@ -35,7 +35,10 @@ def set_key(root, path, value):
         if not isinstance(block.get(key), dict):
             fail(f"{'.'.join(parts[:i + 1])} is not a block of the input (needed for {path})")
         block = block[key]
-    block[same_key(block, parts[-1])] = value
+    if value is None:                      # null: the key is left out (its default)
+        block.pop(same_key(block, parts[-1]), None)
+    else:
+        block[same_key(block, parts[-1])] = value
 
 
 def main(argv):

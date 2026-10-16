@@ -23,7 +23,7 @@ import json, sys; from input_layout import flat, nest
 inp, out, of = sys.argv[1:4]
 # A47 keys; savemode (coherence) and max_clusters_per_order (all 0; its length must be order+1) are defaults, left out
 d = {"method": "cCCE", "quantity": "coherence",
-     "Qubit": {"file": f"{inp}/qubit_espin", "spin": 0.5, "alphams": 0.5, "betams": -0.5},
+     "Qubit": {"file": f"{inp}/qubit_espin", "spin": 0.5, "alpha_state": {"ms": [0.5]}, "beta_state": {"ms": [-0.5]}},
      "configuration": {"gyrofile": f"{inp}/gyro_espin", "bathfile": [f"{inp}/bath_espin"], "nstate": 0},
      "order": 2, "bfield": 300, "rbath": 500, "rdip": 300, "deltat": 0.04, "nstep": 50,
      "add_subclusters": True, "pulse": {"count": 1}}
@@ -191,8 +191,8 @@ E5="$REPO/example/tutorial/05_multiNV/gCCE2_HahnRamsey_NV2"
 python3 - "$E5" "$W" <<'PY'
 import json, re, sys; from input_layout import flat, nest
 E, w = sys.argv[1:3]
-s = open(f"{E}/ccein_hahn.json").read()
-s = re.sub(r'#[^\n]*', '', s); s = re.sub(r'!\S*', '', s)
+s = open(f"{E}/ccein_hahn.jsonc").read()
+s = re.sub(r'#[^\n]*', '', s); s = re.sub(r'!\S*', '', s); s = re.sub(r"//[^\n]*", "", s)
 d = flat(json.loads(s))
 d["configuration"].update({"bathfile": [f"{E}/bath"], "bath_state_file": [f"{E}/state"], "gyrofile": f"{E}/gyro_13C"})
 d.update({"quantity": "coherence", "nstep": 20, "deltat": 1e-4, "order": 1})   # order 1, as the tutorial input was until A66

@@ -176,6 +176,15 @@ void runOneCalculation(Config* cnf, QubitArray* qa, BathArray* ba, DefectArray* 
 // the qubit in the Hamiltonian and applies the rotation that was asked for.
 void validatePulsesForMethod(Config* cnf, Pulse* pls) {
     const char* kernel=methodKernel(cnf->method);   // gCCE, megCCE and their pcce forms (pgCCE, pmegCCE)
+    // A94 (R2): a finite pulse (pulse.detuning_factor other than 1, of pulse.duration) is the gCCE kernel's alone; the
+    // cCCE kernel ignored both keys without a word (meCCE and megCCE refuse detuning_factor, validateMasterEquation)
+    if(!strcmp(kernel,"cce") && (pls->detuning_factor!=1.0 || pls->pulse_time!=0.0)) {
+        if(rank==0) fprintf(stderr,"Error: method cCCE needs pulse.detuning_factor = 1 and pulse.duration = 0 (it calculates ideal "
+                                   "instantaneous pulses; a finite pulse needs method gCCE)\n");
+        ccexRefuse();
+    }
+    if(!strcmp(kernel,"gcce") && pls->detuning_factor==1.0 && pls->pulse_time!=0.0)
+        warnNotUsed("pulse.duration","it is read only with pulse.detuning_factor other than 1 (a finite pulse)");
     if(!strcmp(kernel,"gcce") || !strcmp(kernel,"megcce")) return;   // ME-gCCE applies any rotation too
     for(int i=0;i<Pulse_getNpulse(pls);++i) {
         const char axis=pls->pulse_axes[i];
@@ -189,7 +198,7 @@ void validatePulsesForMethod(Config* cnf, Pulse* pls) {
     // The CUDA ensemble path takes CPMG intervals the way the CPU one did.
     if(cnf->nstate==0 && !strcasecmp(pls->pulsename,"Manual") && strcasecmp(cnf->backend,"cpu")) {
         if(!strcasecmp(cnf->backend,"cuda")) {
-            if(rank==0) fprintf(stderr,"Error: an ensemble (nstate 0) Manual sequence is calculated on the CPU only, "
+            if(rank==0) fprintf(stderr,"Error: an ensemble (no configuration.s_range) Manual sequence is calculated on the CPU only, "
                                        "set execution.backend to cpu\n");
             ccexRefuse();
         }
@@ -247,6 +256,7 @@ void validateMasterEquation(Config* cnf, Pulse* pls, QubitArray* qa, Output* op)
         refuseRun("method %s takes its pulses from pulse.count (Ramsey, HahnEcho, CPMG), a Manual sequence is not supported", method);
     if (Pulse_getPulseiter(pls))       refuseRun("method %s needs pulse.per_qubit = false", method);
     if (pls->detuning_factor != 1.0)   refuseRun("method %s needs pulse.detuning_factor = 1", method);
+    if (pls->pulse_time != 0.0)        refuseRun("method %s needs pulse.duration = 0 (it calculates ideal instantaneous pulses)", method);   // A94 R2
     if (strcasecmp(cnf->propagator,"eigen")) refuseRun("method %s needs execution.propagator eigen (its own matrix exponential)", method);
     if (!strcasecmp(op->savemode,"cluster_density_matrix")) refuseRun("method %s does not write output.savemode cluster_density_matrix", method);
     const int nqubit = QubitArray_getNqubit(qa);
@@ -308,10 +318,11 @@ void validateJumpOperatorNames(BathArray* ba, DefectArray* dfa, QubitArray* qa, 
 // they would do nothing, so they are refused; meCCE reads them as cCCE does. hamiltonian.meCCE / megCCE.jump_operators
 // belong to that method.
 //
-// delta_A false (A47) replaces the hyperfine tensors of a cluster's bath spins by their mean (createBathArray), which is
-// defined for a bath of nuclear spins: the spins a defect species brings into a cluster and the qubit's mean field
-// (the Overhauser field, computed from the tensors before they are averaged) are refused with it.
-void validateHamiltonianForMethod(Config* cnf, QubitArray* qa, DefectArray* dfa) {
+// delta_A true (A83) adds the second-order term delta_A(m_s).I of each bath spin (HamilQubitBathSecularApp), which needs
+// a spin-1 qubit with a zero-field splitting Delta = 3/2 D_zz != 0; hfmedi already holds it (its i = j terms are the
+// complete second order of the same coupling), so the two together are refused. knight divides by the same Delta, so it is
+// refused when Delta = 0 (no zero-field splitting).
+void validateHamiltonianForMethod(Config* cnf, QubitArray* qa) {
     const char* kernel=methodKernel(cnf->method);   // the section of a pcce form is its method's (pmeCCE: meCCE)
     if(cnf->jump_operators && strcasecmp(cnf->jump_operators_section,kernel)) {
         if(rank==0) fprintf(stderr,"Error: hamiltonian.%s (jump_operators) belongs to method %s, this run is %s\n",
@@ -323,12 +334,30 @@ void validateHamiltonianForMethod(Config* cnf, QubitArray* qa, DefectArray* dfa)
                             inputMethodName(cnf->method));
         ccexRefuse();
     }
-    if(!cnf->delta_A && (DefectArray_getNdefect(dfa) > 0 || QubitArray_getOverhaus(qa))) {
-        if(rank==0) fprintf(stderr,"Error: hamiltonian.cCCE.delta_A false is for a bath of nuclear spins: not with Defect species "
-                                   "or hamiltonian.common.qubit_bath_mean_field true\n");
-        ccexRefuse();
+    if(Config_getKnight(cnf)) {
+        const double Delta = QubitArray_getIntmap_i_j(qa,0,0)(2,2).real() * 3.0 / 2.0;
+        if(Delta == 0.0) {
+            if(rank==0) fprintf(stderr,"Error: hamiltonian.cCCE.knight divides by the zero-field splitting of the qubit (Delta = "
+                                       "3/2 D_zz of the qubit's intmap self term), this run has Delta %g kHz\n",
+                                       RADKHZ_TO_KHZ(Delta));
+            ccexRefuse();
+        }
     }
-    setClusterHyperfineMean(!cnf->delta_A);
+    if(cnf->delta_A) {
+        const double Delta = QubitArray_getIntmap_i_j(qa,0,0)(2,2).real() * 3.0 / 2.0;
+        if(QubitArray_getNqubit(qa) != 1 || QubitArray_getQubit_i_spin(qa,0) != 1.0f || Delta == 0.0) {
+            if(rank==0) fprintf(stderr,"Error: hamiltonian.cCCE.delta_A is the second-order term of a spin-1 qubit with a zero-field "
+                                       "splitting (Delta = 3/2 D_zz of the qubit's intmap self term), this run has %d qubit(s), "
+                                       "spin %g, Delta %g kHz\n", QubitArray_getNqubit(qa),
+                                       (double)QubitArray_getQubit_i_spin(qa,0), RADKHZ_TO_KHZ(Delta));
+            ccexRefuse();
+        }
+        if(Config_getHfmedi(cnf)) {
+            if(rank==0) fprintf(stderr,"Error: hamiltonian.cCCE.delta_A is refused with hfmedi: hfmedi already includes the "
+                                       "delta-A (same-nucleus second-order) term\n");
+            ccexRefuse();
+        }
+    }
 }
 
 // A cluster.adaptive object in the input file asks for the refinement (the --adaptive option
@@ -395,7 +424,21 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
     for(cJSON* item=block->child; item; item=item->next) {
         const std::string key = item->string;
         if(!strcasecmp(key.c_str(),"probe_memory_gb")) continue;   // the steps' setting (A65), read by the Config reader
-        std::string name = key;
+        // A94 (G23): an input key is spelled with _ as every other key (- is the command line's, --max-rounds)
+        if(key.find('-') != std::string::npos) {
+            std::string spelled = key;
+            for(char& ch : spelled) if(ch == '-') ch = '_';
+            fail("cluster.adaptive."+key+" is spelled \""+spelled+"\" in the input (- is the command line's spelling)");
+        }
+        // A94 (G10): the folder of the steps is workdir, as auto_convergence.workdir (output until A94: it read like the
+        // top-level output block); the driver's option is still --output
+        if(!strcasecmp(key.c_str(),"output"))
+            fail("cluster.adaptive.output is now cluster.adaptive.workdir (the folder of the steps and summary.json)\n"
+                 "Old inputs: python3 example/tools/InputKeys/convert_input_keys.py FILE... rewrites them with the new keys");
+        // A94 (G9): merge is the only policy; the key stays readable for old inputs, and is reported as not needed
+        if(!strcasecmp(key.c_str(),"policy"))
+            warnNotUsed("cluster.adaptive.policy","merge is the only policy (the default), leave the key out");
+        std::string name = !strcasecmp(key.c_str(),"workdir") ? std::string("output") : key;
         for(char& ch : name) ch = ch=='_' ? '-' : char(std::tolower((unsigned char)ch));   // keys are read without regard to case
         const adaptive::options::Option* option = nullptr;
         for(const adaptive::options::Option& one : adaptive::options::kOptions)
@@ -419,7 +462,7 @@ std::vector<std::string> adaptiveArgsFromInput(char* fccein, const char* self) {
         if(!one.required || is_fixed) continue;
         bool given = false;
         for(const std::string& arg : args) if(arg == std::string("--")+one.name) given = true;
-        if(!given) fail(std::string("cluster.adaptive.")+one.dest+" is required");
+        if(!given) fail(std::string("cluster.adaptive.")+(std::string(one.name) == "output" ? "workdir" : one.dest)+" is required");
     }
     args.insert(args.begin(), {"--input", fccein, "--binary", self});
     return args;
@@ -442,7 +485,7 @@ void applyStepConfig(const std::string& stepInput, const std::string& firstInput
     // step (measured 2026-09-19; the recorded inputs all spell it).
     // output.file, output.savemode and cluster.adaptive ({"work_file"} in a step) - in blocks since A65
     static const char* mutable_keys[][2] = {{"output", "file"}, {"output", "savemode"}, {"cluster", "adaptive"}};
-    // Both files are read as CCEX inputs (a line ends at its first ! or #): the
+    // Both files are read as CCEX inputs (a //, # or ! outside a string starts a comment): the
     // first one is the user's, and may carry comments; the step's is what the
     // policy wrote, and carries none.
     char* firstText = cJSON_ReadFccein(const_cast<char*>(firstInput.c_str()));
@@ -675,7 +718,7 @@ static const char kRemovedShortOptions[] = "PN:m:q:B:I:s:S:a:";
 static const char* removedShortOption(int c){
     switch (c){
         case 'I': return "-I was removed: give the bath files in the input, \"configuration\": {\"bathfile\": [\"FILE\", ...]}";
-        case 'N': return "-N was removed: give the number of bath states in the input, \"configuration\": {\"nstate\": ...}";
+        case 'N': return "-N was removed: give the bath states in the input, \"configuration\": {\"s_range\": [1, N]}";
         case 'm': return "-m was removed: give the method in the input, \"method\" (with \"cluster.mode\" for the cluster shape)";
         case 'q': return "-q was removed: give the quantity in the input, \"quantity\"";
         case 'B': return "-B was removed: give the field in the input, \"bfield\" (a number is Bz, or [Bx, By, Bz])";
@@ -900,7 +943,7 @@ static int runInput(char* fccein, const char* outputFolder, std::vector<std::str
     Config_validatePropagator(cnf,QubitArray_getNqubit(qa));   // A2: before the evolution_update check, so sparse is named
     Config_validateEvolutionUpdate(cnf);       // after the packed kernel's value (A36)
     validatePulsesForMethod(cnf,pls);
-    validateHamiltonianForMethod(cnf,qa,dfa);
+    validateHamiltonianForMethod(cnf,qa);
     validateAdaptiveConfig(cnf,cls);
     Config_validatePcceCache(cnf);
     if (clusterPlanOnly && ((strcasecmp(cnf->method,"cce") &&
@@ -986,12 +1029,7 @@ static int runInput(char* fccein, const char* outputFolder, std::vector<std::str
         printf("    ======================================================================\n\n");
     }
 
-    // Qubit
-    if (rank == 0){
-        printSubTitle("Qubit file");
-    }
-    readQubitfile(qa,cnf); // set qubit xyz position for nqubit=1
-    MPI_Barrier(MPI_COMM_WORLD);
+    // the qubit positions of Qubit.qubit[].file are read with the Qubit block (A94, G12; readQubitfile until A94)
 
     // Bath : Gyromagnetic ratio
     if (rank == 0){
@@ -1023,7 +1061,7 @@ static int runInput(char* fccein, const char* outputFolder, std::vector<std::str
     // The tensor files are keyed by POSITION, and those position columns are written in
     // the source bath frame, so every lookup above has to run against un-moved
     // coordinates. Tensor COMPONENTS are a separate question: they are in whichever basis
-    // hf_tensor_frame / qd_tensor_frame declares, and a point-dipole tensor CCEX computed
+    // hamiltonian.common.hyperfine.frame / quadrupole.frame declares, and a point-dipole tensor CCEX computed
     // itself is in the bath frame no matter what those say.
     //
     // This step normalizes the two into one: every qubit position and every bath-spin

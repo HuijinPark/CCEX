@@ -50,11 +50,14 @@ old = set(re.findall(r'\{\s*"[^"]*",\s*' + IDENT + r',\s*"(?:is now|was removed)
 # lower-case forms they compare), labels of the defect readers' messages, a section label of a message, the fopen mode,
 # the prefix of the default qubit names, the refused names outside the table above (the flat gpu_* keys, the old
 # "Refine" block, save_nodiv, magnetic_field_axis), and rdip_ladder - read by CCEX, but an internal key the automatic
-# convergence writes into its runs' inputs (A65), not shown in the example
+# convergence writes into its runs' inputs (A65), not shown in the example; work_file, the key the adaptive driver writes
+# into a step input (A94, G11), and print_limit, refused with its new form (A94, G7)
 NOT_INPUT = {
     "pCCE", "pgCCE", "pmeCCE", "pmegCCE", "ccce", "cce", "gcce", "mecce", "megcce", "pgcce", "pmecce", "pmegcce",
     "cJSON_ReadDefectInfo_IntCharDouble", "cJSON_ReadDefectInfo_IntCharMatrixXcd1d", "cJSON_ReadDefectInfo_IntCharMatrixXcd2d",
-    "r", "q", "rdip_ladder",
+    "r", "q", "rdip_ladder", "work_file", "print_limit",
+    "None", "turn",   # pulse.name's internal default, and a word of a message split over string literals (A94)
+    "corrections", "dissipation",   # A94's hamiltonian sections, refused with the sections by method (G1 reverted)
     "gpu_min_dim", "gpu_batch_clusters", "gpu_batch_steps", "gpu_cache_mb", "gpu_cluster_batch_mb", "refine", "save_nodiv",
     "magnetic_field_axis",
 }
@@ -76,7 +79,9 @@ adaptive = {n.replace('-', '_') for n in re.findall(r'\{"([a-z-]+)",\s*"[a-z_]+"
 fixed = re.search(r'static const char\* fixed\[\] = \{([^}]*)\}', main)   # adaptiveArgsFromInput: decided by the run
 decided = set(re.findall(r'"([a-z_]+)"', fixed.group(1))) if fixed else set()
 if not fixed: problems.append("src/main.cpp: the list of refinement options the run decides (fixed[]) was not found")
-adaptive_keys = (adaptive - decided) | {"work_file"}
+# the input spells the driver's output as workdir (A94, G10); merge is the only policy and work_file is the driver's own
+# key of a step input (A94, G9, G11): neither is shown
+adaptive_keys = (adaptive - decided - {"output", "policy"}) | {"workdir"}
 # the automatic convergence's keys (the block is read by its runner, not by CCEX): the top-level keys, the sections and
 # the keys of each section as the input writes them (runner.py TOP_KEYS, SECTIONS, SPLIT_KEYS; its FILE_KEYS are the CCEX
 # configuration block's keys since A65, read by option.cpp, not keys of the block)

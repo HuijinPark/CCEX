@@ -59,7 +59,10 @@ PY
     echo "  PASS  $name (exit=$rc)"; PASS=$((PASS+1))
 }
 
-R111='{"enabled": True, "bath_axis": [0.0,0.0,1.0], "qubit_axis": [1.0,1.0,1.0]}'
+R111='{"enabled": True, "qubit_axis": [1.0,1.0,1.0]}'
+# A90: the frames of the tensor files are the "frame" keys of their hamiltonian blocks
+HF_FILE="d['hamiltonian']['common']['hyperfine']['frame'] = 'file'"
+QD_FILE="d['hamiltonian']['common']['quadrupole']['frame'] = 'file'"
 
 # A valid input with a command-line option that was removed (A63): refused, with the input key that replaces it, before
 # the input is read. (Until A63 this section checked -N and -B values that are not numbers, review 78d583 R5; the keys
@@ -74,7 +77,7 @@ reject_cli(){
 }
 echo "=== S1a : removed command-line options (A63)"
 reject_cli S1a rj_cli_removed_bathfile '-I was removed: give the bath files in the input, "configuration": {"bathfile"' -I bath
-reject_cli S1a rj_cli_removed_nstate '-N was removed: give the number of bath states in the input, "configuration": {"nstate"' -N 3
+reject_cli S1a rj_cli_removed_nstate '-N was removed: give the bath states in the input, "configuration": {"s_range": [1, N]}' -N 3
 reject_cli S1a rj_cli_removed_method '-m was removed: give the method in the input, "method"' -m gCCE
 reject_cli S1a rj_cli_removed_quantity '-q was removed: give the quantity in the input, "quantity"' -q dm
 reject_cli S1a rj_cli_removed_bfield '-B was removed: give the field in the input, "bfield"' -B 500
@@ -115,13 +118,22 @@ example_exists(){
     else echo "  FAIL  rj_cli_example_exists : exit=$rc, see $w/proc"; FAIL=$((FAIL+1)); fi
 }
 example_exists
-# a Qubit.file (qubitfile until A47) the input names but that is not there ran the qubit at (0,0,0) (review 4dd5fd R1)
-reject S1a rj_qubitfile_missing "cannot open the qubit file" "d['Qubit']['file'] = d['Qubit']['file'] + '.missing'"
-# Qubit.file and Qubit.qubit together (qubitfile and a Qubit block until A47): the block was ignored without a word, so
-# a "two-qubit" tutorial ran one qubit
-# (review 20261013-readme R01)
-reject S1a rj_qubitfile_and_qubit_block "the Qubit block has both \"file\" and \"qubit\", keep one form" \
-  "d['Qubit']['qubit'] = [{'name': 'q1', 'spin': 1.0, 'gyro': -17608.59705, 'xyz': [0.0, 0.0, 0.0]}]"
+# a qubit position file (Qubit.file until A94, qubitfile until A47) the input names but that is not there ran the qubit
+# at (0,0,0) (review 4dd5fd R1)
+reject S1a rj_qubitfile_missing 'Qubit.qubit[0].file: cannot read' "d['Qubit']['qubit'][0]['file'] += '.missing'"
+# A94: a Qubit.qubit entry has its position from "file" or "xyz", not both (Qubit.file beside Qubit.qubit until then:
+# the block was ignored without a word, so a "two-qubit" tutorial ran one qubit, review 20261013-readme R01)
+reject S1a rj_qubitfile_and_qubit_block 'Qubit.qubit[0] has both "file" and "xyz", the position is one of them' \
+  "d['Qubit']['qubit'][0]['xyz'] = [0.0, 0.0, 0.0]"
+# A90: with the rotation on a single qubit's Qubit.intmap entry states its frame; the ZFS of the Qubit.file form is such
+# an entry since A93 (Qubit.zfs and its Qubit.frame until then)
+reject S1a rj_qubit_zfs_frame_missing 'frame.rotation is on, so Qubit.intmap["q0","q0"].frame must say' \
+  "d['coordinate_frame_rotation'] = $R111
+d['Qubit']['intmap'] = [{'between': ['q0', 'q0'], 'tensor': [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]], 'unit': 'kHz'}]"
+reject S1a rj_one_qubit_intmap_frame_missing 'frame.rotation is on, so Qubit.intmap["q0","q0"].frame must say' \
+  "d['coordinate_frame_rotation'] = $R111
+d['Qubit'] = {'qubit': [{'name': 'q0', 'spin': 1.0, 'gyro': -17608.59705, 'xyz': [0.0, 0.0, 0.0]}],
+              'intmap': [{'between': ['q0', 'q0'], 'tensor': [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]]}]}"
 # quantity noise was accepted and computed the coherence (review 20261013-doxygen D22)
 reject S1a rj_quantity_noise "quantity \"noise\" is not supported" "d['quantity'] = 'noise'"
 # --help is -h (review 20261013-doxygen D21): the same text, exit 0
@@ -158,65 +170,167 @@ PY
     else echo "  FAIL  sequence_accepted : see $w/proc_seq_ok"; FAIL=$((FAIL+1)); fi
 }
 sequence_accepted
+# A86: WAHUHA writes five rows whatever the count while the arrays have count + 1 rows (counts 0-3 overflowed, 5 gave
+# another curve without a word); a sequence with a name other than Manual left the arrays zero (gCCE aborted with
+# "Invalid axis character"); a Manual row count that does not match ended in an uncaught throw
+for c in 1 3 5; do
+    reject S1a rj_wahuha_count$c "pulse.name WAHUHA needs pulse.count 4 (the four-pulse sequence) (this input has $c)" \
+      "d['method'] = 'gCCE'; d['pulse'] = {'count': $c, 'name': 'WAHUHA'}"
+done
+WAHUHA_ROWS="[['1/6','X',90],['1/6','Y',270],['2/6','Y',90],['1/6','X',270],['1/6','I',0]]"
+reject S1a rj_seq_wahuha "pulse.sequence is read only with pulse.name Manual (pulse.name WAHUHA)" \
+  "d['method'] = 'gCCE'; d['pulse'] = {'count': 4, 'name': 'WAHUHA', 'sequence': $WAHUHA_ROWS}"
+reject S1a rj_seq_no_name "pulse.sequence is read only with pulse.name Manual (pulse.name None)" \
+  "d['pulse'] = {'count': 1, 'sequence': [['1/2','X',180],['1/2','I',0]]}"
+reject S1a rj_seq_rows "pulse.sequence has 2 rows, pulse.count + 1 = 3" "$MANUAL; d['pulse']['sequence'] = [['1/2','X',180],['1/2','I',0]]"
+# WAHUHA with count 4 still runs to the end (gCCE order 1, a small bath) and logs its five rows
+wahuha4_runs(){
+    local w="$WORK/S1a"
+    python3 - "$w" <<'PY'
+import json, sys; from input_layout import flat, nest
+w = sys.argv[1]; d = flat(json.load(open(f"{w}/legacy.json")))
+d.update(method='gCCE', order=1, rbath=15, nstep=10, pulse={'count': 4, 'name': 'WAHUHA'}, outfile='./wahuha4')
+json.dump(nest(d), open(f"{w}/wahuha4.json", "w"))
+PY
+    rm -f "$w"/wahuha4_wiDiv
+    if (cd "$w" && "$MPIRUN" -n 1 "$BIN_DEV" -f wahuha4.json < /dev/null > proc_wahuha4 2>&1) && [ -s "$w/wahuha4_wiDiv" ] &&
+       grep -Eq ' Y +270' "$w/proc_wahuha4" && grep -Eq ' X +270' "$w/proc_wahuha4"; then
+        echo "  PASS  wahuha4_runs (count 4, exit 0)"; PASS=$((PASS+1))
+    else echo "  FAIL  wahuha4_runs : see $w/proc_wahuha4"; FAIL=$((FAIL+1)); fi
+}
+wahuha4_runs
 # a finite double outside the float it is stored in became inf (review fa7f39 R3)
 reject S1a rj_bfield_float_overflow "within the float range" "d['bfield'] = 1e40"
 
 echo "=== S4 : DFT tensor file + rotation"
-reject S4 rj_hf_frame_missing "hamiltonian.common.hyperfine dipole \"dft\" with the coordinate frame rotation on" \
+reject S4 rj_hf_frame_missing "frame.rotation is on, so hamiltonian.common.hyperfine.frame must say the frame of" \
   "d['coordinate_frame_rotation'] = $R111
-d['coordinate_frame_rotation']['qd_tensor_frame'] = 'bath'"
-reject S4 rj_qd_frame_missing "hamiltonian.common.quadrupole (structure plain) with the coordinate frame rotation on" \
+$QD_FILE"
+reject S4 rj_qd_frame_missing "frame.rotation is on, so hamiltonian.common.quadrupole.frame must say the frame of" \
   "d['coordinate_frame_rotation'] = $R111
-d['coordinate_frame_rotation']['hf_tensor_frame'] = 'bath'"
+$HF_FILE"
 reject S4 rj_tilted_bfield "bfield" \
   "d['coordinate_frame_rotation'] = $R111
-d['coordinate_frame_rotation']['hf_tensor_frame'] = 'bath'
-d['coordinate_frame_rotation']['qd_tensor_frame'] = 'bath'
+$HF_FILE
+$QD_FILE
 d['bfield'] = [100.0, 0.0, 30000.0]"
-reject S4 rj_pos_frame_qubit "qubit_position_frame" \
+# A90: the keys removed from frame.rotation and the old places and value of the tensor-file frames
+reject S4 rj_a90_bath_axis '"frame.rotation.bath_axis" was removed' \
+  "d['coordinate_frame_rotation'] = $R111
+d['coordinate_frame_rotation']['bath_axis'] = [0.0, 0.0, 1.0]
+$HF_FILE
+$QD_FILE"
+reject S4 rj_a90_position_frame '"frame.rotation.qubit_position_frame" was removed' \
+  "d['coordinate_frame_rotation'] = $R111
+d['coordinate_frame_rotation']['qubit_position_frame'] = 'bath'
+$HF_FILE
+$QD_FILE"
+reject S4 rj_a90_hf_tensor_frame '"frame.rotation.hf_tensor_frame" is now "hamiltonian.common.hyperfine.frame"' \
   "d['coordinate_frame_rotation'] = $R111
 d['coordinate_frame_rotation']['hf_tensor_frame'] = 'bath'
-d['coordinate_frame_rotation']['qd_tensor_frame'] = 'bath'
-d['coordinate_frame_rotation']['qubit_position_frame'] = 'qubit'"
+$QD_FILE"
+reject S4 rj_a90_qd_tensor_frame '"frame.rotation.qd_tensor_frame" is now "hamiltonian.common.quadrupole.frame"' \
+  "d['coordinate_frame_rotation'] = $R111
+d['coordinate_frame_rotation']['qd_tensor_frame'] = 'qubit'
+$HF_FILE"
+reject S4 rj_a90_hf_frame_bath 'hamiltonian.common.hyperfine.frame "bath" is now "file"' \
+  "d['coordinate_frame_rotation'] = $R111
+d['hamiltonian']['common']['hyperfine']['frame'] = 'bath'
+$QD_FILE"
+reject S4 rj_a90_qd_frame_unknown 'hamiltonian.common.quadrupole.frame must be "file"' \
+  "d['coordinate_frame_rotation'] = $R111
+$HF_FILE
+d['hamiltonian']['common']['quadrupole']['frame'] = 'crystal'"
 
 echo
 echo "=== S5 : two qubits + rotation"
-reject S5 rj_refq_missing "reference_qubit is required" \
-  "d['coordinate_frame_rotation'] = $R111
-d['coordinate_frame_rotation']['qubit_position_frame'] = 'bath'
-for e in d['Qubit']['intmap']: e['tensor_frame'] = 'bath'"
-reject S5 rj_intmap_frame_missing "intmap tensor" \
+reject S5 rj_a90_reference_qubit '"frame.rotation.reference_qubit" was removed' \
   "d['coordinate_frame_rotation'] = $R111
 d['coordinate_frame_rotation']['reference_qubit'] = 'q1'
-d['coordinate_frame_rotation']['qubit_position_frame'] = 'bath'"
-# D43: a state index (Qubit.alpha_state/beta_state {"index"}, alphaidx/betaidx until A47) counts the qubit eigenstates by
-# descending energy and overrides alphams/betams; written together and naming other states, the run stops (S5 writes
-# alphams 1 / betams 0 for both NVs; index 2 is not |0,0>, the lowest level)
-reject S5 rj_alphaidx_vs_alphams "Keep one of the two" \
-  "d['Qubit']['alpha_state'] = {'index': 1}; d['Qubit']['beta_state'] = {'index': 2}" read
-# only what is written constrains (review b467fe R1): q1's betams 0 alone against beta index 0, the highest level |+1,+1>
-reject S5 rj_alphaidx_one_side "Keep one of the two" \
-  "d['Qubit']['alpha_state'] = {'index': 1}; d['Qubit']['beta_state'] = {'index': 0}
-for q in d['Qubit']['qubit']: q.pop('alphams', None); q.pop('betams', None)
-d['Qubit']['qubit'][0]['betams'] = 0" read
-# and the same kind of input that agrees runs: q1's alphams 1 alone with alpha index 0 (|+1,+1>); beta index 1 is not written
-# against, so it is free. A short run (nstep 2), since the check sits where the run picks psia/psib.
-idx_ms_accepted(){
-    local w="$WORK/S5"
-    python3 - "$w" <<'PY'
+for e in d['Qubit']['intmap']: e['frame'] = 'file'"
+reject S5 rj_intmap_frame_missing "frame.rotation is on, so Qubit.intmap[" \
+  "d['coordinate_frame_rotation'] = $R111"
+reject S5 rj_a90_intmap_tensor_frame '"Qubit.intmap[0].tensor_frame" is now "frame"' \
+  "d['coordinate_frame_rotation'] = $R111
+for e in d['Qubit']['intmap']: e['tensor_frame'] = 'bath'"
+reject S5 rj_a90_intmap_frame_bath '.frame "bath" is now "file"' \
+  "d['coordinate_frame_rotation'] = $R111
+for e in d['Qubit']['intmap']: e['frame'] = 'bath'"
+# A93 (2026-10-16): the qubit states are Qubit.alpha_state/beta_state only, each one of {"ms": [one m_s per qubit]},
+# {"index": n} and {"vector": [...]}; the per-qubit alphams/betams (and Qubit.alphams/betams of the Qubit.file form) are
+# refused with the new form. (Until A93 an index beside a written alphams/betams that named another state stopped the
+# run, D43; the two can no longer be written together.)
+reject S5 rj_a93_old_qubit_alphams 'input key "Qubit.qubit[1].alphams" is now "Qubit.alpha_state": {"ms": [m_1, m_2, ...]}' \
+  "d['Qubit']['qubit'][1]['alphams'] = 1"
+reject S5 rj_a93_old_qubit_betams 'input key "Qubit.qubit[0].betams" is now "Qubit.beta_state": {"ms": [m_1, m_2, ...]}' \
+  "d['Qubit']['qubit'][0]['betams'] = 0"
+reject S1a rj_a93_old_file_alphams 'input key "Qubit.alphams" is now "Qubit.alpha_state": {"ms": [m]}' \
+  "d['Qubit']['alphams'] = d['Qubit'].pop('alpha_state')['ms'][0]"
+reject S1a rj_a93_old_file_betams 'input key "Qubit.betams" is now "Qubit.beta_state": {"ms": [m]}' \
+  "d['Qubit']['betams'] = d['Qubit'].pop('beta_state')['ms'][0]"
+reject S5 rj_a93_ms_and_index 'Qubit.alpha_state must have exactly one of "ms", "index" and "vector" (it has more than one)' \
+  "d['Qubit']['alpha_state'] = {'ms': [1, 1], 'index': 0}"
+reject S5 rj_a93_ms_too_short 'Qubit.alpha_state.ms must be a list of one m_s per qubit, 2 numbers in the order of Qubit.qubit (it has 1)' \
+  "d['Qubit']['alpha_state'] = {'ms': [1]}"
+reject S5 rj_a93_ms_too_long 'Qubit.beta_state.ms must be a list of one m_s per qubit, 2 numbers in the order of Qubit.qubit (it has 3)' \
+  "d['Qubit']['beta_state'] = {'ms': [0, 0, 0]}"
+reject S5 rj_a93_ms_not_number 'Qubit.alpha_state.ms[1] must be a finite JSON number' \
+  "d['Qubit']['alpha_state'] = {'ms': [1, '1']}"
+reject S1a rj_a93_file_ms_number 'Qubit.alpha_state.ms must be a list of one m_s per qubit, 1 numbers in the order of Qubit.qubit (a list also for one qubit)' \
+  "d['Qubit']['alpha_state'] = {'ms': 1}"
+# A94: the qubit of a position file is a Qubit.qubit entry, so {"index"} and {"vector"} are taken (Qubit.file refused them);
+# pulse.per_qubit turns each qubit between the m_s of {"ms"} and refuses them (user 2026-10-16: A93 took a guessed level)
+reject S1a rj_per_qubit_index 'pulse.per_qubit true needs Qubit.alpha_state and Qubit.beta_state as {"ms": [m_1, m_2, ...]}' \
+  "d['Qubit']['beta_state'] = {'index': 1}; d['pulse']['per_qubit'] = True"
+reject S1a rj_per_qubit_vector 'Qubit.alpha_state is {"vector"}' \
+  "d['Qubit']['alpha_state'] = {'vector': [1, 0, 0]}; d['pulse']['per_qubit'] = True"
+# the ZFS of the Qubit.file form is a Qubit.intmap self entry (A93; Qubit.zfs in kHz and Qubit.frame until then), naming
+# the qubit by Qubit.name (default "q0")
+reject S1a rj_a93_old_file_zfs 'input key "Qubit.zfs" is now a Qubit.intmap self entry: "intmap"' \
+  "d['Qubit']['zfs'] = [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]]"
+reject S1a rj_a93_old_file_frame 'input key "Qubit.frame" was removed: the frame of the ZFS is the "frame" of its Qubit.intmap self entry' \
+  "d['Qubit']['frame'] = 'qubit'"
+reject S1a rj_a93_file_intmap_name "The qubit name is not found in the input file" \
+  "d['Qubit']['qubit'][0]['name'] = 'NV'
+d['Qubit']['intmap'] = [{'between': ['q0', 'q0'], 'tensor': [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]]}]"
+# the phase of an index eigenvector (A93): its largest component real and positive, the first of equal ones. One spin-1/2
+# qubit in a field along x (the eigenvectors (1, +-1)/sqrt2, a tie) and along y ((1, +-i)/sqrt2), and one NV in a tilted
+# field (mixed states with one largest component); psia and psib as the log prints them (two decimals). A short run.
+phase_rule(){
+    local name="$1" edit="$2" w="$WORK/S5"
+    python3 - "$w" "$name" <<PY
 import json, sys; from input_layout import flat, nest
-w = sys.argv[1]; d = flat(json.load(open(f"{w}/legacy.json")))
-for q in d['Qubit']['qubit']: q.pop('alphams', None); q.pop('betams', None)
-d['Qubit']['qubit'][0]['alphams'] = 1
-d['Qubit'].update(alpha_state={'index': 0}, beta_state={'index': 1}); d.update(nstep=2, outfile='./idx_ms_ok')
-json.dump(nest(d), open(f"{w}/idx_ms_ok.json", "w"))
+w, name = sys.argv[1:3]; d = flat(json.load(open(f"{w}/legacy.json")))
+$edit
+d.update(nstep=2, outfile=f'./{name}')
+json.dump(nest(d), open(f"{w}/{name}.json", "w"))
 PY
-    if (cd "$w" && run_ccex "$BIN_DEV" idx_ms_ok.json proc_idx_ms_ok) &&
-       grep -Eq 'psia is mostly +: +m_s \|\+1, \+1>' "$w/proc_idx_ms_ok"; then
-        echo "  PASS  idx_ms_accepted (an alpha index with a partly written alphams that agrees)"; PASS=$((PASS+1))
-    else echo "  FAIL  idx_ms_accepted : see $w/proc_idx_ms_ok"; FAIL=$((FAIL+1)); fi
+    if ! (cd "$w" && run_ccex "$BIN_DEV" "$name.json" "proc_$name"); then
+        echo "  FAIL  $name : the run failed, see $w/proc_$name"; FAIL=$((FAIL+1)); return; fi
+    if python3 - "$w/proc_$name" <<'PY'
+import re, sys
+text = open(sys.argv[1]).read()
+def vector(name):         # psia : [(re,im), (re,im), ...] as the log prints it, the last one printed
+    line = [l for l in text.splitlines() if re.match(rf'\s*{name}\s*:', l)][-1]
+    nums = [float(x) for x in re.findall(r'[-+]?\d+\.?\d*(?:[eE][-+]?\d+)?', line.split(':', 1)[1])]
+    return [complex(nums[k], nums[k+1]) for k in range(0, len(nums), 2)]
+ok = True
+for name in ('psia', 'psib'):
+    v = vector(name)
+    big = max(abs(c) for c in v)
+    first = next(c for c in v if abs(c) >= big*(1 - 1e-6))
+    good = first.real > 0 and abs(first.imag) <= 1e-12
+    print(f"        {name} = {v}: first largest component {first} {'real > 0' if good else 'NOT real > 0'}")
+    ok &= good
+sys.exit(0 if ok else 1)
+PY
+    then echo "  PASS  $name (the largest component of psia and psib is real and positive)"; PASS=$((PASS+1))
+    else echo "  FAIL  $name : see $w/proc_$name"; FAIL=$((FAIL+1)); fi
 }
-idx_ms_accepted
+SPIN_HALF="d['Qubit'] = {'qubit': [{'name': 'e', 'spin': 0.5, 'xyz': [0.0, 0.0, 0.0]}], 'alpha_state': {'index': 0}, 'beta_state': {'index': 1}}"
+phase_rule a93_phase_tie_x "$SPIN_HALF; d['bfield'] = [100.0, 0.0, 0.0]"
+phase_rule a93_phase_tie_y "$SPIN_HALF; d['bfield'] = [0.0, 100.0, 0.0]"
+phase_rule a93_phase_mixed "q = d['Qubit']; q.update(qubit=q['qubit'][:1], intmap=q['intmap'][:1], alpha_state={'index': 0}, beta_state={'index': 2}); d['bfield'] = [300.0, 200.0, 500.0]"
 # D28: Qubit.intmap[].tensor shorter than 3x3 was padded with zeros
 reject S5 rj_intmap_tensor_short "3x3" \
   "d['Qubit']['intmap'][0]['tensor'] = [[1.0]]"
@@ -226,11 +340,6 @@ reject S5 rj_intmap_tensor_string "finite JSON number" \
 # number of qubits is the length of Qubit.qubit since A47 (Qubit.nqubit removed), so what is left to refuse is no qubit
 reject S5 rj_qubit_array_short "Qubit.qubit must be an array of one entry per qubit" \
   "d['Qubit']['qubit'] = []"
-reject S5 rj_refq_unknown "reference_qubit" \
-  "d['coordinate_frame_rotation'] = $R111
-d['coordinate_frame_rotation']['reference_qubit'] = 'q9'
-d['coordinate_frame_rotation']['qubit_position_frame'] = 'bath'
-for e in d['Qubit']['intmap']: e['tensor_frame'] = 'bath'"
 
 echo
 echo "=== S3 : removed key, and the Defect object forms"
@@ -240,20 +349,21 @@ reject S3 rj_defaxis_without_rot "defect_axis_reference" \
   "d['defect_axis_reference'] = 'qubit_axis'"
 reject S3 rj_zfs_de_no_axis "axis is missing" \
   "df = d['Defect']['species'][0]
-df['coordinate_frame'] = 'qubit'
+df['frame'] = 'qubit'
 df['zfs'] = {'D': 2870.0, 'unit': 'MHz'}"
-reject S3 rj_zfs_E_nonzero "zfs.E is non-zero" \
+reject S3 rj_zfs_E_nonzero "zfs.E was removed (only 0 was taken)" \
   "df = d['Defect']['species'][0]
-df['coordinate_frame'] = 'qubit'
-df['axis'] = [1.0,1.0,1.0]
-df['zfs'] = {'D': 2870.0, 'E': 5.0, 'unit': 'MHz'}"
-# axis is validated before zfs, so these are two different guards, not one.
-reject S3 rj_axis_no_frame "axis is present but coordinate_frame is missing" \
+df['frame'] = 'qubit'
+df['zfs'] = {'D': 2870.0, 'E': 5.0, 'axis': [1.0,1.0,1.0], 'unit': 'MHz'}"
+# A90: with the rotation on every species states its frame (an absent one was "qubit" until then, and an axis or an
+# object-form zfs asked for coordinate_frame whether the rotation was on or not); the old name is refused with the new
+reject S3 rj_defect_frame_missing "frame.rotation is on, so Defect.species[" \
+  "d['coordinate_frame_rotation'] = $R111
+df = d['Defect']['species'][0]
+df['zfs'] = {'D': 2870.0, 'axis': [1.0,1.0,1.0], 'unit': 'MHz'}"
+reject S3 rj_a90_coordinate_frame '"Defect.species[0].coordinate_frame" is now "frame"' \
   "df = d['Defect']['species'][0]
-df['axis'] = [1.0,1.0,1.0]"
-reject S3 rj_zfs_object_no_frame "object-form zfs but has no coordinate_frame" \
-  "df = d['Defect']['species'][0]
-df['zfs'] = {'D': 2870.0, 'unit': 'MHz'}"
+df['coordinate_frame'] = 'bath'"
 # The one behaviour change that can stop a v1.1.0 input which used to complete. The
 # arrays hold n_configurations+1 entries (index 0 is the main spin), so n_configurations+1 is one past the
 # end; it used to be accepted and written to. S3's own fixture uses 1..n_configurations, and
@@ -298,7 +408,7 @@ d['configuration']['defect_axis_file'] = [f'{w}/avaax_axis5']" read
 
 reject S3 rj_bad_unit "unit" \
   "df = d['Defect']['species'][0]
-df['coordinate_frame'] = 'qubit'
+df['frame'] = 'qubit'
 df['quadrupole_moments'] = {'values': [2.044], 'unit': 'furlongs'}"
 reject S3 rj_rot_alias_both "both" \
   "d['coordinate_frame_rotation'] = $R111
@@ -343,9 +453,9 @@ echo
 echo "=== a key nobody reads, close to one that took its default"
 # Until 2026-10-02 (D24) such a key was ignored without a word: "nstates" left nstate at 0, and
 # the top-level "alphams" of the qubitfile form (which read qalphams) left the NV branch at +1; the same inside a block
-# (Qubit.alphms for Qubit.alphams, A47).
-reject S1a rj_typo_nstates "did you mean \"nstate\"" "d['configuration']['nstates'] = d['configuration'].pop('nstate')"
-reject S1a rj_typo_qubitfile_alphams "did you mean \"alphams\"" "d['Qubit']['alphms'] = d['Qubit'].pop('alphams')"
+# (Qubit.alphms for Qubit.alphams, A47; Qubit.alpha_stat for Qubit.alpha_state since A93, the default taken in its place).
+reject S1a rj_typo_nstates "did you mean \"s_range\"" "d['configuration']['s_rnge'] = [1, 1]"
+reject S1a rj_typo_qubitfile_alphams "did you mean \"alpha_state\"" "d['Qubit']['alpha_stat'] = d['Qubit'].pop('alpha_state')"
 
 echo
 echo "=== a result that cannot be written in full"
@@ -510,11 +620,11 @@ reject_case p1_cce2_single rj_savemode_unknown 'savemode "averaged" is not one o
 echo
 echo "=== propagator"
 # propagator (A2, 2026-10-12): expm is gCCE only; sparse runs for one sampled state of the cCCE and gCCE evolution=vector
-# with one qubit, backend=cpu, evolution_update=exact, without knight and hfmedi - everything else is refused at the
+# with one qubit, backend=cpu, evolution_update=exact, without knight, hfmedi and delta_A - everything else is refused at the
 # start (the paths that run, and the malformed values, are in ../check_input_forms/propagator.sh).
 SP="d['propagator'] = {'method': 'sparse', 'min_dim': 1}"
 reject_case p1_cce2_single rj_prop_expm_cce "propagator=expm is implemented for method=gCCE only" "d['propagator'] = 'expm'"
-reject_case p1_cce2_ensemble rj_prop_sparse_ensemble "this run has nstate=0 (the ensemble)" "$SP"
+reject_case p1_cce2_ensemble rj_prop_sparse_ensemble "this run has the ensemble (no configuration.s_range)" "$SP"
 reject_case p1_manual_hahn rj_prop_sparse_matrix "this run has method=gCCE with execution.evolution=matrix" "$SP; d['evolution'] = 'matrix'"
 reject_case p1_cce2_single rj_prop_sparse_cuda "this run has execution.backend=cuda" "$SP; d['backend'] = 'cuda'"
 reject_case p1_manual_hahn rj_prop_sparse_auto "this run has execution.backend=auto" "$SP; d['backend'] = 'auto'"
@@ -522,9 +632,13 @@ reject_case p1_cce2_single rj_prop_sparse_recursive "this run has execution.evol
 reject_case p1_manual_hahn rj_prop_sparse_recursive_gcce "this run has execution.evolution_update=recursive" "$SP; d['evolution_update'] = 'recursive'"
 reject_case natab_knight_shift rj_prop_sparse_knight "this run has the knight term" "$SP; d['configuration']['nstate'] = 1"
 reject_case hbn_hfmedi rj_prop_sparse_hfmedi "this run has the hfmedi term" "$SP; d['configuration']['nstate'] = 1"
+reject_case natab_knight_shift rj_prop_sparse_delta_A "this run has the delta_A term" \
+  "$SP; d['configuration']['nstate'] = 1; d['hamiltonian'] = {'cCCE': {'delta_A': True}}"
 # a second NV 20 A away added to the one-qubit Qubit block (the check_numerics cases hold one qubit each; the old
 # natab_gcce2_two_qubits held one too, through its qubitfile, and is natab_gcce2_bathadjust since 2026-10-13)
-TWO="q = d['Qubit']; q2 = dict(q['qubit'][0], name='qubit2', xyz=[x + 20.0 for x in q['qubit'][0]['xyz']]); q['qubit'].append(q2); q['intmap'].append(dict(q['intmap'][0], between=['qubit2', 'qubit2']))"
+TWO="q = d['Qubit']; q2 = dict(q['qubit'][0], name='qubit2', xyz=[x + 20.0 for x in q['qubit'][0]['xyz']]); q['qubit'].append(q2); q['intmap'].append(dict(q['intmap'][0], between=['qubit2', 'qubit2']))
+for k in ('alpha_state', 'beta_state'):
+    if 'ms' in q.get(k, {}): q[k]['ms'] = q[k]['ms']*2"
 reject_case p1_gcce2_zfs rj_prop_sparse_two_qubits "this run has nqubit=2" "$SP; $TWO"
 
 echo
@@ -560,7 +674,7 @@ reject_case $HB rj_tensor_tag_vs_source_qe "line 1 is 'QUANTUMESPRESSO' but the 
 reject_case $HB rj_tensor_source_vs_tag_vasp "line 1 is 'VASP' but the provenance line says source = QE hyperfine.out" "d['hamiltonian']['common']['hyperfine']['file'] = '$TF/qe_source'"
 reject_case $HB rj_tensor_no_tag "it must be line 2" "d['hamiltonian']['common']['hyperfine']['file'] = '$TF/no_tag'"
 reject_case $HB rj_tensor_spin_vs_defect "spin S = 0.5 defect (provenance line) but the qubit spin is 1" "d['hamiltonian']['common']['hyperfine']['file'] = '$TF/spin_half'"
-reject_case $HB rj_tensor_defect_vs_spin "spin S = 1 defect (provenance line) but the qubit spin is 1.5" "d['hamiltonian']['common']['hyperfine']['file'] = '$V3'; d['Qubit'].update(spin=1.5, alphams=1.5, betams=0.5)"
+reject_case $HB rj_tensor_defect_vs_spin "spin S = 1 defect (provenance line) but the qubit spin is 1.5" "d['hamiltonian']['common']['hyperfine']['file'] = '$V3'; d['Qubit']['qubit'][0]['spin'] = 1.5; d['Qubit'].update(alpha_state={'ms': [1.5]}, beta_state={'ms': [0.5]})"
 reject_case $HB rj_tensor_spin_fraction "S must be a positive half-integer" "d['hamiltonian']['common']['hyperfine']['file'] = '$TF/spin_fraction'"
 reject_case $HB rj_tensor_no_spin "has no \", S = <S>\"" "d['hamiltonian']['common']['hyperfine']['file'] = '$TF/no_spin'"
 reject_case $HB rj_tensor_version4 "is not a tensor format this version reads" "d['hamiltonian']['common']['hyperfine']['file'] = '$TF/version4'"
@@ -575,7 +689,7 @@ echo "=== input keys renamed (A47)"
 OLDK='input key "'
 reject_case natab_cce2_hahn rj_old_npulse "${OLDK}npulse\" is now \"pulse.count\"" "d['npulse'] = 1"
 reject_case natab_cce2_hahn rj_old_hint "example/tools/InputKeys/convert_input_keys.py" "d['npulse'] = 1"
-reject_case natab_cce2_hahn rj_old_qubitfile "${OLDK}qubitfile\" is now \"Qubit.file\"" "d['qubitfile'] = d['Qubit'].pop('file')"
+reject_case natab_cce2_hahn rj_old_qubitfile "${OLDK}qubitfile\" is now an entry of Qubit.qubit" "d['qubitfile'] = d['Qubit'].pop('qubit')[0]['file']"
 reject_case natab_cce2_hahn rj_old_rbathcut "${OLDK}rbathcut\" is now the inner radius of \"rbath\": [inner, outer]" "d['rbathcut'] = 1.0"
 reject_case natab_cce2_hahn rj_old_addsubclus "${OLDK}addsubclus\" is now \"cluster.selection.add_subclusters\"" "d['addsubclus'] = 0"
 reject_case natab_cce2_hahn rj_old_nk "${OLDK}nk\" is now \"cluster.selection.max_per_order\"" "d['nk'] = [0, 0, 0]"
@@ -604,7 +718,7 @@ reject_case natab_cce2_hahn rj_a65_backend "${OLDK}backend\" is now \"execution.
 reject_case natab_cce2_hahn rj_a65_cluster_mode "${OLDK}cluster_mode\" is now \"cluster.mode\"" "d['__keep_old__'] = ['cluster_mode']; d['cluster_mode'] = 'standard'"
 reject_case natab_cce2_hahn rj_a65_outfile "${OLDK}outfile\" is now \"output.file\"" "d['__keep_old__'] = ['outfile']"
 reject_case natab_cce2_hahn rj_a65_savemode "${OLDK}savemode\" is now \"output.savemode\"" "d['__keep_old__'] = ['savemode']; d['savemode'] = 'coherence'"
-reject_case natab_cce2_hahn rj_a65_rotation "${OLDK}coordinate_frame_rotation\" is now \"frame.rotation\"" "d['__keep_old__'] = ['coordinate_frame_rotation']; d['coordinate_frame_rotation'] = {'enabled': True, 'bath_axis': [0, 0, 1], 'qubit_axis': [0, 0, 1]}"
+reject_case natab_cce2_hahn rj_a65_rotation "${OLDK}coordinate_frame_rotation\" is now \"frame.rotation\"" "d['__keep_old__'] = ['coordinate_frame_rotation']; d['coordinate_frame_rotation'] = {'enabled': True, 'qubit_axis': [0, 0, 1]}"
 reject_case natab_cce2_hahn rj_a65_defect_axis_reference "${OLDK}defect_axis_reference\" was removed" "d['defect_axis_reference'] = 'qubit_axis'"
 reject_case natab_cce2_hahn rj_a65_max_clusters "${OLDK}max_clusters_per_order\" is now \"cluster.selection.max_per_order\"" "d['__keep_old__'] = ['max_clusters_per_order']; d['max_clusters_per_order'] = [0, 0, 0]"
 reject_case natab_cce2_hahn rj_a65_add_subclusters "${OLDK}add_subclusters\" is now \"cluster.selection.add_subclusters\"" "d['__keep_old__'] = ['add_subclusters']; d['add_subclusters'] = True"
@@ -636,18 +750,21 @@ reject_case natab_cce2_hahn rj_method_noise "method \"noise\" is not implemented
 reject_case natab_cce2_hahn rj_adaptive_standard "the cluster.adaptive block belongs to cluster.mode pcce or bundle (this input has cluster.mode standard)" \
   "d['adaptive'] = {'output': 'x', 'atol': 1e-8, 'rtol': 1e-6}"
 reject_case natab_cce2_hahn rj_pcce_block_standard "the cluster.pcce block belongs to cluster.mode pcce" "d['pcce'] = {'partition_size': 2}"
-# the two new settings (A47; what they compute is in ../check_analytic/): delta_A false is for a bath of nuclear spins,
-# and bath_bath_mean_field takes off, z or xyz
-reject_case p1_cce2_single rj_delta_A_defect "hamiltonian.cCCE.delta_A false is for a bath of nuclear spins" \
-  "d['hamiltonian'] = {'cCCE': {'delta_A': False}}"
-reject_case natab_cce2_hahn rj_delta_A_overhaus "hamiltonian.cCCE.delta_A false is for a bath of nuclear spins" \
-  "d['hamiltonian'] = {'cCCE': {'delta_A': False}, 'common': {'qubit_bath_mean_field': True}}"
+# delta_A (A83; what it computes is in ../check_analytic/) needs a spin-1 qubit with a zero-field splitting and is
+# not taken with hfmedi, which already holds it; bath_bath_mean_field (A47) takes off, z or xyz
+reject_case natab_knight_shift rj_delta_A_no_zfs "hamiltonian.cCCE.delta_A is the second-order term of a spin-1 qubit with a zero-field splitting" \
+  "del d['Qubit']['intmap']; d['hamiltonian'] = {'cCCE': {'delta_A': True}}"
+reject_case natab_knight_shift rj_delta_A_hfmedi "hamiltonian.cCCE.delta_A is refused with hfmedi: hfmedi already includes the delta-A (same-nucleus second-order) term" \
+  "d['hamiltonian'] = {'cCCE': {'delta_A': True, 'hfmedi': True}}"
+# knight divides by the same Delta (A83 follow-up)
+reject_case natab_knight_shift rj_knight_no_zfs "hamiltonian.cCCE.knight divides by the zero-field splitting of the qubit" \
+  "del d['Qubit']['intmap']; d['hamiltonian'] = {'cCCE': {'knight': True}}"
 reject_case natab_cce2_hahn rj_mean_field_value "hamiltonian.common.bath_bath_mean_field must be \"off\", \"z\" or \"xyz\"" \
   "d['hamiltonian'] = {'common': {'bath_bath_mean_field': 'vector'}}"
 # one qubit state, one form
-reject_case hbn_gcce2_oh rj_state_index_and_vector "Qubit.alpha_state must have one of \"index\" and \"vector\" (it has both)" \
+reject_case hbn_gcce2_oh rj_state_index_and_vector "Qubit.alpha_state must have exactly one of \"ms\", \"index\" and \"vector\" (it has more than one)" \
   "d['Qubit']['alpha_state']['index'] = 0"
-reject_case hbn_gcce2_oh rj_state_neither "Qubit.beta_state must have one of \"index\" and \"vector\" (it has neither)" \
+reject_case hbn_gcce2_oh rj_state_neither "Qubit.beta_state must have exactly one of \"ms\", \"index\" and \"vector\" (it has none)" \
   "d['Qubit']['beta_state'] = {}"
 
 echo
@@ -793,7 +910,7 @@ reject S5 rj_me_qubit_jump_two "a qubit jump operator needs one qubit" \
 # (nstep and rbath small, so that a build without the check runs these in seconds)
 MEI="$REPO/test/code_verification/check_master_equation/inputs"
 reject_case p1_cce2_single rj_me_jump_name 'hamiltonian.meCCE.jump_operators[1].bath_name "P1x" names no bath spin of this run (bath spins, compared ignoring case: e)' \
-  "d = {'method': 'meCCE', 'quantity': 'coherence', 'Qubit': {'file': '$MEI/qubit_espin', 'spin': 0.5, 'alphams': 0.5, 'betams': -0.5}, 'configuration': {'gyrofile': '$MEI/gyro_espin', 'bathfile': ['$MEI/bath_espin'], 'nstate': 0}, 'order': 2, 'bfield': 300, 'rbath': 500, 'rdip': 300, 'deltat': 0.04, 'nstep': 5, 'pulse': {'count': 1}}; $(MEJ meCCE "[{'bath_name':'e','operator':'-','rate':1e-4},{'bath_name':'P1x','operator':'+','rate':1e-4}]")"
+  "d = {'method': 'meCCE', 'quantity': 'coherence', 'Qubit': {'file': '$MEI/qubit_espin', 'spin': 0.5, 'alpha_state': {'ms': [0.5]}, 'beta_state': {'ms': [-0.5]}}, 'configuration': {'gyrofile': '$MEI/gyro_espin', 'bathfile': ['$MEI/bath_espin'], 'nstate': 0}, 'order': 2, 'bfield': 300, 'rbath': 500, 'rdip': 300, 'deltat': 0.04, 'nstep': 5, 'pulse': {'count': 1}}; $(MEJ meCCE "[{'bath_name':'e','operator':'-','rate':1e-4},{'bath_name':'P1x','operator':'+','rate':1e-4}]")"
 reject_case p1_manual_hahn rj_meg_jump_name 'hamiltonian.megCCE.jump_operators[0].bath_name "P1x" names no bath spin of this run (bath spins, compared ignoring case: P1)' \
   "d['method']='megCCE'; d['nstep']=5; d['rbath']=200; $(MEJ megCCE "[{'bath_name':'P1x','operator':'z','rate':1e-4}]")"
 # a bath_name that is the qubit's name and a bath spin's: the megCCE kernel takes it as a qubit jump and drops the bath
@@ -836,8 +953,8 @@ src, w = sys.argv[1:3]
 d = flat(json.load(open(src)))
 for form in ("spaced", "attached", "upper"):
     # upper: the adaptive keys in another case (I03), read as the lower-case ones
-    keys = ("Policy", "Output", "ATOL", "Rtol") if form == "upper" else ("policy", "output", "atol", "rtol")
-    d["adaptive"] = dict(zip(keys, ("merge", f"{w}/{form}_adaptive", 1e-8, 2e-6)))
+    keys = ("Workdir", "ATOL", "Rtol") if form == "upper" else ("workdir", "atol", "rtol")   # workdir: output until A94
+    d["adaptive"] = dict(zip(keys, (f"{w}/{form}_adaptive", 1e-8, 2e-6)))
     d["outfile"] = f"{w}/{form}"
     json.dump(nest(d), open(f"{w}/{form}.json", "w"), indent=1)
 PY
@@ -852,7 +969,7 @@ PY
         cmp -s "$w/spaced_adaptive/final-bundles.json" "$w/${f}_adaptive/final-bundles.json" || ok=0
         cmp -s "$w/spaced_adaptive/0009-run/coherence_wiDiv" "$w/${f}_adaptive/0009-run/coherence_wiDiv" || ok=0
     done
-    if [ $ok -eq 1 ]; then echo "  PASS  adaptive_attached (-f FILE, -fFILE and Policy/Output/ATOL/Rtol refine alike)"; PASS=$((PASS+1))
+    if [ $ok -eq 1 ]; then echo "  PASS  adaptive_attached (-f FILE, -fFILE and Workdir/ATOL/Rtol refine alike)"; PASS=$((PASS+1))
     else echo "  FAIL  adaptive_attached : see $w"; FAIL=$((FAIL+1)); fi
 }
 adaptive_attached
@@ -885,6 +1002,14 @@ PY
 accept_same natab_cce2_hahn ac_savemode_keys_case "d['savemode'] = {'Mode': 'coherence', 'NoDiv': True}" \
   "d['savemode'] = {'mode': 'coherence', 'nodiv': True}"
 accept_same natab_cce2_hahn ac_propagator_keys_case "d['propagator'] = {'Method': 'eigen'}" "d['propagator'] = {'method': 'eigen'}"
+# A89: max_per_order entries 1 and 2 cut nothing (only orders 3 and up are cut): the same result as all 0, and one warning
+# (A94: the one wording of a key read and not used)
+accept_same p1_cce2_single ac_max_per_order_low "d['max_clusters_per_order'] = [0, 3, 5]" "d['max_clusters_per_order'] = [0, 0, 0]"
+if [ "$(grep -c 'Warning: input key "cluster.selection.max_per_order" is not used by this run: entries 1, 2 are ignored, only orders 3 and up are cut' \
+        "$WORK/accepted_forms/proc_ac_max_per_order_low")" = 1 ] \
+   && ! grep -q 'input key "cluster.selection.max_per_order" is not used' "$WORK/accepted_forms/proc_ac_max_per_order_low_ref"; then
+    echo "  PASS  ac_max_per_order_low warning (once, and not for all 0)"; PASS=$((PASS+1))
+else echo "  FAIL  ac_max_per_order_low warning : see $WORK/accepted_forms/proc_ac_max_per_order_low"; FAIL=$((FAIL+1)); fi
 
 echo "=== A67 : units of a key, the memory check"
 # a unit not in the key's row (case counts), an object that is not {"value", "unit"}, a value that is not a number or a list
@@ -899,6 +1024,188 @@ reject S1a rj_unit_extra_key 'deltat must be a number (in ms) or {"value"' "d['d
 SLURM_MEM_PER_NODE=1 reject S1a rj_memory_not_enough "Error: not enough memory: the largest cluster (dimension" "pass" read
 if grep -q "Main calculation" "$WORK/S1a/proc_rj_memory_not_enough"; then
     echo "  FAIL  rj_memory_not_enough : refused after the calculation started"; FAIL=$((FAIL+1)); fi
+
+echo "=== A94 : the input key review ((internal review))"
+P1D=../../inputs/p1_1ppm
+# configuration.s_range [first, last] in place of nstate (an old nstate refused with the new form), its forms
+reject_case p1_cce2_single rj_a94_nstate 'input key "configuration.nstate" is now "configuration.s_range"' \
+  "d['configuration'].pop('s_range'); d['configuration']['nstate'] = 2; d['__keep_old__'] = ['nstate']"
+reject_case p1_cce2_single rj_s_range_number 'configuration.s_range must be [first, last], two integers of 1 or more with first <= last (both included), a list also for one ([n, n])' \
+  "d['configuration']['s_range'] = 2"
+reject_case p1_cce2_single rj_s_range_reversed 'configuration.s_range must be [first, last]' "d['configuration']['s_range'] = [2, 1]"
+reject_case p1_cce2_single rj_s_range_zero 'configuration.s_range must be [first, last]' "d['configuration']['s_range'] = [0, 2]"
+# configuration.seed: a number (the first configuration's) or one per configuration
+reject_case natab_cce2_hahn rj_seed_list_length 'configuration.seed as a list has one seed per configuration, 1 here' \
+  "d['configuration']['seed'] = [19, 20]"
+reject_case natab_cce2_hahn rj_seed_list_entry 'configuration.seed[0] must be an integer' "d['configuration']['seed'] = ['19']"
+# a file the input names and the run reads that does not open: refused (until A94 a warning, and states or axes drawn
+# from the seed, or a default)
+reject_case p1_cce2_single rj_missing_state_file "configuration.bath_state_file[0]: cannot read \"$P1D/state_3\"" \
+  "d['configuration']['s_range'] = [1, 3]"
+reject_case p1_cce2_single rj_missing_state_name_s "configuration.bath_state_file[0]: cannot read \"$P1D/st2ate\"" \
+  "d['configuration']['bath_state_file'] = ['$P1D/st{s}ate']; d['configuration']['s_range'] = [2, 2]"
+reject_case p1_cce2_single rj_missing_axis_file "configuration.defect_axis_file[0]: cannot read \"$P1D/no_axis\"" \
+  "d['configuration']['defect_axis_file'] = ['$P1D/no_axis']"
+reject_case p1_cce2_single rj_missing_defect_state "configuration.defect_state_file[0]: cannot read \"$P1D/no_onsite1\"" \
+  "d['configuration']['defect_state_file'] = ['$P1D/no_onsite']"
+reject_case natab_cce2_hahn rj_missing_bathfile 'configuration.bathfile[0]: cannot read "no_bath"' "d['configuration']['bathfile'] = ['no_bath']"
+reject_case natab_cce2_hahn rj_missing_gyrofile 'configuration.gyrofile: cannot read "no_gyro"' "d['configuration']['gyrofile'] = 'no_gyro'"
+reject_case hbn_cce2_hf3_qd2 rj_missing_hyperfine_file 'hamiltonian.common.hyperfine.file: cannot read "no_hf"' \
+  "d['hamiltonian']['common']['hyperfine']['file'] = 'no_hf'"
+reject_case hbn_cce2_hf3_qd2 rj_missing_quadrupole_file 'hamiltonian.common.quadrupole.file: cannot read "no_qd"' \
+  "d['hamiltonian']['common']['quadrupole']['file'] = 'no_qd'"
+reject_case p1_pcce2_sk2 rj_missing_pcce_cache 'cluster.pcce.cache.file: cannot read "no_cache"' \
+  "d['pcce']['cache'] = {'mode': 'read', 'file': 'no_cache'}"
+# the ensemble reads no state files: reported, not checked
+accept_same natab_cce2_hahn ac_ensemble_state_file "d['configuration']['bath_state_file'] = ['no_state_']" "pass"
+grep -qF 'Warning: input key "configuration.bath_state_file" is not used by this run: the ensemble' \
+     "$WORK/accepted_forms/proc_ac_ensemble_state_file" \
+  && { echo "  PASS  ac_ensemble_state_file warning"; PASS=$((PASS+1)); } \
+  || { echo "  FAIL  ac_ensemble_state_file warning : see $WORK/accepted_forms/proc_ac_ensemble_state_file"; FAIL=$((FAIL+1)); }
+# the Qubit.file form is a Qubit.qubit entry (G12); a qubit's detuning is a number (G21); a gyro takes a unit (G20)
+reject_case natab_cce2_hahn rj_a94_qubit_file 'input key "Qubit.file" is now an entry of Qubit.qubit' \
+  "q = d['Qubit']; q['file'] = q.pop('qubit')[0]['file']; d['__keep_old__'] = ['Qubit.file']"
+reject_case natab_cce2_hahn rj_a94_qubit_spin 'input key "Qubit.spin" is now the "spin" of the Qubit.qubit entry' "d['Qubit']['spin'] = 1.0"
+reject_case natab_cce2_hahn rj_a94_qubit_name 'input key "Qubit.name" is now the "name" of the Qubit.qubit entry' "d['Qubit']['name'] = 'NV'"
+reject_case natab_cce2_hahn rj_qubit_detuning_list 'Qubit.qubit[0].detuning is a number (kHz) or {"value": ..., "unit": ...}, not a list' \
+  "d['Qubit']['qubit'][0]['detuning'] = [0.0]"
+reject_case natab_cce2_hahn rj_qubit_gyro_unit 'Qubit.qubit[0].gyro.unit = "kHz/T" is not supported' \
+  "d['Qubit']['qubit'][0]['gyro'] = {'value': -17608.59705, 'unit': 'kHz/T'}"
+reject_case natab_gcce2_hahn rj_state_vector_component 'Qubit.alpha_state.vector[0] must be a number or [re, im]' \
+  "d['Qubit']['alpha_state'] = {'vector': [[1, 0, 0], 0, 0]}"
+# pulse.name: five names, and the count a name fixes (R1); finite pulses are gCCE's (R2)
+reject_case natab_cce2_hahn rj_pulse_name_unknown 'pulse.name must be Ramsey, HahnEcho, CPMG, WAHUHA or Manual (not "Hahn")' \
+  "d['pulse'] = {'count': 1, 'name': 'Hahn'}"
+reject_case natab_cce2_hahn rj_pulse_name_cpmg0 'pulse.name CPMG needs pulse.count 2 or more (this input has 0)' \
+  "d['pulse'] = {'count': 0, 'name': 'CPMG'}"
+reject_case natab_cce2_hahn rj_pulse_name_ramsey1 'pulse.name Ramsey needs pulse.count 0 (this input has 1)' \
+  "d['pulse'] = {'count': 1, 'name': 'Ramsey'}"
+reject_case natab_cce2_hahn rj_pulse_name_hahn3 'pulse.name HahnEcho needs pulse.count 1 (this input has 3)' \
+  "d['pulse'] = {'count': 3, 'name': 'HahnEcho'}"
+reject_case natab_cce2_hahn rj_ccce_duration 'method cCCE needs pulse.detuning_factor = 1 and pulse.duration = 0' \
+  "d['pulse'] = {'count': 1, 'duration': 30}"
+reject_case natab_cce2_hahn rj_ccce_detuning_factor 'method cCCE needs pulse.detuning_factor = 1 and pulse.duration = 0' \
+  "d['pulse'] = {'count': 1, 'detuning_factor': 2.0}"
+reject_case p1_cce2_single rj_mecce_duration 'method meCCE needs pulse.duration = 0' \
+  "d['method'] = 'meCCE'; d['pulse'] = {'count': 1, 'duration': 30}"
+# pulse.bath: spin is the driven spins' own, alphams/betams are levels (G6)
+reject_case p1_cce2_single rj_bath_pulse_spin 'pulse.bath.spin was removed' \
+  "d['pulse']['bath'] = {'count': 0, 'spin': 0.5}; d['__keep_old__'] = ['pulse.bath']"
+reject_case p1_cce2_single rj_bath_pulse_alphams 'pulse.bath.alphams and betams are now pulse.bath.levels' \
+  "d['pulse']['bath'] = {'count': 0, 'alphams': 0.5}; d['__keep_old__'] = ['pulse.bath']"
+reject_case p1_cce2_single rj_bath_pulse_levels 'pulse.bath.levels must be [m_a, m_b]' "d['pulse']['bath'] = {'count': 0, 'levels': 0.5}"
+# cluster.pcce.print_trials is the number printed (G7)
+reject_case p1_pcce2_sk2 rj_print_limit 'cluster.pcce.print_limit is now cluster.pcce.print_trials' "d['pcce']['print_limit'] = 5"
+reject_case p1_pcce2_sk2 rj_print_trials_bool 'cluster.pcce.print_trials is a number' "d['pcce']['print_trials'] = True"
+# bundle connections checked can be written; it takes no rdip (G8)
+reject_case natab_cce2_hahn rj_connections_checked_rdip 'cluster.bundle.connections checked takes no rdip' \
+  "d['cluster_mode'] = 'bundle'; d['bundle'] = {'max_dim': 8, 'connections': 'checked'}"
+# Defect: the axis belongs to zfs (G5), value or values (R3), units with their case (R3)
+reject_case p1_cce2_single rj_defect_axis '"Defect.species[0].axis" is now "zfs.axis"' "d['Defect']['species'][0]['axis'] = [1, 1, 1]; d['__keep_old__'] = ['axis']"
+reject_case p1_cce2_single rj_defect_zfs_no_axis 'Defect.species[P1].zfs uses the D form but zfs.axis is missing' \
+  "d['Defect']['species'][0]['zfs'] = {'D': 0.0, 'unit': 'MHz'}"
+reject_case p1_cce2_single rj_defect_value_and_values 'Defect.species[P1].detuning has both "value" and "values"' \
+  "r = d['Defect']['species'][0]['detuning']; d['Defect']['species'][0]['detuning'] = {'values': r, 'value': r, 'unit': 'MHz'}"
+reject_case p1_cce2_single rj_defect_unit_case 'Defect.species[P1].detuning.unit "mhz" is written "MHz"' \
+  "r = d['Defect']['species'][0]['detuning']; d['Defect']['species'][0]['detuning'] = {'values': r, 'unit': 'mhz'}"
+# the hamiltonian sections stay named by method (G1 reverted, 2026-10-17): A94's corrections and dissipation are refused
+reject_case natab_cce2_hahn rj_hamiltonian_corrections_section 'hamiltonian.corrections is now "hamiltonian.cCCE"' \
+  "d['hamiltonian'] = {'corrections': {'knight': False}}"
+reject_case p1_cce2_single rj_hamiltonian_dissipation_section 'hamiltonian.dissipation is now "hamiltonian.meCCE" or "hamiltonian.megCCE"' \
+  "d['method']='meCCE'; d['hamiltonian'] = {'dissipation': {'jump_operators': []}}"
+# cluster.adaptive: workdir (G10), keys with _ (G23)
+ADB="d['cluster_mode'] = 'bundle'; d['bundle'] = {'max_dim': 8}; d.pop('rdip')"
+reject_case natab_cce2_hahn rj_adaptive_output 'cluster.adaptive.output is now cluster.adaptive.workdir' \
+  "$ADB; d['adaptive'] = {'output': 'x', 'atol': 1e-3, 'rtol': 0}"
+reject_case natab_cce2_hahn rj_adaptive_dash_key 'cluster.adaptive.max-rounds is spelled "max_rounds" in the input' \
+  "$ADB; d['adaptive'] = {'workdir': 'x', 'atol': 1e-3, 'rtol': 0, 'max-rounds': 2}"
+
+# accept_runs <case> <name> <python body>: the body writes inputs with put(tag, d) (outputs <w>/<tag>_...) and names output
+# pairs with same(a, b) (two output names, byte for byte the same); every input runs, every pair is compared
+accept_runs(){
+    local case="$1" name="$2" body="$3"
+    local w="$WORK/a94_forms/$name" c="$REPO/test/code_verification/check_numerics/cases/$case" ok=1 a b n=0 f
+    rm -rf "${w:?}"; mkdir -p "$w"
+    python3 - "$c/ccein.json" "$w" <<PY || ok=0
+import copy, json, os, sys; from input_layout import flat, nest
+src, w = sys.argv[1:3]
+base = flat(json.load(open(src)))
+pairs = []
+def put(tag, d):
+    d = copy.deepcopy(d); d["outfile"] = f"{w}/{tag}"
+    json.dump(nest(d), open(f"{w}/{tag}.json", "w"), indent=1)
+def same(a, b): pairs.append(f"{a} {b}")
+d = copy.deepcopy(base)
+$body
+open(f"{w}/pairs", "w").write("\n".join(pairs) + "\n")
+PY
+    for f in "$w"/*.json; do
+        ( cd "$c" && "$MPIRUN" -n 1 "$BIN_DEV" -f "$f" > "${f%.json}.proc" 2>&1 < /dev/null ) || { ok=0; echo "        $(basename "$f") exited $?"; }
+    done
+    while read -r a b; do
+        [ -n "$a" ] || continue
+        for f in wiDiv noDiv; do
+            n=$((n+1)); cmp -s "$w/${a}_$f" "$w/${b}_$f" || { ok=0; echo "        ${a}_$f != ${b}_$f"; }
+        done
+    done < "$w/pairs"
+    [ $n -gt 0 ] || ok=0
+    if [ $ok -eq 1 ]; then echo "  PASS  $name"; PASS=$((PASS+1)); else echo "  FAIL  $name : see $w"; FAIL=$((FAIL+1)); fi
+}
+# states drawn from the seed (no state files): s_range [2, 3] calculates states 2 and 3 of a run of [1, 3]
+accept_runs p1_cce2_single ac_s_range_tail "
+d['nstep'] = 40; d['configuration'].pop('bath_state_file')
+d['configuration']['s_range'] = [1, 3]; put('all', d)
+d['configuration']['s_range'] = [2, 3]; put('tail', d)
+same('all_state2', 'tail_state2'); same('all_state3', 'tail_state3')"
+# {s} in a state file name: the same files as the number appended
+accept_runs p1_cce2_single ac_state_name_s "
+d['nstep'] = 40; put('append', d)
+d['configuration']['bath_state_file'] = ['$P1D/state_{s}']; put('braces', d)
+same('append_state1', 'braces_state1'); same('append_state2', 'braces_state2')"
+# configuration.seed with k_range: a number is the first configuration's, k takes seed + (k - first); a list one per k
+accept_runs p1_cce2_single ac_seed_of_a_range "
+d['nstep'] = 40; c = d['configuration']; c.pop('bath_state_file'); c['s_range'] = [1, 1]
+for k in (1, 2): os.symlink(os.path.abspath(c['bathfile'][0]) if os.path.isabs(c['bathfile'][0]) else
+                            os.path.normpath(os.path.join(os.path.dirname(src), c['bathfile'][0])), f'{w}/bath_{k}')
+c['bathfile'] = [f'{w}/bath_{{k}}']; c['k_range'] = [1, 2]; c['seed'] = 19; put('number', d)
+c['seed'] = [19, 20]; put('list', d)
+c['seed'] = [5, 20]; put('list5', d)
+c.pop('k_range'); c['bathfile'] = [f'{w}/bath_2']; c['seed'] = 20; put('alone', d)
+same('number_k2_state1', 'alone_state1'); same('list_k1_state1', 'number_k1_state1'); same('list_k2_state1', 'alone_state1')
+same('list5_k2_state1', 'alone_state1')"
+# the other forms that mean the same: value for values (R3), a gyro with its unit (G20), a complex vector with im 0
+# (G13), connections checked written (G8), a Defect species with detunings only needs no frame with the rotation on (G4)
+accept_same p1_cce2_single ac_defect_value \
+  "r = d['Defect']['species'][0]['detuning']; d['Defect']['species'][0]['detuning'] = {'value': r, 'unit': 'MHz'}" \
+  "r = d['Defect']['species'][0]['detuning']; d['Defect']['species'][0]['detuning'] = {'values': r, 'unit': 'MHz'}"
+accept_same natab_cce2_hahn ac_qubit_gyro_unit "d['Qubit']['qubit'][0]['gyro'] = {'value': -17608.597050, 'unit': 'radkHz/G'}" \
+  "d['Qubit']['qubit'][0]['gyro'] = -17608.597050"
+accept_same natab_gcce2_hahn ac_state_vector_complex "d['Qubit']['alpha_state'] = {'vector': [[1, 0], [0, 0], 0]}" \
+  "d['Qubit']['alpha_state'] = {'vector': [1, 0, 0]}"
+accept_same natab_cce2_hahn ac_connections_checked \
+  "d['cluster_mode'] = 'bundle'; d['bundle'] = {'max_dim': 64, 'connections': 'checked'}; d.pop('rdip'); d['nstep'] = 20; d['rbath'] = 10" \
+  "d['cluster_mode'] = 'bundle'; d['bundle'] = {'max_dim': 64}; d.pop('rdip'); d['nstep'] = 20; d['rbath'] = 10"
+# A96: connections checked with bundles of more than one site (max_dim 8, merge_cutoff 1) ran its audit through calculate()
+# without clusters and stopped with a segmentation fault; it runs to the end and reports the audit
+checked_merged(){
+    local w="$WORK/checked_merged" ok=1; rm -rf "${w:?}"; mkdir -p "$w"
+    python3 - "$REPO/test/cluster_verification/check_bundle/checked_ensemble.json" "$w" <<'PY'
+import json, sys
+src, w = sys.argv[1:3]
+d = json.load(open(src))
+d["cluster"]["bundle"] = {"max_dim": 8, "merge_cutoff": 1.0}
+d["output"]["file"] = f"{w}/checked"
+json.dump(d, open(f"{w}/checked.json", "w"), indent=1)
+PY
+    ( cd "$REPO" && "$MPIRUN" -n 1 "$BIN_DEV" -f "$w/checked.json" > "$w/proc" 2>&1 < /dev/null ) || ok=0
+    grep -q '^\[adaptive-check\] status=' "$w/proc" || ok=0
+    [ -s "$w/checked_wiDiv" ] || ok=0
+    if [ $ok -eq 1 ]; then echo "  PASS  checked_merged (connections checked, bundles of several sites)"; PASS=$((PASS+1))
+    else echo "  FAIL  checked_merged : see $w/proc"; FAIL=$((FAIL+1)); fi
+}
+checked_merged
+accept_same p1_cce2_single ac_defect_frame_not_needed \
+  "d['nstep'] = 40; d['coordinate_frame_rotation'] = {'enabled': True, 'qubit_axis': [0.0, 0.0, 1.0]}" "d['nstep'] = 40"
 
 echo
 echo "==========================================="

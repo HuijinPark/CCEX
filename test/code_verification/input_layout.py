@@ -13,9 +13,13 @@ flat form still applies; nest(d) puts every flat name back into its block, as CC
   frame          coordinate_frame_rotation -> rotation
   Defect.species n_nuclear_spins -> n_onsite_spins, n_configurations -> n_axis_states
 
+A94 (2026-10-16): nest also writes the forms A94 asks for: configuration.nstate N as s_range [1, N] (0: left out, the
+ensemble), the Qubit.file form ({"file", "spin", "name"} in the Qubit block) as a Qubit.qubit entry, a Defect species'
+axis as zfs.axis of the D form (left out without one), pulse.bath.alphams / betams as levels (pulse.bath.spin left out).
+
 A refusal check of an old place keeps it: the names in d["__keep_old__"] (a list) are left where they are.
 """
-CONFIGURATION = ("gyrofile", "bathfile", "bath_shift", "bath_state_file", "nstate", "seed")
+CONFIGURATION = ("gyrofile", "bathfile", "bath_shift", "bath_state_file", "nstate", "s_range", "seed")   # nstate: s_range (A94)
 EXECUTION = ("backend", "gpu_options", "propagator", "evolution", "evolution_update", "gcce_refinement",
              "column_evolution", "profile")
 CLUSTER = {"cluster_mode": "mode", "pcce": "pcce", "bundle": "bundle", "adaptive": "adaptive"}
@@ -46,7 +50,31 @@ def nest(d):
             for old, new in SPECIES.items():
                 if isinstance(sp, dict) and old in sp and old not in keep:
                     sp[new] = sp.pop(old)
+            # A94 (G5): the symmetry axis is zfs.axis of the D form (left out where nothing used it)
+            if isinstance(sp, dict) and "axis" in sp and "axis" not in keep:
+                axis, zfs = sp.pop("axis"), sp.get("zfs")
+                if isinstance(zfs, dict) and "D" in zfs:
+                    zfs.setdefault("axis", axis)
     conf = d.get("configuration")
+    if isinstance(conf, dict) and "nstate" in conf and "nstate" not in keep:      # A94
+        n = conf.pop("nstate")
+        if n:
+            conf["s_range"] = [1, n]
+    q = d.get("Qubit")
+    if isinstance(q, dict) and "file" in q and "Qubit.file" not in keep:          # A94 (G12)
+        old = q.get("qubit")
+        entry = dict(old[0]) if isinstance(old, list) and len(old) == 1 and isinstance(old[0], dict) else {}
+        entry.pop("xyz", None)
+        entry["file"] = q.pop("file")
+        for k in ("name", "spin"):
+            if k in q:
+                entry[k] = q.pop(k)
+        q["qubit"] = [entry]
+    pb = d.get("pulse", {}).get("bath") if isinstance(d.get("pulse"), dict) else None
+    if isinstance(pb, dict) and "pulse.bath" not in keep:                         # A94 (G6)
+        pb.pop("spin", None)
+        if "alphams" in pb or "betams" in pb:
+            pb["levels"] = [pb.pop("alphams", 0.5), pb.pop("betams", -0.5)]
     if isinstance(conf, dict):
         for k in ("bath_state_file", "defect_axis_file", "defect_state_file"):
             if isinstance(conf.get(k), str) and k not in keep:

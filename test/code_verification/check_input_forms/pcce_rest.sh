@@ -39,10 +39,10 @@ for name in ("bath_DiaP1_1ppm_1", "state_1", "state_2", "avaax_nav12"):
     open("cut/" + name, "w").writelines(l for i, l in enumerate(lines) if i not in drop)
 for tag in ("full", "cut"):
     c = json.loads(json.dumps(case))
-    c["cluster"]["pcce"].update(partition_size=sk, trials=100, max_iterations=100, print_trials=False)
-    c["Qubit"]["file"] = src + "bath_DiaP1_1ppm_Defect"
+    c["cluster"]["pcce"].update(partition_size=sk, trials=100, max_iterations=100, print_trials=0)
+    c["Qubit"]["qubit"] = [{"file": src + "bath_DiaP1_1ppm_Defect"}]
     c["configuration"].update(gyrofile=src + "DiaP1_gyro", bathfile=[tag + "/bath_DiaP1_1ppm_1"],
-                              bath_state_file=[tag + "/state_"], defect_axis_file=[tag + "/avaax_nav12"], nstate=2)
+                              bath_state_file=[tag + "/state_"], defect_axis_file=[tag + "/avaax_nav12"], s_range=[1, 2])
     c["nstep"] = 50
     c["output"] = {"savemode": "coherence", "file": "./out/" + tag}
     json.dump(c, open(tag + ".json", "w"), indent=1)
@@ -55,6 +55,11 @@ run_ccex "$BIN_DEV" full.json full.log || ok=0
 grep -q "JOB DONE" full.log || ok=0
 if [ $ok -eq 1 ]; then echo "  PASS  P1 $nsel spins, $rest left over by partition_size 3: the run with their states in the files finishes"; PASS=$((PASS+1))
 else echo "  FAIL  P1 (see $W/full.log)"; tail -20 full.log | sed 's/^/      /'; FAIL=$((FAIL+1)); fi
+
+# A89: the default log names them, once: "pCCE spins left out : <rest> of <selected> (partition_size 3), ..."
+if [ "$(grep -c "^      pCCE spins left out : $rest of $nsel (partition_size 3), the last read" full.log)" = 1 ]; then
+    echo "  PASS  P1 log: $(grep -m1 'pCCE spins left out' full.log | sed 's/^ *//')"; PASS=$((PASS+1))
+else echo "  FAIL  P1 log has no single 'pCCE spins left out : $rest of $nsel' line (see $W/full.log)"; FAIL=$((FAIL+1)); fi
 
 run_ccex "$BIN_DEV" cut.json cut.log
 for s in 1 2; do cmp_raw "P2 state $s: == the bath without the $rest left-over spins" "out/full_state$s" "out/cut_state$s"; done

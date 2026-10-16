@@ -379,13 +379,26 @@ NativeResult run_native(const std::vector<std::string>& command, const std::stri
 namespace adaptive {
 namespace {
 // the input keys that name files, as paths into the input's blocks (A47; the configuration block A64); the order is the
-// manifest's
+// manifest's. {"Qubit", "qubit", "file"} is the "file" of each entry of the list Qubit.qubit (A94; Qubit.file before).
 const std::vector<std::vector<const char*>> kInputFiles = {
-    {"configuration", "gyrofile"}, {"Qubit", "file"}, {"configuration", "bathfile"}, {"configuration", "bath_state_file"},
+    {"configuration", "gyrofile"}, {"Qubit", "qubit", "file"}, {"configuration", "bathfile"}, {"configuration", "bath_state_file"},
     {"configuration", "defect_state_file"},
     {"configuration", "defect_axis_file"}, {"hamiltonian", "common", "hyperfine", "file"},
     {"hamiltonian", "common", "quadrupole", "file"},
     {"hamiltonian", "common", "quadrupole", "file_without_defect"}};
+
+// the file of state s of a bath_state_file or defect_state_file name, as CCEX opens it (stateFileName, general.cpp, A94):
+// {s} is s, {{s}} a literal {s}, and a name without {s} has s appended
+std::string state_file_name(const std::string& name, int s) {
+    std::string out;
+    bool found = false;
+    for (std::size_t i = 0; i < name.size();) {
+        if (!name.compare(i, 5, "{{s}}")) { out += "{s}"; i += 5; }
+        else if (!name.compare(i, 3, "{s}")) { out += std::to_string(s); i += 3; found = true; }
+        else out += name[i++];
+    }
+    return found ? out : out+std::to_string(s);
+}
 
 std::string parent_of(const std::string& path) {
     const std::size_t slash = path.rfind('/');
@@ -477,9 +490,17 @@ Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector
     for (const std::vector<const char*>& key : kInputFiles) {
         std::vector<std::string> paths;
         const Value* at = &cfg;
-        for (const char* step : key)
-            at = at && at->kind() == Value::Kind::Object ? at->find(step) : nullptr;
-        if (at && at->kind() != Value::Kind::Null) {
+        const bool qubitEntries = key.size() == 3 && std::string(key[1]) == "qubit";
+        for (std::size_t i = 0; i < (qubitEntries ? 2 : key.size()); ++i)
+            at = at && at->kind() == Value::Kind::Object ? at->find(key[i]) : nullptr;
+        if (qubitEntries) {
+            if (at && at->kind() == Value::Kind::Array)
+                for (std::size_t i = 0; i < at->size(); ++i)
+                    if (at->at(i).kind() == Value::Kind::Object)
+                        if (const Value* file = at->at(i).find("file"))
+                            if (file->kind() == Value::Kind::String)
+                                paths.push_back(file->as_string());
+        } else if (at && at->kind() != Value::Kind::Null) {
             const Value& given = *at;
             if (given.kind() == Value::Kind::String) {
                 paths.push_back(given.as_string());
@@ -495,7 +516,7 @@ Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector
             for (const std::string& path : paths)
                 for (int state : states)
                     if (state != 0)                 // Python's "for s in states if s"
-                        spread.push_back(path+std::to_string(state));
+                        spread.push_back(state_file_name(path, state));
             paths = spread;
         }
         for (std::string path : paths) {

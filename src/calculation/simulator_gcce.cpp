@@ -186,9 +186,9 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
     const bool recursivePhases = (strcasecmp(cnf->evolution_update,"recursive")==0);   // A16 b, A18; propagator=eigen (main.cpp)
     if (useVector){
         if (isEnsemble){
-            fprintf(stderr,"Error : evolution=vector needs a pure rho0, but nstate=0 "
-                           "(ensemble) makes the bath density matrix mixed. "
-                           "Use nstate > 0, or evolution=matrix.\n");
+            fprintf(stderr,"Error : evolution=vector needs a pure rho0, but the ensemble (no configuration.s_range) "
+                           "makes the bath density matrix mixed. "
+                           "Use configuration.s_range, or evolution=matrix.\n");
             exit(1);
         }
         if (strcasecmp(Config_getPropagator(cnf),"expm")==0){

@@ -2,9 +2,9 @@
   "method": "cCCE",
   "quantity": "coherence",
   "Qubit": {
-    "file": "../../inputs/vp_10ppm/bath_DiaVp_10ppm_Defect",
-    "alphams": -1,
-    "betams": 0
+    "qubit": [{"file": "../../inputs/vp_10ppm/bath_DiaVp_10ppm_Defect"}],
+    "alpha_state": {"ms": [-1]},
+    "beta_state": {"ms": [0]}
   },
   "configuration": {
     "gyrofile": "../../inputs/vp_10ppm/DiaVp_gyro",
@@ -12,7 +12,7 @@
       "../../inputs/vp_10ppm/bath_DiaVp_10ppm_1"
     ],
     "bath_state_file": ["../../inputs/vp_10ppm/state_"],
-    "nstate": 1,
+    "s_range": [1, 1],
     "seed": 19
   },
   "order": 2,

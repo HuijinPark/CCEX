@@ -20,7 +20,7 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'check_gpu'))
-from benchmark import INPUTS, REPO, compare, parse_profiles, absolute_paths, get, put
+from benchmark import INPUTS, REPO, a94, compare, parse_profiles, absolute_paths, get, put
 
 # name, method folder, nstate file, sites, npulse, nstep, ranks
 CONDITIONS = [
@@ -42,8 +42,8 @@ def prepare(method, nstate, sites, npulse, nstep, directory):
     source = INPUTS/f'Diamond_NV_P1_10ppm_{method}'/'inputfiles'/f'ccein_nstate{nstate}.json'
     config = json.loads(source.read_text())
     config = absolute_paths(config, source.parent.parent)
-    origin = ([float(v) for v in Path(config['Qubit']['file']).read_text().split()[:3]] if get(config, 'Qubit.file')
-              else config['Qubit']['qubit'][0]['xyz'])
+    q = config['Qubit']['qubit'][0]   # A94: the qubit of a position file is a Qubit.qubit entry
+    origin = [float(v) for v in Path(q['file']).read_text().split()[:3]] if q.get('file') else q['xyz']
     rows = Path(config['configuration']['bathfile'][0]).read_text().splitlines()[1:]
     near = sorted(sorted(enumerate(rows), key=lambda r: math.dist([float(v) for v in r[1].split()[:3]], origin))[:sites])
     directory.mkdir(parents=True, exist_ok=False)
@@ -69,7 +69,7 @@ def check_backends(directory, backend, seen):
 def run(binary, config, directory, backend, ranks, mpirun, timeout):
     directory.mkdir(parents=True, exist_ok=False)
     config = put(config, {'backend': backend, 'outfile': str(directory/'coherence')})   # execution.backend, output.file (A65)
-    (directory/'input.json').write_text(json.dumps(config, indent=2)+'\n')
+    (directory/'input.json').write_text(json.dumps(a94(config), indent=2)+'\n')   # the A94 forms
     command = [mpirun, '-n', str(ranks), str(binary), '-f', str(directory/'input.json')]
     start = time.perf_counter()
     with (directory/'run.log').open('w') as log:

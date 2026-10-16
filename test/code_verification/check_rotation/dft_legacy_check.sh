@@ -69,9 +69,9 @@ dest, hf, qd, outfile, hex_dir = sys.argv[1:6]
 cfg = {
     "method"    : "cCCE",
     "quantity"  : "coherence",
-    "Qubit"     : {"file": hex_dir + "/defect", "alphams": 1, "betams": 0},
+    "Qubit"     : {"file": hex_dir + "/defect", "alpha_state": {"ms": [1]}, "beta_state": {"ms": [0]}},
     "configuration" : {"gyrofile": hex_dir + "/../ensemble_data/Gyro_h_BN", "bathfile": [hex_dir + "/bath_1"],
-                       "nstate": 0, "seed": 1},
+                       "seed": 1},
     "order"     : 1,
     "bfield"    : 30000,
     "rbath"     : 15,
