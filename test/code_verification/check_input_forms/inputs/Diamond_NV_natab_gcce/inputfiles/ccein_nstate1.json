@@ -1,9 +1,12 @@
 {
     "method"        : "gCCE",
     "quantity"      : "coherence",
-
-    "gyrofile"      : "./inputfiles/gyro_13C",
-    "bathfile"      : ["./inputfiles/bath_Diamond_NV_natab_1"],
+    "configuration" : {
+        "gyrofile"      : "./inputfiles/gyro_13C",
+        "bathfile"      : ["./inputfiles/bath_Diamond_NV_natab_1"],
+        "nstate"        : 1,
+        "seed"          : 1
+    },
 
     "order"         : 2,
     "bfield"        : 300,
@@ -14,9 +17,6 @@
     "nstep"         : 30,
 
     "pulse"         : {"count": 1},
-
-    "nstate"        : 1,
-    "seed"          : 1,
 
     "Qubit" : {
         "qubit"  : [
@@ -38,6 +38,5 @@
             }
         ]
     },
-
-    "outfile"       : "./results/nstate1/raw/gCCE2_Diamond_NV_natab"
+    "output"        : {"file": "./results/nstate1/raw/gCCE2_Diamond_NV_natab"}
 }

@@ -1,3 +1,7 @@
+/**
+ * @file bundle_contributions.h
+ * @brief Bundle clustering: the per-cluster contributions (output.cluster_contributions), a diagnostic.
+ */
 #ifndef CCEX_CLUSTER_CONTRIBUTIONS_H
 #define CCEX_CLUSTER_CONTRIBUTIONS_H
 #include "../../calculation/simulator.h"

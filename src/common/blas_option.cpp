@@ -1,3 +1,7 @@
+/**
+ * @file blas_option.cpp
+ * @brief The optional external BLAS/LAPACK (Intel MKL) calls; empty without CCEX_BLAS_DIRECT.
+ */
 // A46: the library calls of the external BLAS/LAPACK option (include/common/blas_option.h). Empty unless the build
 // defines CCEX_BLAS_DIRECT. A file of its own, so that the code around the call sites compiles as before.
 #include "common/blas_option.h"
@@ -20,6 +24,13 @@ void ccexBlas::hahnProduct(const Eigen::MatrixXcd& M, const Eigen::VectorXcd& d,
     scratch = M.array().rowwise() * d.transpose().array();
     X.resize(n,n);
     zgemm_("N","C",&n,&n,&n,&one,scratch.data(),&n,M.data(),&n,&zero,X.data(),&n);
+}
+
+void ccexBlas::product(const Eigen::MatrixXcd& A, const Eigen::MatrixXcd& B, Eigen::MatrixXcd& C){
+    const int m = int(A.rows()), k = int(A.cols()), n = int(B.cols());
+    const std::complex<double> one(1,0), zero(0,0);
+    C.resize(m,n);
+    zgemm_("N","N",&m,&n,&k,&one,A.data(),&m,B.data(),&k,&zero,C.data(),&m);
 }
 
 void CcexEigensolver::compute(const Eigen::MatrixXcd& H){

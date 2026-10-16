@@ -1,3 +1,7 @@
+/**
+ * @file base_run.h
+ * @brief Adaptive refinement: running CCEX once, the input manifest of a run and the cache of probe curves.
+ */
 // Running CCEX once and keeping what came back: the launcher, the clock, SHA-256,
 // the input manifest that identifies a run, and the on-disk cache of raw probe curves.
 #pragma once
@@ -78,7 +82,7 @@ using LocalRunner = std::function<NativeResult(const std::vector<std::string>& c
                                                const std::string& log_path)>;
 
 // Install a runner for the steps, or clear it by passing nothing. Used by
-// main.out --adaptive, which already is the binary a step would launch.
+// main.out with an "adaptive" block in its input, which already is the binary a step would launch.
 void set_local_runner(LocalRunner runner);
 
 // The environment a run gets: the parent's, with the thread counts pinned to one

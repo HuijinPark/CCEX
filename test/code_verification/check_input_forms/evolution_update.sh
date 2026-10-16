@@ -37,9 +37,9 @@ NUM="$REPO/test/code_verification/check_numerics"
 # into $W/<name>/out*; relative paths in the case's input are read from the case's folder
 run_case(){
     local d="$NUM/cases/$1" o="$W/$2"; mkdir -p "$o"
-    python3 -c 'import json,sys; j=json.load(open(sys.argv[1])); j.update(json.loads(sys.argv[3])); json.dump(j,open(sys.argv[2],"w"),indent=1)' \
+    python3 -c 'import json,sys; from input_layout import flat, nest; j=flat(json.load(open(sys.argv[1]))); j.update(json.loads(sys.argv[3])); j["outfile"]="out"; json.dump(nest(j),open(sys.argv[2],"w"),indent=1)' \
         "$d/ccein.json" "$o.json" "$3"
-    ( cd "$d" && "$MPIRUN" -n 2 "$BIN_DEV" -f "$o.json" -o "$o/out" > "$o.log" 2>&1 < /dev/null ) || { echo "    $2 exited $?"; return 1; }
+    ( cd "$d" && "$MPIRUN" -n 2 "$BIN_DEV" -f "$o.json" -o "$o" > "$o.log" 2>&1 < /dev/null ) || { echo "    $2 exited $?"; return 1; }
 }
 # same_bytes <dirA> <dirB>: the same output files, byte for byte
 same_bytes(){ [ -n "$(ls "$1")" ] && [ "$(ls "$1")" = "$(ls "$2")" ] && diff -rq "$1" "$2" >/dev/null; }
@@ -72,7 +72,7 @@ while read -r name case change; do
     ok=1
     run_case "$case" "e3_$name/default" "$change" || ok=0
     for v in exact recursive; do
-        run_case "$case" "e3_$name/$v" "$(python3 -c 'import json,sys; print(json.dumps(dict(json.loads(sys.argv[1]), evolution_update=sys.argv[2])))' "$change" $v)" || ok=0
+        run_case "$case" "e3_$name/$v" "$(python3 -c 'import json,sys; from input_layout import flat, nest; print(json.dumps(dict(json.loads(sys.argv[1]), evolution_update=sys.argv[2])))' "$change" $v)" || ok=0
     done
     d="$W/e3_$name"
     same_bytes "$d/default" "$d/recursive" || { echo "    $name: the default run is not an explicit recursive's bytes"; ok=0; }
@@ -87,11 +87,11 @@ done <<< "$SUPPORTED"
 
 # E4: without the key, exact where recursive does not exist (A29: silently, not refused)
 # name  case  changes  what the log names
-UNSUPPORTED="expm hbn_gcce2_oh {\"propagator\":\"expm\"} method=gCCE with propagator=expm"
+UNSUPPORTED="expm hbn_gcce2_oh {\"propagator\":\"expm\"} method=gCCE with execution.propagator=expm"
 while read -r name case change why; do
     ok=1
     run_case "$case" "e4_$name/default" "$change" || ok=0
-    run_case "$case" "e4_$name/exact" "$(python3 -c 'import json,sys; print(json.dumps(dict(json.loads(sys.argv[1]), evolution_update="exact")))' "$change")" || ok=0
+    run_case "$case" "e4_$name/exact" "$(python3 -c 'import json,sys; from input_layout import flat, nest; print(json.dumps(dict(json.loads(sys.argv[1]), evolution_update="exact")))' "$change")" || ok=0
     d="$W/e4_$name"
     same_bytes "$d/default" "$d/exact" || { echo "    $name: the default run is not an explicit exact's bytes"; ok=0; }
     grep -Eq '^ +evolution_update +: +exact' "$d/default.log" && grep -Fq "default ($why)" "$d/default.log" ||
@@ -130,12 +130,12 @@ NAMES=""
 while read -r name sys file change; do
     NAMES="$NAMES $name"; mkdir -p "$W/$name/out"; cp -r "$REG/Diamond_NV_P1_10ppm_$sys/inputfiles" "$W/$name/"
     python3 - "$W/$name" "$file" "$change" <<'PY2'
-import json, re, sys
+import json, re, sys; from input_layout import flat, nest
 d, file, change = sys.argv[1], sys.argv[2], json.loads(sys.argv[3])
-j = json.loads(re.sub(r"(?m)^\s*#.*$", "", open(f"{d}/inputfiles/{file}").read()))
+j = flat(json.loads(re.sub(r"(?m)^\s*#.*$", "", open(f"{d}/inputfiles/{file}").read())))
 j.update(change)
 for value in ("exact", "recursive"):
-    json.dump(dict(j, outfile=f"./out/{value}", evolution_update=value), open(f"{d}/{value}.json", "w"), indent=1)
+    json.dump(nest(dict(j, outfile=f"./out/{value}", evolution_update=value)), open(f"{d}/{value}.json", "w"), indent=1)
 PY2
 done <<< "$VARIANTS"
 for sys in $NAMES; do

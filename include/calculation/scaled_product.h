@@ -1,3 +1,7 @@
+/**
+ * @file scaled_product.h
+ * @brief A complex product that keeps its binary exponent apart, so that the cluster product does not underflow.
+ */
 #ifndef CCEX_SCALED_PRODUCT_H
 #define CCEX_SCALED_PRODUCT_H
 #include <algorithm>

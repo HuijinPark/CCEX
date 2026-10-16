@@ -1,3 +1,7 @@
+/**
+ * @file simulator_gcce_vector.cpp
+ * @brief Pieces of the gCCE evolution = vector time step.
+ */
 #include "../../include/calculation/simulator.h"
 
 // A16: two pieces of the evolution=vector step (propagateStateGcce), byte-identical to what they replace.

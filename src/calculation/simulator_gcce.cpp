@@ -1,3 +1,7 @@
+/**
+ * @file simulator_gcce.cpp
+ * @brief The gCCE coherence of one cluster (qubit and bath in the cluster space).
+ */
 #include "../../include/calculation/simulator.h"
 #include "../../include/calculation/hamiltonian.h"
 #include "../../include/common/memory.h"
@@ -5,6 +9,7 @@
 #include "../../include/calculation/gpu/eigen_refinement.h"
 #include "../../include/calculation/small_hamiltonian.h"
 #include "../../include/calculation/sparse_propagator.h"
+#include "../../include/calculation/simulator_gcce_bath.h"
 #ifdef CCEX_USE_CUDA
 #include "../../include/calculation/gpu/gpu_backend.h"
 #include <memory>
@@ -69,7 +74,7 @@ void prepareGcceWork(GcceWork* w, const MatrixXcd& Htot, bool useEigen, bool ref
     w->evalCorrections=Eigen::VectorXd::Zero(w->evals.size());
     try {if(refine)refineEigensystem(Htot,w->M,w->evals,w->evalCorrections,maxSweeps);}
     catch(const std::exception& error){
-        fprintf(stderr,"Error: gCCE eigensystem dim=%ld gcce_refinement.max_sweeps=%d: %s\n",
+        fprintf(stderr,"Error: gCCE eigensystem dim=%ld execution.gcce_refinement.max_sweeps=%d: %s\n",
             static_cast<long>(Htot.rows()),maxSweeps,error.what());
         MPI_Abort(MPI_COMM_WORLD,1);
     }
@@ -187,7 +192,7 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
             exit(1);
         }
         if (strcasecmp(Config_getPropagator(cnf),"expm")==0){
-            fprintf(stderr,"Error : evolution=vector requires propagator=eigen "
+            fprintf(stderr,"Error : execution.evolution=vector requires execution.propagator=eigen "
                            "(with expm the per-step matrix exponential dominates and "
                            "there is nothing to gain).\n");
             exit(1);
@@ -273,12 +278,12 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
     const auto prepareOnCpu=[&](){
     if (sparse){
         if (!useVector){
-            fprintf(stderr,"Error : propagator=sparse needs evolution=vector\n");
+            fprintf(stderr,"Error : execution.propagator=sparse needs execution.evolution=vector\n");
             ccexFatal();
         }
         double asym, scale;
         if (!csrFiniteHermitian(sw.H,asym,scale)){
-            fprintf(stderr,"Error : propagator=sparse : the gCCE Hamiltonian (dim %d) is not finite and Hermitian "
+            fprintf(stderr,"Error : execution.propagator=sparse : the gCCE Hamiltonian (dim %d) is not finite and Hermitian "
                            "(max|H-H^dag| = %.3e, max|H| = %.3e)\n",totdim,asym,scale);
             ccexFatal();
         }
@@ -289,6 +294,7 @@ MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Puls
         prepareGcceWork(&gw,Htot,strcasecmp(Config_getPropagator(cnf),"expm")!=0,
                         cnf->gcce_refinement,cnf->gcce_refinement_max_sweeps);
         prepareGccePulses(&gw,Upulses,pulse->npulse,bdim);
+        applyBathPulsesGcce(&gw,Upulses,ba,pulse);           // DEER: kron(U_q, U_b) where a bath spin is driven
     }
     };
     if (!useCuda) prepareOnCpu();
@@ -856,7 +862,7 @@ MatrixXcd cal_TDUpulse(QubitArray* qa, MatrixXcd Hq, Pulse* pulse, MatrixXcd ox,
     const int qdim = ox.rows();
     double dt = ptime / static_cast<double>(Nstep);
 
-     printf("Qubit Hamiltonian : \n");
+     printf("Qubit Hamiltonian :\n");
      std::cout << Hq << std::endl;
      printf("\n");
      std::cout << "Pulse angle: " << pulse_angle << "  rad"  << std::endl;

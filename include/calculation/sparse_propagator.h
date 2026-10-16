@@ -1,9 +1,13 @@
+/**
+ * @file sparse_propagator.h
+ * @brief propagator = sparse: exp(-i H tau) on a state vector by a Krylov expansion, without diagonalizing H.
+ */
 #ifndef __CCEX_SPARSE_PROPAGATOR_H_
 #define __CCEX_SPARSE_PROPAGATOR_H_
 #include "calculation/simulator.h"
 
 /**
- * A2 (improvements.md), propagator = sparse: exp(-i H tau) applied to a state vector without diagonalizing H. The cluster
+ * propagator = sparse: exp(-i H tau) applied to a state vector without diagonalizing H. The cluster
  * Hamiltonian is assembled as a sparse (CSR) matrix from its one- and two-spin terms - never as a dense matrix - and the
  * action of the exponential is a Lanczos (Krylov) expansion with an a-posteriori error estimate per substep
  * (sparse_propagator.cpp). Paths: the single-state cCCE (nstate > 0) and gCCE with evolution = vector, for clusters of

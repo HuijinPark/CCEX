@@ -2,7 +2,7 @@
 
     sh test/cluster_verification/check_adaptive/verify.sh unit        # build the driver (cpp/bin/ccex-adaptive) and its unit tests, run them
     sh test/cluster_verification/check_adaptive/verify.sh regress     # the merge policy against 33 recorded runs and their golden answers
-    sh test/cluster_verification/check_adaptive/verify.sh inprocess   # the driver inside bin/main.out, and from an "adaptive" block, against the separate one (11 cases), then probe_rotation.py
+    sh test/cluster_verification/check_adaptive/verify.sh inprocess   # the driver from an "adaptive" block inside bin/main.out against the separate one (11 cases), then probe_rotation.py
     sh test/cluster_verification/check_adaptive/verify.sh sanitize    # unit and regress again, built with ASan and UBSan
     sh test/cluster_verification/check_adaptive/verify.sh fuzz [SEED [COUNT]]   # random JSON through the reader and the writer
 

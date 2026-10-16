@@ -1,9 +1,13 @@
+/**
+ * @file small_hamiltonian.h
+ * @brief The cluster Hamiltonians of the CPU cCCE and gCCE paths without per-call allocations.
+ */
 #ifndef __CCEX_SMALL_HAMILTONIAN_H_
 #define __CCEX_SMALL_HAMILTONIAN_H_
 #include "calculation/simulator.h"
 
 /**
- * A25: the cluster Hamiltonians of the CPU cCCE and gCCE calculations, built with the arithmetic of HamilBath,
+ * The cluster Hamiltonians of the CPU cCCE and gCCE calculations, built with the arithmetic of HamilBath,
  * HamilQubitBathSecularApp, HamilQubit and HamilQubitBath (simulator_hamiltonian.cpp) - the same Eigen expressions on the
  * same types in the same order - without their per-call allocations: the spin operators are kept per dimension, the
  * pieces go into buffers kept from one cluster to the next, the dipolar tensor of a pair is formed once instead of

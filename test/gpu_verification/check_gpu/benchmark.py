@@ -17,13 +17,57 @@ import time
 
 REPO = Path(__file__).resolve().parents[3]
 INPUTS = REPO / 'test/code_verification/check_input_forms/inputs'
-# the input keys that name files, as dotted paths into the input's blocks (A47, 2026-10-13)
-FILE_KEYS = ('Qubit.file', 'gyrofile', 'Defect.axis_file', 'bath_state_file', 'Defect.state_file')
+# the input keys that name files, as dotted paths into the input's blocks (A47, 2026-10-13; the configuration block and
+# one state or axis file per bath file, A64)
+FILE_KEYS = ('Qubit.file', 'configuration.gyrofile', 'configuration.defect_axis_file', 'configuration.bath_state_file',
+             'configuration.defect_state_file')
+# A65 (2026-10-15): the keys of the execution, cluster, output and frame blocks by their names before, and their places
+# now (A64: the Defect files in the configuration block). get and put read an old first name as its place, and blocks()
+# moves a flat key a script set into its block (replacing what was there), just before an input is written.
+MOVED = {'backend': 'execution.backend', 'gpu_options': 'execution.gpu_options', 'propagator': 'execution.propagator',
+         'evolution': 'execution.evolution', 'evolution_update': 'execution.evolution_update',
+         'gcce_refinement': 'execution.gcce_refinement', 'column_evolution': 'execution.column_evolution',
+         'profile': 'execution.profile', 'cluster_mode': 'cluster.mode',
+         'add_subclusters': 'cluster.selection.add_subclusters', 'max_clusters_per_order': 'cluster.selection.max_per_order',
+         'pcce': 'cluster.pcce', 'bundle': 'cluster.bundle', 'adaptive': 'cluster.adaptive',
+         'probe_memory_gb': 'cluster.adaptive.probe_memory_gb', 'outfile': 'output.file', 'savemode': 'output.savemode',
+         'cluster_contributions': 'output.cluster_contributions', 'cluster_only': 'output.cluster_only',
+         'coordinate_frame_rotation': 'frame.rotation'}
+DEFECT_FILES = {'Defect.axis_file': 'configuration.defect_axis_file', 'Defect.state_file': 'configuration.defect_state_file'}
+
+
+def place(path):
+    """The dotted path of a key now: 'pcce.cache.mode' -> 'cluster.pcce.cache.mode', 'backend' -> 'execution.backend'."""
+    for old, new in DEFECT_FILES.items():
+        if path == old or path.startswith(old + '.'):
+            return new + path[len(old):]
+    first, dot, rest = path.partition('.')
+    return MOVED[first] + dot + rest if first in MOVED else path
+
+
+def blocks(config):
+    """config with every flat key of MOVED at its top level put into its block (A65)."""
+    out = json.loads(json.dumps(config))
+    for old in [k for k in out if k in MOVED]:
+        out = put(out, {old: out.pop(old)})
+    return out
+
+
+def absolute_paths(config, base):
+    """config with every file name of FILE_KEYS and configuration.bathfile, relative to base, made absolute (A64: the
+    state and axis files are lists, one per bath file). configuration.path is not used by the inputs read here."""
+    here = lambda p: str((base / p).resolve())
+    for key in FILE_KEYS + ('configuration.bathfile',):
+        given = get(config, key)
+        if given:
+            config = put(config, {key: [here(p) for p in given] if isinstance(given, list) else here(given)})
+    return config
 
 
 def get(config, path, default=None):
-    """config at a dotted path ('pcce.cache.mode'), or default."""
-    for key in path.split('.'):
+    """config at a dotted path ('cluster.pcce.cache.mode'; an old first name such as 'pcce' is read as its place), or
+    default."""
+    for key in place(path).split('.'):
         if not isinstance(config, dict) or key not in config:
             return default
         config = config[key]
@@ -31,10 +75,10 @@ def get(config, path, default=None):
 
 
 def put(config, changes):
-    """A deep copy of config with each dotted path set to its value (None removes it)."""
+    """A deep copy of config with each dotted path set to its value (None removes it); an old first name is its place."""
     out = json.loads(json.dumps(config))
     for path, value in changes.items():
-        *parents, last = path.split('.')
+        *parents, last = place(path).split('.')
         here = out
         for key in parents:
             here = here.setdefault(key, {})
@@ -110,12 +154,10 @@ def compare(reference, target, atol, rtol):
 def run(binary, source, directory, backend, args):
     directory.mkdir(parents=True, exist_ok=False)
     config = json.loads(source.read_text())
-    for key in FILE_KEYS:
-        if get(config, key):
-            config = put(config, {key: str((source.parent.parent / get(config, key)).resolve())})
-    config['bathfile'] = [str((source.parent.parent / p).resolve()) for p in config['bathfile']]
+    config = absolute_paths(config, source.parent.parent)
+    bath = config['configuration']
     if args.nearest_sites:
-        if len(config['bathfile']) != 1:
+        if len(bath['bathfile']) != 1:
             raise ValueError('--nearest-sites requires one bath file')
         if get(config, 'Qubit.qubit'):
             origin = config['Qubit']['qubit'][0]['xyz']
@@ -123,30 +165,30 @@ def run(binary, source, directory, backend, args):
             origin = [float(v) for v in Path(config['Qubit']['file']).read_text().split()[:3]]
             if len(origin)!=3:
                 raise ValueError('Cannot read qubit origin')
-        rows = Path(config['bathfile'][0]).read_text().splitlines()[1:]
+        rows = Path(bath['bathfile'][0]).read_text().splitlines()[1:]
         ranked = sorted(enumerate(rows),key=lambda item: sum(
             (float(v)-c)**2 for v,c in zip(item[1].split()[:3],origin)))
         selected = sorted(ranked[:args.nearest_sites])
         if len(selected) != args.nearest_sites:
             raise ValueError('Not enough bath sites')
-        bath = directory/'bath'
-        bath.write_text(f'{len(selected)+1}.0 0 0 0\n'+'\n'.join(row for _,row in selected)+'\n')
-        config['bathfile'] = [str(bath)]
+        nearest = directory/'bath'
+        nearest.write_text(f'{len(selected)+1}.0 0 0 0\n'+'\n'.join(row for _,row in selected)+'\n')
+        bath['bathfile'] = [str(nearest)]
         radius = max(math.dist([float(v) for v in row.split()[:3]],origin) for _,row in selected)+1
         config.update(order=args.nearest_sites,rbath=radius,rdip=2*radius)
-    config.update(backend=backend, profile=True, savemode=args.savemode, outfile=str(directory/'coherence'))
+    config = put(config, {'backend': backend, 'profile': True, 'savemode': args.savemode, 'outfile': str(directory/'coherence')})
     if args.pulses is not None:
         config = put(config, {'pulse.count': args.pulses})
     if args.steps is not None:
         config['nstep'] = args.steps
     if args.batch is not None:
-        config.setdefault('gpu_options', {})['evolution_batch_steps'] = args.batch
+        config = put(config, {'gpu_options.evolution_batch_steps': args.batch})
     if args.min_dim is not None:
-        config.setdefault('gpu_options', {})['min_dim'] = args.min_dim
+        config = put(config, {'gpu_options.min_dim': args.min_dim})
     if args.evolution is not None:
-        config['evolution'] = args.evolution
+        config = put(config, {'evolution': args.evolution})
     path = directory/'input.json'
-    path.write_text(json.dumps(config, indent=2)+'\n')
+    path.write_text(json.dumps(blocks(config), indent=2)+'\n')
     command = [str(binary), '-f', str(path)]
     if args.mpirun:
         command = [args.mpirun, '-n', str(args.ranks)] + command

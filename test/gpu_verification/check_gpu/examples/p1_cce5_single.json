@@ -6,10 +6,14 @@
     "alphams": -1,
     "betams": 0
   },
-  "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
-  "bathfile": [
-    "test/gpu_verification/check_gpu/examples/bath_p1_5"
-  ],
+  "configuration": {
+    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
+    "bathfile": [
+      "test/gpu_verification/check_gpu/examples/bath_p1_5"
+    ],
+    "nstate": 1,
+    "seed": 1
+  },
   "order": 5,
   "bfield": 292,
   "rbath": 59.66270215962017,
@@ -17,13 +21,11 @@
   "deltat": 0.0003,
   "nstep": 20,
   "pulse": {"count": 1},
-  "nstate": 1,
-  "seed": 1,
   "Defect": {
     "species": [
       {
         "name": "P1",
-        "n_nuclear_spins": 1,
+        "n_onsite_spins": 1,
         "types": [
           "15N"
         ],
@@ -33,7 +35,7 @@
         "gyros": [
           -2.71261804
         ],
-        "n_configurations": 4,
+        "n_axis_states": 4,
         "hyperfine": [
           [
             1,
@@ -99,9 +101,10 @@
       }
     ]
   },
-  "outfile": "bin/cce5_gpu_single",
-  "backend": "auto",
-  "profile": true,
-  "savemode": "coherence",
-  "gpu_options": {"evolution_batch_steps": 20, "min_dim": 256}
+  "output": {"file": "bin/cce5_gpu_single", "savemode": "coherence"},
+  "execution": {
+    "backend": "auto",
+    "gpu_options": {"evolution_batch_steps": 20, "min_dim": 256},
+    "profile": true
+  }
 }

@@ -1,3 +1,7 @@
+/**
+ * @file defect.cpp
+ * @brief The defects of the bath: extra spins, interactions and the random choice of axes.
+ */
 #include "../../include/physical/defect.h"
 #include "../../include/common/memory.h"
 #include "../../include/calculation/hamiltonian.h"
@@ -9,6 +13,7 @@
 // into the stream; main.cpp puts a repeated calculation back at the same place.
 static long paxesDraws = 0;
 long DefectArray_paxesDraws(){ return paxesDraws; }
+void DefectArray_resetPaxesDraws(){ paxesDraws = 0; }
 
 void DefectArray_setPaxesRandom(DefectArray* dfa, BathArray* ba){
 
@@ -558,7 +563,7 @@ void updateMainSpins_fromDefectArray(DefectArray* dfa, BathArray* ba){
                 // If the main spin is not an electron spin 
                 // and quadrupole already exist and zfs is given, then err
                 fprintf(stderr,"Error (updateMainSpins_fromDefectArray) : the defect's zfs tensor cannot be set to BathArray quad.\n");
-                fprintf(stderr,"Error (updateMainSpins_fromDefectArray) : Check if the spin is electron spin and quadrupole is given \n");
+                fprintf(stderr,"Error (updateMainSpins_fromDefectArray) : Check if the spin is electron spin and quadrupole is given\n");
                 exit(EXIT_FAILURE);
             }
         }
@@ -770,7 +775,7 @@ void updateOverhaus_qubit_sub(DefectArray* dfa, QubitArray* qa){
     
     if (verbosity && rank==0){
         printSubTitle("Update the overhauser field of QubitArray from the subspins of DefectArray");
-        printMessage(" * qubit - subspin : hypf of subspin (point-dipole approximation) \n");
+        printMessage(" * qubit - subspin : hypf of subspin (point-dipole approximation)\n");
     }
 
     int nbathspin = DefectArray_getNbathspin(dfa);
@@ -818,7 +823,7 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
     printStructElementChar("dfname",DefectArray_getDefect_idf_dfname(dfa,idf));
     printStructElementBool("apprx",DefectArray_getDefect_idf_apprx(dfa,idf));
     printStructElementInt("naddspin",DefectArray_getDefect_idf_naddspin(dfa,idf));
-    printf("      %-18s:   %d indexed configurations (1 ~ %d)\n", "navaax",
+    printf("      %-18s : %d indexed configurations (1 ~ %d)\n", "navaax",
            DefectArray_getDefect_idf_navaax(dfa,idf)-1,
            DefectArray_getDefect_idf_navaax(dfa,idf)-1);
 
@@ -843,10 +848,10 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
     printStructElementDouble1d("gyros (radkHz/G)",dfa->defect[idf]->gyros,DefectArray_getDefect_idf_naddspin(dfa,idf));
     printStructElementDouble1d("eqs (10e-30 m^2)",dfa->defect[idf]->eqs,DefectArray_getDefect_idf_naddspin(dfa,idf));
 
-    printf("      ________________________________________________________________\n\n");
-    printf("      Relative distance (A) : rxyz[iax][isp] \n");
-    printf("       - iax : principal axis index \n");
-    printf("       - isp : additional spin index \n");
+    printf("    ----------------------------------------------------------------------\n\n");
+    printf("      Relative distance (A) : rxyz[iax][isp]\n");
+    printf("        - iax : principal axis index\n");
+    printf("        - isp : additional spin index\n");
     for (int i=1; i<DefectArray_getDefect_idf_navaax(dfa,idf); i++){
         for (int j=0; j<DefectArray_getDefect_idf_naddspin(dfa,idf); j++){
             char message[100];
@@ -854,8 +859,8 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
             printStructElementDouble1d(message,DefectArray_getDefect_idf_iax_isp_rxyz(dfa,idf,i,j),3);            
         }
     }
-    printf("      ________________________________________________________________\n\n");
-    printf("      Hyperfine tensor (MHz) : hypf[iax][isp] \n");
+    printf("    ----------------------------------------------------------------------\n\n");
+    printf("      Hyperfine tensor (MHz) : hypf[iax][isp]\n");
     for (int i=1; i<DefectArray_getDefect_idf_navaax(dfa,idf); i++){
         for (int j=0; j<DefectArray_getDefect_idf_naddspin(dfa,idf); j++){
             char message[100];
@@ -867,8 +872,8 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
             }
         }
     }
-    printf("      ________________________________________________________________\n\n");
-    printf("      Electric field gradient (Hartree/Bohr_radius^2) : efg[iax][isp] \n");
+    printf("    ----------------------------------------------------------------------\n\n");
+    printf("      Electric field gradient (Hartree/Bohr_radius^2) : efg[iax][isp]\n");
     for (int i=1; i<DefectArray_getDefect_idf_navaax(dfa,idf); i++){
         for (int j=0; j<DefectArray_getDefect_idf_naddspin(dfa,idf); j++){
             char message[100];
@@ -881,7 +886,7 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
         }
     }
 
-    printf("      ________________________________________________________________\n\n");
+    printf("    ----------------------------------------------------------------------\n\n");
     printf("      Zero-field splitting tensor (MHz)\n");
     int izfs_begin = 1;
     int izfs_end = DefectArray_getDefect_idf_navaax(dfa,idf);
@@ -903,14 +908,14 @@ void DefectArray_reportDefect_idf(DefectArray* dfa, int idf){
         }
     }
 
-    printf("      ________________________________________________________________\n\n");
-    printf("      Detuning (MHz) : detuning[iax] \n");
+    printf("    ----------------------------------------------------------------------\n\n");
+    printf("      Detuning (MHz) : detuning[iax]\n");
     for (int i=1; i<DefectArray_getDefect_idf_navaax(dfa,idf); i++){
         char message[100];
         sprintf(message,"detuning[%d]",i);
         printStructElementDouble(message,DefectArray_getDefect_idf_iax_detuning(dfa,idf,i));
     }
-    printf("      ________________________________________________________________\n\n");
+    printf("    ----------------------------------------------------------------------\n\n");
 
 }
 
@@ -930,7 +935,7 @@ void DefectArray_reportPaxes(DefectArray* dfa){
         }
 
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printLine();
@@ -964,7 +969,7 @@ void DefectArray_reportSubbath_states(DefectArray* dfa){
         }
 
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
 
@@ -989,7 +994,7 @@ void DefectArray_reportNaddspins(DefectArray* dfa){
         }
 
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printLine();
@@ -1004,7 +1009,7 @@ void DefectArray_reportSubbath_i_props(DefectArray* dfa, int ibs, int isp){
     double gyro = BathSpin_getGyro(subspin);
     double* xyz = BathSpin_getXyz(subspin);
     int mainspidx = BathSpin_getMainspidx(subspin);
-    printf("      SubBath[%3d][%3d] %7s %7.3lf %7.3lf %7.3lf   ( S = %2.1f, gyro = %7.3lf , mainspidx = %d ) \n"\
+    printf("      SubBath[%3d][%3d] %7s %7.3lf %7.3lf %7.3lf   ( S = %2.1f, gyro = %7.3lf , mainspidx = %d )\n"\
     ,ibs,isp,name,xyz[0],xyz[1],xyz[2],spin,gyro, mainspidx);
 }
 
@@ -1038,7 +1043,7 @@ void DefectArray_reportSubbath_hypfs(DefectArray* dfa, int nqubit){
         }
 
         if (!verbosity && ibs==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printf("\n");
@@ -1070,7 +1075,7 @@ void DefectArray_reportSubbath_quads(DefectArray* dfa){
         }
 
         if (!verbosity && ibs==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printf("\n");
@@ -1103,7 +1108,7 @@ void DefectArray_reportSubbath_hypf_subs(DefectArray* dfa){
         }
 
         if (!verbosity && ibs==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printf("\n");
@@ -1136,7 +1141,7 @@ void DefectArray_reportSubbath_disorders(DefectArray* dfa){
         }
 
         if (!verbosity && ibs==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printf("\n");
@@ -1163,12 +1168,12 @@ void DefectArray_reportSubbath_props(DefectArray* dfa){
         }
 
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
 
     if (!isExist){
-        printf("       No sub-bath  \n");
+        printf("        No sub-bath\n");
     }
 
     printLine();

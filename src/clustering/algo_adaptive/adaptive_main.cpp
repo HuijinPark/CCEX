@@ -1,3 +1,7 @@
+/**
+ * @file adaptive_main.cpp
+ * @brief Adaptive refinement: the entry point, which reads the options and runs the merge policy.
+ */
 // bin/ccex-adaptive: the refinement driver, without Python (plan stage 1, Task 7).
 //
 // Structure C of the design: this program makes the decisions and launches the
@@ -34,19 +38,40 @@ struct Prepared {
     std::vector<int> states;
 };
 
-// The input may carry an "adaptive" object - that is how bin/main.out is asked to
-// refine without a command line. It is this run's request, not part of the
-// calculation: copied into a step's input.json it would ask the step to start a
-// refinement of its own. CCEX reads keys without regard to case ("Adaptive" until A47),
-// so any spelling is left out; so is a step's "adaptive": {"work_file"}.
+// The input may carry a cluster.adaptive object (a top-level "adaptive" until A65) - that is how bin/main.out is
+// asked to refine without a command line. It is this run's request, not part of the calculation: copied into a step's
+// input.json it would ask the step to start a refinement of its own. CCEX reads keys without regard to case
+// ("Adaptive" until A47), so any spelling is left out; so is a step's "adaptive": {"work_file"}. Its probe_memory_gb is
+// kept: it is the steps' setting (the Config reader's cluster.adaptive.probe_memory_gb).
+std::string lowered(std::string key) {
+    for (char& c : key)
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    return key;
+}
 adaptive::Value without_adaptive_block(const adaptive::Value& given) {
     adaptive::Value out = adaptive::Value::object();
     for (const std::string& key : given.keys()) {
-        std::string lower = key;
-        for (char& c : lower)
-            c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-        if (lower != "adaptive")
+        if (lowered(key) != "cluster" || given.at(key).kind() != adaptive::Value::Kind::Object) {
             out.set(key, given.at(key));
+            continue;
+        }
+        const adaptive::Value& block = given.at(key);
+        adaptive::Value kept = adaptive::Value::object();
+        for (const std::string& inner : block.keys()) {
+            if (lowered(inner) != "adaptive") {
+                kept.set(inner, block.at(inner));
+                continue;
+            }
+            if (block.at(inner).kind() != adaptive::Value::Kind::Object)
+                continue;
+            adaptive::Value probe = adaptive::Value::object();
+            for (const std::string& option : block.at(inner).keys())
+                if (lowered(option) == "probe_memory_gb")
+                    probe.set(option, block.at(inner).at(option));
+            if (!probe.keys().empty())
+                kept.set(inner, probe);
+        }
+        out.set(key, kept);
     }
     return out;
 }
@@ -54,13 +79,14 @@ adaptive::Value without_adaptive_block(const adaptive::Value& given) {
 Prepared prepare_config(const adaptive::Value& given) {
     Prepared out;
     out.cfg = given;
-    if (!out.cfg.has("rdip") && !adaptive::find_path(out.cfg, {"bundle", "connections"}))
+    if (!out.cfg.has("rdip") && !adaptive::find_path(out.cfg, {"cluster", "bundle", "connections"}))
         throw adaptive::ValueError(
             "For rdip-omitted checked connections, run CCEX directly. This separate "
             "refinement driver requires rdip or explicit legacy connection settings.");
-    if (!out.cfg.has("cluster_mode") || out.cfg.at("cluster_mode").as_string() != "bundle" ||
+    const adaptive::Value* mode = adaptive::find_path(out.cfg, {"cluster", "mode"});   // cluster_mode until A65
+    if (!mode || mode->kind() != adaptive::Value::Kind::String || mode->as_string() != "bundle" ||
         (out.cfg.has("quantity") && out.cfg.at("quantity").as_string() != "coherence"))
-        throw adaptive::ValueError("input must use cluster_mode=bundle and quantity=coherence");
+        throw adaptive::ValueError("input must use cluster.mode=bundle and quantity=coherence");
     // method cCCE or gCCE (A47); inside, the policy names them cce and gcce, as CCEX does
     out.method = out.cfg.has("method") ? out.cfg.at("method").as_string() : "ccce";
     for (char& c : out.method)
@@ -69,9 +95,11 @@ Prepared prepare_config(const adaptive::Value& given) {
         out.method = "cce";
     else if (out.method != "gcce")
         throw adaptive::ValueError("refinement supports method cCCE/gCCE");
-    if (!out.cfg.has("seed") || out.cfg.at("seed").kind() != adaptive::Value::Kind::Int)
+    // seed and nstate are the configuration block's (A64)
+    const adaptive::Value* seed = adaptive::find_path(out.cfg, {"configuration", "seed"});
+    if (!seed || seed->kind() != adaptive::Value::Kind::Int)
         throw adaptive::ValueError(
-            "an explicit integer seed is required to preserve bath states between runs");
+            "an explicit integer configuration.seed is required to preserve bath states between runs");
     const long long steps =
         out.cfg.has("nstep") ? static_cast<long long>(out.cfg.at("nstep").as_int()) : 0;
     const double delta = out.cfg.has("deltat") ? out.cfg.at("deltat").as_double() : 0.;
@@ -80,17 +108,23 @@ Prepared prepare_config(const adaptive::Value& given) {
     // the step inputs save the coherence; a savemode block keeps its nodiv (until 2026-10-13 the top-level save_nodiv,
     // which was copied through)
     adaptive::Value savemode = adaptive::Value::text("coherence");
-    if (const adaptive::Value* given = out.cfg.find("savemode"))
+    if (const adaptive::Value* given = adaptive::find_path(out.cfg, {"output", "savemode"}))   // savemode until A65
         if (given->kind() == adaptive::Value::Kind::Object && given->has("nodiv")) {
             savemode = adaptive::Value::object();
             savemode.set("mode", adaptive::Value::text("coherence"));
             savemode.set("nodiv", given->at("nodiv"));
         }
-    out.cfg.set("savemode", savemode);
+    // A73: the output block and its savemode as the input spells them (key_of), not a second block CCEX would not read
+    const std::string output_key = adaptive::key_of(out.cfg, "output");
+    adaptive::Value output = out.cfg.has(output_key) && out.cfg.at(output_key).kind() == adaptive::Value::Kind::Object
+                                 ? out.cfg.at(output_key) : adaptive::Value::object();
+    output.set(adaptive::key_of(output, "savemode"), savemode);
+    out.cfg.set(output_key, output);
     out.states.push_back(0);
-    if (out.cfg.has("nstate") && out.cfg.at("nstate").as_int() != 0) {
+    const adaptive::Value* nstate = adaptive::find_path(out.cfg, {"configuration", "nstate"});
+    if (nstate && nstate->as_int() != 0) {
         out.states.clear();
-        for (long long s = 1; s <= static_cast<long long>(out.cfg.at("nstate").as_int()); ++s)
+        for (long long s = 1; s <= static_cast<long long>(nstate->as_int()); ++s)
             out.states.push_back(static_cast<int>(s));
     }
     return out;
@@ -175,7 +209,7 @@ int adaptive_main(const std::vector<std::string>& given) {
                 throw UsageError{"regroup-max-regions and regroup-max-candidates must be positive"};
             if (regroup_except && !adaptive::kLongDoubleX87)
                 throw UsageError{"--regroup-whole except needs long double to be the x87 80-bit format, which this "
-                                 "build does not have (it reassembles CCEX's long double product; in double the "
+                                 "build does not have (it reassembles CCEX's long double product, in double the "
                                  "rounding reached 1e-10): use --regroup-whole probes"};
         }
         if (args.at("probe_batch_clusters").as_int() < 0)
@@ -190,7 +224,7 @@ int adaptive_main(const std::vector<std::string>& given) {
             args.at("max_probes").as_int() < 1 || args.at("max_candidates").as_int() < 1 ||
             args.at("neighbors").as_int() < 1 || args.at("cache_mb").as_int() < 1 ||
             !std::isfinite(timeout_value) || timeout_value <= 0.)
-            throw UsageError{"budgets/ranks/timeout must be positive; max-rounds may be zero"};
+            throw UsageError{"budgets/ranks/timeout must be positive, max-rounds may be zero"};
 
         const Prepared prepared = prepare_config(given);   // the adaptive block, work_file with it, is left out
         adaptive::Value cfg = prepared.cfg;
@@ -208,12 +242,12 @@ int adaptive_main(const std::vector<std::string>& given) {
                 throw adaptive::ValueError("--regroup supports method cce only (gCCE's physical bound is not decided)");
             if (order != 2)
                 throw adaptive::ValueError("--regroup needs bundle order 2: the culprit is a pair of bundles");
-            const adaptive::Value* given_connections = adaptive::find_path(cfg, {"bundle", "connections"});
+            const adaptive::Value* given_connections = adaptive::find_path(cfg, {"cluster", "bundle", "connections"});
             std::string connections = given_connections ? given_connections->as_string() : "distance";
             for (char& c : connections)                     // CCEX reads it with strcasecmp
                 c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
             if (connections != "distance")
-                throw adaptive::ValueError("--regroup needs bundle.connections distance: its connections are worked "
+                throw adaptive::ValueError("--regroup needs cluster.bundle.connections distance: its connections are worked "
                                            "out again from the site distances, which auto and checked do not use");
             if (!cfg.has("rdip"))
                 throw adaptive::ValueError("--regroup needs rdip: its connections are the sites within it");
@@ -222,8 +256,8 @@ int adaptive_main(const std::vector<std::string>& given) {
             // Method and order are checked above; the power-0 terms these two options add would mix
             // with the culprit factors and with P_K.
             if (regroup_factors || regroup_except) {
-                // the cluster_contributions block is on unless it says "enabled": false (A47)
-                const adaptive::Value* block = cfg.find("cluster_contributions");
+                // the output.cluster_contributions block is on unless it says "enabled": false (A47; in output since A65)
+                const adaptive::Value* block = adaptive::find_path(cfg, {"output", "cluster_contributions"});
                 const adaptive::Value* enabled = block ? adaptive::find_path(*block, {"enabled"}) : nullptr;
                 const bool contributions = block && block->kind() == adaptive::Value::Kind::Object &&
                                            (!enabled || (enabled->kind() == adaptive::Value::Kind::Bool && enabled->as_bool()));
@@ -231,7 +265,7 @@ int adaptive_main(const std::vector<std::string>& given) {
                                     cfg.at("rdip_ladder").size() > 0;
                 if (contributions || ladder)
                     throw adaptive::ValueError("--regroup-factors factors and --regroup-whole except cannot be combined "
-                                               "with cluster_contributions or rdip_ladder");
+                                               "with output.cluster_contributions or rdip_ladder");
             }
         }
 
@@ -270,9 +304,9 @@ int adaptive_main(const std::vector<std::string>& given) {
         adaptive::MergeContext merge;
         merge.neighbors = static_cast<long long>(args.at("neighbors").as_int());
         merge.max_patches = static_cast<long long>(args.at("max_patches").as_int());
-        const adaptive::Value* max_dim = adaptive::find_path(cfg, {"bundle", "max_dim"});
+        const adaptive::Value* max_dim = adaptive::find_path(cfg, {"cluster", "bundle", "max_dim"});
         if (!max_dim)
-            throw adaptive::ValueError("cluster_mode bundle requires bundle.max_dim");
+            throw adaptive::ValueError("cluster.mode bundle requires cluster.bundle.max_dim");
         merge.bundle_max_dim = max_dim->as_int();
         merge.merge_priority = args.at("merge_priority").as_string();
         adaptive::Driver::Limits limits;

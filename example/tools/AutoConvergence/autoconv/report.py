@@ -155,7 +155,7 @@ def truncation(out_dir, name, times, j, label_setting="setting", label_reference
         f"fit check: {'ok' if j['quality_ok'] else 'failed'} -> {j['route']} route: {j['verdict']}"]) + "\n")
 
 
-# ---------------------------------------------------------------- per-step figures of the --auto_conv runner (linear scales)
+# ---------------------------------------------------------------- per-step figures of the automatic-convergence runner (linear scales)
 def window_step(out_dir, times, data, w):
     """1_window.png: the pilot's mean curve with each configuration, the T2 fit and the time window chosen."""
     out = Path(out_dir); out.mkdir(parents=True, exist_ok=True)

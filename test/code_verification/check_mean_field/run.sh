@@ -11,6 +11,7 @@
 # ---------------------------------------------------------------------------
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$HERE/../../.." && pwd)"
+export PYTHONPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)${PYTHONPATH:+:$PYTHONPATH}"   # input_layout.py (A64/A65)
 # One run at a time per folder: a second run would delete the first one's work files (D29; review 20261008-003400 R3).
 if [ "${CCEX_RUN_LOCK:-}" != "$HERE" ]; then
     exec 9>"$HERE/.run.lock"
@@ -23,7 +24,7 @@ BIN="${CCEX_BIN:-$REPO/bin/main.out}"; MPIRUN="${CCEX_MPI:-mpirun}"
 CASE="$REPO/test/code_verification/check_numerics/cases/p1_cce2e2n"; INP="$REPO/test/code_verification/check_numerics/inputs/p1_1ppm"
 WORK="$HERE/_work"; rm -rf "${WORK:?}"; mkdir -p "$WORK"
 python3 - "$CASE" "$INP" "$WORK" <<'PY'
-import json, math, sys
+import json, math, sys; from input_layout import flat, nest
 case, inp, work = sys.argv[1:]
 q = [float(x) for x in open(f'{inp}/bath_DiaP1_1ppm_Defect').read().split()[:3]]
 rows = open(f'{inp}/bath_DiaP1_1ppm_1').read().splitlines()
@@ -39,13 +40,14 @@ for i in range(1, len(rows)):
     p = rows[i].split()
     out.append(rows[i] if i == near else ' %.5f\t %.5f\t %.5f\t        %s\t' % (float(p[0])+1e5, float(p[1])+1e5, float(p[2])+1e5, p[3]))
 open(f'{work}/bath_one', 'w').write('\n'.join(out)+'\n')
-c = json.load(open(f'{case}/ccein.json'))
-for block, k in ((c['Qubit'], 'file'), (c, 'gyrofile'), (c['Defect'], 'axis_file'), (c, 'bath_state_file'),
-                 (c['Defect'], 'state_file')):
+c = flat(json.load(open(f'{case}/ccein.json')))
+for block, k in ((c['Qubit'], 'file'), (c['configuration'], 'gyrofile')):
     block[k] = f'{case}/{block[k]}'
-c['bathfile'] = [f'{work}/bath_one']; c['nstep'] = 40
+for block, k in ((c['configuration'], 'defect_axis_file'), (c['configuration'], 'bath_state_file'), (c['configuration'], 'defect_state_file')):
+    block[k] = [f'{case}/{x}' for x in block[k]]       # one per bath file (A64)
+c['configuration']['bathfile'] = [f'{work}/bath_one']; c['nstep'] = 40
 for name, field in (('z', 'z'), ('vector', 'xyz')):
-    json.dump(dict(c, hamiltonian={'common': {'bath_bath_mean_field': field}}, outfile=f'{work}/{name}'),
+    json.dump(nest(dict(c, hamiltonian={'common': {'bath_bath_mean_field': field}}, outfile=f'{work}/{name}')),
               open(f'{work}/{name}.json', 'w'), indent=1)
 PY
 for m in z vector; do

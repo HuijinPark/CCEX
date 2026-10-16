@@ -1,8 +1,8 @@
 # AutoConvergence — automatic convergence of a CCEX calculation
 
 An ordinary CCEX input with an `auto_convergence` block makes `main.out -f input.json` choose the time window, rdip, rbath
-and the number of configurations (and states) of a coherence calculation by itself - cCCE with `cluster_mode` standard or pcce (order ≥ 2) or gCCE (order ≥ 1), fixed
-bundles (`cluster_mode` bundle without an `adaptive` block), CPU or GPU backends, DFT tensor files - then run the
+and the number of configurations (and states) of a coherence calculation by itself - cCCE with `cluster.mode` standard or pcce (order ≥ 2) or gCCE (order ≥ 1), fixed
+bundles (`cluster.mode` bundle without a `cluster.adaptive` block), CPU or GPU backends, DFT tensor files - then run the
 production (the order is the input's; the adaptive refinement is excluded). The rdip ladder (one run gives every smaller rdip)
 exists for order 2 of cCCE, gCCE and pCCE with standard clusters; otherwise (order 3 and above, fixed bundles) each rdip
 candidate is its own run, which costs more but is judged alike. You
@@ -12,15 +12,17 @@ ordinary CCEX run in its own folder. The rules and the decisions behind them are
 
 ```sh
 mpirun -n 8 main.out -f input.json   # every CCEX run with mpirun -n 8 (rank 0 alone runs the runner)
-main.out -f input.json               # with the block's launcher (e.g. ["mpirun", "-n", "4"]), else one rank
+main.out -f input.json               # every CCEX run on one rank
 ```
 
-`"enabled": false` in the block runs the ordinary calculation instead (the block is not read); `main.out --auto_conv -f
-input.json` starts the runner too (with `enabled` false it refuses). The automatic run takes only `-f FILE`: another option
-(`-P`, `-B`, `-N`, ...) would not reach the runner, so it is refused - set it in the input. Under `mpirun -n N` (2026-10-10)
+`"enabled": false` in the block runs the ordinary calculation instead (the block is not read). The automatic run takes
+only `-f FILE`: another option (`-o`, `-v`, ...) would not reach the runner, so it is refused - set it in the input. (The
+command-line options `--auto_conv` and `--auto_status` were removed on 2026-10-15: the block starts the run, and the
+status is this tool's `status` command below.) Under `mpirun -n N` (2026-10-10)
 every rank but 0 leaves at once; rank 0 drops the outer launch's MPI variables (Open MPI refuses an mpirun started from inside
-one otherwise) and the runner starts every CCEX run with `mpirun -n N` (the `mpirun` on PATH) unless the block gives a
-`launcher`, which comes first. `summary.txt` section 0 says which launcher was used. `main.out` starts the Python runner
+one otherwise) and the runner starts every CCEX run with `mpirun -n N` (the `mpirun` on PATH); without mpirun every run is
+on one rank. (The block's `launcher` was removed on 2026-10-15: it is refused.) `summary.txt` section 0 says which
+launcher was used. `main.out` starts the Python runner
 (`python -m autoconv run`; Python 3.10 or newer with numpy, scipy and matplotlib, `CCEX_PYTHON` picks the interpreter). Calling it again
 continues: finished runs are reused when their inputs, files and binary are unchanged.
 
@@ -34,7 +36,8 @@ and continues it. `"resume": "fresh"` in the block starts over instead (the earl
 - `result/progress.txt` (and `result/json/progress.json`), rewritten at every step and after every finished CCEX run: the status, the step now,
   the steps done and left, finished CCEX runs per step, the values chosen so far, an earlier interruption, and the command to
   continue.
-- `main.out --auto_status -f input.json` (no mpirun, nothing computed): `running` (a process holds the lock), `interrupted`,
+- `python -m autoconv status input.json` (run in this folder, or with it on `PYTHONPATH`; no mpirun, nothing computed; the
+  `workdir` is read from the input, relative to the input's folder): `running` (a process holds the lock), `interrupted`,
   `stopped` or how it ended, then `progress.txt` (and `summary.txt` once it ended).
 
 ## When the baths are too small or too few
@@ -50,37 +53,42 @@ The runner does not make baths (user 2026-10-09; the `bath_generation` section o
   bath (and state) files to add. When the test and production configurations were found from the files, the split is kept in
   `<workdir>/split.json`: the files added are put after the production and the next call goes on from the last batch (the
   configurations computed are not computed again). A production list given by hand is not extended: add the new IDs to
-  `configurations.production` (a new plan).
+  `sampling.production` (a new plan).
 
 ## The smallest input
 
 ```json
 {
   "method": "cCCE", "quantity": "coherence", "order": 2,
-  "Qubit": {"file": "data/qubit"}, "gyrofile": "data/gyro_13C",
-  "bfield": 500, "pulse": {"count": 1}, "nstate": 0,
-  "auto_convergence": {
-    "workdir": "auto",
-    "configurations": {"bathfile": "data/config_{k}"},
-    "launcher": ["mpirun", "-n", "4"]
-  }
+  "Qubit": {"file": "data/qubit"},
+  "configuration": {"gyrofile": "data/gyro_13C", "nstate": 0, "bathfile": ["data/config_{k}"]},
+  "bfield": 500, "pulse": {"count": 1},
+  "auto_convergence": {"workdir": "auto"}
 }
 ```
+
+The bath configurations are the `configuration` block's (2026-10-15): `bathfile` (one name with `{k}`), and when
+given `bath_state_file`, `defect_axis_file` and `defect_state_file` (one name each, `{k}` too), all in `configuration.path`
+when it is given. With `configuration.k_range` [first, last] the configurations are those k (each must have its files);
+without it, every k whose bath file exists. Each run's input holds one configuration: the names with k in place of `{k}`,
+absolute, without `k_range` and `path`. (Until 2026-10-15 the patterns were `auto_convergence.configurations.bathfile`,
+`statefile`, `avaaxfile` and `exstatefile`, and the rest of that section is now `auto_convergence.sampling`; both old forms
+are refused, and `example/tools/InputKeys/convert_input_keys.py` rewrites an old input.)
 
 Divergent points (2026-10-10): wherever a curve is read, a point with |wiDiv − noDiv| ≥ 2 or a nan/inf wiDiv takes the noDiv
 value (not the rule of the group's analyzer: its `error_correct` replaces such a point by the mean of the previous corrected
 point and the next good wiDiv, which gives other numbers); a configuration that still has |L| > 10 or nan/inf (noDiv bad too,
-or no noDiv with `"savemode": {"mode": "coherence", "nodiv": false}`) is left out of every average and judgement, and more than 5 % of the production left out
+or no noDiv with `"output": {"savemode": {"mode": "coherence", "nodiv": false}}`) is left out of every average and judgement, and more than 5 % of the production left out
 is a numerical failure. `summary.txt` lists the corrected points and the configurations left out, with the nearest bath spin.
 
-`nstate` chooses the approach: **0** = ensemble, one curve per configuration, only the number of configurations is chosen;
-**> 0** = states sampled (2026-10-10: its value no longer sets the test; `configurations.test_number`, default 10
-configurations, and `configurations.test_states`, default 5 states, do), and `configurations.statefile` (a prefix:
+`configuration.nstate` chooses the approach: **0** = ensemble, one curve per configuration, only the number of configurations is chosen;
+**> 0** = states sampled (2026-10-10: its value no longer sets the test; `sampling.test_number`, default 10
+configurations, and `sampling.test_states`, default 5 states, do), and `configuration.bath_state_file` (a prefix:
 `data/cfg{k}_state` reads `data/cfg{k}_state1`, `..._state2`, ...) is optional: when given, the state files of each
 configuration are counted (every configuration needs at least `test_states` of them; the state test below uses more
 when the test configurations hold them); when left out, the runner makes them for each run in the run folder and removes them after (no stored state
 files; m_s drawn evenly from each species' sublevels with `default_rng([seed, k, s])`, one draw per bath-file line, so a spin
-keeps its state at every rbath and rdip and the paired comparisons hold; up to `configurations.max_states` states, default 30; `seed` of the input, else 1).
+keeps its state at every rbath and rdip and the paired comparisons hold; up to `sampling.max_states` states, default 30; `configuration.seed` of the input, else 1).
 CCEX's own random states are not used: they change with rbath. `rbath`, `rdip`, `nstep` and `deltat` of the
 input are not needed: they are found. `nstep` of the input is the number of time points of every run (150 when absent); a
 `deltat` given only sets the first window ((nstep − 1) × deltat): nstep stays fixed and the time step follows the window (2026-10-10).
@@ -95,7 +103,7 @@ input are not needed: they are found. `nstep` of the input is the number of time
 | 2. rdip | One run at the largest rdip gives every smaller one (`rdip_ladder`; order 2 of CCE, gCCE, pCCE, otherwise one run per value). Two values agree when the area under their T2 fits, A = T2 Γ(1+1/n), differs by at most `rdip.threshold`. **When either T2 fit fails (2026-10-12)**, that comparison (here, in rbath and in the combination check) judges both curves on the raw area ∫\|L̄\|dt over [0, T_d] (trapezoid on the configuration mean) with the same threshold - a fail there is an actual fail; `summary.txt`, the figure (open circles) and the `truncation` decision in `decisions.jsonl` (`raw_area`) say which comparisons were; such a comparison gives no trend estimate. Fitted comparisons are unchanged. The largest is raised by 1.25 (up to 2 × rbath) until the last comparisons agree — two in a row when the candidates were found — and the smallest rdip from which every larger one agrees with the largest is chosen | `2_rdip.png` |
 | 3. rbath | The same rule with `rbath.threshold`, one run per value, up to the radius the bath files cover. Then rdip is judged again at the final rbath (the same consecutive passes at its top); when it does not hold there, rdip is converged again at that rbath (raised if needed) and rbath once more | `3_rbath.png`, `summary.txt` sections 2 and 3 |
 | 3b. window again | When the final reference (largest rbath, rdip) is 1.25 × or more above the one the window was found at, T_d is measured there; outside 0.8–1.25 × the earlier T_d, steps 1–3 run again from it (at most 3 rounds). The fitted area cannot see a shape change: a smaller rbath may still be chosen whose production curve then does not decay in the new window, and the run stops there as `window-unresolved` | `summary.txt` section 1 ("found again") |
-| 4. sampling | From the test configurations at the chosen rbath and rdip. **States (a check, 2026-10-10):** the states' share of the sampling error of A (the test configurations kept, only their states drawn again) at 2, 3, ..., `test_states`; above `configurations.states_threshold` (default 0.05) at `test_states`, 5 more states (each new block computed alone, at most `max_states` (default 30) or the state files the test configurations hold) and measured again; an S above `test_states` or none within the threshold is a warning only (`4_states.png`: the mean curves at 1, 2, ... states, the errors and the threshold). **Configurations:** the states stay `test_states`; the variance of A between configurations and between states gives the configurations needed for SE(A)/A ≤ `configurations.threshold`, never fewer than `min_configurations` | `4_states.png`, `summary.txt` sections 4 and 5 |
+| 4. sampling | From the test configurations at the chosen rbath and rdip. **States (a check, 2026-10-10):** the states' share of the sampling error of A (the test configurations kept, only their states drawn again) at 2, 3, ..., `test_states`; above `sampling.states_threshold` (default 0.05) at `test_states`, 5 more states (each new block computed alone, at most `max_states` (default 30) or the state files the test configurations hold) and measured again; an S above `test_states` or none within the threshold is a warning only (`4_states.png`: the mean curves at 1, 2, ... states, the errors and the threshold). **Configurations:** the states stay `test_states`; the variance of A between configurations and between states gives the configurations needed for SE(A)/A ≤ `sampling.threshold`, never fewer than `min_configurations` | `4_states.png`, `summary.txt` sections 4 and 5 |
 | 5. production | The chosen setting on `production` configurations, on the same number of points over `production_factor` × T_d; generously first (plan "넉넉하게 먼저, 나눠 보기, 모자라면 추가", 2026-10-09): 1.5 × the pilot's estimate of the configurations needed, at least max(20, `min_configurations`), rounded up to a multiple of 5, at most the production holds; judged on everything computed; when short, 1.5 × the shortage the measured SE implies (at least 20) more, until the SE meets the target or the files are used up (then reported with how many to add); `5_configurations.png` (2026-10-10): the production's configurations growing (2, 5, 10, ..., all; 2, 3, ... up to 10), left their mean curves, right the SE(A)/A measured at each count and the threshold; the production curve must decay inside the window; the chosen setting is compared once with the largest rbath and rdip on the first 3 production configurations (a warning when it differs by more than the larger threshold); **Production window (2026-10-10):** when the production curve has not decayed inside its window, the production is computed again on a longer window (production_factor × its T_d, at least 1.5 ×), the same configurations first, at most 3 times; `summary.txt` lists the windows. | `5_configurations.png`, `6_converged_coherence.png`, `summary.txt`, `coherence_mean.txt` |
 
 ## The `auto_convergence` block
@@ -109,7 +117,7 @@ required):
 | `time_window` | `value` (+ `unit`) | the window is used as it is; T_d is only measured (a warning when the curve does not decay in it) |
 | `rdip` | `value` (Å) | step 2 and the rdip check at the final rbath are skipped |
 | `rbath` | `value` (Å) | step 3 is skipped; a plateau stops instead of raising rbath |
-| `configurations` | `number` (and `states` when nstate > 0) | step 4 is skipped; the production uses exactly that many configurations, its SE is reported |
+| `sampling` | `number` (and `states` when nstate > 0) | step 4 is skipped; the production uses exactly that many configurations, its SE is reported |
 
 Step 3b runs only when the time window, rdip and rbath all converge. All four `false` is refused (run CCEX itself). Example,
 rdip and the configurations only:
@@ -117,7 +125,6 @@ rdip and the configurations only:
 ```json
 "auto_convergence": {
   "workdir": "auto",
-  "configurations": {"bathfile": "data/config_{k}"},
   "time_window": {"converge": false, "value": 15, "unit": "us"},
   "rbath": {"converge": false, "value": 288}
 }
@@ -128,13 +135,10 @@ rdip and the configurations only:
 | (top) | `enabled` | false: `main.out -f` runs the ordinary calculation | true |
 | | `resume` | `continue`: reuse what the workdir holds; `fresh`: move it to `<workdir>.old<n>` and start over | continue |
 | | `workdir` | folder for the runs (`runs/`), decisions (`decisions.jsonl`) and results (`result/`) | required |
-| | `launcher` | how CCEX is started (e.g. `srun` or binding options) | `mpirun -n N` when main.out was started with `mpirun -n N`, else one rank |
 | `t2_fit` | `points` | points of every T2 fit (window, rdip, rbath, sampling, production): `peaks` (t = 0 and the points higher than both neighbours; all points when fewer than 3) or `all` | peaks |
 | | `floor` | only the points before \|mean\| falls below this are fitted | 0.05 |
 | | `n_range` | allowed stretching exponent n of exp(−(t/T2)^n); outside it the fit fails | [0.3, 4.0] |
-| `configurations` | `bathfile` | bath file pattern with `{k}` (found files are named with the plain number: `config_7`, not `config_07`) | required |
-| | `statefile` | state file prefix pattern (nstate > 0; left out: made per run and removed), written into each run's input as `bath_state_file` | — |
-| | `test`, `production` | configuration IDs for the convergence tests and for the production (never the same) | found |
+| `sampling` | `test`, `production` | configuration IDs for the convergence tests and for the production (never the same) | found |
 | | `converge`, `number`, `states` | see above | true |
 | | `threshold` | SE(A)/A target of the sampling | 0.05 (2026-10-10; was 0.02) |
 | | `min_configurations` | the fewest production configurations | 10 |
@@ -142,7 +146,6 @@ rdip and the configurations only:
 | | `test_number`, `test_states` | configurations and states of the test runs (nstate > 0 for the states) | 10, 5 |
 | | `states_threshold` | the states' share of the sampling error at which the state test stops | 0.05 |
 | | `max_states` | the most states the state test computes (nstate > 0; with state files, at most the files there) | 30 |
-| | `avaaxfile`, `exstatefile` | optional per-configuration file patterns, written into each run's input as `Defect.axis_file` and `Defect.state_file` (these pattern names of the tool kept their names on 2026-10-13) | — |
 | `time_window` | `converge`, `value`, `unit` | see above; units `s`, `ms`, `us`, `ns` | true, —, ms |
 | | `threshold` | T_d is where the fit reaches this level | 0.01 |
 | | `revival_check_factor` | the test runs go to this × T_d to see a revival | 2.5 |
@@ -156,8 +159,8 @@ rdip and the configurations only:
 | | `num_candidates` | how many to start with when found | 4 |
 | | `threshold` | relative difference of A at which two rbath agree | 0.02 |
 
-pCCE partition cache (A17, 2026-10-11): the runner gives every pCCE run `pcce.cache.mode` `readwrite` and a file
-`<workdir>/pcce_cache/<key>.cache`, the key a hash of the child input without `rdip`, `rdip_ladder`, `nstate`, `bath_state_file`, `Defect.state_file`,
+pCCE partition cache (2026-10-11): the runner gives every pCCE run `pcce.cache.mode` `readwrite` and a file
+`<workdir>/pcce_cache/<key>.cache`, the key a hash of the child input without `rdip`, `rdip_ladder`, `configuration.nstate`, `configuration.bath_state_file`, `configuration.defect_state_file`,
 `nstep` and `deltat`, of the bath (and other) file contents and of the binary. Runs that differ only in rdip (or states and
 time grid) therefore search the k-means partition once and read it afterwards; CCEX itself compares the stored partition's
 inputs byte for byte and searches again on any difference. The key is part of the run key; `done.json` records whether the
@@ -165,17 +168,20 @@ run read (`hit`) or stored the file and its hash, and a cache file is read only 
 stored. Outputs are the same bytes as without the cache. Changing to this version recomputes the pCCE runs of an earlier
 workdir once (their keys changed); other methods' runs are reused.
 
-Refused: other methods, cluster modes (`dsj`, `itb`, `dsjitb`) or quantities, `rdip_ladder` in the input, an `adaptive` block, `pcce.cache`
-(the runner gives its own), `pcce.partition` legacy (its partitions depend on the MPI size), `cluster_contributions`, a nonzero
-`max_clusters_per_order`, file inputs the runner does not hash
-(`Defect.axis_file`/`Defect.state_file` outside `configurations`; the files `Qubit.file`, `gyrofile`, `hamiltonian.common.hyperfine.file`,
-`quadrupole.file` and `quadrupole.file_without_defect` are hashed and allowed), `pilot_states`
-(use `nstate`), `bath_shift` and more than one qubit, a list together with its count, a fixed value with `converge` true,
+Refused: other methods, cluster modes (`dsj`, `itb`, `dsjitb`) or quantities, `rdip_ladder` in the input, a `cluster.adaptive`
+block, `cluster.pcce.cache` (the runner gives its own), `cluster.pcce.partition` legacy (its partitions depend on the MPI size),
+`output.cluster_contributions`, `output.cluster_only`, a nonzero `cluster.selection.max_per_order` (the files `Qubit.file`,
+`configuration.gyrofile`, `hamiltonian.common.hyperfine.file`, `quadrupole.file` and `quadrupole.file_without_defect` are
+hashed and allowed), `pilot_states` (use `configuration.nstate`), `configuration.bath_shift`, more than one name in
+`configuration.bathfile` (one bath file per configuration), a `bathfile` without `{k}`, the keys in their places before
+2026-10-15 (the configuration keys at the top; `cluster_mode`, `outfile`, `savemode`, `backend`, ... at the top and
+`n_nuclear_spins`/`n_configurations` - CCEX refuses them too), the block's `launcher` and `configurations`,
+more than one qubit, a list together with its count, a fixed value with `converge` true,
 options out of range, unknown keys, and the earlier flat names (`threshold_rdip`, `candi_rdip`, `rdip_rungs`, `se_target`,
 `time_window` as a number, ...) or removed keys (`max_spins`, `max_pairs`, `max_core_hours`, `cost_config`, `cost_state`,
 `margin_s`, `run_timeout_s`, `truncation_max_tol`, `truncation_area_tol`, `version`, `source_radius`, `max_nstep`,
 `states_available`, `recheck`, `default_nstep`, `time_window.method` (always the T2 fit), `time_window.smoothing_points`
-(always 9: a running median that ignores spikes of up to 4 points), `configurations.pilot`/`pool` - now `test`/`production`, `fit_points` - now `t2_fit.points`, `t2_fit.step_threshold`, `t2_fit.quality`, `t2_fit.step_limit` and `time_window.max_points` (2026-10-10)) — the message says
+(always 9: a running median that ignores spikes of up to 4 points), `sampling.pilot`/`pool` - now `test`/`production`, `fit_points` - now `t2_fit.points`, `t2_fit.step_threshold`, `t2_fit.quality`, `t2_fit.step_limit` and `time_window.max_points` (2026-10-10)) — the message says
 where each went. rbath never goes above the radius the bath files cover: the distance from the qubit to the nearest face of
 the box their spins span, the smallest over the configurations.
 
@@ -212,6 +218,7 @@ disagree, and where the fit fails the raw area disagrees too, (internal notes)),
 
 ```sh
 cd example/tools/AutoConvergence
+python -m autoconv status INPUT.json     # where an automatic convergence is, nothing computed
 python -m autoconv analyze RUN_DIR [RUN_DIR ...] [--config driver.json] [--cost-config A --cost-state B]
                             [--expect-states N] [--expect-points N]
 python -m autoconv analyze --manifest manifest.json [--config driver.json] [--cost-config A --cost-state B]
@@ -227,8 +234,9 @@ the allocation) and `truncation_<name>.png`/`.txt` (the two
 \|mean\| with their fits; fit-line and smoothed differences with the tolerance and the jackknife band; the residuals). With an
 `rdip_ladder` run (CCEX writes `out_rdip<r>_state<s>_wiDiv` beside `out_state<s>_wiDiv`) each rung is judged against the
 main output of the same runs with `--setting-prefix out_rdip<r>`. The setting and reference runs are paired by order but must be the same configuration: each run folder's
-`input.json` must agree on every key except `rdip`, `rbath`, `rdip_ladder` and `outfile` (bath, state and axis files, seed,
-physics), otherwise `judge` refuses; `--unverified-pairs` accepts folders without `input.json` with a warning. A T2 fit with
+`input.json` must agree on every key except `rdip`, `rbath`, `rdip_ladder` and `output.file` (`outfile` in an input before
+2026-10-15) (bath, state and axis files, seed, physics; a key of the configuration or output block is named `configuration.<key>`,
+`output.<key>`), otherwise `judge` refuses; `--unverified-pairs` accepts folders without `input.json` with a warning. A T2 fit with
 T2 <= 0, n outside [0.3, 4] or non-finite values is a failure (`t2-unresolved`), not a number.
 
 One `RUN_DIR` per bath configuration, each holding the CCEX outputs `out_state<s>_wiDiv` (the coherence; `_noDiv` is
@@ -238,7 +246,7 @@ allocation) is averaged over [0, T_d] when a decay time is found, so a longer wi
 look smaller; the report says which points were evaluated (`evaluated_on`). The report is JSON on standard output.
 
 Every `RUN_DIR` is one independent configuration: the same directory is refused twice, and so is a run with fewer states or
-time points than expected or another time grid (`nstate`/`nstep`/`deltat` of `base_input` with `--config`, or the options) —
+time points than expected or another time grid (`configuration.nstate`/`nstep`/`deltat` of `base_input` with `--config`, or the options) —
 a partial or stale run would otherwise look like a smaller complete sample. Without a manifest, identical outputs under two
 names are refused and the report says `provenance: unverified`. A manifest (`{"configurations": [{"id", "run", "states"}],
 "available_configurations": N, "grid": {"deltat", "nstep"}}`, run paths relative to it) gives each run its ID and its own

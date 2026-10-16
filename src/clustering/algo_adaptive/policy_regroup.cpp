@@ -1,3 +1,7 @@
+/**
+ * @file policy_regroup.cpp
+ * @brief Adaptive refinement: the regroup option of the merge policy.
+ */
 // Method D of (internal notes) (the merge policy's --regroup):
 // regroup the bundles where the bundle expansion gives |L| > 1. The item numbers in the
 // comments are the plan's "방식 D (구현 명세)".
@@ -1357,7 +1361,7 @@ Result drive(const Partition& start, const Curves& first, Search* search, const 
             // A prediction the runs keep contradicting is a fault in the assembly, not a
             // search to go on with.
             if (++out.rollbacks > constants.max_changes)
-                throw RuntimeError("regroup: more rollbacks than changes allowed; the assembled predictions do not "
+                throw RuntimeError("regroup: more rollbacks than changes allowed, the assembled predictions do not "
                                    "match the runs");
             continue;
         }

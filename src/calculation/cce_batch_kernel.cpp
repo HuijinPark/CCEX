@@ -1,3 +1,7 @@
+/**
+ * @file cce_batch_kernel.cpp
+ * @brief The batched time evolution of small cCCE clusters on the CPU (compiled without contraction).
+ */
 // A30: the batched time evolution of small cCCE clusters (cce_batch.h). Compiled with -ffp-contract=off (both builds):
 // every fused multiply-add here is written out, nothing else is fused. No Eigen in this file: an Eigen function
 // instantiated here with these flags could be the copy the linker keeps for the scalar path too.

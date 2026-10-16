@@ -31,7 +31,7 @@ W="$WORK/tensor_format"
 rm -rf "$W"; mkdir -p "$W"
 NUM="$REPO/test/code_verification/check_numerics"
 V3="$NUM/inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3"
-V1="$EX/tutorial/07_hBN_VB_natab/bath/flat/hBN_VB_flat_ATensor_HSE_CellPBE"
+V1="$EX/tutorial/04_hBN/bath/flat/hBN_VB_flat_ATensor_HSE_CellPBE"
 OLDREF="$NUM/reference/head-20261012-aa883d0d4"
 { echo VASP; cat "$V1"; } > "$W/v1_tagged"
 # v3 with every hyperfine number x 2 (exact decimal doubling of the 6-decimal values): the numbers of v1_tagged
@@ -53,9 +53,9 @@ PY
 
 run_case(){    # <case> <name> <tensor file>
     local d="$NUM/cases/$1" o="$W/$1/$2"; mkdir -p "$o"
-    python3 -c 'import json,sys; j=json.load(open(sys.argv[1])); j["hamiltonian"]["common"]["hyperfine"]["file"]=sys.argv[3]; json.dump(j,open(sys.argv[2],"w"),indent=1)' \
+    python3 -c 'import json,sys; from input_layout import flat, nest; j=flat(json.load(open(sys.argv[1]))); j["hamiltonian"]["common"]["hyperfine"]["file"]=sys.argv[3]; j["outfile"]="out"; json.dump(nest(j),open(sys.argv[2],"w"),indent=1)' \
         "$d/ccein.json" "$o.json" "$3"
-    ( cd "$d" && "$MPIRUN" -n 2 "$BIN_DEV" -f "$o.json" -o "$o/out" > "$o.log" 2>&1 < /dev/null ) || { echo "    $1/$2 exited $?"; return 1; }
+    ( cd "$d" && "$MPIRUN" -n 2 "$BIN_DEV" -f "$o.json" -o "$o" > "$o.log" 2>&1 < /dev/null ) || { echo "    $1/$2 exited $?"; return 1; }
 }
 same_bytes(){ [ -n "$(ls "$1")" ] && [ "$(ls "$1")" = "$(ls "$2")" ] && diff -rq "$1" "$2" >/dev/null; }
 
@@ -72,6 +72,17 @@ for d in "$NUM"/cases/hbn_*/; do
         # evolution_update.sh E1) only the self-contained half is judged (CI run 38487968260: three of five cases differ)
         echo "  SKIP  T2 $case: the bytes of $(basename "$OLDREF") on a CI runner (one machine's digits)"
         what="(the bytes of $(basename "$OLDREF") skipped on a CI runner)"
+    elif [ -d "$OLDREF/$case" ] && [ "$case" = hbn_gcce2_dm ]; then
+        # A71 (2026-10-15): gCCE with nstate 1 and qubit_bath_mean_field false keeps the static Overhauser field of the
+        # cluster's own spins since then, which moved this case's numbers after the reference was recorded (check_numerics
+        # README); only the self-contained half is judged here
+        echo "  SKIP  T2 $case: the bytes of $(basename "$OLDREF") (A71 moved this case's numbers after it was recorded)"
+        what="(the bytes of $(basename "$OLDREF") skipped: A71 moved this case)"
+    elif [ -d "$OLDREF/$case" ] && [ "$case" = hbn_gcce2_oh ]; then
+        # A81 (2026-10-16): this case's input gives its zero-field splitting in MHz since then (it was read as kHz), so
+        # its numbers moved after the reference was recorded (check_numerics README); only the self-contained half is judged
+        echo "  SKIP  T2 $case: the bytes of $(basename "$OLDREF") (A81 changed this case's input after it was recorded)"
+        what="(the bytes of $(basename "$OLDREF") skipped: A81 changed this case's input)"
     elif [ -d "$OLDREF/$case" ] && grep -q "MKL for large clusters : on" "$W/$case/v1_tagged.log"; then
         # A46: a binary built with MKL is held to the reference as check_numerics holds it (its README): the _noDiv
         # and density-matrix files within 1e-12 of the reference relative to it (absolute where it is 0), _wiDiv not judged

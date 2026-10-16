@@ -7,35 +7,37 @@
         "alphams"  : -1,
         "betams"  : 0
     },
-    "gyrofile"      :  "./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro",
-    "bathfile"      : ["./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1"      ],
-    "bath_state_file" :  "./../CCE_Reprod/Bath_Data/1.single_data/state_DiaP1_1ppm_",
+    "configuration" : {
+        "gyrofile"      :  "./../CCE_Reprod/Bath_Data/1.single_data/DiaP1_gyro",
+        "bathfile"      : ["./../CCE_Reprod/Bath_Data/1.single_data/bath_DiaP1_1ppm_1"      ],
+        "bath_state_file" :  ["./../CCE_Reprod/Bath_Data/1.single_data/state_DiaP1_1ppm_"],
+        "nstate" : 1,
+        "seed" : 8805,
+        "defect_axis_file" :  ["./../CCE_Reprod/Bath_Data/1.single_data/bathJT_DiaP1_1ppm_1"],
+        "defect_state_file" :  ["./../CCE_Reprod/Bath_Data/1.single_data/stateEx_DiaP1_1ppm_"]
+    },
 
     "order" : 2,
     "pulse"  : {"count": 1},
     "bfield" : 500,
     "deltat": 0.01,
     "nstep": 300, !100
-    "seed" : 8805,
 
     "rbath": 850,
     "rdip": 620,
-    "nstate" : 1,
     
-    "outfile" : "CCE2_DetunedP1Bath_1ppm_1",
+    "output" : {"file": "CCE2_DetunedP1Bath_1ppm_1"},
 
     "Defect" : {
-        "state_file"    :  "./../CCE_Reprod/Bath_Data/1.single_data/stateEx_DiaP1_1ppm_",
-        "axis_file"     :  "./../CCE_Reprod/Bath_Data/1.single_data/bathJT_DiaP1_1ppm_1",
         "species" : [
             {
                 "name": "P1",
-                "n_nuclear_spins" : 1,
+                "n_onsite_spins"  : 1,
                 "types" : ["14N"],
                 "spins" : [1],
                 "quadrupole_moments" : [2.044],
                 "gyros" : [1.9337792],
-                "n_configurations" : 4,
+                "n_axis_states"    : 4,
                 "hyperfine" : [ [1, "14N", [ 81.312000 ,     0.000000 ,    0.000000 ,    0.000000 ,    81.312000 ,    0.000000 ,   0.000000 ,    0.000000 ,    114.026400]],
                            [2, "14N", [103.121928 ,    12.591967 ,    8.903264 ,   12.591967 ,    88.581975 ,    5.140302 ,   8.903264 ,    5.140302 ,     84.946496]],
                            [3, "14N", [103.121923 ,   -12.591970 ,   -8.903263 ,  -12.591970 ,    88.581981 ,    5.140303 ,  -8.903263 ,    5.140303 ,     84.946496]],

@@ -16,14 +16,14 @@ rm -rf "$W"; mkdir -p "$W/out"
 cp -r "$REG/Diamond_NV_natab_cce/inputfiles" "$W/"
 cd "$W"
 python3 - <<'PY'
-import json, re
+import json, re; from input_layout import flat, nest
 for name in ("ccein_nstate0.json", "ccein_nstate1.json"):
-    j = json.loads(re.sub(r"(?m)^\s*#.*$", "", open("inputfiles/" + name).read()))
+    j = flat(json.loads(re.sub(r"(?m)^\s*#.*$", "", open("inputfiles/" + name).read())))
     tag = name.split("_")[1].split(".")[0]
-    json.dump(dict(j, outfile=f"./out/{tag}_both"), open(f"{tag}_both.json", "w"), indent=1)
-    json.dump(dict(j, outfile=f"./out/{tag}_wi", savemode={"mode": "coherence", "nodiv": False}), open(f"{tag}_wi.json", "w"), indent=1)
-    json.dump(dict(j, outfile=f"./out/{tag}_blk", savemode={"mode": "coherence", "nodiv": True}), open(f"{tag}_blk.json", "w"), indent=1)
-    json.dump(dict(j, outfile=f"./out/{tag}_bad", savemode={"mode": "coherence", "nodiv": "false"}), open(f"{tag}_bad.json", "w"), indent=1)
+    json.dump(nest(dict(j, outfile=f"./out/{tag}_both")), open(f"{tag}_both.json", "w"), indent=1)
+    json.dump(nest(dict(j, outfile=f"./out/{tag}_wi", savemode={"mode": "coherence", "nodiv": False})), open(f"{tag}_wi.json", "w"), indent=1)
+    json.dump(nest(dict(j, outfile=f"./out/{tag}_blk", savemode={"mode": "coherence", "nodiv": True})), open(f"{tag}_blk.json", "w"), indent=1)
+    json.dump(nest(dict(j, outfile=f"./out/{tag}_bad", savemode={"mode": "coherence", "nodiv": "false"})), open(f"{tag}_bad.json", "w"), indent=1)
 PY
 for tag in nstate0 nstate1; do
     run_ccex "$BIN_DEV" ${tag}_both.json ${tag}_both.log

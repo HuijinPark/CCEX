@@ -1,3 +1,7 @@
+/**
+ * @file simulator_hamiltonian.cpp
+ * @brief The cluster Hamiltonians: qubit, bath, and qubit-bath terms.
+ */
 #include "../../include/calculation/simulator.h"
 #include "../../include/calculation/hamiltonian.h"
 
@@ -12,9 +16,11 @@ MatrixXcd HamilQubit(QubitArray* qa, BathArray* ba, MatrixXcd** sigmas, Config* 
     MatrixXcd Hq = MatrixXcd::Zero(qdim,qdim);
     
     Hq = QubitArray_TotalHamil(qa, sigmas, bfield);
-    // Subtract the double counted Overhauser fields
+    // Subtract the double counted Overhauser fields: QubitArray_TotalHamil adds the static field of the whole bath only
+    // with hamiltonian.common.qubit_bath_mean_field true, and the cluster's own spins already act through the coupling.
+    // With it false nothing was added, so nothing is subtracted (A71; before, the qubit lost the field of the cluster).
     MatrixXcd Hq_i_overlapped = MatrixXcd::Zero(qdim,qdim);
-    for (int iq = 0; iq < nqubit; iq++){
+    if (QubitArray_getOverhaus(qa)) for (int iq = 0; iq < nqubit; iq++){
         double overhaus = 0.0;
         for (int ib = 0; ib < nspin; ib++){
             overhaus += BathArray_getBath_i_overhaus_j(ba,ib,iq); // if ensemble calculation, overhaus = 0.0 (ms = 0.0)
@@ -198,7 +204,7 @@ static MatrixXcd hfmediBranch(const MatrixXcd& psi, const MatrixXcd& eigenVector
             }
             if (E_ab.norm() <= 1e-12 * scale) continue;
             fprintf(stderr,"Error : hfmedi: qubit level %d (energy %.10g) is degenerate with level %d (energy %.10g), "
-                    "which it couples to through the hyperfine interaction; the second-order hyperfine-mediated term does "
+                    "which it couples to through the hyperfine interaction, the second-order hyperfine-mediated term does "
                     "not exist there (a nonzero field or zero-field splitting lifts the degeneracy)\n", ai, w_a, k, w_b);
             ccexFatal();
         }

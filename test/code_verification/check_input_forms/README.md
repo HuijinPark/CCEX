@@ -16,7 +16,11 @@ Manual) and gCCE2 `evolution` = `matrix` (ensemble Hahn, one-state CPMG-8), and 
 `_noDiv`; without the key (A29) single-state and ensemble cCCE2 and gCCE2 vector and matrix give the bytes of an explicit
 `recursive` and the log says `recursive`, chosen by default - the path is judged by the log, the value the time evolutions
 dispatch on; that `exact` writes other bytes is only noted since A56, as on another machine it need not -, and gCCE `propagator` = `expm` those of an explicit `exact`, not a refusal; `backend` = `auto`, all on the CPU in
-this binary, gives the bytes of `backend` = `cpu`, with or without a given `recursive`, A36), `gpu_options` (no
+this binary, gives the bytes of `backend` = `cpu`, with or without a given `recursive`, A36), `column_evolution` (on by
+default since A62: without the block the bytes of an explicit `{"enabled": true, "min_dim": 256, "columns": 64}` and the
+log prints both values; `{"enabled": false}` the bytes of a run whose `min_dim` no cluster reaches; the default within
+1e-10 of that in the raw `_noDiv` (on WSL the same written digits: the path is judged by the log); p1_cce2e2n at
+order 4 with one cluster of dimension 1296), `gpu_options` (no
 block, an empty one, every default written out and every key changed give the same bytes on a CPU run of single-state
 cCCE2 and gCCE2, and the log shows the values read; A26, 2026-10-12), `propagator` (A2: `"eigen"` and `{"method": "eigen"}` give the default run's bytes, `"sparse"` and `{"method": "sparse",
 "min_dim": 4096}` those of an explicit `exact` on cCCE2 and gCCE2 inputs whose clusters are all below 4096 (sparse runs
@@ -28,10 +32,31 @@ VASP-tagged v1 file of the tutorial until then is read as before, x 1, and gives
 with it - skipped on a CI runner, since that reference is one machine's digits (A56); old files warn in the log; values of 10 characters or more, written by SpinTensorReader's VASP and QE writers in
 their format and in the tab-glued one before 2026-10-13, are read as written: `example/tools/SpinTensorReader/tests/check_wide_fields.py`;
 and a VASP Q file alone from an OUTCAR with magnetization 0 or none is written, while an A file from it is refused:
-`example/tools/SpinTensorReader/tests/check_qfile_spin.py`), `autoconv` (`auto_convergence.enabled`: `false` gives
+`example/tools/SpinTensorReader/tests/check_qfile_spin.py`), `cli` (A63, 2026-10-15, A77 2026-10-16: `-e` writes the template
+`ccex_example.jsonc` alone, with and without `-o DIR`; a sed copy with its `bathfile` pointed at 00_quickstart's bath
+(the path written with a `//` inside the string) runs to the end with no unread key and writes `run_*` (the `//`
+comments are read and `.jsonc` leaves the output name); every trailing comment of the template starts at column 41;
+`example_keys.py` holds the example to the
+input readers' source - every key `option.cpp` and `main.cpp` look up with `cJSON_GetObjectItem`/`readBlock` is written as
+`"key":`, every other identifier-like literal of `option.cpp` appears in it except the refused old names and a short list of
+internal names, every option of the refinement and every key of the automatic convergence is written as `"key":`, and every
+`"key":` of the example is one of those names; then the `-o` rules: no `output.file` gives the input name, `-o DIR` (made, two
+levels) holds it, a relative `output.file` goes inside `DIR` with `-o` before or after `-f`, an absolute one without `-o` is
+that path, `output.cluster_only` true writes `DIR/<name>.clusters.json` and no curve, `output.path` (A65; made, two levels)
+holds the outputs, and `-o DIR` wins over it), `configuration` (A64, 2026-10-15:
+`configuration.k_range` runs every configuration k, each `<outfile>_k<k>` byte for byte the run of its files alone, with
+random axes and states and with state, axis and defect state files per k; two bath files with their per-bath-file lists
+give the bytes of the files merged; `{{k}}` and `{k}` without `k_range` are literal; a pCCE cache file per k; refused
+before any calculation: `k_range` without `{k}`, a missing file of one k, a bad `k_range`, a list of the wrong length or
+a string for a list, an enabled cache without `{k}`, the old top-level `bathfile` and `nstate`), `autoconv` (`auto_convergence.enabled`: `false` gives
 the bytes of the input without the block, an enabled block makes `main.out -f` start the runner, once under `mpirun -n 2`,
-a value that is not a boolean and another option beside it are refused, `--auto_status` reads the workdir, and a tool
-file or folder writable by others is refused). The refused key combinations are `../check_refusals/`, the
+a value that is not a boolean and another option beside it are refused, `python -m autoconv status` reads the workdir, and a tool
+file or folder writable by others is refused), `units` (A67, 2026-10-16: a key written as `{"value": ..., "unit": ...}` in
+another unit gives the bytes of the plain number - deltat in us, bfield in mT, rbath and rdip in nm, the qubit's xyz in nm
+and detuning in Hz, bath_shift in nm, a meCCE jump rate in kHz, pulse.duration in us - and every key in its own unit
+written out gives the plain input's bytes; DEER energy_shift and bandwidth are in `../check_deer`), `pcce_rest` (A80, 2026-10-16: pCCE
+with spins left over by `partition_size` and states read from `bath_state_file` finishes, byte for byte the run whose files lack the
+left-over spins' lines; with `CCEX_BIN` a `CCEX_SANITIZE=1` build, the old write into the deleted spins stops the run). The refused key combinations are `../check_refusals/`, the
 rotation `../check_rotation/`; the comparison against v1.1.0 and
 v1.2.2 is `../check_numerics/`. Nothing here needs an old binary.
 

@@ -1,3 +1,7 @@
+/**
+ * @file output.h
+ * @brief The Output structure and the writing of the result files.
+ */
 #ifndef __CCEX_OUTPUT_H_
 #define __CCEX_OUTPUT_H_
 
@@ -5,12 +9,15 @@
 #include "physical/bath.h"
 #include "common/utilities.h"
 
+/**
+ * @brief Where and what a run writes: the result file name, the output folder and the output.savemode setting.
+ */
 typedef struct {
    
     // Intermediate Save
     // char* InterSaveClusterFile; /**< File name to save clusters' information */
     // char* InterSaveCoherenceFile; /**< File name to save coherence functions of clusters */
-    char savemode[32]; /**< savemode.mode (until 2026-10-13: normal, info, all, allfull) */
+    char savemode[32]; /**< output.savemode (its mode): coherence (default), coherence_tagged, cluster_coherence or cluster_density_matrix */
     // coherence : coherence function for each state (default) : output = output_{state}_wD/nD
     // coherence_tagged : coherence + deep learning information (Azx, Azz, bathfile) : output = output_{state}_wD/nD
     // cluster_coherence : coherence function for each cluster and each state : output = output_{cluster}_{state}_wD/nD
@@ -24,8 +31,9 @@ typedef struct {
     // char* OutputFileTail; /**< File name to save final result */
     // char* OutputFileHeadDisjoint; /**< File name to save final result */
     // char* OutputFileTailDisjoint; /**< File name to save final result */
-    char* outfile; // output file name with mode (auto generated)
-    bool save_nodiv; // write <outfile>_..._noDiv beside _wiDiv (input savemode.nodiv, default true; 2026-10-08)
+    char* outfile; /**< result file name without the _wiDiv/_noDiv ending (made from output.file and the run) */
+    bool save_nodiv; /**< write the _noDiv file beside the _wiDiv one (output.savemode.nodiv, default true) */
+    char outpath[512]; /**< output.path: the folder of the outputs when -o DIR is not given; "" for none */
 } Output;
 
 Output* Output_init();

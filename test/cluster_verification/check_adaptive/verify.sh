@@ -2,7 +2,7 @@
 # What a change to the refinement code (src/clustering/algo_adaptive) has to pass.
 #   verify.sh unit                 # build the driver and its unit tests, run them
 #   verify.sh regress              # the policy against its recorded answers, run for real
-#   verify.sh inprocess            # the driver alone, inside bin/main.out, and from an "adaptive" block; the probe
+#   verify.sh inprocess            # the driver alone and from an "adaptive" block inside bin/main.out; the probe
 #                                  # step on 1 and 3 ranks with its memory budget (probe_rotation.py)
 #   verify.sh sanitize             # unit and regress once more, built with ASan and UBSan
 #   verify.sh fuzz [SEED [COUNT]]  # random JSON documents through the reader and the writer

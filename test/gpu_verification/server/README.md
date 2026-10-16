@@ -76,7 +76,7 @@ Automatic selection retains the default dimension threshold of 256. The current
 CCE2 fixtures are smaller than that threshold, so gCCE `auto` profiles are expected
 to show CPU computation. Since 2026-10-12 (A26) `auto` with method cCCE (coherence)
 sends cCCE clusters of bath dimension 2 and 4 to the packed GPU kernel by default
-(`gpu_options.packed_max_dim` 4, `Config_resolvePackedMaxDim` in `src/input/general.cpp`).
+(`execution.gpu_options.packed_max_dim` 4, `Config_resolvePackedMaxDim` in `src/input/general.cpp`).
 Since A48 (2026-10-13) that default is used only where it beats the CPU batch (A30), which the
 GPU binary now also runs: one state from 40000 clusters of bath dimension 2 and 4 per rank per
 state, never for the ensemble (a run the CPU batch does not take keeps the 20000-per-rank
@@ -131,7 +131,7 @@ Job output remains under the isolated source directory:
 - `server-results/measure-JOB/cuda/summary.json`: CPU versus forced CUDA.
 - `server-results/measure-JOB/auto/summary.json`: CPU versus automatic selection.
 
-Two measurement jobs for `gpu_options.min_dim` (A3 of (internal notes)) build with `do_compile.sh gpu` themselves:
+Two measurement jobs for `execution.gpu_options.min_dim` (A3 of (internal notes)) build with `do_compile.sh gpu` themselves:
 
 - `min_dim.sbatch` (8 ranks, gpu-long): `gpu_benchmarks/benchmark_min_dim.py`, CPU against forced CUDA per cluster dimension for ten
   conditions; `server-results/min-dim-JOB.log` and `min-dim-JOB/conditions/summary.json` (jobs 648, 659).

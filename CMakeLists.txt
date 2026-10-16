@@ -185,6 +185,30 @@ add_library(ccex_core OBJECT ${_ccex_lib_srcs})
 target_include_directories(ccex_core PRIVATE ${CCEX_INCLUDE})
 target_compile_options(ccex_core PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN})
 target_link_libraries(ccex_core PRIVATE MPI::MPI_CXX)
+# A68: the banner's Build line (src/common/utilities.cpp): preset "cmake", and the commit from ccex_build_commit.h, which
+# ccex_build_commit writes at every build and changes only when the commit (or "-dirty") does, as do_compile.sh's Makefile:
+# git rev-parse --short HEAD, "-dirty" when the tree differs from it, "unknown" outside git
+set(_ccex_generated ${CMAKE_BINARY_DIR}/generated)
+file(WRITE ${_ccex_generated}/build_commit.cmake [=[
+execute_process(COMMAND git rev-parse --short HEAD WORKING_DIRECTORY ${SRC} RESULT_VARIABLE r
+                OUTPUT_VARIABLE c OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+if(NOT r EQUAL 0 OR c STREQUAL "")
+  set(c unknown)
+else()
+  execute_process(COMMAND git diff --quiet HEAD -- WORKING_DIRECTORY ${SRC} RESULT_VARIABLE d OUTPUT_QUIET ERROR_QUIET)
+  if(NOT d EQUAL 0)
+    set(c "${c}-dirty")
+  endif()
+endif()
+file(CONFIGURE OUTPUT ${OUT} CONTENT "#define CCEX_BUILD_COMMIT \"${c}\"\n")
+]=])
+set(_ccex_commit_cmd ${CMAKE_COMMAND} -DSRC=${CMAKE_SOURCE_DIR} -DOUT=${_ccex_generated}/ccex_build_commit.h
+    -P ${_ccex_generated}/build_commit.cmake)
+execute_process(COMMAND ${_ccex_commit_cmd})
+add_custom_target(ccex_build_commit COMMAND ${_ccex_commit_cmd} BYPRODUCTS ${_ccex_generated}/ccex_build_commit.h)
+add_dependencies(ccex_core ccex_build_commit)
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/common/utilities.cpp PROPERTIES
+  INCLUDE_DIRECTORIES ${_ccex_generated} COMPILE_DEFINITIONS "CCEX_BUILD_PRESET=\"cmake\"")
 add_executable(ccex ${CMAKE_SOURCE_DIR}/src/main.cpp $<TARGET_OBJECTS:ccex_core> $<TARGET_OBJECTS:ccex_adaptive>)
 set_target_properties(ccex PROPERTIES OUTPUT_NAME main.out)
 target_include_directories(ccex PRIVATE ${CCEX_INCLUDE})
@@ -243,8 +267,14 @@ if(_ccex_cuda)
               ${CMAKE_SOURCE_DIR}/src/calculation/gpu/warp_cluster_gpu.cu)
   target_include_directories(ccex_gpu_backend PRIVATE ${CMAKE_SOURCE_DIR}/include)
   target_compile_options(ccex_gpu_backend PRIVATE -O3 -lineinfo)
+  # A68: the architecture in the Build line; "native" leaves it to the list nvcc compiled for (gpu_backend.cu)
+  if(NOT CMAKE_CUDA_ARCHITECTURES STREQUAL "native")
+    string(REPLACE ";" "," _ccex_arch "${CMAKE_CUDA_ARCHITECTURES}")
+    target_compile_definitions(ccex_gpu_backend PRIVATE CCEX_CUDA_ARCH=${_ccex_arch})
+  endif()
 
   add_executable(ccex_gpu ${CCEX_CORE_SRCS} $<TARGET_OBJECTS:ccex_adaptive> $<TARGET_OBJECTS:ccex_gpu_backend>)
+  add_dependencies(ccex_gpu ccex_build_commit)
   set_target_properties(ccex_gpu PROPERTIES OUTPUT_NAME main_gpu.out)
   target_include_directories(ccex_gpu PRIVATE ${CCEX_INCLUDE})
   target_compile_definitions(ccex_gpu PRIVATE CCEX_USE_CUDA)
@@ -364,6 +394,13 @@ set_target_properties(test_small_eigensolver PROPERTIES OUTPUT_NAME test_small_e
 target_include_directories(test_small_eigensolver PRIVATE ${CCEX_INCLUDE})
 target_compile_options(test_small_eigensolver PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} -UNDEBUG)
 target_link_libraries(test_small_eigensolver PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS})
+# A62: the column-block one-state cCCE evolution against the one-time-point path (1e-12 relative)
+add_executable(test_cce_columns EXCLUDE_FROM_ALL
+  ${CMAKE_SOURCE_DIR}/test/code_verification/check_numerics/test_cce_columns.cpp $<TARGET_OBJECTS:ccex_core>)
+set_target_properties(test_cce_columns PROPERTIES OUTPUT_NAME test_cce_columns.out)
+target_include_directories(test_cce_columns PRIVATE ${CCEX_INCLUDE})
+target_compile_options(test_cce_columns PRIVATE ${CCEX_CPU_OPT} ${CCEX_CXX_WARN} -UNDEBUG)
+target_link_libraries(test_cce_columns PRIVATE MPI::MPI_CXX Threads::Threads ${CMAKE_DL_LIBS})
 file(GLOB _small_cluster_dumps ${CMAKE_SOURCE_DIR}/test/gpu_verification/check_gpu/data/small_cluster/*.bin)
 add_custom_target(cpu-test
   COMMAND $<TARGET_FILE:test_cluster_log>
@@ -379,4 +416,5 @@ add_custom_target(cpu-test
   COMMAND $<TARGET_FILE:test_fixed_size>
   COMMAND $<TARGET_FILE:test_cce_batch> ${_small_cluster_dumps}
   COMMAND $<TARGET_FILE:test_small_eigensolver> ${_small_cluster_dumps}
-  DEPENDS ${_cpu_tests} ${_bundle_tests} test_partition_cache_format test_fixed_size test_cce_batch test_small_eigensolver)
+  COMMAND $<TARGET_FILE:test_cce_columns>
+  DEPENDS ${_cpu_tests} ${_bundle_tests} test_partition_cache_format test_fixed_size test_cce_batch test_small_eigensolver test_cce_columns)

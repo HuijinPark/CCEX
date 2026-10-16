@@ -1,3 +1,7 @@
+/**
+ * @file small_cluster_gpu.cu
+ * @brief The packed GPU kernel: the cCCE of small clusters, one thread per cluster.
+ */
 // A26 step 1: the batched cCCE of small clusters on the card - one thread per cluster, the whole calculation of a
 // cluster (both eigensystems, the time chain of every step) in that thread (small_cluster_math.h). A batch is a list of
 // items (windows of packed clusters, one per rank); its inputs are copied into one device buffer per dimension, one kernel

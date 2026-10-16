@@ -1,3 +1,7 @@
+/**
+ * @file bundle_connection_check.cpp
+ * @brief Bundle clustering: the bounded check of which bundle connections may be omitted.
+ */
 #include "../../../include/clustering/bundle/bundle_connection_check.h"
 #include "../../../include/clustering/bundle/bundle_text.h"
 #include <climits>

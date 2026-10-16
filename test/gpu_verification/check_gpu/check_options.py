@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 import subprocess
 
-from benchmark import REPO, INPUTS, compare
+from benchmark import REPO, INPUTS, blocks, compare
 
 
 def main():
@@ -21,24 +21,26 @@ def main():
     case=INPUTS/'Diamond_NV_natab_gcce'
     original=json.loads((case/'inputfiles/ccein_nstate0.json').read_text())
     original.update(nstep=2,rbath=10,order=1,profile=True)
-    original['gyrofile']=str((case/original['gyrofile']).resolve())
-    original['bathfile']=[str((case/p).resolve()) for p in original['bathfile']]
+    bath=original['configuration']   # A64
+    bath['gyrofile']=str((case/bath['gyrofile']).resolve())
+    bath['bathfile']=[str((case/p).resolve()) for p in bath['bathfile']]
 
     # hidden: True hides every GPU (CUDA_VISIBLE_DEVICES empty), a string sets CUDA_VISIBLE_DEVICES to it; actual_backend
     # None: no "backend=" profile line is asked for (the packed kernel prints none), the GPU tolerance is used
-    def run(name,binary,overrides,expected=None,hidden=False,extra=(),
+    def run(name,binary,overrides,expected=None,hidden=False,
             reference='baseline',actual_backend='cpu',env_extra=None):
         directory=args.output/name
         directory.mkdir()
         config=dict(original,**overrides)
         config['outfile']=str(directory/'coherence')
+        config=blocks(config)   # A65: the flat keys of the overrides in their blocks
         path=directory/'input.json'
         path.write_text(json.dumps(config))
         env=dict(os.environ,I_MPI_FABRICS='shm')
         if hidden: env['CUDA_VISIBLE_DEVICES']=hidden if isinstance(hidden,str) else ''
         env.update(env_extra or {})
         with (directory/'run.log').open('w') as log:
-            result=subprocess.run([str(binary.resolve()),'-f',str(path),*extra],cwd=REPO,
+            result=subprocess.run([str(binary.resolve()),'-f',str(path)],cwd=REPO,
                                   env=env,stdout=log,stderr=subprocess.STDOUT,timeout=30)
         output=(directory/'run.log').read_text()
         if expected:
@@ -79,10 +81,11 @@ def main():
     run('cuda-hidden-auto',args.cuda,{'backend':'auto'},hidden=True)
     run('cuda-hidden-required',args.cuda,{'backend':'cuda'},'CUDA initialization failed',hidden=True)
     run('cuda-reject-expm',args.cuda,{'backend':'cuda','propagator':'expm'},'supports method cCCE')
-    # dsj is a cluster_mode of method cCCE since A47 (-m takes cCCE or gCCE only)
+    # dsj is a cluster_mode of method cCCE since A47
     run('cuda-reject-dsj',args.cuda,{'backend':'cuda','method':'cCCE','cluster_mode':'dsj'},'supports method cCCE')
     run('cce-cpu',args.cpu,{'backend':'cpu','method':'cCCE'},reference=None)
-    run('cce-cuda-cli',args.cuda,{'backend':'cuda'},extra=('-m','cCCE'),reference='cce-cpu',actual_backend='cuda')
+    # (the name is from the -m cCCE it was run with until A63; the method is the input's now)
+    run('cce-cuda-cli',args.cuda,{'backend':'cuda','method':'cCCE'},reference='cce-cpu',actual_backend='cuda')
     # packed_max_dim 0 here: with the default (4) the GPU may take every cluster once it is up, and then there is no CPU
     # profile line and the tolerance is the GPU's (review 20261012-233058-452278 P3-05); the default is cce-auto-packed
     run('cce-auto-cpu',args.cuda,{'backend':'auto','method':'cCCE','gpu_options':{'min_dim':256,'packed_max_dim':0}},
@@ -110,7 +113,7 @@ def main():
         print('PASS '+a+' output byte-identical to '+b+' ('+str(len(files))+' files)',flush=True)
     evaluations={}
     for name,base in (('cce3-threshold',{'method':'cCCE','order':3,'rbath':15}),('gcce-threshold',{}),
-                      ('gcce-threshold-states',{'nstate':3})):
+                      ('gcce-threshold-states',{'configuration':dict(bath,nstate=3)})):
         run(name+'-off',args.cuda,dict(base,backend='auto',gpu_options={'packed_max_dim':0,'warp_max_dim':0}),reference=None)
         run(name,args.cuda,dict(base,backend='auto'),reference=None)
         output=(args.output/name/'run.log').read_text()
@@ -164,12 +167,12 @@ def main():
     # are the first state's), and nstep 3000 makes a window 131 clusters, so an order fills several windows and the two
     # slots are reused. Both kernels must have computed clusters (packed: GPU count minus warp count) and more windows than
     # the two slots must have gone through the feeder; the curve is the CPU's within the GPU tolerance.
-    ready=dict(third,nstate=3,nstep=3000)
+    ready=dict(third,configuration=dict(bath,nstate=3),nstep=3000)
     run('cce3-ready-cpu',args.cpu,dict(ready,backend='cpu'),reference=None)
     run('cce3-ready-packed-warp',args.cuda,dict(ready,backend='auto',gpu_options={'packed_max_dim':4,'warp_max_dim':8}),
         reference='cce3-ready-cpu',actual_backend=None)
     output=(args.output/'cce3-ready-packed-warp'/'run.log').read_text()
-    gpu=re.search(r'\[gpu-packed\] clusters on the GPU (\d+), on the CPU while the GPU started \d+, back to the CPU (\d+);.* (\d+) batches of (\d+) windows',output)
+    gpu=re.search(r'\[gpu-packed\] clusters on the GPU (\d+), on the CPU while the GPU started \d+, back to the CPU (\d+),.* (\d+) batches of (\d+) windows',output)
     warped=re.search(r'\[gpu-warp\] of these in the warp kernel (\d+)',output)
     assert gpu and warped, 'cce3-ready-packed-warp counts'
     on_gpu,back,_,windows=map(int,gpu.groups()); in_warp=int(warped.group(1))
@@ -222,10 +225,10 @@ def main():
     chosen('cce-auto-packed','recursive','clusters on the CPU and packed kernel: recursive; clusters on the GPU (backend=auto, warp kernel included): exact')
     chosen('baseline','recursive','supported path')
     run('gpu-build-cpu-recursive',args.cuda,{'backend':'cpu','evolution_update':'recursive'})
-    run('auto-reject-recursive',args.cuda,{'backend':'auto','evolution_update':'recursive'},'this run has backend=auto')
-    run('cuda-reject-recursive',args.cuda,{'backend':'cuda','evolution_update':'recursive'},'this run has backend=cuda')
-    run('cce-cuda-reject-recursive',args.cuda,{'backend':'cuda','evolution_update':'recursive'},'this run has backend=cuda',
-        extra=('-m','cCCE'))
+    run('auto-reject-recursive',args.cuda,{'backend':'auto','evolution_update':'recursive'},'this run has execution.backend=auto')
+    run('cuda-reject-recursive',args.cuda,{'backend':'cuda','evolution_update':'recursive'},'this run has execution.backend=cuda')
+    run('cce-cuda-reject-recursive',args.cuda,{'backend':'cuda','method':'cCCE','evolution_update':'recursive'},
+        'this run has execution.backend=cuda')
 
     # the warp kernel (A40, gpu_options.warp_max_dim; user 2026-10-13: default 27 in the GPU build with backend auto or
     # cuda and method CCE or gCCE, 0 otherwise): a given value is refused where it cannot run; the log says the value and why
@@ -240,10 +243,10 @@ def main():
     warp('cuda-refinement-off',27,'default (backend=cuda, method=gCCE)')
     warp('cce-cuda-cli',27,'default (backend=cuda, method=CCE)')
     run('warp-reject-cpu-build',args.cpu,{'backend':'auto','gpu_options':{'warp_max_dim':27}},'needs the GPU binary')
-    run('warp-reject-backend-cpu',args.cuda,{'backend':'cpu','gpu_options':{'warp_max_dim':27}},'works with backend auto or cuda')
+    run('warp-reject-backend-cpu',args.cuda,{'backend':'cpu','gpu_options':{'warp_max_dim':27}},'works with execution.backend auto or cuda')
     run('warp-reject-dimension',args.cuda,{'backend':'auto','gpu_options':{'warp_max_dim':5}},'has no dimension up to it')
     run('warp-reject-form',args.cuda,{'backend':'auto','gpu_options':{'warp_max_dim':33}},'an integer up to 32')
-    run('warp-reject-old-key',args.cuda,{'backend':'auto','gpu_options':{'warp_dims':[6]}},'unknown key gpu_options.warp_dims')
+    run('warp-reject-old-key',args.cuda,{'backend':'auto','gpu_options':{'warp_dims':[6]}},'unknown key execution.gpu_options.warp_dims')
     # cluster_mode pcce (-m pCCE until A47) with a partition larger than the bath, so the run stops at clustering - after
     # the log has printed the settings
     PCCE_BIG=dict(PCCE,pcce={'partition_size':100000})

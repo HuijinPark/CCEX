@@ -1,3 +1,7 @@
+/**
+ * @file bundle_partition.h
+ * @brief Bundle clustering: the partition of the sites into bundles and its expansion terms.
+ */
 #ifndef CCEX_ADAPTIVE_PARTITION_H
 #define CCEX_ADAPTIVE_PARTITION_H
 

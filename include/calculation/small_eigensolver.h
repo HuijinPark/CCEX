@@ -1,3 +1,7 @@
+/**
+ * @file small_eigensolver.h
+ * @brief The eigensystems of small cCCE cluster Hamiltonians by a fixed-sweep complex Jacobi, several at once.
+ */
 #ifndef CCEX_SMALL_EIGENSOLVER_H
 #define CCEX_SMALL_EIGENSOLVER_H
 // A42: the eigensystems of the small cCCE cluster Hamiltonians (bath dimension 2 and 4) by a cyclic complex Jacobi with a

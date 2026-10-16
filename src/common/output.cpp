@@ -1,3 +1,7 @@
+/**
+ * @file output.cpp
+ * @brief Writing the result files.
+ */
 #include "../../include/common/output.h"
 #include "../../include/common/memory.h"
 #include "../../include/common/utilities.h"
@@ -123,7 +127,7 @@ void Output_save_all(Output* op, MatrixXcd* result, int nstep, double deltat, in
         cluster_str += "_" + std::to_string(cluster[i]);
     }
     if (strlen(op->outfile) + cluster_str.size() + 64 >= MAX_FILEPATH){
-        fprintf(stderr, "Error: savemode cluster_coherence: the file name of cluster %s is longer than %d characters; use a shorter outfile\n",
+        fprintf(stderr, "Error: output.savemode cluster_coherence: the file name of cluster %s is longer than %d characters, use a shorter output.file\n",
                 cluster_str.c_str(), MAX_FILEPATH - 1);
         ccexFatal(1);
     }
@@ -152,7 +156,7 @@ Output Output_fullOutput(const Output* op, char* name, const int* cluster, int n
     full += "_full";
     if (istate!=0) full += "_state" + std::to_string(istate);
     if (full.size() + 16 >= MAX_FILEPATH){   // Output_save appends _wiDiv / _noDiv
-        fprintf(stderr, "Error: savemode cluster_density_matrix: the file name %s is longer than %d characters; use a shorter outfile\n",
+        fprintf(stderr, "Error: output.savemode cluster_density_matrix: the file name %s is longer than %d characters, use a shorter output.file\n",
                 full.c_str(), MAX_FILEPATH - 17);
         ccexFatal(1);
     }
@@ -167,7 +171,7 @@ void Output_save_info(Output* op, MatrixXcd* result_wD, MatrixXcd* result_nD, in
     char* savemode = Output_getSavemode(op);
 
     if (strcasecmp(savemode, "coherence_tagged") != 0){
-        printf("Error: savemode is not coherence_tagged\n");
+        printf("Error: output.savemode is not coherence_tagged\n");
         ccexFatal(1);
     }
 
@@ -259,13 +263,13 @@ void Output_setSavemode(Output* op, char* savemode){
     const char* names[] = {"coherence", "coherence_tagged", "cluster_coherence", "cluster_density_matrix"};
     for (int k=0; k<4; ++k)
         if (strcasecmp(savemode, oldNames[k]) == 0){
-            ccexRefusalPrint(stderr, "Error: savemode \"%s\" is now \"%s\"\n", oldNames[k], names[k]);
+            ccexRefusalPrint(stderr, "Error: output.savemode \"%s\" is now \"%s\"\n", oldNames[k], names[k]);
             ccexRefuse();   // read from the input on every rank (A55)
         }
     int k = 0;
     while (k<4 && strcasecmp(savemode, names[k])) ++k;
     if (k == 4) {
-        ccexRefusalPrint(stderr, "Error: savemode \"%s\" is not one of coherence, coherence_tagged, cluster_coherence, "
+        ccexRefusalPrint(stderr, "Error: output.savemode \"%s\" is not one of coherence, coherence_tagged, cluster_coherence, "
                         "cluster_density_matrix\n", savemode);
         ccexRefuse();
     }
@@ -304,8 +308,8 @@ void Output_report(Output* op){
 
     printTitle("Structure Output");
 
-    printStructElementChar("savemode", op->savemode);
-    printStructElementChar("outfile", op->outfile);
-    printStructElementBool("savemode.nodiv", op->save_nodiv);
+    printStructElementChar("output.savemode", op->savemode);
+    printStructElementChar("output.file", op->outfile);
+    printStructElementBool("output.savemode.nodiv", op->save_nodiv);
 
 }

@@ -1,86 +1,30 @@
 # Examples
 
-Twelve worked examples live in `example/tutorial/`, numbered in the order to read
-them: from the smallest hand-written input to the features this branch added.
-Each folder is one physical system (or one feature on a system above), and each
-calculation inside it is a folder with its inputs (`ccein*.json`, JSON with `#`
-comments), one `run.sh` that runs them and the post-processing, and the cluster
-`job` that submits that `run.sh` on idm. The system folder's `README.md` has
-the table of its calculations.
+Eleven worked examples live in `example/tutorial/`, in the order to learn them. Each topic folder holds one folder per
+calculation (named `<method><order>_<pulse>_<approach>`) with its inputs (only the keys that matter), a `run.sh` and
+the `expected.png` a rerun is compared with; the topic's `README.md` says, per calculation, what it shows, the keys
+that matter, how to run it (time, ranks, memory), the expected result and what to change next.
 
-## Running one
+| Topic | README |
+|---|---|
+| quickstart: NV in natural-abundance ¹³C, cCCE2 Hahn echo, seconds | [00_quickstart](../../example/tutorial/00_quickstart/README.md) |
+| bath configurations (`k_range`) and sampled bath states (`nstate`) | [01_ensemble_and_states](../../example/tutorial/01_ensemble_and_states/README.md) |
+| Hahn echo, CPMG, a sequence written out | [02_pulses](../../example/tutorial/02_pulses/README.md) |
+| an electron-spin bath: P1, Vp | [03_P1](../../example/tutorial/03_P1/README.md) |
+| V_B⁻ in h-BN with DFT tensors | [04_hBN](../../example/tutorial/04_hBN/README.md) |
+| several NV centres | [05_multiNV](../../example/tutorial/05_multiNV/README.md) |
+| cCCE against gCCE, and the cCCE options | [06_cCCE_vs_gCCE](../../example/tutorial/06_cCCE_vs_gCCE/README.md) |
+| pCCE, bundles, adaptive refinement | [07_pCCE_and_bundle](../../example/tutorial/07_pCCE_and_bundle/README.md) |
+| the GPU backend | [08_GPU](../../example/tutorial/08_GPU/README.md) |
+| the automatic convergence | [09_auto_convergence](../../example/tutorial/09_auto_convergence/README.md) |
+| the coordinate-frame rotation | [10_coordinate_rotation](../../example/tutorial/10_coordinate_rotation/README.md) |
 
 ```
 bash do_compile.sh wsl-gnu                        # once; makes bin/main.out
-cd example/tutorial/02_Diamond_NV_natab/ensemble_CCE
-NP=4 NCONF=1 bash run.sh                      # writes results/
+cd example/tutorial/00_quickstart
+NP=4 bash run.sh                                  # results/coherence.png; compare with expected.png
 ```
 
-`run.sh` runs every input of the folder with `mpirun -n $NP`, then the error
-correction, the ensemble average and the plot the recorded run did
-(`example/analysis/README.md`). `NCONF` is the number of bath configurations,
-and the electron-bath runs also take `NSTATE`, the sampled bath states per
-configuration. Into `results/` go `<name>_<conf>[_state<s>]_noDiv` and
-`_wiDiv` from CCEX (the coherence, or the density matrix, without and with the
-division of each cluster's term by its sub-clusters' terms; see
-[outfile](InputFile_Output.md#tag_outfile)), `_ErrCorr` and `EnsAvg_conv<N>` from
-the analyzer, and `.png` plots.
-
-The figures below were made on 2026-09-24 on a laptop (WSL, 4 ranks) from the
-results of each `run.sh` with one bath configuration, by
-`docs/images/tutorials/make_figures.py` (those of 11 and 12, on 2026-10-12, are the figures
-the two tutorials write themselves; the three of 07 were redone on 2026-10-13 with 4 ranks, after its hyperfine file
-was corrected (it was read 2x, `Examples_07.md`); 02's Knight-shift and 07's hfmedi figures were redone on 2026-10-13, the same way,
-with the corrected `knight` and `hfmedi` code of 2026-10-12, the Knight-shift one from the error-corrected curves the
-analyzer makes, since one raw `_wiDiv` curve diverges); the recorded runs on the cluster used
-up to 50 configurations, so these curves are the shape, not the converged
-number. A coherence figure shows `|L(t)|`; a density-matrix figure shows the
-diagonal of `rho(t)` and its largest off-diagonal element. The time is the one
-each system's post-processing uses.
-
-## What run.sh does
-
-Every calculation folder has the same shape of script; this is the one of
-`02_Diamond_NV_natab/ensemble_CCE/`:
-
-```
-#!/bin/sh
-# 02_Diamond_NV_natab/ensemble_CCE: CCE2 Hahn echo, one run per bath configuration, then the ensemble average
-#
-# Recorded run: 20 bath configuration(s), 5 MPI ranks on idm.
-# Here NCONF configurations on NP ranks. Set them to repeat the recorded run.
-set -e
-ROOT=$(git rev-parse --show-toplevel)
-CCEX=$ROOT/bin/main.out
-ANALYZER=$ROOT/example/analysis/Analyzer/CoherenceAnalyzer.v1/run.py
-NP=${NP:-4}
-NCONF=${NCONF:-1}
-mkdir -p results
-
-for i in $(seq 1 $NCONF); do
-  mpirun -n $NP $CCEX -f ccein.json -I ../bath/bath_Diamond_NV_natab_${i} -o results/CCE2_Diamond_NV_natab_$i > results/process_CCE2_Diamond_NV_natab_$i
-done
-
-# --- post-processing (needs numpy, matplotlib; MPLBACKEND=Agg without a display)
-# error correction: wiDiv against noDiv
-python3 $ANALYZER -d results/ -fi CCE2_Diamond_NV_natab_CONF_wiDiv -err_d results/ -err_fi CCE2_Diamond_NV_natab_CONF_noDiv -vn "CONF" -v $(seq -s ' ' 1 $NCONF) -uc "ms" -err -ntn -fo results/CCE2_Diamond_NV_natab_CONF_ErrCorr
-# ensemble average
-python3 $ANALYZER -d results/ -fi CCE2_Diamond_NV_natab_CONF_ErrCorr -vn "CONF" -v $(seq -s ' ' 1 $NCONF) -uc "ms" -ea -ntn -fo results/CCE2_Diamond_NV_natab_EnsAvg -pl -fit -fit_initp 2 -fit_space 5
-```
-
-## The twelve
-
-| Page | What it shows |
-|---|---|
-| [01 Arbitrary system](Examples_01.md) | the three input file formats on a hand-written system; gCCE1, density matrix |
-| [02 Diamond NV, natural-abundance ¹³C](Examples_02.md) | the basic NV case: ensemble CCE2, sampled bath states, gCCE, dsj, the Knight shift, the built-in isotope table |
-| [03 Diamond, several NV centres](Examples_03.md) | several NV centres: the gCCE density matrix, Ramsey and Hahn echo |
-| [04 Diamond NV in a P1 bath](Examples_04.md) | an electron-spin bath: CCE2, CCE4 and CCE2e2n, pCCE, gCCE2 with the zero-field splitting, the population |
-| [05 Diamond NV in a Vp bath](Examples_05.md) | the same spin echo over Vp concentrations |
-| [06 Pulse sequences written out](Examples_06.md) | pulse sequences written out: Hahn echo, CPMG, WAHUHA |
-| [07 h-BN V_B⁻](Examples_07.md) | DFT hyperfine and quadrupole tensors, the hyperfine-mediated term, the OH term |
-| [08 Bundle clustering](Examples_08.md) | bundle clustering and its adaptive refinement: merge and regroup |
-| [09 GPU backend](Examples_09.md) | the CUDA backend: cpu, auto and cuda compared for CCE5, gCCE4 and pCCE2 |
-| [10 Coordinate frame rotation](Examples_10.md) | the coordinate frame rotation: a bath in the crystal frame |
-| [11 Automatic convergence](Examples_11.md) | the `auto_convergence` block: the time window, rdip, rbath and the configurations found by the run itself |
-| [12 rdip ladder](Examples_12.md) | `rdip_ladder`: the curves of smaller rdip from one run; `evolution_update` exact against recursive |
+`example/README.md` has the table "what should I use for my case" (situation → method → example), and
+`example/tutorial/README.md` the map from the tutorial folders of earlier versions to these. Each topic's `README.md`
+and `expected.png` describe it next to its inputs.

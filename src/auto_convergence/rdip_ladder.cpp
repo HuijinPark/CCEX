@@ -1,3 +1,7 @@
+/**
+ * @file rdip_ladder.cpp
+ * @brief The rdip ladder: the coherence of every smaller rdip assembled from one order-2 run.
+ */
 // rdip ladder (include/auto_convergence/rdip_ladder.h; (internal notes)).
 #include "../../include/auto_convergence/rdip_ladder.h"
 #include "../../include/clustering/pcce_partition_cache.h"
@@ -59,9 +63,9 @@ void prepare(Config* c,Cluster* cls,BathArray* ba,Output* op){
     if((strcasecmp(c->method,"cce") && strcasecmp(c->method,"gcce") && !pcce) || strcasecmp(c->quantity,"coherence"))
         refuse("needs method CCE, gCCE or pCCE and quantity coherence");
     if(Cluster_getOrder(cls)!=(pcce ? 2*cls->sK : 2))refuse("needs order 2");
-    if(strcasecmp(c->cluster_mode,"standard"))refuse("needs cluster_mode standard");
-    if(c->cluster_contributions)refuse("cannot be combined with cluster_contributions");
-    if(strcasecmp(Output_getSavemode(op),"coherence"))refuse("needs savemode coherence");
+    if(strcasecmp(c->cluster_mode,"standard"))refuse("needs cluster.mode standard");
+    if(c->cluster_contributions)refuse("cannot be combined with output.cluster_contributions");
+    if(strcasecmp(Output_getSavemode(op),"coherence"))refuse("needs output.savemode coherence");
     const float rdip=Config_getRdip(c),cut=Config_getRdipcut(c);
     for(int k=0;k<c->nrdip_ladder;++k)
         if(!(c->rdip_ladder[k]>cut && c->rdip_ladder[k]<rdip))refuse("rungs must lie between rdipcut and rdip");
@@ -85,7 +89,7 @@ void prepare(Config* c,Cluster* cls,BathArray* ba,Output* op){
         for(int s=0;s<size;++s)grown[old+m][1+s]=units.of.empty() ? missing[m] : units.members[missing[m]][s];
     }
     freeInt2d(&rows,old);rows=grown;
-    if(rank==0)printf("[rdip-ladder] %d rungs below rdip %g; %zu single %s re-added at power 0\n",c->nrdip_ladder,double(rdip),
+    if(rank==0)printf("[rdip-ladder] %d rungs below rdip %g, %zu single %s re-added at power 0\n",c->nrdip_ladder,double(rdip),
                       missing.size(),pcce ? "partitions" : "spins");
 }
 

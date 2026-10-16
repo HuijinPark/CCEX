@@ -1,3 +1,7 @@
+/**
+ * @file warp_cluster_gpu.cu
+ * @brief The warp GPU kernel: one cluster per warp of 32 threads, its matrices in shared memory.
+ */
 // A40: the warp kernel (warp_cluster.h says what a cluster computes). One cluster per warp: its matrices in shared memory,
 // the eigensystem by a parallel cyclic Jacobi (round-robin ordering: every round rotates disjoint index pairs at once, the
 // lanes sharing the column and row updates), then the lanes take different time points (point i on lane i % 32), each

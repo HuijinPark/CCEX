@@ -1,3 +1,7 @@
+/**
+ * @file simulator.h
+ * @brief The calculation: cluster Hamiltonians, time evolution and the coherence of each cluster and of the whole bath.
+ */
 #include "calculation/gpu/accelerator_defaults.h"
 #ifndef __CCEX_SIMULATOR_H_
 #define __CCEX_SIMULATOR_H_
@@ -25,8 +29,10 @@ void setClusterHyperfineMean(bool on);   // hamiltonian.cCCE.delta_A false: crea
 struct GcceBatch;
 MatrixXcd* calCoherenceGcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op, GcceBatch* batch=nullptr);
 MatrixXcd* calCoherenceCce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls);
+MatrixXcd* calCoherenceMecce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls);   // bath jumps only; no 0th cluster (L_0 = 1, as CCE)
+MatrixXcd* calCoherenceMegcce(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op);   // ba == NULL: 0th cluster
 /**
- * Storage calCoherenceCceInto reuses from one cluster to the next (improvements.md A14): the eigensolvers, the products and the
+ * Storage calCoherenceCceInto reuses from one cluster to the next: the eigensolvers, the products and the
  * vectors of the time evolution. Owned by the caller (calculate); nothing in it carries a value from one call to the next - every
  * member is written before it is read.
  */
@@ -38,27 +44,41 @@ struct CceWorkspace {
     Eigen::RowVectorXcd rowStart, row, rowNext;
     Eigen::VectorXcd colStart, col, colNext, scaled;
     std::vector<doublec> phases;                     // single state: the phases of each distinct interval (A16)
+    // A62 (cceEvolveColumns): one column block's phases per distinct interval, the row side (columns x D) and the column
+    // side (D x columns) of the chain and their next values
+    std::vector<MatrixXcd> blockUp, blockDown;
+    MatrixXcd blockRow, blockRowNext, blockCol, blockColNext;
 };
-/** calCoherenceGcce writing into into[0..nstep) when given (else a new array), reusing *alphaRho for psia^dagger rho (A14). */
+/** calCoherenceGcce writing into into[0..nstep) when given (else a new array), reusing *alphaRho for psia^dagger rho. */
 MatrixXcd* calCoherenceGcceInto(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, Output* op, MatrixXcd* into,
                                 Eigen::RowVectorXcd* alphaRho, GcceBatch* batch=nullptr);
 /** calCoherenceCce writing into result[0..nstep) (1 x 1 each, reused when already so) with the storage of ws; the same arithmetic. */
 void calCoherenceCceInto(QubitArray* qa, BathArray* ba, Config* cnf, Pulse* pls, MatrixXcd* result, CceWorkspace& ws);
-/** The two halves of calCoherenceCceInto after the Hamiltonians (A30): cceSetup takes ws.Halpha and ws.Hbeta to the
+/** The two halves of calCoherenceCceInto after the Hamiltonians: cceSetup takes ws.Halpha and ws.Hbeta to the
  *  eigensystems, M, the eigenvalues and, for one state (psi, d x 1, else nullptr), rowStart, colStart and Madj; cceEvolve
  *  is the time evolution from these into result[0..nstep). The batched small-cluster path (cce_batch.h) shares cceSetup. */
 void cceSetup(CceWorkspace& ws, const MatrixXcd* psi);
 void cceEvolve(Config* cnf, Pulse* pls, MatrixXcd* result, CceWorkspace& ws);
-/** A42 (cce_setup_small.cpp): cceSetup with the eigensystems of ws.Halpha (s 0) and ws.Hbeta (s 1) given - the small-cluster
+/** (simulator_cce_columns.cpp) The one-state time evolution of cceEvolve with
+ *  the time points of a block of `columns` steps as matrix columns, so that each interval is one matrix-matrix product
+ *  (D x D times D x columns) instead of `columns` matrix-vector products. The phases are those of evolveSingleState
+ *  (exact: sin and cos at every step; recursive: so at steps 0, 16, 32, ... and the previous step's times one step's
+ *  factor in between, carried across blocks). The same products in another summation order: the last bits differ.
+ *  cceEvolve calls it for bath dimension >= column_evolution.min_dim when column_evolution is on (the column_evolution
+ *  input block; on by default with min_dim 256, columns 64). */
+void cceEvolveColumns(const Eigen::VectorXcd& valUp, const Eigen::VectorXcd& valDown, double** sequence,
+                      const int* sequenceIndices, int npulse, int nstep, double deltat, bool recursive, int columns,
+                      MatrixXcd* result, CceWorkspace& ws);
+/** (cce_setup_small.cpp) cceSetup with the eigensystems of ws.Halpha (s 0) and ws.Hbeta (s 1) given - the small-cluster
  *  Jacobi's values w[s][0..d) and vectors V[s] (column major), set into ws.up/ws.down; a null w[s] has that one solved by
- *  Eigen. The A30 window solves its clusters' matrices in groups (small_eigensolver.h) and calls this. */
+ *  Eigen. The batch window (cce_batch_window.h) solves its clusters' matrices in groups (small_eigensolver.h) and calls this. */
 void cceSetupSmall(CceWorkspace& ws, const MatrixXcd* psi, const double* const* w, const doublec* const* V);
-/** A42: for bath dimension 2 and 4 (and CCEX_SMALL_EIG not 0) solves the two Hamiltonians one at a time with the Jacobi
+/** For bath dimension 2 and 4 (and CCEX_SMALL_EIG not 0) solves the two Hamiltonians one at a time with the Jacobi
  *  and calls cceSetupSmall - the bits a cluster gets in a group of the window - and returns true; otherwise false (the
  *  caller then runs cceSetup, Eigen). */
 bool cceSetupSmallAlone(CceWorkspace& ws, const MatrixXcd* psi);
-/** The ensemble (nstate 0) time evolution of calCoherenceCceInto with evolution_update = recursive (A18,
- *  simulator_cce_recursive.cpp): M = M_up^dagger M_down, the eigenvalues of the two conditional Hamiltonians. */
+/** The ensemble (nstate 0) time evolution of calCoherenceCceInto with evolution_update = recursive
+ *  (simulator_cce_recursive.cpp): M = M_up^dagger M_down, the eigenvalues of the two conditional Hamiltonians. */
 void evolveEnsembleRecursiveCce(const MatrixXcd& M, const MatrixXcd& M_up, const MatrixXcd& M_down,
                                 const Eigen::VectorXcd& valUp, const Eigen::VectorXcd& valDown, Pulse* pls,
                                 bool manualIntervals, int nstep, double deltat, MatrixXcd* result);
@@ -113,7 +133,7 @@ void applyPulseGcce(GcceWork* w, int ipulse, const Eigen::VectorXcd& in, Eigen::
 void prepareGcceWork(GcceWork* w, const MatrixXcd& Htot, bool useEigen, bool refine=true,
                      int maxSweeps=ccex::refinementSweeps);
 MatrixXcd calPropagatorGcce(QubitArray* qa, const MatrixXcd& Htot, Pulse* pls, double tfree, MatrixXcd* Upulses, GcceWork* w);
-/** calPropagatorGcce (propagator=eigen) for evolution_update = recursive (A18): the calls come for istep = 0, 1, 2, ... with
+/** calPropagatorGcce (propagator=eigen) for evolution_update = recursive: the calls come for istep = 0, 1, 2, ... with
  *  tfree = istep deltat (accumulated), and the phases between every 16th step are carried over by one step's factor. */
 MatrixXcd calPropagatorGcceRecursive(Pulse* pls, double tfree, GcceWork* w, int istep, double deltat);
 
@@ -123,8 +143,8 @@ void prepareGccePulses(GcceWork* w, MatrixXcd* Upulses, int npulse, int bdim);
 /** evolution=vector: applies the same pulse sequence as calPropagatorGcce, but to the
  *  state vector psi0 instead of assembling the propagator. Result in w->psi.
  *  prepareGccePulses must have been called for this cluster first, and psi0 is the same in every call for the cluster
- *  (M^dag psi0 is formed on the first call and kept, A16). istep >= 0 (evolution_update = recursive): the calls come for istep = 0, 1, 2, ... with
- *  tfree = istep deltat (accumulated), and the phases between every 16th step are carried over by one step's factor (A16 b). */
+ *  (M^dag psi0 is formed on the first call and kept). istep >= 0 (evolution_update = recursive): the calls come for istep = 0, 1, 2, ... with
+ *  tfree = istep deltat (accumulated), and the phases between every 16th step are carried over by one step's factor. */
 const Eigen::VectorXcd& propagateStateGcce(const Eigen::VectorXcd& psi0, Pulse* pls, double tfree, GcceWork* w,
                                            int istep=-1, double deltat=0.0);
 

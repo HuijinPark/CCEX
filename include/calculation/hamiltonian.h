@@ -1,3 +1,7 @@
+/**
+ * @file hamiltonian.h
+ * @brief Spin operators and the single-spin and two-spin Hamiltonian terms (Zeeman, dipolar, hyperfine, quadrupole).
+ */
 #ifndef __CCEX_HAMILTONIAN_H_
 #define __CCEX_HAMILTONIAN_H_
 

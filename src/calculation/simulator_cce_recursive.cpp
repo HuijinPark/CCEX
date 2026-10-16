@@ -1,3 +1,7 @@
+/**
+ * @file simulator_cce_recursive.cpp
+ * @brief The ensemble cCCE time evolution with evolution_update = recursive.
+ */
 #include "../../include/calculation/simulator.h"
 #include <cmath>
 

@@ -1,3 +1,7 @@
+/**
+ * @file small_cluster_math.h
+ * @brief The cCCE coherence of one small cluster, written once for the GPU packed kernel and its CPU check.
+ */
 #ifndef CCEX_SMALL_CLUSTER_MATH_H
 #define CCEX_SMALL_CLUSTER_MATH_H
 // A26 step 1: the cCCE coherence of one small cluster (bath dimension D = 2 or 4), written once for the batched GPU kernel

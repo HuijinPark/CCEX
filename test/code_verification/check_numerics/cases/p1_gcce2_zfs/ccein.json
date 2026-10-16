@@ -1,17 +1,22 @@
 {
   "method": "gCCE",
   "quantity": "coherence",
-  "gyrofile": "../../inputs/p1_10ppm/DiaP1_gyro",
-  "bathfile": [
-    "../../inputs/p1_10ppm/bath_DiaP1_10ppm_1"
-  ],
+  "configuration": {
+    "gyrofile": "../../inputs/p1_10ppm/DiaP1_gyro",
+    "bathfile": [
+      "../../inputs/p1_10ppm/bath_DiaP1_10ppm_1"
+    ],
+    "bath_state_file": ["../../inputs/p1_10ppm/state_"],
+    "nstate": 1,
+    "seed": 19,
+    "defect_axis_file": ["../../inputs/p1_10ppm/avaax_nav12"]
+  },
   "order": 2,
   "bfield": 0,
   "rbath": 200,
   "rdip": 330,
   "deltat": 5e-05,
   "nstep": 100,
-  "seed": 19,
   "Qubit": {
     "qubit": [
       {
@@ -56,21 +61,24 @@
       }
     ]
   },
-  "add_subclusters": false,
-  "max_clusters_per_order": [
-    0,
-    0,
-    0
-  ],
+  "cluster": {
+    "selection": {
+      "add_subclusters": false,
+      "max_per_order": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
   "pulse": {"count": 1},
-  "savemode": "coherence",
+  "output": {"savemode": "coherence"},
   "Defect": {
-    "axis_file": "../../inputs/p1_10ppm/avaax_nav12",
     "species": [
       {
         "name": "P1",
-        "n_nuclear_spins": 0,
-        "n_configurations": 12,
+        "n_onsite_spins": 0,
+        "n_axis_states": 12,
         "detuning": [
           [
             1,
@@ -135,7 +143,5 @@
         ]
       }
     ]
-  },
-  "nstate": 1,
-  "bath_state_file": "../../inputs/p1_10ppm/state_"
+  }
 }

@@ -1,3 +1,7 @@
+/**
+ * @file bundle_defaults.h
+ * @brief Bundle clustering: the default limits and check tolerances.
+ */
 #ifndef CCEX_ADAPTIVE_DEFAULTS_H
 #define CCEX_ADAPTIVE_DEFAULTS_H
 #include <cstddef>

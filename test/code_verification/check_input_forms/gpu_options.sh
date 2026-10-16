@@ -23,9 +23,9 @@ NUM="$REPO/test/code_verification/check_numerics"
 
 run_case(){    # <case> <name> <json changes>
     local d="$NUM/cases/$1" o="$W/$2"; mkdir -p "$o"
-    python3 -c 'import json,sys; j=json.load(open(sys.argv[1])); j.update(json.loads(sys.argv[3])); json.dump(j,open(sys.argv[2],"w"),indent=1)' \
+    python3 -c 'import json,sys; from input_layout import flat, nest; j=flat(json.load(open(sys.argv[1]))); j.update(json.loads(sys.argv[3])); j["outfile"]="out"; json.dump(nest(j),open(sys.argv[2],"w"),indent=1)' \
         "$d/ccein.json" "$o.json" "$3"
-    ( cd "$d" && "$MPIRUN" -n 2 "$BIN_DEV" -f "$o.json" -o "$o/out" > "$o.log" 2>&1 < /dev/null ) || { echo "    $2 exited $?"; return 1; }
+    ( cd "$d" && "$MPIRUN" -n 2 "$BIN_DEV" -f "$o.json" -o "$o" > "$o.log" 2>&1 < /dev/null ) || { echo "    $2 exited $?"; return 1; }
 }
 same_bytes(){ [ -n "$(ls "$1")" ] && [ "$(ls "$1")" = "$(ls "$2")" ] && diff -rq "$1" "$2" >/dev/null; }
 
@@ -36,7 +36,7 @@ changed {"gpu_options":{"min_dim":17,"packed_max_dim":0,"warp_max_dim":0,"evolut
 for case in p1_cce2_single hbn_gcce2_oh; do
     ok=1
     while read -r form change; do
-        run_case "$case" "$case/$form" "$(python3 -c 'import json,sys; print(json.dumps(dict(json.loads(sys.argv[1]), backend="cpu")))' "$change")" || ok=0
+        run_case "$case" "$case/$form" "$(python3 -c 'import json,sys; from input_layout import flat, nest; print(json.dumps(dict(json.loads(sys.argv[1]), backend="cpu")))' "$change")" || ok=0
     done <<< "$FORMS"
     for form in empty defaults changed; do
         same_bytes "$W/$case/none" "$W/$case/$form" || { echo "    $case: the $form block changes the outputs"; ok=0; }
@@ -44,8 +44,8 @@ for case in p1_cce2_single hbn_gcce2_oh; do
     if [ $ok -eq 1 ]; then echo "  PASS  G1 $case: no block, an empty, a default and a changed block give the same bytes"; PASS=$((PASS+1))
     else echo "  FAIL  G1 $case (see $W/$case)"; FAIL=$((FAIL+1)); fi
     ok=1
-    for want in "gpu_options.min_dim: +17" "gpu_options.evolution_batch_steps: +5" "gpu_options.cache_mb: +0" \
-                "gpu_options.evolution_batch_size: +3" "gpu_options.cluster_batch_mb: +7" "gpu_options.packed_max_dim: +0" "gpu_options.warp_max_dim: +0"; do
+    for want in "gpu_options.min_dim *: +17" "gpu_options.evolution_batch_steps *: +5" "gpu_options.cache_mb *: +0" \
+                "gpu_options.evolution_batch_size *: +3" "gpu_options.cluster_batch_mb *: +7" "gpu_options.packed_max_dim *: +0" "gpu_options.warp_max_dim *: +0"; do
         grep -Eq "^ +$want( |$)" "$W/$case/changed.log" || { echo "    $case: the log does not show $want"; ok=0; }
     done
     grep -q "input key \"gpu_options[^\"]*\" is not read" "$W/$case/changed.log" && { echo "    $case: a gpu_options key reported as not read"; ok=0; }
@@ -57,9 +57,9 @@ done
 ok=1
 run_case p1_cce2_single auto_default '{"backend":"auto"}' || ok=0
 for log in "$W/p1_cce2_single/none.log" "$W/auto_default.log"; do
-    grep -A1 -E "^ +gpu_options.packed_max_dim: +0( |$)" "$log" | grep -Eq "chosen by +: +default \(CPU build\)" ||
+    grep -A1 -E "^ +gpu_options.packed_max_dim *: +0( |$)" "$log" | grep -Eq "chosen by +: +default \(CPU build\)" ||
         { echo "    $log: packed_max_dim is not 0 by default (CPU build)"; ok=0; }
-    grep -A1 -E "^ +gpu_options.warp_max_dim: +0( |$)" "$log" | grep -Eq "chosen by +: +default \(CPU build\)" ||
+    grep -A1 -E "^ +gpu_options.warp_max_dim *: +0( |$)" "$log" | grep -Eq "chosen by +: +default \(CPU build\)" ||
         { echo "    $log: warp_max_dim is not 0 by default (CPU build)"; ok=0; }
 done
 # backend auto computes everything on the CPU in this build and so takes the CPU default (A36; exact under A29 until

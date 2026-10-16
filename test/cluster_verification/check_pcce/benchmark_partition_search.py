@@ -64,7 +64,7 @@ def main():
         # radius-selected bath. Standard pCCE remainder removal remains enabled.
         for item in manifest['realizations']:
             cfg=config_for(families['pl6'],fixture,2,2,1,steps=33)
-            cfg['bathfile']=[str(fixture/item['name'])]
+            cfg['configuration']['bathfile']=[str(fixture/item['name'])]
             backends=['cpu','cuda','auto'] if item['realization']==1 and a.scope=='full' else ['cpu']
             run_case(item['name']+'-k2',cfg,a.ranks,a.repeats,backends)
         if a.scope=='realizations-cpu':

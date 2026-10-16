@@ -12,7 +12,7 @@ import threading
 import time
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'gpu_verification/check_gpu'))
-from benchmark import REPO,compare,parse_profiles,get,put
+from benchmark import REPO,blocks,compare,parse_profiles,get,put
 from check_baths import save,sha
 from inventory_sweep import resolve
 
@@ -46,7 +46,7 @@ def cgroup_memory():
 
 def execute(config,directory,binary,ranks,timeout=1800,monitor=True):
     directory=Path(directory).resolve();binary=Path(binary).resolve()
-    config=dict(config,outfile=str(directory/'coherence'))
+    config=blocks(dict(config,outfile=str(directory/'coherence')))   # A65: the flat keys in their blocks
     existing=directory/'execution.json'
     if existing.exists():
         result=json.loads(existing.read_text())
@@ -114,8 +114,8 @@ def execute(config,directory,binary,ranks,timeout=1800,monitor=True):
     if monitor:
         samples=[int(line.strip()) for line in (directory/'gpu-memory.csv').read_text().splitlines() if line.strip().isdigit()]
     clustering=None
-    if '       Clusterize ' in log and '       Main calculation ' in log:
-        section=log.split('       Clusterize ',1)[1].split('       Main calculation ',1)[0]
+    if '\n    Clusterize\n' in log and '\n    Main calculation\n' in log:
+        section=log.split('\n    Clusterize\n',1)[1].split('\n    Main calculation\n',1)[0]
         times=re.findall(r'Wall time = ([0-9.eE+-]+) s',section)
         if times:clustering=float(times[-1])
     result=dict(status='timeout' if expired.is_set() else 'passed' if code==0 and profiles else 'failed',
@@ -142,7 +142,8 @@ def check(execution,inventory):
 
 def config_for(family,fixture,order,size,pulses,steps=129,seed=None,state=0):
     return put(resolve(family['config'],fixture),{'order':order,'pcce.partition_size':size,'pulse.count':pulses,'nstep':steps,
-                'deltat':family['end_ms']/(steps-1),'seed':family['config']['seed'] if seed is None else seed,'nstate':state})
+                'deltat':family['end_ms']/(steps-1),'configuration.seed':get(family['config'],'configuration.seed') if seed is None else seed,
+                'configuration.nstate':state})
 
 
 def measure(config,directory,ranks,repeats,binaries,inventory=None):

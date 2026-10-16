@@ -39,6 +39,7 @@ abspath(){ [ -z "${1:-}" ] && return 0; ( cd "$(dirname "$1")" 2>/dev/null && pr
 set -- "$(abspath "${1:-}")" "$(abspath "${2:-}")"
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PYTHONPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)${PYTHONPATH:+:$PYTHONPATH}"   # input_layout.py (A64/A65)
 cd "$HERE"
 REPO="$(cd "$HERE/../../.." && pwd)"
 DATA="$REPO/test/code_verification/bath_data"
@@ -63,14 +64,14 @@ rm -rf "$OUT"; mkdir -p "$OUT"
 write_ccein(){
     local tag="$1" hf="$2" qd="$3" dest="$4" outfile="$5"
     python3 - "$dest" "$hf" "$qd" "$outfile" "$HEX" <<'PY'
-import json, sys
+import json, sys; from input_layout import flat, nest
 dest, hf, qd, outfile, hex_dir = sys.argv[1:6]
 cfg = {
     "method"    : "cCCE",
     "quantity"  : "coherence",
     "Qubit"     : {"file": hex_dir + "/defect", "alphams": 1, "betams": 0},
-    "gyrofile"  : hex_dir + "/../ensemble_data/Gyro_h_BN",
-    "bathfile"  : [hex_dir + "/bath_1"],
+    "configuration" : {"gyrofile": hex_dir + "/../ensemble_data/Gyro_h_BN", "bathfile": [hex_dir + "/bath_1"],
+                       "nstate": 0, "seed": 1},
     "order"     : 1,
     "bfield"    : 30000,
     "rbath"     : 15,
@@ -78,8 +79,6 @@ cfg = {
     "deltat"    : 0.002,
     "nstep"     : 20,
     "pulse"     : {"count": 1},
-    "nstate"    : 0,
-    "seed"      : 1,
     "outfile"   : outfile,
 }
 # hf / qd are the readmodes of the code, written as the hamiltonian block (A47)
@@ -91,7 +90,7 @@ if int(qd) != 0:
     common["quadrupole"] = {"structure": "plain", "file": hex_dir + "/Qfile_vertex"}
 if common:
     cfg["hamiltonian"] = {"common": common}
-json.dump(cfg, open(dest, "w"), indent=4)
+json.dump(nest(cfg), open(dest, "w"), indent=4)
 PY
 }
 

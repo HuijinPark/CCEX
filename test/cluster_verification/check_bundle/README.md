@@ -6,7 +6,7 @@ set the option names of that time (`adaptive_cluster_max_dim`, `adaptive_group_m
 binaries `bin/main.cpu.out` / `bin/main.cuda.out` the build no longer writes, and
 `check_refinement.py` calls the removed oracle `check_adaptive/oracle/adaptive_refine.py`. They are kept
 because they are the scripts behind the records listed below and cited in
-`docs/methods/adaptive-cluster-mode.md`. The current checks of the bundle and adaptive code are
+(internal notes). The current checks of the bundle and adaptive code are
 `../check_adaptive/verify.sh` (`unit`, `regress`, `inprocess`) and the unit tests of `../check_pcce/`.
 
 | script (historical) | checked then | needed then |

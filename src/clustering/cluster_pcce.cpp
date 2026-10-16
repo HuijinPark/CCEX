@@ -1,3 +1,7 @@
+/**
+ * @file cluster_pcce.cpp
+ * @brief pCCE: the partition of the bath spins and the clusters of partitions.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,7 +80,7 @@ void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
 
     if (order == 1){ // For pCCE, + k=1 (order = n)
         
-        if (rank==0){printf("\n\t Clustering 1st order ... \n");}
+        if (rank==0){printf("\n      Clustering 1st order ...\n");}
     
         int cluster[1] = {0};
         int iter = 1; // clusinfo[N][i][0]
@@ -96,14 +100,14 @@ void clusterizePcce(Cluster* cls, BathArray* ba, Config* config){
         float rdipcut = Config_getRdipcut(config);
     
         // center >> cls->info for on
-        if (strcasecmp(cls->method, "pcce")==0){
+        if (methodUsesPcceClusters(cls->method)){
             const bool spins = !strcasecmp(config->pcce_connections,"spins");
             if (spins) BathArray_connectivity_pcce_spins(&cmap, &stmap, ba, best_assigned_idx, ncenter, rdip, rdipcut);
             else       BathArray_connectivity_pcce(&cmap, &stmap, best_centers, rdip, rdipcut, ncenter);
             if (rank==0){
                 long npair = 0;
                 for (int a=0; a<ncenter; a++) for (int b=a+1; b<ncenter; b++) npair += cmap[a][b];
-                printf("\t pCCE connections : %s (rdip=%g, rdipcut=%g): %ld of %ld partition pairs connected\n",
+                printf("      pCCE connections : %s (rdip=%g, rdipcut=%g): %ld of %ld partition pairs connected\n",
                        spins ? "spins" : "centers", rdip, rdipcut, npair, (long)ncenter*(ncenter-1)/2);
             }
             makeSparsemap(&spmap, cmap, ncenter);
@@ -370,7 +374,7 @@ void simulator_cluster_partition(BathSpin** bath        , Partition_info* pinfo 
             MPI_Abort(MPI_COMM_WORLD,1);
         }
         if(cls->iter_detail && local_trials>config->pcce_detail_limit)
-            printf("[partition-detail] rank=0 suppressed=%d limit=%d; global totals follow\n",
+            printf("[partition-detail] rank=0 suppressed=%d limit=%d, global totals follow\n",
                    local_trials-config->pcce_detail_limit,config->pcce_detail_limit);
         printf("[partition] mode=%s total_trials=%d best_trial=%d best_rank=%d\n",
                config->pcce_partition,total_trials,global_best_trial,best_rank);
@@ -1015,7 +1019,7 @@ void print_optimize_kmeans_info(int trial, int iteration, double inertia, double
     //print_BD("=", 55); 
     printf("\n||------------- Optimization Infomation -------------||\n\n");
     //printf(" ||  Iteration  infomation  ||\n\n");
-    printf("    - Rank: %d \n\n", rank);
+    printf("    - Rank: %d\n\n", rank);
     printf("    - %d trials & %d iterations.\n\n", trial, iteration);
     printf("    - Iner. & Best Iner. : %.2lf & %.2lf\n\n", inertia, best_inertia);
     printf("    - Best Sil.  : %.2lf\n\n", best_sil);
@@ -1046,7 +1050,7 @@ void print_time(clock_t start, clock_t end){
     int hours      = (int) cpu_time_used / 3600;
     int minutes    = ((int) cpu_time_used % 3600) / 60;
     double seconds = cpu_time_used - (hours * 3600) - (minutes*60);
-    printf("    %d : %d : %.3f \n\n", hours, minutes, seconds);
+    printf("    %d : %d : %.3f\n\n", hours, minutes, seconds);
 }
 
 ///////////////////////////////////
@@ -1097,7 +1101,7 @@ void print_best_centers(Point **centers, int ncenter){
     printf(" ===========\n");
     printf(" = Centers =\n");
     printf(" ===========\n");
-    printf(" x   y   z \n");
+    printf(" x   y   z\n");
     for (int p=0; p<ncenter; p++){
         printf(" %10.5lf %10.5lf %10.5lf\n", (*centers)[p].x, (*centers)[p].y, (*centers)[p].z);
     }

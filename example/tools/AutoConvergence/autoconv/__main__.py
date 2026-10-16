@@ -1,5 +1,6 @@
 """Command line: analyse existing CCEX runs (one run directory per bath configuration).
 
+    python -m autoconv status INPUT.json      (where an automatic convergence is; nothing computed)
     python -m autoconv analyze RUN_DIR [RUN_DIR ...] [--config DRIVER.json] [--cost-config A --cost-state B] [--prefix out]
                                 [--expect-states N] [--expect-points N] [--report-dir DIR]
     python -m autoconv judge --setting RUN_DIR ... --reference RUN_DIR ... [--setting-prefix P] [--reference-prefix P]
@@ -166,7 +167,19 @@ def _finite(x):
 
 
 # Keys a truncation setting may change between paired runs; every other input key must be equal (review 20261007i).
-SETTING_KEYS = {"rdip", "rbath", "rdip_ladder", "outfile"}
+SETTING_KEYS = {"rdip", "rbath", "rdip_ladder", "output.file", "outfile"}   # outfile: the inputs before A65 (recorded runs)
+
+
+def _with_configuration(inp):
+    """The configuration and output blocks' keys (A64, A65, 2026-10-15) as configuration.<key> and output.<key>, so a
+    difference names the key."""
+    for block in ("configuration", "output"):
+        conf = inp.pop(block, None)
+        if isinstance(conf, dict):
+            inp.update({f"{block}.{k}": v for k, v in conf.items()})
+        elif conf is not None:
+            inp[block] = conf
+    return inp
 
 
 def check_pairs(setting_dirs, reference_dirs, unverified=False):
@@ -184,7 +197,7 @@ def check_pairs(setting_dirs, reference_dirs, unverified=False):
                                  "(--unverified-pairs to accept the order as the pairing)")
             warnings.append(f"{s} / {r}: pairing not verified (no input.json)")
             continue
-        a, b = read_json(fs), read_json(fr)
+        a, b = (_with_configuration(read_json(f)) for f in (fs, fr))
         diff = sorted(k for k in set(a) | set(b) if k not in SETTING_KEYS and a.get(k) != b.get(k))
         if diff:
             raise ValueError(f"{s} / {r}: not the same configuration, inputs differ in {diff}")
@@ -223,10 +236,10 @@ def judge_runs(setting_dirs, reference_dirs, settings, setting_prefix="out", ref
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
-    if argv and argv[0] == "run":                      # main.out --auto_conv hands over here (autoconv/runner.py)
+    if argv and argv[0] == "run":                      # main.out -f input.json with the block hands over here (autoconv/runner.py)
         from . import runner
         return runner.main(argv[1:])
-    if argv and argv[0] == "status":                   # main.out --auto_status (where a run is, without computing)
+    if argv and argv[0] == "status":                   # python -m autoconv status input.json (where a run is, without computing)
         from . import runner
         return runner.status_main(argv[1:])
     ap = argparse.ArgumentParser(prog="autoconv", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)

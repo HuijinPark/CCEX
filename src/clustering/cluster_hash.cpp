@@ -1,9 +1,14 @@
+/**
+ * @file cluster_hash.cpp
+ * @brief The hash-based search for the clusters of standard CCE.
+ */
 #include <string.h>  /* strcpy */
 #include <stdlib.h>  /* malloc */
 #include <stdio.h>   /* printf */
 #include <time.h>
 #include <math.h>
 #include <vector>
+#include <string>
 #include <string.h>
 #include "../../external/uthash/src/uthash.h"
 #include "../../include/clustering/cluster_hash.h"
@@ -19,12 +24,12 @@ void clusterizeHash(Cluster* CCE, int nspin, int** spmap, float** stmap){
     //////////////////////////////////////////////////
     // Clusterize
     //////////////////////////////////////////////////
-    if (rank==0){printf("\n\t CCE1 ... \n");}
+    if (rank==0){printf("\n      CCE1 ...\n");}
     HashCluster *hashClusters = NULL;
     makeHashClusterO1(&hashClusters,nspin);
     updateNk(&(nks),order,hashClusters);
     
-    if (rank==0){printf("\n\t CCE2 ... \n");}
+    if (rank==0){printf("\n      CCE2 ...\n");}
     makeHashClusterO2(&hashClusters,nspin,spmap,stmap);
     updateNk(&(nks),order,hashClusters);
     
@@ -32,14 +37,16 @@ void clusterizeHash(Cluster* CCE, int nspin, int** spmap, float** stmap){
     makeHashClusterOn(&hashClusters,order,nspin,spmap,stmap,nks);
     updateNk(&(nks),order,hashClusters);
     if (rank==0 && verbosity){
+        logAlignBegin();   // A76: the colons of each order in one column
         printClusters(hashClusters);
+        logAlignEnd();
     }
     //////////////////////////////////////////////////
     // Add all sub clusters
     //////////////////////////////////////////////////
     if (addsubclus) {
         for (int n=order; n>2; n--){
-            if (rank==0){printf("\n\t Add subclusters ... \n");}
+            if (rank==0){printf("\n      Add subclusters ...\n");}
             addSubClusters(&hashClusters,nspin,stmap,n);
         }
         updateNk(&(nks),order,hashClusters);
@@ -238,7 +245,7 @@ void makeHashClusterOn(HashCluster** hashclusters, int order, int nspin, int** s
     int res = 0;
 
     for (int n=3; n<order+1; n++){
-        if (rank==0){printf("\n\t CCE%d ... \n",n);}
+        if (rank==0){printf("\n      CCE%d ...\n",n);}
         int o = n-1;
         HashCluster *existingClusters = findCluster(*hashclusters,o);
 //        printf("order : %s\n", existingClusters ? existingClusters->N : "unknown\n");
@@ -356,7 +363,7 @@ void makeHashClusterOn(HashCluster** hashclusters, int order, int nspin, int** s
             }
             /////////////////////////////////////////////////////////
             if (nCluster > nk ){
-                if (rank==0){printf("\t\t apply Nk=%d ... \n",nk);}
+                if (rank==0){printf("        apply Nk=%d ...\n",nk);}
                 nCluster = 0;
                 HASH_ITER(hh, madeClusters, madeCluster, tmp)
                 {
@@ -478,21 +485,21 @@ void printProperties(Property* hashProperties)
     int nCluster = 0;
     int count = 0;
     HASH_ITER(hh, hashProperties, item2, tmp2) {
-        printf("\t\t$items[%15s] : ", item2->id);
+        char label[64];
+        snprintf(label, sizeof label, "cluster[%s]", item2->id);
+        printf("        %-24s : spins", label);
 
         int* clusterFromId = parseClusterIdToIntArray(item2->id,&count);
         for (int i =0; i<count; i++){
-            printf("%4d ",item2->spins[i]);
+            printf(" %d",item2->spins[i]);
         }
-        printf(" (strength : %12.5f)\n",item2->strength);
+        printf(" (strength %.5f)\n",item2->strength);
         nCluster++;
         free(clusterFromId);
     }
+    printf("        %-24s : %d\n", (std::string("clusters of size ")+std::to_string(count)).c_str(), nCluster);
     printf("\n");
-    printf("\t\tTotal %d-Cluster # :  %d\n",count,nCluster);
-    printf("\t\t_________________________________________________________\n");
-    printf("\n\n");
-    
+
 }
 
 void printClusters(HashCluster* hashClusters)
@@ -502,21 +509,21 @@ void printClusters(HashCluster* hashClusters)
     HASH_ITER(hh, hashClusters, item1, tmp1) {
         int nCluster = 0;
         HASH_ITER(hh, item1->prop, item2, tmp2) {
-            printf("\t\t$items[%3s][%10s] : ", item1->N, item2->id);
+            char label[80];
+            snprintf(label, sizeof label, "cluster[%s][%s]", item1->N, item2->id);
+            printf("        %-24s : spins", label);
 
             int count = 0;
             int* clusterFromId = parseClusterIdToIntArray(item2->id,&count);
             for (int i =0; i<count; i++){
-                printf("%3d ",item2->spins[i]);
+                printf(" %d",item2->spins[i]);
             }
-            printf(" (strength : %10.5f)\n",item2->strength);
+            printf(" (strength %.5f)\n",item2->strength);
             nCluster++;
             free(clusterFromId);
         }
+        printf("        %-24s : %d\n", (std::string("clusters of order ")+item1->N).c_str(), nCluster);
         printf("\n");
-        printf("\t\tTotal %s-Cluster # :  %d\n",item1->N,nCluster);
-        printf("\t\t_________________________________________________________\n");
-        printf("\n\n");
     }
 }
 
@@ -604,10 +611,10 @@ void updateNk(int** Nk, int order, HashCluster* hashClusters){
         (*Nk)[k] = nk;
     }
 
-    if (rank==0){
-        printf("\t\t update \"Nk\"\n\t\t ");
+    if (rank==0 && verbosity){   // A76: -v; the counts are "Clusters per order"
+        printf("        update \"Nk\"\n        ");
         for (int i=0; i<=order; i++){
-            printf("%d:%d  ",i,(*Nk)[i]);
+            printf("%s%d:%d",i ? "  " : "",i,(*Nk)[i]);
         }
         printf("\n\n");
     }

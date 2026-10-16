@@ -9,7 +9,7 @@ import re
 import subprocess
 import time
 
-from benchmark import REPO, compare, parse_profiles, put
+from benchmark import REPO, blocks, compare, parse_profiles, put
 
 
 # mpirun as test/README.md has it: CCEX_MPI when set, else the Intel MPI of the loaded module, else PATH. With
@@ -26,7 +26,7 @@ def mpirun():
 
 def run_case(config, directory, binary, ranks=1, timeout=120, hidden=False, extra=()):
     directory.mkdir(parents=True, exist_ok=False)
-    config = dict(config, outfile=str(directory / 'coherence'))
+    config = blocks(dict(config, outfile=str(directory / 'coherence')))   # A65: the flat keys a check set, in their blocks
     path = directory / 'input.json'
     path.write_text(json.dumps(config, indent=2) + '\n')
     launcher = mpirun()
@@ -73,7 +73,7 @@ def main():
         for state in (0, 1):
             for pulses in (1, 4):
                 name = f'sK{size}_state{state}_pulse{pulses}'
-                config = put(original, {'pcce.partition_size': size, 'nstate': state, 'pulse.count': pulses})
+                config = put(original, {'pcce.partition_size': size, 'configuration.nstate': state, 'pulse.count': pulses})
                 cpu, _ = run_case(dict(config, backend='cpu'), args.output/name/'cpu', args.cpu, args.ranks)
                 assert cpu['returncode'] == 0, name
                 compare(args.output/name/'cpu', args.output/name/'cpu', 1e-8, 2e-6)
@@ -90,7 +90,7 @@ def main():
                     print('PASS', name, backend, error, flush=True)
 
     for name, overrides, expected in [
-        ('missing-sK', {'pcce.partition_size': None}, 'cluster_mode pcce requires pcce.partition_size'),
+        ('missing-sK', {'pcce.partition_size': None}, 'cluster.mode pcce requires cluster.pcce.partition_size'),
         ('zero-sK', {'pcce.partition_size': 0}, 'positive 32-bit integer'),
         ('fractional-sK', {'pcce.partition_size': 1.5}, 'positive 32-bit integer'),
         ('string-sK', {'pcce.partition_size': '2'}, 'finite JSON number'),

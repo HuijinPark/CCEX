@@ -16,8 +16,11 @@ fi
 BIN="${CCEX_BIN:-$REPO/bin/main.out}"; NP="${1:-2}"; WORK="$HERE/_work"
 [ -x "$BIN" ] || { echo "no binary at $BIN (bash do_compile.sh wsl-gnu)"; exit 2; }
 rm -rf "$WORK"; mkdir -p "$WORK"
+# -o is the output folder since A63, and a case's input has no outfile: its copy named out.json gives the outputs their
+# names (out_noDiv, ...), from the case's folder, where its relative paths are read
 for d in "$HERE"/cases/*/; do n=$(basename "$d"); mkdir -p "$WORK/$n"; s=$(date +%s.%N)
-  ( cd "$d" && timeout 900 "${CCEX_MPI:-mpirun}" -n "$NP" "$BIN" -f ccein.json -o "$WORK/$n/out" > "$WORK/$n/run.log" 2>&1 ); e=$?
+  cp "$d/ccein.json" "$WORK/$n/out.json"
+  ( cd "$d" && timeout 900 "${CCEX_MPI:-mpirun}" -n "$NP" "$BIN" -f "$WORK/$n/out.json" -o "$WORK/$n" > "$WORK/$n/run.log" 2>&1 ); e=$?
   printf '%-24s exit=%-3s %6.1fs\n' "$n" "$e" "$(echo "$(date +%s.%N) - $s" | bc)"
 done | tee "$WORK/timing.txt"
 # tags (v*) are history; the newest head-* folder is the reference this line of development is held to

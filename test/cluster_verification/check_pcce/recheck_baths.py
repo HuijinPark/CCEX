@@ -13,7 +13,7 @@ from pathlib import Path
 import re
 
 from check_baths import compare, resolve, run_case, save, sha, values
-from benchmark import parse_profiles
+from benchmark import get, parse_profiles
 
 
 def execution(directory, dimension_bound=None):
@@ -26,9 +26,9 @@ def execution(directory, dimension_bound=None):
         raise ValueError(f'Missing profiles: {directory}')
     config = json.loads((directory/'input.json').read_text())
     # the [profile] lines name the method as the code does: pcce, cce or gcce (A47: method cCCE/gCCE + cluster_mode)
-    internal = 'pcce' if config.get('cluster_mode') == 'pcce' else 'gcce' if config['method'].lower() == 'gcce' else 'cce'
+    internal = 'pcce' if get(config, 'cluster_mode') == 'pcce' else 'gcce' if config['method'].lower() == 'gcce' else 'cce'
     if any(p['method'] != internal or
-           p['backend'] != config['backend'] for p in profiles):
+           p['backend'] != get(config, 'backend') for p in profiles):
         raise ValueError(f'Unexpected method/backend: {directory}')
     if dimension_bound and max(int(p['dim']) for p in profiles) > dimension_bound:
         raise ValueError(f'Unexpected matrix dimension: {directory}')

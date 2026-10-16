@@ -38,36 +38,44 @@
       }
      ]
     },
-    "backend": "cpu",
-    "bathfile": [
-     "test/cluster_verification/check_bundle/bath_6"
-    ],
     "bfield": 300,
-    "bundle": {
-     "max_dim": 8,
-     "merge_cutoff": 1.0
+    "cluster": {
+     "bundle": {
+      "max_dim": 8,
+      "merge_cutoff": 1.0
+     },
+     "mode": "bundle"
     },
-    "cluster_mode": "bundle",
+    "configuration": {
+     "bathfile": [
+      "test/cluster_verification/check_bundle/bath_6"
+     ],
+     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+     "nstate": 2,
+     "seed": 19
+    },
     "deltat": 0.005,
-    "gpu_options": {
-     "evolution_batch_steps": 4,
-     "min_dim": 8
+    "execution": {
+     "backend": "cpu",
+     "gpu_options": {
+      "evolution_batch_steps": 4,
+      "min_dim": 8
+     },
+     "profile": true
     },
-    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
     "method": "gcce",
-    "nstate": 2,
     "nstep": 9,
     "order": 2,
-    "outfile": "bin/adaptive_ensemble",
-    "profile": true,
+    "output": {
+     "file": "bin/adaptive_ensemble",
+     "savemode": "coherence"
+    },
     "pulse": {
      "count": 4
     },
     "quantity": "coherence",
     "rbath": 15,
-    "rdip": 30,
-    "savemode": "coherence",
-    "seed": 19
+    "rdip": 30
    },
    "input_file_sha256": {
     "<REPO>/test/cluster_verification/check_bundle/bath_6": "7860fc92298dc8cc559e0df50fb73070cbadf1bfe0b4a8ae3631d00887273738",
@@ -87,14 +95,14 @@
       "candidate_patches": 1,
       "checked_patches": 1,
       "coverage_limited": false,
-      "max_inverse_log10_amplification": 0.45255251972072835,
+      "max_inverse_log10_amplification": 0.45258865146099553,
       "whole_bath_oracle": true,
       "work_blocked": 0
      },
      "finite_and_cce_bound": true,
      "global_change": null,
      "iteration": 0,
-     "max_local_scaled_error": 0.12795812683715638,
+     "max_local_scaled_error": 0.5530387608642583,
      "patches": [
       {
        "bundles": [
@@ -102,8 +110,8 @@
         1,
         2
        ],
-       "max_abs_error": 8.352494159624478e-07,
-       "scaled_error": 0.12795812683715638,
+       "max_abs_error": 3.6105432262650496e-06,
+       "scaled_error": 0.5530387608642583,
        "worst_state_step": [
         0,
         6
@@ -111,8 +119,8 @@
       }
      ],
      "whole_bath_error": {
-      "max_abs_error": 8.352494159851481e-07,
-      "scaled_error": 0.127958126840634,
+      "max_abs_error": 3.6105432262613477e-06,
+      "scaled_error": 0.5530387608636913,
       "worst_state_step": [
        0,
        6

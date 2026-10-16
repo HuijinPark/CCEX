@@ -1,3 +1,7 @@
+/**
+ * @file hamiltonian_check.h
+ * @brief The finiteness and hermiticity check of a Hamiltonian before it goes to the GPU.
+ */
 #ifndef CCEX_HAMILTONIAN_CHECK_H
 #define CCEX_HAMILTONIAN_CHECK_H
 #include <Eigen/Dense>

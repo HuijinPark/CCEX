@@ -1,3 +1,7 @@
+/**
+ * @file options.cpp
+ * @brief Adaptive refinement: reading and checking the options.
+ */
 #include "options.h"
 
 #include "options_table.h"

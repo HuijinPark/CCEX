@@ -1,3 +1,7 @@
+/**
+ * @file small_eigensolver.cpp
+ * @brief The fixed-sweep complex Jacobi for small cCCE eigensystems (compiled without contraction).
+ */
 // A42: the fixed-sweep complex Jacobi for the small cCCE eigensystems (small_eigensolver.h). Compiled with
 // -ffp-contract=off (do_compile.sh rule, CMake source property) and the pragma below for a build that forgets the flag:
 // nothing here may be fused, so that one lane computes what any other lane computes. No Eigen and no std::complex

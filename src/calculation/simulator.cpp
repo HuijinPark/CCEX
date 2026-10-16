@@ -1,3 +1,7 @@
+/**
+ * @file simulator.cpp
+ * @brief calculate(): the loop over the clusters of a rank and the product of their coherences.
+ */
 #include "../../include/calculation/gpu/gpu_batch_memory.h"
 #include "../../include/calculation/simulator.h"
 #include "../../include/calculation/hamiltonian.h"
@@ -52,25 +56,35 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     // Print the calculation method
     ////////////////////////////////
 
-    // gCCE or conventional CCE
-    if (strcasecmp(method,"gcce")==0 && iter_0th==0){
+    // gCCE or conventional CCE; the kernel decides, whatever the clusters (pgCCE, pmeCCE, pmegCCE: cluster_mode pcce)
+    const char* kernel = methodKernel(method);
+    if (strcmp(kernel,"gcce")==0 && iter_0th==0){
         // gCCE method requires the 0th cluster
         fprintf(stderr,"Error : calculate,, gCCE method requires the 0th cluster\n");
         exit(1);
-    }else if (strcasecmp(method,"gcce")==0 && iter_0th>0){
+    }else if (strcmp(kernel,"gcce")==0 && iter_0th>0){
         isGCCE = true;
     }
+    // master equation: meCCE projects the qubit out as the cCCE does (no 0th cluster, L_0 = 1); megCCE keeps it in the
+    // cluster space as gCCE does
+    const bool isMECCE = !strcmp(kernel,"mecce");
+    const bool isMEGCCE = !strcmp(kernel,"megcce");
+    if (isMEGCCE && iter_0th==0){
+        fprintf(stderr,"Error : calculate, method %s requires the 0th cluster\n",method);
+        exit(1);
+    }
+    const bool qubitInMatrix = isGCCE || isMEGCCE;
 
     // The Overhauser term reaches the Hamiltonian only through QubitArray_SingleHamil
     // -> HamilQubit (simulator_hamiltonian.cpp:4), and calCoherenceGcce is its only
     // caller. Under CCE the qubit is frozen into the classical labels alphams/betams, so
     // its own Hamiltonian never enters -- the field is still parsed, stored and printed,
     // which reads exactly like it took effect.
-    if (!isGCCE && QubitArray_getOverhaus(qa) && rank==0){
+    if (!qubitInMatrix && QubitArray_getOverhaus(qa) && rank==0){
         fprintf(stderr,"Warning: hamiltonian.common.qubit_bath_mean_field has no effect with method=%s.\n"
                        "         CCE projects the qubit out, so the qubit Hamiltonian --\n"
                        "         where the Overhauser field lives -- is never built.\n"
-                       "         Use method=gCCE for mean-field.\n", method);
+                       "         Use method=gCCE for mean-field.\n", inputMethodName(method));
     }
 
 
@@ -96,7 +110,17 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
     Eigen::RowVectorXcd gcceAlphaRho;                      // A14: psia^dagger rho of the gCCE coherence, reused
     const bool checkDisorder = getenv("CCEX_CHECK_DISORDER") && strcmp(getenv("CCEX_CHECK_DISORDER"),"0");
     SmallClusterBatch smallGpu(qa,ba,dfa,cnf,pls,isGCCE,localclusters,order,savemode);   // A26: small cCCE clusters on the GPU; A40: the warp kernel (off: nothing)
-    CceBatchWindow cpuBatch(qa,ba,dfa,cnf,pls,isGCCE);           // A30: small cCCE clusters batched on the CPU (A48: also beside the GPU batch)
+    // A30: small cCCE clusters batched on the CPU (A48: also beside the GPU batch); the cCCE kernel only: never a gCCE or
+    // master-equation cluster
+    CceBatchWindow cpuBatch(qa,ba,dfa,cnf,pls,isGCCE || isMECCE || isMEGCCE);
+    // A68: the log of a state. Rank 0 reports its own clusters at every tenth of them (-v: the per-cluster lines of
+    // before, every 5000/nprocess clusters of an order), and a state ends with one line: its index, the number of
+    // clusters of every rank and its time. The bath states, mean fields, qubit states and the steps of a state are
+    // printed with -v only; the qubit states also for the first state of the run.
+    long long localClusters=0,allClusters=0;
+    for (int n=1; n<=order; n++) localClusters+=localclusters[n][0][0]-1;
+    MPI_Allreduce(&localClusters,&allClusters,1,MPI_LONG_LONG,MPI_SUM,MPI_COMM_WORLD);
+    static bool qubitStatesShown=false;   // once per process: the next configurations of k_range set the same qubit
     for (int istate=0; istate<=nstate; istate++){
 
         // wall time
@@ -121,22 +145,22 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             // Randomize bath states
             ////////////////////////////////
             // Set Bath states
-            if (rank==0){
+            if (rank==0 && verbosity){
                 printSubTitle("Randomize main-bath states...");
             }
             const bool restoredCheckState=restoreAdaptiveCheckState(ba,dfa,istate);
             if(!restoredCheckState)setBathStates(ba,cnf,istate); // Read or random set
-            if (rank==0){
+            if (rank==0 && verbosity){
                 BathArray_reportBath_states(ba);
             }
 
             // Set Subbath states
             if (DefectArray_getNdefect(dfa)>0){
-                if (rank==0){
+                if (rank==0 && verbosity){
                     printSubTitle("Randomize sub-bath states...");
                 }
                 if(!restoredCheckState)setSubbathStates(dfa,ba,cnf,istate); // Read or random set
-                if (rank==0){
+                if (rank==0 && verbosity){
                     DefectArray_reportSubbath_states(dfa);
                 }
             }
@@ -185,7 +209,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 }
             }
 
-            if (rank==0){
+            if (rank==0 && verbosity){
                 QubitArray_reportQubit_overhaus(qa);
                 BathArray_reportBath_disorders(ba);
                 if (DefectArray_getNdefect(dfa)>0){
@@ -215,27 +239,29 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             float* bfield = Config_getBfield(cnf);
             int* alphaidx = QubitArray_get_alphaidx(qa);
             int* betaidx = QubitArray_get_betaidx(qa);
+            const bool showQubit = rank==0 && (verbosity || !qubitStatesShown);   // A68: the first state of the run, or -v
+            qubitStatesShown = true;
 
             // Qubit.alpha_state and beta_state (A47): each side is its vector, the eigenstate of its index, or the
             // product of the qubits' alphams (betams). Two sides given the same way take the paths they always took.
             const bool vectorA = psia.size() > 0, vectorB = psib.size() > 0;
             if (vectorA && vectorB){
-                if (rank==0){
+                if (showQubit){
                     printSubTitle("Set psia, psib from input...\n");
                 }
             }else if (!vectorA && !vectorB && alphaidx!=NULL && betaidx!=NULL){
-                if (rank==0){
+                if (showQubit){
                     printSubTitle("Set psia, psib from qubit index...");
                 }
                 QubitArray_setPsiaPsib_fromIdx(qa,bfield);
                 QubitArray_checkIdxAgainstMs(qa);
             }else if (!vectorA && !vectorB && alphaidx==NULL && betaidx==NULL){
-                if (rank==0){
+                if (showQubit){
                     printSubTitle("Set psia, psib from qubit alpha, beta...");
                 }
                 QubitArray_setPsiaPsib_fromQubit(qa);
             }else{
-                if (rank==0){
+                if (showQubit){
                     printSubTitle("Set psia, psib side by side (vector, index, or alphams/betams)...");
                 }
                 QubitArray_setPsiaPsib_fromQubit(qa);
@@ -245,26 +271,31 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 if (alphaidx!=NULL || betaidx!=NULL) QubitArray_checkIdxAgainstMs(qa);
             }
 
-            if (rank==0){
+            if (showQubit){
+                logAlignBegin();   // A76: the four rows in one column
                 QubitArray_reportPsiaPsib(qa);
+                logAlignEnd();
             }
             
             // Qubit initial state
             MatrixXcd psi0 = QubitArray_getPsi0(qa);
             if (psi0.rows()==0 && psi0.cols()==0){
-                if (rank==0){
+                if (showQubit){
                     printSubTitle("Set psi0 from psia, psib...");
                 }
                 QubitArray_setPsi0_fromPsiaPsib(qa);
             }else{
-                if (rank==0){
+                if (showQubit){
                     printSubTitle("Set psi0 from input...");
                 }
             }
 
             // Report
-            if (rank==0){
+            if (showQubit){
+                logAlignBegin();
                 QubitArray_reportPsi0(qa);
+                logAlignEnd();
+                printf("\n");
             }
 
             /////////////////////////////////////////////////////////
@@ -303,7 +334,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             // Preserve a separate exponent through powers, local products and
             // MPI. DSJ/ITB variants retain their existing execution path.
             const bool stableProduct=!strcasecmp(quantity,"coherence") &&
-                (isGCCE || !strcasecmp(method,"cce") || !strcasecmp(method,"pcce"));
+                (qubitInMatrix || isMECCE || !strcasecmp(method,"cce") || !strcasecmp(method,"pcce"));
             std::vector<ScaledComplex> stableWith(stableProduct ? nstep : 0);
             std::vector<ScaledComplex> stableWithout(stableProduct ? nstep : 0);
             // mode "except" (adaptive-regroup-stage3b.md 1절): the run's own product is untouched; beside it P_K, the
@@ -315,7 +346,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             long long exceptMatched=0;
             bool reportedInvalidProduct=false;
             double dmDropped=0.0;   // the largest cluster value in an element the free evolution keeps at zero (dm only)
-            if (isGCCE && strcasecmp(quantity,"dm")==0){
+            if (qubitInMatrix && strcasecmp(quantity,"dm")==0){
                 dim = QubitArray_dim(qa);
             }else{
                 dim = 1;
@@ -343,14 +374,15 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 else strcpy(fullOp.savemode,"coherence");
             }
 
-            if (isGCCE){ // gcce
+            if (qubitInMatrix){ // gcce, megcce
                 // Zero-th order
-                if (rank==0){
+                if (rank==0 && verbosity){
                     printf("\n");
                     printSubTitle("Calculate 0-th cluster...");
                 }
-                result_0th = calCoherenceGcce(qa,NULL,cnf,pls,allFull ? &fullOp : op);
-                if (rank==0){
+                result_0th = isMEGCCE ? calCoherenceMegcce(qa,NULL,cnf,pls,op)
+                                      : calCoherenceGcce(qa,NULL,cnf,pls,allFull ? &fullOp : op);
+                if (rank==0 && verbosity){
                     steptime_end = MPI_Wtime();
                     // make message
                     sprintf(message,"# Wall time : %.2f[s]",steptime_end-steptime_sta);
@@ -408,10 +440,12 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
             ////////////////////////////////
             // Higher orders
+            long long clustersDone=0;   // rank 0's clusters of this state so far, and the next tenth to report (A68)
+            long long nextTenth=1;
             for (int n=1; n<=order; n++){
 
                 // Message
-                if (rank==0){
+                if (rank==0 && verbosity){
                     printf("\n");
                     sprintf(message,"Calculate %d-th cluster...",n);
                     printSubTitle(message);
@@ -501,6 +535,12 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                         ownedResult = false;
                     }else if(!batchResults.empty()){
                         result_nth=batchResults[ic-batchFirst];
+                    }else if (isMECCE){        // meCCE: a new array (the kernel's own), deleted below
+                        result_nth = calCoherenceMecce(qa, ba_cluster, cnf, pls);
+                        ownedResult = true;
+                    }else if (isMEGCCE){       // megCCE: a new array (the kernel's own), deleted below
+                        result_nth = calCoherenceMegcce(qa, ba_cluster, cnf, pls, op);
+                        ownedResult = true;
                     }else if (isGCCE){ // gcce: into the reused buffer (A14)
                         if(allFull)fullOp=Output_fullOutput(op,fullName.data(),cluster,n,istate);
                         calCoherenceGcceInto(qa, ba_cluster, cnf, pls, allFull ? &fullOp : op, cceResult.get(), &gcceAlphaRho);
@@ -571,7 +611,16 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
 
                     if (rank==0){
                         steptime_end = MPI_Wtime();
-                        if (ic % std::max(1, 5000/nprocess) == 0){
+                        ++clustersDone;
+                        if (!verbosity){
+                            if (clustersDone*10 >= nextTenth*localClusters){
+                                const long long tenth = clustersDone*10/localClusters;
+                                sprintf(message,"At rank 0, %lld of %lld clusters (%lld%%) are computed at %.2f s",
+                                        clustersDone, localClusters, tenth*10, steptime_end-steptime_sta);
+                                printMessage(message);
+                                nextTenth = tenth+1;
+                            }
+                        }else if (ic % std::max(1, 5000/nprocess) == 0){
                             sprintf(message,"At rank 0, %d-th cluster (%d%%) is computed at %.2f s",ic, int(ic*100/ncluster), steptime_end-steptime_sta);
                             printMessage(message);
 
@@ -597,7 +646,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                     lap(PH_FREE);
                 }
 
-                if (rank==0){
+                if (rank==0 && verbosity){
                     steptime_end = MPI_Wtime();
                     // make message
                     printf("\n");
@@ -625,7 +674,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             MPI_Barrier(MPI_COMM_WORLD);
             lap(PH_WAIT);
             if (rank==0){
-                printSubTitle("Product local results...");
+                if(verbosity)printSubTitle("Product local results...");
                 // zeroth cluster  L_C_(k=0) * PI_C_(k=1){ L_C_(k=1) } * PI_C_(k=2){ L_C_(k=2) }  .. 
                 for (int istep=0; istep<nstep; istep++){
                     if(stableProduct){
@@ -648,7 +697,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 double dmDroppedAll=0.0;
                 MPI_Reduce(&dmDropped,&dmDroppedAll,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
                 if (rank==0 && dmDroppedAll > 0.0){
-                    printf("[dm] elements the free evolution keeps at zero are left at zero; clusters put values up to %.3e into them, which the elementwise product cannot carry (state %d)\n",dmDroppedAll,istate);
+                    printf("[dm] elements the free evolution keeps at zero are left at zero, clusters put values up to %.3e into them, which the elementwise product cannot carry (state %d)\n",dmDroppedAll,istate);
                 }
             }
             contributions.finish(result_0th,istate,op);
@@ -661,7 +710,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             // Gather the results (MPI)
             ////////////////////////////////
             if (rank==0){
-                printSubTitle("Gather the results (MPI)...");
+                if(verbosity)printSubTitle("Gather the results (MPI)...");
             }
             // Initialize the result_all
             MatrixXcd* result_wD_all = new MatrixXcd[nstep];
@@ -709,8 +758,8 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 }
                 MPI_Op_free(&multiply);MPI_Type_free(&type);
                 if(rank==0){
-                    // Only gCCE has the historical L(t=0) normalization.
-                    const auto normalization=isGCCE ? with[0].inverse() : ScaledComplex();
+                    // Only gCCE (and megCCE, the qubit in the cluster space as well) has the historical L(t=0) normalization.
+                    const auto normalization=qubitInMatrix ? with[0].inverse() : ScaledComplex();
                     for(int i=0;i<nstep;++i){
                         result_wD_all[i](0,0)=(with[i]*normalization).value();
                         result_nD_all[i](0,0)=(without[i]*normalization).value();
@@ -737,7 +786,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             ////////////////////////////////
             if (rank == 0 && !stableProduct){
                 std::complex<double> normalization;
-                if ( strcasecmp(quantity,"coherence")==0 && isGCCE){
+                if ( strcasecmp(quantity,"coherence")==0 && qubitInMatrix){
                     normalization = result_wD_all[0].coeff(0);
                 }else{
                     normalization = std::complex<double>(1, 0);
@@ -755,7 +804,7 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
             ////////////////////////////////
             if (rank==0){
 
-                printSubTitle("Save the results...");
+                if(verbosity)printSubTitle("Save the results...");
                 adaptiveWriteCurve(cnf,result_wD_all,istate);
                 
                 if (strcasecmp(savemode,"coherence")==0){
@@ -771,10 +820,15 @@ void calculate(QubitArray* qa, BathArray* ba, DefectArray* dfa, Config* cnf, Pul
                 }
                 // print wall clock time
                 steptime_end = MPI_Wtime();
-                printLine();
-                printf("          Wall time = %.5f s\n", steptime_end - time_start_step);
-                printLine();
-                printf("\n\n");
+                if (verbosity){
+                    printLine();
+                    printf("      Wall time = %.5f s\n", steptime_end - time_start_step);
+                    printLine();
+                    printf("\n");
+                }
+                // A68: one line per state (the clusters of every rank, the 0th not counted)
+                if (nstate==0) printf("      State done : ensemble, %lld clusters, %.2f s\n\n\n", allClusters, steptime_end - time_start_step);
+                else printf("      State done : %d of %d, %lld clusters, %.2f s\n\n\n", istate, nstate, allClusters, steptime_end - time_start_step);
             }
 
             ////////////////////////////////

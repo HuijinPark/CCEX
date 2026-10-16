@@ -164,7 +164,9 @@ int main(int argc, char** argv) {
         if (file != nullptr) { std::fputs("one\n", file); std::fclose(file); }
     }
     adaptive::Value cached_cfg = cfg;
-    cached_cfg.set("bathfile", adaptive::Value::text("inputs/bath.xyz"));
+    adaptive::Value configuration = adaptive::Value::object();   // the configuration block (A64)
+    configuration.set("bathfile", adaptive::Value::text("inputs/bath.xyz"));
+    cached_cfg.set("configuration", configuration);
     adaptive::DriverSettings with_cache = settings;
     with_cache.cwd = "out/probes";
     const adaptive::Value context = adaptive::identity(cached_cfg, with_cache.cwd, {0}, "c", 1);

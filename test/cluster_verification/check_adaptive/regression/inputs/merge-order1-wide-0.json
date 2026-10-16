@@ -1,10 +1,14 @@
 {
   "method": "cCCE",
   "quantity": "coherence",
-  "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
-  "bathfile": [
-    "test/cluster_verification/check_bundle/bath_6"
-  ],
+  "configuration": {
+    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+    "bathfile": [
+      "test/cluster_verification/check_bundle/bath_6"
+    ],
+    "nstate": 0,
+    "seed": 19
+  },
   "Qubit": {
     "qubit": [
       {
@@ -28,13 +32,14 @@
   "pulse": {"count": 16},
   "nstep": 9,
   "deltat": 0.2,
-  "nstate": 0,
-  "seed": 19,
-  "backend": "cpu",
-  "gpu_options": {"evolution_batch_steps": 4, "min_dim": 8},
-  "profile": true,
-  "savemode": "coherence",
-  "outfile": "bin/adaptive_ensemble",
-  "cluster_mode": "bundle",
-  "bundle": {"max_dim": 8, "merge_cutoff": 1e+300}
+  "execution": {
+    "backend": "cpu",
+    "gpu_options": {"evolution_batch_steps": 4, "min_dim": 8},
+    "profile": true
+  },
+  "output": {"file": "bin/adaptive_ensemble", "savemode": "coherence"},
+  "cluster": {
+    "mode": "bundle",
+    "bundle": {"max_dim": 8, "merge_cutoff": 1e+300}
+  }
 }

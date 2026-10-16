@@ -1,3 +1,7 @@
+/**
+ * @file pulse.h
+ * @brief The Pulse structure: the pulse sequence on the qubit and the DEER bath pulses.
+ */
 #ifndef __CCEX_PULSE_H_
 #define __CCEX_PULSE_H_
 
@@ -5,8 +9,13 @@
 
 /**
  * @struct Pulse
- * @brief  This structure contains the pulse-related parameters.
+ * @brief The pulse sequence of the run: the pulses on the qubit (and on bath spins for DEER) and their timing.
  */
+// The default half width of the window around a DEER pump tone (pulse.bath.bandwidth, A67): the fixed 10 rad*kHz of before
+// (adding_MECCE src/simulator_gcce.cpp:546-553, an arbitrary value; = 10/(2 pi 1000) MHz, about 0.0015915 MHz). The physical
+// value is to be decided with the DEER author.
+constexpr double kBathPulseBandwidthRadkHz = 10.0;
+
 typedef struct {
 
     int npulse; /**< The number of pulse (default : -)*/
@@ -168,6 +177,21 @@ typedef struct {
      *         pulse_axes      = {"X", "Y", "Y", "X", "I"}
      *         sequence_indices = {0, 0, 2, 0, 0}
     */
+
+    // DEER bath pulses (bnpulse = 0: none), from the input block pulse.bath. As given in the input:
+    int     bnpulse;             // number of bath pulses
+    char    bpulse_defect[50];   // bath spin name driven (case-insensitive)
+    double  bspin, balphams, bbetams;
+    int     n_bpulse_shift;      // number of pump tones
+    double* bpulse_energy_shifts;// pump tones [rad*kHz] (input MHz)
+    double  bpulse_bandwidth;    // half width of the window around a tone [rad*kHz] (input MHz, pulse.bath.bandwidth; A67;
+                                 // default kBathPulseBandwidthRadkHz)
+    double* bsequence_fracs;     // bnpulse+1 interval fractions
+    char*   bpulse_axes;         // bnpulse+1
+    double* bpulse_angles;       // bnpulse+1 [deg]
+    // After Pulse_resolveBathSequence: aligned with the merged sequence (npulse+1 rows)
+    char*   tot_bpulse_axes;
+    double* tot_bpulse_angles;   // [deg]
 } Pulse;
 
 Pulse* Pulse_init();

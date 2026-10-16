@@ -34,8 +34,10 @@ def main():
         for name in args.cases:
             source=args.baseline_run.resolve()/name/'cpu/input.json'
             config=put(json.loads(source.read_text()),{'pcce.partition':'legacy'})
-            assert config.get('cluster_mode')=='pcce' and config['nstate']==0 and config['order']==2
-            data=[config['gyrofile'],*config['bathfile']]
+            # the configuration block (A64): a baseline input written before it is put through
+            # example/tools/InputKeys/convert_input_keys.py first
+            assert get(config,'cluster_mode')=='pcce' and get(config,'configuration.nstate',0)==0 and config['order']==2
+            data=[get(config,'configuration.gyrofile'),*get(config,'configuration.bathfile')]
             if get(config,'Qubit.file'):data.append(get(config,'Qubit.file'))
             record=dict(case=name,source_input=str(source),source_input_sha256=sha(source),
                 input_data_sha256={p:sha(Path(p)) for p in data},config=config,trials=[])
@@ -46,7 +48,7 @@ def main():
                 order=variants[repeat%len(variants):]+variants[:repeat%len(variants)]
                 for variant,binary,overrides in order:
                     summary.update(current_case=name,current_repeat=repeat,current_variant=variant);save(root/'summary.json',summary)
-                    result,log=run_case({**config,**overrides,'gpu_options':{**config.get('gpu_options',{}),**overrides.get('gpu_options',{})}},directory/variant,binaries[binary],args.ranks,600)
+                    result,log=run_case({**config,**overrides,'gpu_options':{**get(config,'gpu_options',{}),**overrides.get('gpu_options',{})}},directory/variant,binaries[binary],args.ranks,600)
                     if result['returncode'] or not result['profiles']:raise RuntimeError(f'{name}/{variant} failed')
                     if variant=='cuda_batch' and '[gpu-batch]' not in log:raise RuntimeError('Cluster batching was not exercised')
                     if variant=='auto' and ('[gpu-memory]' in log or '[backend] rank=' in log):raise RuntimeError('Small PL6 auto unnecessarily initialized CUDA')

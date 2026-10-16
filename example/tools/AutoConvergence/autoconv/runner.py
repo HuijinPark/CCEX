@@ -1,9 +1,11 @@
-"""`main.out --auto_conv -f input.json`: the runner ((internal notes), "--auto_conv 첫 판 설계 v2").
+"""`main.out -f input.json` with an auto_convergence block: the runner ((internal notes), "--auto_conv 첫 판 설계 v2").
 
-    python -m autoconv run INPUT --binary /abs/path/main.out          (main.out --auto_conv calls this; not under mpirun)
+    python -m autoconv run INPUT --binary /abs/path/main.out          (main.out -f input.json calls this; not under mpirun)
 
 The input is a CCEX input with an `auto_convergence` block (v1; example: examples/nv13c/input.json). Every calculation is an
-ordinary CCEX run of a child input (the block removed) in its own folder, launched with the block's `launcher`. Steps:
+ordinary CCEX run of a child input (the block removed) in its own folder, launched with mpirun -n N when main.out was started
+under mpirun -n N (CCEX_AUTOCONV_NP), else on one rank. The bath configurations are the input's configuration block's: the
+k of configuration.k_range, or without it the k whose files exist ({k} in configuration.bathfile). Steps:
 window (pilot at the largest rbath and rdip with the rdip ladder on nstep points, the window grown until it resolves, the fit
 points chosen), rdip
 then rbath (converge(): relative area of the T2 fit, rdip judged again at the final rbath), sampling allocation of the area
@@ -34,14 +36,14 @@ from . import autostart
 from . import report as report_mod
 from . import t2 as t2mod
 from . import truncation, window
-from .config import KeyCaseError, read_input
+from .config import KeyCaseError, UnitError, plain_units, plain_value, read_input
 from .curves import read_curve
 
 VERSION = 1
-METHODS = ("cce", "gcce", "pcce")    # Adaptive excluded (plan "지원 방법 넓히기", 2026-10-08); pcce: cCCE with cluster_mode pcce
+METHODS = ("cce", "gcce", "pcce")    # Adaptive excluded (plan "지원 방법 넓히기", 2026-10-08); pcce: cCCE with cluster.mode pcce
 # the input files besides the bath, as paths into the input's blocks (input keys of A47, 2026-10-13): resolved to absolute
 # paths in every child input, and hashed into every run key and the plan
-INPUT_FILES = (("Qubit", "file"), ("gyrofile",), ("hamiltonian", "common", "hyperfine", "file"),
+INPUT_FILES = (("Qubit", "file"), ("configuration", "gyrofile"), ("hamiltonian", "common", "hyperfine", "file"),
                ("hamiltonian", "common", "quadrupole", "file"), ("hamiltonian", "common", "quadrupole", "file_without_defect"))
 MADE_STATES = 10 ** 6     # states the runner can make (no files): no limit of their own; max_states bounds the state test (review 01ecda #2)
 DEFAULTS = dict(pilot_states=10, test_number=10, test_states=5, max_configurations=None, max_states=30,
@@ -49,9 +51,8 @@ DEFAULTS = dict(pilot_states=10, test_number=10, test_states=5, max_configuratio
                 fit_points="peaks", fit_floor=0.05, fit_n_range=[0.3, 4.0],
                 revival_check_factor=2.5,
                 set_time_window=None, set_time_window_unit="ms", num_candi_rdip=7, num_candi_rbath=4,
-                threshold_rdip=0.02, threshold_rbath=0.02, threshold_config=0.05, states_threshold=0.05, min_configurations=10,
-                launcher=[])
-KEYS = set(DEFAULTS) | {"workdir", "configurations", "candi_rdip", "candi_rbath", "value_rdip", "value_rbath",
+                threshold_rdip=0.02, threshold_rbath=0.02, threshold_config=0.05, states_threshold=0.05, min_configurations=10)
+KEYS = set(DEFAULTS) | {"workdir", "sampling", "candi_rdip", "candi_rbath", "value_rdip", "value_rbath",
                         "number_config", "states_config"}
 # the block is nested by step (user 2026-10-08): section -> {key -> the flat name the runner uses}
 SECTIONS = {
@@ -63,20 +64,24 @@ SECTIONS = {
     "rbath": dict(converge="converge_rbath", value="value_rbath", candidates="candi_rbath", num_candidates="num_candi_rbath",
                   threshold="threshold_rbath"),
     "t2_fit": dict(points="fit_points", floor="fit_floor", n_range="fit_n_range"),
-    "configurations": dict(converge="converge_config", number="number_config", states="states_config", threshold="threshold_config",
+    "sampling": dict(converge="converge_config", number="number_config", states="states_config", threshold="threshold_config",
                            test_number="test_number", test_states="test_states", states_threshold="states_threshold",
                            max_configurations="max_configurations", max_states="max_states",
                            min_configurations="min_configurations"),
 }
-FILE_KEYS = ("bathfile", "statefile", "avaaxfile", "exstatefile")
-SPLIT_KEYS = dict(test="pilot", production="pool")   # configurations.test / .production (user 2026-10-08) -> the runner's names
-TOP_KEYS = {"enabled", "resume", "workdir", "launcher"} | set(SECTIONS)
+# the file patterns of the configurations: the CCEX configuration block's (A65; auto_convergence.configurations.bathfile,
+# statefile, avaaxfile and exstatefile until 2026-10-15) - the tool's names for them -> the block's keys
+FILE_KEYS = dict(bathfile="bathfile", statefile="bath_state_file", avaaxfile="defect_axis_file", exstatefile="defect_state_file")
+SPLIT_KEYS = dict(test="pilot", production="pool")   # sampling.test / .production (user 2026-10-08) -> the runner's names
+TOP_KEYS = {"enabled", "resume", "workdir"} | set(SECTIONS)
 STEPS = ("0 start", "1 time window", "2 rdip", "3 rbath", "4 configurations", "5 production")
 WHERE = {flat: f"{sec}.{key}" for sec, m in SECTIONS.items() for key, flat in m.items()}
 TIME_UNITS = dict(s=1e3, ms=1.0, us=1e-3, ns=1e-6)        # to ms, the CCEX time unit
-RANDOM_FALLBACK = ("bath state is randomly generated", "paxes is randomly generated")
-SUBBATH_FALLBACK = "subbath states are randomly generated"   # a failure only when a defect has sub-bath spins (review 10-07 A7;
-                                                             # CCEX prints it also with "No sub-bath", e.g. the P1 inputs)
+# the whole bath drawn, or (A73) one bath file whose file did not open drawn while the others are read ("Cannot open ...")
+RANDOM_FALLBACK = ("bath state is randomly generated", "paxes is randomly generated",
+                   "Cannot open the state file", "Cannot open the avaax file")
+SUBBATH_FALLBACK = ("subbath states are randomly generated",   # a failure only when a defect has sub-bath spins (review 10-07 A7;
+                    "Cannot open the exstate file")             # CCEX prints it also with "No sub-bath", e.g. the P1 inputs)
 MAX_GROWS = 8            # longer windows when deltat is found (1.5^8 ~ 26 x the start)
 MAX_WINDOW_ROUNDS = 3    # the window found again at a grown reference (plan "자동 시작값" (8c))
 COARSE_POINTS = 10       # deltat found: the mean below the fit floor (t2_fit.floor) within this many points is a grid too coarse
@@ -114,19 +119,37 @@ REPLACED = dict(step_threshold="removed (2026-10-10): the fit points are the pea
                 rbath_candidates="now rbath.candidates", truncation_max_tol="removed (it did not take part in the verdict)",
                 truncation_area_tol="removed (it did not take part in the verdict)", cost_config="removed (2026-10-08)", cost_state="removed (2026-10-08)", margin_s="removed (2026-10-08)",
                 run_timeout_s="removed (2026-10-08)", truncation_rel_tol="now rdip.threshold and rbath.threshold",
-                se_target="now configurations.threshold", max_core_hours="removed (2026-10-08)",
+                se_target="now sampling.threshold", max_core_hours="removed (2026-10-08)",
                 max_spins="removed (2026-10-08)", max_pairs="removed (2026-10-08)",
-                bath_generation="removed (2026-10-09): make the bath files yourself; the run says which ones to add")
+                bath_generation="removed (2026-10-09): make the bath files yourself; the run says which ones to add",
+                launcher="removed (2026-10-15): the runs use the mpirun -n N main.out was started with (one rank without "
+                         "mpirun)",
+                configurations="now auto_convergence.sampling (2026-10-15); its bathfile, statefile, avaaxfile and exstatefile "
+                               "are configuration.bathfile, bath_state_file, defect_axis_file and defect_state_file "
+                               "(example/tools/InputKeys/convert_input_keys.py rewrites an old input)")
 CODE = ("runner.py", "window.py", "t2.py", "truncation.py", "curves.py", "autostart.py")      # the decision code, in the plan fingerprint
 # pCCE partition cache (A17 (1), user 2026-10-11): every pCCE run gets pcce.cache.mode readwrite and a file named by a key of
 # its child input without the keys the partition does not read, the contents of the files it reads but the state files, and
 # the binary - so runs differing only in rdip (or in states, nstep, deltat) share one partition. CCEX compares the stored
 # partition's own inputs (bath spins, seed, sK, trials, iterations, kmeans_pp, build) byte for byte and searches again on
 # any difference (pcce_partition_cache.cpp), so the key only keeps different partitions in different files.
-PARTITION_FREE = ("rdip", "rdip_ladder", "nstate", "bath_state_file", "Defect.state_file", "nstep", "deltat")
+PARTITION_FREE = ("rdip", "rdip_ladder", "configuration.nstate", "configuration.bath_state_file", "configuration.defect_state_file", "nstep",
+                  "deltat")
 PARTITION_RULE = dict(mode="readwrite", key="child input without " + ", ".join(PARTITION_FREE) +
                       "; contents of the bath and other files but the states; binary",
-                      seed="1 when the input has none (CCEX would take the start time, and the cache holds the seed)", version=2)
+                      seed="1 when the input has none (CCEX would take the start time, and the cache holds the seed)", version=3)
+# A64 (2026-10-15): the bath configuration of a CCEX input is one block; these keys at the top are refused, as CCEX refuses them
+CONFIGURATION_KEYS = ("gyrofile", "bathfile", "bath_shift", "bath_state_file", "nstate", "seed")
+# A65 (2026-10-15): the top-level keys CCEX refuses since, with their new places
+MOVED_A65 = dict(backend="execution.backend", gpu_options="execution.gpu_options", propagator="execution.propagator",
+                 evolution="execution.evolution", evolution_update="execution.evolution_update",
+                 gcce_refinement="execution.gcce_refinement", column_evolution="execution.column_evolution",
+                 profile="execution.profile", cluster_mode="cluster.mode", add_subclusters="cluster.selection.add_subclusters",
+                 max_clusters_per_order="cluster.selection.max_per_order", pcce="cluster.pcce", bundle="cluster.bundle",
+                 adaptive="cluster.adaptive", probe_memory_gb="cluster.adaptive.probe_memory_gb", outfile="output.file",
+                 savemode="output.savemode", cluster_contributions="output.cluster_contributions",
+                 cluster_only="output.cluster_only", coordinate_frame_rotation="frame.rotation",
+                 bath_coordinate_rotation="frame.rotation", defect_axis_reference="(removed)")
 
 
 class Refused(Exception):
@@ -162,19 +185,19 @@ def _radius(v):
 
 
 def _method(base):
-    """The method as the runner names it: cce, gcce or pcce (cCCE with cluster_mode pcce); the input's method and
-    cluster_mode otherwise (cluster_mode bundle keeps the method's name)."""
+    """The method as the runner names it: cce, gcce or pcce (cCCE with cluster.mode pcce); the input's method and
+    cluster.mode otherwise (cluster.mode bundle keeps the method's name)."""
     m = str(base.get("method", "cCCE")).lower()
     m = "cce" if m == "ccce" else m
-    shape = str(base.get("cluster_mode", "standard")).lower()
+    shape = str(_at(base, "cluster", "mode", default="standard")).lower()
     if shape == "pcce" and m == "cce":
         return "pcce"
-    return m if shape in ("standard", "bundle") else f"{m} with cluster_mode {shape}"
+    return m if shape in ("standard", "bundle") else f"{m} with cluster.mode {shape}"
 
 
 def _nodiv(cin):
-    """savemode.nodiv of a CCEX input (default true): false, CCEX writes _wiDiv alone (docs/user/InputFile_Output.md)."""
-    sm = cin.get("savemode")
+    """output.savemode.nodiv of a CCEX input (default true): false, CCEX writes _wiDiv alone (docs/user/InputFile_Output.md)."""
+    sm = _at(cin, "output", "savemode")
     return not (isinstance(sm, dict) and sm.get("nodiv", True) is False)
 
 
@@ -371,25 +394,25 @@ class Runner:
         autostart.ISOTOPES = autostart.find_isotope_table(self.binary) or autostart.ISOTOPES
         try:
             raw = read_input(self.input_path)       # keys in the names looked up below, case not read as in CCEX (R4)
-        except KeyCaseError as e:
+            plain_units(raw)                        # A67: {"value", "unit"} as the number CCEX reads (ms, A, ...)
+        except (KeyCaseError, UnitError) as e:
             raise Refused(str(e))
         if "auto_convergence" not in raw:
             raise Refused("the input has no auto_convergence block")
         self.block = raw.pop("auto_convergence")
         self.base = raw
         self.root = self.input_path.parent
+        self._configuration()
         self._validate()
-        # main.out under mpirun -n N passes N (plan "mpirun으로 부르면 그 rank 수로", 2026-10-10): the input's launcher first, then
-        # mpirun -n N, else one rank
+        # main.out under mpirun -n N passes N (plan "mpirun으로 부르면 그 rank 수로", 2026-10-10): the runs use mpirun -n N, else
+        # one rank (the block's launcher was removed, A65)
         np_env = os.environ.get("CCEX_AUTOCONV_NP")
         if np_env is not None and not re.fullmatch(r"[1-9]\d*", np_env):
             raise Refused(f"CCEX_AUTOCONV_NP = {np_env!r} is not a rank count")
-        if "launcher" in self.block:
-            self.launcher_from = "input"
-        elif np_env is not None:
-            self.o["launcher"], self.launcher_from = ["mpirun", "-n", np_env], "mpirun"
+        if np_env is not None:
+            self.o["launcher"] = ["mpirun", "-n", np_env]
         else:
-            self.launcher_from = None
+            self.o["launcher"] = []
         self.work = (self.root / self.block["workdir"]).resolve()
         self.work.mkdir(parents=True, exist_ok=True)
         self.decisions_path = self.work / "decisions.jsonl"
@@ -406,14 +429,72 @@ class Runner:
         # every rung is its own run, gathered under the ladder's names so the rest reads them alike (plan "지원 방법 넓히기" M3)
         b_ = self.base
         self.ladder = _method(b_) in ("cce", "gcce", "pcce") and b_.get("order") == 2 and \
-            str(b_.get("cluster_mode", "standard")).lower() in ("standard", "pcce")
+            str(_at(b_, "cluster", "mode", default="standard")).lower() in ("standard", "pcce")
         self.pcce = _method(b_) == "pcce"
         self.step_now, self.interrupted, self.status_now = 0, None, "running"
 
     # ---------------------------------------------------------------- input
+    def _configuration(self):
+        """The configuration block of the base input (A64; read by the tool since A65, 2026-10-15): its bathfile,
+        bath_state_file, defect_axis_file and defect_state_file (one bath file, {k} in the names) are the patterns of the
+        configurations, k_range (when given) the k used - without it the k whose bath files exist. configuration.path is put
+        in front of the block's names here and left out of the child inputs, which name every file with an absolute path and
+        hold one configuration (no k_range, the names with k in place of {k})."""
+        top = [k for k in CONFIGURATION_KEYS if k in self.base]
+        if top:
+            raise Refused(f"input keys {top} are now in the configuration block (\"configuration\": {{...}}); "
+                          "example/tools/InputKeys/convert_input_keys.py rewrites an old input")
+        moved = [f"{k} (now {v})" for k, v in MOVED_A65.items() if k in self.base]
+        species = _at(self.base, "Defect", "species", default=[])
+        moved += [f"Defect.species[].{k} (now {v})" for k, v in (("n_nuclear_spins", "n_onsite_spins"),
+                                                                 ("n_configurations", "n_axis_states"))
+                  if any(isinstance(d, dict) and k in d for d in (species if isinstance(species, list) else []))]
+        moved += [f"Defect.{k} (now configuration.defect_{k})" for k in ("axis_file", "state_file")
+                  if isinstance(self.base.get("Defect"), dict) and k in self.base["Defect"]]
+        if moved:
+            raise Refused(f"input keys in their places before 2026-10-15, as CCEX refuses them: {moved}; "
+                          "example/tools/InputKeys/convert_input_keys.py rewrites an old input")
+        conf = self.base.get("configuration", {})
+        if not isinstance(conf, dict):
+            raise Refused("configuration must be an object")
+        folder = conf.pop("path", None)
+        if folder is not None and (not isinstance(folder, str) or not folder):
+            raise Refused("configuration.path must be a nonempty folder name")
+        def in_folder(name):
+            return name if folder is None or Path(name).is_absolute() else str(Path(folder) / name)
+        gf = conf.get("gyrofile")
+        if isinstance(gf, str):
+            conf["gyrofile"] = in_folder(gf)
+        self.k_range = None
+        if "k_range" in conf:
+            kr = conf.pop("k_range")
+            if not (isinstance(kr, list) and len(kr) == 2 and all(isinstance(x, int) and not isinstance(x, bool) and x >= 0
+                                                                  for x in kr) and kr[0] <= kr[1]):
+                raise Refused("configuration.k_range must be [first, last], two nonnegative integers with first <= last")
+            self.k_range = list(range(kr[0], kr[1] + 1))
+        self.patterns = {}
+        for tool, key in FILE_KEYS.items():
+            v = conf.pop(key, None)
+            if v is None:
+                continue
+            if not (isinstance(v, list) and len(v) == 1 and isinstance(v[0], str)):
+                raise Refused(f"configuration.{key} must be a list of one name: the automatic convergence runs one bath file per "
+                              "configuration")
+            if v[0]:                       # "": that bath file has none
+                self.patterns[tool] = in_folder(v[0])
+        if "bathfile" not in self.patterns:
+            raise Refused("configuration.bathfile (one name with {k}) is required")
+        if self.patterns["bathfile"].count("{k}") != 1:
+            raise Refused("configuration.bathfile must hold {k} once: the configurations are its k")
+        self.base["configuration"] = conf
+
+    def _conf(self, key, default=None):
+        """configuration.<key> of the input, or default."""
+        return _at(self.base, "configuration", key, default=default)
+
     @staticmethod
     def _flatten(block):
-        """The nested block (time_window / rdip / rbath / configurations, user 2026-10-08) as the flat names the runner
+        """The nested block (time_window / rdip / rbath / t2_fit / sampling, user 2026-10-08) as the flat names the runner
         uses; an earlier flat name is refused with where it went."""
         if not isinstance(block, dict):
             raise Refused("auto_convergence must be an object")
@@ -422,7 +503,7 @@ class Runner:
             raise Refused("; ".join(f"auto_convergence.{k}: {v}" for k, v in moved.items()))
         unknown = set(block) - TOP_KEYS
         if unknown:
-            raise Refused(f"unknown auto_convergence keys: {sorted(unknown)} (sections: time_window, rdip, rbath, configurations)")
+            raise Refused(f"unknown auto_convergence keys: {sorted(unknown)} (sections: time_window, rdip, rbath, t2_fit, sampling)")
         on = block.get("enabled", True)
         if not isinstance(on, bool):
             raise Refused("auto_convergence.enabled must be true or false")
@@ -436,10 +517,12 @@ class Runner:
             part = block.get(sec, {})
             if not isinstance(part, dict):
                 raise Refused(f"auto_convergence.{sec} must be an object")
-            extra = set(part) - set(names) - (set(FILE_KEYS) | set(SPLIT_KEYS) if sec == "configurations" else set())
+            extra = set(part) - set(names) - (set(SPLIT_KEYS) if sec == "sampling" else set())
             gone = {k: REPLACED[k] for k in extra if k in REPLACED}
-            if sec == "configurations":
-                gone.update({k: f"now configurations.{u}" for u, k in SPLIT_KEYS.items() if k in extra})
+            if sec == "sampling":
+                gone.update({k: f"now sampling.{u}" for u, k in SPLIT_KEYS.items() if k in extra})
+                gone.update({k: f"now configuration.{v} (the CCEX configuration block)" for k, v in FILE_KEYS.items()
+                             if k in extra})
             if gone:
                 raise Refused("; ".join(f"auto_convergence.{sec}.{k}: {v}" for k, v in gone.items()))
             if extra:
@@ -449,9 +532,8 @@ class Runner:
                     raise Refused(f"auto_convergence.{sec}.{k} is null: leave it out to have it found, or give a value")
                 if k in names:
                     flat[names[k]] = v
-            if sec == "configurations" and sec in block:
-                flat["configurations"] = {k: v for k, v in part.items() if k in FILE_KEYS}
-                flat["configurations"].update({SPLIT_KEYS[k]: v for k, v in part.items() if k in SPLIT_KEYS})
+            if sec == "sampling":
+                flat["sampling"] = {SPLIT_KEYS[k]: v for k, v in part.items() if k in SPLIT_KEYS}
         return flat
 
     def _validate(self):
@@ -461,7 +543,7 @@ class Runner:
         b = self._flatten(self.block)
         conv = {}
         for sec, flag in (("time_window", "converge_time_window"), ("rdip", "converge_rdip"), ("rbath", "converge_rbath"),
-                          ("configurations", "converge_config")):
+                          ("sampling", "converge_config")):
             v = b.pop(flag, True)
             if not isinstance(v, bool):
                 raise Refused(f"auto_convergence.{sec}.converge must be true or false")
@@ -472,7 +554,7 @@ class Runner:
         # converge false: the value is used as it is and is required; converge true: no fixed value
         for sec, val, others in (("time_window", "set_time_window", ()), ("rdip", "value_rdip", ("candi_rdip", "num_candi_rdip")),
                                  ("rbath", "value_rbath", ("candi_rbath", "num_candi_rbath")),
-                                 ("configurations", "number_config", ())):
+                                 ("sampling", "number_config", ())):
             key = WHERE.get(val, f"{sec}.number")
             if not conv[sec] and val not in b:
                 raise Refused(f"auto_convergence.{sec}.converge is false: give {key} (the value to use)")
@@ -481,12 +563,10 @@ class Runner:
             bad = [WHERE[o] for o in others if o in b and not conv[sec]]
             if bad:
                 raise Refused(f"{sec}.converge is false: {bad} are not used, leave them out")
-        if "states_config" in b and conv["configurations"]:
-            raise Refused("auto_convergence.configurations.states is a fixed value: set configurations.converge false to use it")
+        if "states_config" in b and conv["sampling"]:
+            raise Refused("auto_convergence.sampling.states is a fixed value: set sampling.converge false to use it")
         if "workdir" not in b:
             raise Refused("auto_convergence.workdir is required")
-        if "configurations" not in b:
-            raise Refused("auto_convergence.configurations.bathfile is required")
         # absent keys are found automatically (plan "자동 시작값", 2026-10-08); a key given wins, null or empty is refused
         for k in ("candi_rdip", "candi_rbath"):
             if k in b and (b[k] is None or b[k] == []):
@@ -496,26 +576,26 @@ class Runner:
         base = self.base
         method = _method(base)
         if method not in METHODS:
-            raise Refused(f"--auto_conv supports method cCCE, gCCE or cCCE with cluster_mode pcce (the adaptive block is excluded), "
+            raise Refused(f"the automatic convergence supports method cCCE, gCCE or cCCE with cluster.mode pcce (the adaptive block is excluded), "
                           f"not {method}")
         if str(base.get("quantity", "")).lower() != "coherence":
-            raise Refused("--auto_conv supports quantity coherence only")
+            raise Refused("the automatic convergence supports quantity coherence only")
         order = base.get("order")
         if not (isinstance(order, int) and not isinstance(order, bool) and order >= (1 if method == "gcce" else 2)):
             raise Refused(f"order must be an integer >= {1 if method == 'gcce' else 2} for {method}")
         if "save_nodiv" in base:            # CCEX refuses it too (2026-10-13)
-            raise Refused('save_nodiv is now savemode.nodiv ("savemode": {"mode": "coherence", "nodiv": false})')
-        for path, bad in ((("savemode",), lambda v: str(v.get("mode", "coherence") if isinstance(v, dict) else v).lower() != "coherence"),
-                          (("cluster_contributions",), lambda v: not isinstance(v, dict) or v.get("enabled", True) is not False),
-                          (("max_clusters_per_order",), lambda v: any(v)), (("rdip_ladder",), lambda v: True),
-                          (("adaptive",), lambda v: True), (("pcce", "cache"), lambda v: True),
-                          (("pcce", "partition"), lambda v: str(v).lower() == "legacy"),   # legacy partitions depend on the MPI size
-                          (("Defect", "axis_file"), lambda v: True), (("Defect", "state_file"), lambda v: True)):   # review 10-07 A6: files not hashed
+            raise Refused('save_nodiv is now output.savemode.nodiv ("output": {"savemode": {"mode": "coherence", "nodiv": false}})')
+        for path, bad in ((("output", "savemode"), lambda v: str(v.get("mode", "coherence") if isinstance(v, dict) else v).lower() != "coherence"),
+                          (("output", "cluster_contributions"), lambda v: not isinstance(v, dict) or v.get("enabled", True) is not False),
+                          (("cluster", "selection", "max_per_order"), lambda v: any(v)), (("rdip_ladder",), lambda v: True),
+                          (("cluster", "adaptive"), lambda v: True), (("cluster", "pcce", "cache"), lambda v: True),
+                          (("output", "cluster_only"), lambda v: v is not False),   # A63: a plan without dynamics has no curve to judge
+                          (("cluster", "pcce", "partition"), lambda v: str(v).lower() == "legacy")):   # legacy partitions depend on the MPI size
             v = _at(base, *path)
             if v is not None and bad(v):
                 k = ".".join(path)
-                why = " (the runner gives every pCCE run its own partition cache)" if k.startswith("pcce.cache") else ""
-                raise Refused(f"--auto_conv refuses {k} = {v!r} in the base input{why}")
+                why = " (the runner gives every pCCE run its own partition cache)" if k.startswith("cluster.pcce.cache") else ""
+                raise Refused(f"the automatic convergence refuses {k} = {v!r} in the base input{why}")
         dt = base.get("deltat")
         if "deltat" in base and dt is None:
             raise Refused("deltat is null: leave it out to have it found from the window, or give a positive number of ms")
@@ -531,15 +611,15 @@ class Runner:
             raise Refused("nstep must be an integer >= 3")
         self.nstep0 = n if n is not None else DEFAULT_NSTEP     # time points: nstep of the input (user 2026-10-08)
         # review 10-07 A10: the preflight measures the bath around ONE qubit in the files' own coordinates
-        shift = base.get("bath_shift")
+        shift = _at(base, "configuration", "bath_shift")
         flat = [shift] if isinstance(shift, (int, float)) else (shift or [])
         while any(isinstance(x, list) for x in flat):
             flat = [y for x in flat for y in (x if isinstance(x, list) else [x])]
         if any(float(x) != 0 for x in flat):
-            raise Refused("--auto_conv refuses bath_shift (its bath radius and resource checks read the files' own coordinates)")
+            raise Refused("the automatic convergence refuses configuration.bath_shift (its bath radius and resource checks read the files' own coordinates)")
         qubits = base.get("Qubit", {})
         if isinstance(qubits, dict) and len(qubits.get("qubit", []) or []) > 1:
-            raise Refused("--auto_conv supports one qubit (its bath radius is measured from it)")
+            raise Refused("the automatic convergence supports one qubit (its bath radius is measured from it)")
         o = self.o
         checks = (("threshold_config", lambda v: 0 < v < 1), ("states_threshold", lambda v: 0 < v < 1), ("threshold_rdip", lambda v: 0 < v < 1), ("threshold_rbath", lambda v: 0 < v < 1), ("production_window_factor", lambda v: v >= 1),
                   ("revival_check_factor", lambda v: v >= 0), ("threshold_time_window", lambda v: 0 < v < 1))
@@ -568,6 +648,14 @@ class Runner:
         if u not in TIME_UNITS:
             raise Refused(f"time_window.unit must be one of {sorted(TIME_UNITS)}, not {u!r}")
         w0 = o["set_time_window"]
+        if isinstance(w0, dict):               # A67: {"value", "unit"}, in place of time_window.unit
+            if "set_time_window_unit" in b:
+                raise Refused('time_window.value carries its unit ({"value", "unit"}): leave time_window.unit out')
+            try:
+                w0 = o["set_time_window"] = plain_value("auto_convergence.time_window.value", w0, "ms")
+            except UnitError as e:
+                raise Refused(str(e))
+            u = "ms"
         if w0 is not None:
             if not (isinstance(w0, (int, float)) and not isinstance(w0, bool) and math.isfinite(w0) and w0 > 0):
                 raise Refused("time_window.value must be a positive number (in time_window.unit, default ms)")
@@ -585,74 +673,73 @@ class Runner:
         if not self.converge["rbath"]:
             self.rbaths = [float(b["value_rbath"])]
         self.fixed_config = None
-        if not self.converge["configurations"]:
+        if not self.converge["sampling"]:
             n, st = b["number_config"], b.get("states_config")
             if not (isinstance(n, int) and not isinstance(n, bool) and n >= 2):
-                raise Refused("auto_convergence.configurations.number must be an integer >= 2")
-            if self.base.get("nstate", 0) and not (isinstance(st, int) and not isinstance(st, bool) and st >= 1):
-                raise Refused("nstate > 0: auto_convergence.configurations.states (states per configuration, >= 1) is required")
-            if not self.base.get("nstate", 0) and st is not None:
-                raise Refused("nstate 0 (ensemble): auto_convergence.configurations.states is not used, leave it out")
+                raise Refused("auto_convergence.sampling.number must be an integer >= 2")
+            if self._conf("nstate", default=0) and not (isinstance(st, int) and not isinstance(st, bool) and st >= 1):
+                raise Refused("nstate > 0: auto_convergence.sampling.states (states per configuration, >= 1) is required")
+            if not self._conf("nstate", default=0) and st is not None:
+                raise Refused("nstate 0 (ensemble): auto_convergence.sampling.states is not used, leave it out")
             self.fixed_config = (n, st or 0)
-        c = b["configurations"]
-        if not isinstance(c, dict) or "bathfile" not in c:
-            raise Refused("auto_convergence.configurations.bathfile is required")
+        c = dict(b.get("sampling", {}), **self.patterns)      # the split (sampling) and the file patterns (configuration)
         for k in ("pilot", "pool"):
             if k in c and not (isinstance(c[k], list) and c[k]):
-                raise Refused(f"configurations.{dict(pilot='test', pool='production')[k]} is {c[k]!r}: leave it out to have it found, or give the IDs")
+                raise Refused(f"sampling.{dict(pilot='test', pool='production')[k]} is {c[k]!r}: leave it out to have it found, or give the IDs")
+            if k in c and self.k_range is not None and not set(int(x) for x in c[k]) <= set(self.k_range):
+                raise Refused(f"sampling.{dict(pilot='test', pool='production')[k]} holds k outside configuration.k_range")
         self.auto |= {k for k in ("pilot", "pool") if k not in c}
         # ensemble or single-sample from the CCEX nstate of the input (user decision 2026-10-07): 0 (the CCEX default) is the
         # ensemble, one curve per configuration, and only the number of configurations is chosen; > 0 samples states, the
-        # value being the pilot's states per configuration, and needs configurations.statefile
-        nst = self.base.get("nstate", 0)
+        # value being the pilot's states per configuration, and needs configuration.bath_state_file
+        nst = self._conf("nstate", default=0)
         if not isinstance(nst, int) or isinstance(nst, bool) or nst < 0:
             raise Refused("nstate must be a non-negative integer (0: ensemble, > 0: states sampled)")
         self.ensemble = nst == 0
         if "pilot_states" in b:
-            raise Refused("pilot_states is replaced by configurations.test_states (nstate of the input only chooses ensemble or states)")
+            raise Refused("pilot_states is replaced by sampling.test_states (nstate of the input only chooses ensemble or states)")
         # the test's size (user 2026-10-10): test_number configurations (default 10) of test_states states (default 5); nstate
         # of the input only chooses the ensemble (0) or sampled states (> 0)
         tn, ts = self.o["test_number"], self.o["test_states"]
         if not (isinstance(tn, int) and not isinstance(tn, bool) and tn >= 2):
-            raise Refused("configurations.test_number must be an integer >= 2")
+            raise Refused("sampling.test_number must be an integer >= 2")
         if "test_number" in b and "pilot" in c:
-            raise Refused("configurations.test_number and configurations.test: give one (the list is the test configurations)")
+            raise Refused("sampling.test_number and sampling.test: give one (the list is the test configurations)")
         if self.ensemble and "test_states" in b:
-            raise Refused("nstate 0 (ensemble): configurations.test_states is not used, leave it out")
+            raise Refused("nstate 0 (ensemble): sampling.test_states is not used, leave it out")
         if not self.ensemble and not (isinstance(ts, int) and not isinstance(ts, bool) and ts >= 2):
-            raise Refused("configurations.test_states must be an integer >= 2 (the states of a test configuration)")
+            raise Refused("sampling.test_states must be an integer >= 2 (the states of a test configuration)")
         self.o["pilot_states"] = 0 if self.ensemble else ts
         # the largest numbers (plan "최대 configuration·state 수 키", user 2026-10-10): max_configurations (default every production
         # file) and max_states (default 30, the state test)
         mxc, mxs = self.o["max_configurations"], self.o["max_states"]
         if mxc is not None and not (isinstance(mxc, int) and not isinstance(mxc, bool) and mxc >= 2):
-            raise Refused("configurations.max_configurations must be an integer >= 2 (leave it out to use every production file)")
+            raise Refused("sampling.max_configurations must be an integer >= 2 (leave it out to use every production file)")
         if self.ensemble and "max_states" in b:
-            raise Refused("nstate 0 (ensemble): configurations.max_states is not used, leave it out")
+            raise Refused("nstate 0 (ensemble): sampling.max_states is not used, leave it out")
         if not self.ensemble and not (isinstance(mxs, int) and not isinstance(mxs, bool) and mxs >= ts):
-            raise Refused(f"configurations.max_states must be an integer >= test_states ({ts})")
-        if self.ensemble and ("statefile" in c or "exstatefile" in c):    # the tool's pattern names (configurations.*)
-            raise Refused("nstate 0 (ensemble) does not read state files: remove configurations.statefile or set nstate > 0")
+            raise Refused(f"sampling.max_states must be an integer >= test_states ({ts})")
+        if self.ensemble and ("statefile" in c or "exstatefile" in c):    # the tool's pattern names (configuration.* since A65)
+            raise Refused("nstate 0 (ensemble) does not read state files: remove configuration.bath_state_file and defect_state_file, or set nstate > 0")
         # nstate > 0 without state files: the runner makes them for each run and removes them after (plan "state 파일 자동",
         # user 2026-10-09; CCEX's own random states change with rbath and would break the paired comparisons)
         self.auto_states = not self.ensemble and "statefile" not in c
         # keyed in lower case: CCEX finds a defect by its name ignoring case (strcasecmp; review 6548a9 R4)
-        self.defect_axes = {str(d_["name"]).lower(): int(d_.get("n_configurations", 0) or 0)
+        self.defect_axes = {str(d_["name"]).lower(): int(d_.get("n_axis_states", 0) or 0)
                             for d_ in _at(self.base, "Defect", "species", default=[])
-                            if isinstance(d_, dict) and "name" in d_ and int(d_.get("n_configurations", 0) or 0) > 0}
+                            if isinstance(d_, dict) and "name" in d_ and int(d_.get("n_axis_states", 0) or 0) > 0}
         self.auto_avaax = {}
         if self.auto_states and "exstatefile" in c:
-            raise Refused("configurations.exstatefile needs configurations.statefile (the states the runner makes cover the bath spins only)")
+            raise Refused("configuration.defect_state_file needs configuration.bath_state_file (the states the runner makes cover the bath spins only)")
         mc = self.o["min_configurations"]
         if not isinstance(mc, int) or isinstance(mc, bool) or mc < 2:
-            raise Refused("min_configurations must be an integer >= 2")
+            raise Refused("sampling.min_configurations must be an integer >= 2")
         if mxc is not None and mxc < mc:
-            raise Refused(f"configurations.max_configurations {mxc} is below min_configurations {mc}")
+            raise Refused(f"sampling.max_configurations {mxc} is below sampling.min_configurations {mc}")
         if not self.ensemble and self.o["pilot_states"] < 2:
             raise Refused("the pilot needs at least 2 states")
         self.pilot = [int(x) for x in c["pilot"]] if "pilot" in c else None
         self.pool = [int(x) for x in c["pool"]] if "pool" in c else None
-        self.patterns = {k: c[k] for k in ("bathfile", "statefile", "avaaxfile", "exstatefile") if k in c}
         if not self.auto:
             self._check_lists()
 
@@ -675,11 +762,11 @@ class Runner:
         if len(set(names)) != len(names) or _gname(rmax) in names:
             raise Refused("two rdip rungs print the same name (%g of the float value)")
         if set(self.pilot) & set(self.pool) or len(set(self.pilot)) != len(self.pilot) or len(set(self.pool)) != len(self.pool):
-            raise Refused("configurations.test and configurations.production IDs must be distinct and not overlap")
+            raise Refused("sampling.test and sampling.production IDs must be distinct and not overlap")
         if self.fixed_config is not None:
             n, st = self.fixed_config
             if n > self.cap:
-                raise Refused(f"configurations.number {n} is more than the pool holds ({len(self.pool)}"
+                raise Refused(f"sampling.number {n} is more than the pool holds ({len(self.pool)}"
                               + (f", max_configurations {self.o['max_configurations']})" if self.o["max_configurations"] is not None else ")"))
 
         if len(self.pilot) < 2:
@@ -688,7 +775,7 @@ class Runner:
     @staticmethod
     def _shown(keys):
         """The keys as the user writes them (nested names)."""
-        return [dict(pilot="configurations.test", pool="configurations.production").get(k) or WHERE.get(k, k) for k in keys]
+        return [dict(pilot="sampling.test", pool="sampling.production").get(k) or WHERE.get(k, k) for k in keys]
 
     def _split(self, ids, seed, mc):
         """The test and production configurations not given, kept across calls in <workdir>/split.json (plan "bath 만들기 빼기",
@@ -751,17 +838,17 @@ class Runner:
         o = self.o
         rec = dict(found=sorted(self._shown(self.auto)))
         if self.pilot is None or self.pool is None:
-            try:
-                ids = autostart.discover(self.patterns["bathfile"], self.root)
+            try:                            # configuration.k_range, or the k whose bath files exist
+                ids = self.k_range if self.k_range is not None else autostart.discover(self.patterns["bathfile"], self.root)
             except ValueError as e:
                 raise Refused(str(e))
             need = o["pilot_states"]
             missing = {k: [p.name for p in self.files(k, need).values() if not p.is_file()] for k in ids}
             missing = {k: v for k, v in missing.items() if v}
             if missing:                     # never left out quietly: a missing file could select the configurations
-                raise Refused("configurations with missing files (give configurations.test and .production to choose them by hand): "
+                raise Refused("configurations with missing files (give sampling.test and .production to choose them by hand): "
                               + "; ".join(f"{k}: {v[:3]}" for k, v in list(missing.items())[:5]))
-            seed = self.base.get("seed", 1)
+            seed = self._conf("seed", default=1)
             mc = self.fixed_config[0] if self.fixed_config else o["min_configurations"]
             try:
                 self.pilot, self.pool, note = self._split(ids, seed, mc)
@@ -783,7 +870,7 @@ class Runner:
             names = sorted({n for sp, _ in configs for n in sp})
             r_cov = min(self.bath_radius(k) for k in self.pilot + self.pool)
             cut = float(_radius(self.base.get("rbath"))[0] or 0.0)
-            gf = self.base.get("gyrofile")
+            gf = self._conf("gyrofile")
             gf = None if gf is None else (Path(gf) if Path(gf).is_absolute() else self.root / gf)
             g = autostart.gyros(gf, set(names))
             unknown = [n for n in names if n not in g]
@@ -873,7 +960,7 @@ class Runner:
             if ns < nb:
                 raise Refused(f"configuration {k}: {ns} states per state file, {nb} spins in the bath file")
         if self.auto_states:                # the spins of every species the made states need
-            gf = self.base.get("gyrofile")
+            gf = self._conf("gyrofile")
             gf = None if gf is None else (Path(gf) if Path(gf).is_absolute() else self.root / gf)
             g = autostart.gyros(gf, self._state_names)
             unknown = sorted(n for n in self._state_names if n not in g)
@@ -887,7 +974,7 @@ class Runner:
         # states the sampling may use: the fewest over the pool (the state files are counted; states_available removed 2026-10-08)
         self.states_avail = 0 if self.ensemble else min(self.count_states(k) for k in self.pool)
         if self.fixed_config is not None and self.fixed_config[1] > self.states_avail:
-            raise Refused(f"configurations.states {self.fixed_config[1]} is more than the state files of every pool configuration hold ({self.states_avail})")
+            raise Refused(f"sampling.states {self.fixed_config[1]} is more than the state files of every pool configuration hold ({self.states_avail})")
         # the largest rbath the bath files allow (user decision 2026-10-07): the smallest box radius over the configurations,
         # (source_radius was removed on 2026-10-08)
         radii = [self.bath_radius(k) for k in self.pilot + self.pool]
@@ -965,23 +1052,29 @@ class Runner:
         fs = self.files(k, nstate, first)
         # the inner radii of the base input stay ([inner, outer]; A47)
         inner_b, inner_d = (v[0] if isinstance(v, list) and len(v) == 2 else None for v in (c.get("rbath"), c.get("rdip")))
-        c.update(bathfile=[str(fs["bathfile"])], nstate=nstate, nstep=nstep, deltat=self.deltat,
-                 rbath=rbath if inner_b is None else [inner_b, rbath], rdip=rdip if inner_d is None else [inner_d, rdip],
-                 outfile="out")
-        # the configuration's files under the CCEX input keys (A47): bath_state_file, Defect.axis_file, Defect.state_file
+        c.update(nstep=nstep, deltat=self.deltat,
+                 rbath=rbath if inner_b is None else [inner_b, rbath], rdip=rdip if inner_d is None else [inner_d, rdip])
+        # output.file out in the run folder: output.path of the base input is left out (the runner places the outputs)
+        out = c.get("output") if isinstance(c.get("output"), dict) else {}
+        out.pop("path", None)
+        out["file"] = "out"
+        c["output"] = out
+        # the configuration block (A64): one bath file; its state, axis and defect state files are lists of one per bath file
+        conf = c.setdefault("configuration", {})
+        conf.update(bathfile=[str(fs["bathfile"])], nstate=nstate)
         if self.ensemble:
-            c.pop("bath_state_file", None)
+            conf.pop("bath_state_file", None)
         elif self.auto_states or first > 1:              # a later block of given state files: copied there as 1, 2, ...
-            c["bath_state_file"] = "made/cfg_state"      # made in the run folder just before CCEX starts, removed after
+            conf["bath_state_file"] = ["made/cfg_state"]   # made in the run folder just before CCEX starts, removed after
         else:
-            c["bath_state_file"] = str(self._path(self.patterns["statefile"], k))
-        if "avaaxfile" in self.patterns:
-            c.setdefault("Defect", {})["axis_file"] = str(fs["avaaxfile"])
+            conf["bath_state_file"] = [str(self._path(self.patterns["statefile"], k))]
+        if "avaaxfile" in self.patterns:                   # the Defect files are the configuration's (A64)
+            conf["defect_axis_file"] = [str(fs["avaaxfile"])]
         elif self.auto_avaax:
-            c.setdefault("Defect", {})["axis_file"] = "made/cfg_avaax"
+            conf["defect_axis_file"] = ["made/cfg_avaax"]
         if "exstatefile" in self.patterns:
-            c.setdefault("Defect", {})["state_file"] = "made/cfg_exstate" if first > 1 else \
-                str(self._path(self.patterns["exstatefile"], k))
+            conf["defect_state_file"] = ["made/cfg_exstate" if first > 1 else
+                                         str(self._path(self.patterns["exstatefile"], k))]
         for path in INPUT_FILES:
             v = _at(c, *path)
             if isinstance(v, str) and not Path(v).is_absolute():
@@ -991,17 +1084,16 @@ class Runner:
         else:
             c.pop("rdip_ladder", None)
         if self.pcce:
-            c.setdefault("seed", 1)                      # PARTITION_RULE: without it every run searches the partition again
+            conf.setdefault("seed", 1)                   # PARTITION_RULE: without it every run searches the partition again
         return c, fs
 
     def partition_key(self, cin, fs, extra):
         """The pCCE partition cache key (PARTITION_RULE): the bath spins inside rbath (bath file content, rbath with its inner radius,
         the qubit), seed, pcce.partition_size, trials, max_iterations, kmeans_pp and the binary are all in it; rdip is not."""
         free = {n: v for n, v in cin.items() if n not in PARTITION_FREE}
-        if isinstance(free.get("Defect"), dict) and "state_file" in free["Defect"]:   # Defect.state_file: states too
-            free["Defect"] = {n: v for n, v in free["Defect"].items() if n != "state_file"}
-            if not free["Defect"]:
-                free.pop("Defect")
+        if isinstance(free.get("configuration"), dict):       # configuration.nstate and .bath_state_file: the states (A64)
+            free["configuration"] = {n: v for n, v in free["configuration"].items()
+                                     if f"configuration.{n}" not in PARTITION_FREE}
         return hashlib.sha256(_canon(dict(rule=PARTITION_RULE, input=free,
                                           files={n: _sha(p) for n, p in fs.items() if not n.startswith(("state", "exstate"))},
                                           other={n: _sha(p) for n, p in extra.items() if Path(p).is_file()},
@@ -1021,13 +1113,13 @@ class Runner:
         if self.auto_avaax:
             made.update(avaax=AVAAX_RULE, navaax=self.auto_avaax)
         if made:
-            made.update(seed=int(self.base.get("seed", 1)), k=k)
+            made.update(seed=int(self._conf("seed", default=1)), k=k)
         cache = None
         if self.pcce:                      # A17 (1): the partition cache, named by what the partition depends on
             ckey = self.partition_key(cin, fs, extra)
             cache = self.work / "pcce_cache" / f"{ckey}.cache"
             # relative to the run folder (runs/<step>/<name>/), so the run key does not hold where the workdir is
-            cin.setdefault("pcce", {})["cache"] = dict(mode="readwrite", file=f"../../../pcce_cache/{cache.name}")
+            cin.setdefault("cluster", {}).setdefault("pcce", {})["cache"] = dict(mode="readwrite", file=f"../../../pcce_cache/{cache.name}")
         key = hashlib.sha256(_canon(dict(input=cin, rungs=[] if self.ladder else list(ladder), files={n: _sha(p) for n, p in sorted(fs.items())},
                                          **(dict(states_made=made) if made else {}),
                                          other={n: _sha(p) for n, p in extra.items() if Path(p).is_file()},
@@ -1093,9 +1185,9 @@ class Runner:
         logtext = (d / "process.log").read_text(errors="replace")
         if code != 0:
             raise RuntimeError(f"{d}: CCEX exited with {code}")
-        subbath = any(int(d.get("n_nuclear_spins", 0) or 0) > 0 for d in _at(self.base, "Defect", "species", default=[])
+        subbath = any(int(d.get("n_onsite_spins", 0) or 0) > 0 for d in _at(self.base, "Defect", "species", default=[])
                       if isinstance(d, dict))
-        if any(m in logtext for m in RANDOM_FALLBACK) or (subbath and SUBBATH_FALLBACK in logtext):
+        if any(m in logtext for m in RANDOM_FALLBACK) or (subbath and any(m in logtext for m in SUBBATH_FALLBACK)):
             raise RuntimeError(f"{d}: bath states or axes fell back to random values")
         own = [f for f in expected if self.ladder or not f.startswith("out_rdip")]
         missing = [f for f in own if not (d / f).is_file()]
@@ -1251,8 +1343,8 @@ class Runner:
             resolved = {k: v for k, v in self.resolved.items() if k not in ("pool", "found_configurations", "r_cov")}   # review 82c666 R3
         # max_configurations raised later continues the plan like files added (user 2026-10-10)
         block = copy.deepcopy(self.block)
-        if isinstance(block.get("configurations"), dict):
-            block["configurations"].pop("max_configurations", None)
+        if isinstance(block.get("sampling"), dict):
+            block["sampling"].pop("max_configurations", None)
         fp = hashlib.sha256(_canon(dict(block=block, base=self.base, files=files, other=other, binary=self.binary_sha, resolved=resolved,
                                         code={c: _sha(here / c) for c in CODE},
                                         **(dict(partition_cache=PARTITION_RULE) if self.pcce else {}))).encode()).hexdigest()
@@ -1655,7 +1747,7 @@ class Runner:
         self.decide("truncation", rbath=B, rdip=R, **({} if not raw else dict(
             raw_area=[dict(parameter=n, lo=lo, hi=hi, verdict=v) for n, lo, hi, v in raw])))
         summary["truncation"].update(chosen=dict(rbath=B, rdip=R, pairs=pairs_used))
-        if self.fixed_config is not None:      # configurations.converge false: the number (and states) given
+        if self.fixed_config is not None:      # sampling.converge false: the number (and states) given
             C, S = self.fixed_config
             summary["sampling_pilot"] = dict(fixed=dict(configurations=C, states=S))
         else:
@@ -1816,7 +1908,7 @@ class Runner:
         ids, prod, batches, res = [], [], [], None
         planned = sum(len(v["ids"]) for k_, v in self.decisions().items() if k_.startswith(f"production{tag}_batch_") and k_.endswith("_plan"))
         if planned > self.cap:                # lowered since (review 01ecda #1): the recorded blocks are not cut
-            raise Refused(f"configurations.max_configurations {self.cap} is below the {planned} production configurations already "
+            raise Refused(f"sampling.max_configurations {self.cap} is below the {planned} production configurations already "
                           f"planned in this workdir: raise it to {planned} or more, or start over with \"resume\": \"fresh\"")
         target = min(start, self.cap) if start else first_target(n_pilot, cmin, self.cap)
         for i in itertools.count():
@@ -1861,14 +1953,14 @@ class Runner:
             # what to add (plan "bath 만들기 빼기": suggested, not made): the next block with its margin; files already there
             # beyond max_configurations: raise it first
             if len(self.pool) > self.cap:
-                res["reason"] += (f"; raise configurations.max_configurations (now {self.cap}, {len(self.pool)} production "
+                res["reason"] += (f"; raise sampling.max_configurations (now {self.cap}, {len(self.pool)} production "
                                   f"files there) to about {self.cap + want - n} and call again")
                 return ids, prod, res, batches
             if self.o["max_configurations"] is not None:     # the files and the cap both used up (review 01ecda #3)
-                res["reason"] += f"; raise configurations.max_configurations to about {self.cap + want - n} (or leave it out)"
+                res["reason"] += f"; raise sampling.max_configurations to about {self.cap + want - n} (or leave it out)"
             res["reason"] += (f"; add {want - n} more bath files ({self.patterns['bathfile']}"
                               + (f" and {S} state files each" if not self.ensemble and not self.auto_states else "")
-                              + (") and call again to continue" if "pool" in self.auto else ") to configurations.production and call again"))
+                              + (") and call again to continue" if "pool" in self.auto else ") to sampling.production and call again"))
         return ids, prod, res, batches
 
     def _state_test(self, t, nstep, B, R, pk):
@@ -1916,7 +2008,7 @@ class Runner:
                               f"the production uses test_states {S0}")
         elif rec["chosen"] > S0:
             rec["warning"] = (f"state test: the states converge at {rec['chosen']}, more than test_states {S0} the production uses "
-                              f"(raise configurations.test_states to {rec['chosen']} to use them)")
+                              f"(raise sampling.test_states to {rec['chosen']} to use them)")
         last = max(values) if values else S0
         rec["_curves"] = {v: np.abs(np.mean([data[k][:v].mean(0) for k in data], 0)) for v in [*range(1, S0 + 1), *[v for v in values if v > S0]]
                           if v <= last} if data else {}
@@ -2055,12 +2147,11 @@ class Runner:
             L.append(f"  rdip candidates {cand(rs['candi_rdip'])}" + (" (given" if "candi_rdip" not in self.auto else " (")
                      + (f"; estimate {rs['r_seed']:.2g} Å)" if rs.get("r_seed") is not None else ")").replace("(;", "(").replace("()", ""))
         L.append("  states: " + ("ensemble (nstate 0)" if self.ensemble else
-                                 f"made per run (seed {int(self.base.get('seed', 1))})" if self.auto_states else f"files {self.patterns.get('statefile')}"))
+                                 f"made per run (seed {int(_at(self.base, 'configuration', 'seed', default=1))})" if self.auto_states else f"files {self.patterns.get('statefile')}"))
         if self.auto_avaax:
             L.append(f"  avaax: made per run (navaax {self.auto_avaax})")
-        L.append("  launcher: " + (" ".join(self.o["launcher"]) + (" (input)" if self.launcher_from == "input" else
-                                                                   " (the mpirun that started main.out)")
-                                   if self.o["launcher"] else "none (one rank; give launcher or start main.out with mpirun -n N)"))
+        L.append("  launcher: " + (" ".join(self.o["launcher"]) + " (the mpirun that started main.out)"
+                                   if self.o["launcher"] else "none (one rank; start main.out with mpirun -n N for more)"))
         # 1. time window
         if w:
             L += ["", head_fig("1. time window", "1_window.png")]
@@ -2169,7 +2260,7 @@ class Runner:
 
 
 def status_main(argv):
-    """main.out --auto_status -f input.json: where an automatic convergence is, without computing (plan R4). Running (a process
+    """python -m autoconv status input.json (from this folder, or with it on PYTHONPATH): where an automatic convergence is, without computing (plan R4). Running (a process
     holds the lock), interrupted (the result says running but nobody holds the lock), or how it ended."""
     import argparse
     ap = argparse.ArgumentParser(prog="autoconv status")
@@ -2221,7 +2312,7 @@ def main(argv):
     a = ap.parse_args(argv)
     for v in ("PMI_RANK", "PMI_SIZE", "OMPI_COMM_WORLD_RANK", "MPI_LOCALRANKID"):
         if v in os.environ:
-            print(f"autoconv run: refused inside an MPI launch ({v} is set); call main.out --auto_conv without mpirun", file=sys.stderr)
+            print(f"autoconv run: refused inside an MPI launch ({v} is set); call main.out -f INPUT without mpirun (or mpirun -n N main.out -f INPUT)", file=sys.stderr)
             return 2
     try:
         r = Runner(a.input, a.binary)

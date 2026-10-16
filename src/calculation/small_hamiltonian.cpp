@@ -1,3 +1,7 @@
+/**
+ * @file small_hamiltonian.cpp
+ * @brief The cluster Hamiltonians of the CPU cCCE and gCCE paths without per-call allocations.
+ */
 #include "../../include/calculation/small_hamiltonian.h"
 #include "../../include/calculation/hamiltonian.h"
 #include "../../include/calculation/sparse_propagator.h"
@@ -281,10 +285,11 @@ void gcceClusterHamiltonian(QubitArray* qa, BathArray* ba, Config* cnf, MatrixXc
     for (int iq=0; iq<nqubit; iq++) qubitSigmas[iq] = pauli(QubitArray_dimQubit_i(qa,iq));
     MatrixXcd** qsigmas = qubitSigmas.data();
 
-    // HamilQubit: the qubit Hamiltonian less the Overhauser fields the cluster's spins put in it
+    // HamilQubit: the qubit Hamiltonian less the Overhauser fields the cluster's spins put in it, only when the mean
+    // field added them (qubit_bath_mean_field true, A71)
     if (nqubit == 1) Hq = qubitTotal(qa, qsigmas, Config_getBfield(cnf));
     else             Hq = QubitArray_TotalHamil(qa, qsigmas, Config_getBfield(cnf));
-    for (int iq=0; iq<nqubit; iq++){
+    if (QubitArray_getOverhaus(qa)) for (int iq=0; iq<nqubit; iq++){
         double overhaus = 0.0;
         for (int ib=0; ib<nspin; ib++)   // BathArray_getBath_i_overhaus_j: A_zz m
             overhaus += product(ba->bath[ib]->hypf[iq](2,2).real(), BathArray_getBath_i_state(ba,ib));
@@ -378,7 +383,7 @@ void addTerm(LocalHamiltonian& H, int s0, int s1, MatrixXcd op){
 
 void cceClusterTerms(QubitArray* qa, BathArray* ba, Config* cnf, LocalHamiltonian& Halpha, LocalHamiltonian& Hbeta){
     if (Config_getKnight(cnf) || Config_getHfmedi(cnf) || QubitArray_getNqubit(qa) > 1){
-        fprintf(stderr,"Error : propagator=sparse : knight, hfmedi and nqubit > 1 are not covered\n");
+        fprintf(stderr,"Error : execution.propagator=sparse : knight, hfmedi and nqubit > 1 are not covered\n");
         ccexFatal();
     }
     MatrixXcd** sigmas = spinOperators(ba);
@@ -411,7 +416,7 @@ void cceClusterTerms(QubitArray* qa, BathArray* ba, Config* cnf, LocalHamiltonia
 
 void gcceClusterTerms(QubitArray* qa, BathArray* ba, Config* cnf, LocalHamiltonian& Htot, MatrixXcd& Hq){
     if (QubitArray_getNqubit(qa) != 1 || BathArray_getNspin(ba) == 0){
-        fprintf(stderr,"Error : propagator=sparse : gCCE terms need one qubit and bath spins\n");
+        fprintf(stderr,"Error : execution.propagator=sparse : gCCE terms need one qubit and bath spins\n");
         ccexFatal();
     }
     const int nspin = BathArray_getNspin(ba);
@@ -419,15 +424,18 @@ void gcceClusterTerms(QubitArray* qa, BathArray* ba, Config* cnf, LocalHamiltoni
     qubitSigmas.resize(1);
     qubitSigmas[0] = pauli(QubitArray_dimQubit_i(qa,0));
     MatrixXcd** qsigmas = qubitSigmas.data();
-    // gcceClusterHamiltonian: the qubit Hamiltonian less the Overhauser field of the cluster's spins
+    // gcceClusterHamiltonian: the qubit Hamiltonian less the Overhauser field of the cluster's spins, only when the
+    // mean field added it (qubit_bath_mean_field true, A71)
     Hq = qubitTotal(qa, qsigmas, Config_getBfield(cnf));
-    double overhaus = 0.0;
-    for (int ib=0; ib<nspin; ib++)
-        overhaus += product(ba->bath[ib]->hypf[0](2,2).real(), BathArray_getBath_i_state(ba,ib));
-    const doublec v[3] = {doublec(0.0), doublec(0.0), doublec(overhaus)};
-    MatrixXcd shift;
-    singleInt(shift, v, qsigmas[0]);
-    Hq -= shift;
+    if (QubitArray_getOverhaus(qa)){
+        double overhaus = 0.0;
+        for (int ib=0; ib<nspin; ib++)
+            overhaus += product(ba->bath[ib]->hypf[0](2,2).real(), BathArray_getBath_i_state(ba,ib));
+        const doublec v[3] = {doublec(0.0), doublec(0.0), doublec(overhaus)};
+        MatrixXcd shift;
+        singleInt(shift, v, qsigmas[0]);
+        Hq -= shift;
+    }
 
     MatrixXcd** bsigmas = spinOperators(ba);
     pairTensors(ba);

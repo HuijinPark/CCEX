@@ -1,3 +1,7 @@
+/**
+ * @file bundle_text.h
+ * @brief Bundle clustering: small input-check and JSON text helpers.
+ */
 #ifndef CCEX_BUNDLE_TEXT_H
 #define CCEX_BUNDLE_TEXT_H
 

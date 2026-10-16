@@ -23,14 +23,19 @@ class ServerDriverTests(unittest.TestCase):
         source = INPUTS / 'Diamond_NV_P1_10ppm_gcce/inputfiles/ccein_nstate1.json'
         original = json.loads(source.read_text())
         generated = prepare_config(source, self.root, 5, 'auto', 4)
-        allowed = {'order', 'backend', 'profile', 'savemode', 'outfile', 'gpu_options',
-                   'bathfile', 'Qubit', 'gyrofile', 'Defect', 'bath_state_file'}   # the blocks that hold file paths
+        allowed = {'order', 'execution', 'output',   # what the run sets (A65 blocks)
+                   'configuration', 'Qubit', 'Defect'}   # the blocks that hold file paths
         for key, value in original.items():
             if key not in allowed:
                 self.assertEqual(generated[key], value, key)
         self.assertEqual(generated['order'], 5)
-        self.assertEqual(len(generated['bathfile']), len(original['bathfile']))
-        for new, old in zip(generated['bathfile'], original['bathfile']):
+        self.assertEqual(generated['execution']['backend'], 'auto')
+        self.assertEqual(generated['execution']['gpu_options']['evolution_batch_steps'], 4)
+        self.assertEqual(generated['output']['savemode'], 'coherence')
+        self.assertEqual({k: v for k, v in generated['configuration'].items() if k not in ('gyrofile', 'bathfile')},
+                         {k: v for k, v in original['configuration'].items() if k not in ('gyrofile', 'bathfile')})
+        self.assertEqual(len(generated['configuration']['bathfile']), len(original['configuration']['bathfile']))
+        for new, old in zip(generated['configuration']['bathfile'], original['configuration']['bathfile']):
             self.assertEqual(Path(new), (source.parent.parent / old).resolve())
 
     def test_success(self):

@@ -12,10 +12,10 @@ from check_baths import save,sha
 
 
 def resolve(config,fixture):
-    config=dict(config)
-    for key in ['Qubit.file','gyrofile']:
+    config=put(config,{})
+    for key in ['Qubit.file','configuration.gyrofile']:
         if get(config,key):config=put(config,{key:str(fixture/get(config,key))})
-    config['bathfile']=[str(fixture/p) for p in config['bathfile']]
+    config['configuration']['bathfile']=[str(fixture/p) for p in config['configuration']['bathfile']]
     return config
 
 

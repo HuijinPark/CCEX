@@ -75,8 +75,8 @@
          ]
         ]
        },
-       "n_configurations": 12,
-       "n_nuclear_spins": 0,
+       "n_axis_states": 12,
+       "n_onsite_spins": 0,
        "name": "P1"
       }
      ]
@@ -86,31 +86,39 @@
      "betams": 0,
      "file": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect"
     },
-    "backend": "cpu",
-    "bathfile": [
-     "test/cluster_verification/check_adaptive/regression/inputs/bath_p1_6"
-    ],
     "bfield": 292,
-    "bundle": {
-     "max_dim": 4,
-     "merge_cutoff": 0
+    "cluster": {
+     "bundle": {
+      "max_dim": 4,
+      "merge_cutoff": 0
+     },
+     "mode": "bundle"
     },
-    "cluster_mode": "bundle",
+    "configuration": {
+     "bathfile": [
+      "test/cluster_verification/check_adaptive/regression/inputs/bath_p1_6"
+     ],
+     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
+     "nstate": 5,
+     "seed": 1
+    },
     "deltat": 0.0005,
-    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
+    "execution": {
+     "backend": "cpu"
+    },
     "method": "cCCE",
-    "nstate": 5,
     "nstep": 30,
     "order": 2,
-    "outfile": "bin/adaptive_ensemble",
+    "output": {
+     "file": "bin/adaptive_ensemble",
+     "savemode": "coherence"
+    },
     "pulse": {
      "count": 1
     },
     "quantity": "coherence",
     "rbath": 38,
-    "rdip": 100,
-    "savemode": "coherence",
-    "seed": 1
+    "rdip": 100
    },
    "input_file_sha256": {
     "<INPUTS>/bath_p1_6": "c973839d638f70ff792eb0a9cdf9bf39e88ef82c8d57fe1d8bdcbfeb569b56c3",

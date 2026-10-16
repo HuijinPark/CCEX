@@ -1,3 +1,7 @@
+/**
+ * @file general.h
+ * @brief The Config structure: all run settings, with their setters and getters.
+ */
 #ifndef __CCEX_SIMULATOR_GENERAL_H_
 #define __CCEX_SIMULATOR_GENERAL_H_
 
@@ -6,20 +10,22 @@
 /**
  * @enum DefectAxisReference
  * @brief Reference axis for a future Jahn-Teller axis classification
- * @details Set from the top-level "defect_axis_reference" key. QUBIT_AXIS means the
- *          central qubit's symmetry axis, which only coordinate_frame_rotation defines,
- *          so the key requires that section to be enabled.
+ * @details The input key that set it was removed (it is refused), so it
+ *          stays NONE. QUBIT_AXIS means the central qubit's
+ *          symmetry axis, which only frame.rotation defines.
 */
 typedef enum {
     DEFECT_AXIS_REFERENCE_NONE       = 0, /**< key absent (default) */
     DEFECT_AXIS_REFERENCE_QUBIT_AXIS = 1  /**< "qubit_axis" */
 } DefectAxisReference;
 
+struct JumpOperatorArray;   // calculation/superoperator.h: the jump operators of meCCE / megCCE
+
 /**
  * @struct Config
- * @brief This structure contains the parameters for the simulation.
- * @details Each parameter is read from the input file or options.
- *          and those parameters are used in the simulation directly.
+ * @brief All run settings: the input keys (and the -f/-o/-v options) as the simulation uses them.
+ * @details Filled by the input reader (src/input/option.cpp) with the defaults of Config_init, then read by
+ *          every part of the run.
  */
 typedef struct {
 
@@ -30,7 +36,7 @@ typedef struct {
      * 
      *  - cce    : Conventional CCE method *using hash algorithm
      *  - gcce   : Generalized CCE method *using hash algorithm
-     *  - pcce   : Parition CCE method *using hash algorithm
+     *  - pcce   : Partition CCE method *using hash algorithm
      *  - dsj    : Disjoint clustering algorithm
      *             , meaning that it consider the disjointed cluster
      *  - itb    : Inter-bathcluster clustering algorithm
@@ -44,23 +50,28 @@ typedef struct {
      * 
     */
     char method[MAX_CHARARRAY_LENGTH];
+    struct JumpOperatorArray* jump_operators;   /**< hamiltonian.meCCE / megCCE.jump_operators; NULL: none (ME methods then run at rate 0) */
+    char jump_operators_section[MAX_CHARARRAY_LENGTH];   /**< "meCCE" or "megCCE": the hamiltonian section it came from ("" if none) */
     char quantity[MAX_CHARARRAY_LENGTH];  /**< Measurement : coherence | dm (noise is refused: not implemented) */
-    char propagator[MAX_CHARARRAY_LENGTH];/**< free-evolution propagator : eigen | expm (gCCE) | sparse (A2) */
+    char propagator[MAX_CHARARRAY_LENGTH];/**< free-evolution propagator : eigen | expm (gCCE) | sparse */
     long sparse_min_dim;                  /**< propagator sparse: clusters of this Hilbert dimension and above take it (default 4096) */
     double sparse_tol;                    /**< propagator sparse: the Krylov expansion tolerance (default 1e-12) */
     char evolution[MAX_CHARARRAY_LENGTH]; /**< gCCE state representation : matrix | vector   */
     bool evolution_isdefault;             /**< true until an "evolution" key is actually read */
-    char evolution_update[16];            /**< exact | recursive: the phases of the time grid by sin/cos at every point, or by the previous point's times one step's factor (A16 b); empty until given or resolved (A29: recursive where supported, else exact) */
-    char evolution_update_source[160];    /**< why evolution_update has its value (given, or the default and the path; per path in the GPU build, A36), for the run log */
+    char evolution_update[16];            /**< exact | recursive: the phases of the time grid by sin/cos at every point, or by the previous point's times one step's factor; empty until given or resolved (recursive where supported, else exact) */
+    char evolution_update_source[160];    /**< why evolution_update has its value (given, or the default and the path; per path in the GPU build), for the run log */
+    bool column_evolution;                /**< one-state cCCE clusters of bath dimension >= column_evolution_min_dim evolve their time points as matrix columns (cceEvolveColumns); on by default */
+    int column_evolution_min_dim;         /**< the smallest bath dimension that takes it (default 256) */
+    int column_evolution_columns;         /**< time points per column block (default 64) */
     char backend[8];                      /**< cpu (default) | cuda | auto */
     int gpu_min_dim;                       /**< auto uses CUDA at/above this Hilbert dimension */
     int gpu_batch_steps;                   /**< maximum time points per CUDA batch */
-    bool gcce_refinement;                 /**< compensated eigensystem refinement; off by default since 2026-10-02 */
+    bool gcce_refinement;                 /**< compensated eigensystem refinement; off by default */
     int gcce_refinement_max_sweeps;
-    bool vector_mean_field;               /**< the static mean field of the other bath spins as the vector J . m_j, not its z part alone (2026-10-03, off by default; hamiltonian.common.bath_bath_mean_field "xyz") */
-    bool bath_mean_field_off;             /**< no static mean field of the other bath spins at all (hamiltonian.common.bath_bath_mean_field "off", A47) */
+    bool vector_mean_field;               /**< the static mean field of the other bath spins as the vector J . m_j, not its z part alone (off by default; hamiltonian.common.bath_bath_mean_field "xyz") */
+    bool bath_mean_field_off;             /**< no static mean field of the other bath spins at all (hamiltonian.common.bath_bath_mean_field "off") */
     bool hamiltonian_ccce_given;          /**< hamiltonian.cCCE has a setting: refused in a gCCE run (validateHamiltonianForMethod, main.cpp) */
-    bool delta_A;                         /**< hamiltonian.cCCE.delta_A: false replaces the hyperfine tensors of a cluster's bath spins by their mean (A47) */
+    bool delta_A;                         /**< hamiltonian.cCCE.delta_A: false replaces the hyperfine tensors of a cluster's bath spins by their mean */
     int pcce_detail_limit;                /**< rank-zero trial details, 0 disables */
     int gpu_cache_mb;                      /**< reusable device-buffer cache per rank; 0 disables */
     double probe_memory_gb;                /**< node budget for the probes running at once; 0: 80 % of RAM (and of the GPU) */
@@ -68,9 +79,10 @@ typedef struct {
     int gpu_cluster_batch_mb;              /**< estimated live buffer budget for bundleing clusters */
     int gpu_packed_max_dim;                /**< gpu_options.packed_max_dim: cCCE clusters of this bath dimension or less (2, 4) to the packed kernel; 0 off; -1 until Config_resolvePackedMaxDim */
     char gpu_packed_source[64];            /**< "given", or the default and why (Config_resolvePackedMaxDim) */
-    int gpu_warp_max_dim;                  /**< gpu_options.warp_max_dim (A40): clusters of a compiled total dimension up to this value to the warp kernel; 0 off; -1 until Config_resolveWarpMaxDim */
+    int gpu_warp_max_dim;                  /**< gpu_options.warp_max_dim: clusters of a compiled total dimension up to this value to the warp kernel; 0 off; -1 until Config_resolveWarpMaxDim */
     char gpu_warp_source[64];              /**< "given", or the default and why (Config_resolveWarpMaxDim) */
     bool profile;                         /**< print per-rank, per-dimension timing totals */
+    bool cluster_only;                    /**< write OUTFILE.clusters.json and stop before the dynamics (output.cluster_only) */
     bool cluster_contributions;           /**< record irreducible cluster log importance over all input times */
     int cluster_contribution_max_mb;      /**< diagnostic raw-table budget per MPI rank */
     int nrdip_ladder;                     /**< number of rdip_ladder rungs (0 = off) */
@@ -79,7 +91,7 @@ typedef struct {
     char pcce_connections[16];            /**< centers (default) | spins: which distance connects two partitions */
     char pcce_cache_mode[16];             /**< off (default) | read | readwrite */
     char pcce_cache_file[MAX_FILEPATH];    /**< explicit partition cache file, relative to cwd */
-    char cluster_mode[16];                 /**< standard (default) | adaptive */
+    char cluster_mode[16];                 /**< internal clustering mode: standard (cluster.mode standard and pcce) | adaptive (cluster.mode bundle) */
     int bundle_max_dim;            /**< required dimension cap for one bundle */
     int expansion_max_clusters;            /**< subset-closed bundle family count limit */
     int expansion_max_work;       /**< graph/subset enumeration work limit */
@@ -91,7 +103,7 @@ typedef struct {
     char adaptive_work_file[MAX_FILEPATH]; /**< optional request for the refinement driver */
 
     // General options
-    int   order;        /**< Maximum cluster size ( >= 0 ): bath sites (standard), partitions of sK spins (pCCE), bundles (cluster_mode adaptive) */
+    int   order;        /**< Maximum cluster size ( >= 0 ): bath sites (standard), partitions of sK spins (pCCE), bundles (cluster.mode bundle) */
     float bfield[3];    /**< Magnetic field (Bx,Bx,Bz) (Unit G)                  */
     float rbath;        /**< Bath radius (Unit angstrom)                         */
     float rdip;         /**< Dipole radius (Unit angstrom)                       */
@@ -102,6 +114,7 @@ typedef struct {
     float rdipcut;      /**< Cutoff to remove spin pairs within rdipcut          */
     int   nstate;       /**< Number of bath states (single and gcce method only) */
     int   seed;         /**< Fixed random value (if none, time(null) )           */
+    bool  seed_used;    /**< the run draws from seed: nstate > 0, Defect species or pCCE (the log reports the seed only then) */
 
     // Qubit and Bath file options
     char* qubitfile; /**< Qubit file name */
@@ -109,9 +122,11 @@ typedef struct {
     int nbathfiles; /**< Number of bath files */
     char** bathfiles; /**< Bath file names */
     double** bathadjust; /**< Bath adjust values */
-    char* avaaxfile; /**< Available principal axis */
-    char* statefile; /**< State file */
-    char* exstatefile ; /**< extra spin' state file */
+    // A64: one name per bath file (nbathfiles of each, or NULL when the key is absent), read in the order of the bath files
+    char** avaaxfile; /**< configuration.defect_axis_file: available principal axis, per bath file */
+    char** statefile; /**< configuration.bath_state_file: state file prefixes, per bath file */
+    char** exstatefile ; /**< configuration.defect_state_file: extra spin' state file prefixes, per bath file */
+    int* bathfile_first; /**< nbathfiles+1: the spins of bath file j are bathfile_first[j] .. bathfile_first[j+1]-1 */
     int _nflines; /**< number of file lines */
     int* _flines; /**< file line number of each bath spins */
 
@@ -144,7 +159,7 @@ typedef struct {
      *            - bfield
      *
      *          bfield is expressed directly in the computational frame. When
-     *          coordinate_frame_rotation is enabled, Config_validateBfieldAlignment
+     *          frame.rotation is enabled, Config_validateBfieldAlignment
      *          requires it to lie along the computational z axis, which represents
      *          qubit_axis.
      * @ref buildQubitAlignedRotation, applyCoordinateFrameRotation
@@ -219,7 +234,7 @@ typedef struct {
 
 Config* Config_init();
 void Config_freeAll(Config* cnf);
-void Config_report(Config* cnf);
+void Config_report(Config* cnf, bool qubitBathMeanField);
 
 /* Low level ----------------------------------------------------*/
 
@@ -243,9 +258,9 @@ char*   Config_getGyrofile(Config* cnf);
 int     Config_getNbathfiles(Config* cnf);
 char*   Config_getBathfiles_i(Config* cnf,int i);
 double* Config_getBathadjust_i(Config* cnf,int i);
-char*   Config_getAvaaxfile(Config* cnf);
-char*   Config_getStatefile(Config* cnf);
-char*   Config_getExstatefile(Config* cnf);
+char**  Config_getAvaaxfile(Config* cnf);     // nbathfiles names, or NULL
+char**  Config_getStatefile(Config* cnf);     // nbathfiles prefixes, or NULL
+char**  Config_getExstatefile(Config* cnf);   // nbathfiles prefixes, or NULL
 int     Config_get_nflines(Config* cnf);
 int*    Config_get_flines(Config* cnf);
 int     Config_get_flines_i(Config* cnf, int i);
@@ -267,6 +282,16 @@ int     Config_getQd_readmode(Config* cnf);
 bool    Config_getHfmedi(Config* cnf);
 bool    Config_getKnight(Config* cnf);
 
+// The internal method names (option.cpp internalMethod): which clusters and which kernel. cluster_mode pcce makes the
+// partition clusters of pCCE (cCCE), pgCCE, pmeCCE and pmegCCE (gCCE, meCCE, megCCE with cluster_mode pcce); the kernel
+// computing a cluster is "cce" (CCE, pCCE, dsj, itb, dsjitb), "gcce" (gCCE, pgCCE), "mecce" (meCCE, pmeCCE) or "megcce"
+// (megCCE, pmegCCE).
+bool methodUsesPcceClusters(const char* m);
+const char* methodKernel(const char* m);
+// The method as the input writes it, for messages (A47): CCE, pCCE, dsj, itb, dsjitb are cCCE (the reader refuses them as
+// old method names); pgCCE, pmeCCE, pmegCCE are gCCE, meCCE, megCCE (refused as the adding_MECCE branch's names).
+const char* inputMethodName(const char* m);
+
 // set 
 void Config_setMethod(Config* cnf, char* method);
 void Config_setQuantity(Config* cnf, char* quantity);
@@ -275,8 +300,8 @@ void Config_setEvolution(Config* cnf, char* evolution);
 void Config_resolveEvolution(Config* cnf);
 void Config_validateEvolutionUpdate(Config* cnf);
 void Config_validatePropagator(const Config* cnf, int nqubit);
-void Config_resolvePackedMaxDim(Config* cnf);   /**< gpu_options.packed_max_dim without the key (A26) */
-void Config_resolveWarpMaxDim(Config* cnf);     /**< gpu_options.warp_max_dim without the key (A40) */
+void Config_resolvePackedMaxDim(Config* cnf);   /**< gpu_options.packed_max_dim without the key */
+void Config_resolveWarpMaxDim(Config* cnf);     /**< gpu_options.warp_max_dim without the key */
 void Config_setOrder(Config* cnf, int order);
 void Config_setBfield(Config* cnf, float* bfield);
 void Config_setBfield_z(Config* cnf, float bz);
@@ -294,9 +319,9 @@ void Config_setGyrofile(Config* cnf, char* gyrofile);
 void Config_setNbathfiles(Config* cnf, int nbathfiles);
 void Config_setBathfiles_i(Config* cnf, char* bathfiles, int i);
 void Config_setBathadjust_i(Config* cnf, double* bathadjust, int i);
-void Config_setAvaaxfile(Config* cnf, char* avaaxfile);
-void Config_setStatefile(Config* cnf, char* statefile);
-void Config_setExstatefile(Config* cnf, char* exstatefile);
+void Config_setAvaaxfile_i(Config* cnf, char* avaaxfile, int i);
+void Config_setStatefile_i(Config* cnf, char* statefile, int i);
+void Config_setExstatefile_i(Config* cnf, char* exstatefile, int i);
 void Config_set_nflines(Config* cnf, int nflines);
 void Config_set_flines_i(Config* cnf, int fline, int i);
 void Config_setRot_enabled(Config* cnf, bool rot_enabled);

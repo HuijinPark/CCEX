@@ -3,8 +3,34 @@
 ## 2.0.0 — unreleased (changes since v1.2.2, 2026-09-04)
 
 ### Added
-- **Reserved method names `meCCE` and `noise`**: `method` (and `-m`) accepts the names and refuses them as not
-  implemented yet; `hamiltonian.meCCE` and `hamiltonian.noise` are empty sections like `hamiltonian.gCCE`.
+- **A unit per key**: `deltat`, `auto_convergence.time_window.value`, `pulse.duration`, `bfield`, `rbath`, `rdip`,
+  `configuration.bath_shift`, `Qubit.qubit[].xyz`, `Qubit.qubit[].detuning`, `pulse.bath.energy_shift`,
+  `pulse.bath.bandwidth` and `hamiltonian.<method>.jump_operators[].rate` take `{"value": ..., "unit": "..."}` (a number or
+  a list) beside the plain number, which keeps its unit: time `s`, `ms`, `us`, `ns`; field `G`, `mT`, `T`; length `A`,
+  `nm`; frequency `Hz`, `kHz`, `MHz`, `GHz`. One exact operation per value (× or / a power of ten), so
+  `{"value": 5, "unit": "us"}` is `0.005` ms bit for bit; an unknown unit or a malformed object is refused with the units
+  of the key. See `docs/user/InputFile.md#Units`.
+- **Memory check before the calculation** (no input key): the peak memory of a rank is estimated from its largest
+  cluster on the path the run takes (dense matrices × 16 D², meCCE/megCCE × 16 D⁴, the column blocks, the dm buffers,
+  cluster_density_matrix) plus what it holds, and compared with what a rank of the node may use (`SLURM_MEM_PER_NODE`,
+  `SLURM_MEM_PER_CPU`, else `MemAvailable`, shared by the node's ranks); one log line, and a run that does not fit is
+  refused before the first cluster with the cluster dimension, both sizes and what to change.
+- **`pulse.bath.bandwidth`** (MHz): the half width of the frequency window of the DEER bath pulse, the fixed
+  10 rad·kHz of before as an input key; the default is that value (results unchanged), the physical value is to be
+  decided with the DEER author.
+- **DEER bath pulses** (the block `pulse.bath`: `count`, `sequence`, `defect`, `energy_shift`, `spin`, `alphams`,
+  `betams`) for gCCE (matrix and vector, exact and recursive) and megCCE ($U_q\otimes U_b$ in its pulse superoperator)
+  on the CPU, with `cluster_mode` standard or pcce. Ported from the adding_DEER/adding_MECCE branches, whose flat keys
+  (`bnpulse`, ...) are refused with the new names. See `docs/methods/deer.md`.
+- **ME-CCE / ME-gCCE** (`method`: `meCCE`, `megCCE`; `hamiltonian.meCCE.jump_operators`,
+  `hamiltonian.megCCE.jump_operators`) — Lindblad dissipation of bath spins (meCCE, megCCE) and of the qubit (megCCE
+  only), CPU. Ported from adding_MECCE; meCCE refuses qubit jump operators, which the branch multiplied into every
+  cluster. Method: Onizhuk et al., Phys. Rev. Lett. 132, 250401 (2024). See `docs/methods/master-equation.md`.
+- **`cluster_mode: "pcce"` with gCCE, meCCE and megCCE** (inside pgCCE, pmeCCE, pmegCCE): the pCCE partitions with the
+  gCCE and master-equation kernels, on the CPU; `pcce.cache` stays with cCCE. The adding_MECCE branch's method names
+  `pgCCE`, `pmeCCE` and `pmegCCE` are refused with the new form (method + `"cluster_mode": "pcce"`).
+- **Reserved method name `noise`**: `method` accepts the name and refuses it as not implemented yet;
+  `hamiltonian.noise` is an empty section like `hamiltonian.gCCE`.
 - **`hamiltonian.common.bath_bath_mean_field: "off"`** (nstate > 0): the static field of the bath spins outside a cluster
   left out (`"z"` stays the default, `"xyz"` is the former `vector_mean_field: true`).
 - **`hamiltonian.cCCE.delta_A: false`**: the hyperfine tensors of a cluster's spins replaced by their mean, so the pair
@@ -16,14 +42,38 @@
 - **Adaptive clustering** (`cluster_mode: adaptive` with an `Adaptive` input block): bundles of strongly coupled spins with
   the merge policy, and `"regroup": true` in that block (command line `--regroup`) to regroup where a bundle expansion
   gives |L| > 1.
-  See `docs/methods/adaptive-cluster-mode.md` and `docs/methods/adaptive-input-block.md`.
+  See `cluster.adaptive` in `docs/user/InputFile_Cluster.md`.
 - **pCCE**: a deterministic partition search, a partition cache (`pcce_cache_file`, `pcce_cache_mode`) and
   `pcce_connections` (`centers`, `spins`).
 - **Automatic convergence**: an `auto_convergence` block in the input (`main.out -f input.json`; `"enabled": false` runs
-  the ordinary calculation; command line `--auto_conv`) chooses rbath, rdip, the time window and the number of bath
+  the ordinary calculation) chooses rbath, rdip, the time window and the number of bath
   configurations and states (`example/tools/AutoConvergence/README.md`). Neighbouring candidates are compared on the
   area under a T2 fit of |L|; where the fit fails, on the area under |L| itself (same 2 %), and the summary says so.
 - **`rdip_ladder`**: one order-2 run (cCCE, gCCE or pCCE) also writes the curves of smaller rdip values.
+- **`main.out -e`**: writes the input template `ccex_example.jsonc` (in the working directory, or in `DIR` with
+  `-o DIR`; an existing file is not overwritten) and stops. The active part is the setting of
+  `example/tutorial/00_quickstart` with a `bathfile` the user fills in (the template does not run until it names a bath
+  file) and `gyrofile` commented (the built-in table); every other input key is a commented line with its allowed values
+  and default, `//` comments starting at column 41. A standing check (`check_input_forms/cli.sh`, `example_keys.py`)
+  holds the template to every name the input readers know, runs it with a bath and checks the comment column.
+- **`//` comments and `.jsonc` inputs** (2026-10-16): `//` outside a JSON string starts a comment to the end of the line,
+  as `#` and `!` do (`"http://x"` or `"a//b"` in a string stay as written), in CCEX, the adaptive refinement and the
+  automatic convergence's reader. An input may be named `.jsonc`, and the default output name drops `.jsonc` as it drops
+  `.json`.
+- **`-h` is short** (2026-10-16): the usage, one line per option and where the input keys and tutorials are, without the
+  banner.
+- **Several bath configurations in one run** (2026-10-15): `configuration.k_range: [first, last]` runs every k as a
+  configuration of its own, one after another in one execution, with `{k}` in the file names (`configuration.bathfile`,
+  `bath_state_file`, `defect_axis_file`, `defect_state_file`, `cluster.pcce.cache.file`) replaced by k (`{{k}}` a literal `{k}`);
+  each writes `<output.file>_k<k>_...` (no average), byte for byte what its files give alone. `configuration.path` is the
+  folder of the block's file names. Refused before anything is calculated: `k_range` without `{k}`, a file of any k that
+  cannot be read, an enabled pCCE cache whose file has no `{k}`, `k_range` with an `adaptive` block. Standing check
+  `check_input_forms/configuration.sh`.
+- **`output.path`** (2026-10-15): the folder of the outputs, made when missing; `-o DIR` takes its place (`-o DIR`
+  > `output.path` > the working directory). An absolute `output.file` with `output.path` (or `-o`) is refused, and so is
+  `output.path` with the adaptive refinement (its steps go to `cluster.adaptive.output`).
+- **`"cluster_only": true`** (`output.cluster_only` since 2026-10-15): the cluster plan `<output.file>.clusters.json` and no dynamics, what `-P` did, with the
+  same limits.
 - **`evolution_update`**: `exact` or `recursive` (the phases by a recurrence; 1.0–1.6x faster on the tested systems,
   where the curves stay within 1e-9 of `exact`; not bit-identical). The default is `recursive` where it exists (see Changed).
 - **`propagator: "sparse"`** (opt-in; also `{"method": "sparse", "min_dim": 4096, "tol": 1e-12}`): one sampled state of
@@ -55,10 +105,79 @@
   default; `off` without it, `mkl` to insist; the build and the run log's header say on or off): the cCCE ensemble Hahn step's D³ product from bath dimension 21 by zgemm and the cCCE/gCCE cluster
   eigensolve from dimension 63 by zheevd (MKL lp64, sequential). idm, 64 ranks: h-BN cCCE2 ensemble 0.80–0.88, gCCE3
   0.72–0.80, gCCE2 0.98 of the time; P1 production inputs unchanged. The curves differ in the last digits (cCCE ≤ 2e-10,
-  h-BN gCCE late times up to 9e-8). (internal notes) A46.
+  h-BN gCCE late times up to 9e-8). (internal notes).
+- **`column_evolution` for large one-state clusters** (on by default, `min_dim` 256, `columns` 64; `{"enabled": false}`
+  turns it off): in the single-state cCCE/pCCE evolution of clusters of dimension ≥ `min_dim`, the time points are
+  carried as matrix columns, `columns` at a time, so each pulse interval is one matrix product instead of one product per
+  time point (the same arithmetic, read from memory once per interval). Curves agree with the path before to about 2e-15
+  relative, not bit-identical: outputs of one-state cCCE/pCCE runs with clusters of dimension ≥ 256 move in the last
+  digits. idm job 17492 (64 ranks, median of 3, pCCE sK5/sK3o3/sK4 with clusters of dimension 1024/512/256, Hahn and
+  CPMG-8, nstep 200 and 1000; 12 inputs): with MKL the geometric mean is 0.40 of the time (sK5 CPMG-8 nstep 1000
+  114.3 s → 13.4 s, 8.5 times faster), with Eigen alone 0.61; curves within 1e-10 (the last printed digit); peak memory
+  per rank −8 to +11 MB. Idea from the `cce-fast-mkl_hyeonsu` branch. `docs/user/InputFile_Backend.md#tag_column_evolution`.
 
 ### Changed
-- **Input keys renamed and grouped** (A47, 2026-10-13; the table of old and new names is in `docs/user/InputFile.md`):
+- **A shorter run log** (2026-10-16; results unchanged, byte for byte): the progress of a state is at most one line
+  per tenth of rank 0's clusters (`At rank 0, N of M clusters (x%) are computed at t s`) instead of one every
+  5000/ranks clusters, and every state ends with `State done : i of n, C clusters, t s` (`ensemble` for nstate 0). The
+  bath states, mean fields (disorders, Overhauser field), the steps of a state ("Calculate n-th cluster", "Product",
+  "Gather", "Save") and their wall times are printed with `-v` only; the qubit states (psia, psib, psi0) for the first
+  state of the run. A configuration of `configuration.k_range` after the first prints only the files it read, the spin
+  counts, the tagged lines (`[seed]`, `[backend]`, ...) and warnings of its read-in (everything with `-v`), and every
+  run prints `Clusters per order : 1: n1, 2: n2 (total, bath spins, ranks)` before the calculation. Measured: a P1 cCCE2
+  run, k_range of 3 configurations x 30 states on 2 ranks, 321 KB -> 121 KB; the 1.2 MB production log of 9.NV_aligned
+  (10 states, 92 % progress lines) comes to about 42 KB by extrapolation.
+- **Build line in the banner**: `Build : CPU | <compiler version> | <MPI library> | MKL on/off | preset <name> |
+  commit <hash>[-dirty]`, `Build : GPU (CUDA x.y, sm_NN) | ...` for main_gpu.out. The compiler from its macros, the MPI
+  from `MPI_Get_library_version`, the preset from do_compile.sh (`cmake` from CMakeLists.txt), the commit from a header
+  both builds write at build time (`-dirty` when the tree differs from it, `unknown` outside git).
+- **`configuration.k_range` without a `seed`** (2026-10-16): configuration k uses the generated seed + (k - first),
+  printed per k in the log (`[seed] configuration k=...: seed S`), so every configuration draws its own bath states;
+  the generated seed used to be shared by every k, which made the configurations' drawn states the same draws. With a
+  `seed` every k uses it, as before (configuration k is byte for byte the run of its files alone with that seed).
+- **Merged bath files with spins of different files within 0.5 Å** (user decision 2026-10-16): a warning on rank
+  0 naming the files and positions (two spins at one site: species files generated independently on one lattice, or two
+  configurations merged by mistake), and the calculation goes on; only spins at the same position (closer than 1e-6 Å),
+  whose coupling is infinite and every result nan, are refused before the calculation. Since 2026-10-15 every pair within
+  0.5 Å had been refused, with a message that named only a merge of two configurations.
+- **The cost of a cluster in the split over the ranks** counts the qubit dimension for megCCE, pgCCE and pmegCCE
+  as for gCCE (it counted 1); results are unchanged.
+- megCCE builds the pulse superoperators of a cluster once (one per distinct pulse) instead of at every time point, and
+  the DEER bath pulse computes its rotation once per sequence row instead of once per driven spin (results byte for
+  byte the same).
+- **The command line is `-f FILE`, `-o DIR`, `-v`, `-e` and `-h`/`--help`** (2026-10-15): every other setting is
+  an input key. `-o` names the output folder (made when missing): the outputs are `DIR/<outfile>`, or `DIR/<input name
+  without .json>` when the input has no `outfile`; an absolute `outfile` with `-o` is refused. Without `-o` they are
+  `<outfile>`, or `<input name without .json>`, from the working directory (a run without `outfile` and `-o` used to stop).
+  The status of an automatic convergence is the tool's own command (`python -m autoconv status FILE` in
+  `example/tools/AutoConvergence`). Results are unchanged.
+- **The bath configuration is one block** (2026-10-15): `"configuration": {"path", "k_range", "gyrofile",
+  "bathfile", "bath_shift", "bath_state_file", "defect_axis_file", "defect_state_file", "nstate", "seed"}` (gyrofile,
+  bathfile, bath_shift, bath_state_file, nstate and seed were top-level keys; defect_axis_file and defect_state_file were
+  `Defect.axis_file` and `Defect.state_file` - the `Defect` block keeps the species alone).
+  `configuration.bath_state_file`, `defect_axis_file` and `defect_state_file` are lists of one name per bath file, read
+  in the order of the bath files into the merged bath; before, with more than one bath file these files were not read
+  (the states and axes were drawn at random); `""` is a bath file without such a file (drawn from the seed). The log
+  names a merge of bath files ("Bath = fileA (n spins) + fileB (m spins)"), and two spins of different bath files within
+  0.5 Angstrom of each other are refused before anything is calculated. A seed generated because none is given is
+  generated once for every k. With k_range a GPU run keeps its CUDA context from one configuration to the next.
+  Results are unchanged (the standing checks' inputs, rewritten, give the same output bytes).
+- **How the run computes, the clusters, the outputs and the frame are four blocks** (2026-10-15; the table is in
+  `docs/user/InputFile.md#Moved20261015b`): `execution` {`backend`, `gpu_options`, `propagator`, `evolution`,
+  `evolution_update`, `gcce_refinement`, `column_evolution`, `profile`}; `cluster` {`mode` (was `cluster_mode`),
+  `selection` {`add_subclusters`, `max_per_order` (was `max_clusters_per_order`)}, `pcce`, `bundle`, `adaptive` (with
+  `probe_memory_gb`, a top-level key before)}; `output` {`path` (new), `file` (was `outfile`), `savemode`,
+  `cluster_contributions`, `cluster_only`}; `frame` {`rotation` (was `coordinate_frame_rotation`)}. `order`, `rbath` and
+  `rdip` stay at the top. **`frame.rotation` is on when the block is given** (`enabled` defaults to true; it defaulted to
+  false, so a written block with `enabled` false or absent was no rotation, and the converter removes such a block).
+  The Defect species' `n_nuclear_spins` is `n_onsite_spins`, `n_configurations` is `n_axis_states`. `rdip_ladder` stays
+  at the top but is an internal key of the automatic convergence (it is no longer listed among the input keys, nor in
+  the `-e` example; the tutorial `12_rdip_ladder` and its page `Examples_12.md` were removed). In the `-e` example
+  `gcce_refinement` is a
+  block that turns the feature on when written (`column_evolution` is on by default since 2026-10-15). Error messages name the keys by their new
+  paths. Results are unchanged (the standing checks' inputs, rewritten, give the same output bytes; the adaptive golden's
+  recorded input echo follows the converter).
+- **Input keys renamed and grouped** (2026-10-13; the table of old and new names is in `docs/user/InputFile.md`):
   `method` is `cCCE` or `gCCE` and the cluster shape is `cluster_mode` (`standard`, `pcce`, `bundle` - the former
   `adaptive` -, `dsj`, `itb`, `dsjitb`); the Hamiltonian settings are one `hamiltonian` block (`common`:
   `qubit_bath_mean_field`, `bath_bath_mean_field`, `hyperfine {dipole, contact, file, missing_row}`, `quadrupole`; `cCCE`:
@@ -68,7 +187,7 @@
   `Qubit.qubit` replaces `nqubit`; `rbath`/`rdip` take `[inner, outer]` (`rbathcut`/`rdipcut`); `bath_shift`,
   `bath_state_file`, `add_subclusters`, `max_clusters_per_order`; `Defect` is `{state_file, axis_file, species: [...]}`
   with `name`, `n_nuclear_spins`, `n_configurations`, `quadrupole_moments`, `nuclear_positions`, `hyperfine`. Numeric
-  codes became words and 0/1 switches true/false. `-m` takes `cCCE` or `gCCE` and keeps the input's `cluster_mode`.
+  codes became words and 0/1 switches true/false.
   Results are unchanged: every input of the repository, converted, gives the bytes it gave before.
 - **Faster CPU paths with unchanged results** (byte-identical output): the cCCE and gCCE product assembly, the state preparation,
   fixed-size paths for small clusters, the order-2 cluster list built without duplicated work, the small-cluster
@@ -78,22 +197,30 @@
   icpx 2026.1 AVX2, icpx 2023.2 AVX-512; any other build keeps the one-by-one path). One state with any pulse plan and the
   ensemble Hahn echo, `exact` and `recursive`. Production P1 cCCE2 on idm (64 ranks): 0.60–0.64 of the time with
   `recursive`, 0.74–0.77 with `exact`. See (internal notes).
-  Since A51 (2026-10-13) each process first checks the batch against the one-by-one path on a few made-up clusters
+  Since 2026-10-13 each process first checks the batch against the one-by-one path on a few made-up clusters
   (about 1 ms) and turns it off, with one `[cpu-batch] off` line, where a bit differs (e.g. a build with
   `CXXFLAGS_EXTRA=-ffp-contract=off`, review 20261013-cpu R1, or another CPU's `-march=native` tuning, CI); results are
   the one-by-one path's everywhere. Its window storage is made only when a window is used, and a time grid whose
-  coherences for one group of lanes pass 4 MiB runs one by one (review 20261013-221715 X5).
-- **`bin/main_gpu.out` uses the CPU batch too, and chooses between it and the packed kernel** (A48, 2026-10-13): the
+  coherences for one group of lanes pass 4 MiB runs one by one.
+- **`bin/main_gpu.out` uses the CPU batch too, and chooses between it and the packed kernel** (2026-10-13): the
   clusters of bath dimension 2 and 4 the GPU does not take (while the card starts, `packed_max_dim` 0, given back) go to
   the CPU batch; with `packed_max_dim` not given and a run the CPU batch takes, the packed kernel is on for one state only
   from 40000 such clusters per rank per state and off for the ensemble (break-even measured at about 39.6 k on idm4-gpu,
   32 ranks; (internal notes)). Runs it turns off write the bytes of `bin/main.out`. Other runs
   keep the threshold below; a given `packed_max_dim` is kept. The early CUDA and shared-memory start is skipped where the
-  input alone rules the kernels out (X7), and for cCCE with the packed kernel off by the input the warp kernel's card
-  start waits for a cluster of a warp dimension (A53).
+  input alone rules the kernels out, and for cCCE with the packed kernel off by the input the warp kernel's card
+  start waits for a cluster of a warp dimension.
 - **Repository layout**: `src/` and `include/` in five parts (input, physical, clustering, calculation, common);
   `example/{tutorial,analysis,tools}`; `external/`; `test/{code_verification,cluster_verification,gpu_verification}`.
-  The tutorials were rewritten as numbered folders (twelve; 11 and 12 added on 2026-10-12) with `run.sh`.
+  The tutorials were rewritten as numbered folders (twelve; 11 and 12 added on 2026-10-12) with `run.sh`, and on
+  2026-10-16 put in learning order: `00_quickstart` (NV-¹³C cCCE2 Hahn echo, seconds), `01_ensemble_and_states`,
+  `02_pulses`, `03_P1` (with the Vp bath), `04_hBN`, `05_multiNV`, `06_cCCE_vs_gCCE`, `07_pCCE_and_bundle`, `08_GPU`,
+  `09_auto_convergence`, `10_coordinate_rotation`; one folder per calculation named `<method><order>_<pulse>_<approach>`
+  (e.g. `cCCE2_Hahn_ensemble`), inputs with only the keys that matter (the outputs of the trimmed inputs are
+  byte-identical to the old ones), one README template per tutorial, an `expected.png` per calculation
+  (`example/tutorial/plot_coherence.py`), `configuration.k_range` instead of the configuration loops of `run.sh`, and
+  the idm `job` files dropped; `example/README.md` has the five-line start and "what should I use for my case".
+  `example/tutorial/README.md` maps every old folder to its new place.
 - In input files, `#` and `!` start a comment only outside JSON strings.
 - **GPU settings moved into one block, `gpu_options`**: `min_dim` (was `gpu_min_dim`), `evolution_batch_size`
   (`gpu_batch_clusters`), `evolution_batch_steps` (`gpu_batch_steps`), `cluster_batch_mb` (`gpu_cluster_batch_mb`),
@@ -111,7 +238,7 @@
   kernel by default** (`gpu_options.warp_max_dim` 27; `"warp_max_dim": 0` gives the earlier path). Its results agree with
   the CPU within 1e-8 + 2e-6 |CPU| outside the stretch where a product diverges (|L| > 1 and between) and are not
   bit-identical to those of the earlier GPU path; `backend` `cpu` and `bin/main.out` are unchanged.
-- **Short runs leave the packed and warp kernels off** (A40 follow-up, 2026-10-13): with neither `packed_max_dim` nor
+- **Short runs leave the packed and warp kernels off** (2026-10-13): with neither `packed_max_dim` nor
   `warp_max_dim` given, a run whose cluster evaluations for them (clusters x states) are fewer than 20000 per rank over all
   ranks does not use the card (its early start is closed again)
   and computes everything on the CPU path (byte-identical to both set to 0), with one `off: ... fewer than the threshold`
@@ -129,11 +256,11 @@
   cCCE3 3.1x). Orders whose clusters all have one size (P1, ¹³C) keep the equal-count split, byte for byte; in a mixed bath
   the product of each rank's clusters is grouped differently, so the last printed digit can change (h-BN gCCE2 dm: 5 of
   36,000 numbers, 1e-10). Data (internal notes).
-- **`gpu_options.min_dim` defaults to 768 (was 256)**: on idm4-gpu (RTX PRO 6000, 32 ranks; A37, job 699) the GPU was
+- **`gpu_options.min_dim` defaults to 768 (was 256)**: on idm4-gpu (RTX PRO 6000, 32 ranks; job 699) the GPU was
   faster than the CPU from a cluster dimension of about 670–750 on, on every path (cCCE and gCCE, single state and
   ensemble), and slower at 648 and below. So in `bin/main_gpu.out` with `backend` `auto` and no `min_dim` given, clusters
   of dimension 256–767 now run on the CPU: their last digits can change (within the GPU tolerance 1e-8 + 2e-6 |CPU|),
-  and the A35 cCCE4 ensemble case ran 22.3 → 9.6 s (measured at `min_dim` 512, which routes it as 768 does). An explicit `min_dim` keeps its value. Data
+  and the cCCE4 ensemble case ran 22.3 → 9.6 s (measured at `min_dim` 512, which routes it as 768 does). An explicit `min_dim` keeps its value. Data
   (internal notes).
 - **`backend` `auto` no longer stops on a GPU that cannot be opened or that runs out of memory**: the packed kernel is
   turned off when the GPU cannot be opened, and a cluster that runs out of GPU memory is computed on the CPU, with every
@@ -150,17 +277,29 @@
   -> x 1, otherwise x 0.5/`DefectTotSpin`), with a warning in the log; its results are unchanged.
   `--fidentify` is removed (the lines are always written). See `docs/user/InputFile_General.md#tag_hyperfine_file`.
 
-### Compared with v1.2.2 (same inputs and node, idm Xeon Gold 6530, 64 ranks, median of 3)
+### Compared with v1.2.2 (same inputs and node, idm Xeon Gold 6530, 64 ranks, median of 3 runs; job 17547)
 
-| Case | v1.2.2 | 2.0.0 (`exact`) | 2.0.0 (`recursive`) |
-|---|---|---|---|
-| P1 production cCCE2, CR0 | 76.0 s | 15.2 s (5.0x) | 9.3 s (8.1x) |
-| P1 production cCCE2, CR60 sigma 4 | 463.5 s | 79.0 s (5.9x) | 45.4 s (10.2x) |
-| P1 production gCCE2, CR0 | 90.0 s | 39.6 s (2.3x) | 30.0 s (3.0x) |
-| P1 production gCCE2, CR60 sigma 4 | 544.9 s | 216.4 s (2.5x) | 161.6 s (3.4x) |
+v1.2.2 built with icpx 2023.2 without MKL; 2.0.0 (commit 7b33ca7d5) built with `do_compile.sh idm4`, MKL on, so the times
+include the effect of MKL. Wall time of each run in seconds (start-up included).
 
-The coherence differs from v1.2.2 only where a fix in this release changes it (deltat read as a float in v1.2.2,
-the sampled states and `seed`, the ensemble half interval in double, the density-matrix `nan`, the pCCE partition).
+| Case | v1.2.2 | 2.0.0 |
+|---|---|---|
+| P1 production cCCE2, CR60 sigma 4, 30 states | 442.4 s | 22.3 s |
+| P1 production gCCE2, CR60 sigma 4, 30 states | 544.0 s | 161.7 s |
+| P1 production gCCE2, CR0, 30 states | 96.0 s | 31.4 s |
+| P1 production cCCE2, CR0, 30 states | 73.5 s | 5.3 s |
+| multi-NV (6 NV) gCCE2, density matrix | 55.2 s | 21.9 s |
+| h-BN gCCE3, density matrix, 1 state | 44.1 s | 6.4 s |
+| h-BN gCCE2, density matrix, 10 states | 27.7 s | 5.9 s |
+| P1 pCCE2 (partition 2), 10 states | 5.9 s | 1.3 s |
+| 13C ensemble cCCE2 | 2.2 s | 1.6 s |
+| tutorial-size inputs (13 cases) | 1.0 - 3.2 s | 1.0 - 1.6 s |
+
+Where the coherence converges, it agrees with v1.2.2 within 1e-4; with deltat rounded to a float as v1.2.2 keeps it,
+within 1e-9 to 1e-10 (P1 cCCE2 and gCCE2, 13C). Larger differences come only from fixes in this release (deltat read as
+a float, the ensemble half interval in double, the complex conjugate for an even pulse count, the static Overhauser field
+of gCCE, the density-matrix `nan`, the pCCE partition) or from points where the curve already diverges (|L| > 1), where
+v1.2.2 often wrote `nan`. The tables are (internal notes).
 
 ### Compared with v1.2.2 on the GPU node (idm4-gpu Xeon 6731P + one RTX PRO 6000, 32 ranks, one run each)
 
@@ -231,6 +370,26 @@ Data: (internal notes) (idm job 17452).
 | Geometric mean of the 11 | | 1.53x | | 1.47x |
 
 ### Fixed
+- **`execution.backend` `auto` with `configuration.k_range`**: from the second configuration on, the ranks that had
+  opened the GPU skipped the collective node split that the others entered, and the run hung. The split is done once, by
+  every rank, at the first configuration.
+- **Per-bath-file lists** (`bath_state_file`, `defect_axis_file`, `defect_state_file`): a file of one bath file
+  that does not open discarded the files of the other bath files too (the whole bath drawn from the seed); now only
+  that bath file's spins are drawn from the seed, with a warning naming the file, as `""` there does.
+- **Adaptive refinement**: the step inputs set `output.file`, `output.savemode` and `cluster.adaptive.work_file`
+  in the blocks as the input spells them (`"Output"`, `"Cluster"`; CCEX reads keys without regard to case) instead of
+  adding a second block that CCEX did not read, and the input manifest no longer takes `""` entries of the per-bath-file
+  lists as paths.
+- The refusal of `--adaptive` names the `cluster.adaptive` block (it named a top-level `adaptive` block, refused since
+  2026-10-15).
+- **An output folder that cannot be written** is refused at the start (rank 0 writes and removes a file there) instead of
+  being found when the first output is written, after the calculation.
+- gCCE and megCCE with sampled bath states (nstate > 0): the qubit Hamiltonian subtracted the static Overhauser field of
+  the cluster's own spins, Σ A_zz m S_z, also with `hamiltonian.common.qubit_bath_mean_field` false, where no mean field
+  had been added, so the qubit lost the static field of the spins in the cluster (no T2* phase in Ramsey). The
+  subtraction now happens only with the mean field on, where it removes the double counting it was written for; that
+  case and ensemble runs (m = 0) are unchanged. Hahn and CPMG change slightly (check_numerics: up to 1.8e-3 in the
+  coherence of the P1 cases, 9.5e-2 for CPMG-8 at 20 us, 0.10 in an h-BN density-matrix element).
 - `example/tools/InputKeys/convert_input_keys.py` also rewrites the savemode names before 2026-10-13 (`normal`, `info`, `all`,
   `allfull`) and a top-level `save_nodiv` (into `"savemode": {"mode", "nodiv"}`); converted inputs with them were refused.
 - Ensemble cCCE: the conjugation of the coherence and the half interval computed in double precision.
@@ -268,32 +427,58 @@ Data: (internal notes) (idm job 17452).
   `QUANTUMESSPRESSO`.
 - The input file given as `-fFILE` (or `-vfFILE`) skipped the `adaptive` block: a bundle input with one ran as a plain
   bundle run without a word (its curve off by up to 2.84 on a six-spin case), and `adaptive` with cluster_mode `standard`
-  was not refused. The file is found by getopt as the rest of the options are (review 20261013-180049 I01).
-- `-m` is checked with the input's `cluster_mode` in place of the input's method: an input with `gCCE` and `pcce` (or
-  `dsj`, `itb`, `dsjitb`) runs under `-m cCCE`; it was refused before `-m` was applied (I02).
+  was not refused. The file is found by getopt as the rest of the options are.
 - The keys of the `savemode` and `propagator` blocks and of the `adaptive` block are read without regard to case, as
-  every other key (`"Mode"`, `"Method"`, `"Policy"` were refused) (I03).
+  every other key (`"Mode"`, `"Method"`, `"Policy"` were refused).
 - The input-key converter wrote a key twice when the input had an old key and its new name (`"count": 1, "count": 2`;
   CCEX reads the first, Python the last). The same value is kept once, different values (or keys that differ only in
-  case) stop the file before it is written; the converter has tests in `example/tools/InputKeys/tests` (C1).
+  case) stop the file before it is written; the converter has tests in `example/tools/InputKeys/tests`.
 - The automatic convergence read `auto_convergence`, `method` and the other keys with their case, unlike CCEX: an
   `"Auto_Convergence"` block was refused as missing and `"Method": "gCCE"` ran as cCCE. Keys are read without regard to
-  case and two keys that differ only in case are refused (R4).
+  case and two keys that differ only in case are refused.
 - SpinTensorReader (VASP) read the defect spin for a Q file alone too, and stopped on an OUTCAR with magnetization 0 or
-  none; the spin is read, and `--spin` checked, for the A file only (T1).
+  none; the spin is read, and `--spin` checked, for the A file only.
 - A refused input under several MPI ranks gave exit code 1 or 255 and zero, one or two messages at random (each rank wrote
   the message and exited without MPI_Finalize). The refusals of the input reading (option, Config, file readers, command
-  line) now write the message once on rank 0 and stop all ranks together with exit code 1 (A55).
+  line) now write the message once on rank 0 and stop all ranks together with exit code 1.
 - The Runner template `srcfin_Qubit` wrote `alphams`/`betams` at the top of the input, where nothing reads them; they are
-  the qubit's now (A55).
-- `-P` with neither `outfile` nor `-o` stopped with "basic_string: construction from null"; it is refused with
-  "-P needs an output name" (A55).
+  the qubit's now.
+- `-P` with neither `outfile` nor `-o` stopped with "basic_string: construction from null"; since 2026-10-15 the output name
+  defaults to the input file's name, and `cluster_only` takes the place of `-P`.
+- A refused input while the GPU card was being opened in the background ended in `std::terminate` (exit 255) instead of the
+  refusal (exit 1); the refusal now closes the card first. A few more refusals (state files, `setSubbathStates`, the
+  adaptive block, file copies) ended on rank 0 alone and could leave the other ranks waiting; they stop all ranks together
+  now.
+- The automatic convergence started CCEX's Python side with the working directory first on `sys.path`, so a file named like
+  one of its modules in that folder would have been imported; `PYTHONSAFEPATH=1` is set for it (Python 3.11 and later).
+- The input-key converter accepted 0 and 1 for `save_nodiv`, `gcce_refinement` and `cluster_contributions` (CCEX takes JSON
+  booleans only), lost CRLF line ends, and could leave a half-written file when the write failed; it takes booleans only,
+  keeps the line ends and writes through a temporary file.
+- The refusal of `-P` with gCCE, meCCE or megCCE and `cluster_mode` pcce said those plans were supported; the message of a
+  bad `pulse.bath.sequence` fraction named `sequence[i]`.
 
 ### Refused now (inputs that used to be accepted)
-- **The input keys before A47** (2026-10-13): an old name, value (`method` `CCE`, `pCCE`, `dsj`, ...; `cluster_mode`
+- **The command-line options `-I`, `-N`, `-m`, `-q`, `-B`, `-s`, `-S`, `-a`, `-P`, `--auto_conv`, `--adaptive` and
+  `--auto_status`** (2026-10-15), each with the input key that replaces it (`configuration.bathfile`,
+  `configuration.nstate`, `method`, `quantity`, `bfield`, `configuration.bath_state_file`, `configuration.defect_state_file`, `configuration.defect_axis_file`, `output.cluster_only`, the `auto_convergence` and
+  `cluster.adaptive` blocks; the tool's `status` command). `-o FILE` as an output name: `-o` is a folder now. `-e` with `-f`.
+- **The top-level `gyrofile`, `bathfile`, `bath_shift`, `bath_state_file`, `nstate` and `seed`, and `Defect.axis_file` and
+  `Defect.state_file`** (2026-10-15), with their place in the `configuration` block named (`defect_axis_file`,
+  `defect_state_file` for the last two); a string where `bath_state_file`, `defect_axis_file` or `defect_state_file`
+  takes a list (one per bath file), and a list of another length than `bathfile`.
+  `python3 example/tools/InputKeys/convert_input_keys.py FILE...` rewrites an old input (it removes a single state or
+  axis file beside several bath files, which was not read).
+- **The top-level `backend`, `gpu_options`, `propagator`, `evolution`, `evolution_update`, `gcce_refinement`,
+  `column_evolution`, `profile`, `cluster_mode`, `add_subclusters`, `max_clusters_per_order`, `pcce`, `bundle`,
+  `adaptive`, `probe_memory_gb`, `outfile`, `savemode`, `cluster_contributions`, `cluster_only` and
+  `coordinate_frame_rotation`, and the Defect species' `n_nuclear_spins` and `n_configurations`** (2026-10-15),
+  each with its new place named (`Error: input key "backend" is now "execution.backend" ...`); the converter rewrites
+  them. **`defect_axis_reference`** (it only named the rotation's qubit axis in the log; removed) and
+  **`bath_coordinate_rotation`** (the old name of the rotation block, read with a warning until then) are refused too.
+- **The input keys before 2026-10-13**: an old name, value (`method` `CCE`, `pCCE`, `dsj`, ...; `cluster_mode`
   `adaptive`) or form (`Defect` as a list, `gcce_refinement: true`) stops the run with the new one named and the
   converter pointed to; `DefectTotSpin` (the qubit spin is used) and `CorrTotSpin` (old-format VASP tensor files only)
-  are removed. Also refused: `gCCE` with `cluster_mode` `pcce`/`dsj`/`itb`/`dsjitb` (not implemented yet), a
+  are removed. Also refused: `gCCE` with `cluster_mode` `dsj`/`itb`/`dsjitb` (not implemented yet), a
   `hamiltonian.cCCE` setting in a gCCE run, the `adaptive` block outside `pcce`/`bundle`, the `pcce` block outside `pcce`,
   a qubit state with both `index` and `vector`, 0/1 for the switches.
 - `alphams` at the top of a `qubitfile` (it had been ignored since v1.1.0).
@@ -308,6 +493,27 @@ Data: (internal notes) (idm job 17452).
 - SpinTensorReader `--version v1` (it wrote the OUTCAR x 2, right only untagged and for S = 1), and QE `--A` without
   `--spin S`.
 - Combinations a method does not support; `test/code_verification/check_refusals` lists them.
+- `pulse.bath` (DEER) where it cannot act: methods cCCE and meCCE, `cluster_mode` bundle, `backend` `cuda`,
+  `propagator` `sparse`, `gpu_options.warp_max_dim` > 0, `pulse.detuning_factor` ≠ 1, `pulse.per_qubit` true; an
+  unknown key of `pulse.bath`; the branch flat keys (`bnpulse`, `bsequence`, `bpulse_defect`, `bpulse_energy_shift`,
+  `bspin`, `balphams`, `bbetams`); a last bath row that is not identity and two pulses of one sequence on one edge; a
+  `pulse.bath.defect` no bath spin has, a `pulse.bath.spin` other than the driven spins' S, and `alphams`/`betams` that
+  are not two different levels of it (a pump that reaches no spin of that name only warns).
+- meCCE / megCCE where they cannot act: the adding_MECCE top-level `jump_operators` (named with its new place) and the
+  old operator names `+-`/`-+`; a `hamiltonian.meCCE`/`.megCCE` section in a run of another method, a
+  key other than `jump_operators` in it, jump operators in both sections, an entry without `bath_name`, `operator` and
+  `rate`, an unknown operator, a rate that is negative or not finite, a `bath_name` that is neither the qubit nor a
+  bath spin of the run (checked once the bath is read; the branch ran it at rate 0) or is both (megCCE would act on the
+  qubit only); for meCCE a Manual sequence, a
+  rotation other than an ideal π flip and qubit jump operators (megCCE named); more than one qubit for meCCE or with a
+  qubit jump; for both, `pulse.per_qubit` true, `pulse.detuning_factor` ≠ 1, `propagator` other than `eigen`,
+  `cluster_mode` other than `standard` and `pcce`, `evolution_update: "recursive"` given, quantity `dm`, savemode
+  `cluster_density_matrix`, `rdip_ladder`; megCCE with a `hamiltonian.cCCE` setting.
 
 ### Removed
+- `example/tools/Runner/` (job folders per variable value; `configuration.k_range` and the automatic convergence took
+  its place) and `example/analysis/ConvTest/` (2026-10-16; git history has both). `example/analysis/AdaptiveStudy/`
+  moved to (internal notes). The P1 bath of the tutorials kept 1 and 10 ppm × 5 configurations (99 MB →
+  0.9 MB; the 100 configurations per ppm of 1, 2, 5, 10, 50, 100 ppm and the Jahn-Teller and detuning sets are in git
+  history, `git show c3c862972:example/tutorial/04_Diamond_NV_P1Bath/bath/...`).
 - The MKL dependency, `hf_cutoff`, the bundled `zlib/`, the top-level `main.cpp` and `config/` (moved into `src/` and the tools).

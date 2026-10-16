@@ -47,7 +47,7 @@ def main():
                 run,log=run_case(dict(cfg,backend=backend),directory,binary,ranks,600)
                 assert run['returncode']==0,(name,backend,log[-3000:])
                 groups=[(int(d),list(map(int,sites.split(',')))) for d,sites in
-                        re.findall(r'\[adaptive-group\] id=\d+ dim=(\d+) sites=([\d,]+)',log)]
+                        re.findall(r'\[adaptive-bundle\] id=\d+ dim=(\d+) sites=([\d,]+)',log)]
                 assert sorted(i for _,g in groups for i in g)==list(range(n)),name
                 assert all(d<=cfg['adaptive_group_max_dim'] for d,_ in groups)
                 assert all(int(d)<=cfg['adaptive_cluster_max_dim'] for d in run['cluster_counts_by_dimension'])

@@ -1,3 +1,7 @@
+/**
+ * @file policy_merge.cpp
+ * @brief Adaptive refinement: the merge policy and its driver.
+ */
 // Policy "merge" (the only one since 2026-10-10): probe pairs of bundles and take, one
 // step at a time, the merge that lowers a local error the most.
 #include "policy_merge.h"
@@ -20,6 +24,30 @@
 // merge decisions: which patches, which pairs, in what order
 // ----------------------------------------------------------------------------
 namespace adaptive {
+namespace {
+// A step's input (A65 blocks): the user's input with cluster.adaptive the work request - beside the probe memory the
+// user gave there, which the step reads - and output.file the step's curves
+Value with_step(const Value& cfg, const std::string& work_file, const std::string& outfile) {
+    // A73: the blocks and keys as the input spells them (CCEX reads them without regard to case): a second "output"
+    // beside the user's "Output" was not read, and the step wrote its curves where the user's output.file said
+    Value config = cfg;
+    const std::string cluster_key = key_of(config, "cluster");
+    Value cluster = config.has(cluster_key) && config.at(cluster_key).kind() == Value::Kind::Object
+                        ? config.at(cluster_key) : Value::object();
+    const std::string adaptive_key = key_of(cluster, "adaptive");
+    Value work = cluster.has(adaptive_key) && cluster.at(adaptive_key).kind() == Value::Kind::Object
+                     ? cluster.at(adaptive_key) : Value::object();
+    work.set(key_of(work, "work_file"), Value::text(work_file));
+    cluster.set(adaptive_key, work);
+    config.set(cluster_key, cluster);
+    const std::string output_key = key_of(config, "output");
+    Value output = config.has(output_key) && config.at(output_key).kind() == Value::Kind::Object
+                       ? config.at(output_key) : Value::object();
+    output.set(key_of(output, "file"), Value::text(outfile));
+    config.set(output_key, output);
+    return config;
+}
+}   // namespace
 bool affordable_clusters(const Plan& plan, const std::vector<Sites>& clusters,
                          const std::map<Sites, Curves>& held, long long states,
                          long long steps, long long work_left) {
@@ -409,11 +437,7 @@ std::unique_ptr<Executed> Driver::execute(const std::string& mode,
             request.set(key, more->at(key));
     const std::string request_text = write_json(request, 2);
     write_file(here+"/request.json", request_text);
-    Value config = cfg_;
-    Value work = Value::object();
-    work.set("work_file", Value::text(here+"/request.json"));
-    config.set("adaptive", work);
-    config.set("outfile", Value::text(here+"/coherence"));
+    Value config = with_step(cfg_, here+"/request.json", here+"/coherence");
     const std::string input_text = write_json(config, 2);
     write_file(here+"/input.json", input_text);
 
@@ -438,7 +462,7 @@ std::unique_ptr<Executed> Driver::execute(const std::string& mode,
     if (answer.timed_out || answer.returncode != 0) {
         if (allow_failure && !answer.timed_out)
             return nullptr;
-        throw RuntimeError("CCEX "+mode+" failed; inspect "+here+"/run.log");
+        throw RuntimeError("CCEX "+mode+" failed, inspect "+here+"/run.log");
     }
 
     std::unique_ptr<Executed> out(new Executed());
@@ -739,11 +763,7 @@ int Driver::finish(const std::string& status, const std::string& directory, cons
     request.set("response", Value::text(root_+"/final-response"));
     request.set("bundles", sites_list(step.plan.bundles));
     write_file(root_+"/final-request.json", write_json(request, 2));
-    Value config = cfg_;
-    Value work = Value::object();
-    work.set("work_file", Value::text(root_+"/final-request.json"));
-    config.set("adaptive", work);
-    config.set("outfile", Value::text(root_+"/final-coherence"));
+    Value config = with_step(cfg_, root_+"/final-request.json", root_+"/final-coherence");
     write_file(root_+"/final-input.json", write_json(config, 2));
     persist();
     std::printf("%s %s/summary.json\n", status.c_str(), root_.c_str());
@@ -845,9 +865,9 @@ std::vector<Sites> patch_clusters(const std::vector<Sites>& bundles, const std::
 
 ExpansionLimits Driver::config_limits() const {
     ExpansionLimits limits;
-    if (const Value* max_clusters = find_path(cfg_, {"bundle", "max_clusters"}))
+    if (const Value* max_clusters = find_path(cfg_, {"cluster", "bundle", "max_clusters"}))
         limits.max_clusters = max_clusters->as_int();
-    if (const Value* max_work = find_path(cfg_, {"bundle", "max_work"}))
+    if (const Value* max_work = find_path(cfg_, {"cluster", "bundle", "max_work"}))
         limits.max_work = max_work->as_int();
     return limits;
 }

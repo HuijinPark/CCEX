@@ -10,7 +10,7 @@ import json
 import os
 from pathlib import Path
 
-from benchmark import REPO, compare, put
+from benchmark import REPO, compare, get, put
 from check_pcce import run_case
 
 
@@ -19,7 +19,7 @@ def cases():
         config = json.loads((REPO/'test/gpu_verification/check_gpu/examples'/fixture).read_text())
         config = put(config, {'order': 2, 'nstep': 9, 'pulse.count': 4, 'gpu_options.evolution_batch_steps': 4})
         for state in (0, 1, 3):
-            yield f'p1-{method}-state{state}', dict(config, nstate=state)
+            yield f'p1-{method}-state{state}', put(config, {'configuration.nstate': state})
         if method == 'gcce':
             # One side's state given as a vector, the other from alphams/betams (Qubit.alpha_state/beta_state, A47;
             # an unpaired psia/psib was ignored before): its parsed temporary must still be released.
@@ -27,7 +27,7 @@ def cases():
                 yield f'p1-gcce-unpaired-{key}', dict(config, Qubit=dict(config['Qubit'], **{key: {'vector': [1, 0, 0]}}))
     base = json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
     for state in (0, 1):
-        yield f'13c-pcce-state{state}', put(base, {'nstate': state, 'pulse.count': 4})
+        yield f'13c-pcce-state{state}', put(base, {'configuration.nstate': state, 'pulse.count': 4})
     # No Defect section, inline Qubit, and empty higher cluster orders.
     for method in ('cCCE', 'gCCE'):
         config = put(base, {'method': method, 'cluster_mode': 'standard', 'pcce': None, 'order': 4, 'rdip': 0.01})
@@ -56,8 +56,8 @@ def main():
             variants = [('baseline', args.baseline, dict(backend='cpu')),
                         ('cpu', args.binary, dict(backend='cpu'))]
             if args.cuda:
-                variants += [('cuda-single', args.cuda, dict(backend='cuda', gpu_options=dict(config.get('gpu_options', {}), evolution_batch_size=1))),
-                             ('cuda-batch', args.cuda, dict(backend='cuda', gpu_options=dict(config.get('gpu_options', {}), evolution_batch_size=8)))]
+                variants += [('cuda-single', args.cuda, dict(backend='cuda', gpu_options=dict(get(config, 'gpu_options', {}), evolution_batch_size=1))),
+                             ('cuda-batch', args.cuda, dict(backend='cuda', gpu_options=dict(get(config, 'gpu_options', {}), evolution_batch_size=8)))]
             for variant, binary, overrides in variants:
                 directory = args.output/name/variant
                 execution, log = run_case(dict(config, **overrides), directory,

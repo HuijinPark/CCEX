@@ -1,65 +1,90 @@
 # example/tutorial/
 
-Twelve worked examples, numbered in the order to read them: from the smallest
-hand-written input to the features this branch added. Each folder is one physical
-system (or one feature on a system above) and holds the calculations that were run
-on it, with their inputs and the `run.sh` that reproduces them; the results the
-first seven were recorded with are in the archive.
+Eleven worked examples in the order to learn them. Each numbered folder is one topic and holds one folder per
+calculation, named `<method><order>_<pulse>_<approach>` (`cCCE2_Hahn_ensemble`: cCCE to order 2, Hahn echo, the bath
+ensemble; the approach is `ensemble`, `states` or what the calculation compares). A calculation folder has its inputs
+(`ccein*.json`, JSON with `#` comments, only the keys that matter; `main.out -e` writes every key), a `run.sh` and the
+`expected.png` a rerun is compared with. The topic's `README.md` says, for every calculation, what it shows, the keys
+that matter, how to run it (time, ranks, memory), the expected result and what to change next.
 
-| Folder | System | What it shows |
+| Folder | Topic | Calculations |
 |---|---|---|
-| `01_Arbitrary_system/` | a bath, a gyromagnetic-ratio file and a qubit file written by hand | the input file formats. gCCE order 1, density matrix (`quantity=dm`), one bath state |
-| `02_Diamond_NV_natab/` | NV⁻ in diamond with natural-abundance ¹³C, rbath 50 Å | the basic case: `ensemble_CCE` over bath configurations, `single-sample_CCE` (nstate 20), `ensemble_gCCE`, `ensemble_Dsj` (`method=dsj`), `knight_shift` (with and without, tilted field), `builtin_isotopes` (no `gyrofile`: ¹³C from the built-in isotope table) |
-| `03_Diamond_multiNV_natab/` | two and six NV centres with ¹³C pairs (`NV2_13C2`, `NV6_13C2`) | several qubits: gCCE density matrix, Ramsey (`pulse.count` 0) and Hahn echo |
-| `04_Diamond_NV_P1Bath/` | NV⁻ in a P1 electron-spin bath, 1 and 10 ppm, rbath 850 Å | an electron bath with sampled bath states (`-N`): `SpinEcho_CCE2_1ppm`, `_CCE4_1ppm`, `_CCE2e2n_1ppm`, `_pCCE2_1ppm` (`pcce.partition_size` 1..4), `_gCCE2_10ppm_ZFS` (with and without the zero-field splitting), `Population_gCCE2_10ppm`; `bath/` holds 100 configurations per ppm |
-| `05_Diamond_NV_VpBath/` | NV⁻ in a Vp defect bath at 10, 12 and 50 ppm | the same calculation over concentrations |
-| `06_Pulse_Manual/` | the natab and P1 systems above | pulse sequences written out (`sequence`): Hahn echo, WAHUHA (`pulse.count` 4), CPMG (`pulse.count` 8), in cCCE and gCCE |
-| `07_hBN_VB_natab/` | V_B⁻ in hexagonal BN with natural-abundance ¹⁰B/¹¹B/¹⁴N, DFT hyperfine and quadrupole tensors | `ensemble_CCE` (hyperfine and quadrupole orders), `single-sample_gCCE`, `single-sample_gCCE_DPS` (with and without `OH`), `hyperfine_mediated_term` (with and without). `bath/flat/` is what the inputs read; the tensors came from `tools/SpinTensorReader` |
-| `08_Bundle_clustering/` | 02's NV | the clustering this branch added: bundles (`cluster_mode=bundle`, `bundle.max_dim`) beside standard CCE2, and the adaptive refinement of a partition (`adaptive` block): `CCE2_adaptive` (merge) and `CCE2_regroup` (`regroup`, on six P1 spins) |
-| `09_GPU_backend/` | the NV in a five-spin P1 bath (one 1024-dimensional cluster) | `backend` cpu / auto / cuda: the same run per backend, compared: `CCE5_P1`, `gCCE_P1` (gCCE4, one 768-dimensional cluster), `pCCE_P1` (pCCE2) |
-| `10_Coordinate_rotation/` | 02's NV, the bath rewritten in the cubic frame | `coordinate_frame_rotation`: the rotated bath with the rotation on reproduces the original; with it off the field is off the NV axis |
-| `11_Auto_convergence/` | 02's NV, 40 baths made by `run.sh` | the automatic convergence (`auto_convergence` block): the time window, rdip, rbath and the number of configurations found, then the production; `results/auto/result/` holds the summary and the figures |
-| `12_rdip_ladder/` | 02's NV | `rdip_ladder` (one order-2 run writes the curves of smaller rdip too, each equal to its separate run) and `evolution_update` `exact` against `recursive` |
-
-Each system folder has a `README.md` with a table of its calculations and the
-run each was recorded with.
-
-## Inside a calculation folder
-
-- `ccein*.json` — the inputs: JSON with `#` comments. Bath, gyro and tensor files are
-  named relative to this folder (`../bath/`, or another tutorial's `bath/`).
-- `run.sh` — runs every input with `mpirun`, then the post-processing the recorded
-  run did (error correction, ensemble average, plot; `example/analysis/README.md`),
-  all into `results/`. `NP` sets the ranks and `NCONF` the number of bath
-  configurations (defaults 4 and 1; 01, 03 and `04/Population_gCCE2_10ppm` compute
-  one fixed configuration and ignore `NCONF`); the electron-bath runs of 04, 05 and 06 also
-  take `NSTATE`, the sampled bath states per configuration (`-N`), which the
-  recorded runs set to 50 (the 1 ppm runs of 04 except ZFS) or 1 (the others; each
-  `job` says which). The header of each `run.sh` says what the recorded run
-  used.
-- `job` — the idm Slurm script: it runs `run.sh` with the job's ranks and the
-  recorded `NCONF` (and `NSTATE`), so a submitted run is the same calculation as one
-  by hand (submit through `QosChange` and `SbatchPath`). Folders 04, 05 and the P1
-  runs of 06 were generated by `tools/Runner`; only their inputs are kept here.
-- `results/` — what a run writes: `<name>_<conf>[_state<s>]_{noDiv,wiDiv}` from
-  CCEX, `_ErrCorr` and `EnsAvg_conv<N>` from the analyzer, and `.png` plots. Git
-  ignores it. The results the folders were recorded with are in the archive
-  (`CCEX-CQML-archive/example/tutorial/`, under the folder names of that time; its
-  README maps them), so a rerun can be compared against them.
-- `bath/` at the system level — the bath configurations and the defect, gyro and
-  tensor files the calculations share. 02 and 06 hold one configuration each (the
-  recorded ensembles used 20, made with `bath/genbath/`); 04 holds 100 per ppm,
-  07 fifty. 11 and 12 have none: 12 reads 02's, and 11's `run.sh` makes its 40
-  configurations from 02's `bath/genbath/` into `results/bath/`.
+| `00_quickstart/` | NV in natural-abundance ¹³C, cCCE2 Hahn echo, seconds on a laptop | the folder itself |
+| `01_ensemble_and_states/` | averaging over bath configurations (`k_range`) and over sampled bath states (`nstate`) | `cCCE2_Hahn_ensemble`, `cCCE2_Hahn_states`, `cCCE2_Hahn_builtinIsotopes` |
+| `02_pulses/` | Hahn echo, CPMG, a sequence written out (`Manual`) | `cCCE2_CPMG_ensemble`, `cCCE2_Manual_ensemble` |
+| `03_P1/` | an electron-spin bath: P1 at 1 and 10 ppm, Vp | `cCCE2_Hahn_states`, `cCCE4_Hahn_states`, `cCCE2_Hahn_onsite14N`, `gCCE2_Hahn_zfs`, `gCCE2_Ramsey_population`, `cCCE2_Hahn_VpBath` |
+| `04_hBN/` | V_B⁻ in h-BN with DFT hyperfine and quadrupole tensors | `cCCE2_Hahn_ensemble`, `cCCE2_Hahn_hfMediated`, `gCCE2_Hahn_states`, `gCCE2_Hahn_OH` |
+| `05_multiNV/` | several NV centres as one register | `gCCE2_Hahn_oneVsTwoNV`, `gCCE2_HahnRamsey_NV2`, `gCCE2_HahnRamsey_NV6` |
+| `06_cCCE_vs_gCCE/` | the two methods, and the options of cCCE | `gCCE2_Hahn_vsCCE`, `cCCE2_Hahn_dsj`, `cCCE2_Hahn_knightShift`, `gCCE1_Hahn_handwritten` |
+| `07_pCCE_and_bundle/` | clusters of groups: partitions (pCCE), bundles, adaptive refinement | `pCCE2_Hahn_states`, `cCCE2_Hahn_bundle`, `cCCE2_Hahn_adaptive`, `cCCE2_Hahn_regroup` |
+| `08_GPU/` | the CUDA backend against the CPU | `cCCE5_Hahn_backends`, `gCCE4_Hahn_backends`, `pCCE2_Hahn_backends` |
+| `09_auto_convergence/` | the automatic convergence of the time window, rdip, rbath and the configurations | `cCCE2_Hahn_ensemble` |
+| `10_coordinate_rotation/` | a bath written in another frame (`frame.rotation`) | `cCCE2_Hahn_rotation` |
 
 ## Running one
 
 ```
-bash do_compile.sh wsl-gnu                        # once; makes bin/main.out
-cd example/tutorial/02_Diamond_NV_natab/ensemble_CCE
-NP=4 NCONF=1 bash run.sh                      # results/ ; needs numpy, scipy and matplotlib for the post-processing
+bash do_compile.sh wsl-gnu                     # once, from the repository root; makes bin/main.out
+cd example/tutorial/00_quickstart
+NP=4 bash run.sh                               # results/; needs python3 with numpy and matplotlib for the plot
 ```
 
-Every `run.sh` was run on WSL on 2026-09-23 with `NP=2 NCONF=1 NSTATE=1`, and those added
-on 2026-10-12 (11, 12, `02/builtin_isotopes`, `08/CCE2_regroup`, `09/gCCE_P1`, `09/pCCE_P1`)
-with `NP=4`; the per-system README tables give the times.
+`run.sh` finds the binary through `git rev-parse --show-toplevel` (`CCEX_BIN` names another one, e.g. a CMake build's
+`build/bin/main.out`; `CCEX_GPU_BIN` the GPU binary of `08_GPU`), runs every input with `mpirun -n $NP ... -o results`
+(the outputs are named after the input: `ccein_wiDiv`, `ccein_k1_state3_wiDiv`, ...) and then
+`plot_coherence.py`, which writes `results/coherence.png` and prints one number per curve (T2 = the last time |L| ≥
+1/e). A few `run.sh` also run a variant of the input written by `example/tools/InputKeys/set_input_keys.py` into
+`results/`. Inputs name their files relative to the calculation folder (`../bath/`, `../../00_quickstart/bath/`), so
+`run.sh` is run from there. Git ignores `results/`.
+
+Shared here: `plot_coherence.py` (the figures and numbers) and `make_natab_baths.sh` (natural-abundance ¹³C
+configurations with `tools/BathGenerator`, for `01` and `09`). Each `expected.png` was made by that folder's `run.sh`
+on 2026-10-16 (i7-14700K, WSL, 4 ranks), except the three of `08_GPU` and `05_multiNV/gCCE2_HahnRamsey_NV6`, which
+need a server and are pending ((internal notes) makes them).
+
+## Where the folders before 2026-10-16 went
+
+The calculations were reorganised in learning order on 2026-10-16; `git mv` kept their history. The trimmed inputs
+give byte-identical `_wiDiv` to the old ones (28 inputs compared, same keys set where `run.sh` used to set them). The
+idm `job` files were dropped (they ran `run.sh` with `NCONF` and `NSTATE`, which `configuration.k_range` and
+`configuration.nstate` in the inputs replace); the old tree is `git show c3c862972:example/tutorial/...`.
+
+| Before | Now | Note |
+|---|---|---|
+| `01_Arbitrary_system/` | `06_cCCE_vs_gCCE/gCCE1_Hahn_handwritten/` | its `qubit` file dropped: the input uses the `Qubit` block and never read it |
+| `02_Diamond_NV_natab/bath/` | `00_quickstart/bath/` | the shared ¹³C bath (00, 01, 02, 05, 06, 07, 10; `genbath/` for 01 and 09) |
+| `02_Diamond_NV_natab/ensemble_CCE/` | `01_ensemble_and_states/cCCE2_Hahn_ensemble/` | `k_range` over four generated configurations; its input on the committed configuration is `00_quickstart` |
+| `02_Diamond_NV_natab/single-sample_CCE/` | `01_ensemble_and_states/cCCE2_Hahn_states/` | compared with `nstate` 0 |
+| `02_Diamond_NV_natab/builtin_isotopes/` | `01_ensemble_and_states/cCCE2_Hahn_builtinIsotopes/` | |
+| `02_Diamond_NV_natab/ensemble_Dsj/` | `06_cCCE_vs_gCCE/cCCE2_Hahn_dsj/` | `ccein_cce.json` is `ccein_standard.json` |
+| `02_Diamond_NV_natab/knight_shift/` | `06_cCCE_vs_gCCE/cCCE2_Hahn_knightShift/` | |
+| `02_Diamond_NV_natab/ensemble_gCCE/` | `05_multiNV/gCCE2_Hahn_oneVsTwoNV/` | |
+| (new) | `02_pulses/cCCE2_CPMG_ensemble/`, `02_pulses/cCCE2_Manual_ensemble/`, `06_cCCE_vs_gCCE/gCCE2_Hahn_vsCCE/` | Hahn/CPMG-2/CPMG-8; a Manual CPMG-2 against the built-in one; cCCE2 against gCCE2 |
+| `03_Diamond_multiNV_natab/NV2_13C2/` | `05_multiNV/gCCE2_HahnRamsey_NV2/` | inputs `ccein_hahn.json`, `ccein_ramsey.json`; the Hahn input order 1 → 2 (as the Ramsey one) |
+| `03_Diamond_multiNV_natab/NV6_13C2/` | `05_multiNV/gCCE2_HahnRamsey_NV6/` | reads NV2's bath, gyro and state files (identical copies dropped); `nstep` 300 → 50 (out of memory at 300) |
+| `03_Diamond_multiNV_natab/bath/` | dropped | read by nothing (a copy of `genbath/` and one configuration) |
+| `04_Diamond_NV_P1Bath/bath/` | `03_P1/bath/` | 1 and 10 ppm × 5 configurations kept (99 MB → 0.9 MB); the rest is in git history |
+| `04_Diamond_NV_P1Bath/SpinEcho_CCE2_1ppm/` | `03_P1/cCCE2_Hahn_states/` | `k_range` [1, 2] × `nstate` 10 (recorded: 50 × 50 on idm) |
+| `04_Diamond_NV_P1Bath/SpinEcho_CCE4_1ppm/` | `03_P1/cCCE4_Hahn_states/` | as above |
+| `04_Diamond_NV_P1Bath/SpinEcho_CCE2e2n_1ppm/` | `03_P1/cCCE2_Hahn_onsite14N/` | as above |
+| `04_Diamond_NV_P1Bath/SpinEcho_gCCE2_10ppm_ZFS/` | `03_P1/gCCE2_Hahn_zfs/` | `ccein_with_ZFS_v2.json` (the same system in the `Qubit.file` form) and its `qubitfile` dropped |
+| `04_Diamond_NV_P1Bath/Population_gCCE2_10ppm/` | `03_P1/gCCE2_Ramsey_population/` | its unread `qubitfile` dropped |
+| `04_Diamond_NV_P1Bath/SpinEcho_pCCE2_1ppm/` | `07_pCCE_and_bundle/pCCE2_Hahn_states/` | four inputs (`partition_size` 1-4) → one, `run.sh` sets the size; one configuration × 4 states |
+| `05_Diamond_NV_VpBath/` | `03_P1/cCCE2_Hahn_VpBath/`, `03_P1/bath/Vp/` | `bath_Diamond_NV_eleBath_1` and its `_defect` dropped (read by nothing) |
+| `06_Pulse_Manual/HahnEcho_natab_{ensemble,single}_{origin,wahuha}/` | dropped | plain Hahn echoes (`pulse.count` 1, no sequence): `00_quickstart` and `01/cCCE2_Hahn_states` on another configuration; the wahuha copies were byte-identical |
+| `06_Pulse_Manual/CPMG_P1_1ppm/`, `SpinEcho_P1_1ppm/` | dropped | CPMG-8 and Hahn by `pulse.count` on the P1 bath, three of the five inputs byte-identical copies; `02_pulses` shows the pulses, `03_P1` the bath |
+| `06_Pulse_Manual/WAHUHA_P1_1ppm/` | dropped | gCCE with the WAHUHA sequence written out on P1; the `Manual` form is `02_pulses/cCCE2_Manual_ensemble` |
+| `06_Pulse_Manual/WAHUHA_natab_single_ccce/` | dropped | refused by the code (cCCE with pulses that are not π flips) |
+| `06_Pulse_Manual/WAHUHA_natab_single_gcce/` | dropped | its `_wiDiv` diverges (\|L\| about 6e172 at 2 ms, rerun 2026-10-16; `check_numerics` leaves WAHUHA out for the same reason) |
+| `06_Pulse_Manual/bath/` | dropped | a second ¹³C configuration, read only by the dropped runs |
+| `07_hBN_VB_natab/bath/` | `04_hBN/bath/` | |
+| `07_hBN_VB_natab/ensemble_CCE/` | `04_hBN/cCCE2_Hahn_ensemble/` | `k_range` [1, 5] |
+| `07_hBN_VB_natab/hyperfine_mediated_term/` | `04_hBN/cCCE2_Hahn_hfMediated/` | |
+| `07_hBN_VB_natab/single-sample_gCCE/` | `04_hBN/gCCE2_Hahn_states/` | `seed` 1 added (the state was drawn from the clock) |
+| `07_hBN_VB_natab/single-sample_gCCE_DPS/` | `04_hBN/gCCE2_Hahn_OH/` | |
+| `08_Bundle_clustering/CCE2_bundle/` | `07_pCCE_and_bundle/cCCE2_Hahn_bundle/` | |
+| `08_Bundle_clustering/CCE2_adaptive/` | `07_pCCE_and_bundle/cCCE2_Hahn_adaptive/` | |
+| `08_Bundle_clustering/CCE2_regroup/` | `07_pCCE_and_bundle/cCCE2_Hahn_regroup/` | `bath/bath_p1_6` → `07_pCCE_and_bundle/bath/`; the copies of the ¹³C files dropped |
+| `09_GPU_backend/CCE5_P1/`, `gCCE_P1/`, `pCCE_P1/` | `08_GPU/cCCE5_Hahn_backends/`, `gCCE4_Hahn_backends/`, `pCCE2_Hahn_backends/` | three inputs per case (differing in `backend`) → one |
+| `10_Coordinate_rotation/HahnEcho_CCE2/` | `10_coordinate_rotation/cCCE2_Hahn_rotation/` | the copies of the ¹³C files dropped (`make_cubic_frame.py` reads `00_quickstart/bath/`) |
+| `11_Auto_convergence/ensemble_CCE2/` | `09_auto_convergence/cCCE2_Hahn_ensemble/` | |

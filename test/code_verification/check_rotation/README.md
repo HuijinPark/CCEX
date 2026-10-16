@@ -17,8 +17,8 @@ Exit status 0 only if every check passed. Everything the suite writes goes to
       -> Defect construction -> clusterization
 
 `Config_validateBfieldAlignment` runs where `Config_resolveEvolution` does,
-immediately after the getopt loop, because `-B` lands there and changes the
-answer. It never modifies the field -- "bfield" is already in the computational
+once every reader has run (until A63 because `-B` landed there, after the file,
+and changed the answer). It never modifies the field -- "bfield" is already in the computational
 frame -- it only refuses a transverse component while the rotation is on.
 
 Selection happens before the rotation on purpose: it is a distance to the
@@ -119,10 +119,13 @@ refused. `check_srcfield.py` reads the field back out of the log in both frames
 and requires `R^T [0,0,Bz] = Bz * normalize(qubit_axis)` -- the expected value is
 built from qubit_axis alone, so it is not just re-deriving what the code did.
 
-`defect_axis_reference: "qubit_axis"` is validated and logged and nothing else.
-The P1 test runs the same defect system with and without it and requires
-byte-identical coherence plus identical paxes and detuning, so "changes nothing"
-is checked rather than asserted.
+`defect_axis_reference` was validated and logged and nothing else; it was removed
+on 2026-10-15 (A65) and is refused ("was removed"), on the P1 system as anywhere.
+The rotation is `frame.rotation` since A65 (`coordinate_frame_rotation` and its older
+alias `bath_coordinate_rotation` are refused with it): a written block is on unless it
+says `"enabled": false`, which the suite checks against `"enabled": true` (byte-identical)
+and against no block (`[disabled]`). The generators write the old flat names and
+`configuration_block.py` (`../input_layout.py`) puts them into the blocks.
 
 ## The A/B equivalence test
 

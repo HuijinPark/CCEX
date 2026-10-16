@@ -1,3 +1,7 @@
+/**
+ * @file cce_batch_window.h
+ * @brief The window of small cCCE clusters that calculate() hands to the batched CPU kernel.
+ */
 #ifndef CCEX_CCE_BATCH_WINDOW_H
 #define CCEX_CCE_BATCH_WINDOW_H
 // A30: calculate()'s side of the batched small-cluster cCCE on the CPU (cce_batch.h). When cluster ic is asked for and is

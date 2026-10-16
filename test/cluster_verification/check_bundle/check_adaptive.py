@@ -39,7 +39,7 @@ def main():
             assert execution['returncode']==0,(name,log[-4000:])
             if cfg.get('cluster_mode')=='adaptive':
                 groups=[]
-                for dim,ids in re.findall(r'\[adaptive-group\] id=\d+ dim=(\d+) sites=([\d,]+)',log):
+                for dim,ids in re.findall(r'\[adaptive-bundle\] id=\d+ dim=(\d+) sites=([\d,]+)',log):
                     groups.append(dict(dim=int(dim),sites=list(map(int,ids.split(',')))))
                 sites=[i for g in groups for i in g['sites']]
                 assert sorted(sites)==list(range(len(sites))),'omitted or repeated site'
@@ -161,7 +161,7 @@ def main():
             ref,_=run('explicit-default-'+key,dict(base,**{key:default}))
             cfg=dict(base);del cfg[key]
             run('missing-'+key,cfg,2,reference=ref)
-        run('cli-method-override',base,2,error='requires method=cce or gcce',extra=('-m','pcce'))
+        run('method-override',dict(base,method='pcce'),2,error='requires method=cce or gcce')   # was -m pcce until A63
         summary['status']='passed';save()
     except BaseException as error:
         summary.update(status='failed',error=f'{type(error).__name__}: {error}');save();raise

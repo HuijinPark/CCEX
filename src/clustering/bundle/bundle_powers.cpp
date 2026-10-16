@@ -1,3 +1,7 @@
+/**
+ * @file bundle_powers.cpp
+ * @brief The cluster expansion over bundles, shared by both halves of adaptive clustering.
+ */
 #include "../../../include/clustering/bundle/bundle_powers.h"
 
 #include <algorithm>

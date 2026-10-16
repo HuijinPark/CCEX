@@ -1,3 +1,7 @@
+/**
+ * @file utilities.cpp
+ * @brief Shared helpers: error stops, logging, maths and string utilities.
+ */
 #include "../../include/common/utilities.h"
 #include "../../include/common/memory.h"
 #include <float.h>  // FLT_EPSILON
@@ -8,6 +12,8 @@
 #include <algorithm>
 #include <queue>
 #include <map>
+#include <string>
+#include <cctype>
 #ifdef CCEX_BLAS_DIRECT
 #include "../../include/common/blas_option.h"   // the thresholds printBanner reports
 #endif
@@ -190,7 +196,7 @@ void buildQubitAlignedRotation(const double bath_axis[3], const double qubit_axi
             return;
         }
 
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): bath_axis and qubit_axis are parallel or antiparallel\n");
+        ccexRefusalPrint(stderr,"Error(frame.rotation): bath_axis and qubit_axis are parallel or antiparallel\n");
         ccexRefusalPrint(stderr,"  normalized bath_axis  : [ %g, %g, %g ]\n",b[0],b[1],b[2]);
         ccexRefusalPrint(stderr,"  normalized qubit_axis : [ %g, %g, %g ]\n",q[0],q[1],q[2]);
         ccexRefusalPrint(stderr,"  |qubit_axis x bath_axis| = %g\n",cross_norm);
@@ -234,7 +240,7 @@ void buildQubitAlignedRotation(const double bath_axis[3], const double qubit_axi
     }
 
     if (ortho_err > ROT_ORTHO_TOL || fabs(det-1.0) > ROT_ORTHO_TOL || zcheck_err > ROT_ORTHO_TOL){
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): the constructed matrix is not a valid rotation\n");
+        ccexRefusalPrint(stderr,"Error(frame.rotation): the constructed matrix is not a valid rotation\n");
         ccexRefusalPrint(stderr,"  max|R^T R - I|            = %g (tol %g)\n",ortho_err,ROT_ORTHO_TOL);
         ccexRefusalPrint(stderr,"  det(R)                    = %.15g (must be +1)\n",det);
         ccexRefusalPrint(stderr,"  max|R*qubit_axis - [001]| = %g (tol %g)\n",zcheck_err,ROT_ORTHO_TOL);
@@ -329,31 +335,31 @@ void reportQubitAlignedRotation(const double bath_axis[3], const double qubit_ax
     }
 
     printSubTitle("Coordinate frame rotation ...");
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","bath axis, source frame" ,b[0],b[1],b[2]);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","qubit axis, source frame",q[0],q[1],q[2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","bath axis, source frame" ,b[0],b[1],b[2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","qubit axis, source frame",q[0],q[1],q[2]);
     printf("\n");
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","computational x axis, source frame",R[0][0],R[0][1],R[0][2]);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","computational y axis, source frame",R[1][0],R[1][1],R[1][2]);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","computational z axis, source frame",R[2][0],R[2][1],R[2][2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","computational x axis, source frame",R[0][0],R[0][1],R[0][2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","computational y axis, source frame",R[1][0],R[1][1],R[1][2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","computational z axis, source frame",R[2][0],R[2][1],R[2][2]);
     printf("\n");
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 0",R[0][0],R[0][1],R[0][2]);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 1",R[1][0],R[1][1],R[1][2]);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 2",R[2][0],R[2][1],R[2][2]);
-    printf("      %-32s: %.15lf\n","det(R)",det);
-    printf("      %-32s: %.3e\n","max|R^T R - I|",ortho_err);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","R * normalize(qubit_axis)",qz[0],qz[1],qz[2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 0",R[0][0],R[0][1],R[0][2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 1",R[1][0],R[1][1],R[1][2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation matrix R, row 2",R[2][0],R[2][1],R[2][2]);
+    printf("      %-32s : %.15lf\n","det(R)",det);
+    printf("      %-32s : %.3e\n","max|R^T R - I|",ortho_err);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","R * normalize(qubit_axis)",qz[0],qz[1],qz[2]);
     printf("\n");
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation origin r0, source frame",r0[0],r0[1],r0[2]);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","B field, computational frame",
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","rotation origin r0, source frame",r0[0],r0[1],r0[2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","B field, computational frame",
            (double)bfield[0],(double)bfield[1],(double)bfield[2]);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","B field, source frame (R^T B)",bsrc[0],bsrc[1],bsrc[2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","B field, source frame (R^T B)",bsrc[0],bsrc[1],bsrc[2]);
     printf("\n");
 
     if (defect_axis_reference != NULL){
-        printf("      %-32s: %s\n","Defect axis reference",defect_axis_reference);
-        printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","Reference axis, source frame",q[0],q[1],q[2]);
-        printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","Reference axis, calc frame",qz[0],qz[1],qz[2]);
-        printf("      %-32s: recorded for future JT-axis classification;\n","Status");
+        printf("      %-32s : %s\n","Defect axis reference",defect_axis_reference);
+        printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","Reference axis, source frame",q[0],q[1],q[2]);
+        printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","Reference axis, calc frame",qz[0],qz[1],qz[2]);
+        printf("      %-32s : recorded for future JT-axis classification,\n","Status");
         printf("      %-32s  not applied to the Defect Hamiltonian\n","");
         printf("\n");
     }
@@ -364,7 +370,7 @@ void reportQubitAlignedRotation(const double bath_axis[3], const double qubit_ax
     printf("      Qubit.intmap tensor follows its own recorded tensor_frame / provenance --\n");
     printf("      the transformed and kept counts are listed below.\n");
     printf("      Defect entries follow their own coordinate_frame: bath-frame axes,\n");
-    printf("      displacement vectors, and tensors are transformed; qubit-frame entries stay.\n");
+    printf("      displacement vectors, and tensors are transformed, qubit-frame entries stay.\n");
     printf("      Read as written in the computational frame: legacy top-level \"qzfs\" and \"bfield\".\n");
     printf("\n");
 }
@@ -604,7 +610,7 @@ MatrixXcd divMatrixXcdElementWise(MatrixXcd a, MatrixXcd b, double* dropped){
 
 /* Easy print ---------------------------------------------------*/
 void printInlineMatrixXcd(char* key, MatrixXcd mat){
-    printf("      %-18s:   [ ", key);
+    printf("      %-18s : [ ", key);
 
     if (mat.rows() * mat.cols() > 9 && mat.rows() * mat.cols() <= 400){
         int count = 0;
@@ -657,7 +663,7 @@ void printInlineMatrixXcd(char* key, MatrixXcd mat){
 }
 
 void printStateInDiracNot(char* key, MatrixXcd mat){
-    printf("      %-18s:   ", key);
+    printf("      %-18s : ", key);
 
     int dim = mat.rows();
     float spin = (dim-1.0)/2.0;
@@ -676,11 +682,11 @@ void printStateInDiracNot(char* key, MatrixXcd mat){
 }
 
 void printStructElementChar(char* key,char* val){
-    printf("      %-18s:   %-21s\n", key, val);
+    printf("      %-18s : %s\n", key, val);
 }
 
 void printStructElementChar2d(char* key, char** val, int n){
-    printf("      %-18s:   [ ", key);
+    printf("      %-18s : [ ", key);
     for (int i = 0; i < n; i++){
         printf("%-10s", val[i]);
         if (i != n - 1){
@@ -693,11 +699,11 @@ void printStructElementChar2d(char* key, char** val, int n){
 }
 
 void printStructElementInt(char* key, int val){
-    printf("      %-18s:   %-21d\n", key, val);
+    printf("      %-18s : %d\n", key, val);
 }
 
 void printStructElementInt1dIdx(char* key, int* val, int n){
-    printf("      %-18s:   [ ", key);
+    printf("      %-18s : [ ", key);
     for (int i = 0; i < n; i++){
         printf("%3d : %-5d",i,val[i]);
         if (i != n - 1){
@@ -710,11 +716,11 @@ void printStructElementInt1dIdx(char* key, int* val, int n){
 }
 
 void printStructElementFloat(char* key, float val){
-    printf("      %-18s:   %-21.6g\n", key, val);
+    printf("      %-18s : %.6g\n", key, val);
 }
 
 void printStructElementFloat1d(char* key, float* val, int n){
-    printf("      %-18s:   [ ", key);
+    printf("      %-18s : [ ", key);
     for (int i = 0; i < n; i++){
         printf("%-10.2f", val[i]);
         if (i != n - 1){
@@ -727,11 +733,11 @@ void printStructElementFloat1d(char* key, float* val, int n){
 }
 
 void printStructElementDouble(char* key, double val){
-    printf("      %-18s:   %-21.3g\n", key, val);
+    printf("      %-18s : %.3g\n", key, val);
 }
 
 void printStructElementDouble1d(char* key, double* val, int n){
-    printf("      %-18s:   [ ", key);
+    printf("      %-18s : [ ", key);
     for (int i = 0; i < n; i++){
         printf("%-10.2f", val[i]);
         if (i != n - 1){
@@ -744,19 +750,19 @@ void printStructElementDouble1d(char* key, double* val, int n){
 }
 
 void printStructElementBool(char* key, bool val){
-    printf("      %-18s:   %-21s\n", key, val ? "true" : "false");
+    printf("      %-18s : %s\n", key, val ? "true" : "false");
 }
 
 void printLine(){
-    printf("    -----------------------------------------------------------------\n");
+    printf("    ----------------------------------------------------------------------\n");
 }
 
 void printLineSection(){
-    printf("\n    ===============================================================\n\n");
+    printf("\n    ======================================================================\n\n");
 }
 
 void printTitle(char* title){
-    printf("    < %s > \n\n",title);
+    printf("    < %s >\n\n",title);
 }
 
 void printSubTitle(char* title){
@@ -1065,21 +1071,189 @@ void MPI_freeLocalClusters(int order, int**** localClusters){
 // } 
 
 /* Print help and banner ---------------------------------------------------------*/
+// A68: what this binary is, for the log: "Build : CPU | g++ 11.4.0 | Intel(R) MPI Library 2021.18 for Linux* OS | MKL on |
+// preset wsl-gnu | commit 1a2b3c4d5-dirty". The compiler from its own macros, the MPI from the library (its first line, cut
+// at the first comma: Open MPI's goes on with the package and the repository), the preset from the build
+// (do_compile.sh, "cmake" from CMakeLists.txt), the commit from the header both builds write at build time
+// (ccex_build_commit.h: "-dirty" when the tree differs from it, "unknown" outside git).
+#ifndef CCEX_BUILD_PRESET
+#define CCEX_BUILD_PRESET "unknown"
+#endif
+#if defined(__has_include)
+#if __has_include("ccex_build_commit.h")
+#include "ccex_build_commit.h"
+#endif
+#endif
+#ifndef CCEX_BUILD_COMMIT
+#define CCEX_BUILD_COMMIT "unknown"
+#endif
+#ifdef CCEX_USE_CUDA
+#include "../../include/calculation/gpu/gpu_backend.h"   // gpuBuildDescription
+#endif
+static std::string buildLine(){
+    char compiler[64];
+#if defined(__INTEL_LLVM_COMPILER)
+    snprintf(compiler, sizeof compiler, "icpx %d.%d.%d", __INTEL_LLVM_COMPILER/10000, __INTEL_LLVM_COMPILER/100%100, __INTEL_LLVM_COMPILER%100);
+#elif defined(__INTEL_COMPILER)
+    snprintf(compiler, sizeof compiler, "icpc %d.%d", __INTEL_COMPILER/100, __INTEL_COMPILER%100/10);
+#elif defined(__clang__)
+    snprintf(compiler, sizeof compiler, "clang %d.%d.%d", __clang_major__, __clang_minor__, __clang_patchlevel__);
+#elif defined(__GNUC__)
+    snprintf(compiler, sizeof compiler, "g++ %d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__);
+#else
+    snprintf(compiler, sizeof compiler, "unknown compiler");
+#endif
+    char library[MPI_MAX_LIBRARY_VERSION_STRING] = "unknown MPI";
+    int length = 0;
+    int initialized = 0;
+    MPI_Initialized(&initialized);
+    if (initialized) MPI_Get_library_version(library, &length);
+    std::string mpi(library);
+    mpi = mpi.substr(0, mpi.find_first_of("\n,"));
+    while (!mpi.empty() && isspace((unsigned char)mpi.back())) mpi.pop_back();
+    while (!mpi.empty() && isspace((unsigned char)mpi.front())) mpi.erase(0, 1);
+#ifdef CCEX_USE_CUDA
+    char device[64];
+    gpuBuildDescription(device, sizeof device);
+    std::string line = std::string("Build : GPU (") + device + ")";
+#else
+    std::string line = "Build : CPU";
+#endif
+#ifdef CCEX_BLAS_DIRECT
+    const char* mkl = "MKL on";
+#else
+    const char* mkl = "MKL off";
+#endif
+    return line + " | " + compiler + " | " + mpi + " | " + mkl + " | preset " + CCEX_BUILD_PRESET + " | commit " + CCEX_BUILD_COMMIT;
+}
+
+static FILE* quietFile = nullptr;
+static int quietSaved = -1;
+static void logQuietAll(){ logQuietEnd(true); }   // a run that stops while quiet: its whole output, the reason included
+void logQuietBegin(bool quiet){
+    if (!quiet || rank != 0 || quietFile) return;
+    static bool registered = false;
+    if (!registered){ atexit(logQuietAll); registered = true; }
+    fflush(stdout); std::cout.flush();
+    quietFile = tmpfile();
+    if (!quietFile) return;   // no temporary file: everything is printed
+    quietSaved = dup(STDOUT_FILENO);
+    dup2(fileno(quietFile), STDOUT_FILENO);
+}
+void logQuietEnd(bool all){
+    logAlignEnd();   // A76: an aligned region inside the quiet one (a run that stops there) ends first
+    if (!quietFile) return;
+    fflush(stdout); std::cout.flush();
+    dup2(quietSaved, STDOUT_FILENO);
+    close(quietSaved);
+    quietSaved = -1;
+    rewind(quietFile);
+    char line[4096];
+    bool keep = false;   // a line longer than the buffer comes in pieces: its continuation follows its start
+    for (bool start = true; fgets(line, sizeof line, quietFile); ){
+        if (start){
+            const char* p = line;
+            while (*p == ' ' || *p == '\t') ++p;
+            // the configuration's own files and spin counts as well: Read QubitFile/GyroFile/BathFile[i]/AvaaxFile,
+            // "- Number of bath spins", "Bath = f (n spins) + g (m spins)"
+            keep = all || (p[0] == '[' && isalpha((unsigned char)p[1])) || strstr(line, "Warning") ||
+                   strstr(line, "warning") || strstr(line, "WARNING") || strstr(line, "Note:") || strstr(line, "Error") || strstr(line, "randomly generated") ||
+                   (!strncmp(p, "Read ", 5) && strstr(p, "File")) || strstr(line, "Number of bath spins") ||
+                   !strncmp(p, "Bath = ", 7);
+        }
+        if (keep) fputs(line, stdout);
+        start = strchr(line, '\n') != nullptr;
+    }
+    fclose(quietFile);
+    quietFile = nullptr;
+    fflush(stdout);
+}
+
+// A76: rank 0's standard output between logAlignBegin and logAlignEnd goes to a temporary file (as logQuietBegin), and at
+// logAlignEnd its "label : value" rows (indentation 6, or 8 for a sub-item) are printed with the ':' of each table - a run
+// of such rows - in one column, after the longest label of the table, and without spaces at the line ends.
+static FILE* alignFile = nullptr;
+static int alignSaved = -1;
+static void logAlignAll(){ logAlignEnd(); }   // a run that stops inside: its output still comes out
+void logAlignBegin(){
+    if (rank != 0 || alignFile) return;
+    static bool registered = false;
+    if (!registered){ atexit(logAlignAll); registered = true; }   // registered after logQuietAll: runs before it
+    fflush(stdout); std::cout.flush();
+    alignFile = tmpfile();
+    if (!alignFile) return;   // no temporary file: printed as it is
+    alignSaved = dup(STDOUT_FILENO);
+    dup2(fileno(alignFile), STDOUT_FILENO);
+}
+void logAlignEnd(){
+    if (!alignFile) return;
+    fflush(stdout); std::cout.flush();
+    dup2(alignSaved, STDOUT_FILENO);
+    close(alignSaved);
+    alignSaved = -1;
+    rewind(alignFile);
+    std::vector<std::string> lines;
+    {
+        std::string line;
+        for (int c; (c = fgetc(alignFile)) != EOF; ){
+            if (c == '\n'){ lines.push_back(line); line.clear(); } else line += char(c);
+        }
+        if (!line.empty()) lines.push_back(line);
+    }
+    fclose(alignFile);
+    alignFile = nullptr;
+    // a row: 6 or 8 spaces, a label without ':' that does not start with a space, spaces, ':' and a space, the value
+    struct Row { size_t indent; std::string label, value; };
+    auto row = [](const std::string& l, Row* r){
+        size_t indent = l.find_first_not_of(' ');
+        if (indent != 6 && indent != 8) return false;
+        size_t colon = l.find(" : ", indent);
+        if (colon == std::string::npos) return false;
+        std::string label = l.substr(indent, colon - indent);
+        while (!label.empty() && label.back() == ' ') label.pop_back();
+        if (label.empty() || label.find(':') != std::string::npos) return false;
+        size_t v = l.find_first_not_of(' ', colon + 2);
+        r->indent = indent; r->label = label; r->value = v == std::string::npos ? "" : l.substr(v);
+        while (!r->value.empty() && r->value.back() == ' ') r->value.pop_back();
+        return true;
+    };
+    for (size_t i = 0; i < lines.size(); ){
+        std::vector<Row> table;
+        Row r;
+        size_t j = i;
+        while (j < lines.size() && row(lines[j], &r)){ table.push_back(r); ++j; }
+        if (table.empty()){
+            std::string l = lines[i];
+            while (!l.empty() && l.back() == ' ') l.pop_back();
+            printf("%s\n", l.c_str());
+            ++i;
+            continue;
+        }
+        size_t width = 0;   // the colon column, counted from indentation 6
+        for (const Row& t : table) width = std::max(width, t.indent - 6 + t.label.size());
+        for (const Row& t : table)
+            printf("%s%-*s :%s%s\n", std::string(t.indent, ' ').c_str(), int(width - (t.indent - 6)), t.label.c_str(),
+                   t.value.empty() ? "" : " ", t.value.c_str());
+        i = j;
+    }
+    fflush(stdout);
+}
+
 void printBanner(){
 
     // Print the following :
     printf("\n\n");
     printf("    ======================================================================\n\n");
-    printf("                   ______   ______  _______ ___   ___ \n");
-    printf("                  /      | /      ||   ____|\\  \\ /  / \n");
-    printf("                 |  ,----'|  ,----'|  |__    \\  V  /  \n");
-    printf("                 |  |     |  |     |   __|    >   <   \n");
-    printf("                 |  `----.|  `----.|  |____  /  .  \\  \n");
-    printf("                  \\______| \\______||_______|/__/ \\__\\ \n");
-    printf("                __   _   _   _  _       _   _     _   _   _ _   \n");
-    printf("               / _| / \\ | \\_/ || |     //  / \\   | | / \\ | | |  \n");
-    printf("              ( (_ ( o )| \\_/ || |_   //  | o |n_| |( o )| U |  \n");
-    printf("               \\__| \\_,7|_| |_||___| //   |_n_|\\__/  \\_/ |___|  \n");
+    printf("                   ______   ______  _______ ___   ___\n");
+    printf("                  /      | /      ||   ____|\\  \\ /  /\n");
+    printf("                 |  ,----'|  ,----'|  |__    \\  V  /\n");
+    printf("                 |  |     |  |     |   __|    >   <\n");
+    printf("                 |  `----.|  `----.|  |____  /  .  \\\n");
+    printf("                  \\______| \\______||_______|/__/ \\__\\\n");
+    printf("                __   _   _   _  _           __   _  _   _  _   _ _\n");
+    printf("               / _| / \\ | \\_/ || |     //  / _) | |/ / | |/ / | | |\n");
+    printf("              ( (_ ( o )| \\_/ || |_   //   \\_ \\ |   <  |   <  | U |\n");
+    printf("               \\__| \\_,7|_| |_||___| //    (__/ |_|\\_\\ |_|\\_\\ |___|\n");
     printf("\n");
 
     //Ref :                                                                              
@@ -1089,73 +1263,24 @@ void printBanner(){
     struct tm *d1 = localtime(&t);
     
     printf("\n");
-    printf("            Program CCEX starts on %s ", asctime(d1));
-    printf("               The CCEX code has compiled at '%s' \n", __DATE__);
+    printf("      Program CCEX starts on %s", asctime(d1));
+    printf("      The CCEX code has compiled at '%s'\n", __DATE__);
     // A46: whether this build takes the large clusters to MKL (test/code_verification/check_numerics reads this line)
+    logAlignBegin();   // A76: the two rows below in one column
 #ifdef CCEX_BLAS_DIRECT
-    printf("               MKL for large clusters : on (zgemm from dim %d, zheevd from dim %d)\n", ccexBlas::gemmMin, ccexBlas::eigMin);
+    printf("      MKL for large clusters : on (zgemm from dim %d, zheevd from dim %d)\n", ccexBlas::gemmMin, ccexBlas::eigMin);
 #else
-    printf("               MKL for large clusters : off\n");
+    printf("      MKL for large clusters : off\n");
 #endif
+    printf("      %s\n", buildLine().c_str());
+    logAlignEnd();
     printf("    ======================================================================\n");
     printf("\n"); 
 
 }
 
-void printHelp(){
-
-    printf("\tThis code is to simulate the many-body spin dynamics\n");
-    printf("\n\n");
-
-    printf("\tHow to use this code : CCECode [OPTION]... [FILE]...\n");
-    printf("\t\t-f\t:\tUse the condition input-file\n");
-    printf("\t\t-m\t:\tUse the external 'calMethod' ('single, ensemble, semi')\n");
-    printf("\t\t-I\t:\tuse the external 'BathFile'\n");
-    printf("\t\t-s\t:\tuse the external 'StateFile'\n");
-    printf("\t\t-S\t:\tuse the external 'ExStateFile'\n");
-    printf("\t\t-a\t:\tuse the external 'AvaaxFile'\n");
-    printf("\t\t-B\t:\tuse the external 'B0'\n");
-    printf("\t\t-o\t:\tuse the external 'Savefile' name\n");
-    printf("\t\t-v\t:\tprint the information of A-&Q-tensor file\n");
-    printf("\t\t-h\t:\tdisplay this help and exit\n");
-    printf("\n\n");
-
-
-    printf("\tAlong the 'calMethod' option, we can choose the calculation method!\n");
-    printf("\t 'calMethod = single'   : use the single sample calculation method\n");
-    printf("\t 'calMethod = ensemble' : use the ensemble CCE calculation method (default)\n");
-    printf("\t 'calMethod = semi'     : use the semi-classical CCE calculation method\n");
-    printf("\n\n");
-
-
-    printf("\tTo run this code, at least you need to the three file before!\n");
-    printf("\t\t1. Inputfile about nuclear configure which have spin positions and isotopes information\n");
-    printf("\t\t2. Gyromagnetic ratio about isotope nuclear\n");
-    printf("\t\t3. Defect position file // Write the defect position in condition file\n");
-    printf("\n\n");
-
-
-    printf("\tAnd then, you need another element!\n");
-    printf("\t\tCommon options         : 'BathFile', 'Order', 'Pulse', 'B0', deltaT', 'nStep', 'SaveFile', HFOpt', 'QuadOpt', 'HFmediOpt', ...\n");
-    printf("\t\tSingle method          : 'StateFile', 'ExStateFile', 'AvaaxFile', 'rDsrdr', 'enJTEOpt', 'nExspin'\n");
-    printf("\t\t                         '&Exspin' tag related stuff (For detail See below)\n");
-    printf("\t\tEnsemble method        : ''\n");
-    printf("\t\tsemi-classical method  : 'IntegStep' \n");
-    printf("\n\n");
-
-
-    printf("\tIf you use the condition file, there are many conditions...\n");
-    printf("\t\t'GyroFile'                \t: gyro magnetic ratio input-file (neccessary)\n");
-    printf("\t\t'DefectFile'              \t: input-file or array related defect position (neccessary) (unit : angsrom)\n");
-    printf("\t\t'BathFile'                \t: input-file of bath Configure\n");
-    printf("\t\t'StateFile'               \t: spin state input file\n");
-    printf("\t\t'ExStateFile'             \t: addtional spin's state input file \n");
-    printf("\t\t'AvaaxFile'               \t: the numbering of available geometry of the extra spin's input file\n");
-    printf("\t\t'SaveFile', 'SaveFileNoDiv', 'SaveFileWiDiv'\t: the file name to save the result of CCE\n");
-    printf("\n");
-}
-
 [[noreturn]] void ccexFatal(int code){
+    logQuietEnd(true);   // A68: MPI_Abort runs no atexit handler
     fflush(stdout); fflush(stderr);
     int running = 0, finished = 0;
     MPI_Initialized(&running); MPI_Finalized(&finished);

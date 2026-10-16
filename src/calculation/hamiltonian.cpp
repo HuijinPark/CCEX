@@ -1,3 +1,7 @@
+/**
+ * @file hamiltonian.cpp
+ * @brief Spin operators and the single-spin and two-spin Hamiltonian terms.
+ */
 #include "../../include/calculation/hamiltonian.h"
 #include "../../include/common/memory.h"
 #include <iostream>

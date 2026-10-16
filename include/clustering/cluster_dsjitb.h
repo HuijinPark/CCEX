@@ -1,3 +1,7 @@
+/**
+ * @file cluster_dsjitb.h
+ * @brief The disjoint (dsj) and inter-bath-cluster (itb) clustering variants.
+ */
 #ifndef __CCEX_CLUSTER_DSJ_H_
 #define __CCEX_CLUSTER_DSJ_H_
 

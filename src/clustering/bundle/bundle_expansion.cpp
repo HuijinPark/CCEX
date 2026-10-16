@@ -1,3 +1,7 @@
+/**
+ * @file bundle_expansion.cpp
+ * @brief Bundle clustering: checking a plan and turning its bundle expansion into site clusters.
+ */
 #include "../../../include/clustering/bundle/bundle_partition.h"
 #include "../../../include/clustering/bundle/bundle_text.h"
 #include "../../../include/clustering/bundle/bundle_powers.h"

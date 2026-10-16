@@ -1,3 +1,7 @@
+/**
+ * @file bundle_powers.h
+ * @brief The cluster expansion over bundles, shared by the calculation and the algorithm half of adaptive clustering.
+ */
 #ifndef CCEX_BUNDLE_POWERS_H
 #define CCEX_BUNDLE_POWERS_H
 

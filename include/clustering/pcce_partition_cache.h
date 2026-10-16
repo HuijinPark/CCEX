@@ -1,3 +1,7 @@
+/**
+ * @file pcce_partition_cache.h
+ * @brief The optional on-disk cache of a pCCE partition.
+ */
 #ifndef CCEX_PCCE_PARTITION_CACHE_H
 #define CCEX_PCCE_PARTITION_CACHE_H
 

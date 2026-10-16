@@ -16,7 +16,10 @@ FAKE_KINK ("B0") from rbath B0 up, the third largest rdip of each run has T2 x 1
 rbath); FAKE_SHAPE ("B0:n2") from rbath B0 up, the exponent is n2 with T2 scaled to keep the area (the decay time moves, the
 area does not).
 nstate 0 (no bath_state_file, the ensemble) writes out_wiDiv / out_noDiv. The input keys are CCEX's since A47 (2026-10-13):
-bath_state_file, Defect.axis_file, pcce.cache.file, rbath and rdip a number or [inner, outer].
+bath_state_file, Defect.axis_file, pcce.cache.file, rbath and rdip a number or [inner, outer]; since A64 (2026-10-15) the
+configuration block {bathfile, bath_state_file, defect_axis_file, defect_state_file, nstate, seed, ...}; since A65 the
+execution, cluster, output and frame blocks (output.file, output.savemode, cluster.pcce.cache.file read here); the file keys
+lists of one name per bath file - the old top-level keys are refused, as CCEX refuses them.
 """
 from math import gamma
 import hashlib
@@ -71,6 +74,31 @@ def outer(v):
 
 def main():
     inp = json.loads(Path(sys.argv[sys.argv.index("-f") + 1]).read_text())
+    old = [x for x in ("bathfile", "gyrofile", "bath_shift", "bath_state_file", "nstate", "seed") if x in inp]
+    if old:                                              # A64: CCEX refuses them
+        print(f"Error: input keys {old} are now in the configuration block", file=sys.stderr)
+        sys.exit(1)
+    a65 = [x for x in ("backend", "gpu_options", "propagator", "evolution", "evolution_update", "gcce_refinement",
+                       "column_evolution", "profile", "cluster_mode", "add_subclusters", "max_clusters_per_order", "pcce",
+                       "bundle", "adaptive", "probe_memory_gb", "outfile", "savemode", "cluster_contributions", "cluster_only",
+                       "coordinate_frame_rotation", "bath_coordinate_rotation", "defect_axis_reference") if x in inp]
+    if a65:                                              # A65: CCEX refuses them at the top
+        print(f"Error: input keys {a65} are now in the execution, cluster, output and frame blocks", file=sys.stderr)
+        sys.exit(1)
+    if "k_range" in inp.get("configuration", {}) or "path" in inp.get("configuration", {}):
+        print("Error: the runner writes one configuration with absolute names (no k_range, no path)", file=sys.stderr)
+        sys.exit(1)
+    inp.update(inp.pop("configuration", {}))             # the configuration block (A64), read as the flat names below
+    if any(k in inp.get("Defect", {}) for k in ("axis_file", "state_file")):   # A64: CCEX refuses them there
+        print("Error: Defect.axis_file and Defect.state_file are now configuration.defect_axis_file and defect_state_file",
+              file=sys.stderr)
+        sys.exit(1)
+    for key in ("bath_state_file", "defect_axis_file", "defect_state_file"):
+        if key in inp:                                   # one name per bath file; the runner writes one bath file
+            if not (isinstance(inp[key], list) and len(inp[key]) == len(inp["bathfile"])):
+                print(f"Error: {key} must be a list of one name per bath file", file=sys.stderr)
+                sys.exit(1)
+            inp[key] = inp[key][0]
     inp["rbath"], inp["rdip"] = outer(inp["rbath"]), outer(inp["rdip"])
     if os.environ.get("FAKE_COUNT"):
         with open(os.environ["FAKE_COUNT"], "a") as f:
@@ -85,10 +113,10 @@ def main():
                 p = Path(f"{inp['bath_state_file']}{st}")
                 f.write(f"{k} {st} {inp['rbath']} {hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else 'missing'} {Path.cwd().parent.name}\n")
     if os.environ.get("FAKE_AVAAX_SEEN"):                # the avaax file this run reads: configuration, rbath, content hash
-        p = Path(inp.get("Defect", {}).get("axis_file", "none"))
+        p = Path(inp.get("defect_axis_file", "none"))
         with open(os.environ["FAKE_AVAAX_SEEN"], "a") as f:
             f.write(f"{k} {inp['rbath']} {hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else 'missing'}\n")
-    cache = inp.get("pcce", {}).get("cache", {}).get("file")
+    cache = inp.get("cluster", {}).get("pcce", {}).get("cache", {}).get("file")
     if cache:                                            # the partition cache: rbath and the bath file stand for the partition
         c = Path(cache)
         mine = f"{inp['rbath']} {hashlib.sha256(Path(inp['bathfile'][0]).read_bytes()).hexdigest()}\n"
@@ -108,8 +136,9 @@ def main():
     big = str(k) in os.environ.get("FAKE_BIG_IDS", "").split(",")
     jump = str(k) in os.environ.get("FAKE_JUMP_IDS", "").split(",")
     files = []
+    out = inp.get("output", {}).get("file", "out")
     for j, r in enumerate(rdips):
-        prefix = "out" if j == 0 else f"out_rdip{float(np.float32(r)):g}"
+        prefix = out if j == 0 else f"{out}_rdip{float(np.float32(r)):g}"
         same = bool(os.environ.get("FAKE_IDENTICAL"))      # every configuration and state the same curve
         T = t2(1 if same else k, float(inp["rbath"]), r) * (1.1 if kink is not None and r == kink else 1.0)
         T *= gamma(1 + 1 / N) / gamma(1 + 1 / n_exp)            # FAKE_SHAPE keeps the area T Gamma(1 + 1/n)
@@ -150,7 +179,7 @@ def main():
             if jump and s in (0, 1):               # wiDiv jumps at one point, noDiv does not (a divergent point to correct)
                 wi = v.copy(); wi[nstep // 3] = 5.0
             files += [(Path(f"{prefix}{g}_wiDiv"), wi)]
-            sm = inp.get("savemode")                          # like CCEX: savemode.nodiv false writes _wiDiv alone
+            sm = inp.get("output", {}).get("savemode")       # like CCEX: output.savemode.nodiv false writes _wiDiv alone
             if not (isinstance(sm, dict) and sm.get("nodiv", True) is False):
                 files += [(Path(f"{prefix}{g}_noDiv"), v)]
     marker = os.environ.get("FAKE_FAIL_ONCE")

@@ -23,17 +23,20 @@
     "alphams": 1,
     "betams": 0
   },
-  "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
-  "bathfile": [
-    "../../inputs/hbn/bath_hBN_VB_flat_1"
-  ],
+  "configuration": {
+    "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
+    "bathfile": [
+      "../../inputs/hbn/bath_hBN_VB_flat_1"
+    ],
+    "nstate": 0,
+    "seed": 19
+  },
   "order": 2,
   "bfield": 1000,
   "rbath": 14,
   "rdip": 8,
   "deltat": 5e-06,
   "nstep": 50,
-  "nstate": 0,
   "hamiltonian": {
     "common": {
       "hyperfine": {
@@ -49,6 +52,5 @@
     },
     "cCCE": {"hfmedi": true}
   },
-  "pulse": {"count": 1},
-  "seed": 19
+  "pulse": {"count": 1}
 }

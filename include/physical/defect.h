@@ -1,3 +1,7 @@
+/**
+ * @file defect.h
+ * @brief The defects of the bath (such as P1): their extra spins, interactions and axes.
+ */
 #ifndef __CCEX_DEFECT_H_
 #define __CCEX_DEFECT_H_
 
@@ -6,7 +10,7 @@
 
 /**
  * @struct Defect
- * @brief Defect structure
+ * @brief A defect species in the bath (such as P1): its extra spins, their interactions and the axes it may take.
 */
 typedef enum {
     DEFECT_COORDINATE_FRAME_QUBIT = 0, /**< common computational/qubit-aligned frame */
@@ -14,7 +18,7 @@ typedef enum {
 } DefectCoordinateFrame;
 
 typedef enum {
-    DEFECT_ZFS_NONE           = 0,
+    DEFECT_ZFS_NONE           = 0, /**< no zfs given */
     DEFECT_ZFS_INDEXED_LEGACY = 1, /**< legacy [[configuration,"e",[9]], ...] form */
     DEFECT_ZFS_SHARED_DE       = 2, /**< shared {D,E,unit} form */
     DEFECT_ZFS_SHARED_TENSOR   = 3  /**< shared {tensor,unit} form */
@@ -53,6 +57,7 @@ typedef struct{
 
 } Defect;
 
+/** @brief The defects of the bath: for each bath spin that is a defect, its extra spins and its chosen axis. */
 typedef struct{
 
     int nbathspin;
@@ -136,6 +141,7 @@ int DefectArray_applyCoordinateFrameRotation(DefectArray* dfa, const double R[3]
 void DefectArray_setPaxes_i(DefectArray* dfa, int ibs, int axis); // paxes
 void DefectArray_setPaxesRandom(DefectArray* dfa, BathArray* ba); // nbathspin (// before calculate)
 long DefectArray_paxesDraws(); // random numbers the axes consumed at set-up
+void DefectArray_resetPaxesDraws(); // a new run in the same process (A64: the next configuration k) counts from 0
 void DefectArray_setSubbathStatesRandom(DefectArray* dfa, BathArray* ba); // subbath->staets
 void DefectArray_setNaddspins(DefectArray* dfa, BathArray* ba); // before calculate
 void DefectArray_setSubbath(DefectArray* dfa, BathArray* ba, QubitArray* qa);

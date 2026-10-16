@@ -1,3 +1,7 @@
+/**
+ * @file base_numeric.cpp
+ * @brief Adaptive refinement: checked integers, exact summation and safe complex arithmetic.
+ */
 // Numbers the policies can rely on: error types, checked 64-bit integers, one-rounding
 // division, exact summation, and complex abs/division that fail instead of overflowing.
 #include "base_numeric.h"

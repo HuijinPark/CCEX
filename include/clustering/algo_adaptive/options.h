@@ -1,3 +1,7 @@
+/**
+ * @file options.h
+ * @brief Adaptive refinement: reading the options (command line or the cluster.adaptive block).
+ */
 // The command line, from the 22 options of options_table.h (42 until the four removed policies took 20 with them, 2026-10-10).
 //
 // The table is generated from adaptive_refine.argument_parser(), so the two stay

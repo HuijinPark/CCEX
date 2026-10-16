@@ -1,3 +1,7 @@
+/**
+ * @file bundle_connection_check.h
+ * @brief Bundle clustering: the bounded check of which bundle connections may be omitted when rdip is not given.
+ */
 #ifndef CCEX_ADAPTIVE_CONNECTION_CHECK_H
 #define CCEX_ADAPTIVE_CONNECTION_CHECK_H
 #include "bundle_partition.h"

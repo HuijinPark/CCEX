@@ -16,16 +16,16 @@ variant, which baseline it is compared against and how:
 Nothing here stores an expected coherence. Every check is legacy-vs-new inside
 one binary, and axis (1) is what ties the legacy side back to v1.1.0.
 """
-import json, sys, os, copy
+import json, sys, os, copy; from input_layout import flat, nest
 
 sysname, work = sys.argv[1], sys.argv[2]
-legacy = json.load(open(f"{work}/legacy.json"))
+legacy = flat(json.load(open(f"{work}/legacy.json")))
 rows = []
 
 def emit(name, d, baseline="legacy", mode="byte", desc=""):
     d = copy.deepcopy(d)
     d["outfile"] = f"./{name}"
-    json.dump(d, open(f"{work}/{name}.json", "w"), indent=4)
+    json.dump(nest(d), open(f"{work}/{name}.json", "w"), indent=4)
     rows.append((name, baseline, mode, desc))
 
 # ---------------------------------------------------------------- rotation keys
@@ -57,12 +57,13 @@ else:
 
 # ---------------------------------------------------------------- per system
 if sysname == "S1a":
-    # The deprecated name has to mean exactly what the new one means.
+    # frame.rotation is on when the block is given (A65): without "enabled" it is the block with "enabled": true. (The
+    # old name bath_coordinate_rotation, an alias until A65, is refused now: ../check_rotation, ../check_refusals.)
     emit("rot111_newname", with_rot(ROT_111), "base", "num",
          '[111] rotation : moves the bath, so it is NOT expected to match the baseline')
-    emit("rot111_alias", with_rot(ROT_111, key="bath_coordinate_rotation"),
+    emit("rot111_noenabled", with_rot({k: v for k, v in ROT_111.items() if k != "enabled"}),
          "rot111_newname", "byte",
-         'deprecated bath_coordinate_rotation == coordinate_frame_rotation')
+         'frame.rotation without "enabled" == "enabled": true (on when given, A65)')
 
 elif sysname == "S3":
     df = legacy["Defect"]["species"][0]
@@ -122,10 +123,7 @@ elif sysname == "S3":
                                     "unit":"GHz"}),
          "df_det_legacy", "num", 'detuning in GHz == the same values in MHz')
 
-    # defect_axis_reference is documented as changing no number; require exactly that
-    d = with_rot(ROT_ID); d["defect_axis_reference"] = "qubit_axis"
-    emit("defaxis_ref", d, "rot_identity", "byte",
-         'defect_axis_reference="qubit_axis" is validated and logged, nothing else')
+    # defect_axis_reference changed no number and was removed on 2026-10-15 (A65): refused, ../check_rotation
 
 elif sysname == "S4":
     # With the rotation ON but R = I, "bath" and "qubit" must both reduce to the

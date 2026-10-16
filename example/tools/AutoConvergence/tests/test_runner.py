@@ -1,4 +1,4 @@
-"""Tests of the --auto_conv runner (autoconv/runner.py) against fake_ccex.py, whose answer is fixed beforehand:
+"""Tests of the automatic-convergence runner (autoconv/runner.py) against fake_ccex.py, whose answer is fixed beforehand:
 the last two candidates are compared (converged?) and then each against the largest (2026-10-07): with rdip rungs 20/30/40
 under rdip_max 50, T2 differs from 50 by 4.0/1.1/0.24 % (the fit-line maxima are about 0.48 x those: 0.019 fail, 0.005 and
 0.001 pass) -> rdip 30; with rbath 10/30/40, by 5.6/0.16 % -> rbath 30. The runner must pick rbath 30, rdip 30.
@@ -31,17 +31,23 @@ def safe(env):
     return dict(env, PYTHONSAFEPATH="1", PYTHONPATH=str(HERE.parent) + (os.pathsep + old if old else ""))
 
 
-def nest(flat):
-    """The nested auto_convergence block (time_window / rdip / rbath / configurations) from the runner's flat names; names
-    the runner does not know stay at the top (the refusal cases)."""
-    from autoconv.runner import WHERE
+def nest(flat, conf=None):
+    """The nested auto_convergence block (time_window / rdip / rbath / sampling) from the runner's flat names; names the
+    runner does not know stay at the top (the refusal cases). "configurations" is the runner's split and file patterns:
+    the split goes to sampling, the patterns (bathfile, statefile, avaaxfile, exstatefile) into conf, the CCEX
+    configuration block (A65)."""
+    from autoconv.runner import WHERE, FILE_KEYS
     out = {}
     for k, v in flat.items():
         if k in WHERE:
             sec, key = WHERE[k].split(".")
             out.setdefault(sec, {})[key] = v
         elif k == "configurations" and isinstance(v, dict):
-            out.setdefault("configurations", {}).update({dict(pilot="test", pool="production").get(x, x): y for x, y in v.items()})
+            for x, y in v.items():
+                if x in FILE_KEYS and conf is not None:
+                    conf[FILE_KEYS[x]] = [y]
+                else:
+                    out.setdefault("sampling", {})[dict(pilot="test", pool="production").get(x, x)] = y
         else:
             out[k] = v
     return out
@@ -64,8 +70,9 @@ def make_case(tmp, pilot=(1, 2, 3, 4), pool=tuple(range(10, 40)), nspin=200, box
                candi_rdip=[20, 30, 40, 50], candi_rbath=[10, 30, 40],
                threshold_config=0.06, min_configurations=2)   # the targets these cases were built for
     blk.update(block)
-    inp = dict(method="cCCE", quantity="coherence", order=2, Qubit=dict(file=str(data / "qubit")), gyrofile=str(data / "qubit"),
-               deltat=0.02, nstep=nstep, nstate=4, bfield=500, auto_convergence=nest(blk))
+    conf = dict(gyrofile=str(data / "qubit"), nstate=4)      # the configuration block (A64; the patterns in it A65)
+    inp = dict(method="cCCE", quantity="coherence", order=2, Qubit=dict(file=str(data / "qubit")),
+               configuration=conf, deltat=0.02, nstep=nstep, bfield=500, auto_convergence=nest(blk, conf))
     (tmp / "input.json").write_text(json.dumps(inp, indent=1))
     return tmp / "input.json", fake
 
@@ -121,7 +128,7 @@ class TestRunner(unittest.TestCase):
 
     def test_nstate_0_is_the_ensemble(self):
         inp, fake = make_case(self.tmp)
-        j = json.loads(inp.read_text()); j["auto_convergence"]["configurations"].pop("statefile"); j["nstate"] = 0
+        j = json.loads(inp.read_text()); j["configuration"].pop("bath_state_file"); j["configuration"]["nstate"] = 0
         inp.write_text(json.dumps(j))
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
@@ -129,7 +136,7 @@ class TestRunner(unittest.TestCase):
         self.assertEqual((s["production"]["states"], s["sampling_pilot"]["allocation"]["best"]["S"]), (0, 1))
         run = next((inp.parent / "auto/runs/production").iterdir())
         child = json.loads((run / "input.json").read_text())
-        self.assertEqual((child["nstate"], "bath_state_file" in child), (0, False))
+        self.assertEqual((child["configuration"]["nstate"], "bath_state_file" in child["configuration"]), (0, False))
         self.assertTrue((run / "out_wiDiv").is_file())
         txt = (inp.parent / "auto/result/summary.txt").read_text()
         self.assertIn("configurations x ensemble", txt)
@@ -140,12 +147,13 @@ class TestRunner(unittest.TestCase):
     def test_nstate_and_statefile_must_agree(self):
         inp, fake = make_case(self.tmp)
         j = json.loads(inp.read_text())
-        for nstate, drop, msg in ((0, False, "does not read state files"), (4, True, "exstatefile needs configurations.statefile")):
-            k = dict(j, nstate=nstate)       # nstate > 0 without statefile is allowed now (states made per run, 2026-10-09)
-            k["auto_convergence"] = dict(j["auto_convergence"], configurations={x: v for x, v in j["auto_convergence"]["configurations"].items()
-                                                                                  if not (drop and x == "statefile")})
+        for nstate, drop, msg in ((0, False, "does not read state files"),
+                                  (4, True, "defect_state_file needs configuration.bath_state_file")):
+            # nstate > 0 without a state file is allowed (states made per run, 2026-10-09)
+            k = dict(j, configuration={x: v for x, v in dict(j["configuration"], nstate=nstate).items()
+                                       if not (drop and x == "bath_state_file")})
             if drop:
-                k["auto_convergence"]["configurations"]["exstatefile"] = "data/ex{k}_state"
+                k["configuration"]["defect_state_file"] = ["data/ex{k}_state"]
             inp.write_text(json.dumps(k))
             code, out = call(inp, fake)
             self.assertEqual(code, 2, out)
@@ -194,7 +202,7 @@ class TestRunner(unittest.TestCase):
 
     def test_nodiv_false_runs_on_wiDiv_alone(self):
         inp, fake = make_case(self.tmp)
-        j = json.loads(inp.read_text()); j["savemode"] = {"mode": "coherence", "nodiv": False}; inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["output"] = {"savemode": {"mode": "coherence", "nodiv": False}}; inp.write_text(json.dumps(j))
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
         run = next((inp.parent / "auto/runs/production").iterdir())
@@ -217,13 +225,26 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(code, 0, out)
         self.assertEqual((summary(inp)["window"]["status"], summary(inp)["window"]["pilot_nstep"]), ("given", 99))
 
+    def test_units_as_value_and_unit(self):                   # A67: {"value", "unit"} in the base input and time_window.value
+        got = []
+        for i, (dt, bf, win) in enumerate(((0.02, 500, 2.0),
+                                           ({"value": 20, "unit": "us"}, {"value": 50, "unit": "mT"}, {"value": 2000, "unit": "us"}))):
+            d = Path(self.tmp) / f"u{i}"; d.mkdir()
+            inp, fake = make_case(d, converge_time_window=False, set_time_window=win)
+            j = json.loads(inp.read_text()); j.update(deltat=dt, bfield=bf); inp.write_text(json.dumps(j))
+            code, out = call(inp, fake)
+            self.assertEqual(code, 0, out)
+            s = summary(inp)
+            got.append((s["window"]["status"], s["window"]["pilot_nstep"], s["production"]["nstep"], s["truncation"]["chosen"]))
+        self.assertEqual(got[0], got[1])
+
     def test_only_rdip_and_configurations_converge(self):     # user 2026-10-08: converge true/false per section
         inp, fake = make_case(self.tmp, converge_time_window=False, set_time_window=6.0, converge_rbath=False, value_rbath=30.0)
         j = json.loads(inp.read_text()); j["auto_convergence"]["rbath"].pop("candidates"); inp.write_text(json.dumps(j))
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
         s = summary(inp)
-        self.assertEqual(s["converge"], dict(time_window=False, rdip=True, rbath=False, configurations=True))
+        self.assertEqual(s["converge"], dict(time_window=False, rdip=True, rbath=False, sampling=True))
         self.assertEqual((s["truncation"]["chosen"]["rbath"], s["rbath"]["values"]), (30.0, [30.0]))
         self.assertIsNotNone(s["truncation"]["chosen"]["rdip"])
         self.assertFalse((inp.parent / "auto/runs/rbath").exists())          # no rbath runs
@@ -263,6 +284,10 @@ class TestRunner(unittest.TestCase):
         status = lambda: subprocess.run([PY, "-m", "autoconv", "status", str(inp)], cwd=HERE.parent, env=safe(os.environ),
                                         capture_output=True, text=True).stdout
         self.assertIn("not started", status())
+        # A63: the status is this tool's own command (main.out --auto_status was removed); without INPUT it is a usage error
+        bare = subprocess.run([PY, "-m", "autoconv", "status"], cwd=HERE.parent, env=safe(os.environ), capture_output=True, text=True)
+        self.assertEqual(bare.returncode, 2, bare.stderr)
+        self.assertIn("usage: autoconv status", bare.stderr)
         code, out = call(inp, fake, dict(FAKE_COUNT=str(cnt)))
         self.assertEqual(code, 0, out)
         prog = (inp.parent / "auto/result/progress.txt").read_text()
@@ -434,7 +459,7 @@ class TestRunner(unittest.TestCase):
         inp, fake = make_case(self.tmp)
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
-        j = json.loads(inp.read_text()); j["auto_convergence"]["configurations"]["threshold"] = 0.05; inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["auto_convergence"]["sampling"]["threshold"] = 0.05; inp.write_text(json.dumps(j))
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
         self.assertIn("decisions.1.jsonl", out)
@@ -456,7 +481,7 @@ class TestRunner(unittest.TestCase):
         inp, fake = make_case(self.tmp)
         code, out = call(inp, fake)
         self.assertEqual(summary(inp)["status"], "converged", out)
-        j = json.loads(inp.read_text()); j["pcce"] = {"cache": {"file": "cache.txt"}}; inp.write_text(json.dumps(j))   # a file not hashed
+        j = json.loads(inp.read_text()); j["cluster"] = {"pcce": {"cache": {"file": "cache.txt"}}}; inp.write_text(json.dumps(j))   # a file not hashed
         code, out = call(inp, fake)
         self.assertEqual(code, 2, out)
         self.assertIn("pcce.cache", out)
@@ -465,7 +490,7 @@ class TestRunner(unittest.TestCase):
     def test_old_savemode_forms_are_refused(self):           # 2026-10-13: save_nodiv is savemode.nodiv, "normal" is "coherence"
         inp, fake = make_case(self.tmp)
         base = json.loads(inp.read_text())
-        for edit, want in ((dict(save_nodiv=False), "save_nodiv is now savemode.nodiv"), (dict(savemode="normal"), "savemode")):
+        for edit, want in ((dict(save_nodiv=False), "save_nodiv is now output.savemode.nodiv"), (dict(savemode="normal"), "savemode")):
             inp.write_text(json.dumps(dict(base, **edit)))
             code, out = call(inp, fake)
             self.assertEqual(code, 2, out)
@@ -577,7 +602,7 @@ class TestRunner(unittest.TestCase):
         inp, fake = make_case(self.tmp, **kw)
         j = json.loads(inp.read_text())
         for k in ("test", "production"):
-            j["auto_convergence"]["configurations"].pop(k)
+            j["auto_convergence"]["sampling"].pop(k)
         inp.write_text(json.dumps(j))
         return inp, fake
 
@@ -658,7 +683,7 @@ class TestRunner(unittest.TestCase):
 
     def test_state_files_made_per_run(self):              # plan "state 파일 자동" (user 2026-10-09)
         inp, fake = make_case(self.tmp, threshold_config=0.5)
-        j = json.loads(inp.read_text()); j["auto_convergence"]["configurations"].pop("statefile"); inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["configuration"].pop("bath_state_file"); inp.write_text(json.dumps(j))
         for f in (inp.parent / "data").glob("cfg*_state*"):
             f.unlink()                                          # none stored
         seen = Path(self.tmp) / "seen"
@@ -678,7 +703,7 @@ class TestRunner(unittest.TestCase):
 
     def test_avaax_files_made_per_run(self):               # plan "avaax 파일 자동" (user 2026-10-09)
         inp, fake = make_case(self.tmp, threshold_config=0.5)
-        j = json.loads(inp.read_text()); j["Defect"] = {"species": [{"name": "13c", "n_configurations": 3}]}; inp.write_text(json.dumps(j))   # case as CCEX (6548a9 R4)
+        j = json.loads(inp.read_text()); j["Defect"] = {"species": [{"name": "13c", "n_axis_states": 3}]}; inp.write_text(json.dumps(j))   # case as CCEX (6548a9 R4)
         seen = Path(self.tmp) / "seen"
         code, out = call(inp, fake, dict(FAKE_AVAAX_SEEN=str(seen)))
         self.assertEqual(code, 0, out)
@@ -803,9 +828,9 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(code, 3, out)
         s = summary(inp)
         self.assertLessEqual(len(s["production"]["configurations"]), 20)
-        self.assertIn("raise configurations.max_configurations (now 20, 30 production files there)", s["reason"])
+        self.assertIn("raise sampling.max_configurations (now 20, 30 production files there)", s["reason"])
         self.assertIn("production 20 of 30 (max_configurations)", (inp.parent / "auto/result/summary.txt").read_text())
-        j = json.loads(inp.read_text()); j["auto_convergence"]["configurations"]["max_configurations"] = 30; inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["auto_convergence"]["sampling"]["max_configurations"] = 30; inp.write_text(json.dumps(j))
         code, out = call(inp, fake)
         self.assertFalse(list((inp.parent / "auto").glob("decisions.*.jsonl")), out)     # the same plan goes on
         self.assertGreater(len(summary(inp)["production"]["configurations"]), 20)
@@ -814,15 +839,15 @@ class TestRunner(unittest.TestCase):
         inp, fake = make_case(self.tmp, threshold_config=0.001, max_configurations=30)
         code, out = call(inp, fake)
         self.assertEqual(code, 3, out)
-        self.assertIn("raise configurations.max_configurations to about", summary(inp)["reason"])   # files and cap used up (#3)
-        j = json.loads(inp.read_text()); j["auto_convergence"]["configurations"]["max_configurations"] = 20; inp.write_text(json.dumps(j))
+        self.assertIn("raise sampling.max_configurations to about", summary(inp)["reason"])   # files and cap used up (#3)
+        j = json.loads(inp.read_text()); j["auto_convergence"]["sampling"]["max_configurations"] = 20; inp.write_text(json.dumps(j))
         code, out = call(inp, fake)
         self.assertEqual(code, 2, out)
         self.assertIn("below the 30 production configurations already planned", out)
 
     def test_max_states_does_not_bound_a_fixed_production_of_made_states(self):   # review 01ecda #2
         inp, fake = make_case(self.tmp, converge_config=False, number_config=2, states_config=20, max_states=5)
-        j = json.loads(inp.read_text()); j["auto_convergence"]["configurations"].pop("statefile"); inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["configuration"].pop("bath_state_file"); inp.write_text(json.dumps(j))
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
         self.assertEqual(summary(inp)["production"]["states"], 20)
@@ -835,7 +860,7 @@ class TestRunner(unittest.TestCase):
     def test_max_keys_are_checked(self):
         for kw, word in ((dict(max_states=3), "max_states must be an integer >= test_states"),
                          (dict(max_configurations=1), "max_configurations must be an integer >= 2"),
-                         (dict(max_configurations=5, min_configurations=10), "below min_configurations")):
+                         (dict(max_configurations=5, min_configurations=10), "below sampling.min_configurations")):
             d = Path(self.tmp) / str(len(word)); d.mkdir()
             inp, fake = make_case(d, **kw)
             code, out = call(inp, fake)
@@ -857,14 +882,18 @@ class TestRunner(unittest.TestCase):
         self.assertTrue(calls and all(c.startswith("-n 3 ") for c in calls))
         self.assertIn("launcher: mpirun -n 3 (the mpirun that started main.out)", (inp.parent / "auto/result/summary.txt").read_text())
 
-    def test_the_input_launcher_comes_first_and_a_bad_rank_count_is_refused(self):
+    def test_without_mpirun_one_rank_the_launcher_key_refused_and_a_bad_rank_count_refused(self):   # A65: no launcher key
         inp, fake = make_case(self.tmp, threshold_config=0.5)
-        j = json.loads(inp.read_text()); j["auto_convergence"]["launcher"] = []; inp.write_text(json.dumps(j))
         d = self._fake_mpirun()
-        code, out = call(inp, fake, dict(CCEX_AUTOCONV_NP="3", PATH=f"{d}:{os.environ['PATH']}"))
+        code, out = call(inp, fake, dict(PATH=f"{d}:{os.environ['PATH']}"))
         self.assertEqual(code, 0, out)
-        self.assertFalse((d / "calls").exists())                             # the input's (empty) launcher, no mpirun
+        self.assertFalse((d / "calls").exists())                             # no CCEX_AUTOCONV_NP: one rank, no mpirun
         self.assertIn("launcher: none", (inp.parent / "auto/result/summary.txt").read_text())
+        j = json.loads(inp.read_text()); j["auto_convergence"]["launcher"] = []; inp.write_text(json.dumps(j))
+        code, out = call(inp, fake)
+        self.assertEqual(code, 2, out)
+        self.assertIn("launcher: removed (2026-10-15)", out)
+        j["auto_convergence"].pop("launcher"); inp.write_text(json.dumps(j))
         code, out = call(inp, fake, dict(CCEX_AUTOCONV_NP="x"))
         self.assertEqual(code, 2, out)
         self.assertIn("CCEX_AUTOCONV_NP", out)
@@ -961,7 +990,7 @@ class TestRunner(unittest.TestCase):
 
     def test_a_divergent_point_without_nodiv_leaves_the_configuration_out(self):
         inp, fake = make_case(self.tmp, threshold_config=0.5)
-        j = json.loads(inp.read_text()); j["savemode"] = {"mode": "coherence", "nodiv": False}; inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["output"] = {"savemode": {"mode": "coherence", "nodiv": False}}; inp.write_text(json.dumps(j))
         code, out = call(inp, fake, dict(FAKE_BIG_IDS="10"))
         self.assertEqual(code, 0, out)
         self.assertEqual([r["configuration"] for r in summary(inp)["unstable"]], [10])
@@ -1007,7 +1036,7 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(code, 0, out)
         (Path(self.tmp) / "b").mkdir()
         inp2, _ = make_case(Path(self.tmp) / "b")
-        j = json.loads(inp2.read_text()); j["Defect"] = dict(species=[dict(name="P1", n_nuclear_spins=1)]); inp2.write_text(json.dumps(j))
+        j = json.loads(inp2.read_text()); j["Defect"] = dict(species=[dict(name="P1", n_onsite_spins=1)]); inp2.write_text(json.dumps(j))
         code, out = call(inp2, fake, dict(FAKE_RANDOM=msg))
         self.assertEqual(code, 1, out)
 
@@ -1027,7 +1056,16 @@ class TestRunner(unittest.TestCase):
         self.assertIn("linearized SE", s["reason"])
 
     def test_inputs_outside_the_checks_are_refused(self):   # review 10-07 A10
-        cases = [(dict(bath_shift=[[1.0, 0.0, 0.0]]), {}, "bath_shift"),
+        cases = [(dict(configuration=dict(gyrofile="data/qubit", nstate=4, bathfile=["data/bath_{k}"], bath_state_file=["data/cfg{k}_state"],
+                                          bath_shift=[[1.0, 0.0, 0.0]])), {}, "bath_shift"),
+                 (dict(configuration=dict(gyrofile="data/qubit", nstate=4, bathfile=["data/bath_{k}", "data/bath_{k}"])), {},
+                  "list of one name"),                                  # one bath file per configuration (A65)
+                 (dict(configuration=dict(gyrofile="data/qubit", nstate=4, bathfile=["data/bath_1"])), {}, "must hold {k} once"),
+                 (dict(configuration=dict(gyrofile="data/qubit", nstate=4, bathfile=["data/bath_{k}"], k_range=[2, 1])), {},
+                  "k_range must be [first, last]"),
+                 (dict(seed=1), {}, "now in the configuration block"),               # A64: the old top-level keys
+                 (dict(cluster_mode="pcce"), {}, "cluster_mode (now cluster.mode)"),      # A65: the old top-level places
+                 (dict(Defect=dict(species=[dict(name="P1", n_configurations=3)])), {}, "n_configurations (now n_axis_states)"),
                  (dict(Qubit=dict(qubit=[dict(name="q1"), dict(name="q2")])), {}, "one qubit"),
                  ({}, dict(candi_rbath=[40]), "at least two"),
                  ({}, dict(window_method="fit"), "removed"),
@@ -1038,13 +1076,19 @@ class TestRunner(unittest.TestCase):
                  ({}, dict(fit_floor=1.5), "t2_fit.floor"),
                  ({}, dict(fit_n_range=[2.0, 1.0]), "t2_fit.n_range"),
                  ({}, dict(t2_fit_points="all"), "now t2_fit.points"),
-                 ({}, dict(threshold_config=2.0), "configurations.threshold"),
-                 ({}, dict(se_target=0.02), "now configurations.threshold"),
+                 ({}, dict(threshold_config=2.0), "sampling.threshold"),
+                 ({}, dict(se_target=0.02), "now sampling.threshold"),
                  ({}, dict(truncation_rel_tol=0.02), "now rdip.threshold and rbath.threshold"),
                  ({}, dict(max_spins=10), "removed"),
                  ({}, dict(rdip_max=50), "now rdip.candidates"),
                  ({}, dict(time_window=2.0), "time_window must be an object"),
                  ({}, dict(converge_time_window=False, set_time_window=2.0, set_time_window_unit="min"), "time_window.unit"),
+                 ({}, dict(converge_time_window=False, set_time_window={"value": 2, "unit": "min"}),
+                  'auto_convergence.time_window.value.unit "min" is not known'),
+                 ({}, dict(converge_time_window=False, set_time_window={"value": 2, "unit": "ms"}, set_time_window_unit="ms"),
+                  "leave time_window.unit out"),
+                 (dict(deltat={"value": 1, "unit": "sec"}), {}, 'deltat.unit "sec" is not known'),
+                 (dict(rdip={"values": 10, "unit": "A"}), {}, "rdip must be a number (in A)"),
                  ({}, dict(smoothing_points=9), "removed"),
                  ({}, dict(enabled=False), "enabled is false"),
                  ({}, dict(converge_rdip=False), "give rdip.value"),
@@ -1072,7 +1116,8 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(code, 2, out)
 
     def test_input_refusals(self):
-        cases = [dict(configurations=None), dict(candi_rdip=[10, 5]), dict(version=1), dict(unknown_key=1),
+        cases = [dict(sampling=dict(bathfile="data/bath_{k}")), dict(configurations=dict(number=3)), dict(launcher=["mpirun", "-n", "2"]),
+                 dict(candi_rdip=[10, 5]), dict(version=1), dict(unknown_key=1),
                  dict(time_window=dict(method="fit")), dict(time_window=dict(smoothing_points=9))]
         for i, bad in enumerate(cases):
             d = Path(self.tmp) / f"c{i}"; d.mkdir()
@@ -1094,9 +1139,12 @@ class TestRunner(unittest.TestCase):
         self.assertEqual(code, 2, out)
         self.assertIn("missing", out)
         for i, (edit, msg) in enumerate(((dict(method="DM"), "supports method"),
-                                         (dict(cluster_mode="pcce", pcce=dict(partition="legacy")), "pcce.partition"),
-                                         (dict(adaptive=dict(policy="merge")), "adaptive"), (dict(pcce=dict(cache=dict(file="x.cache"))), "pcce.cache"),
-                                         (dict(cluster_mode="pcce", pcce=dict(cache=dict(mode="readwrite"))), "own partition cache"))):
+                                         (dict(cluster=dict(mode="pcce", pcce=dict(partition="legacy"))), "cluster.pcce.partition"),
+                                         (dict(cluster=dict(adaptive=dict(policy="merge"))), "adaptive"),
+                                         (dict(cluster=dict(pcce=dict(cache=dict(file="x.cache")))), "cluster.pcce.cache"),
+                                         (dict(cluster=dict(mode="pcce", pcce=dict(cache=dict(mode="readwrite")))), "own partition cache"),
+                                         (dict(output=dict(cluster_only=True)), "refuses output.cluster_only = True"),     # A63
+                                         (dict(output=dict(cluster_only="yes")), "refuses output.cluster_only = 'yes'"))):
             d = Path(self.tmp) / f"method{i}"; d.mkdir()
             inp, fake = make_case(d)
             j = json.loads(inp.read_text()); j.update(edit); inp.write_text(json.dumps(j))
@@ -1105,7 +1153,7 @@ class TestRunner(unittest.TestCase):
             self.assertIn(msg, out)
 
     def test_other_methods_run_every_rung_and_find_the_same_answer(self):   # plan "지원 방법 넓히기" M1, M3; A23
-        for i, edit in enumerate((dict(method="gCCE"), dict(cluster_mode="pcce"), dict(order=3), dict(cluster_mode="bundle"))):
+        for i, edit in enumerate((dict(method="gCCE"), dict(cluster=dict(mode="pcce")), dict(order=3), dict(cluster=dict(mode="bundle")))):
             d = Path(self.tmp) / f"m{i}"; d.mkdir()
             inp, fake = make_case(d)
             j = json.loads(inp.read_text()); j.update(edit); inp.write_text(json.dumps(j))
@@ -1114,7 +1162,7 @@ class TestRunner(unittest.TestCase):
             s = summary(inp)
             self.assertEqual((s["truncation"]["chosen"]["rbath"], s["truncation"]["chosen"]["rdip"]), (30.0, 30.0), edit)
             runs = [json.loads(p.read_text()) for p in (inp.parent / "auto/runs").rglob("input.json")]
-            if "method" in edit or edit.get("cluster_mode") == "pcce":   # gCCE2 and pCCE2 have the ladder too (A23)
+            if "method" in edit or edit.get("cluster", {}).get("mode") == "pcce":   # gCCE2 and pCCE2 have the ladder too (A23)
                 self.assertTrue(any("rdip_ladder" in r for r in runs), edit)
                 self.assertNotIn(20.0, {r["rdip"] for r in runs})
             else:                                   # order 3 and bundles: one run per rung
@@ -1123,17 +1171,17 @@ class TestRunner(unittest.TestCase):
 
     def test_pcce_runs_share_a_partition_cache(self):     # A17 (1): runs differing only in rdip (or states) reuse the partition
         inp, fake = make_case(self.tmp)
-        j = json.loads(inp.read_text()); j["cluster_mode"] = "pcce"; inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["cluster"] = {"mode": "pcce"}; inp.write_text(json.dumps(j))
         cnt = Path(self.tmp) / "count"
         code, out = call(inp, fake, dict(FAKE_COUNT=str(cnt)))
         self.assertEqual(code, 0, out)
         runs = [(json.loads((p.parent / "input.json").read_text()), json.loads(p.read_text())) for p in (inp.parent / "auto/runs").rglob("done.json")]
         files = {}
         for cin, done in runs:
-            self.assertEqual(cin["pcce"]["cache"]["mode"], "readwrite")
-            self.assertEqual(cin["seed"], 1)                                # the case has no seed: 1, not the start time
-            self.assertEqual(cin["pcce"]["cache"]["file"], "../../../pcce_cache/" + done["pcce_cache"]["file"])
-            files.setdefault(done["pcce_cache"]["file"], set()).add((cin["bathfile"][0], cin["rbath"]))
+            self.assertEqual(cin["cluster"]["pcce"]["cache"]["mode"], "readwrite")
+            self.assertEqual(cin["configuration"]["seed"], 1)               # the case has no seed: 1, not the start time
+            self.assertEqual(cin["cluster"]["pcce"]["cache"]["file"], "../../../pcce_cache/" + done["pcce_cache"]["file"])
+            files.setdefault(done["pcce_cache"]["file"], set()).add((cin["configuration"]["bathfile"][0], cin["rbath"]))
             self.assertTrue((inp.parent / "auto/pcce_cache" / done["pcce_cache"]["file"]).is_file())
         self.assertTrue(all(len(v) == 1 for v in files.values()), files)      # one file per configuration and rbath
         self.assertEqual(len(files), len({x for v in files.values() for x in v}))
@@ -1164,21 +1212,22 @@ class TestRunner(unittest.TestCase):
     def test_partition_key_holds_what_the_partition_depends_on(self):     # A17 (1)
         from autoconv.runner import Runner
         inp, fake = make_case(self.tmp)
-        j = json.loads(inp.read_text()); j["cluster_mode"] = "pcce"; inp.write_text(json.dumps(j))
+        j = json.loads(inp.read_text()); j["cluster"] = {"mode": "pcce"}; inp.write_text(json.dumps(j))
         r = Runner(inp, fake)
         data = inp.parent / "data"
-        cin = dict(method="cCCE", cluster_mode="pcce", order=2, pcce=dict(partition_size=2, trials=100), seed=1,
-                   bathfile=[str(data / "bath_1")], rbath=30, rdip=20, nstate=4, bath_state_file=str(data / "cfg1_state"),
-                   nstep=99, deltat=0.02, outfile="out")
+        conf = dict(seed=1, bathfile=[str(data / "bath_1")], nstate=4, bath_state_file=[str(data / "cfg1_state")])
+        cin = dict(method="cCCE", cluster=dict(mode="pcce", pcce=dict(partition_size=2, trials=100)), configuration=conf,
+                   rbath=30, rdip=20, nstep=99, deltat=0.02, output=dict(file="out"))
         fs = dict(bathfile=data / "bath_1", state1=data / "cfg1_state1")
         extra = {"Qubit.file": str(data / "qubit")}
         key = r.partition_key(cin, fs, extra)
-        for same in (dict(rdip=40), dict(nstate=8), dict(nstep=150), dict(deltat=0.05), dict(Defect=dict(state_file="x"))):
+        for same in (dict(rdip=40), dict(configuration=dict(conf, nstate=8)), dict(configuration=dict(conf, bath_state_file=["y"])),
+                     dict(nstep=150), dict(deltat=0.05), dict(configuration=dict(conf, defect_state_file=["x"]))):
             self.assertEqual(r.partition_key(dict(cin, **same), fs, extra), key, same)
         self.assertEqual(r.partition_key(cin, dict(fs, state1=data / "cfg1_state2"), extra), key)
-        for other in (dict(rbath=40), dict(pcce=dict(partition_size=3, trials=100)), dict(seed=2),
-                      dict(pcce=dict(partition_size=2, trials=200)), dict(rbath=[5, 30]),
-                      dict(pcce=dict(partition_size=2, trials=100, kmeans_pp=False))):
+        for other in (dict(rbath=40), dict(cluster=dict(mode="pcce", pcce=dict(partition_size=3, trials=100))),
+                      dict(configuration=dict(conf, seed=2)), dict(cluster=dict(mode="pcce", pcce=dict(partition_size=2, trials=200))),
+                      dict(rbath=[5, 30]), dict(cluster=dict(mode="pcce", pcce=dict(partition_size=2, trials=100, kmeans_pp=False)))):
             self.assertNotEqual(r.partition_key(dict(cin, **other), fs, extra), key, other)
         self.assertNotEqual(r.partition_key(cin, dict(fs, bathfile=data / "bath_2"), extra), key)
         (data / "bath_1").write_text((data / "bath_1").read_text() + "\n")       # the same name, other contents
@@ -1194,7 +1243,7 @@ class TestRunner(unittest.TestCase):
         for shape, moves in (("pcce", True), ("standard", False)):
             d = Path(self.tmp) / shape; d.mkdir()
             inp, fake = make_case(d)
-            j = json.loads(inp.read_text()); j["cluster_mode"] = shape; inp.write_text(json.dumps(j))
+            j = json.loads(inp.read_text()); j["cluster"] = {"mode": shape}; inp.write_text(json.dumps(j))
             r = runner.Runner(inp, fake)
             r.resolve(); r.preflight()
             fp = r.plan()

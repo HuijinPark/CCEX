@@ -1,3 +1,7 @@
+/**
+ * @file blas_option.h
+ * @brief The optional external BLAS/LAPACK (Intel MKL) calls for large clusters.
+ */
 #pragma once
 // A46: Intel MKL for the large clusters (do_compile.sh and CMake turn it on when they find MKL; CCEX_BLAS=off turns it off).
 // Without CCEX_BLAS_DIRECT CcexEigensolver is Eigen's solver, inline as before (plus A42's setGiven).
@@ -36,6 +40,8 @@ constexpr int gemmMin = 21;
 constexpr int eigMin = 63;
 // X = (M diag(d)) M^dagger by zgemm; scratch holds M diag(d)
 void hahnProduct(const Eigen::MatrixXcd& M, const Eigen::VectorXcd& d, Eigen::MatrixXcd& scratch, Eigen::MatrixXcd& X);
+// C = A B by zgemm (A62: the column blocks of cceEvolveColumns)
+void product(const Eigen::MatrixXcd& A, const Eigen::MatrixXcd& B, Eigen::MatrixXcd& C);
 }
 
 // Eigen's SelfAdjointEigenSolver below ccexBlas::eigMin, LAPACK zheevd (lower triangle, as Eigen reads) from it on

@@ -1,63 +1,97 @@
 # Output tags
+The `output` block (its keys at the top level are refused with their place in the block):
+
+```
+"output": {"path": "results", "file": "ccein", "savemode": {"mode": "coherence", "nodiv": true},
+           "cluster_contributions": {"enabled": true, "max_mb": 256}, "cluster_only": false}
+```
+
+- [path](#tag_output_path)
+- [file](#tag_outfile)
 - [savemode](#tag_savemode) (`mode`, `nodiv`)
-- [outfile](#tag_outfile)
+- [cluster_contributions](InputFile_Backend.md#tag_cluster_contributions) (`enabled`, `max_mb`)
+- [cluster_only](#tag_cluster_only)
+
+<a id="tag_output_path"></a>
+## output.path
+<b>Description:</b><br>
+The folder of the outputs. A relative folder is read from the working directory; it is made
+when missing. `-o DIR` on the command line takes its place: the folder is `-o DIR`, else `output.path`, else the working
+directory. An absolute [output.file](#tag_outfile) together with `output.path` (or `-o`) is refused: the two would name
+two places. Not with the adaptive refinement (its steps go to `cluster.adaptive.output`; refused). <br>
+At the start, the folder the outputs go to (with a folder in `output.file`, that one) is checked by writing and removing
+a file there: a folder that does not exist or cannot be written is refused before anything is calculated. <br>
+<b>Data Type:</b> String (a folder)
+
+<b>Default:</b> the working directory
+
+<b>Example:</b> ``` "output" : {"path": "results"} ```
 
 <a id="tag_savemode"></a>
-## savemode
+## output.savemode
 <b>Description:</b><br>
 What is written, and whether `_noDiv` is written beside `_wiDiv`. A string gives the mode (with `nodiv` true); the block
 `{"mode": ..., "nodiv": true|false}` gives both (a missing `mode` is `"coherence"`, a missing `nodiv` is `true`). <br>
 <b>mode:</b>
 
-- `"coherence"` : The coherence of each state: "output_state{state}_wiDiv/noDiv". <br>
+- `"coherence"` : The coherence: "file_wiDiv/noDiv", and with sampled bath states (`nstate` > 0) one per state,
+                 "file_state{state}_wiDiv/noDiv". <br>
 - `"coherence_tagged"` : Like `"coherence"` (the same file names), but every time row also carries the zx and zz
                  components of the first bath spin's hyperfine tensor and the first bath file's name, so that results of
                  many bath files can be told apart after collecting them. <br>
 - `"cluster_coherence"` : The result and, for each cluster and each state, its coherence:
-                 "output_{cluster}_state{state}_wiDiv/noDiv". <br>
+                 "file_{cluster}_state{state}_wiDiv/noDiv" (`{cluster}` the bath indices of the cluster joined by `_`;
+                 `_state{state}` only with `nstate` > 0). <br>
 - `"cluster_density_matrix"` : Everything `"cluster_coherence"` writes, and with gCCE also, for every cluster,
                  the density matrix of the whole qubit + cluster space at every time step, as `n` × `n` blocks (`n` the
-                 full dimension), to "output_{cluster}_full_state{state}_wiDiv/noDiv" (the cluster's bath indices as in
-                 `"cluster_coherence"`; "output_full_state{state}_..." for the zeroth cluster, the qubits alone). The
+                 full dimension), to "file_{cluster}_full_state{state}_wiDiv/noDiv" (the cluster's bath indices as in
+                 `"cluster_coherence"`; "file_full_state{state}_..." for the zeroth cluster, the qubits alone). The
                  `_wiDiv` and `_noDiv` files hold the same matrix. This costs a matrix of the full dimension per time step
-                 and cluster in memory and on disk, so it is meant for small systems (tutorial 01). cCCE has no qubit +
+                 and cluster in memory and on disk, so it is meant for small systems (`example/tutorial/06_cCCE_vs_gCCE/gCCE1_Hahn_handwritten/`). cCCE has no qubit +
                  bath density matrix: there it writes what `"cluster_coherence"` writes. <br>
 
 <b>nodiv:</b> Write `_noDiv` beside `_wiDiv`. `_wiDiv` is the CCE coherence; `_noDiv` is the product of the positive-power
 cluster terms only (no division), which never diverges but is **not** a coherence. It is read by the group analyzer's
-error correction (`example/analysis/Analyzer`, \|wiDiv − noDiv\| ≥ 2 marks a divergent point), by most tutorials' `run.sh`,
+error correction (`example/analysis/Analyzer`, \|wiDiv − noDiv\| ≥ 2 marks a divergent point),
 by the standing checks and by the paper scripts, so it stays on by default. `false` writes `_wiDiv` alone (half the
 files), for runs whose analysis does not use it. Must be a JSON boolean. <br>
 
-<b>Names before 2026-10-13</b> (refused, with a message naming the new form):
-
-| old | new |
-|---|---|
-| `"savemode": "normal"` | `"savemode": "coherence"` |
-| `"savemode": "info"` | `"savemode": "coherence_tagged"` |
-| `"savemode": "all"` | `"savemode": "cluster_coherence"` |
-| `"savemode": "allfull"` | `"savemode": "cluster_density_matrix"` |
-| `"save_nodiv": false` | `"savemode": {"mode": "coherence", "nodiv": false}` |
+Old values and the old `nodiv` key are refused with a message naming the current form ([old names](InputFile.md#OldNames)).
 
 <b>Data Type:</b> String or object (`mode`: string, `nodiv`: boolean)
 
 <b>Default:</b> "coherence" (`nodiv` true)
 
-<b>Example:</b> ``` "savemode" : "cluster_coherence" ```, ``` "savemode" : {"mode": "coherence", "nodiv": false} ```
-
-<b>Related variable:</b> [Output](#Output)::savemode, [Output](#Output)::save_nodiv
+<b>Example:</b> ``` "output" : {"savemode": "cluster_coherence"} ```, ``` "output" : {"savemode": {"mode": "coherence", "nodiv": false}} ```
 
 <a id="tag_outfile"></a>
-## outfile
+## output.file
 <b>Description:</b><br>
 Output file name prefix. <br>
-"outfile_..._wiDiv" is the final result of the coherence function. <br>
-"outfile_..._noDiv" is the result without dividing the final coherence function into those obtained from its sub-clusters. <br>
-You can specify this value via the "-o" command-line option.
+"file_..._wiDiv" is the final result of the coherence function. <br>
+"file_..._noDiv" is the result without dividing the final coherence function into those obtained from its sub-clusters. <br>
+With [configuration.k_range](InputFile_General.md#tag_configuration_k_range) each configuration k writes
+"file_k&lt;k&gt;_...". <br>
+A relative name is read from the output folder: `-o DIR`, else [output.path](#tag_output_path), else the working
+directory; an absolute name together with `-o` or `output.path` is refused. `-o` names the folder, not this
+name. <br>
 <b>Data Type:</b> String
 
-<b>Default:</b> -
+<b>Default:</b> the input file's name without `.json` or `.jsonc` (`-f run/ccein.json` writes `ccein_noDiv`, `ccein_wiDiv`, ... in the
+output folder).
 
-<b>Example:</b> ``` outfile : "filepath" ```
+<b>Example:</b> ``` "output" : {"file": "filepath"} ```
 
-<b>Related variable:</b> [Output](#Output)::outfile
+<a id="tag_cluster_only"></a>
+## output.cluster_only
+<b>Description:</b><br>
+`true` writes the cluster plan to `<file>.clusters.json` and stops before the dynamics (nothing else is computed or
+written). Its limits: method
+cCCE or gCCE, or cCCE with `cluster.mode` pcce, with explicit connections; a `bundle` input whose connections are checked
+by the run (no `rdip`), the adaptive probe, factors and except work, a `cluster.adaptive` block and an `auto_convergence`
+block are refused. <br>
+<b>Data Type:</b> Boolean (a JSON `true` or `false`; anything else is refused)
+
+<b>Default:</b> `false`
+
+<b>Example:</b> ``` "output" : {"cluster_only": true} ```

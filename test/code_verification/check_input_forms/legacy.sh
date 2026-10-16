@@ -32,20 +32,24 @@ gen_reg(){  # gen_reg <sysname> <case> <tag>
     local sys="$1" case="$2" tag="$3"
     mkdir -p "$WORK/$sys"
     python3 - "$WORK/$sys" "$REG/$case" "$tag" <<'PY'
-import json, sys, os, glob
+import json, sys, os, glob; from input_layout import flat, nest
 work, casedir, tag = sys.argv[1:4]
-d = json.load(open(f"{casedir}/inputfiles/ccein_{tag}.json"))
-# the file keys (A47: Qubit.file, bath_state_file, Defect.state_file / axis_file)
-for block, k in ((d.get("Qubit"),"file"),(d,"gyrofile"),(d,"bath_state_file"),(d.get("Defect"),"state_file"),
-                 (d.get("Defect"),"axis_file")):
+d = flat(json.load(open(f"{casedir}/inputfiles/ccein_{tag}.json")))
+# the file keys (A47: Qubit.file, bath_state_file, Defect.state_file / axis_file; A64: the configuration block, and
+# the state and axis files one per bath file)
+c = d["configuration"]
+for block, k in ((d.get("Qubit"),"file"),(c,"gyrofile"),(c,"bath_state_file"),(c,"defect_state_file"),
+                 (c,"defect_axis_file")):
     if isinstance(block, dict) and isinstance(block.get(k), str):
         block[k] = os.path.abspath(os.path.join(casedir, block[k]))
+    elif isinstance(block, dict) and isinstance(block.get(k), list):
+        block[k] = [os.path.abspath(os.path.join(casedir, x)) for x in block[k]]
 baths = sorted(glob.glob(f"{casedir}/inputfiles/bath_*_1"))
-d["bathfile"] = [os.path.abspath(baths[0])]
+c["bathfile"] = [os.path.abspath(baths[0])]
 d["outfile"] = "./OUT"
-json.dump(d, open(f"{work}/legacy.json","w"), indent=4)
+json.dump(nest(d), open(f"{work}/legacy.json","w"), indent=4)
 print(f"    {os.path.basename(casedir)}/{tag}: bath={os.path.basename(baths[0])} "
-      f"order={d.get('order')} rbath={d.get('rbath')} nstep={d.get('nstep')} nstate={d.get('nstate')}")
+      f"order={d.get('order')} rbath={d.get('rbath')} nstep={d.get('nstep')} nstate={c.get('nstate')}")
 PY
 }
 
@@ -80,26 +84,27 @@ for sys in "${WANT[@]}"; do
 
       S3)  mkdir -p "$WORK/S3"
            python3 - "$WORK/S3" "$REPO" "$FIX" <<'PY' || not_written
-import json, re, sys
+import json, re, sys; from input_layout import flat, nest
 work, repo, fix = sys.argv[1:4]
 src = open(f"{repo}/test/code_verification/bath_data/FullP1SpinBath/cce.json").read()
 src = re.sub(r'!\S*','',src); src = re.sub(r'#[^\n]*','',src)   # CCEX json dialect
-d = json.loads(src)
+d = flat(json.loads(src))
 F = f"{fix}/single_data"
-d["Qubit"]["file"]=f"{F}/bath_DiaP1_1ppm_Defect"; d["gyrofile"]=f"{F}/DiaP1_gyro"
-d["bathfile"]=[f"{F}/bath_DiaP1_1ppm_1"];     d["Defect"]["axis_file"]=f"{F}/bathJT_DiaP1_1ppm_1"
-d["bath_state_file"]=f"{F}/state_DiaP1_1ppm_"; d["Defect"]["state_file"]=f"{F}/stateEx_DiaP1_1ppm_"
+c = d["configuration"]
+d["Qubit"]["file"]=f"{F}/bath_DiaP1_1ppm_Defect"; c["gyrofile"]=f"{F}/DiaP1_gyro"
+c["bathfile"]=[f"{F}/bath_DiaP1_1ppm_1"];     c["defect_axis_file"]=[f"{F}/bathJT_DiaP1_1ppm_1"]
+c["bath_state_file"]=[f"{F}/state_DiaP1_1ppm_"]; c["defect_state_file"]=[f"{F}/stateEx_DiaP1_1ppm_"]
 # Reduced from the original (rbath 850 / rdip 620 / nstep 300, 469 spins, sized for
 # 24 ranks). Equivalence needs reproducibility, not convergence; rbath 360 keeps
 # 45 spins and 518 pairs, which still exercises every Defect code path.
-d["rbath"]=360; d["rdip"]=360; d["nstep"]=20; d["nstate"]=1
+d["rbath"]=360; d["rdip"]=360; d["nstep"]=20; c["nstate"]=1
 d["outfile"]="./OUT"
-json.dump(d, open(f"{work}/legacy.json","w"), indent=4)
+json.dump(nest(d), open(f"{work}/legacy.json","w"), indent=4)
 sp = d['Defect']['species'][0]
-print(f"    P1 Defect: rbath={d['rbath']} nstep={d['nstep']} n_configurations={sp['n_configurations']} n_nuclear_spins={sp['n_nuclear_spins']}")
+print(f"    P1 Defect: rbath={d['rbath']} nstep={d['nstep']} n_axis_states={sp['n_axis_states']} n_onsite_spins={sp['n_onsite_spins']}")
 PY
-           # bath_state_file passed BOTH in the ccein and on the command line, on purpose:
-           # a missing -s falls back to randomized states that still look plausible.
+           # bath_state_file, Defect.state_file and nstate 1 in the ccein (until A63 also -s, -S and -N on the command
+           # line, on purpose: a missing state file falls back to randomized states that still look plausible)
            ;;
 
       S4|S4b)
@@ -110,16 +115,16 @@ PY
            SUF=""; [ "$sys" = "S4" ] && SUF="_vertex"
            mkdir -p "$WORK/$sys"
            python3 - "$WORK/$sys" "$FIX" "$SUF" <<'PY' || not_written
-import json, sys
+import json, sys; from input_layout import flat, nest
 work, fix, suf = sys.argv[1:4]
 H=f"{fix}/hexagonal_data"
 # rbath 20 -> 6 : 3897 spins -> 101, and 121 s -> 0.4 s on one core. The A/Q files
 # cover this region comfortably, so both readers stay on their file path.
 d = {"method":"cCCE","quantity":"coherence",
-     "Qubit":{"file":f"{H}/defect","alphams":1,"betams":0},"gyrofile":f"{fix}/ensemble_data/Gyro_h_BN",
-     "bathfile":[f"{H}/bath_1"],
+     "Qubit":{"file":f"{H}/defect","alphams":1,"betams":0},
+     "configuration":{"gyrofile":f"{fix}/ensemble_data/Gyro_h_BN","bathfile":[f"{H}/bath_1"],"nstate":0},
      "order":2,"bfield":30000,"rbath":6,"rdip":4,"deltat":0.002,"nstep":20,
-     "nstate":0,"pulse":{"count":1},
+     "pulse":{"count":1},
      "hamiltonian":{"common":{
      # missing_row point_dipole: the MinDif/MaxDif box in Afile is wider than the set of atoms
      # the file lists, so a spin can sit inside the box with no row of its own. Without
@@ -131,7 +136,7 @@ d = {"method":"cCCE","quantity":"coherence",
      # the QD reader over the vertex boundary; the QD range boundary stays uncovered.
      "quadrupole":({"structure":"plain","file":f"{H}/Qfile{suf}"} if suf else "off")}},
      "outfile":"./OUT"}
-json.dump(d, open(f"{work}/legacy.json","w"), indent=4)
+json.dump(nest(d), open(f"{work}/legacy.json","w"), indent=4)
 print(f"    hBN VB: hyperfine dft+contact, quadrupole={'plain' if suf else 'off'} "
       f"rbath={d['rbath']} boundary={'vertex' if suf else 'MinDif/MaxDif'}")
 PY
@@ -139,18 +144,21 @@ PY
 
       S5)  mkdir -p "$WORK/S5"
            python3 - "$WORK/S5" "$EX" <<'PY' || not_written
-import json, re, sys
+import json, re, sys; from input_layout import flat, nest
 work, ex = sys.argv[1:3]
-E=f"{ex}/tutorial/03_Diamond_multiNV_natab/NV2_13C2"
-s=open(f"{E}/ccein_NV6_13C2_hahnecho.json").read()
+E=f"{ex}/tutorial/05_multiNV/gCCE2_HahnRamsey_NV2"
+s=open(f"{E}/ccein_hahn.json").read()
 s=re.sub(r'#[^\n]*','',s); s=re.sub(r'!\S*','',s)
-d=json.loads(s)
+d=flat(json.loads(s))
 # bathfile as a LIST. Given as a bare string it is read as zero bath files and the
 # run segfaults with "Total 1-Cluster # : 0" -- v1.1.0 behaves the same way, so this
 # is the example being stale, not anything this branch changed.
-d["bathfile"]=[f"{E}/bath"]; d["bath_state_file"]=f"{E}/state"; d["gyrofile"]=f"{E}/gyro_13C"
-d["nstep"]=20; d["outfile"]="./OUT"
-json.dump(d, open(f"{work}/legacy.json","w"), indent=4)
+d["configuration"].update(bathfile=[f"{E}/bath"], bath_state_file=[f"{E}/state"], gyrofile=f"{E}/gyro_13C")
+d["nstep"]=20; d["outfile"]="./OUT"; d["order"]=1     # order 1, as the tutorial input was until A66
+# the qubit keys the tutorial input wrote until A66 (their default values; check_refusals' S5 cases edit them)
+for q in d["Qubit"]["qubit"]:
+    for k, v in (("spin", 1.0), ("gyro", -17608.597050), ("alphams", 1), ("betams", 0)): q.setdefault(k, v)
+json.dump(nest(d), open(f"{work}/legacy.json","w"), indent=4)
 print(f"    2 NV: nqubit={len(d['Qubit']['qubit'])} intmap={len(d['Qubit']['intmap'])} method={d['method']}")
 PY
            ;;

@@ -1,3 +1,7 @@
+/**
+ * @file option.h
+ * @brief The input file reader: parsing the JSON input into Config, QubitArray, Cluster, Pulse and Output.
+ */
 #ifndef __CCEX_OPTION_H_
 #define __CCEX_OPTION_H_
 
@@ -19,10 +23,12 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein); // pulse.h
 void cJSON_readOptionOutput(Output* output, char* fccein); // output.h
 void cJSON_readSavemode(cJSON* item, Output* op, bool readNodiv); // savemode as a string or {"mode", "nodiv"}; readNodiv false takes the mode alone
 void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein); // defect.h
-void cJSON_applyMethodOption(Config* cnf, Cluster* cls, const char* method); // -m: cCCE or gCCE, the input's cluster_mode kept (A47)
-void cJSON_setMethodOverride(const char* method); // the last -m (or NULL), read in place of the file's method before the readers judge it with cluster_mode
 
 char* cJSON_ReadFccein(char* fccein);
+// A64: configuration.k_range [first, last] and every file of every k checked (false without k_range); the k the readers
+// read next (cJSON_readOptionConfig substitutes {k}; without k_range nothing is)
+bool cJSON_readConfigurationRange(char* fccein, long* first, long* last);
+void cJSON_setConfigurationIndex(bool ranged, long k);
 void cJSON_checkInputKeys(char* fccein);   // after every cJSON_readOption*: a likely typo of a key stops the run, other unread keys are reported
 char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_value);
 char* cJSON_ReadString(cJSON* root, char* key, bool _default, char* default_value);

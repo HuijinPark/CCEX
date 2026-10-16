@@ -1,22 +1,26 @@
-# DefectArray-related tags
-The `Defect` block describes the paramagnetic defects of the bath: the list of defect species, and beside it the files of
-their axes and states (the keys before 2026-10-13 are in the table of [InputFile.md](InputFile.md#OldNames); the block
-was the list itself until then).
+# Defect tags
+The `Defect` block describes the paramagnetic defects of the bath: the list of defect species, the model (old key names are in the table of
+[old names](InputFile.md#OldNames)). The files of their axes and states are bath-configuration keys:
+[configuration.defect_axis_file](InputFile_General.md#tag_defect_axis_file) and
+[configuration.defect_state_file](InputFile_General.md#tag_defect_state_file).
 
 <details><summary><b>Example:</b> Click here to show example code</summary>
 ```
 {
+"configuration"  : {
+    "bathfile"          : ["./bath_DiaP1_1ppm_1"],
+    "defect_axis_file"  : ["./bathJT_DiaP1_1ppm_1"],
+    "defect_state_file" : ["./stateEx_DiaP1_1ppm_"]
+},
 "Defect"         : {
-    "axis_file"  : "./bathJT_DiaP1_1ppm_1",
-    "state_file" : "./stateEx_DiaP1_1ppm_",
     "species"    : [
 		{
 			"name"	: "NV0",
-			"n_nuclear_spins" 	: 1,
+			"n_onsite_spins"  	: 1,
 			"types" 	: ["15N"],
 			"spins" 	: [0.5],   
 			"gyros" 	: [-2.71261804],
-			"n_configurations" 	: 4,
+			"n_axis_states"    	: 4,
 			"nuclear_positions"      : [ [1, "15N", [  1.36404 ,   -0.78843 ,   -0.56598 ]],
 		                     [2, "15N", [ -1.36801 ,   -0.79025 ,   -0.56701 ]],
 		                     [3, "15N", [  0.00000 ,    1.57603 ,   -0.56511 ]],
@@ -33,9 +37,7 @@ was the list itself until then).
 </details>
 
 - [Defect](#tag_Defect)       
-- [axis_file](#tag_df_axis_file)
-- [state_file](#tag_df_state_file)
-- [species](#tag_df_species): [name](#tag_df_name), [n_nuclear_spins](#tag_df_n_nuclear_spins), [n_configurations](#tag_df_n_configurations),
+- [species](#tag_df_species): [name](#tag_df_name), [n_onsite_spins](#tag_df_n_nuclear_spins), [n_axis_states](#tag_df_n_configurations),
   [axis](#tag_df_axis), [coordinate_frame](#tag_df_coordinate_frame), [types](#tag_df_types), [spins](#tag_df_spins),
   [gyros](#tag_df_gyros), [quadrupole_moments](#tag_df_quadrupole_moments), [nuclear_positions](#tag_df_nuclear_positions),
   [hyperfine](#tag_df_hyperfine), [efg](#tag_df_efg), [zfs](#tag_df_zfs), [detuning](#tag_df_detuning)
@@ -43,16 +45,15 @@ was the list itself until then).
 <a id="tag_Defect"></a>
 ## Defect
 <b>Description:</b><br>
-Detailed information of the paramagnetic \(PM\) defect bath: `species`, the list of defect species, and the files
-`axis_file` and `state_file`. (A list in place of the block, the form before 2026-10-13, is refused.)
-<b>Data Type:</b> Dictionary `{"axis_file": ..., "state_file": ..., "species": [...]}`
+Detailed information of the paramagnetic \(PM\) defect bath: `species`, the list of defect species. <br>
+<b>Data Type:</b> Dictionary `{"species": [...]}`
 
 <b>Default:</b> -
 
 <b>Example:</b>
     ```
     "Defect" : {"species" : [{
-        "name" : "NV_0", "n_nuclear_spins" : 0, "n_configurations" : 3,
+        "name" : "NV_0", "n_onsite_spins" : 0, "n_axis_states" : 3,
         "axis" : [1.0, 1.0, 1.0], "coordinate_frame" : "bath",
         "zfs" : {"D" : 2870.0, "E" : 0.0, "unit" : "MHz"},
         "detuning" : {
@@ -61,64 +62,6 @@ Detailed information of the paramagnetic \(PM\) defect bath: `species`, the list
         }
     }]}
     ```
-
-<b>Related variable:</b> [DefectArray struct](#DefectArray) [Defect struct](#Defect)
-
-<a id="tag_df_axis_file"></a>
-## Defect.axis_file
-<b>Description:</b><br>
-File path of the configuration index (the principal axis) of each bath spin (`avaaxfile` until 2026-10-13). Without it
-the configurations of the defect spins are assigned at random (from `seed`). <br>
-You can specify this value via the "-a" command-line option. <br>
-<pre>
-    File format is the following :
-    [Principal axis index]
-</pre>
-<pre>
-    example)
-    5.0 - The number of total line
-    1.0 - principal axis index
-    2.0 -  :
-    3.0
-    3.0
-</pre>
-
-<b>Data Type:</b> String (File path)
-
-<b>Default:</b> -
-
-<b>Example:</b> ``` "Defect" : {"axis_file": "filepath", "species": [...]} ```
-
-<b>Related variable:</b> [Config](#Config)::avaaxfile
-
-<a id="tag_df_state_file"></a>
-## Defect.state_file
-<b>Description:</b><br>
-Prefix of the files of the states of the defects' on-site nuclear spins (`exstatefile` until 2026-10-13), as
-[bath_state_file](InputFile_General.md#tag_bath_state_file) for the main bath spins: with `nstate` > 0 the state k is read
-from `<prefix>k`. Without it the states are drawn from `seed`. <br>
-You can specify this value via the "-S" command-line option. <br>
-
-<pre>
-    File format is the following :
-    [SpinSubLevel]
-</pre>
-<pre>
-    example)
-     5.0   - The number of total line
-    -1.0   - Spin sublevel when S=1
-     0.0   -    :
-     1.0
-    -1.0
-</pre>
-
-<b>Data Type:</b> String (File path prefix)
-
-<b>Default:</b> -
-
-<b>Example:</b> ``` "Defect" : {"state_file": "./stateEx_", "species": [...]} ```
-
-<b>Related variable:</b> [Config](#Config)::exstatefile
 
 <a id="tag_df_species"></a>
 ## Defect.species
@@ -129,8 +72,8 @@ The defect species, one entry each. A bath spin whose name is a species' `name` 
 <b>Sub-tags:</b>
 
 - [name](#tag_df_name) : Defect name
-    - [n_nuclear_spins](#tag_df_n_nuclear_spins) : Number of on-site nuclear spins of the PM defect
-    - [n_configurations](#tag_df_n_configurations) : Number of indexed defect configurations
+    - [n_onsite_spins](#tag_df_n_nuclear_spins) : Number of on-site nuclear spins of the PM defect
+    - [n_axis_states](#tag_df_n_configurations) : Number of indexed axis states of the defect
     - [axis](#tag_df_axis) : Physical symmetry-axis direction
     - [coordinate_frame](#tag_df_coordinate_frame) : Basis of Defect vectors and tensors
     - [types](#tag_df_types) : On-site nuclear spin types
@@ -143,8 +86,6 @@ The defect species, one entry each. A bath spin whose name is a species' `name` 
     - [zfs](#tag_df_zfs) : Zero-field splitting tensor
     - [detuning](#tag_df_detuning) : Detuning frequency
 
-(`apprx`, which changed nothing, was removed on 2026-10-13; an entry that still has it is refused.)
-
 <a id="tag_df_name"></a>
 ## name
 <b>Description:</b><br>
@@ -155,47 +96,37 @@ Name of the paramagnetic defect. <br>
 
 <b>Example:</b> ``` "name" : "P1" ```
 
-<b>Related variable:</b> [Defect](#Defect)::dfname
-
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
 <a id="tag_df_n_nuclear_spins"></a>
-## n_nuclear_spins
+## n_onsite_spins
 <b>Description:</b><br>
-Number of on-site nuclear spins of the paramagnetic defect (`naddspin` until 2026-10-13). <br>
+Number of on-site (nuclear) spins of the paramagnetic defect. <br>
 <b>Data Type:</b> Int
 
 <b>Default:</b> 0
 
-<b>Example:</b> ``` "n_nuclear_spins" : 0 ```
-
-<b>Related variable:</b> [DefectArray](#DefectArray)::naddspins [Defect](#Defect)::naddspin
+<b>Example:</b> ``` "n_onsite_spins" : 0 ```
 
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
 <a id="tag_df_n_configurations"></a>
-## n_configurations
+## n_axis_states
 <b>Description:</b><br>
-Number of indexed configurations available for the paramagnetic defect (`navaax`, "available axes", until
-2026-10-13): an index can be a principal axis, or a frozen nuclear state (for example three m<sub>I</sub> detunings). A shared
-object-form zfs is broadcast to indices 1 through n_configurations. <br>
+Number of indexed axis states available for the paramagnetic defect: an index can be a principal axis, or a
+frozen nuclear state (for example three m<sub>I</sub> detunings). A shared object-form zfs is broadcast to indices 1
+through n_axis_states. <br>
 
 The indexed entries of [nuclear_positions](#tag_df_nuclear_positions), [hyperfine](#tag_df_hyperfine),
 [efg](#tag_df_efg), zfs and [detuning](#tag_df_detuning) must address a
-configuration in <b>1 .. n_configurations</b>; index 0 is reserved for the main spin and is
-written by CCEX itself. <br>
-<b>Changed since v1.0.0:</b> an index of n_configurations+1 is now refused. It used to be
-accepted, and wrote one element past the end of every one of those arrays, so an
-input that relied on it was already producing undefined results. This is the one
-change here that can stop an input which previously ran to completion. <br>
+configuration in <b>1 .. n_axis_states</b>; index 0 is reserved for the main spin and is
+written by CCEX itself. An index above n_axis_states is refused. <br>
 
 <b>Data Type:</b> Int
 
 <b>Default:</b> 0
 
-<b>Example:</b> ``` "n_configurations" : 4 ```
-
-<b>Related variable:</b> [Defect](#Defect)::navaax [DefectArray](#DefectArray)::paxes
+<b>Example:</b> ``` "n_axis_states" : 4 ```
 
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
@@ -215,8 +146,6 @@ be supplied with the explicit tensor form. <br>
 
 <b>Example:</b> ``` "axis" : [1.0, 1.0, 1.0] ```
 
-<b>Related variable:</b> [Defect](#Defect)::axis
-
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
 <a id="tag_df_coordinate_frame"></a>
@@ -224,20 +153,18 @@ be supplied with the explicit tensor form. <br>
 <b>Description:</b><br>
 Basis in which this Defect's axis, nuclear_positions displacement vectors, and hyperfine / efg / zfs
 tensor components are written. <tt>"bath"</tt> means the source bath/crystal basis;
-when coordinate_frame_rotation is enabled they are re-expressed in the computational
+when frame.rotation is given they are re-expressed in the computational
 qubit frame. <tt>"qubit"</tt> means they are already in that frame and remain unchanged.
 Detuning is a scalar frequency and is unaffected. <br>
 This key is required when <tt>axis</tt> or an object-form <tt>zfs</tt>, <tt>hyperfine</tt>, or
-<tt>efg</tt> is used. For a legacy Defect without those features it defaults to
-<tt>"qubit"</tt>, preserving the old behavior. <br>
+<tt>efg</tt> is used. Without it the components are taken as written in the computational
+frame (<tt>"qubit"</tt>). <br>
 
 <b>Data Type:</b> String: "bath" or "qubit"
 
-<b>Default:</b> "qubit" for legacy entries
+<b>Default:</b> "qubit"
 
 <b>Example:</b> ``` "coordinate_frame" : "bath" ```
-
-<b>Related variable:</b> [Defect](#Defect)::coordinate_frame
 
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
@@ -245,14 +172,12 @@ This key is required when <tt>axis</tt> or an object-form <tt>zfs</tt>, <tt>hype
 ## types
 <b>Description:</b><br>
 Name of on-site nuclear spins of the paramagnetic defect. <br>
-The number of types should be the same as [n_nuclear_spins](#tag_df_n_nuclear_spins). <br>
+The number of types should be the same as [n_onsite_spins](#tag_df_n_nuclear_spins). <br>
 <b>Data Type:</b> String List
 
 <b>Default:</b> -
 
 <b>Example:</b> ``` "types" : ["1H", "13C"] ```
-
-<b>Related variable:</b> [Defect](#Defect)::types
 
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
@@ -260,14 +185,12 @@ The number of types should be the same as [n_nuclear_spins](#tag_df_n_nuclear_sp
 ## spins
 <b>Description:</b><br>
 Spin numbers of the on-site nuclear spins of the paramagnetic defect. <br>
-The number of spins should be the same as [n_nuclear_spins](#tag_df_n_nuclear_spins). <br>
+The number of spins should be the same as [n_onsite_spins](#tag_df_n_nuclear_spins). <br>
 <b>Data Type:</b> Float List
 
 <b>Default:</b> -
 
 <b>Example:</b> ``` "spins" : [0.5, 1.0] ```
-
-<b>Related variable:</b> [Defect](#Defect)::spins
 
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
@@ -275,7 +198,7 @@ The number of spins should be the same as [n_nuclear_spins](#tag_df_n_nuclear_sp
 ## gyros
 <b>Description:</b><br>
 Gyromagnetic ratio of the on-site nuclear spins of the paramagnetic defect. <br>
-The number of gyros should be the same as [n_nuclear_spins](#tag_df_n_nuclear_spins). <br>
+The number of gyros should be the same as [n_onsite_spins](#tag_df_n_nuclear_spins). <br>
 The unit-aware form is
 ``` "gyros" : {"values" : [3.0777051853], "unit" : "MHz/T"} ```
 Plain frequency units such as MHz/T and kHz/G mean γ/2π; units beginning
@@ -291,15 +214,13 @@ radMHz/T, rad/us/T, or rad/s/T
 
 <b>Example:</b> ``` "gyros" : {"values" : [3.0777051853], "unit" : "MHz/T"} ```
 
-<b>Related variable:</b> [Defect](#Defect)::gyros
-
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
 <a id="tag_df_quadrupole_moments"></a>
 ## quadrupole_moments
 <b>Description:</b><br>
 Quadrupole moment \(eQ\) values of the on-site nuclear spins of the paramagnetic defect. <br>
-The number of eQ values should be the same as [n_nuclear_spins](#tag_df_n_nuclear_spins). <br>
+The number of eQ values should be the same as [n_onsite_spins](#tag_df_n_nuclear_spins). <br>
 The stored quantity follows the existing area convention: one internal unit is
 10<sup>−30</sup> m² = 1 fm² = 10 mbarn. The unit-aware form is
 ``` "quadrupole_moments" : {"values" : [20.44], "unit" : "mbarn"} ```
@@ -313,15 +234,13 @@ and is normalized to that internal unit. The original bare list remains supporte
 
 <b>Example:</b> ``` "quadrupole_moments" : {"values" : [20.44], "unit" : "mbarn"} ```
 
-<b>Related variable:</b> [Defect](#Defect)::eqs
-
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
 <a id="tag_df_nuclear_positions"></a>
 ## nuclear_positions
 <b>Description:</b><br>
 Relative x,y,z position of on-site nuclear spins of the paramagnetic defect over the electron spin position. <br>
-The number of `nuclear_positions` should be the same as [n_nuclear_spins](#tag_df_n_nuclear_spins) × [n_configurations](#tag_df_n_configurations) <br>
+The number of `nuclear_positions` should be the same as [n_onsite_spins](#tag_df_n_nuclear_spins) × [n_axis_states](#tag_df_n_configurations) <br>
 <b>Data Type:</b> 2D List
 
 <b>Unit:</b> angstrom
@@ -331,15 +250,13 @@ The number of `nuclear_positions` should be the same as [n_nuclear_spins](#tag_d
 <b>Example:</b> ``` "nuclear_positions" : [[1, "15N", [0.0, 0.0, 0.0]],
                                   [2, "1H", [0.0, 0.0, 0.0]]] ```
 
-<b>Related variable:</b> [Defect](#Defect)::rxyzs
-
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
 <a id="tag_df_hyperfine"></a>
 ## hyperfine
 <b>Description:</b><br>
 The hyperfine interaction between on-site nuclear spins and the electron spin associated with a paramagnetic defect. <br>
-The number of `hyperfine` should be the same as [n_nuclear_spins](#tag_df_n_nuclear_spins) × [n_configurations](#tag_df_n_configurations) <br>
+The number of `hyperfine` should be the same as [n_onsite_spins](#tag_df_n_nuclear_spins) × [n_axis_states](#tag_df_n_configurations) <br>
 The unit-aware form wraps the same indexed entries in <tt>values</tt>. Each tensor may
 be a flat row-major 9-number array or a nested 3x3 array:
 ```
@@ -360,15 +277,13 @@ original bare indexed list remains supported and is interpreted as MHz. <br>
 <b>Example:</b> ``` "hyperfine" : [[1, "15N", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
                                  [2, "1H", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] ```
 
-<b>Related variable:</b> [Defect](#Defect)::hypf
-
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
 <a id="tag_df_efg"></a>
 ## efg
 <b>Description:</b><br>
 The electric field gradient tensors of the paramagnetic defect. <br>
-The number of `efg` should be the same as [n_nuclear_spins](#tag_df_n_nuclear_spins) × [n_configurations](#tag_df_n_configurations) <br>
+The number of `efg` should be the same as [n_onsite_spins](#tag_df_n_nuclear_spins) × [n_axis_states](#tag_df_n_configurations) <br>
 The unit-aware form follows the same indexed tensor syntax as hyperfine:
 ```
 "efg" : {
@@ -388,8 +303,6 @@ V/m^2, or V/angstrom^2
 
 <b>Example:</b> ``` "efg" : [[1, "14N", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]],
                                [2, "1H", [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]] ```
-
-<b>Related variable:</b> [Defect](#Defect)::efg
 
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
@@ -422,8 +335,7 @@ array, and also broadcasts it to every indexed configuration:
 }
 ```
 
-The original per-index syntax remains supported and is interpreted in MHz exactly as
-before. Here a separate 3x3 tensor may be supplied for every configuration:
+The per-index list form is in MHz. Here a separate 3x3 tensor may be supplied for every configuration:
 ```
 "zfs" : [[1, "e", [0.0, 956.6667, 956.6667, 956.6667, 0.0, 956.6667, 956.6667, 956.6667, 0.0]],
          [2, "e", [0.0, 956.6667, 956.6667, 956.6667, 0.0, 956.6667, 956.6667, 956.6667, 0.0]]]
@@ -437,15 +349,13 @@ stored MHz values to angular kHz (rad/ms).
 
 <b>Default:</b> zero tensor
 
-<b>Related variable:</b> [Defect](#Defect)::zfs
-
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)
 
 <a id="tag_df_detuning"></a>
 ## detuning
 <b>Description:</b><br>
 Detuning frequencies that will be applied to the electron spin associated with the paramagnetic defect. <br>
-The number of `detuning` should be the same as [n_configurations](#tag_df_n_configurations) <br>
+The number of `detuning` should be the same as [n_axis_states](#tag_df_n_configurations) <br>
 This tag is used to approximate the spin interaction tensors related to the paramagnetic defect, <br>
 e.g., <b>S</b> · <b>A</b> · <b>I</b> ≈ Δ m<sub>I</sub> S<sub>z</sub>. <br>
 The unit-aware form wraps the same indexed values in an object:
@@ -469,7 +379,5 @@ stored MHz values to angular kHz (rad/ms).
                                      [2, "e",  2.0],
                                      [3, "e",  3.0],
                                      [4, "e",  4.0]] ```
-
-<b>Related variable:</b> [Defect](#Defect)::detuning
 
 <b>Parent-tags:</b> [Defect.species](#tag_df_species)

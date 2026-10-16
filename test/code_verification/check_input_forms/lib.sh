@@ -22,6 +22,8 @@ else
 fi
 echo "[check] mpirun: $MPIRUN; binary: $BIN_DEV" >&2
 export I_MPI_FABRICS="${I_MPI_FABRICS:-shm}"
+# the input layout of the checks' python: flat() and nest() (test/code_verification/input_layout.py, A64/A65)
+export PYTHONPATH="$REPO/test/code_verification${PYTHONPATH:+:$PYTHONPATH}"
 
 WORK="$REPO/test/code_verification/check_input_forms/_work"
 # One run at a time per folder: a second run would delete the first one's work files (D29).

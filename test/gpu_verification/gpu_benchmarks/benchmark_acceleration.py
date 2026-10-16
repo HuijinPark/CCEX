@@ -6,7 +6,7 @@ from pathlib import Path
 import statistics
 import sys
 sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parents[1]/'check_gpu'))   # benchmark.py, the helper the checks share
-from benchmark import compare, put
+from benchmark import compare, get, put
 from check_pcce import run_case
 from check_acceleration import config_for
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'cluster_verification/check_pcce'))
@@ -39,7 +39,7 @@ def main():
             order=variants[repeat%len(variants):]+variants[:repeat%len(variants)]
             directory=root/section/name/f'ranks{ranks}'/f'repeat{repeat}'
             for variant,binary,overrides in order:
-                execution,log=run_case({**config,**overrides,'gpu_options':{**config.get('gpu_options',{}),**overrides.get('gpu_options',{})}},directory/variant,binary,ranks,600)
+                execution,log=run_case({**config,**overrides,'gpu_options':{**get(config,'gpu_options',{}),**overrides.get('gpu_options',{})}},directory/variant,binary,ranks,600)
                 if execution['returncode'] or not execution['profiles']:raise ValueError(f'{name}/{variant} failed')
                 trial['executions'][variant]=execution
                 save(root/'summary.json',summary)

@@ -1,3 +1,7 @@
+/**
+ * @file cluster.h
+ * @brief The Cluster structure: cluster settings and the clusters of the run.
+ */
 #ifndef __CCEX_CLUSTER_H_
 #define __CCEX_CLUSTER_H_
 
@@ -8,7 +12,7 @@
 
 /**
  * @struct Cluster
- * @brief  This structure contains clustering algorithm-related parameters and the clusters made from them.
+ * @brief The cluster settings of the run (method, order, rdip, ...) and the clusters made from them.
  * @details Each parameter is read from the input file or options.
 */
 typedef struct {
@@ -67,14 +71,14 @@ typedef struct {
     bool addsubclus;
 
     /**
-     * @brief A38 (improvements.md): each rank keeps only its own pair rows
+     * @brief Each rank keeps only its own pair rows
      * @details
-     *  localRequest: set by runOneCalculation when nothing after the split reads every pair row (no -P, no
+     *  localRequest: set by runOneCalculation when nothing after the split reads every pair row (no output.cluster_only, no
      *  cluster_contributions, no adaptive work request); clusterizePairs may then keep only this rank's rows.
      *  pairsLocal: it did. clusinfo[2] still has every row slot and the count, but a row is allocated only for
      *  this rank's share and the first and last four (Cluster_reportClusinfo); the other slots are NULL.
      *  pairRows (npairRows entries, ascending, 1-based): this rank's order-2 rows under the split it decided
-     *  (rankClusterRows: A31 cost, A45 largest first), which MPI_getLocalClusters then uses instead of the rows;
+     *  (rankClusterRows: by cost, largest first), which MPI_getLocalClusters then uses instead of the rows;
      *  pairLoads (nprocess entries): every rank's cost after that split, which order 1 starts from.
     */
     bool localRequest;

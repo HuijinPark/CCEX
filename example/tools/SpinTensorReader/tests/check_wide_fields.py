@@ -150,8 +150,9 @@ for module in ("vasp/mkAQtensorfile_vasp.py", "qe/mkAQtensorfile_qe.py"):
         j["hamiltonian"]["common"]["hyperfine"]["file"] = os.path.join(d, "Afile")
         j["hamiltonian"]["common"]["quadrupole"]["file"] = os.path.join(d, "Qfile")
         j["nstep"] = 2
+        j.setdefault("output", {})["file"] = os.path.join(d, "out")   # output.file (A65)
         json.dump(j, open(os.path.join(d, "ccein.json"), "w"), indent=1)
-        r = subprocess.run([MPIRUN, "-n", "1", BIN, "-v", "-f", os.path.join(d, "ccein.json"), "-o", os.path.join(d, "out")],
+        r = subprocess.run([MPIRUN, "-n", "1", BIN, "-v", "-f", os.path.join(d, "ccein.json")],
                            cwd=CASE, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         open(os.path.join(d, "log"), "w").write(r.stdout)
         bad = [f"CCEX exited {r.returncode}"] if r.returncode else []

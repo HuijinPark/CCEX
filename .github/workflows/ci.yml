@@ -84,6 +84,7 @@ jobs:
       - name: Python unit tests
         run: |
           (cd test/cluster_verification/check_pcce && python3 -m unittest test_partition_log test_profile_parser)
+          python3 (internal notes)
           python3 test/gpu_verification/server/test_run_orders.py   # the server runner's guards, no GPU or Slurm (review b467fe R3)
           python3 test/gpu_verification/check_gpu/test_check_warp_spread.py   # the warp curve verdict's strict reading (review 20261013-180049 G1)
           python3 test/gpu_verification/gpu_benchmarks/test_backend_check.py   # min_dim/gpu_sharing accept cpu-batch on backend=cpu (G3)
@@ -137,7 +138,7 @@ jobs:
       fail-fast: false
       matrix:
         stages: ["legacy axis2 errcorr gyro comments nodiv allfull evolution_update",
-                 "gpu_options propagator tensor_format autoconv"]
+                 "gpu_options propagator tensor_format cli autoconv"]
     env:
       CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
       CCEX_BUILD_DIR: ${{ github.workspace }}/build

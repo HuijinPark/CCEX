@@ -1,3 +1,7 @@
+/**
+ * @file warp_cluster.h
+ * @brief The warp kernel (one cluster per warp of 32 threads): the part both host and card see.
+ */
 #ifndef CCEX_WARP_CLUSTER_H
 #define CCEX_WARP_CLUSTER_H
 // A40: the warp kernel - one cluster per warp of 32 threads, its matrices in shared memory (warp_cluster_gpu.cu) - for

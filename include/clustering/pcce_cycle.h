@@ -1,3 +1,7 @@
+/**
+ * @file pcce_cycle.h
+ * @brief Detection of a cycle in the deterministic pCCE partition iteration.
+ */
 #ifndef CCEX_PCCE_CYCLE_H
 #define CCEX_PCCE_CYCLE_H
 

@@ -1,3 +1,7 @@
+/**
+ * @file compute_backend.cpp
+ * @brief The choice of compute backend (cpu, cuda, auto) per cluster and the GPU start-up.
+ */
 #include "../../../include/calculation/gpu/compute_backend.h"
 #include "../../../include/calculation/gpu/small_cluster_batch.h"
 #include "../../../include/calculation/small_eigensolver.h"
@@ -16,9 +20,11 @@ bool cudaReady = false;
 bool cudaAttempted = false;
 bool cudaSupported = false;
 int nodeRank = 0, nodeSize = 1;
+bool nodeKnown = false;                  // A73: nodeRank/nodeSize found (collective, once per process on every rank)
 int cpuFromDimension = INT_MAX;          // backend auto after an out-of-memory: this dimension and above on the CPU
 long long outOfMemoryClusters = 0;
 bool recovering = false;                 // X12: since an out-of-memory, released device buffers are freed (gpuOutOfMemoryRecovery)
+bool cardKept = false;                   // A64: the previous configuration of configuration.k_range left the CUDA context open
 struct Timing { long long count=0; double build=0, setup=0, evolution=0; };
 std::map<std::tuple<std::string,std::string,int>,Timing> timings;
 struct BatchTiming { long long batches=0, clusters=0; int largest=0; };
@@ -46,23 +52,36 @@ bool computeBackendMethodSupported(const Config* config){
 }
 
 void computeBackendInit(const Config* config, QubitArray* qa, Pulse* pls, const char* savemode){
-    cudaReady=false; cudaAttempted=false; cudaSupported=false;
+    // A64: a card the previous configuration kept open (computeBackendFinish(true)) is used as it is - the same input, so
+    // the same backend, device and cache limit; everything else starts again as in a run of its own
+    const bool kept = cardKept && cudaReady;
+    cardKept = false;
+    if (!kept){ cudaReady=false; cudaAttempted=false; cudaSupported=false; }
     cpuFromDimension=INT_MAX; outOfMemoryClusters=0; recovering=false;
     smallClusterWarmUp(config,qa,pls,savemode);   // A26: the small-cluster batch's CUDA context, early (nothing unless asked for or ruled out, X7)
     if (!strcasecmp(config->backend,"cpu")) return;
     const bool required = !strcasecmp(config->backend,"cuda");
     if (!computeBackendMethodSupported(config)){
-        if (required) fail("backend=cuda supports method cCCE (cluster_mode standard or pcce), or method gCCE with propagator=eigen");
+        if (required) fail("execution.backend=cuda supports method cCCE (cluster.mode standard or pcce), or method gCCE with execution.propagator=eigen");
         if (rank==0) fprintf(stdout,"[backend] auto: this method/propagator uses CPU\n");
         return;
     }
     cudaSupported=true;
 #ifdef CCEX_USE_CUDA
-    MPI_Comm node;
-    MPI_Comm_split_type(MPI_COMM_WORLD,MPI_COMM_TYPE_SHARED,rank,MPI_INFO_NULL,&node);
-    MPI_Comm_rank(node,&nodeRank);
-    MPI_Comm_size(node,&nodeSize);
-    MPI_Comm_free(&node);
+    // A73: the node split is collective, so every rank does it here, the first time - not after `kept`, which differs
+    // between ranks under backend auto (only a rank that met an eligible cluster opened the card): a rank that skipped
+    // it left the others waiting in the second configuration of configuration.k_range
+    if (!nodeKnown){
+        MPI_Comm node;
+        MPI_Comm_split_type(MPI_COMM_WORLD,MPI_COMM_TYPE_SHARED,rank,MPI_INFO_NULL,&node);
+        MPI_Comm_rank(node,&nodeRank);
+        MPI_Comm_size(node,&nodeSize);
+        MPI_Comm_free(&node);
+        nodeKnown = true;
+    }
+#endif
+    if (kept) return;
+#ifdef CCEX_USE_CUDA
     // Only metadata discovery is collective. Lazy initialization below must not
     // use collectives: ranks can encounter eligible clusters at different times,
     // or have no eligible clusters at all.
@@ -80,7 +99,7 @@ void computeBackendInit(const Config* config, QubitArray* qa, Pulse* pls, const 
     if (required && !allOk) fail(description[0] ? description : "CUDA unavailable on another rank");
     fprintf(stdout,"[backend] rank=%d %s\n",rank,description);
 #else
-    if (required) fail("this executable has no CUDA support; run bin/main_gpu.out (bash do_compile.sh gpu, or a CMake build with CUDA)");
+    if (required) fail("this executable has no CUDA support, run bin/main_gpu.out (bash do_compile.sh gpu, or a CMake build with CUDA)");
     if (rank==0) fprintf(stdout,"[backend] auto: CPU-only build\n");
 #endif
 }
@@ -113,6 +132,16 @@ bool computeUseCuda(const Config* config, int dimension){
     return cudaReady;
 }
 
+bool computeMayUseCuda(const Config* config, int dimension){
+#ifdef CCEX_USE_CUDA
+    if (!cudaSupported || !strcasecmp(config->backend,"cpu") || (cudaAttempted && !cudaReady)) return false;
+    return strcasecmp(config->backend,"auto") || (dimension>=config->gpu_min_dim && dimension<cpuFromDimension);
+#else
+    (void)config; (void)dimension;
+    return false;                        // a CPU-only build (computeUseCuda: cudaReady stays false)
+#endif
+}
+
 bool computeCudaOutOfMemory(const Config* config, int dimension, const char* what){
     if (strcasecmp(config->backend,"auto")) return false;
     ++outOfMemoryClusters;
@@ -123,7 +152,7 @@ bool computeCudaOutOfMemory(const Config* config, int dimension, const char* wha
 #endif
     if (dimension < cpuFromDimension){
         cpuFromDimension = dimension;
-        fprintf(stdout,"[gpu-memory-fallback] rank=%d dim=%d: the GPU is out of memory (%s); backend=auto, so this cluster "
+        fprintf(stdout,"[gpu-memory-fallback] rank=%d dim=%d: the GPU is out of memory (%s), backend=auto, so this cluster "
                        "and every later one of dimension %d or more on this rank are computed on the CPU\n",rank,dimension,what,dimension);
         fflush(stdout);
     }
@@ -194,9 +223,17 @@ void computeProfileFlush(){
     }
 }
 
-void computeBackendFinish(){
+void computeBackendFinish(bool keepCard){
     computeProfileFlush();
     smallClusterWarmDown();
+    if (keepCard && cudaReady){       // A64: the next configuration of configuration.k_range uses this context
+#ifdef CCEX_USE_CUDA
+        if (recovering) gpuOutOfMemoryRecovery(false);   // as computeUseCuda does at the next cluster
+#endif
+        cardKept = true;
+        return;
+    }
+    cardKept = false;
 #ifdef CCEX_USE_CUDA
     gpuFinalize();
 #endif

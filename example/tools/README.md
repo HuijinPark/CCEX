@@ -1,15 +1,14 @@
 # example/tools/
 
-Four tools that make what CCEX reads (`IsotopeTable/` its built-in isotope table), the runner of the automatic convergence, which runs CCEX itself, and the converter of inputs written with the keys before 2026-10-13.
+Three tools that make what CCEX reads (`IsotopeTable/` its built-in isotope table), the runner of the automatic convergence, which runs CCEX itself, and the converter of inputs written with the keys before 2026-10-13.
 
 | Tool | Makes | Run | Needs |
 |---|---|---|---|
 | `BathGenerator/` | a bath file (site positions and isotopes) from a POSCAR unit cell, drawing isotopes with the probabilities in a `prob` file; options for 2D materials, a defect, an inserted relaxed cell, deformation | `mpirun -n N python3 BathGenerator.py -o OUT -i POSCAR -p PROB --size 30 --Defect B --opt2D` (`-h` lists everything; `do_BathGenerator` has four cases: three that make a bath and one that converts a configuration to POSCAR) | numpy, psutil, mpi4py with an MPI |
 | `SpinTensorReader/` | the hyperfine (`Afile`) and quadrupole (`Qfile`) tensor files CCEX reads, from a VASP OUTCAR or a QE output | `python3 main.py VASP\|QE POSCAR DEFECT --A OUT --Q OUT [--spin S] [--rangeformat vertex] ...` (`-h`; `--spin` required for QE `--A`); `examples/01..05` each have a `do` | numpy, pandas, psutil |
 | `IsotopeTable/` | `src/input/isotope_table.cpp`, the 154 nuclear isotopes (spin, gyromagnetic ratio) CCEX uses for a species no gyrofile names, from the EasySpin database in `SpinTensorReader/` | `python3 example/tools/IsotopeTable/make_isotope_table.py` from the repository root | python3 |
-| `Runner/` | the job folders of the tutorials: one per value of a variable (order, ppm, rbath, ...) from the templates in `MkCCEJobs/mkjobs.sngapp/`, which were driven by a tutorial's `domkjobs` and `opt/` files (removed on 2026-09-23) | `example/tools/Runner/domkjobs MKE` (`-h` lists the options), with `SourceFileName` and `SourceFileDir` set in the environment to the input template; until 2026-09-23 a copy sat in each tutorial calculation and was run there as `./domkjobs MKE` | idm Slurm |
-| `AutoConvergence/` | the automatic convergence: `main.out -f input.json` with an `auto_convergence` block (or `mpirun -n N main.out -f input.json` since 2026-10-10: rank 0 runs the runner and every CCEX run gets `mpirun -n N`; the block's `launcher`, when given, comes first) finds the time window, rdip, rbath and the configurations and runs the production on the baths you prepare (it says which baths to add when they are too small or too few); `main.out --auto_status -f input.json` shows where it is. `CCEX_PYTHON` picks the interpreter, `CCEX_AUTOCONV_DIR` the tool folder; it may be a shared installation (owned by you, root or the owner of `main.out`), but neither it nor any folder above it may be writable by others (other users, or a group other than the owner's own private group; `chmod go-w`). Also `python -m autoconv analyze` for existing runs (`AutoConvergence/README.md`) | `main.out -f input.json`; tests `python -m unittest discover -s tests` | numpy, scipy, matplotlib |
-| `InputKeys/` | an input in the keys of 2026-10-13 from one written before (`method` cCCE/gCCE with `cluster_mode`, the `hamiltonian`, `pcce`, `bundle`, `pulse` blocks, ...; the table is [Old and new names](../../docs/user/InputFile.md#OldNames)); comments stay, a file already in the new keys is left alone | `python3 example/tools/InputKeys/convert_input_keys.py FILE...` rewrites in place and lists what changed; `--check FILE...` lists only (exit 1 while old keys remain); `--stdout FILE` prints the new text | python3 |
+| `AutoConvergence/` | the automatic convergence: `main.out -f input.json` with an `auto_convergence` block (or `mpirun -n N main.out -f input.json` since 2026-10-10: rank 0 runs the runner and every CCEX run gets `mpirun -n N`; the block's `launcher` was removed on 2026-10-15) finds the time window, rdip, rbath and the configurations and runs the production on the baths you prepare (it says which baths to add when they are too small or too few); `PYTHONPATH=example/tools/AutoConvergence python3 -m autoconv status input.json` shows where it is. `CCEX_PYTHON` picks the interpreter, `CCEX_AUTOCONV_DIR` the tool folder; it may be a shared installation (owned by you, root or the owner of `main.out`), but neither it nor any folder above it may be writable by others (other users, or a group other than the owner's own private group; `chmod go-w`). Also `python -m autoconv analyze` for existing runs (`AutoConvergence/README.md`) | `main.out -f input.json`; tests `python -m unittest discover -s tests` | numpy, scipy, matplotlib |
+| `InputKeys/` | an input in the current keys from one written before (`method` cCCE/gCCE with `cluster_mode`, the `hamiltonian`, `pcce`, `bundle`, `pulse` blocks, ... of 2026-10-13, the `configuration`, `execution`, `cluster`, `output` and `frame` blocks of 2026-10-15; the tables are [Old and new names](../../docs/user/InputFile.md#OldNames) and [Moved on 2026-10-15](../../docs/user/InputFile.md#Moved20261015)); comments stay, a file already in the new keys is left alone | `python3 example/tools/InputKeys/convert_input_keys.py FILE...` rewrites in place and lists what changed; `--check FILE...` lists only (exit 1 while old keys remain); `--stdout FILE` prints the new text; `python3 example/tools/InputKeys/set_input_keys.py IN OUT KEY=VALUE ...` writes a copy with keys set (dotted for a block: `configuration.nstate=5`, `configuration.defect_axis_file=["Random1"]`; VALUE as JSON when it is JSON), what the tutorials' `run.sh` do per run since the command line lost `-I`, `-N`, `-s`, `-S`, `-a` | python3 |
 
 ## BathGenerator
 
@@ -57,15 +56,9 @@ Python 3.12 prints SyntaxWarnings for a few regular expressions; they are harmle
 `runningScripts_Exspin/` holds two example runs (N2p, NVHn) with their OUTCARs and
 a `do_summary` written for the author's own machine (absolute paths).
 
-## Runner
+## Runner (removed)
 
-Templates in `MkCCEJobs/mkjobs.sngapp/`: `srcjob_ConfigArray`,
-`srcjob{Nstate}_ConfigArray` and `srcjob{Nstate}_VariableArray` are current
-(intel-23.2 modules, the 64core partition); `srcjob` and `srcjob_VariableArray`
-are legacy (icc18, 24core) and say so at their top. The run scripts `srcdo` writes
-call `QosChange -j job -q <qos> -n <nodes> -b` and then `SbatchPath --array=... job`,
-and `domkjobs RunL` calls `SbatchPath largejob`: the wrappers idm uses now (SbatchPath
-records the job path). Until 2026-10-02 they called `shortcut/QosChanger` and `sbatch`
-directly. `shortcut/` still holds the old `QosChanger` and `CdMkDir`.
-`alphaFix`/`betaFix` are the qubit's `alphams`/`betams` (in `Qubit`, or in the qubit of `Qubit.qubit`); until
-2026-10-14 `srcfin_Qubit` wrote them at the top of the input, where nothing reads them, and its qubit was always -1/0.
+`Runner/` (the `MkCCEJobs` job templates driven by `domkjobs`: one job folder per value of a variable, which then
+called `analysis/ConvTest`) was removed on 2026-10-16 (user decision); `configuration.k_range` (one input, many
+bath configurations) and the automatic convergence (`AutoConvergence/`) took its place. git history has it
+(`git show c3c862972:example/tools/Runner/domkjobs`).

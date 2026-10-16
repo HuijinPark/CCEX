@@ -1,3 +1,7 @@
+/**
+ * @file accelerator_defaults.h
+ * @brief Default sizes of the accelerated paths (GPU buffer cache, refinement sweeps, pCCE detail limit).
+ */
 #ifndef CCEX_ACCELERATOR_DEFAULTS_H
 #define CCEX_ACCELERATOR_DEFAULTS_H
 namespace ccex {

@@ -61,7 +61,7 @@ def main():
             current=stats(log);assert current['cycles']>0 and current['skipped']>0
             if reference_stats is None:reference_stats=current
             else:assert current==reference_stats,'MPI/backend changed deterministic search work'
-        legacy=put(cfg,{'pcce.partition':'legacy','pcce.trials':8,'pcce.max_iterations':101,'nstate':2})
+        legacy=put(cfg,{'pcce.partition':'legacy','pcce.trials':8,'pcce.max_iterations':101,'configuration.nstate':2})
         ref,_=run('legacy-before',legacy,baseline=True)
         for backend in ['cpu','cuda']:
             _,log=run(f'legacy-{backend}',legacy,backend=backend,reference=ref)
@@ -87,7 +87,7 @@ def main():
         # Old and new files carry different algorithm identities but must have
         # identical exact centers/assignments after their freshly computed search.
         cache=root/'partition.cache'
-        cold=put(cfg,{'pcce.cache.mode':'readwrite','pcce.cache.file':str(cache),'nstate':0})
+        cold=put(cfg,{'pcce.cache.mode':'readwrite','pcce.cache.file':str(cache),'configuration.nstate':0})
         ref,_=run('cache-v2-before',cold,baseline=True)
         old=cache.read_bytes();assert b'pcce-deterministic-20260912-v2' in old
         run('cache-v2-read-rejected',put(cold,{'pcce.cache.mode':'read'}),error='read mode requires a valid matching cache')

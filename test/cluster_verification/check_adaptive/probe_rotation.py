@@ -33,8 +33,10 @@ def prepare(work):
                                                     for r in rows))
     probes = [[i] for i in range(14)]+[[i, i+1] for i in range(0, 13, 2)]+LARGE
     base = json.loads(TEMPLATE.read_text())
-    base.update(gyrofile=str(FIXTURE/'gyro_13C'), bathfile=[str(work/'bath')], nstate=3, rbath=40, rdip=40,
-                bundle=dict(base['bundle'], max_dim=2048), nstep=6, pulse={'count': 1}, profile=False, backend='cpu')
+    base['configuration'].update(gyrofile=str(FIXTURE/'gyro_13C'), bathfile=[str(work/'bath')], nstate=3)   # A64
+    base.update(rbath=40, rdip=40, nstep=6, pulse={'count': 1})
+    base['cluster']['bundle'] = dict(base['cluster']['bundle'], max_dim=2048)   # the A65 blocks
+    base['execution'] = dict(base.get('execution', {}), profile=False, backend='cpu')
     return base, probes
 
 
@@ -43,9 +45,11 @@ def run(work, base, probes, name, ranks, budget):
     d.mkdir()
     (d/'request.json').write_text(json.dumps(dict(mode='probe', response=str(d/'response'),
                                                   bundles=[[i] for i in range(14)], probes=probes)))
-    cfg = dict(base, outfile=str(d/'coherence'), adaptive={'work_file': str(d/'request.json')})
+    adaptive = {'work_file': str(d/'request.json')}
     if budget:
-        cfg['probe_memory_gb'] = budget
+        adaptive['probe_memory_gb'] = budget       # cluster.adaptive.probe_memory_gb, beside the work request (A65)
+    cfg = dict(base, output=dict(base.get('output', {}), file=str(d/'coherence')),
+               cluster=dict(base['cluster'], adaptive=adaptive))
     (d/'input.json').write_text(json.dumps(cfg, indent=1))
     with open(d/'run.log', 'w') as log:
         rc = subprocess.run([MPIRUN, '-n', str(ranks), str(BINARY), '-f', str(d/'input.json')], cwd=REPO,

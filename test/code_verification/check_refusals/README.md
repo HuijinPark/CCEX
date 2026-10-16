@@ -2,7 +2,7 @@
 
     bash test/code_verification/check_refusals/run.sh     # needs bin/main.out
 
-176 inputs that must be refused (4 of them outputs that cannot be written), eight that must run, and `--help` (the same as `-h`), each run once to see
+259 inputs that must be refused (4 of them outputs that cannot be written; 18 removed or wrong command-line uses since A63, 11 command-line cases gone with the options), five that must run, and `--help` (the same as `-h`), each run once to see
 that CCEX stops with the expected message, most of them before it reads any tensor
 file. They are edits of the legacy inputs `../check_input_forms/legacy.sh`
 writes (so it is run first), on the real systems: the h-BN bath with DFT
@@ -16,18 +16,23 @@ defect bath (S3).
 | `qubit_position_frame` other than `bath` | only one meaning is defined |
 | two qubits without `reference_qubit`, or with a name that is not a qubit | the rotation is about one qubit |
 | an `intmap` tensor without its frame | same as the tensor files |
-| `magnetic_field_axis`, `defect_axis_reference` without the rotation | keys that belong to the rotation block alone |
+| `magnetic_field_axis`; `defect_axis_reference` (removed 2026-10-15, A65) | a key that changed nothing would look read |
 | `zfs` given as D and E without `axis`; `axis` without `coordinate_frame`; object-form `zfs` without `coordinate_frame`; E non-zero with one axis | a zero-field splitting needs its axes and their frame |
-| a Jahn-Teller axis index out of `1..n_configurations` | it indexes the per-axis tensors |
+| a Jahn-Teller axis index out of `1..n_axis_states` | it indexes the per-axis tensors |
 | an unknown `unit` | the conversion would be silent |
-| `coordinate_frame_rotation` and `bath_coordinate_rotation` both present | the same option under two names |
+| `bath_coordinate_rotation` (and `coordinate_frame_rotation`, A65) | the rotation is `frame.rotation` |
+| the A65 old places (2026-10-15: top-level `backend`, `propagator`, `cluster_mode`, `add_subclusters`, `max_clusters_per_order`, `probe_memory_gb`, `outfile`, `savemode`, the Defect species' `n_nuclear_spins`, `n_configurations`) | each is refused with its new place (`execution.`, `cluster.`, `output.`, `n_onsite_spins`, `n_axis_states`) |
+| `output.path` with an absolute `output.file`; an empty `output.path` | two places for the outputs; no folder |
 
-Without a row of their own (`run.sh` has a comment on each): `-N`/`-B` that are not numbers, `-P` with no output name, and the command line
-winning over the file in either order; a missing `Qubit.file`; `nstep` 0; a Manual sequence that does not sum to 1 or
+Without a row of their own (`run.sh` has a comment on each): the command-line options removed in A63 (2026-10-15: `-I -N -m -q
+-B -s -S -a -P --auto_conv --adaptive --auto_status`, each refused naming its input key; until then this line checked `-N`/`-B`
+that are not numbers, `-P` with no output name and the command line winning over the file in either order), an unknown
+option, an absolute `output.file` with `-o DIR`, a file where `-o` needs a folder, `-e` with `-f` and `-e` over an existing
+`ccex_example.jsonc` (the accepted `-o`/`-e` forms are `../check_input_forms/cli.sh`); a missing `Qubit.file`; `nstep` 0; a Manual sequence that does not sum to 1 or
 is malformed (a number fraction and an angle of 90.5 must run); a number outside the float it is stored in;
 `alpha_state`/`beta_state` `{"index"}` naming other states than the written `alphams`/`betams` (D43; one that agrees must run);
 `intmap` tensors shorter than 3x3 or not numbers (D28); no qubit in `Qubit.qubit`; malformed entries of
-the indexed form (D28); arrays shorter than the input needs (D42); a `Defect.axis_file` axis past `n_configurations`; a key of the
+the indexed form (D28); arrays shorter than the input needs (D42); a `configuration.defect_axis_file` axis past `n_axis_states`; a key of the
 wrong type (D18); a misspelt key (D24); `quantity` `noise`, in the file and as `-q noise` (nothing computes it; review 20261013-doxygen D22); `Qubit.file` together with `Qubit.qubit` (until 2026-10-13 `qubitfile` with a `Qubit` block, and the block was ignored; review 20261013-readme R01).
 
 Since 2026-10-01 it also checks failures that used to end with exit status 0 (or, for the second file in info mode, crash):
@@ -46,7 +51,7 @@ before any state is calculated (no response file of a state is written):
 | refused | because |
 |---|---|
 | a factors state that is not a state of the run (0 with `nstate` 5, or 6), a step outside `0..nstep-1`, a step that is not an integer | the factors are one state's point of the run |
-| factors or except with `method` gCCE, with `order` 1, with `probes`, with `cluster_contributions`, with `-P` | the modes are defined for cCCE bundle order 2 over an explicit partition, with nothing else in the product |
+| factors or except with `method` gCCE, with `order` 1, with `probes`, with `cluster_contributions`, with `cluster_only` (`-P` until A63) | the modes are defined for cCCE bundle order 2 over an explicit partition, with nothing else in the product |
 | `state`/`step` outside factors, `except` outside except | a key a mode does not read is not ignored |
 | an empty except list, a term listed twice, a site set that is not a term of the partition's expansion | the driver works X out of the same exponent table; one that differs is a different table |
 
@@ -85,11 +90,18 @@ mode. The accepted block is `../check_input_forms/nodiv.sh`.
 
 Since 2026-10-13 (A47) it also checks the renamed input keys (`docs/user/InputFile.md#OldNames`): each case puts one old key,
 old value or old form back into a converted `check_numerics` input, and the run must stop naming the new key and the
-converter; gCCE with `cluster_mode` pcce, dsj, itb or dsjitb (from the input and from `-m`); a `hamiltonian.cCCE` setting in a
+converter; gCCE with `cluster_mode` dsj, itb or dsjitb; a `hamiltonian.cCCE` setting in a
 gCCE run; the `adaptive` block outside `cluster_mode` pcce or bundle and the `pcce` block outside pcce; `delta_A` false with a
 Defect species or with `qubit_bath_mean_field` true; an unknown `bath_bath_mean_field` value; and both forms of a qubit
 state at once. What the two new settings compute is `../check_analytic/`.
 
+Since 2026-10-16 (A67): a key's `{"value", "unit"}` with an unknown unit (also in the wrong case, `MT`), with `values` for
+`value`, a string value or a third key, refused with the units of the key; and the memory check, refused with
+`SLURM_MEM_PER_NODE=1` (1 MB per node) after the clusters and before the main calculation.
+
 `../check_rotation/run.sh` refuses the same combinations on toy systems; this
 folder shows the guards fire on real inputs and before any file is interpreted.
 What it writes goes to `../check_input_forms/_work/`, which is ignored.
+
+The inputs of these cases are written with the flat key names of before 2026-10-15 and put into the blocks of A64/A65 by
+`../input_layout.py` (`flat` when read, `nest` when written); a case of an old place lists it in `__keep_old__`.

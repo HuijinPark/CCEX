@@ -1,3 +1,7 @@
+/**
+ * @file bath.cpp
+ * @brief The bath spins: their interactions, states and mean fields.
+ */
 #include "../../include/physical/bath.h"
 #include "../../include/common/memory.h"
 #include "../../include/calculation/hamiltonian.h"
@@ -616,7 +620,7 @@ void BathArray_reportBath(BathArray* ba){
         }
 
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printf("\n");
@@ -649,7 +653,7 @@ void BathArray_reportBath_states(BathArray* ba){
             printStructElementFloat(message,state);
         }
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printLine();
@@ -666,7 +670,7 @@ void BathArray_reportBath_detunings(BathArray* ba){
             printf("      [%3d] detuning = %7.3g\n",i,detuning);
         }
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printf("\n");
@@ -683,7 +687,7 @@ void BathArray_reportBath_disorders(BathArray* ba){
             printStructElementDouble(message,BathArray_getBath_i_disorder(ba,i));
         }
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printf("\n");
@@ -706,7 +710,7 @@ void BathArray_reportBath_hypf(BathArray* ba, int nqubit){
                 printInlineMatrixXcd(key,hypf);
             }
             if (!verbosity && i==3){
-                printf("         :\n\n");
+                printf("        :\n\n");
             }
         }
         printf("\n");
@@ -730,7 +734,7 @@ void BathArray_reportBath_quad(BathArray* ba){
             printInlineMatrixXcd(key,quad);
         }
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
     printf("\n");
@@ -749,7 +753,7 @@ void BathArray_reportBath_hypf_sub(BathArray* ba){
             printInlineMatrixXcd(key,hypf_sub);
         }
         if (!verbosity && i==3){
-            printf("         :\n");
+            printf("        :\n");
         }
     }
 }

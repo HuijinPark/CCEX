@@ -1,9 +1,18 @@
+/**
+ * @file reader.cpp
+ * @brief The readers of the bath, qubit, gyro, tensor and state files, and the frame rotation.
+ */
 #include "../../include/input/reader.h"
 #include "../../include/input/isotope_table.h"
 #include "../../include/common/memory.h"
 #include "../../include/common/utilities.h"
 #include "../../include/clustering/cluster.h"
 #include "../../include/calculation/hamiltonian.h"
+#include <cmath>
+#include <unordered_map>
+#include <algorithm>
+#include <string>
+#include <vector>
 
 static int addIsotopeSpecies(BathArray* ba, const char* name);   // below readGyrofile
 
@@ -62,7 +71,7 @@ void readQubitfile(QubitArray* qa, Config* cnf){
     // if no data
     ccexRefusalPerror("Error(readQubitFile): Cannot read the qubit file\n");
     ccexRefusalPrint(stdout,"Current WRONG qubitfile name : %s\n",fname);
-    ccexRefusalPrint(stdout,"Check if your qubit file has 'xyz' values in a right form : x y z \n");
+    ccexRefusalPrint(stdout,"Check if your qubit file has 'xyz' values in a right form : x y z\n");
     ccexRefuse();
 }
 
@@ -75,7 +84,7 @@ static void checkQubitNamesUnique(QubitArray* qa){
     for (int i=0; i<nqubit; i++){
         for (int j=i+1; j<nqubit; j++){
             if (strcmp(QubitArray_getQubit_i_name(qa,i),QubitArray_getQubit_i_name(qa,j)) == 0){
-                ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): qubit[%d] and qubit[%d] share the name \"%s\"\n",
+                ccexRefusalPrint(stderr,"Error(frame.rotation): qubit[%d] and qubit[%d] share the name \"%s\"\n",
                         i,j,QubitArray_getQubit_i_name(qa,i));
                 ccexRefusalPrint(stderr,"reference_qubit resolves by exact name, so the names must be unique.\n");
                 ccexRefuse();
@@ -104,7 +113,7 @@ static int resolveReferenceQubit(QubitArray* qa, Config* cnf){
 
     int iref = QubitArray_getQubitIdx_fromName(qa,refname);
     if (iref < 0){
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): reference_qubit \"%s\" is not one of the qubits\n",refname);
+        ccexRefusalPrint(stderr,"Error(frame.rotation): reference_qubit \"%s\" is not one of the qubits\n",refname);
         ccexRefusalPrint(stderr,"Defined qubit names are :");
         for (int i=0; i<nqubit; i++){ ccexRefusalPrint(stderr," \"%s\"",QubitArray_getQubit_i_name(qa,i)); }
         ccexRefusalPrint(stderr,"\n");
@@ -115,7 +124,7 @@ static int resolveReferenceQubit(QubitArray* qa, Config* cnf){
 }
 
 /**
- * @brief Check the coordinate_frame_rotation input against the QubitArray
+ * @brief Check the frame.rotation input against the QubitArray
  * @details PURE VALIDATION. It opens nothing, reads no file and changes no state; it
  *          only compares what the input file and the command line have already produced.
  *          Called from main once every option source is in but before readQubitfile,
@@ -142,7 +151,7 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
 
     int nqubit = QubitArray_getNqubit(qa);
     if (nqubit < 1){
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): no qubit is defined (nqubit = %d)\n",nqubit);
+        ccexRefusalPrint(stderr,"Error(frame.rotation): no qubit is defined (nqubit = %d)\n",nqubit);
         ccexRefuse();
     }
 
@@ -162,7 +171,7 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
     // Several qubits : nothing may be left to a default
     ////////////////////////////////////////////////////////////////////////
     if (Config_getRot_reference_qubit(cnf)[0] == '\0'){
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): nqubit = %d, so reference_qubit is required\n",nqubit);
+        ccexRefusalPrint(stderr,"Error(frame.rotation): nqubit = %d, so reference_qubit is required\n",nqubit);
         ccexRefusalPrint(stderr,"It names the qubit the rotation is taken about, and with more than one qubit\n");
         ccexRefusalPrint(stderr,"there is no sensible default. Defined qubit names are :");
         for (int i=0; i<nqubit; i++){ ccexRefusalPrint(stderr," \"%s\"",QubitArray_getQubit_i_name(qa,i)); }
@@ -175,7 +184,7 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
     (void)resolveReferenceQubit(qa,cnf);
 
     if (Config_getRot_qubit_position_frame(cnf)[0] == '\0'){
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): nqubit = %d, so qubit_position_frame is required\n",nqubit);
+        ccexRefusalPrint(stderr,"Error(frame.rotation): nqubit = %d, so qubit_position_frame is required\n",nqubit);
         ccexRefusalPrint(stderr,"State the frame every Qubit.xyz is written in. The only supported value is\n");
         ccexRefusalPrint(stderr,"\"bath\": the same Cartesian basis and the same origin as the bath files, so that\n");
         ccexRefusalPrint(stderr,"one rotation moves every qubit and every bath spin together.\n");
@@ -186,7 +195,7 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
     // External tensor files : a pre-existing restriction, caught earlier
     ////////////////////////////////////////////////////////////////////////
     if (Config_getHf_readmode(cnf) != 0){
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): a hyperfine tensor file (hamiltonian.common.hyperfine) with %d qubits is not supported\n",
+        ccexRefusalPrint(stderr,"Error(frame.rotation): a hyperfine tensor file (hamiltonian.common.hyperfine) with %d qubits is not supported\n",
                 nqubit);
         ccexRefusalPrint(stderr,"readHftensorfile already refuses more than one qubit with a hyperfine tensor file:\n");
         ccexRefusalPrint(stderr,"the file is written around a single defect, so which qubit it belongs to is not\n");
@@ -194,7 +203,7 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
         ccexRefuse();
     }
     if (Config_getQd_readmode(cnf) != 0){
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): a quadrupole tensor file (hamiltonian.common.quadrupole) with %d qubits is not supported\n",
+        ccexRefusalPrint(stderr,"Error(frame.rotation): a quadrupole tensor file (hamiltonian.common.quadrupole) with %d qubits is not supported\n",
                 nqubit);
         ccexRefusalPrint(stderr,"readQdtensorfile already refuses more than one qubit with a quadrupole tensor file,\n");
         ccexRefusalPrint(stderr,"for the same reason. Use quadrupole \"off\", or run one qubit at a time.\n");
@@ -207,7 +216,7 @@ void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf){
     for (int i=0; i<nqubit; i++){
         for (int j=i; j<nqubit; j++){
             if (QubitArray_getIntmap_i_j_frame(qa,i,j) != INTMAP_EXPLICIT_UNSPECIFIED){ continue; }
-            ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): the intmap tensor between \"%s\" and \"%s\"\n",
+            ccexRefusalPrint(stderr,"Error(frame.rotation): the intmap tensor between \"%s\" and \"%s\"\n",
                     QubitArray_getQubit_i_name(qa,i),QubitArray_getQubit_i_name(qa,j));
             ccexRefusalPrint(stderr,"has no \"tensor_frame\", and with nqubit = %d it cannot be guessed.\n",nqubit);
             ccexRefusalPrint(stderr,"  \"bath\"  : components are in the original bath Cartesian basis, and are\n");
@@ -238,6 +247,10 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
     // Read bath files
     int nspin_prev = 0;
     int nspin = 0;
+    // A64: where each bath file's spins start, for the per-bath-file state and axis files
+    freeInt1d(&(cnf->bathfile_first));
+    cnf->bathfile_first = allocInt1d(nbathfiles+1);
+    cnf->bathfile_first[0] = 0;
 
     for (int i=0; i<nbathfiles; i++){
 
@@ -310,8 +323,8 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
                         ispeceis = addIsotopeSpecies(ba, name);
                         if (ispeceis == -1){
                             ccexRefusalPrint(stderr,"Error(readBathFile): the species \"%s\" is neither in the gyrofile nor in the built-in "
-                                    "isotope table (names like 13C, 14N, 11B); give it in the gyrofile (name spin gyro)\n",name);
-                            ccexRefusalPrint(stderr,"The bath spin is : %s %lf %lf %lf \n",name,xyz[0],xyz[1],xyz[2]);
+                                    "isotope table (names like 13C, 14N, 11B), give it in the gyrofile (name spin gyro)\n",name);
+                            ccexRefusalPrint(stderr,"The bath spin is : %s %lf %lf %lf\n",name,xyz[0],xyz[1],xyz[2]);
                             ccexRefuse();
                         }
                         nspecies = BathArray_getProp_nspecies(ba);    // the property arrays were reallocated
@@ -332,6 +345,7 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
             //lineIdx++;
         }
         fclose(data);
+        cnf->bathfile_first[i+1] = nspin;
 
         ////////////////////////////////////////////////////////////////////////
         // Print
@@ -339,14 +353,9 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
             printLine();
             snprintf(message,sizeof message,"Read BathFile[%d] : %s\n",i,fname); printMessage(message);
             snprintf(message,sizeof message,"- Number of bath spins : %d (nspin = %d)",nspin-nspin_prev,nspin); printMessage(message);
-            for (int isp=nspin_prev; isp<nspin; isp++){
-                if (verbosity || (isp<nspin_prev + 3 || isp>nspin-3)){ 
-                    // printf("        ( fline %5d )",Config_get_flines_i(cnf,isp));
-                    BathArray_reportBath_i_props(ba, isp);
-                }
-                if (!verbosity && isp==nspin_prev + 3){
-                    snprintf(message,sizeof message,"   : \n"); printMessage(message);
-                }
+            for (int isp=nspin_prev; isp<nspin && verbosity; isp++){   // A76: the spins with -v
+                // printf("        ( fline %5d )",Config_get_flines_i(cnf,isp));
+                BathArray_reportBath_i_props(ba, isp);
             }
             printLine();
 
@@ -361,6 +370,78 @@ void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf){
         ccexRefusalPrint(stderr,"The number of bath spins from the file : %d\n",nspin);
         ccexRefusalPrint(stderr,"The number of bath spins from the file line : %d\n",Config_get_nflines(cnf));
         ccexRefuse();
+    }
+
+    // A64: the bath of more than one file is the files merged; the log says so. A73 (user, 2026-10-16): two spins of
+    // different files within 0.5 Angstrom of each other - species files generated independently on one lattice (a P1
+    // file and a 13C file can share a site by chance), or two configurations merged by mistake - are a warning on rank 0
+    // naming the files and positions (A64 refused them all); two at the same position (closer than 1e-6 Angstrom) are
+    // refused before anything is calculated: their coupling is infinite and every result nan. A grid of 0.5 Angstrom
+    // cells: each spin is compared with the spins of its own and the 26 neighbouring cells.
+    int coincident = 0;
+    if (nbathfiles > 1 && rank==0){
+        std::string merged = "Bath = ";
+        for (int i=0; i<nbathfiles; i++){
+            char part[MAX_FILEPATH+64];
+            snprintf(part,sizeof part,"%s%s (%d spins)",i ? " + " : "",Config_getBathfiles_i(cnf,i),
+                     cnf->bathfile_first[i+1]-cnf->bathfile_first[i]);
+            merged += part;
+        }
+        printMessage(const_cast<char*>(merged.c_str()));
+        printf("\n");
+        const double cell = 0.5;
+        const int shown = 10;           // pairs listed; the rest are counted
+        std::vector<int> fileOf(nspin);
+        for (int i=0; i<nbathfiles; i++)
+            for (int s=cnf->bathfile_first[i]; s<cnf->bathfile_first[i+1]; s++) fileOf[s] = i;
+        auto key = [](long long a, long long b, long long c){
+            return (a*73856093LL) ^ (b*19349663LL) ^ (c*83492791LL);
+        };
+        std::unordered_map<long long, std::vector<int>> grid;
+        long long close = 0;
+        for (int s=0; s<nspin; s++){
+            const double* x = BathArray_getBath_i_xyz(ba,s);
+            const long long c[3] = {(long long)std::floor(x[0]/cell), (long long)std::floor(x[1]/cell),
+                                    (long long)std::floor(x[2]/cell)};
+            for (int dx=-1; dx<=1; dx++) for (int dy=-1; dy<=1; dy++) for (int dz=-1; dz<=1; dz++){
+                const auto found = grid.find(key(c[0]+dx,c[1]+dy,c[2]+dz));
+                if (found == grid.end()) continue;
+                for (int t : found->second){
+                    if (fileOf[t] == fileOf[s]) continue;
+                    const double* y = BathArray_getBath_i_xyz(ba,t);
+                    const double d = std::sqrt((x[0]-y[0])*(x[0]-y[0])+(x[1]-y[1])*(x[1]-y[1])+(x[2]-y[2])*(x[2]-y[2]));
+                    if (d >= cell) continue;
+                    if (d < 1e-6 && !coincident++)
+                        ccexRefusalPrint(stderr,"Error(readBathFile): two bath spins of different bath files are at the same "
+                                         "position: %s at (%.5f, %.5f, %.5f) in %s and %s in %s (after bath_shift). Two spins on "
+                                         "one site have an infinite coupling, and every result would be nan. Usually species "
+                                         "files generated independently on one lattice that share a site, or two "
+                                         "configurations merged by mistake (configuration.k_range runs them one by one): "
+                                         "correct the bath files, or shift one (configuration.bath_shift)\n",
+                                         BathArray_getBath_i_name(ba,t),y[0],y[1],y[2],Config_getBathfiles_i(cnf,fileOf[t]),
+                                         BathArray_getBath_i_name(ba,s),Config_getBathfiles_i(cnf,fileOf[s]));
+                    if (coincident) continue;
+                    if (close++ < shown)
+                        fprintf(stdout,"Warning(readBathFile): two bath spins of different bath files are %.4f Angstrom apart "
+                                       "(less than 0.5): %s at (%.5f, %.5f, %.5f) in %s and %s at (%.5f, %.5f, %.5f) in %s "
+                                       "(after bath_shift)\n", d,
+                                BathArray_getBath_i_name(ba,t),y[0],y[1],y[2],Config_getBathfiles_i(cnf,fileOf[t]),
+                                BathArray_getBath_i_name(ba,s),x[0],x[1],x[2],Config_getBathfiles_i(cnf,fileOf[s]));
+                }
+            }
+            grid[key(c[0],c[1],c[2])].push_back(s);
+        }
+        if (close && !coincident)
+            fprintf(stdout,"Warning(readBathFile): %lld pair(s) of bath spins of different bath files within 0.5 Angstrom%s: "
+                           "two spins at one site. Calculated as given, if this is not intended - species files generated "
+                           "independently on one lattice, or two configurations merged by mistake (configuration.k_range runs "
+                           "them one by one) - correct the bath files or shift one (configuration.bath_shift)\n\n",
+                    close, close > shown ? " (the first ten listed)" : "");
+        fflush(stdout);
+    }
+    if (nbathfiles > 1){
+        MPI_Bcast(&coincident,1,MPI_INT,0,MPI_COMM_WORLD);
+        if (coincident) ccexRefuse();
     }
 
     // qsort(ba->bath, ba->nspin, sizeof(BathSpin*), compare_dist);
@@ -401,32 +482,32 @@ static void reportCoordinateFrame(QubitArray* qa, Config* cnf, const double R[3]
                                R,r0,Config_getBfield(cnf),defect_axis_reference);
 
     char* posframe = Config_getRot_qubit_position_frame(cnf);
-    printf("      %-32s: %s\n","Qubit position frame",posframe[0] ? posframe : "bath (default)");
+    printf("      %-32s : %s\n","Qubit position frame",posframe[0] ? posframe : "bath (default)");
     printf("      %-32s  all Qubit.xyz values use the same Cartesian basis and\n","Meaning:");
     printf("      %-32s  origin as the bath files\n","");
     printf("      %-32s  the physical axis of reference_qubit in the source frame\n","Qubit axis:");
     printf("      %-32s  common reference-qubit-aligned computational frame,\n","tensor_frame = \"qubit\":");
     printf("      %-32s  not an individual local frame\n","");
     printf("\n");
-    printf("      %-32s: \"%s\"  (index %d of %d)\n","Reference qubit",
+    printf("      %-32s : \"%s\"  (index %d of %d)\n","Reference qubit",
            QubitArray_getQubit_i_name(qa,iref),iref,nqubit);
-    printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","r0, source frame",r0[0],r0[1],r0[2]);
+    printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","r0, source frame",r0[0],r0[1],r0[2]);
     printf("\n");
 
     for (int iq=0; iq<nqubit; iq++){
         double* now = QubitArray_getQubit_i_xyz(qa,iq);
         printf("      qubit[%d] \"%s\"%s\n",iq,QubitArray_getQubit_i_name(qa,iq),
                (iq==iref) ? "   (reference)" : "");
-        printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","  source frame",
+        printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","  source frame",
                qsrc[iq][0],qsrc[iq][1],qsrc[iq][2]);
-        printf("      %-32s: [ %12.8lf, %12.8lf, %12.8lf ]\n","  computational frame",
+        printf("      %-32s : [ %12.8lf, %12.8lf, %12.8lf ]\n","  computational frame",
                now[0],now[1],now[2]);
     }
     printf("\n");
 
-    printf("      %-32s: %d transformed as R*T*R^T, %d left as written\n",
+    printf("      %-32s : %d transformed as R*T*R^T, %d left as written\n",
            "Qubit intmap tensors",nint_rotated,nint_kept);
-    printf("      %-32s: %d default-zero, %d auto (source geometry),\n",
+    printf("      %-32s : %d default-zero, %d auto (source geometry),\n",
            "  by provenance",nprov[INTMAP_DEFAULT_ZERO],nprov[INTMAP_AUTO_SOURCE_GEOMETRY]);
     printf("      %-32s  %d explicit bath, %d explicit qubit, %d explicit unspecified\n","",
            nprov[INTMAP_EXPLICIT_BATH],nprov[INTMAP_EXPLICIT_QUBIT],nprov[INTMAP_EXPLICIT_UNSPECIFIED]);
@@ -465,7 +546,7 @@ static void reportCoordinateFrame(QubitArray* qa, Config* cnf, const double R[3]
  *          unchanged. mindist is recomputed here anyway, so the value stored on each
  *          spin describes the coordinates actually stored next to it.
  *
- *          A no-op unless coordinate_frame_rotation is enabled.
+ *          A no-op unless frame.rotation is enabled.
 */
 void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* dfa, Config* cnf,
                                   HypfProvenance hypf_bathframe){
@@ -517,7 +598,7 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
                   || (strcasecmp(Config_getRot_qd_tensor_frame(cnf),"bath") == 0);
 
     if (hypf_bathframe == NULL){
-        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): the hyperfine provenance is missing.\n");
+        ccexRefusalPrint(stderr,"Error(frame.rotation): the hyperfine provenance is missing.\n");
         ccexRefusalPrint(stderr,"readHftensorfile must run, and hand its provenance over, before this step.\n");
         ccexRefuse();
     }
@@ -550,14 +631,14 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
                     // nqubit > 1. At nqubit == 1 it is the legacy "qzfs" case, which was
                     // never rotated and must keep not being rotated.
                     if (nqubit > 1){
-                        ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): intmap[%d][%d] has no tensor_frame\n",i,j);
+                        ccexRefusalPrint(stderr,"Error(frame.rotation): intmap[%d][%d] has no tensor_frame\n",i,j);
                         ccexRefusalPrint(stderr,"and nqubit = %d. This should have been caught before any file was read.\n",nqubit);
                         ccexRefuse();
                     }
                     rotate_this = false;
                     break;
                 default:
-                    ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): intmap[%d][%d] has an unusable\n",i,j);
+                    ccexRefusalPrint(stderr,"Error(frame.rotation): intmap[%d][%d] has an unusable\n",i,j);
                     ccexRefusalPrint(stderr,"provenance (state %d).\n",(int)frame);
                     ccexRefuse();
             }
@@ -576,8 +657,9 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     if (rank==0){
         const char* defaxis =
             (Config_getDefect_axis_reference(cnf) == DEFECT_AXIS_REFERENCE_QUBIT_AXIS) ? "qubit_axis" : NULL;
+        logAlignBegin();   // A76: the ':' of each table in one column, up to the tensors below
         reportCoordinateFrame(qa,cnf,R,r0,iref,qsrc,defaxis,nint_rotated,nint_kept,nprov);
-        printf("      %-28s: %d transformed from bath to qubit frame\n",
+        printf("      %-28s : %d transformed from bath to qubit frame\n",
                "Defect templates",ndefect_rotated);
         for (int idf=0; idf<DefectArray_getNdefect(dfa); idf++){
             if (DefectArray_getDefect_idf_axis_set(dfa,idf)){
@@ -609,7 +691,7 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
                 default:
                     // Including HYPF_UNSET. Guessing either way is a silently wrong
                     // Hamiltonian -- a missed rotation or a doubled one.
-                    ccexRefusalPrint(stderr,"Error(coordinate_frame_rotation): hypf[%d][%d] has no usable\n",i,j);
+                    ccexRefusalPrint(stderr,"Error(frame.rotation): hypf[%d][%d] has no usable\n",i,j);
                     ccexRefusalPrint(stderr,"provenance (state %d). Expected %d (from the tensor file) or %d\n",
                             hypf_bathframe[i][j],HYPF_FILE_TENSOR,HYPF_SOURCE_GEOMETRY);
                     ccexRefusalPrint(stderr,"(computed from the source geometry).\n");
@@ -630,9 +712,9 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
     }
 
     if (rank==0){
-        printf("      %-28s: %d transformed as R*T*R^T, %d left as written\n",
+        printf("      %-28s : %d transformed as R*T*R^T, %d left as written\n",
                "hyperfine tensors",nhf_rotated,nhf_kept);
-        printf("      %-28s: %s\n","quadrupole tensors",
+        printf("      %-28s : %s\n","quadrupole tensors",
                rotate_qd ? "transformed as R*T*R^T" : "left as written (qd_tensor_frame = qubit)");
         printf("\n");
 
@@ -640,10 +722,46 @@ void applyCoordinateFrameRotation(BathArray* ba, QubitArray* qa, DefectArray* df
         // but that is BEFORE this step, so those values are the ones in the source frame.
         // Print them again here, so the log ends on the tensors that actually reach the
         // Hamiltonian rather than on the ones that were read.
-        printSubTitle("Tensors after the coordinate frame rotation");
-        BathArray_reportBath_hypf(ba,nqubit);
-        BathArray_reportBath_quad(ba);
+        if (verbosity){   // A76: the tensors with -v
+            printSubTitle("Tensors after the coordinate frame rotation");
+            BathArray_reportBath_hypf(ba,nqubit);
+            BathArray_reportBath_quad(ba);
+        }
+        logAlignEnd();
     }
+}
+
+// names[j], with the state number appended when state > 0
+static std::string perBathFileName(char** names, int j, int state){
+    char fname[MAX_FILEPATH];
+    if (state > 0) snprintf(fname,sizeof fname,"%s%d",names[j],state);
+    else snprintf(fname,sizeof fname,"%s",names[j]);
+    return fname;
+}
+// A64: the per-bath-file files of one kind - bath states, defect axes, defect states - opened together: names[j] (with the
+// state number appended when state > 0) belongs to bath file j; "" is a bath file without such a file (nullptr here: its
+// spins are drawn from the seed, as without the key). A73: a name that does not open is the same - nullptr, its bath
+// file's spins drawn from the seed, the name added to *failed (", "-separated) for the caller's warning - as a single
+// missing file always was (warn, draw from the seed); it used to discard the files of the other bath files too. False
+// when names is NULL (the key is absent) or no file opens (every name "" or missing): the caller draws the whole bath.
+static bool openPerBathFile(Config* cnf, char** names, int state, std::vector<FILE*>* files, std::string* failed){
+    files->clear();
+    failed->clear();
+    if (!names){ *failed = "(null)"; return false; }
+    bool opened = false;
+    for (int j = 0; j < Config_getNbathfiles(cnf); j++){
+        if (names[j][0] == '\0'){ files->push_back(nullptr); continue; }
+        const std::string fname = perBathFileName(names,j,state);
+        FILE* data = fopen(fname.c_str(),"r");
+        if (!data) *failed += std::string(failed->empty() ? "" : ", ") + fname;
+        opened = opened || data;
+        files->push_back(data);
+    }
+    if (!opened){
+        files->clear();
+        if (failed->empty()) *failed = "\"\" for every bath file";
+    }
+    return opened;
 }
 
 void setBathStates(BathArray* ba, Config* cnf, int i){
@@ -669,39 +787,37 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
     // For print
     char message[MAX_FILEPATH];
 
-    // Set filename as fname_i
-    char fname[MAX_FILEPATH];
-    snprintf(fname,sizeof fname,"%s%d",Config_getStatefile(cnf),i);
+    // Read the state files: one per bath file (A64), each of the lines of its bath file
+    std::vector<FILE*> files;
+    std::string failed;
+    if(!openPerBathFile(cnf,Config_getStatefile(cnf),i,&files,&failed)){
 
-    // Read the state file
-    FILE* data;
-    data = fopen(fname,"r");
-
-    // Check the nbathfiles is larger than 1
-    int nbathfiles = Config_getNbathfiles(cnf);
-    if(data==NULL || nbathfiles > 1){
-        
         if (rank==0){
-            if (data == NULL){
-                snprintf(message,sizeof message,"Warning(readStateFile): Cannot open the state file (%s)",fname); printMessage(message);
-            }
-            if (nbathfiles > 1){
-                snprintf(message,sizeof message,"Warning(readStateFile): The number of bathfiles is larger than 1"); printMessage(message);
-            }
+            snprintf(message,sizeof message,"Warning(readStateFile): Cannot open the state file (%s)",failed.c_str()); printMessage(message);
             snprintf(message,sizeof message,"The bath state is randomly generated\n"); printMessage(message);
         }
         BathArray_setBathStatesRandom(ba);
         return;
 
-    }else{
+    }
+    if (std::find(files.begin(),files.end(),nullptr) != files.end()){   // "" or not opened: these bath files' states from the seed
+        if (rank==0 && !failed.empty()){ snprintf(message,sizeof message,"Warning(readStateFile): Cannot open the state file (%s)",failed.c_str()); printMessage(message); }
+        if (rank==0){ snprintf(message,sizeof message,"The bath states of the bath files without a state file (\"\" or not opened) are randomly generated"); printMessage(message); }
+        BathArray_setBathStatesRandom(ba);
+    }
+    for (int j = 0; j < (int)files.size(); j++){
+        FILE* data = files[j];
+        if (!data) continue;
+        const std::string fnameText = perBathFileName(Config_getStatefile(cnf),j,i);
+        const char* fname = fnameText.c_str();
 
         // Read the number of lines
-        int idx = 0;
+        int idx = cnf->bathfile_first[j];
         int count = fscanf(data, "%*s\n");
         int fline = 1; // the first line is the length of the file
-        int nspin = BathArray_getNspin(ba);
+        int nspin = cnf->bathfile_first[j+1];   // the end of bath file j's spins
 
-        while(!feof(data)){
+        while(idx < nspin && !feof(data)){
 
             //Read the bath state from the file
             //We will get the bath state at the same line of bathfile that we get the bath spins
@@ -712,10 +828,12 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
 
             if (fline == Config_get_flines_i(cnf,idx)){
                 if (count == 1){
-                    BathArray_setBath_i_state(ba, state, idx);
+                    // A80: pCCE (shrink_restspins) deletes the last spins of the bath before the states are read; the
+                    // file still has their lines, which are read and counted, but there is no spin to set any more.
+                    if (idx < BathArray_getNspin(ba)) BathArray_setBath_i_state(ba, state, idx);
                     idx++;
                 }else{
-                    ccexRefusalPrint(stderr,"Error(readStateFile): StateFile format is NOT `float` \n");
+                    ccexRefusalPrint(stderr,"Error(readStateFile): StateFile format is NOT `float`\n");
                     ccexRefuse();
                 }
             }
@@ -729,7 +847,7 @@ void setBathStates(BathArray* ba, Config* cnf, int i){
         fclose(data);
         if (idx != nspin){
             if (rank==0){
-                fprintf(stderr,"Error(readStateFile): The number of bath spins is not consistent\n");
+                fprintf(stderr,"Error(readStateFile): The number of bath spins is not consistent (%s)\n",fname);
                 fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
                 fprintf(stderr,"The number of bath spins from the file line : %d\n",nspin);
             }
@@ -752,36 +870,36 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
     // For print
     char message[MAX_FILEPATH];
 
-    // Read the state file
-    char* fname = Config_getAvaaxfile(cnf);
-    FILE* data;
-    data = fopen(fname,"r");
+    // Read the axis files: one per bath file (A64), each of the lines of its bath file
+    std::vector<FILE*> files;
+    std::string failed;
+    if(!openPerBathFile(cnf,Config_getAvaaxfile(cnf),0,&files,&failed)){
 
-    // Check the nbathfiles is larger than 1
-    int nbathfiles = Config_getNbathfiles(cnf);
-
-    if(data==NULL || nbathfiles > 1){
-        
         if (rank==0){
-            if (data == NULL){
-                snprintf(message,sizeof message,"Warning(setPaxes): Cannot open the avaax file (%s)",fname); printMessage(message);
-            }
-            if (nbathfiles > 1){
-                snprintf(message,sizeof message,"Warning(setPaxes): The number of bathfiles is larger than 1\n"); printMessage(message);
-            }
+            snprintf(message,sizeof message,"Warning(setPaxes): Cannot open the avaax file (%s)",failed.c_str()); printMessage(message);
             snprintf(message,sizeof message,"The paxes is randomly generated\n"); printMessage(message);
         }
         DefectArray_setPaxesRandom(dfa, ba);
         return;
     }
 
+    if (std::find(files.begin(),files.end(),nullptr) != files.end()){   // "" or not opened: these bath files' axes from the seed
+        if (rank==0 && !failed.empty()){ snprintf(message,sizeof message,"Warning(setPaxes): Cannot open the avaax file (%s)",failed.c_str()); printMessage(message); }
+        if (rank==0){ snprintf(message,sizeof message,"The paxes of the bath files without an axis file (\"\" or not opened) are randomly generated"); printMessage(message); }
+        DefectArray_setPaxesRandom(dfa, ba);
+    }
+    for (int j = 0; j < (int)files.size(); j++){
+    FILE* data = files[j];
+    if (!data) continue;
+    const std::string fnameText = perBathFileName(Config_getAvaaxfile(cnf),j,0);
+    const char* fname = fnameText.c_str();
     // Read the number of lines
-    int nspin = Config_get_nflines(cnf);
-    int idx = 0;
+    const int end = cnf->bathfile_first[j+1];   // the end of bath file j's spins
+    int idx = cnf->bathfile_first[j];
     int count = fscanf(data, "%*s\n");
     int fline = 1; // the first line is the length of the file
 
-    while(!feof(data)){
+    while(idx < end && !feof(data)){
 
         // Read the bath axes from the file
         // We will get the bath axes at the same line of bathfile that we get the bath spins
@@ -799,7 +917,7 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
                 if (idf == -1){
                     // err if the defect name is not found
                     ccexRefusalPrint(stderr,"Error(setPaxes): Cannot find the defect name in the defect array\n");
-                    ccexRefusalPrint(stderr,"The bath spin[%d] is : %s \n",idx,dfname);
+                    ccexRefusalPrint(stderr,"The bath spin[%d] is : %s\n",idx,dfname);
                     ccexRefuse();
                 }
                 // stored as the input's navaax + 1 (index 0 is the main spin, option.cpp): the axes are 1 .. navaax-1;
@@ -808,21 +926,21 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
                 if (paxes > navaax - 1 || paxes < 1){
                     // err if the principal axis is out of range
                     ccexRefusalPrint(stderr,"Error(setPaxes): The principal axis is out of range\n");
-                    ccexRefusalPrint(stderr,"The bath spin[%d] is : %s \n",idx,dfname);
-                    ccexRefusalPrint(stderr,"The number of principal axis : %d \n",navaax - 1);
-                    ccexRefusalPrint(stderr,"The principal axis from the file : %d \n",paxes);
+                    ccexRefusalPrint(stderr,"The bath spin[%d] is : %s\n",idx,dfname);
+                    ccexRefusalPrint(stderr,"The number of principal axis : %d\n",navaax - 1);
+                    ccexRefusalPrint(stderr,"The principal axis from the file : %d\n",paxes);
                     ccexRefuse();
                 }
                 //////////////////////////////////////////////
                 DefectArray_setPaxes_i(dfa, idx, paxes);
                 idx++;
             }else{
-                ccexRefusalPrint(stderr,"Error(setPaxes): AvaaxFile format is NOT `int` \n");
+                ccexRefusalPrint(stderr,"Error(setPaxes): AvaaxFile format is NOT `int`\n");
                 ccexRefuse();
             }
         }
         //Check if the number of bath spins is consistent
-        if (Config_get_nflines(cnf) == idx){
+        if (end == idx){
             if (rank==0){
                 snprintf(message,sizeof message,"Read AvaaxFile : %s\n",fname); printMessage(message);
             }
@@ -832,13 +950,15 @@ void setDefectPaxes(DefectArray* dfa, BathArray* ba, Config* cnf){
     fclose(data);
 
     // Check if the number of bath spins is consistent
-    if (Config_get_nflines(cnf) != idx){
+    if (end != idx){
         if (rank==0){
-            ccexRefusalPrint(stderr,"Error(setPaxes): The number of bath spins is not consistent\n");
+            ccexRefusalPrint(stderr,"Error(setPaxes): The number of bath spins is not consistent (%s)\n",fname);
             ccexRefusalPrint(stderr,"The number of bath spins from bathfile : %d\n",idx);
-            ccexRefusalPrint(stderr,"The number of bath spins from the file line : %d\n",Config_get_nflines(cnf));
+            ccexRefusalPrint(stderr,"The number of bath spins from the file line : %d\n",end);
         }
+        for (int jj = j+1; jj < (int)files.size(); jj++) if (files[jj]) fclose(files[jj]);
         ccexRefuse();   // every rank counts the same file; rank 0 alone used to exit (A55)
+    }
     }
     return;
 }
@@ -867,39 +987,36 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
     // For print
     char message[MAX_FILEPATH];
 
-    // File
-    char fname[MAX_FILEPATH];
-    snprintf(fname,sizeof fname,"%s%d",Config_getExstatefile(cnf),i);
+    // Read the defect state files: one per bath file (A64), each of the lines of its bath file
+    std::vector<FILE*> files;
+    std::string failed;
+    if (!openPerBathFile(cnf,Config_getExstatefile(cnf),i,&files,&failed)){
 
-    // Read the state file
-    FILE* data;
-    data = fopen(fname,"r");
-
-    // Check the nbathfiles is larger than 1
-    int nbathfiles = Config_getNbathfiles(cnf);
-    if (data == NULL || nbathfiles > 1){
-        
         if (rank==0){
-            if (data == NULL){
-                
-                snprintf(message,sizeof message,"Warning(setSubbathStates): Cannot open the exstate file (%s)",fname); printMessage(message);
-            }
-            if (nbathfiles > 1){
-                snprintf(message,sizeof message,"Warning(setSubbathStates): The number of bathfiles is larger than 1"); printMessage(message);
-            }
+            snprintf(message,sizeof message,"Warning(setSubbathStates): Cannot open the exstate file (%s)",failed.c_str()); printMessage(message);
             snprintf(message,sizeof message,"The subbath states are randomly generated\n"); printMessage(message);
         }
         DefectArray_setSubbathStatesRandom(dfa, ba);
         return;
-    }else{
-            
+    }
+    if (std::find(files.begin(),files.end(),nullptr) != files.end()){   // "" or not opened: these bath files' defect states from the seed
+        if (rank==0 && !failed.empty()){ snprintf(message,sizeof message,"Warning(setSubbathStates): Cannot open the exstate file (%s)",failed.c_str()); printMessage(message); }
+        if (rank==0){ snprintf(message,sizeof message,"The subbath states of the bath files without a state file (\"\" or not opened) are randomly generated"); printMessage(message); }
+        DefectArray_setSubbathStatesRandom(dfa, ba);
+    }
+    for (int j = 0; j < (int)files.size(); j++){
+        FILE* data = files[j];
+        if (!data) continue;
+        const std::string fnameText = perBathFileName(Config_getExstatefile(cnf),j,i);
+        const char* fname = fnameText.c_str();
+
         // Read the number of lines
-        int nspin = BathArray_getNspin(ba);
-        int idx = 0;
+        int nspin = cnf->bathfile_first[j+1];   // the end of bath file j's spins
+        int idx = cnf->bathfile_first[j];
         int count = fscanf(data, "%*s\n");
         int fline = 1; // the first line is the length of the file
 
-        while(!feof(data)){
+        while(idx < nspin && !feof(data)){
 
             // Read the bath state from the file
             // We will get the bath state at the same line of bathfile that we get the bath spins
@@ -946,7 +1063,7 @@ void setSubbathStates(DefectArray* dfa, BathArray* ba, Config* cnf, int i){
         fclose(data);
         if (idx != nspin){
             if (rank==0){
-                fprintf(stderr,"Error(setSubbathStates): The number of bath spins is not consistent\n");
+                fprintf(stderr,"Error(setSubbathStates): The number of bath spins is not consistent (%s)\n",fname);
                 fprintf(stderr,"The number of bath spins from bathfile : %d\n",idx);
                 fprintf(stderr,"The number of bath spins from the file line : %d\n",nspin);
             }
@@ -1018,7 +1135,7 @@ void readGyrofile(BathArray* ba, Config* cnf){
             const IsotopeEntry* iso = findIsotope(name);
             if (rank==0 && iso != NULL && (iso->spin != spin || fabs(gyro - iso->gyro) > 1e-3 * fabs(iso->gyro))){
                 printf("        Note: %s in the gyrofile (spin %.1f, gyro %.6f) differs from the built-in isotope table "
-                       "(spin %.1f, gyro %.6f); the gyrofile is used\n", name, spin, gyro, iso->spin, iso->gyro);
+                       "(spin %.1f, gyro %.6f), the gyrofile is used\n", name, spin, gyro, iso->spin, iso->gyro);
             }
         }
         else{
@@ -1028,7 +1145,7 @@ void readGyrofile(BathArray* ba, Config* cnf){
     }
     fclose(data);
     if(rank==0){printf("        Read GyroFile : %s\n",fname);}
-    if(rank==0){BathArray_reportSpinProperties(ba);}
+    if(rank==0){logAlignBegin(); BathArray_reportSpinProperties(ba); logAlignEnd();}
     if(rank==0){printf("\n");}
 }
 
@@ -1065,12 +1182,13 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
 
     if (rank==0){
         printSubTitle("Read the Hyperfine interaction from DFT inputfile...");
+        logAlignBegin();   // A76: the rows of the hyperfine report in one column (ended after the tensors are read)
     }
 
     //the information in Atensor file
     if (hf_readmode==0){
         if (rank==0){
-            printf("      %-18s:   %4d ( Point-dipole tensor )\n\n", "HF Readmode ", hf_readmode);
+            printf("      %-18s : %d (Point-dipole tensor)\n\n", "HF Readmode", hf_readmode);
         }
         BathArray_setBathHypfs(ba,qa);
 
@@ -1084,16 +1202,16 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
         if (rank==0){
 
             if (hf_readmode==1){
-                printf("      %-18s:   %d ( Fermi-contact term + point-dipole tensor )\n", "HF Readmode ", hf_readmode);
+                printf("      %-18s : %d (Fermi-contact term + point-dipole tensor)\n", "HF Readmode", hf_readmode);
             }
             else if (hf_readmode==2){
-                printf("      %-18s:   %d ( DFT dipolar tensor )\n", "HF Readmode ", hf_readmode);
+                printf("      %-18s : %d (DFT dipolar tensor)\n", "HF Readmode", hf_readmode);
             }
             else if (hf_readmode==3){
-                printf("      %-18s:   %d ( Fermi-contact term + DFT dipole tensor )\n", "HF Readmode ", hf_readmode);
+                printf("      %-18s : %d (Fermi-contact term + DFT dipole tensor)\n", "HF Readmode", hf_readmode);
             }
-            printStructElementChar("HF Tensor file ", hf_tensorfile);
-            printStructElementInt("HF ignoring range ", hf_ignore_oor);
+            printStructElementChar("HF Tensor file", hf_tensorfile);
+            printStructElementInt("HF ignoring range", hf_ignore_oor);
             printf("\n");
 
         }
@@ -1130,9 +1248,9 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
             // format v3: the values are the hyperfine of the spin-S defect; DefectTotSpin and CorrTotSpin do not scale them
             SpinFactor = 1.0;
             if (rank==0){
-                printf("\n\t\tTensor file format v3 (provenance line): the hyperfine of the spin-%g defect, from %s\n",
+                printf("\n        Tensor file format v3 (provenance line): the hyperfine of the spin-%g defect, from %s\n",
                        fileS, version == 1 ? "VASP" : "Quantum ESPRESSO");
-                printf("\t\t-->SpinFactor = 1 (read as written); DefectTotSpin (%g) is only checked against S,"
+                printf("        -->SpinFactor = 1 (read as written), DefectTotSpin (%g) is only checked against S,"
                        " CorrTotSpin (%g) is not used\n\n", DefectTotSpin, CorrTotSpin);
             }
         }else{
@@ -1141,12 +1259,12 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
 
             if (rank==0){
                 printHfInfo_version(version, DefectTotSpin, CorrTotSpin, SpinFactor);
-                printf("\t\t!!! WARNING: this tensor file has no provenance line (a file before format v3).\n"
+                printf("        !!! WARNING: this tensor file has no provenance line (a file before format v3).\n"
                        "\t\t!!! Its factor %g comes from the first line alone: VASP -> x 1 (or CorrTotSpin/DefectTotSpin),\n"
                        "\t\t!!! anything else -> x 0.5/DefectTotSpin. A SpinTensorReader v1 file (OUTCAR x 2) with a\n"
                        "\t\t!!! VASP line is read 2x. Remake the file with example/tools/SpinTensorReader (format v3).\n\n",
                        SpinFactor);
-                fprintf(stderr, "Warning: hyperfine tensor file %s has no provenance line (format before v3); "
+                fprintf(stderr, "Warning: hyperfine tensor file %s has no provenance line (format before v3), "
                         "read x %g by the first-line rule - remake it with SpinTensorReader\n", hf_tensorfile, SpinFactor);
             }
         }
@@ -1346,16 +1464,17 @@ void readHftensorfile(BathArray* ba, QubitArray* qa, Config* cnf, HypfProvenance
     if (nunset > 0){
         ccexRefusalPrint(stderr,"Error(readHftensorfile): %d of %d hyperfine tensors were stored without\n",
                 nunset,nspin_prov*nqubit_prov);
-        ccexRefusalPrint(stderr,"recording which frame they are in; the first is hypf[%d][%d].\n",first_i,first_j);
+        ccexRefusalPrint(stderr,"recording which frame they are in, the first is hypf[%d][%d].\n",first_i,first_j);
         ccexRefusalPrint(stderr,"hf_readmode = %d -- the supported values are 0, 1, 2 and 3.\n",
                 Config_getHf_readmode(cnf));
         ccexRefuse();
     }
 
-    if (rank==0){
+    if (rank==0 && verbosity){   // A76: the tensors with -v
         int nqubit = QubitArray_getNqubit(qa);
         BathArray_reportBath_hypf(ba, nqubit); //report updated hyperfine tensors
     }
+    logAlignEnd();   // A76 (begun under the subtitle)
 }
 
 /**
@@ -1384,39 +1503,40 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
 
     if (rank==0){
         printSubTitle("Read the Quadrupole interaction from DFT inputfile...");
+        logAlignBegin();   // A76: the rows of the quadrupole report in one column (ended after the tensors are read)
     }
 
     //the information in Qtensor file
     if (qd_readmode == 0){
         if (rank==0){
-            printf("      %-18s:   %4d ( No Quadrupole interaction )\n\n", "Qd Readmode ", qd_readmode);
+            printf("      %-18s : %d (No Quadrupole interaction)\n\n", "Qd Readmode", qd_readmode);
             printf("\n");
         }
     }
     else if (qd_readmode == 1){
         if (rank==0){
-            ccexRefusalPrint(stdout,"      %-18s:   %d ** Removed option ( Quadrupole Experimental constant P_para and P_perp (MHz) \n", "Qd Readmode ", qd_readmode);
+            ccexRefusalPrint(stdout,"      %-18s : %d ** Removed option ( Quadrupole Experimental constant P_para and P_perp (MHz)\n", "Qd Readmode", qd_readmode);
         }
         ccexRefuse();
     } 
     else if (qd_readmode == 2 || qd_readmode == 3 || qd_readmode == 4){ 
          if (rank==0){
             if (qd_readmode==2){
-                printf("      %-18s:   %d ( Quadrupole DFT File (QuadFileWiDefect) )\n", "Qd Readmode ", qd_readmode);
-                printStructElementChar("Qd Tensor file ", qd_tensorfile);
+                printf("      %-18s : %d (Quadrupole DFT File (QuadFileWiDefect))\n", "Qd Readmode", qd_readmode);
+                printStructElementChar("Qd Tensor file", qd_tensorfile);
                 printf("\n");
             }
             else if (qd_readmode==3){
-                printf("      %-18s:   %d \n", "Qd Readmode ", qd_readmode);
-                printf("\t  Cell Parameter with perpendicular Direction(X,Y,Z) (QuadCellPara)               : %lf %lf %lf\n",qd_cellpara[0],qd_cellpara[1],qd_cellpara[2]);
-                printf("\t  Quadrupole DFT File for strained structure (QuadFileWiDefect)                   : %s\n",qd_tensorfile);
-                printf("\t  Quadrupole DFT File for strained structure without defect (QuadFileWoDefect)    : %s\n",qd_tensorfile_woqubit);
+                printf("      %-18s : %d\n", "Qd Readmode", qd_readmode);
+                printf("        Cell Parameter with perpendicular Direction(X,Y,Z) (QuadCellPara) : %lf %lf %lf\n",qd_cellpara[0],qd_cellpara[1],qd_cellpara[2]);
+                printf("        Quadrupole DFT File for strained structure (QuadFileWiDefect) : %s\n",qd_tensorfile);
+                printf("        Quadrupole DFT File for strained structure without defect (QuadFileWoDefect) : %s\n",qd_tensorfile_woqubit);
             }
             else if (qd_readmode==4){
-                printf("      %-18s:   %d \n", "Qd Readmode ", qd_readmode);
-                printf("\t  Periodic Cell Parameter with perpendicular Direction(X,Y,Z) (QuadCellPara)      : {%lf, %lf, %lf}\n",qd_cellpara[0],qd_cellpara[1],qd_cellpara[2]);
-                printf("\t  Quadrupole DFT File for insert Defect strcuture (QuadFileWiDefect)              : %s\n",qd_tensorfile);
-                printf("\t  Quadrupole DFT File for strained structure without defect (QuadFileWoDefect)    : %s\n",qd_tensorfile_woqubit);
+                printf("      %-18s : %d\n", "Qd Readmode", qd_readmode);
+                printf("        Periodic Cell Parameter with perpendicular Direction(X,Y,Z) (QuadCellPara) : {%lf, %lf, %lf}\n",qd_cellpara[0],qd_cellpara[1],qd_cellpara[2]);
+                printf("        Quadrupole DFT File for insert Defect strcuture (QuadFileWiDefect) : %s\n",qd_tensorfile);
+                printf("        Quadrupole DFT File for strained structure without defect (QuadFileWoDefect) : %s\n",qd_tensorfile_woqubit);
             }
             printf("\n");
         }      
@@ -1601,7 +1721,7 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
                                 efg(2,1) = QtensorArrayWiDef[tensorIdx_wiDef][10] ;
                                 efg(2,2) = QtensorArrayWiDef[tensorIdx_wiDef][11] ;
                             }else{
-                                ccexRefusalPrint(stdout,"error in EFG(Opt:%d), the atom is within the range but doesn't exist in defect EFG file \n",qd_readmode);
+                                ccexRefusalPrint(stdout,"error in EFG(Opt:%d), the atom is within the range but doesn't exist in defect EFG file\n",qd_readmode);
                                 ccexRefuse();
                             }
                         }else{
@@ -1947,10 +2067,11 @@ void readQdtensorfile(BathArray* ba, QubitArray* qa, Config* cnf){
         }
     }
 
-    if (rank==0){
+    if (rank==0 && verbosity){   // A76: the tensors with -v
         int nqubit = QubitArray_getNqubit(qa);
         BathArray_reportBath_quad(ba); //report updated hyperfine tensors
     }
+    logAlignEnd();   // A76 (begun under the subtitle)
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -2074,8 +2195,8 @@ void READ_Tensor(const char* inputfile, double*** Tensor,int numCol){
     fclose(data);
 
     if ((*Tensor)[0][0]==1){
-        printf("\tThe Tensor tensor can not read from tensor file (%s)\n",inputfile);
-        printf("\tPlz, Check the Tensor file !!!\n");
+        printf("        The Tensor tensor can not read from tensor file (%s)\n",inputfile);
+        printf("        Plz, Check the Tensor file !!!\n");
     }
 }
 
@@ -2299,7 +2420,7 @@ bool READ_Tensor_provenance(const char* inputfile, double DefectTotSpin, int* ve
     // strip the line end
     prov[strcspn(prov, "\r\n")] = '\0';
     if (provline != 2){
-        snprintf(why, sizeof why, "the '# CCEX-tensor' line is line %d; it must be line 2, under the VASP or "
+        snprintf(why, sizeof why, "the '# CCEX-tensor' line is line %d, it must be line 2, under the VASP or "
                  "QUANTUMESPRESSO line", provline);
         refuseTensorFile(inputfile, why);
     }
@@ -2332,7 +2453,7 @@ bool READ_Tensor_provenance(const char* inputfile, double DefectTotSpin, int* ve
     if (source == "VASP OUTCAR"){ fromSource = 1; }
     else if (source == "QE hyperfine.out"){ fromSource = 0; }
     else{
-        snprintf(why, sizeof why, "the provenance line names source '%s'; known: 'VASP OUTCAR', 'QE hyperfine.out'",
+        snprintf(why, sizeof why, "the provenance line names source '%s', known: 'VASP OUTCAR', 'QE hyperfine.out'",
                  source.c_str());
         refuseTensorFile(inputfile, why);
     }
@@ -2340,14 +2461,14 @@ bool READ_Tensor_provenance(const char* inputfile, double DefectTotSpin, int* ve
     if (strcmp(tag, "VASP") == 0){ fromTag = 1; }
     else if (strcmp(tag, "QUANTUMESPRESSO") == 0){ fromTag = 0; }
     if (fromTag != fromSource){
-        snprintf(why, sizeof why, "line 1 is '%s' but the provenance line says source = %s (expected line 1 %s); "
+        snprintf(why, sizeof why, "line 1 is '%s' but the provenance line says source = %s (expected line 1 %s), "
                  "the file contradicts itself, remake it with SpinTensorReader", tag, source.c_str(),
                  fromSource == 1 ? "VASP" : "QUANTUMESPRESSO");
         refuseTensorFile(inputfile, why);
     }
     if (std::fabs(S - DefectTotSpin) > 1e-9){
         snprintf(why, sizeof why, "the file holds the hyperfine of a spin S = %g defect (provenance line) but "
-                 "the qubit spin is %g; the file and the input describe different defects", S, DefectTotSpin);
+                 "the qubit spin is %g, the file and the input describe different defects", S, DefectTotSpin);
         refuseTensorFile(inputfile, why);
     }
     *version = fromSource;
@@ -2380,7 +2501,7 @@ int READ_Tensor_ver(const char* inputfile,double* SpinFactor, double DefectTotSp
             if (strncmp(ptr,QE,strlen(QE))==0){
                 CheckOption=true;
                 if (rank==0){
-                    printf("\t\t  Successfully, The version tag is read from Tensorfile (Q.E)\n");
+                    printf("        Successfully, The version tag is read from Tensorfile (Q.E)\n");
                 }
                 break; // Q.E. version
             }
@@ -2389,12 +2510,12 @@ int READ_Tensor_ver(const char* inputfile,double* SpinFactor, double DefectTotSp
             if (strncmp(ptr,VASP,strlen(VASP))==0){
                 CheckOption=true;
                 if (rank==0){
-                    printf("\t\t  Successfully, The version tag is read from Tensorfile (VASP)\n");
+                    printf("        Successfully, The version tag is read from Tensorfile (VASP)\n");
                 }
                 //just use total spin written in A-tensor file (CorrTotSpin, which scaled it, was removed in A47)
                 (*SpinFactor) = 1;
                 if (rank==0){
-                    printf("\t\t  You will use the raw data of A-tensor file\n");
+                    printf("        You will use the raw data of A-tensor file\n");
                 }
                 rewind(data);fclose(data);
                 return 1;   // VASP version
@@ -2409,15 +2530,15 @@ int READ_Tensor_ver(const char* inputfile,double* SpinFactor, double DefectTotSp
     //if you can search the version tag, 
     //The 'Version Tag' will be recongize as 'Q.E.' version
     if (CheckOption == false && rank == 0){
-        printf("\t\t  The version tage is not finded from Tensorfile, Now we will use 'Q.E.'\n");
+        printf("        The version tage is not finded from Tensorfile, Now we will use 'Q.E.'\n");
     }
     
     //calculate the spin factor with total spin & correlation
     (*CorrTotSpin) = 0.5; //automatically, set S=1/2 in Q.E.
     (*SpinFactor) = (*CorrTotSpin) / DefectTotSpin;
     if (DefectTotSpin != 1 && rank == 0){
-        printf("\t\t  DefectTotSpin is different from default value(1)!!\n");
-        printf("\t\t  To check the detail option, set '-v' options\n");
+        printf("        DefectTotSpin is different from default value(1)!!\n");
+        printf("        To check the detail option, set '-v' options\n");
     }
     return 0;   // Q.E.
 
@@ -2432,17 +2553,17 @@ void printHfInfo_version(int version, double DefectTotSpin, double CorrTotSpin, 
 
     //print A-tensor version (Q.E. or VASP)
     if (version == 0){ //Q.E.
-        printf("\t\tYour Hyperfine file version is 'Q.E.'\n");
-        printf("\t\tCentral Tot spin & Correlation spin = %lf & %lf\n",DefectTotSpin, CorrTotSpin);
-        printf("\t\t-->SpinFactor = (Correlation Spin) / (Central Tot spin) = %lf\n",SpinFactor);
+        printf("        Your Hyperfine file version is 'Q.E.'\n");
+        printf("        Central Tot spin & Correlation spin = %lf & %lf\n",DefectTotSpin, CorrTotSpin);
+        printf("        -->SpinFactor = (Correlation Spin) / (Central Tot spin) = %lf\n",SpinFactor);
 
     }else if (version == 1){    //VASP
-        printf("\t\tYour Hyperfine file version is 'VASP'\n");
-        printf("\t\tNow doesn't consider the SpinFactor(%lf) due to using raw data of A-file!!\n",SpinFactor);
+        printf("        Your Hyperfine file version is 'VASP'\n");
+        printf("        Now doesn't consider the SpinFactor(%lf) due to using raw data of A-file!!\n",SpinFactor);
 
     }else{
-        printf("\tThe version option(%d) is weird!!\n",version);
-        printf("\tNeed to check the reading version from A-tensor File");
+        printf("        The version option(%d) is weird!!\n",version);
+        printf("        Need to check the reading version from A-tensor File");
         ccexFatal(1);   // rank 0 alone prints this (readHftensorfile), so no barrier
     }
     printf("\n");
@@ -2451,24 +2572,24 @@ void printHfInfo_version(int version, double DefectTotSpin, double CorrTotSpin, 
 void printHfInfo_BD(double** vertex, double** center, double** normal, double MinDif[3], double MaxDif[3], bool Usingvertex){
     if (Usingvertex == true){
         for (int i =0; i<8; i++){
-            printf("\tv%d : %+10lf  %+10lf  %+10lf (angstrom)\n",(i+1),vertex[i][0], vertex[i][1], vertex[i][2]);
+            printf("        v%d : %+10lf  %+10lf  %+10lf (angstrom)\n",(i+1),vertex[i][0], vertex[i][1], vertex[i][2]);
         }
         printf("\n");
 
         for (int i =0; i<8; i++){
-            printf("\tv%d : %+10lf  %+10lf  %+10lf (angstrom)\n",(i+1),center[i][0], center[i][1], center[i][2]);
+            printf("        v%d : %+10lf  %+10lf  %+10lf (angstrom)\n",(i+1),center[i][0], center[i][1], center[i][2]);
         }
         printf("\n");
 
         for (int i =0; i<8; i++){
-            printf("\tv%d : %+10lf  %+10lf  %+10lf (angstrom)\n",(i+1),normal[i][0], normal[i][1], normal[i][2]);
+            printf("        v%d : %+10lf  %+10lf  %+10lf (angstrom)\n",(i+1),normal[i][0], normal[i][1], normal[i][2]);
         }
         printf("\n");
 
 
     }else{
-        printf("\t[Min Range] (angstrom) : %+10lf  %+10lf  %+10lf\n",MinDif[0], MinDif[1],MinDif[2]);
-        printf("\t[Max Range] (angstrom) : %+10lf  %+10lf  %+10lf\n",MaxDif[0], MaxDif[1],MaxDif[2]);
+        printf("        [Min Range] (angstrom) : %+10lf  %+10lf  %+10lf\n",MinDif[0], MinDif[1],MinDif[2]);
+        printf("        [Max Range] (angstrom) : %+10lf  %+10lf  %+10lf\n",MaxDif[0], MaxDif[1],MaxDif[2]);
         printf("\n");
     }
 }
@@ -2494,14 +2615,14 @@ void printHfInfo_etc(double** Etc, double* Gfactor, char** names, int nspecies, 
     
     printf("%s",string1);
     for (int i =1; i<nspecies+1; i++){
-        printf("\t%s  =  %12lf\n",names[i-1],Gfactor[i]);
+        printf("        %s  =  %12lf\n",names[i-1],Gfactor[i]);
     }
     printf("\n");
 
     //print etc
     printf("%s",string2);
     for (int i =1; i<nspecies+1; i++){
-        printf("\t%s  : ",names[i-1]);
+        printf("        %s  : ",names[i-1]);
         for (int j=0; j<etc_length; j++){
             printf(" %12lf ",Etc[i][j]);
         }
@@ -2516,22 +2637,22 @@ void printHfInfo_tensor(double** tensorArray, int mode){
     
     switch(mode){
         case 0:
-            printf("\t[A-tensor] (MHz) :\n");
-            printf("\tion  \t\t\t\t\tposition\t\t\t\t\t\tFermi\t\t\t\tA-tensor\n");
+            printf("        [A-tensor] (MHz) :\n");
+            printf("        ion                      position                        Fermi                A-tensor\n");
             break;
         case 1:
-            printf("\t[Q-tensor wi defect] (angstrom) & (Hatree/Bohr_radius^2) :\n");
-            printf("\tion  \t\t\t\t\tposition\t\t\t\t\t\t\tEFG-tensor\n");
+            printf("        [Q-tensor wi defect] (angstrom) & (Hatree/Bohr_radius^2) :\n");
+            printf("        ion                      position                            EFG-tensor\n");
             break;
 
         case 2:
-            printf("\t[Q-tensor wo defect] (angstrom) & (Hatree/Bohr_radius^2) :\n");
-            printf("\tion  \t\t\t\t\tposition\t\t\t\t\t\t\tEFG-tensor\n");
+            printf("        [Q-tensor wo defect] (angstrom) & (Hatree/Bohr_radius^2) :\n");
+            printf("        ion                      position                            EFG-tensor\n");
     }   
 
     for (int i=1; i< int(tensorArray[0][0]); i++){
         //num of ion
-        printf("\t%3d  \t",i);
+        printf("        %3d      ",i);
         //ion position
         for (int j =0; j<3; j++){
             printf("%+12lf ",tensorArray[i][j]);

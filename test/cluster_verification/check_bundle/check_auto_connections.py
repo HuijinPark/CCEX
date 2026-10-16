@@ -47,8 +47,8 @@ def main():
                 assert float(stats['omitted_score'])<=float(stats['budget'])+1e-14
                 assert int(stats['positive_pairs'])==int(stats['kept_pairs'])+int(stats['omitted_pairs'])
                 rec['groups']=[dict(dim=int(d),sites=list(map(int,ids.split(','))))
-                    for d,ids in re.findall(r'\[adaptive-group\] id=\d+ dim=(\d+) sites=([\d,]+)',log)]
-                rec['links']=[tuple(map(int,ids.split(','))) for ids in re.findall(r'\[adaptive-link\] groups=([\d,]+)',log)]
+                    for d,ids in re.findall(r'\[adaptive-bundle\] id=\d+ dim=(\d+) sites=([\d,]+)',log)]
+                rec['links']=[tuple(map(int,ids.split(','))) for ids in re.findall(r'\[adaptive-link\] bundles=([\d,]+)',log)]
                 assert len(rec['links'])==int(stats['kept_pairs'])
                 ids=[i for g in rec['groups'] for i in g['sites']];assert sorted(ids)==list(range(len(ids)))
                 assert all(int(d)<=cfg['adaptive_cluster_max_dim'] for d in execution['cluster_counts_by_dimension'])

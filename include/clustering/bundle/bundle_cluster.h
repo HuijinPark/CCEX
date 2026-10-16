@@ -1,3 +1,7 @@
+/**
+ * @file bundle_cluster.h
+ * @brief Bundle clustering (cluster.mode bundle): checking the settings and making the clusters of bundles.
+ */
 #ifndef CCEX_CLUSTER_ADAPTIVE_H
 #define CCEX_CLUSTER_ADAPTIVE_H
 

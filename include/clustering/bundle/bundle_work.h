@@ -1,3 +1,7 @@
+/**
+ * @file bundle_work.h
+ * @brief Bundle clustering: the file protocol between a run and the adaptive refinement driver.
+ */
 #ifndef CCEX_ADAPTIVE_WORK_H
 #define CCEX_ADAPTIVE_WORK_H
 #include "bundle_partition.h"

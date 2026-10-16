@@ -1,12 +1,11 @@
 # The coordinate frame rotation
 
-What the `coordinate_frame_rotation` block of the input file does, in the order the run
-does it: what is transformed, what is left alone, what is refused, and what each of its
-keys means. The short form is the entry in `../user/InputFile_General.md`; this page
-held that entry's long text until 2026-09-24.
+What the `frame.rotation` block of the input file does (the rotation is on when the block is given, `enabled`
+defaulting to true), in the order the run does it: what is transformed, what is left alone, what is refused, and what
+each of its keys means. The short form is the [frame.rotation](../user/InputFile_General.md#tag_coordinate_frame_rotation)
+entry of the input-file reference.
 
-Where it happens in the run. The magnetic field is settled first, immediately after the
-command line is parsed, so that -B can conflict before any file is opened. The bath is
+Where it happens in the run. The magnetic field is settled first, before any file is opened. The bath is
 then read and the rbath selection (with its inner radius) is applied, and the HF and QD tensor files are
 looked up -- by POSITION, against un-moved coordinates, because the position columns of
 those files are written in the source bath frame. Tensor COMPONENTS are a separate
@@ -44,9 +43,7 @@ R r without the rotation origin. Defect detuning is scalar and is not transforme
 <br>
 
 <b>Not transformed:</b> explicit Qubit.intmap entries with tensor_frame = "qubit"; the
-"zfs" of the single-qubit [Qubit.file](../user/InputFile_Qubit.md#tag_Qubit_file) form (the top-level "qzfs" until
-2026-10-13), which has no tensor_frame to declare, and is read as a computational-frame tensor for
-backward compatibility; each Defect entry whose coordinate_frame is "qubit"; scalar
+"zfs" of the single-qubit [Qubit.file](../user/InputFile_Qubit.md#tag_Qubit_file) form, which has no tensor_frame to declare and is read as a computational-frame tensor; each Defect entry whose coordinate_frame is "qubit"; scalar
 Defect detuning; and [bfield](../user/InputFile_General.md#tag_bfield). These are read as written in the
 computational frame (or are frame-independent). Legacy Defect entries without a
 coordinate_frame also default to "qubit" to preserve their previous numerical meaning.
@@ -57,11 +54,9 @@ IS the qubit axis, so
 ``` "bfield" : [0.0, 0.0, 500.0] ```
 is 500 G along +qubit_axis -- along the physical [111] for an NV -- and [0,0,-500] is the
 same magnitude the other way. Both signs are accepted; what is required is the LINE, not
-the direction. A scalar "bfield" still means [0,0,bz] and works the same way, as does the
-command-line -B, which sets bz. <br>
+the direction. A scalar "bfield" means [0,0,bz] and works the same way. <br>
 A field with any transverse component is refused: a tilted field is not supported
-alongside the rotation in this version. The check runs once the input file and the
-command line have both been applied, against the final Config.bfield, and compares
+alongside the rotation in this version. The check runs once the input file has been read, against the final field, and compares
 |B<sub>⊥</sub>| = √(B<sub>x</sub>² + B<sub>y</sub>²) against 10<sup>−12</sup> max(1, |B|) -- a tight
 bound, because nothing rotates these numbers and anything larger is a component the user
 meant. A zero field is always allowed. <br>
@@ -103,8 +98,7 @@ its point-dipole tensors. <br>
 <b>Required with more than one qubit when the rotation is on.</b> With a single qubit it may be
 omitted and is treated as <tt>"bath"</tt>, so existing inputs are unaffected. <br>
 
-This option was called "bath_coordinate_rotation" while it only moved bath positions.
-That name is still accepted, with a warning; giving both is an error. <br>
+The old top-level names of this block are refused with the new place ([old names](../user/InputFile.md#OldNames)). <br>
 
 "hf_tensor_frame" and "qd_tensor_frame" say which basis the COMPONENTS of an external
 tensor file are written in. "bath" means the original bath Cartesian basis, so each
@@ -113,16 +107,16 @@ already in the computational basis and are left alone. They say nothing about th
 POSITION columns of those files, which are always read in the original, unrotated frame
 -- that is what the lookup matches against, and the files themselves are never touched.
 <br>
-The hyperfine {"dipole": "point", "contact": true} (hf_readmode 1 until 2026-10-13) is a special case: it keeps only the isotropic Fermi-contact term from
+The hyperfine {"dipole": "point", "contact": true} is a special case: it keeps only the isotropic Fermi-contact term from
 the file and rebuilds the anisotropic part as a point-dipole tensor from the source
 geometry, so what is stored is bath-frame whatever the key says. hf_tensor_frame is
 therefore neither required nor used there; giving it is allowed and reported as
 not applicable. <br>
-With "dipole": "dft" (hf_readmode 2 and 3) the two kinds can occur together: a spin the tensor file does not
+With "dipole": "dft" the two kinds can occur together: a spin the tensor file does not
 cover falls back to a point-dipole tensor built from the source geometry. Those fallbacks
 are always transformed, even under hf_tensor_frame = "qubit", while the matched
 file tensors are left alone. <br>
-The quadrupole structures "strained" and "bubble" (qd_readmode 3 and 4) go through the same post-read transformation as "plain" (mode 2). The test
+The quadrupole structures "strained" and "bubble" go through the same post-read transformation as "plain". The test
 suite exercises their two-file reader with distinct wiDef and woDef boundaries and
 checks that each boundary comes from the requested file. "plain" additionally has the
 full hand-transformed versus automatic-rotation tensor/coherence comparison. <br>

@@ -21,7 +21,7 @@ import re
 import shlex
 import subprocess
 
-from benchmark import REPO, INPUTS, compare
+from benchmark import REPO, INPUTS, blocks, compare
 
 
 def build(out):
@@ -57,8 +57,9 @@ def main():
     case = INPUTS/'Diamond_NV_natab_gcce'
     original = json.loads((case/'inputfiles/ccein_nstate0.json').read_text())
     original.update(method='cCCE', order=2, nstep=30, profile=True)
-    original['gyrofile'] = str((case/original['gyrofile']).resolve())
-    original['bathfile'] = [str((case/p).resolve()) for p in original['bathfile']]
+    bath = original['configuration']   # A64
+    bath['gyrofile'] = str((case/bath['gyrofile']).resolve())
+    bath['bathfile'] = [str((case/p).resolve()) for p in bath['bathfile']]
     mpirun = os.environ.get('CCEX_MPI', 'mpirun')
     failures = []
 
@@ -67,7 +68,7 @@ def main():
         directory.mkdir()
         config = dict(original, **overrides)
         config['outfile'] = str(directory/'coherence')
-        (directory/'input.json').write_text(json.dumps(config))
+        (directory/'input.json').write_text(json.dumps(blocks(config)))   # A65: the flat keys in their blocks
         env = dict(os.environ, I_MPI_FABRICS='shm', **(env_extra or {}))
         with (directory/'run.log').open('w') as log:
             result = subprocess.run([mpirun, '-n', str(args.np), str(binary), '-f', str(directory/'input.json')],

@@ -62,7 +62,7 @@ fails = 0; rows = []
 names = sorted({os.path.basename(d.rstrip('/')) for d in glob.glob(f'{run}/*/') + glob.glob(f'{ref}/*/')})
 for name in names:
     cdir, rdir = f'{run}/{name}/', f'{ref}/{name}'
-    files = sorted(f for f in os.listdir(cdir) if f != 'run.log') if os.path.isdir(cdir) else []
+    files = sorted(f for f in os.listdir(cdir) if f not in ('run.log', 'out.json')) if os.path.isdir(cdir) else []   # out.json: run.sh's input copy
     if not files or not os.path.isdir(rdir): rows.append((name, None, None, 'no reference' if files else 'no output')); continue
     judged, shown, notes, compared, missing = 0.0, 0.0, [], 0, []
     names_in_ref = {f: renames.get(name, {}).get(f, f) for f in files}    # run file -> reference file

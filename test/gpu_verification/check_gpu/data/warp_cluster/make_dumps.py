@@ -10,7 +10,7 @@ lanes of a warp, so that a lane takes two points). The inputs:
   gcce_natab_*  test/code_verification/check_input_forms/inputs/Diamond_NV_natab_gcce (13C bath, NV qubit): dimension 6, 12
                 and, with order 3, 24;
   gcce_p1n14_*  .../Diamond_NV_P1_10ppm_gcce with its P1 nitrogen made 14N (spin 1): dimension 18;
-  gcce_hbn_*    example/tutorial/07_hBN_VB_natab/single-sample_gCCE (10B, 11B, 14N; the tutorial's quantity dm): 9, 12, 21, 27;
+  gcce_hbn_*    example/tutorial/04_hBN/gCCE2_Hahn_states (until A66 07_hBN_VB_natab/single-sample_gCCE; 10B, 11B, 14N; the tutorial's quantity dm): 9, 12, 21, 27;
   cce_natab_*   .../Diamond_NV_natab_cce with order 4: bath dimension 8 and 16.
 CLUSTERS.BIN is the A40 step-0 dump of the production P1 CR60 sigma4 gCCE2 input (rank 0, 2 states, dimension 12, Hahn,
 151 points; idm4-gpu job 698, (internal notes)): its first 64 clusters are rewritten
@@ -21,7 +21,7 @@ import json, os, shutil, struct, subprocess, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '../../../../..'))
 FORMS = os.path.join(ROOT, 'test/code_verification/check_input_forms/inputs')
-HBN = os.path.join(ROOT, 'example/tutorial/07_hBN_VB_natab')
+HBN = os.path.join(ROOT, 'example/tutorial/04_hBN')
 
 # name: (input folder, input file, changes)
 NATAB_G = ('Diamond_NV_natab_gcce', 'ccein_nstate1.json')
@@ -57,31 +57,34 @@ def fixture(binary, out):
         change = dict(change)
         p1n14 = change.pop('p1n14', False)
         if where == 'hbn':
-            # the tutorial's relative paths: ../bath/... from single-sample_gCCE/
-            run = os.path.join(work, name, 'single-sample_gCCE')
+            # the tutorial's relative paths: ../bath/... from gCCE2_Hahn_states/
+            run = os.path.join(work, name, 'gCCE2_Hahn_states')
             os.makedirs(run)
             shutil.copytree(os.path.join(HBN, 'bath/flat'), os.path.join(work, name, 'bath/flat'))
             shutil.copy(os.path.join(HBN, 'bath/hBN_natab_gyro'), os.path.join(work, name, 'bath'))
-            cfg = lenient(open(os.path.join(HBN, 'single-sample_gCCE/ccein.json')).read())
-            args = ['-I', '../bath/flat/bath_hBN_VB_flat_1']
+            cfg = lenient(open(os.path.join(HBN, 'gCCE2_Hahn_states/ccein.json')).read())
+            cfg['configuration']['bathfile'] = ['../bath/flat/bath_hBN_VB_flat_1']   # -I on the command line until A63
         else:
             folder, file = where
             run = os.path.join(work, name)
             shutil.copytree(os.path.join(FORMS, folder, 'inputfiles'), os.path.join(run, 'inputfiles'))
             cfg = json.load(open(os.path.join(FORMS, folder, 'inputfiles', file)))
-            args = []
         cfg.update(change)
+        for key in ('nstate', 'seed'):   # the configuration block's (A64)
+            if key in change: cfg['configuration'][key] = cfg.pop(key)
+        if 'evolution_update' in change:   # the execution block's (A65)
+            cfg.setdefault('execution', {})['evolution_update'] = cfg.pop('evolution_update')
         if p1n14:
             d = cfg['Defect']['species'][0]
             d['types'], d['spins'], d['gyros'] = ['14N'], [1.0], [1.9337792]
             for h in d['hyperfine']: h[1] = '14N'
         cfg['nstep'] = 40
-        cfg['outfile'] = './out'
+        cfg['output'] = dict(cfg.get('output', {}), file='./out')   # output.file (A65)
         json.dump(cfg, open(os.path.join(run, 'in.json'), 'w'), indent=1)
         target = os.path.join(out, name + '.bin')
         if os.path.exists(target): os.remove(target)
         env = dict(os.environ, CCEX_WARP_CLUSTER_DUMP=target, CCEX_WARP_CLUSTER_DUMP_N='8')
-        subprocess.run(['mpirun', '-n', '1', binary, '-f', 'in.json'] + args, cwd=run, env=env, check=True,
+        subprocess.run(['mpirun', '-n', '1', binary, '-f', 'in.json'], cwd=run, env=env, check=True,
                        stdout=subprocess.DEVNULL)
         print(name, os.path.getsize(target), 'bytes')
     shutil.rmtree(work)

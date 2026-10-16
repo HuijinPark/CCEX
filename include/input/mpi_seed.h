@@ -1,3 +1,7 @@
+/**
+ * @file mpi_seed.h
+ * @brief The random seed, chosen on rank 0 and shared with every rank.
+ */
 #ifndef CCEX_MPI_SEED_H
 #define CCEX_MPI_SEED_H
 #include <mpi.h>

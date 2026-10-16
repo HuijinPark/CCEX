@@ -1,3 +1,7 @@
+/**
+ * @file cluster.cpp
+ * @brief The Cluster structure: settings, making the clusters and sharing them out between the ranks.
+ */
 #include "../../include/clustering/cluster.h"
 #include "../../include/common/utilities.h"
 #include "../../include/common/memory.h"
@@ -36,7 +40,10 @@ std::function<double(int,const int*)> Cluster_costFunction(Config* cnf, QubitArr
         for (int isp=0; idf>=0 && isp<DefectArray_getDefect_idf_naddspin(dfa,idf); isp++)
             siteDim[i] *= BathSpin_dim(DefectArray_getSubbath_i_isp(dfa,i,isp));
     }
-    const double qubitDim = strcasecmp(cnf->method,"gcce") ? 1.0 : QubitArray_dim(qa);
+    // the qubit is in the cluster for the gCCE kernels: gCCE, megCCE and their pcce forms (A73: by methodKernel; the name
+    // alone left megCCE, pgCCE and pmegCCE at dimension 1 - the split of the clusters over the ranks only, not results)
+    const char* kernel = methodKernel(cnf->method);
+    const double qubitDim = strcmp(kernel,"gcce") && strcmp(kernel,"megcce") ? 1.0 : QubitArray_dim(qa);
     const double nstep = Config_getNstep(cnf);
     return [siteDim, qubitDim, nstep](int n, const int* row){
         double d = qubitDim;
@@ -101,7 +108,8 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config,QubitArray* 
     // the information would stored at cls.clusinfo
     ///////////////////////////////////////////////////////////////////
     if (strcasecmp(method, "cce")==0 
-            || strcasecmp(method, "gcce")==0){
+            || strcasecmp(method, "gcce")==0
+            || strcasecmp(method, "mecce")==0 || strcasecmp(method, "megcce")==0){
 
         Cluster_setClusinfo_0th(cls);    // if order == 0
         Cluster_setClusinfo_1th(cls,ba); // if order == 1
@@ -130,7 +138,7 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config,QubitArray* 
 
         }
     } 
-    else if (strcasecmp(method, "pcce")==0){
+    else if (methodUsesPcceClusters(method)){   // pCCE, pgCCE, pmeCCE, pmegCCE
         // Clusterize for all order 
         // and Solve tilde (Division) of coherence function
         // Args Returns : cls->clusinfo (new address)
@@ -163,7 +171,8 @@ void Cluster_clusterize(Cluster* cls, BathArray* ba, Config* config,QubitArray* 
     //    freeHashCluster(&hashClusters, order);
     //}
 
-    if (strcasecmp(method, "gcce")!=0){
+    // the 0th cluster is kept for the kernels with the qubit in the cluster space (gCCE, megCCE; pgCCE, pmegCCE)
+    if (strcmp(methodKernel(method), "gcce")!=0 && strcmp(methodKernel(method), "megcce")!=0){
         Cluster_setClusinfo_chgiter(cls, 0, 0, 0);
     }
 }
@@ -187,14 +196,14 @@ void Cluster_report(Cluster* cls){
     printSubTitle("General properties");
     printStructElementInt("order",Cluster_getOrder(cls));
     printStructElementChar("method",cls->method);
-    printStructElementBool("addsubclus",Cluster_getAddsubclus(cls));
+    printStructElementBool("cluster.selection.add_subclusters",Cluster_getAddsubclus(cls));
 
-    if (strcasecmp(cls->method,"pcce")==0){
+    if (methodUsesPcceClusters(cls->method)){
         printSubTitle("Conduct pCCE method");
-        printStructElementInt("max_trial",Cluster_getMax_trial(cls));
-        printStructElementInt("max_iter",Cluster_getMax_iter(cls));
-        printStructElementBool("kmeans_pp",Cluster_getKmeans_pp(cls));
-        printStructElementBool("iter_detail",Cluster_getIter_detail(cls));
+        printStructElementInt("cluster.pcce.trials",Cluster_getMax_trial(cls));
+        printStructElementInt("cluster.pcce.max_iterations",Cluster_getMax_iter(cls));
+        printStructElementBool("cluster.pcce.kmeans_pp",Cluster_getKmeans_pp(cls));
+        printStructElementBool("cluster.pcce.print_trials",Cluster_getIter_detail(cls));
     }
     
     if (cls->nk!=NULL){
@@ -218,17 +227,17 @@ void Cluster_reportNk(Cluster* cls){
 void Cluster_reportClusinfo(Cluster* cls){
 
     int order = Cluster_getOrder(cls);
-    printf("      %-18s:   \n\n","clusinfo");
+    printf("      %s :\n\n","clusinfo");
 
     // 0-th order
     int iter_0th = Cluster_getClusinfo_itercluster(cls,0,0)[0];
     int ncluster_0th = Cluster_getClusinfo_ncluster(cls,0);
-    printf("%10s 0-th order ... \n"," ");
-    printf("%10s Cluster[0][%5d] : %3d (Iter)\n"," ",0,iter_0th);
-    printf("\n%10s Total 0-Cluster # :  %d # \n\n\n"," ",ncluster_0th);
+    printf("%7s 0-th order ...\n"," ");
+    printf("%7s Cluster[0][%5d] : %3d (Iter)\n"," ",0,iter_0th);
+    printf("\n%7s Total 0-Cluster # :  %d #\n\n\n"," ",ncluster_0th);
 
     for (int i = 1; i <= order; i++){
-        printf("\n%10s %d-th order ... \n"," ",i);
+        printf("\n%7s %d-th order ...\n"," ",i);
         int ncluster = Cluster_getClusinfo_ncluster(cls, i);
 
         for (int j = 1; j<= ncluster; j++){
@@ -238,7 +247,7 @@ void Cluster_reportClusinfo(Cluster* cls){
                 int* itercluster = Cluster_getClusinfo_itercluster(cls,i,j);
                 int iter = itercluster[0];
 
-                printf("%10s Cluster[%d][%5d] : %3d ["," ",i,j,iter);
+                printf("%7s Cluster[%d][%5d] : %3d ["," ",i,j,iter);
                 for (int k = 1; k <= i; k++){
                     printf("%-3d",itercluster[k]);
                     if (k != i){ printf(", ");} else { printf(" ]\n");}
@@ -246,10 +255,10 @@ void Cluster_reportClusinfo(Cluster* cls){
             }
             
             if (!verbosity && j==5){
-                printf("%10s      : \n"," ");
+                printf("%7s      :\n"," ");
             }
         }
-        printf("\n%10s Total %d-Cluster # :  %d # \n\n\n"," ",i,ncluster);
+        printf("\n%7s Total %d-Cluster # :  %d #\n\n\n"," ",i,ncluster);
     }
 }
 
@@ -258,12 +267,12 @@ void reportClusinfo(int*** clusinfo, int order){
     // 0-th order
     int iter_0th = clusinfo[0][0][0];
     int ncluster_0th = 1;
-    printf("%10s 0-th order ... \n"," ");
-    printf("%10s Cluster[0][%5d] : %3d (Iter)\n"," ",0,iter_0th);
-    printf("\n%10s Total 0-Cluster # :  %d # \n\n\n"," ",ncluster_0th);
+    printf("%7s 0-th order ...\n"," ");
+    printf("%7s Cluster[0][%5d] : %3d (Iter)\n"," ",0,iter_0th);
+    printf("\n%7s Total 0-Cluster # :  %d #\n\n\n"," ",ncluster_0th);
 
     for (int i = 1; i <= order; i++){
-        printf("\n%10s %d-th order ... \n"," ",i);
+        printf("\n%7s %d-th order ...\n"," ",i);
         int ncluster = clusinfo[i][0][0]-1;
 
         for (int j = 1; j<= ncluster; j++){
@@ -273,7 +282,7 @@ void reportClusinfo(int*** clusinfo, int order){
                 int* itercluster = &(clusinfo[i][j][0]);
                 int iter = itercluster[0];
 
-                printf("%10s Cluster[%d][%5d] : %3d ["," ",i,j,iter);
+                printf("%7s Cluster[%d][%5d] : %3d ["," ",i,j,iter);
                 for (int k = 1; k <= i; k++){
                     printf("%-3d",itercluster[k]);
                     if (k != i){ printf(", ");} else { printf(" ]\n");}
@@ -281,10 +290,10 @@ void reportClusinfo(int*** clusinfo, int order){
             }
             
             if (!verbosity && j==5){
-                printf("%10s      : \n"," ");
+                printf("%7s      :\n"," ");
             }
         }
-        printf("\n%10s Total %d-Cluster # :  %d # \n\n\n"," ",i,ncluster);
+        printf("\n%7s Total %d-Cluster # :  %d #\n\n\n"," ",i,ncluster);
     }
 }
 
@@ -309,7 +318,7 @@ void Cluster_allocClusinfo(Cluster* cls, int order){
 void Cluster_setClusinfo_0th(Cluster* cls){
     // Actually do nothing
     if (cls->order==0){
-        if (rank==0){printf("\n\t Clustering 0th order ... \n");}
+        if (rank==0){printf("\n      Clustering 0th order ...\n");}
     }
 }
 
@@ -319,7 +328,7 @@ void Cluster_setClusinfo_1th(Cluster* cls, BathArray* ba){
     // Faster than using Hash algorithm
     //////////////////////////////////////////////
     if (cls->order == 1){ 
-        if (rank==0){printf("\n\t Clustering 1st order ... \n");}
+        if (rank==0){printf("\n      Clustering 1st order ...\n");}
         int cluster[1] = {0};
         int iter = 1;
         for (int spinidx = 0; spinidx < ba->nspin; spinidx++){
@@ -342,7 +351,7 @@ int Cluster_setClusinfo_addcluster(Cluster* cls, int order, int iter, int* clust
     }
 
     if (iter != 1 ){
-        printf("Warning: Cluster_setClusinfo_addcluster: iter is not 1 when you add new cluster ... \n");
+        printf("Warning: Cluster_setClusinfo_addcluster: iter is not 1 when you add new cluster ...\n");
     }
 
     int ncluster_old = cls->clusinfo[order][0][0];

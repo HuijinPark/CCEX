@@ -43,9 +43,9 @@ class ConfigError(ValueError):
 
 
 def strip_comments(text):
-    """Remove '#' and '!' comments (both accepted by the CCEX input reader) outside JSON strings."""
+    """Remove '#', '!' and '//' comments (all accepted by the CCEX input reader) outside JSON strings."""
     out, in_str, esc, skip = [], False, False, False
-    for ch in text:
+    for i, ch in enumerate(text):
         if skip:
             if ch == "\n":
                 skip = False
@@ -62,7 +62,7 @@ def strip_comments(text):
         elif ch == '"':
             in_str = True
             out.append(ch)
-        elif ch in "#!":
+        elif ch in "#!" or text.startswith("//", i):
             skip = True
         else:
             out.append(ch)
@@ -70,7 +70,7 @@ def strip_comments(text):
 
 
 def read_json(path):
-    """JSON with '#' or '!' comments (CCEX input style)."""
+    """JSON with '#', '!' or '//' comments (CCEX input style)."""
     return json.loads(strip_comments(Path(path).read_text()))
 
 
@@ -101,6 +101,70 @@ def canonical_keys(value, top=True):
         return value
     return {(TOP_MIXED_CASE_KEYS.get(k.lower()) if top else None) or MIXED_CASE_KEYS.get(k.lower(), k.lower()):
             canonical_keys(v, False) for k, v in value.items()}
+
+
+class UnitError(ValueError):
+    """A key written as {"value", "unit"} that CCEX would refuse (A67)."""
+
+
+# A67: the keys CCEX reads in a unit of their own, written as a plain number (that unit) or {"value": number or list,
+# "unit": ...}. The same table and the same exact operation as the CCEX reader (src/input/option.cpp, applyInputUnits): a
+# multiplication by an exact power of ten towards a smaller unit, a division by one towards a larger, so the inputs the
+# runner writes hold the number CCEX itself would have read.
+UNITS = {"ms": {"s": (1e3, 1), "ms": (1, 1), "us": (1, 1e3), "ns": (1, 1e6)},
+         "ns": {"s": (1e9, 1), "ms": (1e6, 1), "us": (1e3, 1), "ns": (1, 1)},
+         "G": {"G": (1, 1), "mT": (10, 1), "T": (1e4, 1)},
+         "A": {"A": (1, 1), "nm": (10, 1)},
+         "MHz": {"Hz": (1, 1e6), "kHz": (1, 1e3), "MHz": (1, 1), "GHz": (1e3, 1)},
+         "kHz": {"Hz": (1, 1e3), "kHz": (1, 1), "MHz": (1e3, 1), "GHz": (1e6, 1)}}
+
+
+def plain_value(where, value, own):
+    """value in the unit `own` (a key of UNITS): a plain value as it is, {"value", "unit"} converted; UnitError otherwise."""
+    if not isinstance(value, dict):
+        return value
+    units = UNITS[own]
+    keys = {k.lower(): v for k, v in value.items()}
+
+    def numbers(v):
+        return (isinstance(v, (int, float)) and not isinstance(v, bool)) or (isinstance(v, list) and v and all(map(numbers, v)))
+    if set(keys) != {"value", "unit"} or not isinstance(keys["unit"], str) or not numbers(keys["value"]):
+        raise UnitError(f'{where} must be a number (in {own}) or {{"value": number or list of numbers, "unit": "..."}} with '
+                        f'the unit one of {", ".join(units)}')
+    if keys["unit"] not in units:
+        raise UnitError(f'{where}.unit "{keys["unit"]}" is not known; the unit is one of {", ".join(units)} (a plain number is in {own})')
+    times, over = units[keys["unit"]]
+
+    def scale(v):
+        if isinstance(v, list):
+            return [scale(x) for x in v]
+        return v * times if times != 1 else v / over if over != 1 else v
+    return scale(keys["value"])
+
+
+def plain_units(d):
+    """The input d (read_input's names) with every A67 key in its own unit, in place."""
+    def at(block, key, where, own):
+        if isinstance(block, dict) and key in block:
+            block[key] = plain_value(where, block[key], own)
+    for key, own in (("deltat", "ms"), ("bfield", "G"), ("rbath", "A"), ("rdip", "A")):
+        at(d, key, key, own)
+    at(d.get("configuration"), "bath_shift", "configuration.bath_shift", "A")
+    qubits = d.get("Qubit", {}).get("qubit") if isinstance(d.get("Qubit"), dict) else None
+    for i, q in enumerate(qubits if isinstance(qubits, list) else []):
+        at(q, "xyz", f"Qubit.qubit[{i}].xyz", "A")
+        at(q, "detuning", f"Qubit.qubit[{i}].detuning", "kHz")
+    pulse = d.get("pulse")
+    if isinstance(pulse, dict):
+        at(pulse, "duration", "pulse.duration", "ns")
+        for key in ("energy_shift", "bandwidth"):
+            at(pulse.get("bath"), key, f"pulse.bath.{key}", "MHz")
+    ham = d.get("hamiltonian")
+    for name, section in (ham.items() if isinstance(ham, dict) else ()):
+        jumps = section.get("jump_operators") if isinstance(section, dict) else None
+        for i, j in enumerate(jumps if isinstance(jumps, list) else []):
+            at(j, "rate", f"hamiltonian.{name}.jump_operators[{i}].rate", "MHz")
+    return d
 
 
 def read_input(path):
@@ -256,7 +320,8 @@ def read_manifest(path):
 
 def expected_run_shape(s):
     """(states, time points) every run must have, from base_input (nstate > 0, nstep); None where not fixed."""
-    nstate, nstep = s.base_input.get("nstate"), s.base_input.get("nstep")
+    conf = s.base_input.get("configuration", {})          # nstate is the configuration block's (A64)
+    nstate, nstep = (conf.get("nstate") if isinstance(conf, dict) else None), s.base_input.get("nstep")
     return (nstate if isinstance(nstate, int) and nstate > 0 else None,
             nstep if isinstance(nstep, int) and nstep > 0 else None)
 

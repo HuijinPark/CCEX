@@ -28,7 +28,7 @@ def main():
                             ('disconnected', {'rdip': 0.01}),
                             ('order4', {'order': 4})]:
         for state in (0, 1):
-            config = put(original, dict(overrides, **{'pulse.count': 4, 'nstate': state}))
+            config = put(original, dict(overrides, **{'pulse.count': 4, 'configuration.nstate': state}))
             directory = args.output/f'{name}_state{state}'
             cpu, _ = run_case(dict(config, backend='cpu'), directory/'cpu', args.cpu, args.ranks)
             assert cpu['returncode'] == 0 and cpu['profiles'], name

@@ -1,3 +1,7 @@
+/**
+ * @file base_json.h
+ * @brief Adaptive refinement: the JSON value, reader and writer, and the text of numbers.
+ */
 // JSON as the refinement reads and writes it: the value tree, the reader, the writer,
 // the input-file reader, and the text of floats and numbers.
 #pragma once
@@ -63,14 +67,20 @@ class Value {
 // nested block has to be written back.
 Value with(const Value& object, const std::string& key, const Value& value);
 
+// The key of an object that names `key` as CCEX reads input keys, without regard to case (A73): `key` itself when the
+// object has it, else the first key equal to it in lower case, else `key` (a new key). Setting a block through it reuses
+// the block the input spelled differently ("Output") instead of adding a second one CCEX would not read.
+std::string key_of(const Value& object, const std::string& key);
+
 // The value at a path of object keys - cfg["bundle"]["max_dim"] - or nullptr when a key
 // is missing or a step on the way is not an object (the input blocks of A47, 2026-10-13).
+// Each key is matched as key_of matches it (A73).
 inline const Value* find_path(const Value& value, std::initializer_list<const char*> path) {
     const Value* at = &value;
     for (const char* key : path) {
         if (at->kind() != Value::Kind::Object)
             return nullptr;
-        at = at->find(key);
+        at = at->find(key_of(*at, key));
         if (at == nullptr)
             return nullptr;
     }

@@ -1,3 +1,7 @@
+/**
+ * @file small_cluster_batch.h
+ * @brief The packed kernel: small cCCE clusters computed on the GPU in large batches, one thread per cluster (host side).
+ */
 #ifndef CCEX_SMALL_CLUSTER_BATCH_H
 #define CCEX_SMALL_CLUSTER_BATCH_H
 // A26 step 1: small cCCE clusters (bath dimension 2 and 4) computed on the GPU in large batches, one thread per cluster

@@ -1,3 +1,7 @@
+/**
+ * @file bundle_inventory.cpp
+ * @brief The cluster list file (OUTFILE.clusters.json) of output.cluster_only.
+ */
 #include "../../../include/clustering/bundle/bundle_cluster.h"
 #include "../../../include/clustering/bundle/bundle_text.h"
 #include "../../../include/input/json.h"

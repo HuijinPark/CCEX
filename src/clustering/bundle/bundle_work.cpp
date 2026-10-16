@@ -1,3 +1,7 @@
+/**
+ * @file bundle_work.cpp
+ * @brief Bundle clustering: the file protocol with the adaptive refinement driver.
+ */
 #include "../../../include/clustering/bundle/bundle_work.h"
 #include "../../../include/clustering/bundle/bundle_text.h"
 #include "../../../include/clustering/bundle/bundle_cluster.h"
@@ -80,7 +84,7 @@ const AdaptiveWork& adaptiveWork(const Config* c) {
     workLoaded=true;
     if(!*c->adaptive_work_file)return work;
     try {
-        require(!strcasecmp(c->cluster_mode,"adaptive"),"work request requires cluster_mode bundle");
+        require(!strcasecmp(c->cluster_mode,"adaptive"),"work request requires cluster.mode bundle");
         std::ifstream input(c->adaptive_work_file);require(bool(input),"cannot open request file");
         std::stringstream buffer;buffer<<input.rdbuf();
         std::unique_ptr<cJSON,decltype(&cJSON_Delete)> root(cJSON_Parse(buffer.str().c_str()),cJSON_Delete);
@@ -116,7 +120,7 @@ const AdaptiveWork& adaptiveWork(const Config* c) {
             require(!work.bundles.empty(),"factors/except work requires bundles");
             require(work.extra_clusters.empty(),"factors/except work takes no extra_clusters");
             require(!c->cluster_contributions && c->nrdip_ladder==0,
-                    "factors/except work cannot be combined with cluster_contributions or rdip_ladder");
+                    "factors/except work cannot be combined with output.cluster_contributions or rdip_ladder");
         }
         if(work.mode=="factors") {
             const auto integer=[](cJSON* v){
@@ -301,7 +305,7 @@ public:
             __atomic_store_n(&shared_[0],0LL,__ATOMIC_SEQ_CST);
             __atomic_store_n(&shared_[1],(long long)std::min(bytes,9e18),__ATOMIC_SEQ_CST);
             if (rank==0) printf("[probe-budget] %.2f GB per node for the probes running at once%s\n",bytes/1e9,
-                                c->probe_memory_gb>0 ? " (probe_memory_gb)" : device>0 ? " (80 % of the memory this job may use and of the GPU)" : " (80 % of the memory this job may use)");
+                                c->probe_memory_gb>0 ? " (cluster.adaptive.probe_memory_gb)" : device>0 ? " (80 % of the memory this job may use and of the GPU)" : " (80 % of the memory this job may use)");
         }
         MPI_Barrier(node_);
     }

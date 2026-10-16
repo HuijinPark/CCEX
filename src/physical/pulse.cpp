@@ -1,3 +1,7 @@
+/**
+ * @file pulse.cpp
+ * @brief The pulse sequence.
+ */
 #include "../../include/physical/pulse.h"
 #include "../../include/common/memory.h"
 #include <iostream>
@@ -20,6 +24,19 @@ Pulse* Pulse_init(){
     pulse->pulse_angles     = NULL;
     pulse->sequence_indices = NULL;
     pulse->sequence         = NULL;
+
+    // DEER bath pulses (pulse.bath): none until the block asks for them
+    pulse->bnpulse = 0;
+    pulse->bpulse_defect[0] = '\0';
+    pulse->bspin = 0.5; pulse->balphams = 0.5; pulse->bbetams = -0.5;
+    pulse->n_bpulse_shift = 0;
+    pulse->bpulse_energy_shifts = NULL;
+    pulse->bpulse_bandwidth = kBathPulseBandwidthRadkHz;   // A67: the fixed window of before, unless pulse.bath.bandwidth is given
+    pulse->bsequence_fracs      = NULL;
+    pulse->bpulse_axes          = NULL;
+    pulse->bpulse_angles        = NULL;
+    pulse->tot_bpulse_axes      = NULL;
+    pulse->tot_bpulse_angles    = NULL;
     return pulse;
 }
 
@@ -94,6 +111,28 @@ double* Pulse_getPulseAngles(Pulse* pulse){
 int* Pulse_getSequenceIndices(Pulse* pulse){
     return pulse->sequence_indices;
 }
+
+// DEER bath pulses (pulse.bath), and the merged qubit+bath sequence once Pulse_resolveBathSequence has installed it
+static void reportBathPulses(Pulse* pulse){
+    printSubTitle((char*)"Bath pulses (pulse.bath)");
+    printStructElementInt((char*)"bath pulse count", pulse->bnpulse);
+    printStructElementChar((char*)"bath spin driven", pulse->bpulse_defect);
+    printStructElementDouble((char*)"bath spin S", pulse->bspin);
+    printStructElementDouble((char*)"bath alphams", pulse->balphams);
+    printStructElementDouble((char*)"bath betams", pulse->bbetams);
+    for (int k=0; k<pulse->n_bpulse_shift; k++)
+        printf("%27s   pump tone [%d] : %.9g MHz\n"," ",k,RADKHZ_TO_MHZ(pulse->bpulse_energy_shifts[k]));
+    printf("%27s   bandwidth : %.9g MHz (half width of the window around a tone)\n"," ",RADKHZ_TO_MHZ(pulse->bpulse_bandwidth));
+    if (pulse->tot_bpulse_axes == NULL) return;
+    printSubTitle((char*)"Merged qubit + bath sequence (each pulse at the end of its interval)");
+    printLine();
+    printf("%14s   %9s   %9s   %9s   %9s\n", "Diff", "Q.Axis", "Q.Angle", "B.Axis", "B.Angle");
+    for (int i=0; i<(pulse->npulse)+1; i++)
+        printf("%14.10f   %9c   %9.2f   %9c   %9.2f\n", pulse->sequence[i][2], pulse->pulse_axes[i],
+               pulse->pulse_angles[i], pulse->tot_bpulse_axes[i], pulse->tot_bpulse_angles[i]);
+    printLine();
+}
+
 void Pulse_report(Pulse* pulse){
 
     int      npulse    = Pulse_getNpulse(pulse);
@@ -103,12 +142,12 @@ void Pulse_report(Pulse* pulse){
 
     printTitle("Structure Pulse");
 
-    printStructElementChar("pulsename", Pulse_getPulsename(pulse));
-    printStructElementInt("npulse", Pulse_getNpulse(pulse));
-    printStructElementDouble("detuning_factor", Pulse_getPulseDetuningFactor(pulse));
-    printStructElementDouble("pulse_time", Pulse_getPulseTime(pulse));
+    printStructElementChar("pulse.name", Pulse_getPulsename(pulse));
+    printStructElementInt("pulse.count", Pulse_getNpulse(pulse));
+    printStructElementDouble("pulse.detuning_factor", Pulse_getPulseDetuningFactor(pulse));
+    printStructElementDouble("pulse.duration", Pulse_getPulseTime(pulse));
     
-    printStructElementBool("pulseiter", Pulse_getPulseiter(pulse));
+    printStructElementBool("pulse.per_qubit", Pulse_getPulseiter(pulse));
     printf("%27s * true  - pulse is applied to each qubit\n"," ");
     printf("%27s * false - pulse is applied to qubit-array\n"," ");
     
@@ -131,6 +170,7 @@ void Pulse_report(Pulse* pulse){
         }
         printLine();
     }
+    if (pulse->bnpulse > 0) reportBathPulses(pulse);   // DEER (pulse.bath); nothing printed without bath pulses
 }
 
 //////////////////////////
@@ -180,6 +220,13 @@ void Pulse_freeAll(Pulse* pulse){
     Pulse_freeAxes(pulse);
     Pulse_freeAngles(pulse);
     Pulse_freeSequenceIndices(pulse);
+    // DEER bath pulses (calloc'd by the pulse.bath reader and Pulse_resolveBathSequence)
+    freeArray1d((void**)&pulse->bpulse_energy_shifts);
+    freeArray1d((void**)&pulse->bsequence_fracs);
+    freeArray1d((void**)&pulse->bpulse_axes);
+    freeArray1d((void**)&pulse->bpulse_angles);
+    freeArray1d((void**)&pulse->tot_bpulse_axes);
+    freeArray1d((void**)&pulse->tot_bpulse_angles);
     freeArray1d((void**)&pulse);
 }
 

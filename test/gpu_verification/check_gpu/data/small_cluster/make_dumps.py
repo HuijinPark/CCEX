@@ -39,7 +39,10 @@ def fixture(binary, out):
     base = json.load(open(os.path.join(src, 'ccein_nstate1.json')))
     del base['Defect']
     for name, change in CASES.items():
-        c = dict(base); c.update(change); c['outfile'] = './' + name
+        c = dict(base); c.update(change); c['output'] = {'file': './' + name}
+        c['configuration'] = dict(base['configuration'], nstate=c.pop('nstate'))   # the configuration block's (A64)
+        if 'evolution_update' in c:                                                 # the execution block's (A65)
+            c['execution'] = dict(base.get('execution', {}), evolution_update=c.pop('evolution_update'))
         json.dump(c, open(os.path.join(work, name + '.json'), 'w'), indent=1)
         target = os.path.join(out, name + '.bin')
         if os.path.exists(target): os.remove(target)

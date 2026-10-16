@@ -1,16 +1,20 @@
 # example/analysis/
 
-Two Python tools that post-process the coherence files CCEX writes (neither
-runs CCEX). This page is written so that a person or an AI can decide quickly what to
+One Python tool that post-processes the coherence files CCEX writes (it does not
+run CCEX). This page is written so that a person or an AI can decide quickly what to
 call and what to write themselves.
 
 | Tool | Answers | Entry point | Needs |
 |---|---|---|---|
 | `Analyzer/` | make the raw `_noDiv`/`_wiDiv` files usable: correct the division errors, average over bath configurations and states, fit T2, plot | `Analyzer/CoherenceAnalyzer.v1/coherence.py` (library) and `run.py` (CLI) | numpy; the CLI and plots also scipy and matplotlib |
-| `ConvTest/` | from which value of a variable (order, rbath, number of configurations, ...) the coherence stops changing | `ConvTest/ConvTest/do_convTest.py` (CLI, positional arguments) | numpy, matplotlib, psutil |
 
-On WSL the first two need `PATH=~/anaconda3/bin:$PATH` (the system python3 has no numpy)
+On WSL it needs `PATH=~/anaconda3/bin:$PATH` (the system python3 has no numpy)
 and, without a display, `MPLBACKEND=Agg`.
+
+Removed on 2026-10-16 (git history has them): `ConvTest/` (the convergence over
+one variable, `do_convTest.py`; the automatic convergence of `tools/AutoConvergence/`
+and `configuration.k_range` took its place) and `AdaptiveStudy/` (the scripts of the
+adaptive-refinement study, now (internal notes)).
 
 ## Use as-is, do not rewrite
 
@@ -18,10 +22,9 @@ and, without a display, `MPLBACKEND=Agg`.
 coherence by its sub-clusters' and the division blows up near zeros; the
 analyzer repairs the divided curve against the undivided one with a tolerance,
 by a rule that is the group's convention (`Analyzer/README.md` states it). Every
-tutorial result and every published curve was made with it, so a
+recorded result and every published curve was made with it, so a
 re-implementation that differs even slightly changes what "the same result"
-means. Call the function, or the CLI with `-err`, exactly as
-the tutorials' `run.sh` do.
+means. Call the function, or the CLI with `-err`.
 
 **Reading and writing the files** (`coherence.read_coherence`,
 `coherence.write_coherence`). The format is simple (time in ms, tab, `+re+imj`),
@@ -37,22 +40,12 @@ files it writes stay comparable with the recorded ones.
 **Plots and fits.** `DataSpace` and `CoherencePlot_v2` draw and fit (stretched
 exponential, T2 and power) the way the 2023 figures were made. For a new figure,
 reading the curves with `coherence.py` and drawing them directly is simpler than
-learning the class.
+learning the class; `example/tutorial/plot_coherence.py` is such a script (|L| of the
+raw `_wiDiv` files, averaged over files, and a T2).
 
-**The convergence test.** `do_convTest.py` takes the curve at the last value of
-the variable as the converged reference, computes for each other value the
-area difference in percent of the reference area, and calls the first value
-under the tolerance the converged point; it then draws the curves and the
-differences. That is twenty lines with `coherence.read_coherence`. The
-tutorials' `do_convtest` scripts that drove it were removed on 2026-09-23; it takes six
-positional arguments (file list, variable values, variable name, unit,
-tolerance, output figure), or re-implement it. `python3 ConvTest/ConvTest/do_convTest.py --help`
-lists the arguments and the options `--add` and `--findconv` (the parser in `pyform.py` wraps `argparse`).
+## How the tutorials use it
 
-## How the tutorials use them
-
-A tutorial's `run.sh` runs CCEX, then `run.py -err` on each
-configuration, then `run.py -ea` over all of them, and is the reference for the
-exact calls. The `do_convtest` scripts that ran `do_convTest.py` were removed on
-2026-09-23; `test/code_verification/check_numerics/` compares raw outputs and does
-not call the analyzer.
+Since 2026-10-16 a tutorial's `run.sh` runs CCEX and then
+`example/tutorial/plot_coherence.py` on the raw `_wiDiv` files; it does not call the
+analyzer. `test/code_verification/check_input_forms` (`errcorr.sh`) calls `run.py -err`;
+`test/code_verification/check_numerics/` compares raw outputs and does not call it.

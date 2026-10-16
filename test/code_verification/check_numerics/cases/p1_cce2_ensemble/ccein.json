@@ -6,31 +6,39 @@
     "alphams": -1,
     "betams": 0
   },
-  "gyrofile": "../../inputs/p1_1ppm/DiaP1_gyro",
-  "bathfile": [
-    "../../inputs/p1_1ppm/bath_DiaP1_1ppm_1"
-  ],
+  "configuration": {
+    "gyrofile": "../../inputs/p1_1ppm/DiaP1_gyro",
+    "bathfile": [
+      "../../inputs/p1_1ppm/bath_DiaP1_1ppm_1"
+    ],
+    "nstate": 0,
+    "seed": 19,
+    "defect_axis_file": ["../../inputs/p1_1ppm/avaax_nav12"]
+  },
   "order": 2,
   "bfield": 500,
   "rbath": 500,
   "rdip": 620,
   "deltat": 0.01,
   "nstep": 200,
-  "add_subclusters": false,
-  "max_clusters_per_order": [
-    0,
-    0,
-    0
-  ],
+  "cluster": {
+    "selection": {
+      "add_subclusters": false,
+      "max_per_order": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
   "pulse": {"count": 1},
-  "savemode": "coherence",
+  "output": {"savemode": "coherence"},
   "Defect": {
-    "axis_file": "../../inputs/p1_1ppm/avaax_nav12",
     "species": [
       {
         "name": "P1",
-        "n_nuclear_spins": 0,
-        "n_configurations": 12,
+        "n_onsite_spins": 0,
+        "n_axis_states": 12,
         "detuning": [
           [
             1,
@@ -95,7 +103,5 @@
         ]
       }
     ]
-  },
-  "seed": 19,
-  "nstate": 0
+  }
 }

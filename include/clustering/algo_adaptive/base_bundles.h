@@ -1,3 +1,7 @@
+/**
+ * @file base_bundles.h
+ * @brief Adaptive refinement: bundles and curves as the policy sees them (plan, expansion and its cost, curve comparison).
+ */
 // What the policy uses about bundles and curves: the plan CCEX reports, scaled
 // products, curve comparison, and the cluster expansion and its cost.
 #pragma once

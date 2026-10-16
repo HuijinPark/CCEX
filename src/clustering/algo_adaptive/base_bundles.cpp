@@ -1,3 +1,7 @@
+/**
+ * @file base_bundles.cpp
+ * @brief Adaptive refinement: bundles and curves as the policy sees them.
+ */
 // What the policy uses about bundles and curves: the plan CCEX reports, scaled
 // products, curve comparison, and the cluster expansion and its cost.
 #include "../../../include/clustering/bundle/bundle_powers.h"

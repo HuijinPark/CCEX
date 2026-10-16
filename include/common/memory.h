@@ -1,3 +1,7 @@
+/**
+ * @file memory.h
+ * @brief Allocation, copy and release of arrays of each type.
+ */
 #ifndef __CCEX_MEMORY_H_
 #define __CCEX_MEMORY_H_
 

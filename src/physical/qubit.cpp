@@ -1,3 +1,7 @@
+/**
+ * @file qubit.cpp
+ * @brief The central qubits, their couplings and states.
+ */
 #include "../../include/physical/qubit.h"
 #include "../../include/common/utilities.h"
 #include "../../include/common/memory.h"
@@ -725,7 +729,6 @@ void QubitArray_reportQubit_i(QubitArray* qa, int i){
     printStructElementFloat("spin",QubitArray_getQubit_i_spin(qa,i));
     printStructElementDouble("gyro (radkHz/G)",QubitArray_getQubit_i_gyro(qa,i));
     printStructElementDouble("detuning (radkHz)",QubitArray_getQubit_i_detuning(qa,i));
-    printStructElementDouble("overhaus (radkHz)",QubitArray_getQubit_i_overhaus(qa,i));
     printStructElementDouble1d("xyz (A)",QubitArray_getQubit_i_xyz(qa,i),3);
 
     MatrixXcd alpha = QubitArray_getQubit_i_alpha(qa,i);
@@ -756,8 +759,8 @@ void QubitArray_reportPsiaPsib(QubitArray* qa){
     printInlineMatrixXcd("psib",QubitArray_getPsib(qa));
     // which m_s product state each mostly is (D43): alphaidx/betaidx pick by energy order, which says nothing by itself
     if (qa->psia.size() > 0 && qa->psib.size() > 0){
-        printf("      psia is mostly        :   m_s %s\n", describeMsState(qa, qa->psia).c_str());
-        printf("      psib is mostly        :   m_s %s\n", describeMsState(qa, qa->psib).c_str());
+        printf("      %-18s : m_s %s\n", "psia is mostly", describeMsState(qa, qa->psia).c_str());
+        printf("      %-18s : m_s %s\n", "psib is mostly", describeMsState(qa, qa->psib).c_str());
     }
 }
 
@@ -767,11 +770,11 @@ void QubitArray_reportPsi0(QubitArray* qa){
 
 void QubitArray_reportQubit_overhaus(QubitArray* qa){
 
-    printSubTitle("Qubit overhaus (radkHz)");
+    printSubTitle("Qubit Overhauser field (radkHz)");
     int nqubit = QubitArray_getNqubit(qa);
     for (int i=0; i<nqubit; i++){
         char message[100] = "\0";
-        snprintf(message,100,"Qubit[%d].overhaus",i);
+        snprintf(message,100,"Qubit[%d]",i);
         printStructElementDouble(message,QubitArray_getQubit_i_overhaus(qa,i));
     }
     printf("\n");
@@ -782,7 +785,7 @@ void QubitArray_report(QubitArray* qa){
     printTitle("Structure QubitArray");
     
     printSubTitle("General properties");
-    printStructElementBool("overhaus",QubitArray_getOverhaus(qa));
+    printStructElementBool("hamiltonian.common.qubit_bath_mean_field",QubitArray_getOverhaus(qa));
     printf("\n");
     
     printSubTitle("Qubit properties");

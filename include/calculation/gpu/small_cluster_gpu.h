@@ -1,3 +1,7 @@
+/**
+ * @file small_cluster_gpu.h
+ * @brief The card side of the packed kernel for small cCCE clusters.
+ */
 #ifndef CCEX_SMALL_CLUSTER_GPU_H
 #define CCEX_SMALL_CLUSTER_GPU_H
 // A26 step 1: the card side of the batched small-cluster cCCE (small_cluster_gpu.cu). One process of a node drives the

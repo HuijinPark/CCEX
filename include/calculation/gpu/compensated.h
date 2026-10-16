@@ -1,9 +1,15 @@
+/**
+ * @file compensated.h
+ * @brief Two-double (compensated) arithmetic for the cancellation-sensitive sums of the eigensystem refinement.
+ */
 #ifndef CCEX_COMPENSATED_H
 #define CCEX_COMPENSATED_H
 #include <cmath>
 #ifdef __CUDACC__
+/** Host-and-device qualifier when compiled by nvcc, empty otherwise. */
 #define CCEX_HD __host__ __device__
 #else
+/** Host-and-device qualifier when compiled by nvcc, empty otherwise. */
 #define CCEX_HD
 #endif
 

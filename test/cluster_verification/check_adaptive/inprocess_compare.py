@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""The merge policy run three times with the same request - ccex-adaptive in its own
-process, main.out --adaptive in ours, and main.out -f with the request written as
-an "adaptive" block in the input file - and the three output trees compared.
+"""The merge policy run twice with the same request - ccex-adaptive in its own
+process, and main.out -f with the request written as an "adaptive" block in the
+input file (in ours) - and the two output trees compared. (Until A63, 2026-10-15,
+main.out --adaptive with the request on the command line was a third way; the
+option was removed, and the block is the in-process way.)
 
     inprocess_compare.py WORKDIR
 
@@ -62,7 +64,7 @@ FIXED = ('--input', '--binary', '--cwd', '--output', '--mpiexec', '--ranks')
 
 
 def as_block(args, out, name):
-    """The same request as an "adaptive" object inside a copy of the input file."""
+    """The same request as a cluster.adaptive object inside a copy of the input file (a top-level "adaptive" until A65)."""
     block, listed = {}, list(args)
     i = 0
     while i < len(listed):
@@ -83,7 +85,7 @@ def as_block(args, out, name):
         block[key[2:].replace('-', '_')] = value          # given twice, the last wins, as on the command line
     block['output'] = str(out)
     cfg = json.loads(Path(args[args.index('--input')+1]).read_text())
-    cfg['adaptive'] = block
+    cfg.setdefault('cluster', {})['adaptive'] = block
     path = WORK/f'{name}.block.json'
     path.write_text(json.dumps(cfg, indent=2)+'\n')
     return path
@@ -100,17 +102,16 @@ def run_block(args, out, name):
     return time.time()-start, done.returncode
 
 
-def run(args, out, inprocess):
+def run_split(args, out):
     a = list(args)
     a[a.index('--output')+1] = str(out)
     a[a.index('--binary')+1] = str(BINARY)
     # the separate driver launches each step with --mpiexec (default mpirun from PATH): give it the launcher of the
     # in-process run, unless the case names its own (the fault cases) (review 5f7834 R5). The in-process run launches
-    # nothing and records its default, so "mpiexec" is the one field the two summaries may differ in for that reason.
-    if not inprocess and '--mpiexec' not in a:
+    # nothing and records its default, so "mpiexec" is a field the two summaries may differ in for that reason.
+    if '--mpiexec' not in a:
         a += ['--mpiexec', MPIRUN]
-    cmd = ([MPIRUN, '-n', '1', str(BINARY), '--adaptive'] if inprocess
-           else [str(TEST/'cpp/bin/ccex-adaptive')]) + a
+    cmd = [str(TEST/'cpp/bin/ccex-adaptive')] + a
     start = time.time()
     done = subprocess.run(cmd, capture_output=True, text=True, cwd=str(REPO))
     return time.time()-start, done.returncode
@@ -127,22 +128,23 @@ def normalized(path, tag):
 failed = 0
 print(f"{'case':34}{'split s':>9}{'in-proc s':>11}{'exit':>8}   status")
 for name, args in [(n, recorded[n]['args']) for n in CASES]:
-    A, B, C = WORK/f'{name}.split', WORK/f'{name}.inproc', WORK/f'{name}.block'
-    ta, ra = run(args, A, False)
-    tb, rb = run(args, B, True)
-    tc, rc = run_block(args, C, name)
+    A, B = WORK/f'{name}.split', WORK/f'{name}.block'
+    ta, ra = run_split(args, A)
+    tb, rb = run_block(args, B, name)
     problems = []
     if ra != rb:
         problems.append(f'exit status {ra} vs {rb}')
-    if rc != rb:
-        problems.append(f'exit status {rb} on the command line, {rc} from the Adaptive block')
+    # The block run launches nothing (the launcher of the split run is the field "mpiexec") and reads a different input
+    # file - the same settings plus the block - so what names or hashes that file differs by construction, and nothing
+    # else may.
+    launcher = {'mpiexec'} if '--mpiexec' not in args else set()
+    own = {'input', 'input_file_sha256', 'input_sha256'}
     diff = subprocess.run([sys.executable, str(TEST/'compare_summaries.py'),
                            str(A/'summary.json'), str(B/'summary.json')],
                           capture_output=True, text=True)
     fields = {line.rsplit('/', 1)[-1] for line in diff.stdout.splitlines()}
-    launcher = {'mpiexec'} if '--mpiexec' not in args else set()
-    if diff.returncode and not fields <= MEASURED | launcher:
-        problems.append(f'summary differs in {sorted(fields-MEASURED-launcher)}')
+    if diff.returncode and not fields <= MEASURED | launcher | own:
+        problems.append(f'summary differs in {sorted(fields-MEASURED-launcher-own)}')
     same = 0
     for one in sorted(A.rglob('*')):
         if not one.is_file() or one.name == 'summary.json':
@@ -150,37 +152,23 @@ for name, args in [(n, recorded[n]['args']) for n in CASES]:
         other = B/one.relative_to(A)
         if not other.is_file():
             problems.append(f'missing {one.relative_to(A)}')
-        elif normalized(one, f'{name}.split') != normalized(other, f'{name}.inproc'):
+        elif normalized(one, f'{name}.split') != normalized(other, f'{name}.block'):
             problems.append(f'differs {one.relative_to(A)}')
         else:
             same += 1
-    # The block run reads a different input file - the same settings plus the block -
-    # so what names or hashes that file differs by construction, and nothing else may.
-    own = {'input', 'input_file_sha256', 'input_sha256'}
-    diff = subprocess.run([sys.executable, str(TEST/'compare_summaries.py'),
-                           str(B/'summary.json'), str(C/'summary.json')], capture_output=True, text=True)
-    fields = {line.rsplit('/', 1)[-1] for line in diff.stdout.splitlines()}
-    if diff.returncode and not fields <= MEASURED | own:
-        problems.append(f'Adaptive block: summary differs in {sorted(fields-MEASURED-own)}')
-    for one in sorted(B.rglob('*')):
-        if not one.is_file() or one.name == 'summary.json':
-            continue
-        other = C/one.relative_to(B)
-        if not other.is_file():
-            problems.append(f'Adaptive block: missing {one.relative_to(B)}')
-        elif normalized(one, f'{name}.inproc') != normalized(other, f'{name}.block'):
-            problems.append(f'Adaptive block: differs {one.relative_to(B)}')
     status = json.loads((A/'summary.json').read_text()).get('status', '?')
     print(f'{name:34}{ta:9.2f}{tb:11.2f}{ra:>5}/{rb:<3}  {status}  ({same} files alike)')
     for line in problems[:6]:
         print(f'    * {line}')
     failed += bool(problems)
-# An input with no "outfile" of its own: the steps name one, and the first of them
-# used to copy it into a buffer that only -o or "outfile" allocates (a segfault,
+# An input with no output.file ("outfile" until A65) of its own: the steps name one, and the first of them
+# used to copy it into a buffer that only -o or output.file allocates (a segfault,
 # found on a P1 input on 2026-09-25).
 args = recorded['merge-grow']['args']
 block = as_block(args, WORK/'no-outfile.block', 'no-outfile')
-cfg = json.loads(block.read_text()); cfg.pop('outfile', None); block.write_text(json.dumps(cfg, indent=2)+'\n')
+cfg = json.loads(block.read_text()); cfg.get('output', {}).pop('file', None)
+if cfg.get('output') == {}: cfg.pop('output')
+block.write_text(json.dumps(cfg, indent=2)+'\n')
 done = subprocess.run([MPIRUN, '-n', '1', str(BINARY), '-f', str(block)],
                       capture_output=True, text=True, cwd=str(REPO))
 ok = done.returncode == recorded['merge-grow']['returncode'] and (WORK/'no-outfile.block/summary.json').is_file()

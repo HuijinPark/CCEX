@@ -32,7 +32,7 @@ keep 1e-9 and the tagged references their own tolerance. `compare.py` reads the 
 |---|---|---|---|---|---|
 | natab_cce2_hahn / _ramsey / _cpmg8 | NV + natural-abundance ¹³C, rbath 30 | CCE2 | ensemble (nstate 0) | Hahn / Ramsey (`pulse.count` 0) / CPMG-8 | coherence |
 | natab_cce2_single | same | CCE2 | single (nstate 2, state files) | Hahn | coherence |
-| natab_gcce2_hahn, natab_gcce2_bathadjust | same, one NV from the `Qubit.file` form (`qubitfile` until 2026-10-13); the second with the bath file given twice, the copy shifted 50 Å along z (`bath_shift`, `bathadjust` until 2026-10-13). The second was `natab_gcce2_two_qubits` until 2026-10-13: both inputs also had a `Qubit` block (two NV in the second) that the `qubitfile` overrode and nothing read (found 2026-10-02). Since then a `qubitfile` with a `Qubit` block is refused, the unread blocks are gone (outputs byte-identical to the recorded ones) and the case is named for what it computes; `make_cases.py` cuts both from tutorial 02's `ensemble_CCE` input now that `ensemble_gCCE`'s are a real two-qubit run and a single NV with its ZFS | gCCE2 | ensemble | Hahn | coherence |
+| natab_gcce2_hahn, natab_gcce2_bathadjust | same, one NV from the `Qubit.file` form (`qubitfile` until 2026-10-13); the second with the bath file given twice, the copy shifted 50 Å along z (`configuration.bath_shift`, `bathadjust` until 2026-10-13). The second was `natab_gcce2_two_qubits` until 2026-10-13: both inputs also had a `Qubit` block (two NV in the second) that the `qubitfile` overrode and nothing read (found 2026-10-02). Since then a `qubitfile` with a `Qubit` block is refused, the unread blocks are gone (outputs byte-identical to the recorded ones) and the case is named for what it computes; `make_cases.py` cuts both from tutorial 02's `ensemble_CCE` input now that `ensemble_gCCE`'s are a real two-qubit run and a single NV with its ZFS | gCCE2 | ensemble | Hahn | coherence |
 | natab_dsj2 | same | dsj | ensemble | Hahn | coherence |
 | natab_knight_shift | same, tilted field | CCE2 | ensemble | Hahn | coherence |
 | natab_manual_hahn | same, the Hahn echo written as a `sequence` | CCE2 | ensemble | manual | coherence |
@@ -53,7 +53,7 @@ compared; with `seed` alone they cannot, because the random sequence changed on
 this branch. `make_cases.py` wrote the cases and these files from the tutorials
 and can write them again.
 
-Not in the pool: the two-NV density matrices of tutorial 03 (`NV2_13C2`).
+Not in the pool: the two-NV density matrices of tutorial 03 (`NV2_13C2`; `05_multiNV/gCCE2_HahnRamsey_NV2` since A66).
 Every version up to 64f0a1a41, and the tutorial's own recorded result, held
 `nan` in them (elements the free evolution keeps at zero, divided by zero);
 since 64f0a1a41 they are finite, and the case can join the pool once the tags'
@@ -87,6 +87,24 @@ reproduces the arithmetic of the builds it was checked on (g++ 13 AVX2, icpx 202
 other build it is off and the check reports every output as "scalar only". Run it in every build the batch is to be
 used in: a compiler change can move where the scalar path fuses its products. `CCEX_CPU_BATCH=0` turns the batch off in a
 run (for A/B comparisons).
+
+## The column blocks (A62)
+
+`test_cce_columns.cpp` (also in `make cpu-test` and CMake `--target cpu-test`) holds the one-state cCCE evolution in
+column blocks (`cceEvolveColumns`, input block `column_evolution`) to the one-time-point path it replaces: random
+Hermitian Hamiltonians of bath dimension 300 and 600 (the block's `min_dim` set to the dimension), `exact` and
+`recursive`, Ramsey, Hahn echo, CPMG-8 and two `Manual` sequences (four different intervals; repeated ones), block sizes
+32 (not a divisor of nstep 77 and 41), 1 and more than nstep. Every output within 1e-12 relative to the larger magnitude
+(the two sum the same products in another order; 1.9e-15 with MKL, 2.1e-15 without on WSL). The phase rule is held
+separately, since the relative test cannot see it (`exact` and `recursive` differ by about 1e-16 there): after a run both
+paths leave the last step's phases of every distinct interval in the workspace, compared for last steps around the
+recursive anchors (16, 32, 64) and the block edges. `exact` and the recursive step factors must be the bits of the path
+before; `recursive` at an anchor step the bits of `exact`; between anchors carried (some bit differs from `exact`, all
+within 1e-11) and within 1e-14 of the path before. Not bit for bit there: the carried product is a complex
+multiplication whose fused multiply-adds the compiler places per translation unit (wsl-gnu: the same bits with MKL, 280 of
+480 intervals 1 ulp apart, at most 8.1e-16, with `CCEX_BLAS=off`). An anchor of 15 instead of 16, or sin and cos
+recomputed at each block's first column, fails it. And with the block on but the dimension below `min_dim`, the outputs
+are the bits of the path before.
 
 ## The references
 
@@ -143,3 +161,26 @@ complex Jacobi, A42). Recorded with `CCEX_BLAS=off` like the earlier heads. Agai
 rest byte-identical. With `CCEX_SMALL_EIG=0` the run gives the earlier bits. From this one on the name carries the time
 (`make_reference.sh`), so that two references of one day sort in the order they were made: by name alone this one
 (`...-2b2cc3e16`) would have sorted before `head-20261013-8a775921f` and not decided.
+
+**2026-10-15 20:38: `head-202610152038-5381794ce`, A71** (the qubit Hamiltonian subtracts the static Overhauser field of
+the cluster's own spins only with `hamiltonian.common.qubit_bath_mean_field` true; with it false, the default, nothing
+had added that field, and the qubit lost the field of the cluster's spins in gCCE with nstate > 0). Recorded with a
+`CCEX_BLAS=off` build like the earlier heads. Against `head-202610132130-2b2cc3e16` (noDiv/dm, wiDiv, absolute): the six
+gCCE cases with nstate > 0 and the mean field off change - `arbitrary_gcce1_dm` 4.1e-8 / 4.1e-8, `hbn_gcce2_dm` 0.103 /
+0.246, `p1_cpmg8_manual` 9.47e-2 (wiDiv diverges), `p1_gcce2_population` (Ramsey) 1.71e-3 / 1.89e-3, `p1_gcce2_zfs`
+1.81e-3 / 2.50e-2, `p1_manual_hahn` 1.76e-4 (wiDiv diverges); the binary before the fix gives the earlier bits in all
+six. The other nineteen, `hbn_gcce2_oh` (mean field true) and the ensemble gCCE cases included, are byte-identical.
+`expected.json` names the reason for the six against every earlier reference.
+
+**2026-10-16 14:58: `head-202610161458-9d22ab633`, A81 follow-up** (`hbn_gcce2_oh`: the V_B⁻ zero-field splitting,
+`Qubit.intmap` self term `[[-1080,0,0],[0,-1180,0],[0,0,2320]]`, had no unit and was read as kHz, D 3.48 MHz; it is
+MHz, D 3.48 GHz and E 50 MHz, as in tutorial `04_hBN/gCCE2_Hahn_OH`, so the input now says `"unit": "MHz"`). Recorded
+by `make_reference.sh current` with a `CCEX_BLAS=off` build; against `head-202610152038-5381794ce` only that case
+changes (noDiv 0.85, wiDiv 4.69e-2: |L| at 0.5 ns 0.054 → 0.81, the dip near 1/D 0.29 ns), the other twenty-four are
+byte-identical. The tags' outputs of this one case were re-recorded too: the tags read neither the current input keys
+nor `"unit"` (v1.1.0), so `cases/hbn_gcce2_oh/ccein_tags.json` is the same calculation in their input form (the ZFS in
+kHz, x 1000; the v3 tensor file, which they read x 1 as a `VASP` file with `CorrTotSpin` 0). Run from the case folder
+with each tag's binary (built from the tag with its own `do_compile.sh wsl`; the tags have no `wsl-gnu` preset), 2
+ranks, `-o <folder>/out`. The same procedure with the 2026-09-24 input and its `_tag` tensor file gives the recorded
+bytes of both tags. Both tags now agree with this head within 2.9e-8 (noDiv) / 8.3e-10 (wiDiv), so their earlier
+`expected.json` entry for the case (the tensor format) is gone; the earlier `head-*` name the ZFS unit instead.

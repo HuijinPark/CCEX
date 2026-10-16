@@ -23,10 +23,13 @@
     "alphams": 1,
     "betams": 0
   },
-  "gyrofile": "../../inputs/natab/gyro_13C",
-  "bathfile": [
-    "../../inputs/natab/bath_Diamond_NV_natab_1"
-  ],
+  "configuration": {
+    "gyrofile": "../../inputs/natab/gyro_13C",
+    "bathfile": [
+      "../../inputs/natab/bath_Diamond_NV_natab_1"
+    ],
+    "seed": 19
+  },
   "order": 2,
   "bfield": [
     50,
@@ -40,6 +43,5 @@
   "hamiltonian": {
     "cCCE": {"knight": true}
   },
-  "pulse": {"count": 1},
-  "seed": 19
+  "pulse": {"count": 1}
 }

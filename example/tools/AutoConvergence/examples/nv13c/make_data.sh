@@ -1,5 +1,5 @@
 #!/bin/sh
-# NV-13C test data for main.out --auto_conv (WSL-sized): 70 diamond 13C baths (natural abundance, 110 A cell, rbath up to about 55 A)
+# NV-13C test data for the automatic convergence (WSL-sized): 70 diamond 13C baths (natural abundance, 110 A cell, rbath up to about 55 A)
 # from BathGeneratorSpinCluster example 1_13C_only_diamond with a fixed seed, and 30 state files per bath.
 #   sh make_data.sh [BGSC_DIR]        (default ~/bin/code_develop/BathGeneratorSpinCluster)
 set -e

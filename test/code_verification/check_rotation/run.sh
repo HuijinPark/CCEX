@@ -136,7 +136,9 @@ cfg = {
 # literal_eval, not eval: the overrides are plain dict/list/bool literals written
 # in this file, and there is no reason for the generator to execute anything.
 cfg.update(ast.literal_eval(extra))
-json.dump(cfg, open(dest,"w"), indent=4)
+from configuration_block import configuration_block   # the A64 block (configuration_block.py)
+configuration_block(cfg)
+json.dump(cfg, open(dest, "w"), indent=4)
 PY
 }
 
@@ -281,21 +283,13 @@ python3 check_geometry.py "$WORK/p1_norot.log" "$WORK/p1_rot111.log" \
     --bath-axis 0 0 1 --qubit-axis 1 1 1 --r0 10 20 30
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
-# defect_axis_reference is recorded, not acted on. On the same defect system it must
-# change nothing at all -- not the coherence, not the paxes, not the detuning table.
+# defect_axis_reference only named the rotation's qubit axis in the log; it was removed on 2026-10-15 (A65) and is refused,
+# on the defect system as anywhere
 run_case p1_rot111_defaxis "$P1DEF, $ROT111, 'defect_axis_reference': 'qubit_axis'"
-[ $RC -eq 0 ] || fail "p1_rot111_defaxis run failed (rc=$RC)"
-
-same=1; for suf in _noDiv _wiDiv; do cmp -s "$WORK/p1_rot111$suf" "$WORK/p1_rot111_defaxis$suf" || same=0; done
-[ $same -eq 1 ] \
-    && pass "[P1] defect_axis_reference leaves the coherence byte-identical" \
-    || fail "[P1] defect_axis_reference CHANGED the coherence"
-
-if diff -q <(grep -E "^[[:space:]]+(paxes|detuning)\[[0-9]+\]" "$WORK/p1_rot111.log") \
-           <(grep -E "^[[:space:]]+(paxes|detuning)\[[0-9]+\]" "$WORK/p1_rot111_defaxis.log") > /dev/null; then
-    pass "[P1] defect_axis_reference leaves avaax assignments and detuning unchanged"
+if [ $RC -ne 0 ] && grep -q 'input key "defect_axis_reference" was removed' "$WORK/p1_rot111_defaxis.log"; then
+    pass "[P1] defect_axis_reference is refused as removed (A65)"
 else
-    fail "[P1] defect_axis_reference CHANGED avaax assignments or detuning"
+    fail "[P1] defect_axis_reference was not refused as removed (rc=$RC)"
 fi
 
 echo
@@ -480,6 +474,8 @@ def merge(into, extra):     # a block of the overrides changes the keys it names
 if extra.strip():
     # the overrides arrive as a bare "key: value, ..." fragment, like run_case's
     merge(cfg, ast.literal_eval("{" + extra + "}"))
+from configuration_block import configuration_block   # the A64 block (configuration_block.py)
+configuration_block(cfg)
 json.dump(cfg, open(dest, "w"), indent=4)
 PYEOF
     "$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/$name.json" -v > "$WORK/$name.log" 2>&1
@@ -683,7 +679,7 @@ expect_fail boolelement \
     "qubit_axis\[1\] is not a number"
 expect_fail notobject \
     "'coordinate_frame_rotation': True" \
-    "coordinate_frame_rotation must be an object"
+    "frame.rotation must be an object"
 expect_fail notbool \
     "'coordinate_frame_rotation': {'enabled': 'true', 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}" \
     "must be a boolean"
@@ -746,17 +742,22 @@ echo "--- [S1] option surface : new name, alias, reference_qubit ---"
 run_case newname "$ROT111"
 [ $RC -eq 0 ] || fail "newname run failed (rc=$RC)"
 ALIAS111="'bath_coordinate_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}"
+# the old names (bath_coordinate_rotation, accepted with a warning until A65; coordinate_frame_rotation) are refused with
+# the new place frame.rotation
 run_case aliased "$ALIAS111"
-[ $RC -eq 0 ] || fail "aliased run failed (rc=$RC)"
+if [ $RC -ne 0 ] && grep -q '"bath_coordinate_rotation" is now "frame.rotation"' "$WORK/aliased.log"; then
+    pass "[alias] bath_coordinate_rotation is refused with the new place frame.rotation"
+else
+    fail "[alias] bath_coordinate_rotation was not refused with frame.rotation (rc=$RC)"
+fi
 
-same=1; for suf in _noDiv _wiDiv; do cmp -s "$WORK/newname$suf" "$WORK/aliased$suf" || same=0; done
-[ $same -eq 1 ] \
-    && pass "[alias] the deprecated bath_coordinate_rotation gives byte-identical output" \
-    || fail "[alias] the deprecated name gives DIFFERENT output"
-
-grep -q "bath_coordinate_rotation\" is deprecated" "$WORK/aliased.log" \
-    && pass "[alias] the deprecation warning is printed" \
-    || fail "[alias] no deprecation warning"
+# frame.rotation is on when the block is given (A65): without "enabled" it is the run with "enabled": true (newname);
+# "enabled": false is the run without the block (the [disabled] case above)
+run_case noenabled "'coordinate_frame_rotation': {'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}"
+same=1; for suf in _noDiv _wiDiv; do cmp -s "$WORK/newname$suf" "$WORK/noenabled$suf" || same=0; done
+[ $RC -eq 0 ] && [ $same -eq 1 ] \
+    && pass "[frame.rotation] a block without \"enabled\" is on: byte-identical to \"enabled\": true" \
+    || fail "[frame.rotation] a block without \"enabled\" is not the rotation on (rc=$RC)"
 
 grep -q "is deprecated" "$WORK/newname.log" \
     && fail "[newname] the new name wrongly warns about deprecation" \
@@ -773,7 +774,7 @@ same=1; for suf in _noDiv _wiDiv; do cmp -s "$WORK/rot111$suf" "$WORK/refq0$suf"
 
 expect_fail bothnames \
     "$ROT111, 'bath_coordinate_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0]}" \
-    "both \"coordinate_frame_rotation\" and \"bath_coordinate_rotation\" are present"
+    "\"bath_coordinate_rotation\" is now \"frame.rotation\""
 expect_fail refmissing \
     "'coordinate_frame_rotation': {'enabled': True, 'bath_axis': [0.0,0.0,1.0], 'qubit_axis': [1.0,1.0,1.0], 'reference_qubit': 'central_NV'}" \
     "reference_qubit \"central_NV\" is not one of the qubits"
@@ -813,17 +814,9 @@ else
     pass "[bfield] +500 and -500 are both accepted and give different results"
 fi
 
-# -B sets Bz in the computational frame, so it composes with the rotation instead of
-# conflicting with it. ("bfield" stays in the file because it is a required key; -B
-# overrides its z component, which is the whole point of the flag.)
-write_ccein "$WORK/bf_cli.json" "{'outfile': '$WORK/bf_cli', $ROT111, 'bfield': [0.0,0.0,0.0]}"
-"$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/bf_cli.json" -B 500 -v > "$WORK/bf_cli.log" 2>&1
-rc=$?
-[ $rc -eq 0 ] \
-    && pass "[bfield] rotation + CLI -B 500 accepted (rc=$rc)" \
-    || fail "[bfield] rotation + CLI -B 500 was refused (rc=$rc)"
-
-python3 check_srcfield.py "$WORK/bf_cli.log" --qubit-axis 1 1 1 --bz 500 | sed 's/^/  /'
+# A scalar bfield is Bz in the computational frame, so it composes with the rotation instead of conflicting with it.
+# (Until A63 this was checked with -B 500 over "bfield": [0,0,0]; -B was removed and its value is the scalar bfield.)
+python3 check_srcfield.py "$WORK/bf_scalar.log" --qubit-axis 1 1 1 --bz 500 | sed 's/^/  /'
 if [ $? -eq 0 ]; then npass=$((npass+1)); else nfail=$((nfail+1)); fi
 
 # R^T takes the computational field back to the source frame: R^T*[0,0,B] = B*q_hat.
@@ -854,25 +847,13 @@ expect_fail bf_removed_option \
 
 echo
 echo "--- [S3] defect_axis_reference ---"
-run_case defaxis "$ROT111, 'defect_axis_reference': 'qubit_axis'"
-[ $RC -eq 0 ] \
-    && pass "[defect_axis_reference] qubit_axis with the rotation on is accepted" \
-    || fail "[defect_axis_reference] qubit_axis was refused (rc=$RC)"
-
-grep -q "not applied to the Defect Hamiltonian" "$WORK/defaxis.log" \
-    && pass "[defect_axis_reference] the log says it is recorded, not applied" \
-    || fail "[defect_axis_reference] the log does not say the key is inert"
-
+# removed on 2026-10-15 (A65): it only named the rotation's qubit axis in the log; refused whatever its value
+expect_fail defaxis           "$ROT111, 'defect_axis_reference': 'qubit_axis'" \
+    'input key "defect_axis_reference" was removed'
 expect_fail defaxis_badstring "$ROT111, 'defect_axis_reference': 'bfield'" \
-    "is not available"
-expect_fail defaxis_bathaxis  "$ROT111, 'defect_axis_reference': 'bath_axis'" \
-    "is not available"
-expect_fail defaxis_array     "$ROT111, 'defect_axis_reference': [1.0,1.0,1.0]" \
-    "defect_axis_reference must be a string"
-expect_fail defaxis_bool      "$ROT111, 'defect_axis_reference': True" \
-    "defect_axis_reference must be a string"
+    'input key "defect_axis_reference" was removed'
 expect_fail defaxis_norot     "'defect_axis_reference': 'qubit_axis'" \
-    "needs a qubit axis"
+    'input key "defect_axis_reference" was removed'
 
 echo
 echo "--- [MQ] multi-qubit rotation ---"
@@ -897,6 +878,8 @@ cfg = {
 }
 if extra.strip():
     cfg.update(ast.literal_eval("{" + extra + "}"))
+from configuration_block import configuration_block   # the A64 block (configuration_block.py)
+configuration_block(cfg)
 json.dump(cfg, open(dest, "w"), indent=4)
 PYEOF
     "$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/$name.json" -v > "$WORK/$name.log" 2>&1
@@ -1285,6 +1268,8 @@ cfg = {
             {"between": ["NV0","NV1"], "tensor": rot_T(PAIR)}]},
     "outfile": outfile,
 }
+from configuration_block import configuration_block   # the A64 block (configuration_block.py)
+configuration_block(cfg)
 json.dump(cfg, open(dest, "w"), indent=4)
 PYEOF
 "$MPIRUN" -n 1 "$CCEX_BIN" -f "$WORK/ab/A5.json" -v > "$WORK/ab/A5.log" 2>&1

@@ -1,3 +1,7 @@
+/**
+ * @file options_table.h
+ * @brief Adaptive refinement: the table of every option, its type and default.
+ */
 // Every option the refinement takes, on the command line (--name) or as a key of
 // the input file's "Adaptive" object (name with _ for -). This table is the one
 // place an option is declared: add a row here to add an option. 27 options (20 that

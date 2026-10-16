@@ -1,7 +1,12 @@
+/**
+ * @file option.cpp
+ * @brief The input file reader: parsing the JSON input, checking its keys and refusing removed ones.
+ */
 #include "../../include/input/mpi_seed.h"
 #include "../../include/input/option.h"
 #include "../../include/input/json.h"
 #include "../../include/common/memory.h"
+#include "../../include/calculation/superoperator.h"
 #include "../../include/auto_convergence/rdip_ladder.h"
 
 #include <cmath>
@@ -45,8 +50,10 @@ static std::string shownKey(const cJSON* object, const char* key){
     const auto where = shownPaths().find(object);
     return where == shownPaths().end() ? std::string(key ? key : "") : joinKey(where->second, key ? key : "");
 }
+static void applyInputUnits(cJSON* root);
 static cJSON* trackedParse(const char* text){
     cJSON* root = cJSON_Parse(text);
+    if (root) applyInputUnits(root);    // A67: {"value", "unit"} to the plain number in the key's own unit, before any reader
     if (root) recordPaths(root, "", "");
     return root;
 }
@@ -132,6 +139,117 @@ static cJSON* untrackedItem(const cJSON* object, const char* key){
     return NULL;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+// A67 (2026-10-15, user: a unit per key, not a units block): a key below takes a plain number (or list) in its own unit,
+// as before, or {"value": number or list, "unit": "..."}. The object is replaced by the plain value in the key's own unit
+// right after the parse, so every reader and the unread-key check see what they always saw. The conversion is one exact
+// operation: a multiplication by an exact power of ten going to a smaller unit, a division by one going to a larger
+// (1/1000 has no exact binary form; x/1000 is the double nearest the decimal x/1000, so "5" us is 0.005 ms bit for bit).
+// The key's own unit, written out, leaves the value untouched.
+namespace {
+struct UnitFactor { const char* unit; double times; double over; };
+struct UnitKind { const char* what; std::vector<UnitFactor> units; };
+const UnitKind kTimeMs   {"ms",  {{"s",1e3,1}, {"ms",1,1}, {"us",1,1e3}, {"ns",1,1e6}}};
+const UnitKind kTimeNs   {"ns",  {{"s",1e9,1}, {"ms",1e6,1}, {"us",1e3,1}, {"ns",1,1}}};
+const UnitKind kFieldG   {"G",   {{"G",1,1}, {"mT",10,1}, {"T",1e4,1}}};
+const UnitKind kLengthA  {"A",   {{"A",1,1}, {"nm",10,1}}};
+const UnitKind kFreqMHz  {"MHz", {{"Hz",1,1e6}, {"kHz",1,1e3}, {"MHz",1,1}, {"GHz",1e3,1}}};
+const UnitKind kFreqKHz  {"kHz", {{"Hz",1,1e3}, {"kHz",1,1}, {"MHz",1e3,1}, {"GHz",1e6,1}}};
+
+std::string allowedUnits(const UnitKind& kind){
+    std::string out;
+    for (const UnitFactor& f : kind.units) out += (out.empty() ? "" : ", ") + std::string(f.unit);
+    return out;
+}
+// every leaf of a number or a (nested) list of numbers
+bool numbersOnly(const cJSON* v){
+    if (cJSON_IsNumber(v)) return true;
+    if (!cJSON_IsArray(v) || !v->child) return false;
+    for (const cJSON* c = v->child; c; c = c->next) if (!numbersOnly(c)) return false;
+    return true;
+}
+void scaleNumbers(cJSON* v, const UnitFactor& f){
+    if (cJSON_IsNumber(v)){
+        if (f.times != 1) cJSON_SetNumberHelper(v, v->valuedouble * f.times);
+        else if (f.over != 1) cJSON_SetNumberHelper(v, v->valuedouble / f.over);
+        return;
+    }
+    for (cJSON* c = v->child; c; c = c->next) scaleNumbers(c, f);
+}
+// parent.key (looked up without regard to case, as the readers do): an object there becomes its value in the key's unit
+void applyUnit(cJSON* parent, const char* key, const std::string& shown, const UnitKind& kind){
+    cJSON* item = untrackedItem(parent, key);
+    if (!cJSON_IsObject(item)) return;                  // a plain value, or none: the reader's as before
+    cJSON* value = NULL; cJSON* unit = NULL;
+    int n = 0;
+    for (cJSON* c = item->child; c; c = c->next, ++n){
+        if (!strcasecmp(c->string,"value")) value = c;
+        else if (!strcasecmp(c->string,"unit")) unit = c;
+    }
+    const std::string allowed = allowedUnits(kind);
+    if (n != 2 || !value || !unit || !cJSON_IsString(unit) || !numbersOnly(value)){
+        ccexRefusalPrint(stderr,"Error: %s must be a number (in %s) or {\"value\": number or list of numbers, \"unit\": \"...\"} "
+                         "with the unit one of %s\n", shown.c_str(), kind.what, allowed.c_str());
+        ccexRefuse();
+    }
+    const UnitFactor* factor = NULL;
+    for (const UnitFactor& f : kind.units) if (!strcmp(f.unit, unit->valuestring)) factor = &f;
+    if (!factor){
+        ccexRefusalPrint(stderr,"Error: %s.unit \"%s\" is not known, the unit is one of %s (a plain number is in %s)\n",
+                         shown.c_str(), unit->valuestring, allowed.c_str(), kind.what);
+        ccexRefuse();
+    }
+    cJSON* plain = cJSON_Duplicate(value, 1);
+    scaleNumbers(plain, *factor);
+    const std::string name = item->string;              // the key as written: the replacement keeps it
+    cJSON_ReplaceItemInObjectCaseSensitive(parent, name.c_str(), plain);
+}
+}   // namespace
+
+// The keys with a unit (A67). Not here: what already takes {"values", "unit"} (the Defect block, Qubit.intmap), the
+// numbers inside the bath and state files, the gyromagnetic ratios; auto_convergence.time_window.value is the runner's
+// (example/tools/AutoConvergence).
+static void applyInputUnits(cJSON* root){
+    if (!cJSON_IsObject(root)) return;
+    applyUnit(root, "deltat", "deltat", kTimeMs);
+    applyUnit(root, "bfield", "bfield", kFieldG);
+    applyUnit(root, "rbath", "rbath", kLengthA);
+    applyUnit(root, "rdip", "rdip", kLengthA);
+    cJSON* conf = untrackedItem(root, "configuration");
+    if (cJSON_IsObject(conf)) applyUnit(conf, "bath_shift", "configuration.bath_shift", kLengthA);
+    cJSON* qubitBlock = untrackedItem(root, "Qubit");
+    cJSON* qubits = cJSON_IsObject(qubitBlock) ? untrackedItem(qubitBlock, "qubit") : NULL;
+    if (cJSON_IsArray(qubits)){
+        int i = 0;
+        for (cJSON* q = qubits->child; q; q = q->next, ++i){
+            if (!cJSON_IsObject(q)) continue;
+            const std::string at = "Qubit.qubit[" + std::to_string(i) + "].";
+            applyUnit(q, "xyz", at + "xyz", kLengthA);
+            applyUnit(q, "detuning", at + "detuning", kFreqKHz);
+        }
+    }
+    cJSON* pulse = untrackedItem(root, "pulse");
+    if (cJSON_IsObject(pulse)){
+        applyUnit(pulse, "duration", "pulse.duration", kTimeNs);
+        cJSON* bath = untrackedItem(pulse, "bath");
+        if (cJSON_IsObject(bath)){
+            applyUnit(bath, "energy_shift", "pulse.bath.energy_shift", kFreqMHz);
+            applyUnit(bath, "bandwidth", "pulse.bath.bandwidth", kFreqMHz);
+        }
+    }
+    cJSON* hamiltonian = untrackedItem(root, "hamiltonian");
+    if (cJSON_IsObject(hamiltonian))
+        for (cJSON* section = hamiltonian->child; section; section = section->next){
+            cJSON* jumps = cJSON_IsObject(section) ? untrackedItem(section, "jump_operators") : NULL;
+            if (!cJSON_IsArray(jumps)) continue;
+            int i = 0;
+            for (cJSON* j = jumps->child; j; j = j->next, ++i)
+                if (cJSON_IsObject(j))
+                    applyUnit(j, "rate", "hamiltonian." + std::string(section->string) + ".jump_operators[" + std::to_string(i) + "].rate",
+                              kFreqMHz);
+        }
+}
+
 static void refuseOldInputKeys(cJSON* root){
     struct Renamed { const char* block; const char* key; const char* now; };
     static const Renamed renamed[] = {
@@ -142,18 +260,29 @@ static void refuseOldInputKeys(cJSON* root){
         {"", "qbetams", "is now \"Qubit.betams\" (with Qubit.file)"},
         {"", "rbathcut", "is now the inner radius of \"rbath\": [inner, outer]"},
         {"", "rdipcut", "is now the inner radius of \"rdip\": [inner, outer]"},
-        {"", "bathadjust", "is now \"bath_shift\""},
-        {"", "statefile", "is now \"bath_state_file\""},
-        {"", "exstatefile", "is now \"Defect.state_file\""},
-        {"", "avaaxfile", "is now \"Defect.axis_file\""},
-        {"", "addsubclus", "is now \"add_subclusters\" (true or false)"},
-        {"", "nk", "is now \"max_clusters_per_order\""},
+        {"", "bathadjust", "is now \"configuration.bath_shift\""},
+        {"", "statefile", "is now \"configuration.bath_state_file\": [one prefix per bath file]"},
+        // A64: the bath configuration's files are one block, "configuration" {path, k_range, gyrofile, bathfile, bath_shift,
+        // bath_state_file}
+        {"", "gyrofile", "is now \"configuration.gyrofile\" (\"configuration\": {\"gyrofile\": ...})"},
+        {"", "bathfile", "is now \"configuration.bathfile\" (\"configuration\": {\"bathfile\": [...]})"},
+        {"", "bath_shift", "is now \"configuration.bath_shift\""},
+        {"", "bath_state_file", "is now \"configuration.bath_state_file\": [one prefix per bath file]"},
+        {"", "nstate", "is now \"configuration.nstate\""},
+        {"", "seed", "is now \"configuration.seed\""},
+        {"", "exstatefile", "is now \"configuration.defect_state_file\": [one prefix per bath file]"},
+        {"", "avaaxfile", "is now \"configuration.defect_axis_file\": [one file per bath file]"},
+        // A64: the Defect block holds the species (the model) alone; the files of a configuration are the configuration's
+        {"Defect", "axis_file", "is now \"configuration.defect_axis_file\": [one file per bath file]"},
+        {"Defect", "state_file", "is now \"configuration.defect_state_file\": [one prefix per bath file]"},
+        {"", "addsubclus", "is now \"cluster.selection.add_subclusters\" (true or false)"},
+        {"", "nk", "is now \"cluster.selection.max_per_order\""},
         {"", "vector_mean_field", "is now \"hamiltonian.common.bath_bath_mean_field\" (\"xyz\" for true, \"z\" for false)"},
         {"", "hf_readmode", "is now \"hamiltonian.common.hyperfine\" {\"dipole\": \"point\"|\"dft\", \"contact\": true|false} "
                             "(0 point/false, 1 point/true, 2 dft/false, 3 dft/true)"},
         {"", "hf_tensorfile", "is now \"hamiltonian.common.hyperfine.file\""},
         {"", "hf_ignore_oor", "is now \"hamiltonian.common.hyperfine.missing_row\" (0 \"stop\", 1 \"point_dipole\")"},
-        {"", "qd_readmode", "is now \"hamiltonian.common.quadrupole\" (0 \"off\"; 2, 3, 4 {\"structure\": \"plain\", "
+        {"", "qd_readmode", "is now \"hamiltonian.common.quadrupole\" (0 \"off\", 2, 3, 4 {\"structure\": \"plain\", "
                             "\"strained\", \"bubble\"})"},
         {"", "qd_tensorfile", "is now \"hamiltonian.common.quadrupole.file\""},
         {"", "qd_tensorfile_woqubit", "is now \"hamiltonian.common.quadrupole.file_without_defect\""},
@@ -161,33 +290,70 @@ static void refuseOldInputKeys(cJSON* root){
         {"", "knight", "is now \"hamiltonian.cCCE.knight\""},
         {"", "hfmedi", "is now \"hamiltonian.cCCE.hfmedi\""},
         {"", "DefectTotSpin", "was removed: the qubit spin is used (also for the S of a v3 tensor file)"},
-        {"", "CorrTotSpin", "was removed: it served old-format VASP tensor files only; remake such a file with "
+        {"", "CorrTotSpin", "was removed: it served old-format VASP tensor files only, remake such a file with "
                             "example/tools/SpinTensorReader (format v3)"},
-        {"", "sK", "is now \"pcce.partition_size\""},
-        {"", "max_trial", "is now \"pcce.trials\""},
-        {"", "max_iter", "is now \"pcce.max_iterations\""},
-        {"", "kmeans_pp", "is now \"pcce.kmeans_pp\""},
-        {"", "iter_detail", "is now \"pcce.print_trials\""},
-        {"", "pcce_detail_limit", "is now \"pcce.print_limit\""},
-        {"", "pcce_partition", "is now \"pcce.partition\""},
-        {"", "pcce_connections", "is now \"pcce.connections\""},
-        {"", "pcce_cache_mode", "is now \"pcce.cache.mode\""},
-        {"", "pcce_cache_file", "is now \"pcce.cache.file\""},
-        {"", "bundle_max_dim", "is now \"bundle.max_dim\""},
-        {"", "bundle_merge_cutoff", "is now \"bundle.merge_cutoff\""},
-        {"", "bundle_connections", "is now \"bundle.connections\""},
-        {"", "bundle_connection_budget", "is now \"bundle.connection_budget\""},
-        {"", "expansion_max_clusters", "is now \"bundle.max_clusters\""},
-        {"", "expansion_max_work", "is now \"bundle.max_work\""},
-        {"", "adaptive_work_file", "is now \"adaptive.work_file\""},
+        {"", "sK", "is now \"cluster.pcce.partition_size\""},
+        {"", "max_trial", "is now \"cluster.pcce.trials\""},
+        {"", "max_iter", "is now \"cluster.pcce.max_iterations\""},
+        {"", "kmeans_pp", "is now \"cluster.pcce.kmeans_pp\""},
+        {"", "iter_detail", "is now \"cluster.pcce.print_trials\""},
+        {"", "pcce_detail_limit", "is now \"cluster.pcce.print_limit\""},
+        {"", "pcce_partition", "is now \"cluster.pcce.partition\""},
+        {"", "pcce_connections", "is now \"cluster.pcce.connections\""},
+        {"", "pcce_cache_mode", "is now \"cluster.pcce.cache.mode\""},
+        {"", "pcce_cache_file", "is now \"cluster.pcce.cache.file\""},
+        {"", "bundle_max_dim", "is now \"cluster.bundle.max_dim\""},
+        {"", "bundle_merge_cutoff", "is now \"cluster.bundle.merge_cutoff\""},
+        {"", "bundle_connections", "is now \"cluster.bundle.connections\""},
+        {"", "bundle_connection_budget", "is now \"cluster.bundle.connection_budget\""},
+        {"", "expansion_max_clusters", "is now \"cluster.bundle.max_clusters\""},
+        {"", "expansion_max_work", "is now \"cluster.bundle.max_work\""},
+        {"", "adaptive_work_file", "is now \"cluster.adaptive.work_file\""},
         {"", "npulse", "is now \"pulse.count\""},
         {"", "pulsename", "is now \"pulse.name\""},
         {"", "sequence", "is now \"pulse.sequence\""},
         {"", "pulseiter", "is now \"pulse.per_qubit\""},
         {"", "pulse_time", "is now \"pulse.duration\""},
         {"", "detuning_factor", "is now \"pulse.detuning_factor\""},
-        {"", "gcce_refinement_max_sweeps", "is now \"gcce_refinement.max_sweeps\""},
-        {"", "cluster_contribution_max_mb", "is now \"cluster_contributions.max_mb\""},
+        // DEER bath pulses: adding_MECCE's flat keys (src/option.cpp:677-730 there) are the block pulse.bath here
+        {"", "bnpulse", "is now \"pulse.bath.count\""},
+        {"", "bsequence", "is now \"pulse.bath.sequence\""},
+        {"", "bpulse_defect", "is now \"pulse.bath.defect\""},
+        {"", "bpulse_energy_shift", "is now \"pulse.bath.energy_shift\""},
+        {"", "bspin", "is now \"pulse.bath.spin\""},
+        {"", "balphams", "is now \"pulse.bath.alphams\""},
+        {"", "bbetams", "is now \"pulse.bath.betams\""},
+        // the master-equation dissipators: adding_MECCE's top-level key is a key of the method's hamiltonian section here
+        {"", "jump_operators", "is now \"hamiltonian.meCCE.jump_operators\" (or hamiltonian.megCCE.jump_operators)"},
+        {"", "gcce_refinement_max_sweeps", "is now \"execution.gcce_refinement.max_sweeps\""},
+        {"", "cluster_contribution_max_mb", "is now \"output.cluster_contributions.max_mb\""},
+        // A65 (2026-10-15): how it is computed in "execution", the clusters in "cluster", what is written in "output",
+        // the frame rotation in "frame"
+        {"", "backend", "is now \"execution.backend\" (\"execution\": {\"backend\": ...})"},
+        {"", "gpu_options", "is now \"execution.gpu_options\""},
+        {"", "propagator", "is now \"execution.propagator\""},
+        {"", "evolution", "is now \"execution.evolution\""},
+        {"", "evolution_update", "is now \"execution.evolution_update\""},
+        {"", "gcce_refinement", "is now \"execution.gcce_refinement\""},
+        {"", "column_evolution", "is now \"execution.column_evolution\""},
+        {"", "profile", "is now \"execution.profile\""},
+        {"", "cluster_mode", "is now \"cluster.mode\" (\"cluster\": {\"mode\": ...})"},
+        {"", "add_subclusters", "is now \"cluster.selection.add_subclusters\""},
+        {"", "max_clusters_per_order", "is now \"cluster.selection.max_per_order\""},
+        {"", "pcce", "is now \"cluster.pcce\""},
+        {"", "bundle", "is now \"cluster.bundle\""},
+        {"", "adaptive", "is now \"cluster.adaptive\""},
+        {"", "probe_memory_gb", "is now \"cluster.adaptive.probe_memory_gb\""},
+        {"", "outfile", "is now \"output.file\" (\"output\": {\"file\": ...})"},
+        {"", "savemode", "is now \"output.savemode\""},
+        {"", "cluster_contributions", "is now \"output.cluster_contributions\""},
+        {"", "cluster_only", "is now \"output.cluster_only\""},
+        {"", "coordinate_frame_rotation", "is now \"frame.rotation\" (on when the block is given, \"enabled\" defaults to true)"},
+        {"", "bath_coordinate_rotation", "is now \"frame.rotation\" (on when the block is given, \"enabled\" defaults to true)"},
+        {"", "defect_axis_reference", "was removed: it only named the qubit axis of frame.rotation in the log, remove it"},
+        {"cluster", "max_clusters_per_order", "is now \"cluster.selection.max_per_order\""},
+        {"cluster", "add_subclusters", "is now \"cluster.selection.add_subclusters\""},
+        {"cluster", "cluster_mode", "is now \"cluster.mode\""},
         {"Qubit", "nqubit", "was removed: the number of qubits is the length of Qubit.qubit"},
         {"Qubit", "overhaus", "is now \"hamiltonian.common.qubit_bath_mean_field\""},
         {"Qubit", "alphaidx", "is now \"Qubit.alpha_state\": {\"index\": n}"},
@@ -198,8 +364,10 @@ static void refuseOldInputKeys(cJSON* root){
     static const Renamed species[] = {
         {"", "dfname", "is now \"name\""},
         {"", "apprx", "was removed (it changed nothing)"},
-        {"", "naddspin", "is now \"n_nuclear_spins\""},
-        {"", "navaax", "is now \"n_configurations\""},
+        {"", "naddspin", "is now \"n_onsite_spins\""},
+        {"", "navaax", "is now \"n_axis_states\""},
+        {"", "n_nuclear_spins", "is now \"n_onsite_spins\""},      // A65
+        {"", "n_configurations", "is now \"n_axis_states\""},
         {"", "eqs", "is now \"quadrupole_moments\""},
         {"", "rxyzs", "is now \"nuclear_positions\""},
         {"", "hypf", "is now \"hyperfine\""},
@@ -215,23 +383,23 @@ static void refuseOldInputKeys(cJSON* root){
         if (!strcasecmp(v,"cce")) found.push_back(std::string("method \"") + v + "\" is now \"cCCE\"");
         for (const char* shape : {"pcce", "dsj", "itb", "dsjitb"})
             if (!strcasecmp(v,shape))
-                found.push_back(std::string("method \"") + v + "\" is now \"method\": \"cCCE\" with \"cluster_mode\": \""
-                                + shape + "\"");
+                found.push_back(std::string("method \"") + v + "\" is now \"method\": \"cCCE\" with \"cluster\": {\"mode\": \""
+                                + shape + "\"}");
     }
-    if (cJSON* mode = untrackedItem(root,"cluster_mode"))
+    if (cJSON* mode = untrackedItem(untrackedItem(root,"cluster"),"mode"))
         if (cJSON_IsString(mode) && !strcasecmp(mode->valuestring,"adaptive"))
-            found.push_back("cluster_mode \"adaptive\" is now \"bundle\" (the bundle partition; the \"adaptive\" block "
+            found.push_back("cluster.mode \"adaptive\" is now \"bundle\" (the bundle partition, the cluster.adaptive block "
                             "asks for the refinement)");
-    if (cJSON* item = untrackedItem(root,"gcce_refinement"))
-        if (cJSON_IsBool(item)) found.push_back("\"gcce_refinement\": true|false is now \"gcce_refinement\": {\"enabled\": true|false}");
-    if (cJSON* item = untrackedItem(root,"cluster_contributions"))
+    if (cJSON* item = untrackedItem(untrackedItem(root,"execution"),"gcce_refinement"))
         if (cJSON_IsBool(item))
-            found.push_back("\"cluster_contributions\": true|false is now \"cluster_contributions\": {\"enabled\": true|false}");
+            found.push_back("\"execution.gcce_refinement\": true|false is now \"execution.gcce_refinement\": {\"enabled\": true|false}");
+    if (cJSON* item = untrackedItem(untrackedItem(root,"output"),"cluster_contributions"))
+        if (cJSON_IsBool(item))
+            found.push_back("\"output.cluster_contributions\": true|false is now \"output.cluster_contributions\": {\"enabled\": true|false}");
     if (cJSON* defect = untrackedItem(root,"Defect")){
         cJSON* list = defect;
         if (cJSON_IsArray(defect))
-            found.push_back("\"Defect\": [...] is now \"Defect\": {\"species\": [...]} (with \"state_file\" and \"axis_file\" "
-                            "beside the list)");
+            found.push_back("\"Defect\": [...] is now \"Defect\": {\"species\": [...]} (with \"defect_state_file\" and \"defect_axis_file\" in configuration)");
         else list = untrackedItem(defect,"species");
         int i = 0;
         for (cJSON* entry = cJSON_IsArray(list) ? list->child : NULL; entry; entry = entry->next, ++i)
@@ -247,27 +415,211 @@ static void refuseOldInputKeys(cJSON* root){
     ccexRefuse();
 }
 
-// The calculation method and the cluster shape (A47): "method" is cCCE or gCCE, "cluster_mode" standard, pcce, bundle,
-// dsj, itb or dsjitb. Inside, the code keeps the names it compares against - CCE, gCCE, pCCE, dsj, itb, dsjitb, and
-// cluster_mode adaptive for bundle - so nothing past the readers changed (and the -P inventory writes what it wrote).
-// gCCE with pcce, dsj, itb or dsjitb is not implemented yet (those shapes run with cCCE only; improvements.md A47).
-// meCCE and noise are reserved method names (A49): accepted by the reader, refused as not implemented yet.
-// A method name: cCCE or gCCE (true for gCCE); reserved, old and unknown names are refused.
-static bool checkedMethodName(const char* method, const char* where){
-    const bool gcce = !strcasecmp(method,"gcce");
-    if (!strcasecmp(method,"mecce") || !strcasecmp(method,"noise")){
-        ccexRefusalPrint(stderr,"Error: %s \"%s\" is not implemented yet (a reserved name; the methods that run are cCCE and gCCE)\n",
-                where,method);
+////////////////////////////////////////////////////////////////////////////////////////////////
+// A64 (2026-10-15): the bath configuration is one block, "configuration": {"path", "k_range", "gyrofile", "bathfile",
+// "bath_shift", "bath_state_file", "defect_axis_file", "defect_state_file", "nstate", "seed"}. path is put in front of the
+// block's relative file names (an absolute name is used as it is). bath_state_file, defect_axis_file and defect_state_file
+// (Defect.axis_file and Defect.state_file until 2026-10-15) are lists of one name per bath file, read
+// in the order of the bath files. With "k_range": [first, last] every k from first to last is a configuration of its own,
+// run one after another by main.cpp, and "{k}" in the entries of configuration.bathfile, configuration.bath_state_file,
+// configuration.defect_axis_file, configuration.defect_state_file and in pcce.cache.file is k ("{{k}}" is a literal {k}); without k_range nothing is
+// substituted. cJSON_readConfigurationRange checks k_range and every file of every k before anything is calculated;
+// cJSON_readOptionConfig reads the configuration k set by cJSON_setConfigurationIndex.
+static bool configurationRanged = false;
+static long configurationK = 0;
+void cJSON_setConfigurationIndex(bool ranged, long k){ configurationRanged = ranged; configurationK = k; }
+
+// name with {k} as k and {{k}} as {k} (with k_range); *found: a {k} was there
+static std::string configurationName(const std::string& name, bool ranged, long k, bool* found = nullptr){
+    if (found) *found = false;
+    if (!ranged) return name;
+    std::string out;
+    for (size_t i = 0; i < name.size();){
+        if (!name.compare(i,5,"{{k}}")){ out += "{k}"; i += 5; }
+        else if (!name.compare(i,3,"{k}")){ out += std::to_string(k); i += 3; if (found) *found = true; }
+        else out += name[i++];
+    }
+    return out;
+}
+// configuration.path: "" for the working directory (absent or ".")
+static std::string configurationFolder(cJSON* block){
+    cJSON* item = block ? cJSON_GetObjectItem(block,"path") : NULL;
+    if (!item) return "";
+    if (!cJSON_IsString(item) || !item->valuestring || !item->valuestring[0] || strlen(item->valuestring) >= MAX_FILEPATH/2){
+        ccexRefusalPrint(stderr,"Error: configuration.path must be a nonempty folder name (relative to the working directory, "
+                       "or absolute)\n");
         ccexRefuse();
     }
-    if (!gcce && strcasecmp(method,"ccce")){
-        if (!strcasecmp(method,"cce"))
-            ccexRefusalPrint(stderr,"Error: %s \"%s\" is now \"cCCE\"\n",where,method);
-        else if (!strcasecmp(method,"pcce") || !strcasecmp(method,"dsj") || !strcasecmp(method,"itb") || !strcasecmp(method,"dsjitb"))
-            ccexRefusalPrint(stderr,"Error: %s \"%s\" is now method \"cCCE\" with \"cluster_mode\": \"%s\" in the input\n",where,method,
-                    lowerKey(method).c_str());
+    return strcmp(item->valuestring,".") ? item->valuestring : "";
+}
+static std::string inFolder(const std::string& folder, const std::string& name){
+    if (folder.empty() || name.empty() || name[0] == '/') return name;
+    return folder.back() == '/' ? folder + name : folder + "/" + name;
+}
+// a file name of the configuration block as it is read: {k} substituted (with k_range), in folder
+static std::string configurationPath(const std::string& folder, const std::string& name, bool ranged, long k){
+    return inFolder(folder,configurationName(name,ranged,k));
+}
+// A list of file names, one per bath file (configuration.bath_state_file, defect_axis_file, defect_state_file): {k}
+// substituted, in folder; empty when the key is absent. "" is a bath file without such a file (kept as ""). A string, or
+// a list of another length, is refused with the form.
+static std::vector<std::string> perBathFileNames(cJSON* block, const char* key, int nbathfiles, const std::string& folder,
+                                                 bool ranged, long k){
+    std::vector<std::string> out;
+    if (!block) return out;
+    const std::string shown = shownKey(block,key);
+    cJSON* item = cJSON_GetObjectItem(block,key);
+    if (!item){
+        if (rank==0 && verbosity){printf("        %s : use default value ..\n",shown.c_str());}
+        return out;
+    }
+    if (!cJSON_IsArray(item) || cJSON_GetArraySize(item) != nbathfiles){
+        ccexRefusalPrint(stderr,"Error: %s must be a list of one name per bath file (%d, as configuration.bathfile), e.g. "
+                       "[\"name\"] for one bath file\n",shown.c_str(),nbathfiles);
+        ccexRefuse();
+    }
+    int i = 0;
+    for (cJSON* e = item->child; e; e = e->next, ++i){
+        if (!cJSON_IsString(e) || !e->valuestring || strlen(e->valuestring) >= MAX_FILEPATH/2){
+            ccexRefusalPrint(stderr,"Error: %s[%d] is not a string (a file name)\n",shown.c_str(),i);
+            ccexRefuse();
+        }
+        out.push_back(configurationPath(folder,e->valuestring,ranged,k));
+    }
+    return out;
+}
+// A file name of the configuration block: {k} substituted, in folder; false when absent. The checks and messages of
+// cJSON_ReadFilePath, on the name that is read.
+static bool configurationFile(cJSON* block, const char* key, const std::string& folder, bool ranged, long k, std::string* out){
+    if (!block) return false;
+    const std::string shownName = shownKey(block,key);
+    cJSON* item = cJSON_GetObjectItem(block,key);
+    refuseWrongType(item, shownName.c_str(), cJSON_IsString(item), "a string (a file path)");
+    if (!item){
+        if (rank==0 && verbosity){printf("        %s : use default value ..\n",shownName.c_str());}
+        return false;
+    }
+    *out = configurationPath(folder,item->valuestring,ranged,k);
+    if (access(out->c_str(), R_OK) != 0 && rank==0)
+        fprintf(stderr,"Warning: %s : cannot read \"%s\" -- continuing with defaults\n", shownName.c_str(), out->c_str());
+    return true;
+}
+// configuration.k_range: [first, last], two nonnegative integers, first <= last; false without k_range
+static bool readConfigurationRange(cJSON* block, long* first, long* last){
+    cJSON* range = block ? cJSON_GetObjectItem(block,"k_range") : NULL;
+    if (!range) return false;
+    long value[2] = {0, 0};
+    bool ok = cJSON_IsArray(range) && cJSON_GetArraySize(range) == 2;
+    for (int i = 0; ok && i < 2; ++i){
+        cJSON* item = cJSON_GetArrayItem(range,i);
+        ok = cJSON_IsNumber(item) && std::isfinite(item->valuedouble) && item->valuedouble >= 0 &&
+             item->valuedouble <= INT_MAX && std::floor(item->valuedouble) == item->valuedouble;
+        if (ok) value[i] = (long)item->valuedouble;
+    }
+    if (!ok || value[0] > value[1]){
+        ccexRefusalPrint(stderr,"Error: configuration.k_range must be [first, last], two nonnegative integers with first <= last "
+                       "(both included)\n");
+        ccexRefuse();
+    }
+    *first = value[0];
+    *last = value[1];
+    return true;
+}
+// the pcce partition cache (A64): its file takes {k} like the configuration's files; NULL when there is no enabled cache
+static cJSON* enabledPcceCacheFile(cJSON* pcce){
+    cJSON* cache = cJSON_IsObject(pcce) ? untrackedItem(pcce,"cache") : NULL;
+    cJSON* mode = cJSON_IsObject(cache) ? untrackedItem(cache,"mode") : NULL;
+    if (!cJSON_IsString(mode) || !strcasecmp(mode->valuestring,"off")) return NULL;
+    cJSON* file = untrackedItem(cache,"file");
+    return cJSON_IsString(file) ? file : NULL;
+}
+
+bool cJSON_readConfigurationRange(char* fccein, long* first, long* last){
+    char* data = cJSON_ReadFccein(fccein);
+    cJSON* root = cJSON_Parse(data);
+    freeChar1d(&data);
+    if (!root) return false;                    // the readers report it
+    cJSON* block = untrackedItem(root,"configuration");
+    if (!cJSON_IsObject(block) || !readConfigurationRange(block,first,last)){ cJSON_Delete(root); return false; }
+    const std::string folder = configurationFolder(block);
+    // the names {k} can be in, with the folder each is read from and whether it is a prefix of state files
+    struct Named { std::string key, name, folder; bool prefix; };
+    std::vector<Named> names;
+    const auto add = [&](cJSON* list, const std::string& key, const std::string& from, bool prefix){
+        int i = 0;
+        for (cJSON* e = cJSON_IsArray(list) ? list->child : NULL; e; e = e->next, ++i)
+            if (cJSON_IsString(e) && e->valuestring[0])   // "": that bath file has none
+                names.push_back({key + "[" + std::to_string(i) + "]", e->valuestring, from, prefix});
+    };
+    add(untrackedItem(block,"bathfile"),"configuration.bathfile",folder,false);
+    add(untrackedItem(block,"bath_state_file"),"configuration.bath_state_file",folder,true);
+    add(untrackedItem(block,"defect_axis_file"),"configuration.defect_axis_file",folder,false);
+    add(untrackedItem(block,"defect_state_file"),"configuration.defect_state_file",folder,true);
+    bool any = false;
+    for (const Named& n : names){ bool found = false; configurationName(n.name,true,0,&found); any = any || found; }
+    if (!any){
+        ccexRefusalPrint(stderr,"Error: configuration.k_range is given, but no file name has {k} (configuration.bathfile, "
+                       "configuration.bath_state_file, defect_axis_file, defect_state_file), without {k} every k would be the "
+                       "same configuration\n");
+        ccexRefuse();
+    }
+    // an enabled pcce partition cache: one file per configuration, or the second would read the first one's partition
+    if (cJSON* cacheFile = enabledPcceCacheFile(untrackedItem(untrackedItem(root,"cluster"),"pcce"))){   // cluster.pcce (A65)
+        bool found = false;
+        configurationName(cacheFile->valuestring,true,0,&found);
+        if (!found){
+            ccexRefusalPrint(stderr,"Error: configuration.k_range with the pcce partition cache: cluster.pcce.cache.file \"%s\" needs {k} "
+                           "(one cache file per configuration, e.g. \"partition_{k}.cache\")\n",cacheFile->valuestring);
+            ccexRefuse();
+        }
+    }
+    // every file of every k, before anything is calculated; a state file is the prefix and the state number 1..nstate
+    cJSON* nstateItem = untrackedItem(block,"nstate");
+    const long nstate = cJSON_IsNumber(nstateItem) && nstateItem->valuedouble > 0 ? (long)nstateItem->valuedouble : 0;
+    for (long k = *first; k <= *last; ++k)
+        for (const Named& n : names){
+            bool found = false;
+            const std::string name = inFolder(n.folder,configurationName(n.name,true,k,&found));
+            if (!found) continue;               // the same file for every k: the ordinary reader checks it
+            for (long s = n.prefix ? 1 : 0; s <= (n.prefix ? nstate : 0); ++s){
+                const std::string file = n.prefix ? name + std::to_string(s) : name;
+                if (access(file.c_str(),R_OK) != 0){
+                    ccexRefusalPrint(stderr,"Error: configuration k = %ld: cannot read %s (%s \"%s\")\n",k,file.c_str(),
+                                     n.key.c_str(),n.name.c_str());
+                    ccexRefuse();
+                }
+            }
+        }
+    cJSON_Delete(root);
+    return true;
+}
+
+// The calculation method and the cluster shape (A47): "method" is cCCE, gCCE, meCCE or megCCE (the master-equation
+// methods, adding_MECCE), "cluster_mode" standard, pcce, bundle, dsj, itb or dsjitb. Inside, the code keeps the names it
+// compares against - CCE, gCCE, pCCE, dsj, itb, dsjitb, meCCE, megCCE, pgCCE, pmeCCE, pmegCCE, and cluster_mode adaptive for
+// bundle - so nothing past the readers changed (and the cluster_only inventory writes what it wrote).
+// cluster_mode pcce runs with cCCE, gCCE, meCCE and megCCE: inside pCCE, pgCCE, pmeCCE and pmegCCE (methodUsesPcceClusters
+// and methodKernel, general.h); the adding_MECCE branch's method names pgCCE, pmeCCE and pmegCCE are refused with the new
+// form. gCCE also runs with bundle; dsj, itb and dsjitb run with cCCE only (gCCE with them is not implemented yet;
+// improvements.md A47). noise is a reserved method name (A49): accepted by the reader, refused as not implemented yet.
+// A method name: cCCE, gCCE, meCCE or megCCE (true for gCCE); reserved, old and unknown names are refused.
+static bool checkedMethodName(const char* method, const char* where){
+    const bool gcce = !strcasecmp(method,"gcce");
+    const bool mecce = !strcasecmp(method,"mecce"), megcce = !strcasecmp(method,"megcce");
+    if (!strcasecmp(method,"noise")){
+        ccexRefusalPrint(stderr,"Error: %s \"%s\" is not implemented yet (a reserved name, the methods that run are cCCE, gCCE, meCCE "
+                       "and megCCE)\n",where,method);
+        ccexRefuse();
+    }
+    if (!gcce && !mecce && !megcce && strcasecmp(method,"ccce")){
+        // CCE, pCCE, dsj, itb and dsjitb never come here: refuseOldInputKeys refuses them with the new form, before any reader
+        static const char* branch[][2] = {{"pgcce","gCCE"}, {"pmecce","meCCE"}, {"pmegcce","megCCE"}};   // adding_MECCE
+        const char* now = nullptr;
+        for (const auto& b : branch) if (!strcasecmp(method,b[0])) now = b[1];
+        if (now)
+            ccexRefusalPrint(stderr,"Error: %s \"%s\" is now method \"%s\" with \"cluster.mode\": \"pcce\" in the input\n",where,method,now);
         else
-            ccexRefusalPrint(stderr,"Error: %s must be cCCE or gCCE (meCCE and noise are reserved, not implemented yet), not \"%s\"\n",
+            ccexRefusalPrint(stderr,"Error: %s must be cCCE, gCCE, meCCE or megCCE (noise is reserved, not implemented yet), not \"%s\"\n",
                     where,method);
         ccexRefuse();
     }
@@ -276,57 +628,39 @@ static bool checkedMethodName(const char* method, const char* where){
 
 static void internalMethod(const char* method, const char* shape, const char* where, char* methodOut, char* modeOut){
     const bool gcce = checkedMethodName(method,where);
+    const bool mecce = !strcasecmp(method,"mecce"), megcce = !strcasecmp(method,"megcce");
     static const char* shapes[] = {"standard", "pcce", "bundle", "dsj", "itb", "dsjitb"};
     int k = 0;
     while (k < 6 && strcasecmp(shape,shapes[k])) ++k;
-    if (k == 6){
-        if (!strcasecmp(shape,"adaptive"))
-            ccexRefusalPrint(stderr,"Error: cluster_mode \"adaptive\" is now \"bundle\"\n");
-        else
-            ccexRefusalPrint(stderr,"Error: cluster_mode must be standard, pcce, bundle, dsj, itb or dsjitb, not \"%s\"\n",shape);
+    if (k == 6){   // "adaptive" (bundle now) never comes here: refuseOldInputKeys refuses it first
+        ccexRefusalPrint(stderr,"Error: cluster.mode must be standard, pcce, bundle, dsj, itb or dsjitb, not \"%s\"\n",shape);
         ccexRefuse();
     }
-    if (gcce && k != 0 && k != 2){
-        ccexRefusalPrint(stderr,"Error: method gCCE with cluster_mode \"%s\" is not implemented yet; cluster_mode %s runs with method cCCE\n",
+    if ((mecce || megcce) && k != 0 && k != 1){
+        ccexRefusalPrint(stderr,"Error: method %s with cluster.mode \"%s\" is not implemented (cluster.mode standard or pcce)\n",
+                mecce ? "meCCE" : "megCCE", shapes[k]);
+        ccexRefuse();
+    }
+    if (gcce && k != 0 && k != 1 && k != 2){
+        ccexRefusalPrint(stderr,"Error: method gCCE with cluster.mode \"%s\" is not implemented yet, cluster.mode %s runs with method cCCE\n",
                 shapes[k],shapes[k]);
         ccexRefuse();
     }
     static const char* internal[] = {"CCE", "pCCE", "CCE", "dsj", "itb", "dsjitb"};
-    strcpy(methodOut,gcce ? "gCCE" : internal[k]);
+    if (k == 1 && (gcce || mecce || megcce)) strcpy(methodOut,gcce ? "pgCCE" : mecce ? "pmeCCE" : "pmegCCE");
+    else strcpy(methodOut,gcce ? "gCCE" : mecce ? "meCCE" : megcce ? "megCCE" : internal[k]);
     strcpy(modeOut,k == 2 ? "adaptive" : "standard");
 }
 
-// The last -m of the command line, or NULL (cJSON_setMethodOverride). It replaces the file's method before the
-// combination with cluster_mode is judged, so a file with gCCE + pcce runs under -m cCCE (review 20261013-180049 I02).
-static const char* methodOverride = NULL;
-
+static cJSON* readBlockOrEmpty(cJSON* parent, const char* key);
 static void readMethod(cJSON* root, char* methodOut, char* modeOut){
-    cJSON* mode = cJSON_GetObjectItem(root,"cluster_mode");
+    cJSON* mode = cJSON_GetObjectItem(readBlockOrEmpty(root,"cluster"),"mode");   // cluster.mode (A65; cluster_mode before)
     if (mode && (!cJSON_IsString(mode) || !mode->valuestring)){
-        ccexRefusalPrint(stderr,"Error: cluster_mode must be a string (standard, pcce, bundle, dsj, itb, dsjitb)\n");
+        ccexRefusalPrint(stderr,"Error: cluster.mode must be a string (standard, pcce, bundle, dsj, itb, dsjitb)\n");
         ccexRefuse();
     }
     const char* method = cJSON_ReadString(root,(char*)"method",true,(char*)"cCCE");
-    if (methodOverride){
-        checkedMethodName(method,"method");   // the file's own value is still a method name
-        method = methodOverride;
-    }
-    internalMethod(method,mode ? mode->valuestring : "standard",methodOverride ? "-m" : "method",methodOut,modeOut);
-}
-
-void cJSON_setMethodOverride(const char* method){
-    methodOverride = method;
-}
-
-void cJSON_applyMethodOption(Config* cnf, Cluster* cls, const char* method){
-    // -m changes the method and keeps the input's cluster_mode
-    const char* shape = "standard";
-    for (const char* s : {"pcce", "dsj", "itb", "dsjitb"}) if (!strcasecmp(cnf->method,s)) shape = s;
-    if (!strcasecmp(cnf->cluster_mode,"adaptive")) shape = "bundle";
-    char internal[MAX_CHARARRAY_LENGTH], mode[16];
-    internalMethod(method,shape,"-m",internal,mode);
-    Config_setMethod(cnf,internal);
-    Cluster_setMethod(cls,internal);
+    internalMethod(method,mode ? mode->valuestring : "standard","method",methodOut,modeOut);
 }
 
 // An input block ("pulse", "hamiltonian", ...): absent is NULL, anything but an object is refused.
@@ -337,6 +671,18 @@ static cJSON* readBlock(cJSON* parent, const char* key){
         ccexRefuse();
     }
     return item;
+}
+// A65: a block whose keys all have defaults (execution, cluster, output, frame): an absent one is read as an empty object,
+// added to parent (freed with it) under its path, so its readers look keys up as in a written one
+static cJSON* readBlockOrEmpty(cJSON* parent, const char* key){
+    if (cJSON* item = readBlock(parent,key)) return item;
+    cJSON* empty = cJSON_CreateObject();
+    cJSON_AddItemToObject(parent,key,empty);
+    const auto path = objectPaths().find(parent);
+    const auto shown = shownPaths().find(parent);
+    recordPaths(empty, joinKey(path == objectPaths().end() ? "" : path->second, lowerKey(key)),
+                joinKey(shown == shownPaths().end() ? "" : shown->second, key));
+    return empty;
 }
 
 // rbath and rdip: a number (the outer radius) or [inner, outer] (A47; the inner radius was rbathcut, rdipcut). The outer
@@ -500,7 +846,7 @@ static void readDefectZfs(cJSON* defect, DefectArray* dfa, int idf, int nconfig,
         ccexRefuse();
     }
     if (nconfig < 1){
-        ccexRefusalPrint(stderr,"Error: Defect.species[%s] has an object-form zfs but n_configurations = %d\n",df->dfname,nconfig);
+        ccexRefusalPrint(stderr,"Error: Defect.species[%s] has an object-form zfs but n_axis_states = %d\n",df->dfname,nconfig);
         ccexRefusalPrint(stderr,"At least one indexed configuration is required.\n");
         ccexRefuse();
     }
@@ -861,6 +1207,50 @@ static void readDefectIndexedTensorWithUnit(cJSON* defect, DefectArray* dfa, int
     }
 }
 
+// hamiltonian.<section>.jump_operators (adding_MECCE had a top-level jump_operators): the master-equation dissipators,
+// [{"bath_name": str, "operator": "-"|"+"|"z"|"x"|"y", "rate": MHz >= 0}], stored as C = sqrt(rate) S_op with the rate in
+// rad*kHz. An empty list is kept (rate 0 everywhere) so that the section still names its method.
+static void readJumpOperators(Config* cnf, cJSON* section, const char* name){
+    for (cJSON* key = section->child; key; key = key->next)
+        if (strcmp(key->string,"jump_operators")){
+            ccexRefusalPrint(stderr,"Error: hamiltonian.%s has no key \"%s\" (jump_operators)\n",name,key->string);
+            ccexRefuse();
+        }
+    cJSON* arr = cJSON_GetObjectItem(section, "jump_operators");
+    if (!arr) return;
+    if (cnf->jump_operators) {
+        ccexRefusalPrint(stderr, "Error: jump operators are given in both hamiltonian.meCCE and hamiltonian.megCCE\n"); ccexRefuse();
+    }
+    if (!cJSON_IsArray(arr)) { ccexRefusalPrint(stderr, "Error: hamiltonian.%s.jump_operators must be an array\n", name); ccexRefuse(); }
+    const int n = cJSON_GetArraySize(arr);
+    JumpOperatorArray* joa = JumpOperatorArray_init();
+    if (n > 0) JumpOperatorArray_alloc(joa, n);   // none: njump 0, ops NULL (no zero-length allocation)
+    for (int i = 0; i < n; ++i) {
+        cJSON* it = cJSON_GetArrayItem(arr, i);
+        cJSON* nm = cJSON_GetObjectItem(it, "bath_name");
+        cJSON* op = cJSON_GetObjectItem(it, "operator");
+        cJSON* rt = cJSON_GetObjectItem(it, "rate");
+        if (!cJSON_IsString(nm) || !nm->valuestring[0] || !cJSON_IsString(op) || !rt) {
+            ccexRefusalPrint(stderr, "Error: hamiltonian.%s.jump_operators[%d] needs bath_name, operator and rate\n", name, i);
+            ccexRefuse();
+        }
+        if (!isJumpOperatorType(op->valuestring)) {   // before setOp, which keeps 3 characters of op_type
+            const bool old = !strcmp(op->valuestring, "+-") || !strcmp(op->valuestring, "-+");
+            ccexRefusalPrint(stderr, "Error: hamiltonian.%s.jump_operators[%d].operator must be one of - + z x y%s\n", name, i,
+                    old ? " (the old names +- and -+ are now - and +)" : "");
+            ccexRefuse();
+        }
+        const double rate = cJSON_IsNumber(rt) ? rt->valuedouble : -1.0;
+        if (!(std::isfinite(rate) && rate >= 0.0)) {
+            ccexRefusalPrint(stderr, "Error: hamiltonian.%s.jump_operators[%d].rate must be a finite number >= 0 [MHz]\n", name, i);
+            ccexRefuse();
+        }
+        JumpOperatorArray_setOp(joa, i, nm->valuestring, op->valuestring, MHZ_TO_RADKHZ(rate));
+    }
+    cnf->jump_operators = joa;
+    copyBounded(cnf->jump_operators_section, name, sizeof(cnf->jump_operators_section), "hamiltonian section");
+}
+
 /**
  * @brief Read the option from the input file
  * @details Read &General tag  options
@@ -882,23 +1272,34 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 		;//printf("%s",cJSON_Print(root));
 	}
     refuseOldInputKeys(root);   // the first reader: an old key name stops the run here (A47)
+    // A65: how it is computed, the clusters, what is written, the frame rotation (absent: read as empty, every default)
+    cJSON* execution = readBlockOrEmpty(root,"execution");
+    cJSON* clusterBlock = readBlockOrEmpty(root,"cluster");
+    cJSON* output = readBlockOrEmpty(root,"output");
+    cJSON* frame = readBlockOrEmpty(root,"frame");
+    // the configuration block (A64): {k} of the configuration main.cpp runs (cJSON_setConfigurationIndex)
+    cJSON* configuration = readBlock(root,"configuration");
+    long rangeFirst = 0, rangeLast = 0;
+    const bool ranged = readConfigurationRange(configuration,&rangeFirst,&rangeLast);
+    const long configurationIndex = configurationRanged ? configurationK : rangeFirst;
+    const std::string folder = configurationFolder(configuration);
 
     ////////////////////////////////////////////////////////////////////////
     // General Options
     ////////////////////////////////////////////////////////////////////////
-    if (rank==0){
-        printMessage("Read Config Options ...\n");
+    if (rank==0 && verbosity){
+        printf("    >> Read Config Options\n\n");
     }
 
-    if (rank==0){
-        printMessage("  - General option-related keys : ");
-        printMessage("    [ method, cluster_mode, quantity, propagator, evolution, evolution_update, backend, profile, ");
-        printMessage("      cluster_contributions { enabled, max_mb }, ");
-        printMessage("      gpu_options { min_dim, packed_max_dim, warp_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb }, ");
-        printMessage("      probe_memory_gb, gcce_refinement { enabled, max_sweeps }, ");
-        printMessage("      pcce { partition, connections, print_limit, cache { mode, file } }, ");
-        printMessage("      bundle { max_dim, merge_cutoff, connections, connection_budget, max_clusters, max_work }, ");
-        printMessage("      order, bfield, rbath, rdip, deltat, nstep, nstate, seed ] \n");
+    if (rank==0 && verbosity){
+        printf("      - General option-related keys :\n");
+        printf("        [ method, quantity, order, bfield, rbath, rdip, deltat, nstep ]\n");
+        printf("        execution : [ backend, propagator, evolution, evolution_update, profile,\n");
+        printf("          gpu_options { min_dim, packed_max_dim, warp_max_dim, evolution_batch_size, evolution_batch_steps, cluster_batch_mb, cache_mb },\n");
+        printf("          gcce_refinement { enabled, max_sweeps }, column_evolution { enabled, min_dim, columns } ]\n");
+        printf("        cluster : [ mode, pcce { partition, connections, print_limit, cache { mode, file } },\n");
+        printf("          bundle { max_dim, merge_cutoff, connections, connection_budget, max_clusters, max_work }, adaptive { probe_memory_gb } ]\n");
+        printf("        output : [ cluster_only, cluster_contributions { enabled, max_mb } ]\n\n");
     }
     char method[MAX_CHARARRAY_LENGTH], clusterMode[16];
     readMethod(root,method,clusterMode);
@@ -910,78 +1311,76 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 
     // eigen (default) | expm (gCCE, legacy) | sparse (A2), as a string or as {"method": ..., "min_dim": ..., "tol": ...};
     // min_dim and tol belong to sparse. Config_validatePropagator checks the paths once every source is in.
-    cJSON* propagatorItem = cJSON_GetObjectItem(root,"propagator");
+    cJSON* propagatorItem = cJSON_GetObjectItem(execution,"propagator");
     if (cJSON_IsObject(propagatorItem)){
         for (cJSON* key = propagatorItem->child; key; key = key->next)
             if (strcasecmp(key->string,"method") && strcasecmp(key->string,"min_dim") && strcasecmp(key->string,"tol")){
-                ccexRefusalPrint(stderr,"Error: propagator has no key \"%s\" (method, min_dim, tol)\n",key->string);
+                ccexRefusalPrint(stderr,"Error: execution.propagator has no key \"%s\" (method, min_dim, tol)\n",key->string);
                 ccexRefuse();
             }
         cJSON* method = cJSON_GetObjectItem(propagatorItem,"method");
         if (!cJSON_IsString(method) || !method->valuestring){
-            ccexRefusalPrint(stderr,"Error: propagator.method must be a string (eigen, expm or sparse)\n");
+            ccexRefusalPrint(stderr,"Error: execution.propagator.method must be a string (eigen, expm or sparse)\n");
             ccexRefuse();
         }
         Config_setPropagator(cnf,method->valuestring);
         cJSON* minDim = cJSON_GetObjectItem(propagatorItem,"min_dim");
         cJSON* tol = cJSON_GetObjectItem(propagatorItem,"tol");
         if ((minDim || tol) && strcasecmp(cnf->propagator,"sparse")){
-            ccexRefusalPrint(stderr,"Error: propagator.min_dim and propagator.tol belong to method sparse (this has %s)\n",cnf->propagator);
+            ccexRefusalPrint(stderr,"Error: execution.propagator.min_dim and execution.propagator.tol belong to method sparse (this has %s)\n",cnf->propagator);
             ccexRefuse();
         }
         if (minDim){
-            const double value = readFiniteNumber(minDim,"propagator.min_dim");
+            const double value = readFiniteNumber(minDim,"execution.propagator.min_dim");
             if (value < 1 || value > 2147483647.0 || std::floor(value) != value){
-                ccexRefusalPrint(stderr,"Error: propagator.min_dim must be a positive 32-bit integer\n");
+                ccexRefusalPrint(stderr,"Error: execution.propagator.min_dim must be a positive 32-bit integer\n");
                 ccexRefuse();
             }
             cnf->sparse_min_dim = (long)value;
         }
         if (tol){
-            const double value = readFiniteNumber(tol,"propagator.tol");
+            const double value = readFiniteNumber(tol,"execution.propagator.tol");
             if (!(value > 0.0 && value < 1.0)){
-                ccexRefusalPrint(stderr,"Error: propagator.tol must be a number between 0 and 1 (exclusive)\n");
+                ccexRefusalPrint(stderr,"Error: execution.propagator.tol must be a number between 0 and 1 (exclusive)\n");
                 ccexRefuse();
             }
             cnf->sparse_tol = value;
         }
     }else{
         if (propagatorItem && !cJSON_IsString(propagatorItem)){
-            ccexRefusalPrint(stderr,"Error: propagator must be a string (eigen, expm or sparse) or an object {\"method\": ..., "
+            ccexRefusalPrint(stderr,"Error: execution.propagator must be a string (eigen, expm or sparse) or an object {\"method\": ..., "
                            "\"min_dim\": ..., \"tol\": ...}\n");
             ccexRefuse();
         }
-        char* propagator = cJSON_ReadString(root,"propagator",true,"eigen");
+        char* propagator = cJSON_ReadString(execution,"propagator",true,"eigen");
         Config_setPropagator(cnf,propagator);
     }
 
     // vector is the DEFAULT, but it only exists where its preconditions hold: gCCE, a pure
-    // rho0 (nstate > 0) and propagator=eigen. Do NOT decide that here -- this function
-    // runs from inside main.cpp's getopt loop, so -m and -N have not been applied yet.
-    // Only record whether the key was written; Config_resolveEvolution settles it once
-    // every source is in.
-    char* evolution = cJSON_ReadString(root,"evolution",true,"vector");
+    // rho0 (nstate > 0) and propagator=eigen. Do NOT decide that here: only record whether
+    // the key was written; Config_resolveEvolution settles it once every reader has run.
+    char* evolution = cJSON_ReadString(execution,"evolution",true,"vector");
     Config_setEvolution(cnf,evolution); // gCCE only : vector (default) | matrix (legacy)
-    cnf->evolution_isdefault = (cJSON_GetObjectItem(root,"evolution") == NULL);
+    cnf->evolution_isdefault = (cJSON_GetObjectItem(execution,"evolution") == NULL);
     // exact | recursive (A16 b); without the key Config_validateEvolutionUpdate picks the default once every source is in (A29)
-    cJSON* evolutionUpdate = cJSON_GetObjectItem(root,"evolution_update");
+    cJSON* evolutionUpdate = cJSON_GetObjectItem(execution,"evolution_update");
     if (evolutionUpdate){
         if (!cJSON_IsString(evolutionUpdate) || !evolutionUpdate->valuestring ||
             (strcasecmp(evolutionUpdate->valuestring,"exact") &&
              strcasecmp(evolutionUpdate->valuestring,"recursive"))){
-            ccexRefusalPrint(stderr,"Error: evolution_update must be exact or recursive\n");
+            ccexRefusalPrint(stderr,"Error: execution.evolution_update must be exact or recursive\n");
             ccexRefuse();
         }
         strcpy(cnf->evolution_update,evolutionUpdate->valuestring);
     }
 
-    cJSON* backend = cJSON_GetObjectItem(root,"backend");
+    cJSON* backend = cJSON_GetObjectItem(execution,"backend");
     if (backend){
         if (!cJSON_IsString(backend) || !backend->valuestring ||
             (strcasecmp(backend->valuestring,"cpu") &&
              strcasecmp(backend->valuestring,"cuda") &&
              strcasecmp(backend->valuestring,"auto"))){
-            ccexRefusalPrint(stderr,"Error: backend must be cpu, cuda, or auto\n");
+            ccexRefusalPrint(stderr,"Error: execution.backend must be cpu, cuda, or auto\n");
             ccexRefuse();
         }
         strcpy(cnf->backend,backend->valuestring);
@@ -994,20 +1393,20 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     int* gpuValues[] = {&cnf->gpu_min_dim, &cnf->gpu_batch_steps, &cnf->gpu_cache_mb, &cnf->gpu_batch_clusters, &cnf->gpu_cluster_batch_mb,
                         &cnf->gpu_packed_max_dim, &cnf->gpu_warp_max_dim};
     for (int k=0; k<5; ++k)
-        if (cJSON_GetObjectItem(root,oldGpuKeys[k])){
-            ccexRefusalPrint(stderr,"Error: %s is now gpu_options.%s (\"gpu_options\": {\"%s\": ...})\n",oldGpuKeys[k],gpuKeys[k],gpuKeys[k]);
+        if (untrackedItem(root,oldGpuKeys[k]) || untrackedItem(execution,oldGpuKeys[k])){
+            ccexRefusalPrint(stderr,"Error: %s is now execution.gpu_options.%s (\"execution\": {\"gpu_options\": {\"%s\": ...}})\n",oldGpuKeys[k],gpuKeys[k],gpuKeys[k]);
             ccexRefuse();
         }
-    if (cJSON* block = cJSON_GetObjectItem(root,"gpu_options")){
+    if (cJSON* block = cJSON_GetObjectItem(execution,"gpu_options")){
         if (!cJSON_IsObject(block)){
-            ccexRefusalPrint(stderr,"Error: gpu_options must be an object, e.g. \"gpu_options\": {\"min_dim\": 256}\n");
+            ccexRefusalPrint(stderr,"Error: execution.gpu_options must be an object, e.g. \"gpu_options\": {\"min_dim\": 256}\n");
             ccexRefuse();
         }
         for (cJSON* item = block->child; item; item = item->next){
             int k = 0;
             while (k<7 && strcasecmp(item->string,gpuKeys[k])) ++k;
             if (k==7){
-                ccexRefusalPrint(stderr,"Error: unknown key gpu_options.%s (min_dim, packed_max_dim, warp_max_dim, evolution_batch_size, "
+                ccexRefusalPrint(stderr,"Error: unknown key execution.gpu_options.%s (min_dim, packed_max_dim, warp_max_dim, evolution_batch_size, "
                                "evolution_batch_steps, cluster_batch_mb, cache_mb)\n",item->string);
                 ccexRefuse();
             }
@@ -1016,18 +1415,18 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             cJSON* item = cJSON_GetObjectItem(block,gpuKeys[k]);   // recorded as read (cJSON_checkInputKeys)
             if (!item) continue;
             char name[64];
-            snprintf(name,sizeof name,"gpu_options.%s",gpuKeys[k]);
+            snprintf(name,sizeof name,"execution.gpu_options.%s",gpuKeys[k]);
             const double value = readFiniteNumber(item,name);
             if (k==6){
                 // the warp kernel (A40): clusters of a compiled total dimension up to this value; 0 switches it off
                 if (value < 0 || value > 32 || std::floor(value) != value){
-                    ccexRefusalPrint(stderr,"Error: gpu_options.warp_max_dim must be 0 (off) or an integer up to 32\n");
+                    ccexRefusalPrint(stderr,"Error: execution.gpu_options.warp_max_dim must be 0 (off) or an integer up to 32\n");
                     ccexRefuse();
                 }
             } else if (k==5){
                 // the packed kernel exists for bath dimension 2 and 4 (small_cluster_math.h); 0 switches it off
                 if (value!=0 && value!=2 && value!=4){
-                    ccexRefusalPrint(stderr,"Error: gpu_options.packed_max_dim must be 0 (off), 2 or 4\n");
+                    ccexRefusalPrint(stderr,"Error: execution.gpu_options.packed_max_dim must be 0 (off), 2 or 4\n");
                     ccexRefuse();
                 }
             } else if (value < (k==2 ? 0 : 1) || value > 2147483647.0 || std::floor(value) != value){
@@ -1038,31 +1437,55 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         }
     }
     // A1: the memory the probes of an adaptive probe step may hold at once on a node, in GB (0: automatic)
-    if (cJSON* item = cJSON_GetObjectItem(root,"probe_memory_gb")){
-        const double value = readFiniteNumber(item,"probe_memory_gb");
-        if (value < 0){ ccexRefusalPrint(stderr,"Error: probe_memory_gb must be nonnegative\n"); ccexRefuse(); }
+    if (cJSON* item = cJSON_GetObjectItem(readBlockOrEmpty(clusterBlock,"adaptive"),"probe_memory_gb")){
+        const double value = readFiniteNumber(item,"cluster.adaptive.probe_memory_gb");
+        if (value < 0){ ccexRefusalPrint(stderr,"Error: cluster.adaptive.probe_memory_gb must be nonnegative\n"); ccexRefuse(); }
         cnf->probe_memory_gb = value;
     }
     // gcce_refinement and cluster_contributions are blocks (A47): {"enabled", ...}; a block without "enabled" is on, as an
     // auto_convergence block is (main.cpp, inputAsksAutoConv)
-    if (cJSON* block = readBlock(root,"gcce_refinement")){
-        cnf->gcce_refinement=readStrictBool(block,"gcce_refinement","enabled",true);
+    if (cJSON* block = readBlock(execution,"gcce_refinement")){
+        cnf->gcce_refinement=readStrictBool(block,"execution.gcce_refinement","enabled",true);
         if(auto* item=cJSON_GetObjectItem(block,"max_sweeps")) {
-            const double value=readFiniteNumber(item,"gcce_refinement.max_sweeps");
+            const double value=readFiniteNumber(item,"execution.gcce_refinement.max_sweeps");
             if(value<1 || value>INT_MAX || std::floor(value)!=value) {
-                ccexRefusalPrint(stderr,"Error: gcce_refinement.max_sweeps must be a positive 32-bit integer\n");
+                ccexRefusalPrint(stderr,"Error: execution.gcce_refinement.max_sweeps must be a positive 32-bit integer\n");
                 ccexRefuse();
             }
             cnf->gcce_refinement_max_sweeps=int(value);
         }
     }
-    cnf->profile = readStrictBool(root,"config","profile",false);
-    if (cJSON* block = readBlock(root,"cluster_contributions")){
-        cnf->cluster_contributions = readStrictBool(block,"cluster_contributions","enabled",true);
+    // A62: the one-state cCCE time points as matrix columns for large clusters; a block without "enabled" is on, as above
+    if (cJSON* block = readBlock(execution,"column_evolution")){
+        cnf->column_evolution=readStrictBool(block,"execution.column_evolution","enabled",true);
+        const char* keys[]={"min_dim","columns"};
+        int* values[]={&cnf->column_evolution_min_dim,&cnf->column_evolution_columns};
+        for(int k=0;k<2;++k){
+            cJSON* item=cJSON_GetObjectItem(block,keys[k]);
+            if(!item)continue;
+            const std::string name="execution.column_evolution."+std::string(keys[k]);
+            const double value=readFiniteNumber(item,name.c_str());
+            if(value<1 || value>INT_MAX || std::floor(value)!=value){
+                ccexRefusalPrint(stderr,"Error: %s must be a positive 32-bit integer\n",name.c_str());ccexRefuse();
+            }
+            *values[k]=int(value);
+        }
+    }
+    cnf->profile = readStrictBool(execution,"execution","profile",false);
+    // A63: the plan of the old -P option: <outfile>.clusters.json, then stop before the dynamics (checked in main.cpp)
+    if (cJSON* item = cJSON_GetObjectItem(output,"cluster_only")){
+        if (!cJSON_IsBool(item)){
+            ccexRefusalPrint(stderr,"Error: output.cluster_only must be a boolean (true or false)\n");
+            ccexRefuse();
+        }
+        cnf->cluster_only = cJSON_IsTrue(item);
+    }
+    if (cJSON* block = readBlock(output,"cluster_contributions")){
+        cnf->cluster_contributions = readStrictBool(block,"output.cluster_contributions","enabled",true);
         if(auto* item=cJSON_GetObjectItem(block,"max_mb")) {
-            const double value=readFiniteNumber(item,"cluster_contributions.max_mb");
+            const double value=readFiniteNumber(item,"output.cluster_contributions.max_mb");
             if(value<1 || value>INT_MAX || std::floor(value)!=value) {
-                ccexRefusalPrint(stderr,"Error: cluster_contributions.max_mb must be a positive 32-bit integer\n");ccexRefuse();
+                ccexRefusalPrint(stderr,"Error: output.cluster_contributions.max_mb must be a positive 32-bit integer\n");ccexRefuse();
             }
             cnf->cluster_contribution_max_mb=int(value);
         }
@@ -1085,13 +1508,13 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         cnf->nrdip_ladder=count;
     }
     // the bundle block: cluster_mode bundle only (validateAdaptiveConfig refuses it elsewhere)
-    cJSON* bundle=readBlock(root,"bundle");
+    cJSON* bundle=readBlock(clusterBlock,"bundle");
     if(bundle)cnf->adaptive_options_present=true;
     const char* bundleKeys[]={"max_dim","merge_cutoff"};
     for(int k=0;k<2 && bundle;++k) {
         cJSON* item=cJSON_GetObjectItem(bundle,bundleKeys[k]);
         if(!item)continue;
-        const std::string name="bundle."+std::string(bundleKeys[k]);
+        const std::string name="cluster.bundle."+std::string(bundleKeys[k]);
         double value=readFiniteNumber(item,name.c_str());
         if(k<1) {
             if(value<1 || value>2147483647.0 || std::floor(value)!=value) {
@@ -1099,14 +1522,14 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             }
             cnf->bundle_max_dim=int(value);
         } else {
-            if(value<0) { ccexRefusalPrint(stderr,"Error: bundle.merge_cutoff must be nonnegative\n");ccexRefuse(); }
+            if(value<0) { ccexRefusalPrint(stderr,"Error: cluster.bundle.merge_cutoff must be nonnegative\n");ccexRefuse(); }
             cnf->bundle_merge_cutoff=value;
         }
     }
     const char* expansionKeys[]={"max_clusters","max_work"};
     int* expansionValues[]={&cnf->expansion_max_clusters,&cnf->expansion_max_work};
     for(int k=0;k<2 && bundle;++k)if(auto* item=cJSON_GetObjectItem(bundle,expansionKeys[k])) {
-        const std::string name="bundle."+std::string(expansionKeys[k]);
+        const std::string name="cluster.bundle."+std::string(expansionKeys[k]);
         const double value=readFiniteNumber(item,name.c_str());
         if(value<1 || value>INT_MAX || std::floor(value)!=value) {
             ccexRefusalPrint(stderr,"Error: %s must be a positive 32-bit integer\n",name.c_str());ccexRefuse();
@@ -1117,42 +1540,42 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     if(connections) {
         if(!cJSON_IsString(connections) || !connections->valuestring ||
            (strcasecmp(connections->valuestring,"distance") && strcasecmp(connections->valuestring,"auto"))) {
-            ccexRefusalPrint(stderr,"Error: bundle.connections must be distance or auto\n");ccexRefuse();
+            ccexRefusalPrint(stderr,"Error: cluster.bundle.connections must be distance or auto\n");ccexRefuse();
         }
         strcpy(cnf->bundle_connections,connections->valuestring);
     }
     cJSON* connectionBudget=bundle ? cJSON_GetObjectItem(bundle,"connection_budget") : NULL;
     if(connectionBudget) {
-        cnf->bundle_connection_budget=readFiniteNumber(connectionBudget,"bundle.connection_budget");
+        cnf->bundle_connection_budget=readFiniteNumber(connectionBudget,"cluster.bundle.connection_budget");
         if(cnf->bundle_connection_budget<0) {
-            ccexRefusalPrint(stderr,"Error: bundle.connection_budget must be nonnegative\n");ccexRefuse();
+            ccexRefusalPrint(stderr,"Error: cluster.bundle.connection_budget must be nonnegative\n");ccexRefuse();
         }
     }
     // adaptive.work_file: the request the refinement driver writes into a step's input; the rest of the adaptive block is
     // the refinement request itself, read in main.cpp (adaptiveArgsFromInput)
-    cJSON* adaptiveBlock=readBlock(root,"adaptive");
+    cJSON* adaptiveBlock=readBlock(clusterBlock,"adaptive");
     cJSON* adaptiveWork=adaptiveBlock ? cJSON_GetObjectItem(adaptiveBlock,"work_file") : NULL;
     if(adaptiveWork) {
         cnf->adaptive_options_present=true;
         if(!cJSON_IsString(adaptiveWork) || !adaptiveWork->valuestring || !*adaptiveWork->valuestring ||
            strlen(adaptiveWork->valuestring)>=MAX_FILEPATH) {
-            ccexRefusalPrint(stderr,"Error: adaptive.work_file must be a nonempty bounded path\n");ccexRefuse();
+            ccexRefusalPrint(stderr,"Error: cluster.adaptive.work_file must be a nonempty bounded path\n");ccexRefuse();
         }
         strcpy(cnf->adaptive_work_file,adaptiveWork->valuestring);
     }
     // the pcce block: cluster_mode pcce only (partition_size, trials, max_iterations, kmeans_pp and print_trials are read
     // with the clusters, cJSON_readOptionCluster)
-    cJSON* pcce=readBlock(root,"pcce");
-    if(pcce && strcasecmp(cnf->method,"pcce")) {
-        ccexRefusalPrint(stderr,"Error: the pcce block belongs to cluster_mode pcce (this input has cluster_mode %s)\n",
+    cJSON* pcce=readBlock(clusterBlock,"pcce");
+    if(pcce && !methodUsesPcceClusters(cnf->method)) {   // the rest: standard, bundle (adaptive inside), dsj, itb, dsjitb
+        ccexRefusalPrint(stderr,"Error: the cluster.pcce block belongs to cluster.mode pcce (this input has cluster.mode %s)\n",
                 !strcasecmp(cnf->cluster_mode,"adaptive") ? "bundle" : !strcasecmp(cnf->method,"gcce") || !strcasecmp(cnf->method,"cce")
-                ? "standard" : cnf->method);
+                || !strcasecmp(cnf->method,"mecce") || !strcasecmp(cnf->method,"megcce") ? "standard" : cnf->method);
         ccexRefuse();
     }
     if(auto* item=pcce ? cJSON_GetObjectItem(pcce,"print_limit") : NULL) {
-        const double value=readFiniteNumber(item,"pcce.print_limit");
+        const double value=readFiniteNumber(item,"cluster.pcce.print_limit");
         if(value<0 || value>INT_MAX || std::floor(value)!=value) {
-            ccexRefusalPrint(stderr,"Error: pcce.print_limit must be a nonnegative 32-bit integer\n");
+            ccexRefusalPrint(stderr,"Error: cluster.pcce.print_limit must be a nonnegative 32-bit integer\n");
             ccexRefuse();
         }
         cnf->pcce_detail_limit=int(value);
@@ -1162,7 +1585,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         if (!cJSON_IsString(partition) || !partition->valuestring ||
             (strcasecmp(partition->valuestring,"deterministic") &&
              strcasecmp(partition->valuestring,"legacy"))){
-            ccexRefusalPrint(stderr,"Error: pcce.partition must be deterministic or legacy\n");
+            ccexRefusalPrint(stderr,"Error: cluster.pcce.partition must be deterministic or legacy\n");
             ccexRefuse();
         }
         strcpy(cnf->pcce_partition,partition->valuestring);
@@ -1172,7 +1595,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         if (!cJSON_IsString(pcceConnections) || !pcceConnections->valuestring ||
             (strcasecmp(pcceConnections->valuestring,"centers") &&
              strcasecmp(pcceConnections->valuestring,"spins"))){
-            ccexRefusalPrint(stderr,"Error: pcce.connections must be centers or spins\n");
+            ccexRefusalPrint(stderr,"Error: cluster.pcce.connections must be centers or spins\n");
             ccexRefuse();
         }
         strcpy(cnf->pcce_connections,pcceConnections->valuestring);
@@ -1185,7 +1608,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             (strcasecmp(cacheMode->valuestring,"off") &&
              strcasecmp(cacheMode->valuestring,"read") &&
              strcasecmp(cacheMode->valuestring,"readwrite"))){
-            ccexRefusalPrint(stderr,"Error: pcce.cache.mode must be off, read, or readwrite\n");
+            ccexRefusalPrint(stderr,"Error: cluster.pcce.cache.mode must be off, read, or readwrite\n");
             ccexRefuse();
         }
         strcpy(cnf->pcce_cache_mode,cacheMode->valuestring);
@@ -1194,17 +1617,23 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     if (cacheFile){
         if (!cJSON_IsString(cacheFile) || !cacheFile->valuestring ||
             !cacheFile->valuestring[0] || strlen(cacheFile->valuestring)>=MAX_FILEPATH){
-            ccexRefusalPrint(stderr,"Error: pcce.cache.file must be a nonempty path shorter than %d bytes\n",MAX_FILEPATH);
+            ccexRefusalPrint(stderr,"Error: cluster.pcce.cache.file must be a nonempty path shorter than %d bytes\n",MAX_FILEPATH);
             ccexRefuse();
         }
-        strcpy(cnf->pcce_cache_file,cacheFile->valuestring);
+        // {k} as in the configuration's files (A64: one cache file per configuration of configuration.k_range)
+        const std::string name = configurationName(cacheFile->valuestring,ranged,configurationIndex);
+        if (name.size() >= MAX_FILEPATH){
+            ccexRefusalPrint(stderr,"Error: cluster.pcce.cache.file must be a nonempty path shorter than %d bytes\n",MAX_FILEPATH);
+            ccexRefuse();
+        }
+        strcpy(cnf->pcce_cache_file,name.c_str());
     }
 
     int order = cJSON_ReadInt(root,"order",false,1);
     if(!strcasecmp(cnf->cluster_mode,"adaptive")) {
         const double value=readFiniteNumber(cJSON_GetObjectItem(root,"order"),"order");
         if(value<1 || value>=INT_MAX || value>cnf->expansion_max_clusters || std::floor(value)!=value) {
-            ccexRefusalPrint(stderr,"Error: cluster_mode bundle requires a positive integer order (of bundles) up to bundle.max_clusters\n");
+            ccexRefusalPrint(stderr,"Error: cluster.mode bundle requires a positive integer order (of bundles) up to cluster.bundle.max_clusters\n");
             ccexRefuse();
         }
     }
@@ -1234,7 +1663,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     // key is refused outright rather than skipped.
     if (cJSON_GetObjectItem(root,"magnetic_field_axis") != NULL){
         ccexRefusalPrint(stderr,"Error: \"magnetic_field_axis\" was removed.\n");
-        ccexRefusalPrint(stderr,"Use \"bfield\": [0,0,Bz] with coordinate_frame_rotation.\n");
+        ccexRefusalPrint(stderr,"Use \"bfield\": [0,0,Bz] with frame.rotation.\n");
         ccexRefuse();
     }
     ////////////////////////////////////////////////////////////////////////
@@ -1260,7 +1689,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     if(adaptive && radius) {
         rdip=float(readFiniteNumber(radius,rdipName));
         if(!std::isfinite(rdip) || rdip<=0) {
-            ccexRefusalPrint(stderr,"Error: explicit cluster_mode bundle rdip must be finite and positive; omit it for unlimited auto connections\n");ccexRefuse();
+            ccexRefusalPrint(stderr,"Error: explicit cluster.mode bundle rdip must be finite and positive, omit it for unlimited auto connections\n");ccexRefuse();
         }
     } else if(radius) rdip=readFloatItem(radius,rdipName);
     else if(autoConnections) rdip=0;
@@ -1279,23 +1708,42 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     float rdipcut = rdipInner ? readFloatItem(rdipInner,"rdip[0]") : 0.0f;
     Config_setRdipcut(cnf,rdipcut);
 
-    int nstate = cJSON_ReadInt(root,"nstate",true,0);
+    // nstate and seed: the configuration's (A64)
+    int nstate = configuration ? cJSON_ReadInt(configuration,"nstate",true,0) : 0;
     Config_setNstate(cnf,nstate);
 
-    const int requestedSeed=cJSON_ReadInt(root,"seed",true,-1);
-    const int seed=resolveMpiSeed(requestedSeed,MPI_COMM_WORLD);
-    if(requestedSeed==-1 && rank==0)
-        fprintf(stderr,"[seed] generated on rank 0 and shared with all ranks: %d; set seed=%d to replay this run.\n",seed,seed);
+    const int requestedSeed=configuration ? cJSON_ReadInt(configuration,"seed",true,-1) : -1;
+    // A64: an explicit seed is the seed of every configuration of configuration.k_range (configuration k is then the
+    // run of its files alone with that seed). A73: a generated seed is generated once, for the first configuration, and
+    // configuration k takes generated + (k - first): a different, reproducible sequence of states for every k (one
+    // shared sequence made the configurations' state samples the same draws)
+    static int generatedSeed=-1;
+    const bool reuse=requestedSeed==-1 && generatedSeed!=-1;
+    const int base=reuse ? generatedSeed : resolveMpiSeed(requestedSeed,MPI_COMM_WORLD);
+    if(requestedSeed==-1) generatedSeed=base;
+    const int seed=requestedSeed==-1 && ranged ? int(unsigned(base)+unsigned(configurationIndex-rangeFirst)) : base;
+    // A76: the seed is reported only for a run that draws from it: sampled bath states (nstate > 0), the axes and onsite-spin
+    // states of Defect species (drawn when their files are absent), the pCCE partition (its trials and its cache key). An
+    // ensemble run of a bath without Defect species draws nothing.
+    cJSON* defectBlock=cJSON_GetObjectItem(root,"Defect");
+    cJSON* defectSpecies=cJSON_IsObject(defectBlock) ? cJSON_GetObjectItem(defectBlock,"species") : NULL;
+    cnf->seed_used=nstate>0 || methodUsesPcceClusters(method) ||
+                   (cJSON_IsArray(defectSpecies) && cJSON_GetArraySize(defectSpecies)>0);
+    if(requestedSeed==-1 && !ranged && rank==0 && cnf->seed_used)
+        fprintf(stderr,"[seed] generated on rank 0 and shared with all ranks: %d, set seed=%d to replay this run.\n",seed,seed);
+    if(requestedSeed==-1 && ranged && rank==0 && cnf->seed_used)
+        fprintf(stderr,"[seed] configuration k=%ld: seed %d (generated %d + k - %ld), set seed=%d to replay this configuration alone.\n",
+                configurationIndex,seed,base,rangeFirst,seed);
     Config_setSeed(cnf,seed);
 
     ////////////////////////////////////////////////////////////////////////
     // Qubit and BathFiles
     ////////////////////////////////////////////////////////////////////////
-    if (rank==0){
+    if (rank==0 && verbosity){
         printf("\n");
-        printMessage("  - File-related keys :");
-        printMessage("    [ Qubit.file, gyrofile, bathfile, bath_shift, coordinate_frame_rotation, ");
-        printMessage("      defect_axis_reference, Defect.axis_file, bath_state_file, Defect.state_file ] \n");
+        printf("      - File-related keys :\n");
+        printf("        [ Qubit.file, configuration { path, k_range, gyrofile, bathfile, bath_shift, bath_state_file,\n");
+        printf("          defect_axis_file, defect_state_file, nstate, seed }, frame.rotation ]\n\n");
     }
 
     // Qubit.file (the qubit of a defect file; the Qubit block reader checks the rest of the block)
@@ -1306,30 +1754,32 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         Config_setQubitfile(cnf,qubitfile);
     }
 
-    // gyrofile
-    char* gyrofile = cJSON_ReadFilePath(root,"gyrofile",true,NULL);
-    if (gyrofile != NULL) {
+    // the configuration block (A64): gyrofile, bathfile, bath_shift and bath_state_file, the names in configuration.path
+    std::string gyrofile;
+    if (configurationFile(configuration,"gyrofile",folder,ranged,configurationIndex,&gyrofile)) {
         Config_allocGyrofile(cnf);
-        Config_setGyrofile(cnf,gyrofile);
+        Config_setGyrofile(cnf,const_cast<char*>(gyrofile.c_str()));
     }
 
     // bathfiles
     int length = 0;
-    char** bathfiles = cJSON_ReadFilePath1d(&length, root, "bathfile", true, NULL); // get length
+    char** bathfiles = configuration ? cJSON_ReadFilePath1d(&length, configuration, "bathfile", true, NULL) : NULL; // get length
     if (bathfiles != NULL) {
         Config_setNbathfiles(cnf,length);
         Config_allocBathfiles(cnf);
         Config_allocBathadjust(cnf);
         for (int i = 0; i < length; i++){
-            Config_setBathfiles_i(cnf,bathfiles[i],i);
-        }        
+            const std::string name = configurationPath(folder,bathfiles[i],ranged,configurationIndex);
+            Config_setBathfiles_i(cnf,const_cast<char*>(name.c_str()),i);
+        }
         freeChar2d(&bathfiles,length);
     }
-    
+
     // bath_shift (bathadjust until A47)
     double** bathadjustDefault = allocDouble2d(length,3); // all elements are 0.0
-    double** bathadjust = cJSON_ReadDouble2d(root,(char*)"bath_shift",true,bathadjustDefault,length,3);
-    
+    double** bathadjust = configuration ? cJSON_ReadDouble2d(configuration,(char*)"bath_shift",true,bathadjustDefault,length,3)
+                                        : allocDouble2d(length,3);
+
     for (int i = 0; i < length; i++){
         Config_setBathadjust_i(cnf,bathadjust[i],i);
     }
@@ -1340,32 +1790,11 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     ////////////////////////////////////////////////////////////////////////
     // Coordinate frame rotation
     ////////////////////////////////////////////////////////////////////////
-    // Absent section, or "enabled": false, leaves Config at the values set by
-    // Config_init -- rotation off, both axes on +z -- so the run is bit-for-bit
-    // the legacy one.
-    //
-    // "bath_coordinate_rotation" was the name while the feature only moved bath
-    // POSITIONS. It now also decides the magnetic-field direction, so the name is
-    // wrong; it is still accepted, with a warning, so that inputs written against
-    // the earlier version keep working.
-    const char* ROTKEY = "coordinate_frame_rotation";
-    cJSON* RotSection    = cJSON_GetObjectItem(root,ROTKEY);
-    cJSON* RotSectionOld = cJSON_GetObjectItem(root,"bath_coordinate_rotation");
-
-    if (RotSection != NULL && RotSectionOld != NULL){
-        ccexRefusalPrint(stderr,"Error: both \"coordinate_frame_rotation\" and \"bath_coordinate_rotation\" are present\n");
-        ccexRefusalPrint(stderr,"They are the same option under two names. Keep \"coordinate_frame_rotation\".\n");
-        ccexRefuse();
-    }
-
-    if (RotSection == NULL && RotSectionOld != NULL){
-        RotSection = RotSectionOld;
-        ROTKEY = "bath_coordinate_rotation";
-        if (rank==0){
-            fprintf(stderr,"Warning: \"bath_coordinate_rotation\" is deprecated -- rename it to\n"
-                           "         \"coordinate_frame_rotation\". The behaviour is unchanged.\n");
-        }
-    }
+    // frame.rotation (A65; coordinate_frame_rotation before, refused): an absent block leaves Config at the values set by
+    // Config_init -- rotation off, both axes on +z -- so the run is bit-for-bit the legacy one. A given block is on unless
+    // it says "enabled": false.
+    const char* ROTKEY = "frame.rotation";
+    cJSON* RotSection    = cJSON_GetObjectItem(frame,"rotation");
 
     if (RotSection != NULL){
 
@@ -1378,7 +1807,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
             ccexRefuse();
         }
 
-        bool rot_enabled = readStrictBool(RotSection,ROTKEY,"enabled",false);
+        bool rot_enabled = readStrictBool(RotSection,ROTKEY,"enabled",true);
         Config_setRot_enabled(cnf,rot_enabled);
 
         if (rot_enabled){
@@ -1441,49 +1870,49 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         }
     }
 
-    // Defect.axis_file and Defect.state_file (avaaxfile, exstatefile until A47) sit beside the species list
-    cJSON* defectBlock = readBlock(root,"Defect");
-    char* avaaxfile = defectBlock ? cJSON_ReadFilePath(defectBlock,(char*)"axis_file",true,NULL) : NULL;
-    if (avaaxfile != NULL) {
-        Config_allocAvaaxfile(cnf);
-        Config_setAvaaxfile(cnf,avaaxfile);
-    }
-
-    char* statefile = cJSON_ReadFilePath(root,(char*)"bath_state_file",true,NULL);
-    if (statefile != NULL) {
-        Config_allocStatefile(cnf);
-        Config_setStatefile(cnf,statefile);
-    }
-
-    char* exstatefile = defectBlock ? cJSON_ReadFilePath(defectBlock,(char*)"state_file",true,NULL) : NULL;
-    if (exstatefile != NULL) {
-        Config_allocExstatefile(cnf);
-        Config_setExstatefile(cnf,exstatefile);
+    // configuration.defect_axis_file and defect_state_file (avaaxfile, exstatefile until A47, then Defect.axis_file and
+    // Defect.state_file until A64)
+    // one name per bath file each (A64), in the order of configuration.bathfile
+    const int nbath = Config_getNbathfiles(cnf);
+    const struct { const char* key; void (*alloc)(Config*); void (*set)(Config*,char*,int); } perBath[] = {
+        {"defect_axis_file",  Config_allocAvaaxfile,   Config_setAvaaxfile_i},
+        {"bath_state_file",   Config_allocStatefile,   Config_setStatefile_i},
+        {"defect_state_file", Config_allocExstatefile, Config_setExstatefile_i}};
+    for (const auto& f : perBath) {
+        const std::vector<std::string> names = perBathFileNames(configuration,f.key,nbath,folder,ranged,configurationIndex);
+        if (names.empty()) continue;
+        f.alloc(cnf);
+        for (int i = 0; i < nbath; i++) f.set(cnf,const_cast<char*>(names[i].c_str()),i);
     }
 
     ////////////////////////////////////////////////////////////////////////
     // The hamiltonian block (A47): common to both methods, and the terms of one method
     ////////////////////////////////////////////////////////////////////////
-    if (rank==0){
+    if (rank==0 && verbosity){
         printf("\n");
-        printMessage("  - Hamiltonian-related keys :");
-        printMessage("    hamiltonian.common : [ qubit_bath_mean_field, bath_bath_mean_field, ");
-        printMessage("      hyperfine { dipole, contact, file, missing_row }, ");
-        printMessage("      quadrupole (\"off\" or { structure, file, file_without_defect, cell }) ] ");
-        printMessage("    hamiltonian.cCCE : [ knight, hfmedi, delta_A ] \n");
+        printf("      - Hamiltonian-related keys :\n");
+        printf("        hamiltonian.common : [ qubit_bath_mean_field, bath_bath_mean_field,\n");
+        printf("          hyperfine { dipole, contact, file, missing_row },\n");
+        printf("          quadrupole (\"off\" or { structure, file, file_without_defect, cell }) ]\n");
+        printf("        hamiltonian.cCCE : [ knight, hfmedi, delta_A ]\n");
+        printf("        hamiltonian.meCCE / megCCE : [ jump_operators ]\n\n");
     }
     cJSON* hamiltonian = readBlock(root,"hamiltonian");
     cJSON* common = hamiltonian ? readBlock(hamiltonian,"common") : NULL;
     cJSON* cCCE = hamiltonian ? readBlock(hamiltonian,"cCCE") : NULL;
-    // gCCE, and the reserved methods meCCE and noise (A49), have no settings yet: an empty section is allowed
-    for (const char* name : {"gCCE", "meCCE", "noise"}){
+    // gCCE and the reserved method noise (A49) have no settings yet: an empty section is allowed
+    for (const char* name : {"gCCE", "noise"}){
         cJSON* section = hamiltonian ? readBlock(hamiltonian,name) : NULL;
         if (section && section->child){
             ccexRefusalPrint(stderr,"Error: hamiltonian.%s has no settings yet (\"%s\")\n",name,section->child->string);
             ccexRefuse();
         }
     }
-    // a cCCE setting in a gCCE run is refused once -m has been applied (main.cpp, validateHamiltonianForMethod)
+    // the master-equation methods: jump_operators only; which method the section belongs to is checked once every
+    // reader has run (main.cpp, validateHamiltonianForMethod)
+    for (const char* name : {"meCCE", "megCCE"})
+        if (cJSON* section = hamiltonian ? readBlock(hamiltonian,name) : NULL) readJumpOperators(cnf, section, name);
+    // a cCCE setting in a gCCE run is refused once every reader has run (main.cpp, validateHamiltonianForMethod)
     cnf->hamiltonian_ccce_given = cCCE && cCCE->child;
 
     // the static field of the other bath spins (nstate > 0; with nstate 0 it is not used, as vector_mean_field was not):
@@ -1594,35 +2023,6 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
     cnf->delta_A = cCCE ? readStrictBool(cCCE,"hamiltonian.cCCE","delta_A",true) : true;
 
     ////////////////////////////////////////////////////////////////////////
-    // Defect axis reference
-    ////////////////////////////////////////////////////////////////////////
-    // Read here, after the rotation section, because the only value it can take names
-    // an axis that only that section defines.
-    cJSON* DefAxisItem = cJSON_GetObjectItem(root,"defect_axis_reference");
-
-    if (DefAxisItem != NULL){
-
-        if (!cJSON_IsString(DefAxisItem) || DefAxisItem->valuestring == NULL){
-            ccexRefusalPrint(stderr,"Error: defect_axis_reference must be a string\n");
-            ccexRefusalPrint(stderr,"The only accepted value is \"qubit_axis\".\n");
-            ccexRefuse();
-        }
-        if (strcasecmp(DefAxisItem->valuestring,"qubit_axis") != 0){
-            ccexRefusalPrint(stderr,"Error: defect_axis_reference = \"%s\" is not available\n",
-                    DefAxisItem->valuestring);
-            ccexRefusalPrint(stderr,"The only accepted value is \"qubit_axis\".\n");
-            ccexRefuse();
-        }
-        if (!Config_getRot_enabled(cnf)){
-            ccexRefusalPrint(stderr,"Error: defect_axis_reference = \"qubit_axis\" needs a qubit axis,\n");
-            ccexRefusalPrint(stderr,"and coordinate_frame_rotation is what defines one in the source frame.\n");
-            ccexRefusalPrint(stderr,"Enable coordinate_frame_rotation, or drop defect_axis_reference.\n");
-            ccexRefuse();
-        }
-        Config_setDefect_axis_reference(cnf,DEFECT_AXIS_REFERENCE_QUBIT_AXIS);
-    }
-
-    ////////////////////////////////////////////////////////////////////////
     // Cross-checks that need both the rotation section and the readmodes
     ////////////////////////////////////////////////////////////////////////
     if (Config_getRot_enabled(cnf)){
@@ -1640,7 +2040,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         if ((Config_getHf_readmode(cnf) == 2 || Config_getHf_readmode(cnf) == 3)
             && Config_getRot_hf_tensor_frame(cnf)[0] == '\0'){
             ccexRefusalPrint(stderr,"Error: hamiltonian.common.hyperfine dipole \"dft\" with the coordinate frame rotation on, but\n");
-            ccexRefusalPrint(stderr,"coordinate_frame_rotation.hf_tensor_frame is not set.\n");
+            ccexRefusalPrint(stderr,"frame.rotation.hf_tensor_frame is not set.\n");
             ccexRefusalPrint(stderr,"State the basis the tensor COMPONENTS in hamiltonian.common.hyperfine.file are written in:\n");
             ccexRefusalPrint(stderr,"  \"bath\"  : the original bath Cartesian basis -- they get transformed\n");
             ccexRefusalPrint(stderr,"  \"qubit\" : already the qubit-aligned basis -- they are left alone\n");
@@ -1650,7 +2050,7 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
         if (Config_getQd_readmode(cnf) != 0 && Config_getRot_qd_tensor_frame(cnf)[0] == '\0'){
             ccexRefusalPrint(stderr,"Error: hamiltonian.common.quadrupole (structure %s) with the coordinate frame rotation on, but\n",
                     Config_getQd_readmode(cnf) == 2 ? "plain" : Config_getQd_readmode(cnf) == 3 ? "strained" : "bubble");
-            ccexRefusalPrint(stderr,"coordinate_frame_rotation.qd_tensor_frame is not set.\n");
+            ccexRefusalPrint(stderr,"frame.rotation.qd_tensor_frame is not set.\n");
             ccexRefusalPrint(stderr,"State the basis the tensor COMPONENTS in hamiltonian.common.quadrupole.file are written in:\n");
             ccexRefusalPrint(stderr,"  \"bath\"  : the original bath Cartesian basis -- they get transformed\n");
             ccexRefusalPrint(stderr,"  \"qubit\" : already the qubit-aligned basis -- they are left alone\n");
@@ -1668,16 +2068,16 @@ void cJSON_readOptionConfig(Config* cnf, char* fccein){
 */
 void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 
-    if (rank==0){
+    if (rank==0 && verbosity){
         printf("\n");
-        printMessage("Read Qubit Options ...\n");
-        printMessage("  - Read values of main-key 'Qubit'");
-        printMessage("    sub-key of 'Qubit' : [ qubit, intmap, alpha_state, beta_state, psi0 ] or [ file, spin, zfs, alphams, betams ] \n");
-        printMessage("  - Read values of sub-key 'qubit'");
-        printMessage("    sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ] \n");
-        printMessage("  - Read values of sub-key 'intmap'");
-        printMessage("    sub-sub-key : [ between, tensor, unit, tensor_frame ] \n");
-        printMessage("  - Read hamiltonian.common.qubit_bath_mean_field");
+        printf("    >> Read Qubit Options\n\n");
+        printf("      - Read values of main-key 'Qubit'\n");
+        printf("        sub-key of 'Qubit' : [ qubit, intmap, alpha_state, beta_state, psi0 ] or [ file, spin, zfs, alphams, betams ]\n\n");
+        printf("      - Read values of sub-key 'qubit'\n");
+        printf("        sub-sub-key : [ name, spin, gyro, xyz, detuning, alphams, betams ]\n\n");
+        printf("      - Read values of sub-key 'intmap'\n");
+        printf("        sub-sub-key : [ between, tensor, unit, tensor_frame ]\n\n");
+        printf("      - Read hamiltonian.common.qubit_bath_mean_field\n");
     }
 
     char* data = cJSON_ReadFccein(fccein);
@@ -1715,7 +2115,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
         for (const char* key : {"qubit", "intmap", "alpha_state", "beta_state", "psi0"})
             if (cJSON_GetObjectItem(QubitSection,key) != NULL){
                 if (rank==0){
-                    ccexRefusalPrint(stderr,"Error: the Qubit block has both \"file\" and \"%s\"; keep one form (\"file\" for one "
+                    ccexRefusalPrint(stderr,"Error: the Qubit block has both \"file\" and \"%s\", keep one form (\"file\" for one "
                                    "qubit from a defect file, \"qubit\" for one or more qubits written out)\n",key);
                 }
                 ccexRefuse();
@@ -1800,7 +2200,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 
         cJSON_ArrayForEach(qubit, qubitArray){
             if (qubit == NULL) {
-                ccexRefusalPrint(stderr, "Error: The length of \"qubit\" is different from nqubit(%d) \n", nqubit);
+                ccexRefusalPrint(stderr, "Error: The length of \"qubit\" is different from nqubit(%d)\n", nqubit);
                 ccexRefuse();
             }
             // read qubit properties from the input file
@@ -1914,7 +2314,7 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
                             qubit1_name,qubit2_name,tframe->valuestring);
                     ccexRefusalPrint(stderr,"  \"bath\"  : components are in the original bath Cartesian basis\n");
                     ccexRefusalPrint(stderr,"  \"qubit\" : components are already in the common computational basis\n");
-                    ccexRefusalPrint(stderr,"            (reference-qubit-aligned; NOT an individual local frame)\n");
+                    ccexRefusalPrint(stderr,"            (reference-qubit-aligned, NOT an individual local frame)\n");
                     ccexRefuse();
                 }
             }
@@ -1983,10 +2383,10 @@ void cJSON_readOptionQubitArray(QubitArray* qa, char* fccein){
 */
 void cJSON_readOptionCluster(Cluster* clus, char* fccein){
 
-    if (rank==0){
+    if (rank==0 && verbosity){
         printf("\n");
-        printMessage("Read Cluster Options ...");
-        printMessage("  [ order, method, cluster_mode, add_subclusters, max_clusters_per_order ] \n");
+        printf("    >> Read Cluster Options\n");
+        printf("      [ order, method, cluster.mode, cluster.selection { add_subclusters, max_per_order } ]\n\n");
     }
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
@@ -2006,11 +2406,14 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     readMethod(root,method,clusterMode); // read twice (cJSON_readOptionConfig)
     Cluster_setMethod(clus,method);
 
-    // add_subclusters and max_clusters_per_order (addsubclus and nk until A47)
+    // cluster.selection {add_subclusters, max_per_order} (A65; addsubclus and nk until A47, then top-level add_subclusters
+    // and max_clusters_per_order)
+    cJSON* clusterBlock = readBlockOrEmpty(root,"cluster");
+    cJSON* selection = readBlockOrEmpty(clusterBlock,"selection");
     bool addsubclus = true;
-    if (cJSON* item = cJSON_GetObjectItem(root,"add_subclusters")){
+    if (cJSON* item = cJSON_GetObjectItem(selection,"add_subclusters")){
         if (!cJSON_IsBool(item)){
-            ccexRefusalPrint(stderr,"Error: add_subclusters must be true or false\n");
+            ccexRefusalPrint(stderr,"Error: cluster.selection.add_subclusters must be true or false\n");
             ccexRefuse();
         }
         addsubclus = cJSON_IsTrue(item);
@@ -2018,7 +2421,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     Cluster_setAddsubclus(clus,addsubclus);
 
     Cluster_allocNk(clus);
-    int* nk = cJSON_ReadInt1d(root,(char*)"max_clusters_per_order",true,NULL,order+1);
+    int* nk = cJSON_ReadInt1d(selection,(char*)"max_per_order",true,NULL,order+1);
     if (nk!=NULL){
         Cluster_setNk(clus,nk);
     }else{;} 
@@ -2026,27 +2429,27 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
     // all element would be "0" in which we consider all pairs within rdip
 
 
-    if (strcasecmp(Cluster_getMethod(clus),"pcce") == 0){
+    if (methodUsesPcceClusters(Cluster_getMethod(clus))){
 
-        if (rank==0){
-            printMessage("  pcce : [ partition_size, trials, max_iterations, kmeans_pp, print_trials ] \n");
+        if (rank==0 && verbosity){
+            printf("      cluster.pcce : [ partition_size, trials, max_iterations, kmeans_pp, print_trials ]\n\n");
         }
 
         // Do not dereference a null default argument even when partition_size is supplied.
         // Zero or fractional sizes also make the partition divisions invalid.
-        cJSON* pcce = readBlock(root,"pcce");
+        cJSON* pcce = readBlock(clusterBlock,"pcce");
         const char* keys[] = {"partition_size", "trials", "max_iterations"};
         int values[] = {0, 30000, 30000};
         for (int k=0; k<3; ++k){
             cJSON* item = pcce ? cJSON_GetObjectItem(pcce,keys[k]) : NULL;
             if (!item){
                 if (k==0){
-                    ccexRefusalPrint(stderr,"Error: cluster_mode pcce requires pcce.partition_size\n");
+                    ccexRefusalPrint(stderr,"Error: cluster.mode pcce requires cluster.pcce.partition_size\n");
                     ccexRefuse();
                 }
                 continue;
             }
-            const std::string name = "pcce." + std::string(keys[k]);
+            const std::string name = "cluster.pcce." + std::string(keys[k]);
             double value = readFiniteNumber(item,name.c_str());
             if (value < 1 || value > 2147483647.0 || std::floor(value) != value){
                 ccexRefusalPrint(stderr,"Error: %s must be a positive 32-bit integer\n",name.c_str());
@@ -2055,8 +2458,8 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
             values[k] = (int)value;
         }
         int sK = values[0], max_trial = values[1], max_iter = values[2];
-        bool kmeans_pp   = pcce ? readStrictBool(pcce,"pcce","kmeans_pp",true) : true;
-        bool iter_detail = pcce ? readStrictBool(pcce,"pcce","print_trials",false) : false;
+        bool kmeans_pp   = pcce ? readStrictBool(pcce,"cluster.pcce","kmeans_pp",true) : true;
+        bool iter_detail = pcce ? readStrictBool(pcce,"cluster.pcce","print_trials",false) : false;
 
         Cluster_setSk(clus,sK);
         Cluster_setMax_trial(clus,max_trial);
@@ -2075,7 +2478,7 @@ void cJSON_readOptionCluster(Cluster* clus, char* fccein){
 // One fraction of a Manual sequence (review 5f7834 R2): a JSON number, or a string "a/b" of two integers or a
 // number, all of it; finite and not negative. Until 2026-10-02 a number fraction read a null string (an exception)
 // and "1/2x" read as 1/2.
-static double readSequenceFraction(cJSON* item, int row) {
+static double readSequenceFraction(cJSON* item, int row, const char* key = "sequence") {
     double value = 0;
     if (cJSON_IsNumber(item)) value = item->valuedouble;
     else if (cJSON_IsString(item) && item->valuestring) {
@@ -2086,23 +2489,23 @@ static double readSequenceFraction(cJSON* item, int row) {
             const bool numOk = end == slash && slash != text;
             const long den = strtol(slash+1, &end, 10);
             if (!numOk || end == slash+1 || *end != '\0' || errno == ERANGE || den == 0) {
-                ccexRefusalPrint(stderr, "Error: sequence[%d] fraction \"%s\" must be a/b with integers and b != 0\n", row, text);
+                ccexRefusalPrint(stderr, "Error: %s[%d] fraction \"%s\" must be a/b with integers and b != 0\n", key, row, text);
                 ccexRefuse();
             }
             value = double(num)/double(den);
         } else {
             errno = 0; value = strtod(text, &end);
             if (end == text || *end != '\0' || errno == ERANGE) {
-                ccexRefusalPrint(stderr, "Error: sequence[%d] fraction \"%s\" is not a number\n", row, text);
+                ccexRefusalPrint(stderr, "Error: %s[%d] fraction \"%s\" is not a number\n", key, row, text);
                 ccexRefuse();
             }
         }
     } else {
-        ccexRefusalPrint(stderr, "Error: sequence[%d] fraction must be a number or a string such as \"1/2\"\n", row);
+        ccexRefusalPrint(stderr, "Error: %s[%d] fraction must be a number or a string such as \"1/2\"\n", key, row);
         ccexRefuse();
     }
     if (!std::isfinite(value) || value < 0) {
-        ccexRefusalPrint(stderr, "Error: sequence[%d] fraction must be finite and not negative\n", row);
+        ccexRefusalPrint(stderr, "Error: %s[%d] fraction must be finite and not negative\n", key, row);
         ccexRefuse();
     }
     return value;
@@ -2149,10 +2552,10 @@ std::string read_json_file(const std::string& fccein) {
 
 void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
 
-    if (rank == 0) {
+    if (rank == 0 && verbosity) {
         printf("\n");
-        printMessage("Read Pulse Options ...");
-        printMessage("  pulse : [ count, name, sequence, per_qubit, duration, detuning_factor ] \n");
+        printf("    >> Read Pulse Options\n");
+        printf("      pulse : [ count, name, sequence, per_qubit, duration, detuning_factor ]\n\n");
     }
 
     char*  data = cJSON_ReadFccein(fccein);
@@ -2247,6 +2650,77 @@ void cJSON_readOptionPulse(Pulse* pulse, char* fccein) {
         }
     }
 
+    // DEER bath pulses, the block pulse.bath (adding_MECCE src/option.cpp:677-730 had them as top-level keys)
+    if (cJSON* bath = readBlock(block,"bath")) {
+        for (cJSON* key = bath->child; key; key = key->next)
+            if (strcmp(key->string,"count") && strcmp(key->string,"sequence") && strcmp(key->string,"defect") &&
+                strcmp(key->string,"energy_shift") && strcmp(key->string,"bandwidth") && strcmp(key->string,"spin") &&
+                strcmp(key->string,"alphams") && strcmp(key->string,"betams")){
+                ccexRefusalPrint(stderr,"Error: pulse.bath has no key \"%s\" (count, sequence, defect, energy_shift, bandwidth, spin, "
+                        "alphams, betams)\n", key->string);
+                ccexRefuse();
+            }
+        cJSON* jseq = cJSON_GetObjectItem(bath, "sequence");     // every key looked up, so the input check knows them
+        cJSON* jdef = cJSON_GetObjectItem(bath, "defect");
+        cJSON* jsh  = cJSON_GetObjectItem(bath, "energy_shift");
+        cJSON* jbs  = cJSON_GetObjectItem(bath, "spin");
+        cJSON* jba  = cJSON_GetObjectItem(bath, "alphams");
+        cJSON* jbb  = cJSON_GetObjectItem(bath, "betams");
+        pulse->bnpulse = cJSON_ReadInt(bath, (char*)"count", true, 0);    // type and integer checks as pulse.count
+        if (pulse->bnpulse < 0) { ccexRefusalPrint(stderr, "Error: pulse.bath.count must be >= 0\n"); ccexRefuse(); }
+        if (jbs) pulse->bspin    = readFiniteNumber(jbs, "pulse.bath.spin");
+        if (jba) pulse->balphams = readFiniteNumber(jba, "pulse.bath.alphams");
+        if (jbb) pulse->bbetams  = readFiniteNumber(jbb, "pulse.bath.betams");
+        // A67: the half width of the window around a tone (MHz); absent: kBathPulseBandwidthRadkHz itself, not a round trip
+        if (cJSON* jbw = cJSON_GetObjectItem(bath, "bandwidth")) {
+            const double mhz = readFiniteNumber(jbw, "pulse.bath.bandwidth");
+            if (!(mhz > 0.0)) {
+                ccexRefusalPrint(stderr, "Error: pulse.bath.bandwidth must be a positive number [MHz] (%g)\n", mhz); ccexRefuse();
+            }
+            pulse->bpulse_bandwidth = MHZ_TO_RADKHZ(mhz);
+        }
+        if (pulse->bnpulse > 0) {
+            if (!(jdef && cJSON_IsString(jdef) && jdef->valuestring && jdef->valuestring[0])) {
+                ccexRefusalPrint(stderr, "Error: pulse.bath.defect is required when pulse.bath.count > 0\n"); ccexRefuse();
+            }
+            copyBounded(pulse->bpulse_defect, jdef->valuestring, sizeof(pulse->bpulse_defect), "pulse.bath.defect");
+            std::vector<double> tones;
+            if (jsh && cJSON_IsNumber(jsh)) tones.push_back(readFiniteNumber(jsh, "pulse.bath.energy_shift"));
+            else if (jsh && cJSON_IsArray(jsh))
+                for (int k = 0; k < cJSON_GetArraySize(jsh); ++k)
+                    tones.push_back(readFiniteNumber(cJSON_GetArrayItem(jsh, k), "pulse.bath.energy_shift"));
+            if (tones.empty()) {
+                ccexRefusalPrint(stderr, "Error: pulse.bath.energy_shift needs at least one finite number [MHz]\n"); ccexRefuse();
+            }
+            pulse->n_bpulse_shift = (int)tones.size();
+            pulse->bpulse_energy_shifts = (double*)calloc(tones.size(), sizeof(double));
+            for (size_t k = 0; k < tones.size(); ++k) pulse->bpulse_energy_shifts[k] = MHZ_TO_RADKHZ(tones[k]);
+            if (!(jseq && cJSON_IsArray(jseq)) || cJSON_GetArraySize(jseq) != pulse->bnpulse + 1) {
+                ccexRefusalPrint(stderr, "Error: pulse.bath.sequence must have pulse.bath.count+1 rows of [fraction, axis, angle]\n");
+                ccexRefuse();
+            }
+            const int nrow = pulse->bnpulse + 1;
+            pulse->bsequence_fracs = (double*)calloc(nrow, sizeof(double));
+            pulse->bpulse_axes     = (char*)calloc(nrow + 1, sizeof(char));
+            pulse->bpulse_angles   = (double*)calloc(nrow, sizeof(double));
+            double total = 0.0;
+            for (int i = 0; i < nrow; ++i) {
+                cJSON* row = cJSON_GetArrayItem(jseq, i);
+                if (!cJSON_IsArray(row) || cJSON_GetArraySize(row) != 3) {
+                    ccexRefusalPrint(stderr, "Error: pulse.bath.sequence[%d] must be [fraction, axis, angle]\n", i); ccexRefuse();
+                }
+                pulse->bsequence_fracs[i] = readSequenceFraction(cJSON_GetArrayItem(row, 0), i, "pulse.bath.sequence");
+                pulse->bpulse_axes[i]     = parse_axis(cJSON_GetArrayItem(row, 1), i);
+                char label[64]; snprintf(label, sizeof(label), "pulse.bath.sequence[%d] angle", i);
+                pulse->bpulse_angles[i]   = readFiniteNumber(cJSON_GetArrayItem(row, 2), label);
+                total += pulse->bsequence_fracs[i];
+            }
+            if (std::fabs(total - 1.0) > 1e-9) {
+                ccexRefusalPrint(stderr, "Error: the fractions of pulse.bath.sequence sum to %.12g, not 1\n", total); ccexRefuse();
+            }
+        }   // what the merge needs of the two sequences is checked where it runs (Pulse_resolveBathSequence)
+    }
+
     //////////////////////////
     cJSON_Delete(root);
     freeChar1d(&data);
@@ -2263,24 +2737,24 @@ void cJSON_readSavemode(cJSON* item, Output* op, bool readNodiv){
         return;
     }
     if (!cJSON_IsObject(item)){
-        ccexRefusalPrint(stderr,"Error: savemode must be a string (coherence, coherence_tagged, cluster_coherence, cluster_density_matrix) "
+        ccexRefusalPrint(stderr,"Error: output.savemode must be a string (coherence, coherence_tagged, cluster_coherence, cluster_density_matrix) "
                        "or an object {\"mode\": ..., \"nodiv\": true|false}\n");
         ccexRefuse();
     }
     for (cJSON* key = item->child; key; key = key->next)
         if (strcasecmp(key->string,"mode") && strcasecmp(key->string,"nodiv")){
-            ccexRefusalPrint(stderr,"Error: savemode has no key \"%s\" (mode, nodiv)\n",key->string);
+            ccexRefusalPrint(stderr,"Error: output.savemode has no key \"%s\" (mode, nodiv)\n",key->string);
             ccexRefuse();
         }
     cJSON* mode = cJSON_GetObjectItem(item,"mode");
     if (mode && (!cJSON_IsString(mode) || !mode->valuestring)){
-        ccexRefusalPrint(stderr,"Error: savemode.mode must be a string (coherence, coherence_tagged, cluster_coherence, cluster_density_matrix)\n");
+        ccexRefusalPrint(stderr,"Error: output.savemode.mode must be a string (coherence, coherence_tagged, cluster_coherence, cluster_density_matrix)\n");
         ccexRefuse();
     }
     Output_setSavemode(op,mode ? mode->valuestring : (char*)"coherence");
     cJSON* nodiv = cJSON_GetObjectItem(item,"nodiv");
     if (nodiv && !cJSON_IsBool(nodiv)){
-        ccexRefusalPrint(stderr,"Error: savemode.nodiv must be a boolean (true or false)\n");
+        ccexRefusalPrint(stderr,"Error: output.savemode.nodiv must be a boolean (true or false)\n");
         ccexRefuse();
     }
     if (readNodiv) op->save_nodiv = nodiv ? (bool)nodiv->valueint : true;
@@ -2288,10 +2762,10 @@ void cJSON_readSavemode(cJSON* item, Output* op, bool readNodiv){
 
 void cJSON_readOptionOutput(Output* op, char* fccein){
 
-    if (rank==0){
+    if (rank==0 && verbosity){
         printf("\n");
-        printMessage("Read Output Options ...");
-        printMessage("  [ savemode { mode, nodiv }, outfile ] ");
+        printf("    >> Read Output Options\n");
+        printf("      output : [ path, file, savemode { mode, nodiv } ]\n");
     }
     char* data = cJSON_ReadFccein(fccein);
     cJSON* root = cJSON_Parse(data);
@@ -2306,15 +2780,27 @@ void cJSON_readOptionOutput(Output* op, char* fccein){
 
     // save_nodiv is savemode.nodiv since 2026-10-13 (refused with the new form, as the flat gpu_* keys)
     if (cJSON_GetObjectItem(root,"save_nodiv")){
-        ccexRefusalPrint(stderr,"Error: save_nodiv is now savemode.nodiv (\"savemode\": {\"mode\": \"coherence\", \"nodiv\": false})\n");
+        ccexRefusalPrint(stderr,"Error: save_nodiv is now output.savemode.nodiv (\"output\": {\"savemode\": {\"mode\": \"coherence\", \"nodiv\": false}})\n");
         ccexRefuse();
     }
     Output_setSavemode(op,(char*)"coherence");
     op->save_nodiv = true;
-    if (cJSON* item = cJSON_GetObjectItem(root,"savemode")) cJSON_readSavemode(item,op,true);
+    cJSON* output = readBlockOrEmpty(root,"output");   // A65: savemode and outfile were top-level keys
+    if (cJSON* item = cJSON_GetObjectItem(output,"savemode")) cJSON_readSavemode(item,op,true);
+
+    // output.path (A65): the folder of the outputs, below -o DIR (main.cpp, resolveOutputName)
+    op->outpath[0] = '\0';
+    if (cJSON* item = cJSON_GetObjectItem(output,"path")){
+        if (!cJSON_IsString(item) || !item->valuestring || !item->valuestring[0] || strlen(item->valuestring) >= sizeof op->outpath){
+            ccexRefusalPrint(stderr,"Error: output.path must be a nonempty folder name (relative to the working directory, or "
+                           "absolute)\n");
+            ccexRefuse();
+        }
+        strcpy(op->outpath,item->valuestring);
+    }
 
     char* outfileDefault = NULL;
-    char* outfile = cJSON_ReadString(root,"outfile",true,outfileDefault);
+    char* outfile = cJSON_ReadString(output,"file",true,outfileDefault);
 	if (outfile != NULL){
 	    Output_allocOutfile(op);
     	Output_setOutfile(op,outfile);
@@ -2339,13 +2825,13 @@ void cJSON_readOptionOutput(Output* op, char* fccein){
 */
 void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
 
-    if (rank==0){
+    if (rank==0 && verbosity){
         printf("\n");
-        printMessage("Read Defect Options ...\n");
-        printMessage("  - Read values of main-key 'Defect' { state_file, axis_file, species }");
-        printMessage("    Defect.species[] : [ name, n_nuclear_spins, n_configurations, coordinate_frame, ( type : single value) ");
-        printMessage("                axis, types, spins, gyros, quadrupole_moments,    ( type : array ) ");
-        printMessage("                nuclear_positions, hyperfine, efg, zfs, detuning ]  ( type : [ axis, spname, array ] ) \n");
+        printf("    >> Read Defect Options\n\n");
+        printf("      - Read values of main-key 'Defect' { species }\n");
+        printf("        Defect.species[] : [ name, n_onsite_spins, n_axis_states, coordinate_frame, ( type : single value)\n");
+        printf("                    axis, types, spins, gyros, quadrupole_moments,    ( type : array )\n");
+        printf("                    nuclear_positions, hyperfine, efg, zfs, detuning ]  ( type : [ axis, spname, array ] )\n\n");
     }
 
     char* data = cJSON_ReadFccein(fccein);
@@ -2361,7 +2847,7 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
 
     int ndefect = 0;
 
-    // Defect is {"state_file", "axis_file", "species": [...]} (a list until A47; refuseOldInputKeys)
+    // Defect is {"species": [...]} (a list until A47; its axis and state files are the configuration's since A64)
     cJSON* defectBlock = readBlock(root,"Defect");
     cJSON* defectArray = defectBlock ? cJSON_GetObjectItem(defectBlock,"species") : NULL;
     if (defectArray && !cJSON_IsArray(defectArray)){
@@ -2390,8 +2876,8 @@ void cJSON_readOptionDefectArray(DefectArray* dfa, char* fccein){
         ////////////////////////////////////////////////////////////////////////
         // General information && Allocation
         ////////////////////////////////////////////////////////////////////////
-        int naddspin = cJSON_ReadInt(defect,(char*)"n_nuclear_spins",true,naddspinDefault);
-        int navaax = cJSON_ReadInt(defect,(char*)"n_configurations",true,navaaxDefault);
+        int naddspin = cJSON_ReadInt(defect,(char*)"n_onsite_spins",true,naddspinDefault);   // n_nuclear_spins until A65
+        int navaax = cJSON_ReadInt(defect,(char*)"n_axis_states",true,navaaxDefault);        // n_configurations until A65
         
         DefectArray_setDefect_idf_naddspin(dfa,idf,naddspin);
         DefectArray_setDefect_idf_navaax(dfa,idf,navaax+1); // 0th : main spin
@@ -2484,9 +2970,10 @@ char* cJSON_ReadFccein(char* fccein){
         ccexRefuse();
     }
 
-    // '#' and '!' start a comment to the end of the line, but only outside a JSON string: a key such as "#note" or a
-    // path such as "run#1" used to be cut at the '#' and the input refused or misread (2026-10-08). The text is read
-    // whole, so a line is no longer limited to 1023 characters either.
+    // '#', '!' and '//' start a comment to the end of the line, but only outside a JSON string: a key such as "#note" or
+    // a path such as "run#1" or "http://x" used to be cut at the '#' and the input refused or misread (2026-10-08). The
+    // text is read whole, so a line is no longer limited to 1023 characters either. '//' (2026-10-16) lets an input be
+    // a .jsonc file that vim and VS Code colour as JSON with comments.
     std::string text;
     char chunk[4096];
     size_t got;
@@ -2503,7 +2990,7 @@ char* cJSON_ReadFccein(char* fccein){
             if (escaped) escaped = false;
             else if (c == '\\') escaped = true;
             else if (c == '"') inString = false;
-        } else if (c == '#' || c == '!') {
+        } else if (c == '#' || c == '!' || (c == '/' && i + 1 < text.size() && text[i + 1] == '/')) {
             while (i < text.size() && text[i] != '\n') ++i;   // drop the comment, keep the newline
             if (i < text.size()) kept += '\n';
         } else {
@@ -2558,7 +3045,7 @@ char* cJSON_ReadFilePath(cJSON* root, char* key, bool _default, char* default_va
         }
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;
         }else{
             ccexRefusalPrint(stderr, "Error: %s is not found in the input file\n",name);
@@ -2607,7 +3094,7 @@ char** cJSON_ReadFilePath1d(int* length, cJSON* root, char* key, bool _default, 
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;
             
         }else{
@@ -2625,7 +3112,7 @@ char* cJSON_ReadString(cJSON* root, char* key, bool _default, char* default_valu
         return item->valuestring;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;
         }else{
             ccexRefusalPrint(stderr, "Error: %s is not found in the input file\n",name);
@@ -2660,7 +3147,7 @@ char** cJSON_ReadString1d(cJSON* root, char* key, bool _default, char** default_
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;
             
         }else{
@@ -2679,7 +3166,7 @@ int cJSON_ReadInt(cJSON* root, char* key, bool _default, int default_value){
         return integerValue(item, name);
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;
         }else{
             ccexRefusalPrint(stderr, "Error: %s is not found in the input file\n",name);
@@ -2717,7 +3204,7 @@ int* cJSON_ReadInt1d(cJSON* root, char* key, bool _default, int* default_value, 
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;
             
         }else{
@@ -2749,7 +3236,7 @@ double cJSON_ReadDouble(cJSON* root, char* key, bool _default, double default_va
         return finiteNumber(item, name, -1, -1, false);
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;    
         }else{
             ccexRefusalPrint(stderr, "Error: %s is not found in the input file\n",name);
@@ -2788,7 +3275,7 @@ double* cJSON_ReadDouble1d(cJSON* root, char* key, bool _default, double* defaul
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;
             
         }else{
@@ -2847,7 +3334,7 @@ double** cJSON_ReadDouble2d(cJSON* root, char* key, bool _default, double** defa
         return array;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             copyDouble2d(array,(const double**)default_value,row,col);
             return array;
             
@@ -2866,7 +3353,7 @@ float cJSON_ReadFloat(cJSON* root, char* key, bool _default, float default_value
         return finiteNumber(item, name, -1, -1, true);
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;    
         }else{
             ccexRefusalPrint(stderr, "Error: %s is not found in the input file\n",name);
@@ -2905,7 +3392,7 @@ float* cJSON_ReadFloat1d(cJSON* root, char* key, bool _default, float* default_v
         return array;
     }else{
         if(_default){
-            if (rank==0 && strcasecmp(name,"bfield")!=0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity && strcasecmp(name,"bfield")!=0){printf("        %s : use default value ..\n",name);}
             return default_value;
             
         }else{
@@ -2929,7 +3416,7 @@ bool cJSON_ReadBool(cJSON* root, char* key, bool _default, bool default_value){
         return item->valueint;
     }else{
         if(_default){
-            if (rank==0){printf("           %s : use default value .. \n",name);}
+            if (rank==0 && verbosity){printf("        %s : use default value ..\n",name);}
             return default_value;    
         }else{
             ccexRefusalPrint(stderr, "Error: %s is not found in the input file\n",name);
@@ -3311,7 +3798,7 @@ static void collectUnreadKeys(const cJSON* object, const std::string& shown, con
     for (const cJSON* c = object->child; c; c = c->next){
         if (!c->string) continue;
         const std::string key = lowerKey(c->string);
-        if (block.empty() && (key == "adaptive" || key == "refine")) continue;
+        if ((block == "cluster" && key == "adaptive") || (block.empty() && key == "refine")) continue;
         const std::string where = shown.empty() ? c->string : shown + "." + c->string;
         if (!lookedUpKeys().count(joinKey(block, key))){
             std::string best; size_t bestDistance = 3;
@@ -3320,7 +3807,7 @@ static void collectUnreadKeys(const cJSON* object, const std::string& shown, con
                     const size_t d = keyDistance(key, known);
                     if (d < bestDistance && !objectHasKey(object, known)){ bestDistance = d; best = known; }
                 }
-            if (!best.empty()) typos.push_back("\"" + where + "\" is not read; did you mean \"" + best
+            if (!best.empty()) typos.push_back("\"" + where + "\" is not read, did you mean \"" + best
                                                + "\"? (it is absent, so its default was used)");
             else unread.push_back(where);
             continue;

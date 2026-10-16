@@ -1,3 +1,7 @@
+/**
+ * @file cce_setup_small.cpp
+ * @brief The setup of a small cCCE cluster from the fixed-sweep Jacobi eigensystems.
+ */
 // A42: the setup of a cCCE cluster of bath dimension 2 or 4 from the small-cluster Jacobi (small_eigensolver.h), for the
 // scalar path (cceSetupSmallAlone, from calCoherenceCceInto) and the A30 window (cceSetupSmall with a group's results).
 // Both go through cceSetupSmall here, so a cluster's M, eigenvalues and start vectors are the same bits on either path.

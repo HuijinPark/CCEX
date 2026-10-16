@@ -1,4 +1,4 @@
-"""Automatic starts of --auto_conv ((internal notes), "자동 시작값", registered 2026-10-08): the
+"""Automatic starts of the automatic convergence ((internal notes), "자동 시작값", registered 2026-10-08): the
 configurations found from the bathfile pattern and split in a seeded order, and the first rbath, time window and rdip
 estimated from the bath files and the gyromagnetic ratios. Every value here is a start; the runner converges from it.
 """
@@ -36,7 +36,8 @@ def find_isotope_table(binary=None):
 def discover(pattern, root):
     """Configuration IDs k with an existing file for the bathfile pattern (literal {k} = a non-negative integer)."""
     if pattern.count("{k}") != 1 or "{k}" in str(Path(pattern).parent):
-        raise ValueError("configurations.bathfile must hold {k} once, in the file name, for the configurations to be found")
+        raise ValueError("configuration.bathfile must hold {k} once, in the file name, for the configurations to be found "
+                         "(or give configuration.k_range)")
     p = Path(pattern)
     folder = p.parent if p.is_absolute() else Path(root) / p.parent
     rx = re.compile(re.escape(p.name).replace(re.escape("{k}"), "(0|[1-9][0-9]*)") + r"\Z")

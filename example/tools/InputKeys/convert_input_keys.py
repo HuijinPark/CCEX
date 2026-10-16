@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Rewrite CCEX inputs written with the input keys before 2026-10-13 (A47) in the new keys.
+"""Rewrite CCEX inputs written with older input keys in the current ones: the names before 2026-10-13 (A47) and the
+places before 2026-10-15 (A64: the configuration block, with nstate and seed; one state or axis file per bath file;
+A65: the execution, cluster, output and frame blocks, n_onsite_spins and n_axis_states, the auto_convergence block's
+sampling).
 
     python3 convert_input_keys.py FILE...            rewrite each file in place and list what changed
     python3 convert_input_keys.py --check FILE...    list only; exit 1 when a file still has old keys
@@ -257,7 +260,7 @@ def strip_comments(text):
                 esc = True
             elif c == '"':
                 in_str = False
-        elif c in '#!':
+        elif c in '#!' or text.startswith('//', i):
             while i < len(text) and text[i] != '\n':
                 i += 1
             continue
@@ -374,10 +377,14 @@ class Converter:
         self.radii(R)
         self.renames(R)
         self.savemode(R, top)
+        self.single_keys(R, '')         # a renamed key beside its new name, before a block takes one of the two
+        self.configuration(R, top)
         self.blocks(R, top)
         self.qubit(R, top)
         self.hamiltonian(R, top)
         self.defect(R, top)
+        self.defect_files(R, top)
+        self.a65(R, top)
         self.single_keys(R, '')
         self.compact(R)
         return self.prefix + R.render() + self.suffix
@@ -428,6 +435,11 @@ class Converter:
             if len(inline) > 72:
                 continue
             ind = m.indent() or ''
+            # line breaks that followed a moved value (an input with the comma at the start of the next line) stay
+            # after the block written on one line, where the value stood
+            breaks = ''.join(x.tail for x in v.items if '\n' in x.tail and not x.tail.strip())
+            if breaks and not m.tail:
+                m.tail = breaks
             comments = [l.strip() for x in v.items for l in x.pre.split('\n') if l.strip()]
             if comments:
                 m.pre = m.pre[:len(m.pre) - len(ind)] + ''.join(ind + c + '\n' for c in comments) + ind
@@ -552,6 +564,149 @@ class Converter:
         R.insert(min(pos, len(R.items)), mem)
         R.dirty = True
         self.note('save_nodiv -> savemode {mode, nodiv}')
+
+    def configuration(self, R, top):
+        """A64 (2026-10-15): the bath configuration in one block, "configuration": {"gyrofile", "bathfile", "bath_shift",
+        "bath_state_file", "nstate", "seed"} (path and k_range are new keys; nothing to move into them)."""
+        self.move(R, top, 'configuration', [('gyrofile', 'gyrofile'), ('bathfile', 'bathfile'),
+                                            ('bath_shift', 'bath_shift'), ('bath_state_file', 'bath_state_file'),
+                                            ('nstate', 'nstate'), ('seed', 'seed')])
+        c = R.get('configuration')
+        if c is not None and isinstance(c.value, Obj):
+            self.per_bath_file(c.value, 'configuration.', 'bath_state_file')
+
+    def defect_files(self, R, top):
+        """A64: Defect.axis_file and Defect.state_file are the configuration's defect_axis_file and defect_state_file (the
+        Defect block keeps the species alone), one name per bath file."""
+        d = R.get('Defect')
+        if d is None or not isinstance(d.value, Obj):
+            return
+        D = d.value
+        found = [(old, new) for old, new in (('axis_file', 'defect_axis_file'), ('state_file', 'defect_state_file'))
+                 if D.get(old) is not None]
+        if not found:
+            return
+        C = self.child_block(R, top, 'configuration')
+        cind = self.indent_of(C, top)
+        for old, new in found:
+            _, m = D.take(old)
+            dind = self.indent_of(D, top)
+            if C.get(new) is not None:
+                raise ValueError(f'Defect.{old} beside configuration.{new}: keep one')
+            self.put(C, top, new, m, None, dind)
+            self.note(f'Defect.{old} -> configuration.{new}')
+            self.per_bath_file(C, 'configuration.', new)
+
+    def a65(self, R, top):
+        """A65 (2026-10-15): execution {backend, gpu_options, propagator, evolution, evolution_update, gcce_refinement,
+        column_evolution, profile}; cluster {mode, selection {add_subclusters, max_per_order}, pcce, bundle, adaptive
+        (with probe_memory_gb)}; output {file, savemode, cluster_contributions, cluster_only}; frame {rotation}, on when
+        given (an old block with "enabled" false or absent was off: removed); defect_axis_reference removed; the Defect
+        species' n_onsite_spins and n_axis_states; the auto_convergence block without launcher, its configurations
+        (without the file patterns, which go to the configuration and Defect blocks) as sampling."""
+        self.move(R, top, 'execution', [(k, k) for k in ('backend', 'gpu_options', 'propagator', 'evolution',
+                                                          'evolution_update', 'gcce_refinement', 'column_evolution',
+                                                          'profile')])
+        probe = R.get('probe_memory_gb')
+        if probe is not None and R.get('adaptive') is None:
+            R.drop('probe_memory_gb')
+            self.note('probe_memory_gb removed (it is read with an adaptive block only)')
+        self.move(R, top, 'cluster', [('cluster_mode', 'mode'), ('add_subclusters', ('selection', 'add_subclusters')),
+                                      ('max_clusters_per_order', ('selection', 'max_per_order')), ('pcce', 'pcce'),
+                                      ('bundle', 'bundle'), ('adaptive', 'adaptive')])
+        if R.get('probe_memory_gb') is not None:
+            c = R.get('cluster').value
+            a = c.get('adaptive').value
+            _, m = R.take('probe_memory_gb')
+            self.put(a, self.indent_of(c, top), 'probe_memory_gb', m, None, top)
+            self.note('probe_memory_gb -> cluster.adaptive.probe_memory_gb')
+        self.move(R, top, 'output', [('outfile', 'file'), ('savemode', 'savemode'),
+                                     ('cluster_contributions', 'cluster_contributions'), ('cluster_only', 'cluster_only')])
+        for name in ('coordinate_frame_rotation', 'bath_coordinate_rotation'):
+            m = R.get(name)
+            if m is None:
+                continue
+            v = plain(m.value)
+            if not isinstance(v, dict) or v.get('enabled', False) is not True:
+                R.drop(name)
+                self.note(f'{name} removed (the rotation was off; an absent frame.rotation is no rotation)')
+                continue
+            self.move(R, top, 'frame', [(name, 'rotation')])
+        if R.drop('defect_axis_reference') is not None:
+            self.note('defect_axis_reference removed (it only named the rotation\'s qubit axis in the log)')
+        d = R.get('Defect')
+        species = d.value.get('species') if d is not None and isinstance(d.value, Obj) else None
+        if species is not None and isinstance(species.value, Arr):
+            for n, item in enumerate(species.value.items):
+                e = item.value
+                if not isinstance(e, Obj):
+                    continue
+                for old, new in (('n_nuclear_spins', 'n_onsite_spins'), ('n_configurations', 'n_axis_states')):
+                    m = e.get(old)
+                    if m is not None:
+                        self.rename(m, new)
+                        e.dirty = True
+                        self.note(f'Defect.species[{n}].{old} -> {new}')
+        self.auto_convergence(R, top)
+
+    def auto_convergence(self, R, top):
+        """A65: launcher removed (the runs use the mpirun -n N main.out was started with); configurations -> sampling; its
+        file patterns go to the configuration block: bathfile -> bathfile, statefile -> bath_state_file, avaaxfile ->
+        defect_axis_file, exstatefile -> defect_state_file (lists; without k_range the tool finds the k that exist)."""
+        a = R.get('auto_convergence')
+        if a is None or not isinstance(a.value, Obj):
+            return
+        A = a.value
+        if A.drop('launcher') is not None:
+            self.note('auto_convergence.launcher removed (the runs use the mpirun -n N main.out was started with)')
+        c = A.get('configurations')
+        if c is None or not isinstance(c.value, Obj):
+            return
+        C = c.value
+        block = 'configuration'
+        for old, new in (('bathfile', 'bathfile'), ('statefile', 'bath_state_file'), ('avaaxfile', 'defect_axis_file'),
+                         ('exstatefile', 'defect_state_file')):
+            m = C.get(old)
+            if m is None:
+                continue
+            C.take(old)
+            B = self.child_block(R, top, block)
+            if B.get(new) is not None:
+                raise ValueError(f'auto_convergence.configurations.{old} beside {block}.{new}: keep one')
+            value = m.value if isinstance(m.value, Container) else Scalar('[' + m.value.render() + ']')
+            self.put(B, top, new, m, value, top)
+            self.note(f'auto_convergence.configurations.{old} -> {block}.{new}')
+        if C.items:                    # a line left blank by the keys taken out of the block's first line goes
+            first = C.items[0]
+            lines = first.pre.split('\n')
+            if len(lines) > 2 and lines[0] == '' and not lines[1].strip():
+                first.pre = '\n'.join([''] + lines[2:])
+                C.dirty = True
+        self.rename(c, 'sampling')
+        A.dirty = True
+        self.note('auto_convergence.configurations -> auto_convergence.sampling')
+
+    def bath_files(self):
+        c = self.root.get('configuration')
+        b = c.value.get('bathfile') if c is not None and isinstance(c.value, Obj) else None
+        v = plain(b.value) if b is not None else None
+        return len(v) if isinstance(v, list) else None
+
+    def per_bath_file(self, block, path, key):
+        """A64: bath_state_file, Defect.axis_file and Defect.state_file are lists of one name per bath file. A single name
+        becomes ["name"] with one bath file; with more, CCEX did not read it (the states and axes were drawn at random),
+        so it is removed."""
+        m = block.get(key)
+        if m is None or isinstance(m.value, Container):
+            return
+        n = self.bath_files()
+        if n is None or n == 1:
+            m.value = Scalar('[' + m.value.render() + ']')
+            block.dirty = True
+            self.note(f'{path}{key}: "name" -> ["name"] (one per bath file)')
+        else:
+            block.drop(key)
+            self.note(f'{path}{key} removed: with {n} bath files it was not read (drawn at random); give one per bath file')
 
     def move(self, R, top, block_key, pairs, position_keys=None, values=None):
         """Move R[old] to R[block_key][new] for (old, new) in pairs; returns the block (None if nothing moved)."""

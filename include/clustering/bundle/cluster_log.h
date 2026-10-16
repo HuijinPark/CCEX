@@ -1,3 +1,7 @@
+/**
+ * @file cluster_log.h
+ * @brief The complex logarithm of a cluster coherence, NaN for zero or non-finite values.
+ */
 #ifndef CCEX_CLUSTER_LOG_H
 #define CCEX_CLUSTER_LOG_H
 #include <algorithm>

@@ -1,3 +1,7 @@
+/**
+ * @file simulator_cce.cpp
+ * @brief The cCCE coherence of one cluster: Hamiltonians, eigensystems and time evolution.
+ */
 #include "../../include/calculation/simulator.h"
 #include "../../include/calculation/hamiltonian.h"
 #include <cmath>
@@ -542,6 +546,10 @@ void cceEvolve(Config* cnf, Pulse* pulse, MatrixXcd* result, CceWorkspace& ws){
             Eigen::RowVector2cd r0=rowStart, r, rn; Eigen::Vector2cd c0=colStart, c, cn, sc;
             if (recursive) evolveSingleState<true>(run,M2,Madj2,r0,c0,r,rn,c,cn,sc);
             else           evolveSingleState<false>(run,M2,Madj2,r0,c0,r,rn,c,cn,sc);
+        } else if (cnf->column_evolution && bdim >= cnf->column_evolution_min_dim){
+            // A62: the time points in blocks of matrix columns (simulator_cce_columns.cpp); on by default (execution.column_evolution)
+            cceEvolveColumns(es_up_Val,es_down_Val,sequence,sequence_indices,npulse,nstep,deltat,recursive,
+                             cnf->column_evolution_columns,result,ws);
         } else {
             ws.row.resize(bdim); ws.rowNext.resize(bdim); ws.col.resize(bdim); ws.colNext.resize(bdim); ws.scaled.resize(bdim);
             if (recursive) evolveSingleState<true>(run,M,Madj,rowStart,colStart,ws.row,ws.rowNext,ws.col,ws.colNext,ws.scaled);

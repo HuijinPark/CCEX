@@ -1,3 +1,7 @@
+/**
+ * @file cce_batch_window.cpp
+ * @brief The window of small cCCE clusters that calculate() hands to the batched CPU kernel.
+ */
 // A30: the window of small cCCE clusters calculate() hands to the batched kernel (cce_batch_window.h).
 #include "../../include/calculation/cce_batch_window.h"
 #include "../../include/calculation/small_hamiltonian.h"
@@ -134,8 +138,8 @@ bool ccebatchUsable(const char** why){
         }
         state = ok;
         if (kernel && !ok && rank == 0)
-            printf("[cpu-batch] off: the batched small-cluster kernel (A30, %s) does not reproduce the scalar path in this "
-                   "build (%s) - every cluster goes the scalar way (A51 self-check)\n", ccebatch::variant(), reason);
+            printf("[cpu-batch] off: the batched small-cluster kernel (%s) does not reproduce the scalar path in this "
+                   "build (%s) - every cluster goes the scalar way (self-check)\n", ccebatch::variant(), reason);
     }
     if (why) *why = reason;
     return state == 1;
@@ -148,7 +152,7 @@ bool ccebatchRunTakes(QubitArray* qa, Config* cnf, Pulse* pls, bool isGCCE, cceb
     if (getenv("CCEX_SMALL_CLUSTER_DUMP")){ *why = "CCEX_SMALL_CLUSTER_DUMP is set"; return false; }
     if (getenv("CCEX_CPU_BATCH") && !strcmp(getenv("CCEX_CPU_BATCH"),"0")){ *why = "CCEX_CPU_BATCH=0"; return false; }
     if (QubitArray_getNqubit(qa) != 1 || strcasecmp(Config_getQuantity(cnf),"coherence")){ *why = "not one qubit with quantity coherence"; return false; }
-    if (!strcasecmp(cnf->backend,"cuda")){ *why = "backend cuda"; return false; }   // every cluster on the card
+    if (!strcasecmp(cnf->backend,"cuda")){ *why = "execution.backend cuda"; return false; }   // every cluster on the card
     if (!ccebatchPlan(cnf,pls,plan)){
         *why = Config_getNstate(cnf) == 0 ? "an ensemble other than the Hahn echo" : "more pulse intervals than the kernel has";
         return false;
@@ -157,7 +161,7 @@ bool ccebatchRunTakes(QubitArray* qa, Config* cnf, Pulse* pls, bool isGCCE, cceb
         const int d = k == 0 ? 2 : 4;
         dimOk[k] = ccebatch::covers(plan,d) && !sparsePropagatorFor(cnf,d) && !computeUseCuda(cnf,d);
     }
-    if (!dimOk[0] && !dimOk[1]){ *why = "its clusters of bath dimension 2 and 4 go another way (propagator sparse, the CUDA cluster path)"; return false; }
+    if (!dimOk[0] && !dimOk[1]){ *why = "its clusters of bath dimension 2 and 4 go another way (execution.propagator sparse, the CUDA cluster path)"; return false; }
     if (!ccebatchUsable(why)){ dimOk[0] = dimOk[1] = false; return false; }
     return true;
 }

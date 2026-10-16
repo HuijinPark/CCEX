@@ -1,3 +1,7 @@
+/**
+ * @file rdip_ladder.h
+ * @brief The rdip ladder: the coherence of every smaller rdip assembled from one order-2 run (input key rdip_ladder).
+ */
 #ifndef CCEX_AUTO_CONVERGENCE_RDIP_LADDER_H
 #define CCEX_AUTO_CONVERGENCE_RDIP_LADDER_H
 // rdip ladder ((internal notes)): one order-2 run (cCCE, gCCE or pCCE) also assembles the product of
@@ -68,7 +72,7 @@ struct Ladder {
         if(!on)return;
         if(n==units.size){
             const int u=units.unit(cl[0]);
-            if(power!=1-deg[K][u])refuse("found a single-unit power that is not 1 - (pairs of the unit); the cluster set is not the plain rdip graph");
+            if(power!=1-deg[K][u])refuse("found a single-unit power that is not 1 - (pairs of the unit), the cluster set is not the plain rdip graph");
             for(int k=0;k<K;++k){
                 const int p=1-deg[k][u];
                 if(p==0)continue;

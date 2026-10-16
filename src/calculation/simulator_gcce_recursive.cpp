@@ -1,3 +1,7 @@
+/**
+ * @file simulator_gcce_recursive.cpp
+ * @brief The gCCE evolution = matrix propagator with evolution_update = recursive.
+ */
 #include "../../include/calculation/simulator.h"
 #include "../../include/calculation/gpu/eigen_refinement.h"
 

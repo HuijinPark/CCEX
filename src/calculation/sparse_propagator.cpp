@@ -1,3 +1,7 @@
+/**
+ * @file sparse_propagator.cpp
+ * @brief propagator = sparse: the sparse cluster Hamiltonian and the Krylov expansion of exp(-i H tau).
+ */
 #include "../../include/calculation/sparse_propagator.h"
 #include "../../include/calculation/gpu/compute_backend.h"
 #include "../../include/calculation/small_hamiltonian.h"
@@ -127,7 +131,7 @@ namespace {
 void checkHamiltonian(const CsrMatrix& H, const char* what){
     double asym, scale;
     if (!csrFiniteHermitian(H, asym, scale)){
-        fprintf(stderr,"Error : propagator=sparse : the %s Hamiltonian (dim %ld) is not finite and Hermitian "
+        fprintf(stderr,"Error : execution.propagator=sparse : the %s Hamiltonian (dim %ld) is not finite and Hermitian "
                        "(max|H-H^dag| = %.3e, max|H| = %.3e)\n", what, H.n, asym, scale);
         ccexFatal();
     }
@@ -229,7 +233,7 @@ void krylovExpv(const CsrMatrix& H, double t, Eigen::VectorXcd& v, double tol, K
             stats.rejected++;
             tau *= std::min(0.9, std::max(0.1, 0.9 * std::pow(allowed/err, 1.0/k)));
             if (tau < total * 1e-13){
-                fprintf(stderr,"Error : propagator=sparse : the Krylov expansion does not converge (dim %ld, t = %.6e, "
+                fprintf(stderr,"Error : execution.propagator=sparse : the Krylov expansion does not converge (dim %ld, t = %.6e, "
                                "tol = %.3e, ||H||_inf = %.6e)\n", n, t, tol, H.normInf);
                 ccexFatal();
             }

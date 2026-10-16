@@ -20,14 +20,19 @@ cd "$W"
 GAMMA=$(grep -o '"13C", 0.5f, [0-9.]*' "$REPO/src/input/isotope_table.cpp" | awk '{print $3}')
 printf '13C 0.5 %s\n' "$GAMMA" > inputfiles/gyro_table
 python3 - <<'PY'
-import json, re
+import json, re; from input_layout import flat, nest
 src = open("inputfiles/ccein_nstate0.json").read()
-j = json.loads(re.sub(r"(?m)^\s*#.*$", "", src))
+j = flat(json.loads(re.sub(r"(?m)^\s*#.*$", "", src)))
 def write(name, **kw):
     k = dict(j, **kw)
+    conf = dict(j["configuration"])                  # gyrofile and bathfile are the configuration block's (A64)
+    for key in ("gyrofile", "bathfile"):
+        if key in kw:
+            conf[key] = k.pop(key)
+    k["configuration"] = conf
     for key in [x for x, v in kw.items() if v is None]:
-        k.pop(key)
-    open(name, "w").write(json.dumps(k, indent=1))
+        (conf if key in ("gyrofile", "bathfile") else k).pop(key)
+    open(name, "w").write(json.dumps(nest(k), indent=1))
 lines = open("inputfiles/bath_Diamond_NV_natab_1").read().splitlines()
 open("inputfiles/bath_15N", "w").write("\n".join([lines[0]] + [l.replace("13C", "15N") if i % 7 == 0 else l
                                                              for i, l in enumerate(lines[1:])]) + "\n")

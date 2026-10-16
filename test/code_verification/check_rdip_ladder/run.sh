@@ -20,6 +20,7 @@
 # ---------------------------------------------------------------------------
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$HERE/../../.." && pwd)"
+export PYTHONPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)${PYTHONPATH:+:$PYTHONPATH}"   # input_layout.py (A64/A65)
 # One run at a time per folder: a second run would delete the first one's work files (D29; review 20261008-003400 R3).
 if [ "${CCEX_RUN_LOCK:-}" != "$HERE" ]; then
     exec 9>"$HERE/.run.lock"
@@ -32,16 +33,16 @@ BIN="${CCEX_BIN:-$REPO/bin/main.out}"; MPIRUN="${CCEX_MPI:-mpirun}"
 CASES="$REPO/test/code_verification/check_numerics/cases"
 WORK="$HERE/_work"; rm -rf "${WORK:?}"; mkdir -p "$WORK"
 python3 - "$CASES" "$WORK" <<'PY'
-import json, os, sys
+import json, os, sys; from input_layout import flat, nest
 cases, work = sys.argv[1:]
 P1, P1ZFS, C13, HBN = [200, 300, 450], [100, 200, 300], [4, 6, 8], [3, 5, 6.5]
-ENS = dict(nstate=0, bath_state_file=None)                     # gCCE ensemble: the default evolution is then matrix
+ENS = dict(configuration=dict(nstate=0, bath_state_file=None))   # gCCE ensemble: the default evolution is then matrix
 PCCE = dict(method='cCCE', cluster_mode='pcce', pcce={'partition_size': 2})
 # name: (check_numerics case, changes, rungs)
 plan = {'p1_cce2_single': ('p1_cce2_single', {}, P1), 'natab_cce2_hahn': ('natab_cce2_hahn', {}, C13),
         'natab_gcce2_ensemble': ('natab_gcce2_hahn', {}, C13),
-        'natab_gcce2_vector': ('natab_gcce2_hahn', dict(nstate=2), C13),
-        'natab_gcce2_matrix': ('natab_gcce2_hahn', dict(nstate=2, evolution='matrix'), C13),
+        'natab_gcce2_vector': ('natab_gcce2_hahn', dict(configuration=dict(nstate=2)), C13),
+        'natab_gcce2_matrix': ('natab_gcce2_hahn', dict(configuration=dict(nstate=2), evolution='matrix'), C13),
         'natab_pcce2_centers': ('natab_cce2_hahn', dict(PCCE, pcce={'partition_size': 2, 'connections': 'centers'}), C13),
         'natab_pcce2_spins': ('natab_cce2_hahn', dict(PCCE, pcce={'partition_size': 2, 'connections': 'spins'}), C13),
         'hbn_gcce2_ensemble': ('hbn_gcce2_oh', ENS, HBN),
@@ -65,16 +66,18 @@ if part:
             if (heavy.index(m) if m in heavy else light.index(m)) % n == k - 1}
 runs = []
 for name, (case, change, rungs) in plan.items():
-    c = json.load(open(f'{cases}/{case}/ccein.json'))
+    c = flat(json.load(open(f'{cases}/{case}/ccein.json')))
     def absolute(block):     # the case's relative paths, in the blocks too (Qubit.file, Defect.state_file, ...; A47)
         for k, v in list(block.items()):
             if isinstance(v, str) and v.startswith('../'): block[k] = os.path.normpath(f'{cases}/{case}/{v}')
             elif isinstance(v, dict): absolute(v)
+            elif isinstance(v, list) and all(isinstance(x, str) for x in v):     # a list of file names (A64), bathfile too
+                block[k] = [os.path.normpath(f'{cases}/{case}/{x}') if x.startswith('../') else x for x in v]
     absolute(c)
-    c['bathfile'] = [os.path.normpath(f'{cases}/{case}/{x}') for x in c['bathfile']]
     for k, v in change.items():
         if v is None: c.pop(k, None)
-        elif isinstance(v, dict) and isinstance(c.get(k), dict): c[k] = dict(c[k], **v)    # a block: the keys changed
+        elif isinstance(v, dict) and isinstance(c.get(k), dict):    # a block: the keys changed, None removes one
+            c[k] = {x: y for x, y in dict(c[k], **v).items() if y is not None}
         else: c[k] = v
     if os.environ.get('CCEX_QUICK'):     # CI: what is checked (a rung = the separate run) holds at any size; the same cases, smaller
         c['nstep'] = min(int(c.get('nstep', 30)), 30)
@@ -87,7 +90,7 @@ for name, (case, change, rungs) in plan.items():
     jobs.update({f'sep{r:g}': dict(c, rdip=r) for r in rungs})
     for job, cfg in jobs.items():
         cfg['outfile'] = f'{d}/{job}'
-        json.dump(cfg, open(f'{d}/{job}.json', 'w'), indent=1); runs.append(f'{d} {job}')
+        json.dump(nest(cfg), open(f'{d}/{job}.json', 'w'), indent=1); runs.append(f'{d} {job}')
     # refusals: order 3, rung >= rdip, decreasing rungs, savemode cluster_coherence (cCCE); quantity dm (gCCE); pCCE order 3
     bad = {}
     if case == name:
@@ -98,7 +101,7 @@ for name, (case, change, rungs) in plan.items():
     elif name == 'natab_pcce2_centers':
         bad = {'bad_order3': dict(c, order=3, max_clusters_per_order=[0, 0, 0, 0], rdip_ladder=rungs[:1])}
     for job, cfg in bad.items():
-        cfg['outfile'] = f'{d}/{job}'; json.dump(cfg, open(f'{d}/{job}.json', 'w'), indent=1)
+        cfg['outfile'] = f'{d}/{job}'; json.dump(nest(cfg), open(f'{d}/{job}.json', 'w'), indent=1)
 open(f'{work}/runs', 'w').write('\n'.join(runs) + '\n')
 PY
 fail=0

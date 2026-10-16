@@ -1,3 +1,7 @@
+/**
+ * @file cluster_pairs.cpp
+ * @brief The order-2 cluster list of CCE/gCCE made without the hash, shared out between the ranks.
+ */
 #include "../../include/clustering/cluster_pairs.h"
 #include "../../include/common/memory.h"
 
@@ -49,10 +53,10 @@ void sortLikeHash(std::vector<int>& order, const std::vector<float>& strength){
 
 // updateNk's report (cluster_hash.cpp), printed at the same three places.
 void reportNk(const int* nk, int order){
-    if (rank==0){
-        printf("\t\t update \"Nk\"\n\t\t ");
+    if (rank==0 && verbosity){
+        printf("        update \"Nk\"\n        ");
         for (int i=0; i<=order; i++){
-            printf("%d:%d  ",i,nk[i]);
+            printf("%s%d:%d",i ? "  " : "",i,nk[i]);
         }
         printf("\n\n");
     }
@@ -68,7 +72,7 @@ void clusterizePairs(Cluster* cls, BathArray* ba, float rdip, float rdipcut,
     int* nks = Cluster_getNk(cls);
 
     // makeHashClusterO1 + updateNk: one single per spin.
-    if (rank==0){printf("\n\t CCE1 ... \n");}
+    if (rank==0){printf("\n      CCE1 ...\n");}
     if (nspin > 0) nks[1] = nspin;
     reportNk(nks,order);
 
@@ -78,7 +82,7 @@ void clusterizePairs(Cluster* cls, BathArray* ba, float rdip, float rdipcut,
     // whole list in that same order on every rank. Connection and strength are the expressions of
     // BathArray_connectivity; the tensor is now made only for connected pairs, the only ones whose
     // strength is read at order 2.
-    if (rank==0){printf("\n\t CCE2 ... \n");}
+    if (rank==0){printf("\n      CCE2 ...\n");}
     const long long candidates = (long long)nspin*(nspin-1)/2;
     int first = nspin, last = nspin;
     {

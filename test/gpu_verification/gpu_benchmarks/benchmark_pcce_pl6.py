@@ -11,7 +11,7 @@ import re
 
 import numpy as np
 
-from benchmark import REPO, values, get
+from benchmark import REPO, values, get, put
 from check_pcce import run_case
 
 _keys = importlib.util.spec_from_file_location('convert_input_keys', REPO/'example/tools/InputKeys/convert_input_keys.py')
@@ -91,9 +91,12 @@ def main():
             historical = args.package/'results'/grid/name
             old_log = (historical/'process_1').read_text()
             seed = int(re.search(r'^\s*seed\s*:\s*(\d+)', old_log, re.M)[1])
-            config['gyrofile'] = str((source.parent/config['gyrofile']).resolve())
-            config['bathfile'] = [str((source.parent/p).resolve()) for p in config['bathfile']]
-            config.update(seed=seed, profile=True, savemode='coherence', gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=64))
+            bath = config['configuration']   # A64
+            bath['gyrofile'] = str((source.parent/bath['gyrofile']).resolve())
+            bath['bathfile'] = [str((source.parent/p).resolve()) for p in bath['bathfile']]
+            bath['seed'] = seed
+            config = put(config, {'profile': True, 'savemode': 'coherence',
+                                  'gpu_options': dict(get(config, 'gpu_options', {}), evolution_batch_steps=64)})
             directory = args.output/source.stem
             old = directory/'archived'
             old.mkdir(parents=True)

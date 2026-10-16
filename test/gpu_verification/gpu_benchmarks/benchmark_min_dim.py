@@ -20,7 +20,7 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'check_gpu'))
-from benchmark import INPUTS, REPO, compare, parse_profiles, FILE_KEYS, get, put
+from benchmark import INPUTS, REPO, compare, parse_profiles, absolute_paths, get, put
 
 # name, method folder, nstate file, sites, npulse, nstep, ranks
 CONDITIONS = [
@@ -41,17 +41,15 @@ def prepare(method, nstate, sites, npulse, nstep, directory):
     """the input, cut to the nearest sites, with every path absolute"""
     source = INPUTS/f'Diamond_NV_P1_10ppm_{method}'/'inputfiles'/f'ccein_nstate{nstate}.json'
     config = json.loads(source.read_text())
-    for key in FILE_KEYS:
-        if get(config, key): config = put(config, {key: str((source.parent.parent/get(config, key)).resolve())})
-    config['bathfile'] = [str((source.parent.parent/p).resolve()) for p in config['bathfile']]
+    config = absolute_paths(config, source.parent.parent)
     origin = ([float(v) for v in Path(config['Qubit']['file']).read_text().split()[:3]] if get(config, 'Qubit.file')
               else config['Qubit']['qubit'][0]['xyz'])
-    rows = Path(config['bathfile'][0]).read_text().splitlines()[1:]
+    rows = Path(config['configuration']['bathfile'][0]).read_text().splitlines()[1:]
     near = sorted(sorted(enumerate(rows), key=lambda r: math.dist([float(v) for v in r[1].split()[:3]], origin))[:sites])
     directory.mkdir(parents=True, exist_ok=False)
     (directory/'bath').write_text(f'{sites+1}.0 0 0 0\n'+'\n'.join(r for _, r in near)+'\n')
     radius = max(math.dist([float(v) for v in r.split()[:3]], origin) for _, r in near)+1
-    config = put(config, {'bathfile': [str(directory/'bath')], 'order': sites-1, 'rbath': radius, 'rdip': 2*radius,
+    config = put(config, {'configuration.bathfile': [str(directory/'bath')], 'order': sites-1, 'rbath': radius, 'rdip': 2*radius,
                           'pulse.count': npulse, 'nstep': nstep, 'profile': True, 'savemode': 'coherence',
                           'max_clusters_per_order': None})
     return config
@@ -70,7 +68,7 @@ def check_backends(directory, backend, seen):
 
 def run(binary, config, directory, backend, ranks, mpirun, timeout):
     directory.mkdir(parents=True, exist_ok=False)
-    config = dict(config, backend=backend, outfile=str(directory/'coherence'))
+    config = put(config, {'backend': backend, 'outfile': str(directory/'coherence')})   # execution.backend, output.file (A65)
     (directory/'input.json').write_text(json.dumps(config, indent=2)+'\n')
     command = [mpirun, '-n', str(ranks), str(binary), '-f', str(directory/'input.json')]
     start = time.perf_counter()

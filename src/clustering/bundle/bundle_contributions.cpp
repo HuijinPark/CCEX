@@ -1,3 +1,7 @@
+/**
+ * @file bundle_contributions.cpp
+ * @brief Bundle clustering: the per-cluster contributions diagnostic.
+ */
 #include "../../../include/clustering/bundle/bundle_contributions.h"
 #include "../../../include/clustering/bundle/cluster_log.h"
 #include "../../../include/clustering/bundle/bundle_cluster.h"
@@ -65,7 +69,7 @@ void prepareContributionClusters(const Config* c,Cluster* cls,BathArray* ba) {
         auto add=[&](const Sites& s,int power){
             if(!family.count(s)) {
                 bytes+=rowBytes(c,s.size());
-                if(bytes>cap)throw std::runtime_error("raw table exceeds cluster_contributions.max_mb before propagation");
+                if(bytes>cap)throw std::runtime_error("raw table exceeds output.cluster_contributions.max_mb before propagation");
                 family.emplace(s,power);
             }
         };
@@ -77,7 +81,7 @@ void prepareContributionClusters(const Config* c,Cluster* cls,BathArray* ba) {
         for(const auto& entry:production) {
             const auto ids=owners(entry.first,gs,own);
             subsets(ids,[&](const Sites& sub){
-                if(++work>size_t(c->expansion_max_work))throw std::runtime_error("diagnostic subset traversal exceeds bundle.max_work");
+                if(++work>size_t(c->expansion_max_work))throw std::runtime_error("diagnostic subset traversal exceeds cluster.bundle.max_work");
                 Sites s;for(int g:sub)s.insert(s.end(),gs[g].begin(),gs[g].end());
                 std::sort(s.begin(),s.end());add(s,0);
             });

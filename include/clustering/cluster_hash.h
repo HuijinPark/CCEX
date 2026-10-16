@@ -1,3 +1,7 @@
+/**
+ * @file cluster_hash.h
+ * @brief The hash-based search for the clusters of standard CCE.
+ */
 #ifndef __CCEX_CLUSTER_HASH_H_
 #define __CCEX_CLUSTER_HASH_H_
 

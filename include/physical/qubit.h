@@ -1,3 +1,7 @@
+/**
+ * @file qubit.h
+ * @brief The central qubits (Qubit, QubitArray), their couplings and states.
+ */
 #ifndef __CCEX_QUBIT_H_
 #define __CCEX_QUBIT_H_
 
@@ -6,7 +10,7 @@
 
 /**
  * @struct Qubit
- * @brief Qubit structure contains each qubit's information
+ * @brief One central qubit: its name, spin, gyromagnetic ratio, position, detuning and the two levels alpha and beta.
  * @note When you make this structure, 
  *       the following action would be done automatically.
  *       (1) alpha, beta value would be allocated
@@ -57,7 +61,7 @@ typedef struct {
 
     /**
      * @brief The position of a qubit (Unit : angstrom)
-     * @details Read from Qubit.qubit[i].xyz, or from the qubitfile (no default value)
+     * @details Read from Qubit.qubit[i].xyz, or from the file of Qubit.file (no default value)
      * @note Unit in the input file : angstrom
     */
     double xyz[3];
@@ -100,7 +104,7 @@ typedef struct {
 
 /**
  * @struct QubitArray
- * @brief QubitArray include information of all qubits
+ * @brief All central qubits of the run, their mutual couplings and the initial qubit state.
  * @todo Check if the psia, psib, psi0, rho0 is normalied.
  * @details Each parameter is read from the input file or options.
  *          * _parameter : Only use during reading input file and then free
@@ -128,7 +132,7 @@ typedef struct {
     // QubitArray
     int* _alphaidx;      /**< Eigen state alpha index (default : NULL)             */
     int* _betaidx;       /**< Eigen state beta index (default : NULL)              */
-    std::vector<char> _alphaGiven;  /**< per qubit: alphams written in the Qubit block (D43; review b467fe R1)  */
+    std::vector<char> _alphaGiven;  /**< per qubit: alphams written in the Qubit block                          */
     std::vector<char> _betaGiven;   /**< per qubit: betams written in the Qubit block                         */
     /*-----------------------------------------------------------------------------*/
     /* Use during simulation                                                       */

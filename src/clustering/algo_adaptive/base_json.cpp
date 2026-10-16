@@ -1,3 +1,7 @@
+/**
+ * @file base_json.cpp
+ * @brief Adaptive refinement: the JSON value, reader and writer.
+ */
 // JSON as the refinement reads and writes it: the value tree, the reader, the writer,
 // the input-file reader, and the text of floats and numbers.
 #include "base_json.h"
@@ -60,6 +64,16 @@ const Value* Value::find(const std::string& key) const {
     expect(Kind::Object, "dict");
     auto found = index_.find(key);
     return found == index_.end() ? nullptr : &items_[found->second];
+}
+
+std::string key_of(const Value& object, const std::string& key) {
+    if (object.find(key) != nullptr)
+        return key;
+    const std::string wanted = lowered(key);
+    for (const std::string& given : object.keys())
+        if (lowered(given) == wanted)
+            return given;
+    return key;
 }
 
 const Value& Value::at(const std::string& key) const {
@@ -1072,17 +1086,26 @@ Value read_config(const std::string& text) {
     return read_json(text, [](long long, const std::string&) {});
 }
 
+// The comment rule of the CCEX input reader (cJSON_ReadFccein, src/input/option.cpp): '#', '!' and '//' start a
+// comment to the end of the line, outside a JSON string only (2026-10-16, with '//' for .jsonc inputs).
 std::string without_comments(const std::string& text) {
     std::string out;
     out.reserve(text.size());
-    std::size_t at = 0;
-    while (at < text.size()) {
-        std::size_t end = text.find('\n', at);
-        if (end == std::string::npos) end = text.size();
-        const std::size_t cut = text.find_first_of("!#", at);
-        out.append(text, at, (cut != std::string::npos && cut < end ? cut : end) - at);
-        if (end < text.size()) out.push_back('\n');
-        at = end + 1;
+    bool in_string = false, escaped = false;
+    for (std::size_t i = 0; i < text.size(); ++i) {
+        const char c = text[i];
+        if (in_string) {
+            out.push_back(c);
+            if (escaped) escaped = false;
+            else if (c == '\\') escaped = true;
+            else if (c == '"') in_string = false;
+        } else if (c == '#' || c == '!' || (c == '/' && i + 1 < text.size() && text[i + 1] == '/')) {
+            while (i < text.size() && text[i] != '\n') ++i;
+            if (i < text.size()) out.push_back('\n');
+        } else {
+            if (c == '"') in_string = true;
+            out.push_back(c);
+        }
     }
     return out;
 }

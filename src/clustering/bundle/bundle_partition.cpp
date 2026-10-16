@@ -1,3 +1,7 @@
+/**
+ * @file bundle_partition.cpp
+ * @brief Bundle clustering: the partition of the sites into bundles.
+ */
 #include "../../../include/clustering/bundle/bundle_partition.h"
 #include "../../../include/clustering/bundle/bundle_text.h"
 #include <algorithm>
@@ -27,7 +31,7 @@ AdaptivePlan makeAdaptivePlan(const std::vector<int>& dims,std::vector<AdaptiveE
     std::vector<std::set<int>> neighbors(n);
     std::set<std::pair<int,int>> unique;
     for(int d:dims) require(d>0 && d<=bundle_cap,
-        "an indivisible site exceeds bundle.max_dim");
+        "an indivisible site exceeds cluster.bundle.max_dim");
     for(auto& e:edges) {
         if(e.a>e.b) std::swap(e.a,e.b);
         require(e.a>=0 && e.a<e.b && e.b<n,"invalid adaptive edge indices");
@@ -91,7 +95,7 @@ AdaptivePlan makeAdaptiveAutoPlan(const std::vector<int>& dims,std::vector<Adapt
     require(std::isfinite(duration) && duration>=0,"adaptive auto duration must be finite and nonnegative");
     require(std::isfinite(budget) && budget>=0,"adaptive auto connection budget must be finite and nonnegative");
     require(dims.size()<size_t(INT_MAX),"too many adaptive sites");
-    for(int d:dims)require(d>0 && d<=bundleCap,"an indivisible site exceeds bundle.max_dim");
+    for(int d:dims)require(d>0 && d<=bundleCap,"an indivisible site exceeds cluster.bundle.max_dim");
     const int n=int(dims.size());
     struct Link { long double strength=0; bool allowed=false; };
     std::vector<std::map<int,Link>> graph(n);
@@ -169,9 +173,9 @@ AdaptivePlan makeAdaptiveAutoPlan(const std::vector<int>& dims,std::vector<Adapt
         message<<"adaptive auto connection budget exceeded by mandatory omissions: score="
                <<plan.omitted_strength*duration<<" budget="<<budget;
         if(order==1)
-            message<<"; order 1 omits every remaining inter-bundle link: permit larger bundles/eligible merges, increase bundle order, or explicitly increase the budget";
+            message<<", order 1 omits every remaining inter-bundle link: permit larger bundles/eligible merges, increase bundle order, or explicitly increase the budget";
         else
-            message<<"; enlarge/remove rdip, lower rdipcut, adjust the bundle cap or bundle order, or explicitly increase the budget";
+            message<<", enlarge/remove rdip, lower rdipcut, adjust the bundle cap or bundle order, or explicitly increase the budget";
         throw std::runtime_error(message.str());
     }
     // For this fixed partition, dropping weakest pairs first minimizes the

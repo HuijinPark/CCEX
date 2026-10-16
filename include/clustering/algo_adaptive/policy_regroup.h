@@ -1,3 +1,7 @@
+/**
+ * @file policy_regroup.h
+ * @brief Adaptive refinement: the regroup option of merge, which regroups bundles where the expansion gives |L| > 1.
+ */
 // Method D of (internal notes), an option of the merge policy
 // (--regroup, "regroup": true in the Adaptive block): where the bundle expansion gives
 // |L| > 1, find the bundle pair that drives it and regroup the bundles around it. With

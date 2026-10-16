@@ -14,42 +14,26 @@ time:
 
 - the coherence function `L(t)` of the qubit under the pulse sequence, or with
   gCCE its density matrix (`quantity`);
-- by conventional CCE (cCCE) or generalized CCE (gCCE) (`method`), with partition CCE (pCCE), bundle
-  clustering and the disjoint-cluster and inter-bath variants dsj, itb and dsjitb (`cluster_mode`);
+- by conventional CCE (cCCE) or generalized CCE (gCCE), or their master-equation forms meCCE and megCCE
+  (`method`), with partition CCE (pCCE), bundle
+  clustering and the disjoint-cluster and inter-bath variants dsj, itb and dsjitb (`cluster.mode`);
 - for a Hahn echo, a Ramsey experiment, CPMG (`pulse.count`) or any sequence written
-  out pulse by pulse (`sequence`);
+  out pulse by pulse (`pulse.sequence`), with DEER pulses on the bath (`pulse.bath`);
 - for one bath configuration or an ensemble of them, and for electron-spin baths
-  with sampled bath states (`nstate`).
+  with sampled bath states (`configuration.nstate`).
 
 Baths can be nuclear spins with point-dipole or DFT tensors (hyperfine and
 quadrupole), electron-spin defects such as P1 centres with their own on-site
 spins and axes, or both. Beyond the standard clustering by order and distance
-CCEX has bundle clustering (`cluster_mode` bundle, `bundle.max_dim`) and an adaptive
-refinement of the clusters (the `adaptive` block), a CUDA backend for the
-cluster propagation (`backend`), and a coordinate frame rotation that lets the
-bath file stay in the crystal frame (`coordinate_frame_rotation`).
+CCEX has bundle clustering (`cluster.mode` bundle, `cluster.bundle.max_dim`) and an adaptive
+refinement of the clusters (the `cluster.adaptive` block), a CUDA backend for the
+cluster propagation (`execution.backend`), and a coordinate frame rotation that lets the
+bath file stay in the crystal frame (`frame.rotation`).
 
 ## Building
 
-```
-cmake -B build && cmake --build build -j 8      # any machine: finds the MPI wrapper and, if there is one, nvcc
-bash do_compile.sh <preset>                     # the group's machines: wsl-gnu, wsl-icpx, idm4, gpu, nurion, mac (or generic)
-```
-
-`do_compile.sh` writes `bin/main.out` and, where there is CUDA, `bin/main_gpu.out` for
-`backend` cuda or auto; the CMake line writes the same two files under `build/bin/`
-(pass `-DCCEX_BIN_DIR=$PWD/bin` to put them in `bin/` instead). The build needs a C++17 compiler behind an MPI wrapper
-and, for the GPU binary, the CUDA toolkit. Eigen, uthash and SQLite are
-bundled in `external/`. Intel MKL is linked when the build finds it (`$MKLROOT` from setvars.sh or the intel
-module; the build prints `[build] MKL on/off`, the run log's header too): it takes the large cCCE/gCCE clusters
-(zgemm in the recursive path of the cCCE ensemble Hahn echo from bath dimension 21; zheevd from dimension 63, the bath
-dimension for cCCE and the whole qubit × bath dimension for gCCE), which helps runs whose time is in such clusters (h-BN: 0.72–0.88 of
-the time on idm; P1 unchanged); the curves then differ in the last digits (up to 9e-8 at late times of h-BN gCCE).
-`CCEX_BLAS=off bash do_compile.sh <preset>` (CMake `-DCCEX_BLAS=OFF`) builds without it. `CMakeLists.txt` takes
-`-DCCEX_CUDA=OFF`, `-DCMAKE_CUDA_ARCHITECTURES=<cc>` and
-`-DMPI_CXX_COMPILER=<wrapper>`; `do_compile.sh` loads the modules of the
-group's machines itself, and its `generic` preset takes `CXX`, `CUDA_HOME` and
-`CUDA_ARCH` from the environment.
+`bash do_compile.sh <preset>` or `cmake -B build && cmake --build build -j 8`; the presets, what is needed and the
+options are in [Getting started](GettingStarted.md#Building).
 
 ## Running
 
@@ -57,28 +41,29 @@ group's machines itself, and its `generic` preset takes `CXX`, `CUDA_HOME` and
 mpirun -n 4 bin/main.out -f ccein.json
 ```
 
-The input file is JSON with `#` and `!` comments; its keys are the reference in
-[Input file](InputFile.md), and the command-line options that override them are
-in [Getting started](GettingStarted.md). A run writes the coherence (or density
+The input file is JSON (`.json` or `.jsonc`) with `//`, `#` and `!` comments; its keys are
+the reference in [Input file](InputFile.md). Every setting of a run is a key of the input
+file: the command-line options only name the input (`-f`), the output folder (`-o`, in
+place of `output.path`), a longer log (`-v`), the input template (`-e`) and the usage (`-h`);
+they are in [Getting started](GettingStarted.md#HowToRun). A run writes the coherence (or density
 matrix) per bath configuration into text files, which the analyzer in
 `example/analysis/` error-corrects, averages over the ensemble and plots.
 
 ## Where to go next
 
-- [Getting started](GettingStarted.md): the command-line options, the input
-  files (bath, gyromagnetic ratios, qubit, states, axes) and the order in which
-  a run reads them.
+- [Getting started](GettingStarted.md): building, the command-line options, the
+  environment variables and the order in which a run reads its input.
 - [Input file](InputFile.md): every key, by group.
-- [Examples](Examples.md): twelve worked examples in `example/tutorial/`, from a
-  hand-written bath to the GPU backend, the frame rotation, the automatic
-  convergence and the rdip ladder.
+- [Examples](Examples.md): eleven worked examples in `example/tutorial/`, in learning
+  order from a quickstart of seconds to the GPU backend, the automatic convergence and the
+  frame rotation.
 - [Analysis](Analysis.md) and [Tools](Tools.md): what runs on the output, and what
   makes the inputs (`example/analysis/`, `example/tools/`).
 - Data structures and Source files: the code itself, for developers.
-- Methods: [clustering terminology](../methods/clustering-terminology.md),
-  [adaptive cluster mode](../methods/adaptive-cluster-mode.md), [the `adaptive` block](../methods/adaptive-input-block.md),
-  [GPU execution](../methods/gpu.md) and [the coordinate frame rotation](../methods/coordinate-frame-rotation.md),
-  in detail (`docs/methods/` in the repository; partly in Korean).
+- Methods: [the coordinate frame rotation](../methods/coordinate-frame-rotation.md),
+  [DEER bath pulses](../methods/deer.md), [master-equation CCE](../methods/master-equation.md) and
+  [GPU execution](../methods/gpu.md), in detail (`docs/methods/` in the repository). Bundle clustering and
+  the adaptive refinement are described with their keys in [Cluster tags](InputFile_Cluster.md).
 
 ## Citing
 

@@ -18,13 +18,13 @@ def main():
     args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=False)
     config = json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
-    config.pop('seed')
+    config['configuration'].pop('seed')
     config = put(config, {'backend': 'cpu', 'pcce.cache.mode': 'readwrite',
                           'pcce.cache.file': str(args.output/'partition.cache')})
     execution, log = run_case(config, args.output/'cache-generated', args.cpu.resolve(), ranks=2)
     assert execution['returncode'] == 0 and '[partition-cache] status=stored' in log, log[-2000:]
-    seed = int(re.search(r'\[seed\].*shared with all ranks: (\d+);', log)[1])
-    config = put(config, {'seed': seed, 'pcce.cache.mode': 'read'})
+    seed = int(re.search(r'\[seed\].*shared with all ranks: (\d+),', log)[1])
+    config = put(config, {'configuration.seed': seed, 'pcce.cache.mode': 'read'})
     for ranks in (1, 4):
         directory = args.output/f'cache-replay-{ranks}'
         execution, log = run_case(config, directory, args.cpu.resolve(), ranks=ranks)

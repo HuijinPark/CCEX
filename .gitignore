@@ -32,7 +32,7 @@
 /.ccex_makefile.stamp
 
 # NOTE: do NOT add a global `*.out` rule. This repo tracks 60+ legitimate .out
-#       files (DFT outputs under example/tutorial/08_hBN_VB_natab/bath/, QE outputs under
+#       files (DFT outputs under example/tutorial/04_hBN/bath/, QE outputs under
 #       example/tools/SpinTensorReader/). The only build .out is bin/main.out, which
 #       /bin/ above already covers.
 
@@ -70,7 +70,7 @@ test/**/*.sqlite
 # --- tutorial outputs -------------------------------------------------------
 # A tutorial run writes results/, summary*/ and rawdata/ next to its input, plus
 # logs and figures. The recorded ones went to the archive on 2026-09-23; new ones
-# are not tracked.
+# are not tracked, except each calculation's expected.png (A66: the figure a rerun is compared with).
 example/tutorial/**/results/
 example/tutorial/**/summary*/
 example/tutorial/**/rawdata/
@@ -79,6 +79,7 @@ example/tutorial/**/*_wiDiv
 example/tutorial/**/*_ErrCorr
 example/tutorial/**/*EnsAvg*
 example/tutorial/**/*.png
+!example/tutorial/**/expected.png
 example/tutorial/**/outfile
 example/tutorial/**/process*
 example/tutorial/**/Process_*
@@ -92,6 +93,7 @@ docs/doxygen/xml/
 test/code_verification/check_numerics/_work/
 test/code_verification/check_mean_field/_work/
 test/code_verification/check_rdip_ladder/_work/
+test/code_verification/check_master_equation/_work/
 .vscode/
 
 # per-folder run locks of the standing checks (D29)

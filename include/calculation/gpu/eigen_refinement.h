@@ -1,3 +1,7 @@
+/**
+ * @file eigen_refinement.h
+ * @brief The compensated refinement of eigensystems and the phases computed from them.
+ */
 #ifndef CCEX_EIGEN_REFINEMENT_H
 #define CCEX_EIGEN_REFINEMENT_H
 

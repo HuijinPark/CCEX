@@ -6,25 +6,31 @@
     "alphams": -1,
     "betams": 0
   },
-  "gyrofile": "../../inputs/vp_10ppm/DiaVp_gyro",
-  "bathfile": [
-    "../../inputs/vp_10ppm/bath_DiaVp_10ppm_1"
-  ],
+  "configuration": {
+    "gyrofile": "../../inputs/vp_10ppm/DiaVp_gyro",
+    "bathfile": [
+      "../../inputs/vp_10ppm/bath_DiaVp_10ppm_1"
+    ],
+    "bath_state_file": ["../../inputs/vp_10ppm/state_"],
+    "nstate": 1,
+    "seed": 19
+  },
   "order": 2,
   "bfield": 500,
   "rbath": 200,
   "rdip": 330,
   "deltat": 3e-05,
   "nstep": 200,
-  "add_subclusters": false,
-  "max_clusters_per_order": [
-    0,
-    0,
-    0
-  ],
+  "cluster": {
+    "selection": {
+      "add_subclusters": false,
+      "max_per_order": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
   "pulse": {"count": 1},
-  "savemode": "coherence",
-  "seed": 19,
-  "nstate": 1,
-  "bath_state_file": "../../inputs/vp_10ppm/state_"
+  "output": {"savemode": "coherence"}
 }

@@ -341,7 +341,7 @@ class TestReview20261007d(unittest.TestCase):
             tmp = Path(tmp)
             for k in range(4):
                 (tmp / f"bath{k}").write_text("x")
-            (tmp / "ccein.json").write_text('{"rdip": 300, "rbath": 288, "deltat": 1e-4, "nstep": 151, "nstate": 30}')
+            (tmp / "ccein.json").write_text('{"rdip": 300, "rbath": 288, "deltat": 1e-4, "nstep": 151, "configuration": {"nstate": 30}}')
             (tmp / "drv.json").write_text(json.dumps({"base_input": "ccein.json", "bath_source": {"files": "bath*"},
                                                       "state_source": {"files": "s{k}"}}))
             s = config.load_config(tmp / "drv.json")

@@ -96,11 +96,10 @@ def main():
                 row.update(check_plan(plan, cfg['adaptive_cluster_max_dim'], cfg['order']))
                 if not old:
                     cap = cfg.get('adaptive_group_max_dim', cfg['adaptive_cluster_max_dim']//plan['qubit_dimension'])
-                    mode = 'explicit' if 'adaptive_group_max_dim' in cfg else 'auto'
-                    assert plan['dimension_limits']['group_max_dim'] == cap
-                    assert plan['dimension_limits']['group_max_dim_source'] == mode
+                    # the plan writes dimension_limits.bundle_max_dim only (bundle_work.cpp); the source of the cap
+                    # (explicit or auto) is printed nowhere, so it is not checked (A66)
+                    assert plan['dimension_limits']['bundle_max_dim'] == cap
                     assert plan['merge_cutoff_rad_ms'] == cfg.get('adaptive_merge_cutoff', 0)
-                    assert f'group_max_dim_source={mode}' in log
                     assert max(row['group_dimensions']) <= cap
                     assert all(int(d) <= cfg['adaptive_cluster_max_dim'] for d in execution['cluster_counts_by_dimension'])
             if reference: row['comparison'] = compare(reference, directory, 1e-8, 2e-6)

@@ -22,11 +22,11 @@ for m in gcce cce; do
     cp -r "$REG/Diamond_NV_natab_$m/inputfiles" $m/
 done
 python3 - <<'PY'
-import json, re
+import json, re; from input_layout import flat, nest
 for m in ("gcce", "cce"):
-    j = json.loads(re.sub(r"(?m)^\s*#.*$", "", open(f"{m}/inputfiles/ccein_nstate1.json").read()))
+    j = flat(json.loads(re.sub(r"(?m)^\s*#.*$", "", open(f"{m}/inputfiles/ccein_nstate1.json").read())))
     for sm, mode in (("all", "cluster_coherence"), ("allfull", "cluster_density_matrix")):
-        json.dump(dict(j, savemode=mode, outfile=f"./out_{sm}/r"), open(f"{m}/{sm}.json", "w"), indent=1)
+        json.dump(nest(dict(j, savemode=mode, outfile=f"./out_{sm}/r")), open(f"{m}/{sm}.json", "w"), indent=1)
 PY
 for m in gcce cce; do
     for np in 1 3; do

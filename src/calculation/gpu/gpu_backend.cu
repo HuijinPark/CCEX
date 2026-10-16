@@ -1,3 +1,7 @@
+/**
+ * @file gpu_backend.cu
+ * @brief The CUDA cCCE and gCCE paths for large clusters.
+ */
 #include "calculation/gpu/gpu_backend.h"
 #include "calculation/gpu/compensated.h"
 #include <cuda_runtime.h>
@@ -500,6 +504,23 @@ bool gpuInitialize(int localRank, int localSize, char* description, int capacity
 }
 
 void gpuFinalize(){ context.reset(); }
+
+// A68: CCEX_CUDA_ARCH is the -arch both builds pass (CMake: its CUDA architectures, "native" there leaves the list nvcc
+// compiled for, __CUDA_ARCH_LIST__, e.g. 860)
+#define CCEX_STRINGIFY_(...) #__VA_ARGS__
+#define CCEX_STRINGIFY(...) CCEX_STRINGIFY_(__VA_ARGS__)
+void gpuBuildDescription(char* out, int capacity){
+#ifdef CCEX_CUDA_ARCH
+    std::string arch = CCEX_STRINGIFY(CCEX_CUDA_ARCH);
+#else
+    std::string arch = "native";
+#endif
+#ifdef __CUDA_ARCH_LIST__
+    const int compiled[] = {__CUDA_ARCH_LIST__};
+    if (arch == "native" || arch.empty()) arch = std::to_string(compiled[0]/10);
+#endif
+    snprintf(out, capacity, "CUDA %d.%d, sm_%s", CUDART_VERSION/1000, CUDART_VERSION%1000/10, arch.c_str());
+}
 std::size_t gpuDeviceMemorySmallest(){
     // the same guard as gpuInitialize: an empty CUDA_VISIBLE_DEVICES aborts inside cudaGetDeviceCount (review 5f7834 R4)
     const char* visible=std::getenv("CUDA_VISIBLE_DEVICES");
@@ -540,7 +561,7 @@ GpuGcce* gpuGcceCreate(int dimension, int qubitDimension, bool vectorMode,
     const size_t columns=(size_t)w->width*batchSteps;
     if (square>INT_MAX || columns>INT_MAX/(size_t)dimension ||
         (size_t)qubitDimension*qubitDimension*batchSteps>INT_MAX)
-        throw std::runtime_error("GPU batch exceeds 32-bit indexing; reduce gpu_batch_steps or cluster dimension");
+        throw std::runtime_error("GPU batch exceeds 32-bit indexing, reduce gpu_batch_steps or cluster dimension");
     diagonalize(dimension,hamiltonian,w->eigenvectors,w->eigenvalues);
     w->eigenCorrections.allocate(dimension);
     GPU_CHECK(cudaMemsetAsync(w->eigenCorrections.p,0,size_t(dimension)*sizeof(double),context->stream));
@@ -636,7 +657,7 @@ GpuCce* gpuCceCreate(int d, bool ensemble, int batchSteps, int pulseCount,
     w->d=d; w->width=ensemble ? d : 1; w->batch=batchSteps; w->npulse=pulseCount; w->ensemble=ensemble;
     const size_t square=(size_t)d*d, columns=(size_t)w->width*batchSteps;
     if (square>INT_MAX || columns>INT_MAX/(size_t)d)
-        throw std::runtime_error("GPU batch exceeds 32-bit indexing; reduce gpu_batch_steps or cluster dimension");
+        throw std::runtime_error("GPU batch exceeds 32-bit indexing, reduce gpu_batch_steps or cluster dimension");
     Buffer<Z> va,vb;
     diagonalize(d,hAlpha,va,w->evalA);
     diagonalize(d,hBeta,vb,w->evalB);

@@ -1,18 +1,21 @@
 {
   "method": "gCCE",
   "quantity": "coherence",
-  "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
-  "bathfile": [
-    "../../inputs/hbn/bath_hBN_VB_flat_1"
-  ],
+  "configuration": {
+    "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
+    "bathfile": [
+      "../../inputs/hbn/bath_hBN_VB_flat_1"
+    ],
+    "bath_state_file": ["../../inputs/hbn/state_"],
+    "nstate": 1,
+    "seed": 19
+  },
   "order": 2,
   "bfield": 0,
   "rbath": 14,
   "rdip": 8,
   "deltat": 1e-08,
   "nstep": 50,
-  "nstate": 1,
-  "seed": 19,
   "Qubit": {
     "qubit": [
       {
@@ -32,6 +35,7 @@
           "VB",
           "VB"
         ],
+        "unit": "MHz",
         "tensor": [
           [
             -1080,
@@ -81,6 +85,5 @@
         "file": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE"
       }
     }
-  },
-  "bath_state_file": "../../inputs/hbn/state_"
+  }
 }

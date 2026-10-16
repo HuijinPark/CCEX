@@ -6,17 +6,21 @@
     "alphams": 1,
     "betams": 0
   },
-  "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
-  "bathfile": [
-    "../../inputs/hbn/bath_hBN_VB_flat_1"
-  ],
+  "configuration": {
+    "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
+    "bathfile": [
+      "../../inputs/hbn/bath_hBN_VB_flat_1"
+    ],
+    "bath_state_file": ["../../inputs/hbn/state_"],
+    "nstate": 1,
+    "seed": 19
+  },
   "order": 2,
   "bfield": 500,
   "rbath": 5,
   "rdip": 3,
   "deltat": 0.0001,
   "nstep": 10,
-  "nstate": 1,
   "pulse": {"count": 1},
   "hamiltonian": {
     "common": {
@@ -31,7 +35,5 @@
         "file": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE"
       }
     }
-  },
-  "seed": 19,
-  "bath_state_file": "../../inputs/hbn/state_"
+  }
 }

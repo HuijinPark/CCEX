@@ -17,26 +17,27 @@ W="$HERE/_work"; rm -rf "${W:?}"; mkdir -p "$W"
 cp "$HERE"/inputs/{qubit,bath,gyro} "$W/"
 NSTEP=400; DELTAT=0.0005
 # Qubit.file form: the branch is Qubit.alphams/betams beside the file
-input(){ # input <npulse> <gyro file>
+input(){ # input <npulse> <gyro file> <outfile>
     cat <<JSON
-{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0}, "gyrofile": "$2",
- "bathfile": ["bath"], "order": 1, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": $DELTAT, "nstep": $NSTEP,
- "pulse": {"count": $1}, "nstate": 0, "seed": 1}
+{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0},
+ "configuration": {"gyrofile": "$2", "bathfile": ["bath"], "nstate": 0, "seed": 1},
+ "order": 1, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": $DELTAT, "nstep": $NSTEP,
+ "pulse": {"count": $1}, "output": {"file": "$3"}}
 JSON
 }
 PASS=0; FAIL=0
 for np in 0 1; do
-    input $np gyro > "$W/in$np.json"
-    ( cd "$W" && run_ccex "$BIN_DEV" "in$np.json" "proc$np" -o "out$np" )
+    input $np gyro "out$np" > "$W/in$np.json"
+    ( cd "$W" && run_ccex "$BIN_DEV" "in$np.json" "proc$np" )
     if [ $? -ne 0 ]; then echo "  FAIL  npulse $np : CCEX exit"; FAIL=$((FAIL+1)); continue; fi
     if python3 "$HERE/analytic.py" "$W/out$np" --npulse $np --nstep $NSTEP --deltat $DELTAT; then PASS=$((PASS+1)); else echo "  FAIL  npulse $np"; FAIL=$((FAIL+1)); fi
 done
 # self-test: a 1 % wrong gyro has to be caught
 printf '13C 0.5 6.795567\n' > "$W/gyro_wrong"
-input 1 gyro_wrong > "$W/in_wrong.json"
+input 1 gyro_wrong out_wrong > "$W/in_wrong.json"
 # only a numerical mismatch (exit 1) counts: a run that failed, or an output that could not be read
 # (exit 2), is a broken self-test, not a caught error
-( cd "$W" && run_ccex "$BIN_DEV" "in_wrong.json" "proc_wrong" -o "out_wrong" )
+( cd "$W" && run_ccex "$BIN_DEV" "in_wrong.json" "proc_wrong" )
 rc=$?
 python3 "$HERE/analytic.py" "$W/out_wrong" --npulse 1 --nstep $NSTEP --deltat $DELTAT > "$W/selftest.log"
 ac=$?
@@ -52,10 +53,11 @@ else echo "  FAIL  self-test : $(cat "$W/selftest.log")"; FAIL=$((FAIL+1)); fi
 hfmedi(){ # hfmedi <name> <Qubit.zfs> [gyro file]
     cat > "$W/$1.json" <<JSON
 {"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0, "zfs": $2},
- "gyrofile": "${3:-gyro}", "bathfile": ["bath"], "order": 1, "bfield": 0, "rbath": 20, "rdip": 10, "deltat": 0.001,
- "nstep": 3, "hamiltonian": {"cCCE": {"hfmedi": true}}, "pulse": {"count": 1}, "nstate": 0, "seed": 1}
+ "configuration": {"gyrofile": "${3:-gyro}", "bathfile": ["bath"], "nstate": 0, "seed": 1},
+ "order": 1, "bfield": 0, "rbath": 20, "rdip": 10, "deltat": 0.001,
+ "nstep": 3, "hamiltonian": {"cCCE": {"hfmedi": true}}, "pulse": {"count": 1}, "output": {"file": "out_$1"}}
 JSON
-    ( cd "$W" && run_ccex "$BIN_DEV" "$1.json" "proc_$1" -o "out_$1" )
+    ( cd "$W" && run_ccex "$BIN_DEV" "$1.json" "proc_$1" )
 }
 finite(){ # finite <name>: both outputs there, 3 points each, all finite
     python3 -c '
@@ -95,11 +97,12 @@ else echo "  FAIL  hfmedi B=0 ZFS diag(0,0,1) exit $rs, + 1e13 I exit $rh : expe
 pair(){ # pair <name> <order> <delta_A json value or "">
     local h=""; [ -n "$3" ] && h=", \"hamiltonian\": {\"cCCE\": {\"delta_A\": $3}}"
     cat > "$W/$1.json" <<JSON
-{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0}, "gyrofile": "gyro",
- "bathfile": ["bath_pair"], "order": $2, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": 0.005, "nstep": 400,
- "pulse": {"count": 1}, "nstate": 0, "seed": 1$h}
+{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0},
+ "configuration": {"gyrofile": "gyro", "bathfile": ["bath_pair"], "nstate": 0, "seed": 1},
+ "order": $2, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": 0.005, "nstep": 400,
+ "pulse": {"count": 1}, "output": {"file": "out_$1"}$h}
 JSON
-    ( cd "$W" && run_ccex "$BIN_DEV" "$1.json" "proc_$1" -o "out_$1" )
+    ( cd "$W" && run_ccex "$BIN_DEV" "$1.json" "proc_$1" )
 }
 cp "$HERE"/inputs/bath_pair "$W/"
 farthest(){ # farthest <name>: the largest |L - 1| of the noDiv output
@@ -130,11 +133,12 @@ fi
 offrun(){ # offrun <name> <bath> <state file prefix> <bath_bath_mean_field or "">
     local h=""; [ -n "$4" ] && h=", \"hamiltonian\": {\"common\": {\"bath_bath_mean_field\": \"$4\"}}"
     cat > "$W/$1.json" <<JSON
-{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0}, "gyrofile": "gyro_e",
- "bathfile": ["$2"], "order": 1, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": 0.00002, "nstep": 200,
- "pulse": {"count": 1}, "nstate": 1, "bath_state_file": "$3", "seed": 1$h}
+{"method": "cCCE", "quantity": "coherence", "Qubit": {"file": "qubit", "alphams": 1, "betams": 0},
+ "configuration": {"gyrofile": "gyro_e", "bathfile": ["$2"], "bath_state_file": ["$3"], "nstate": 1, "seed": 1},
+ "order": 1, "bfield": 500, "rbath": 20, "rdip": 10, "deltat": 0.00002, "nstep": 200,
+ "pulse": {"count": 1}, "output": {"file": "out_$1"}$h}
 JSON
-    ( cd "$W" && run_ccex "$BIN_DEV" "$1.json" "proc_$1" -o "out_$1" )
+    ( cd "$W" && run_ccex "$BIN_DEV" "$1.json" "proc_$1" )
 }
 cp "$HERE"/inputs/{gyro_e,bath_off,bath_off_a,bath_off_b,st_ab1,st_a1,st_b1} "$W/"
 offrun mf_off bath_off st_ab off; r1=$?

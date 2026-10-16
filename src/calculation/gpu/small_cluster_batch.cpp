@@ -1,7 +1,12 @@
+/**
+ * @file small_cluster_batch.cpp
+ * @brief The host side of the packed GPU kernel for small cCCE clusters: windows and the node feeder.
+ */
 // A26 step 1: the host side of the batched small-cluster cCCE on the GPU (small_cluster_batch.h says how it is used).
 #include "../../../include/calculation/gpu/small_cluster_batch.h"
 #include "../../../include/calculation/hamiltonian_check.h"
 #include "../../../include/calculation/small_hamiltonian.h"
+#include "../../../include/physical/pulse_bath.h"
 #include "../../../include/calculation/cce_batch_window.h"
 #include <algorithm>
 #include <atomic>
@@ -84,6 +89,7 @@ bool warpClusterRun(QubitArray* qa, Config* cnf, Pulse* pls, warpcluster::Plan& 
     plan.mode = gcce ? warpcluster::modeGcce : warpcluster::modeCce;
     plan.ensemble = Config_getNstate(cnf)==0;
     plan.qdim = 1;
+    if (Pulse_hasBathPulses(pls)){ why = "bath pulses (the kernel applies qubit pulses only)"; return false; }
     if (!gcce){
         if (strcasecmp(cnf->method,"cce")){ why = "the method is not CCE or gCCE"; return false; }
         if (QubitArray_getNqubit(qa)!=1 || strcasecmp(cnf->quantity,"coherence")){ why = "cCCE with one qubit and quantity=coherence only"; return false; }
@@ -190,21 +196,27 @@ static unsigned long long warpMask(const Config* cnf, int qdim = 3){
     return mask;
 }
 
+// The method as the input names it, with ", cluster.mode pcce" for a pcce form (the refusals below)
+static std::string inputMethodText(const Config* cnf){
+    return std::string(inputMethodName(cnf->method)) + (methodUsesPcceClusters(cnf->method) ? ", cluster.mode pcce" : "");
+}
+
 // A40: the input checks of a given gpu_options.warp_max_dim that need no qubit (smallClusterWarmUp; the rest in the
 // constructor). The default (Config_resolveWarpMaxDim) is nonzero only where these hold.
 static void warpInputCheck(const Config* cnf){
     const bool gcce = !strcasecmp(cnf->method,"gcce");
     if (!gcce && strcasecmp(cnf->method,"cce")){
-        if (rank==0) fprintf(stderr,"Error: gpu_options.warp_max_dim works with method=CCE or gCCE (this run: %s); 0 switches it off\n",cnf->method);
+        if (rank==0) fprintf(stderr,"Error: execution.gpu_options.warp_max_dim works with method=CCE or gCCE (this run: %s), 0 switches it off\n",
+                             inputMethodText(cnf).c_str());
         ccexFatal();
     }
     if (!strcasecmp(cnf->backend,"cpu")){
-        if (rank==0) fprintf(stderr,"Error: gpu_options.warp_max_dim works with backend auto or cuda (this run: backend cpu); 0 switches it off\n");
+        if (rank==0) fprintf(stderr,"Error: execution.gpu_options.warp_max_dim works with execution.backend auto or cuda (this run: execution.backend cpu), 0 switches it off\n");
         ccexFatal();
     }
     if (!warpMask(cnf)){
-        if (rank==0) fprintf(stderr,"Error: gpu_options.warp_max_dim %d: the warp kernel has no dimension up to it for method=%s (it has %s)\n",
-                             cnf->gpu_warp_max_dim,cnf->method,gcce ? "6, 9, 12, 18, 21, 24 and 27 with a qubit of dimension 3" : "8 and 16");
+        if (rank==0) fprintf(stderr,"Error: execution.gpu_options.warp_max_dim %d: the warp kernel has no dimension up to it for method=%s (it has %s)\n",
+                             cnf->gpu_warp_max_dim,inputMethodName(cnf->method),gcce ? "6, 9, 12, 18, 21, 24 and 27 with a qubit of dimension 3" : "8 and 16");
         ccexFatal();
     }
 }
@@ -582,7 +594,8 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
     if (!packed && !warp) return;
     // refused here, before the bath is read: the packed kernel is cCCE, and it is in the GPU binary only
     if (packed && strcasecmp(cnf->method,"cce")){
-        if (rank==0) fprintf(stderr,"Error: gpu_options.packed_max_dim works with method=CCE (this run: %s)\n",cnf->method);
+        if (rank==0) fprintf(stderr,"Error: execution.gpu_options.packed_max_dim works with method=CCE (this run: %s)\n",
+                             inputMethodText(cnf).c_str());
         ccexFatal();
     }
     if (warp && !strcmp(cnf->gpu_warp_source,"given")) warpInputCheck(cnf);
@@ -592,8 +605,8 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
     int provided = MPI_THREAD_SINGLE;
     MPI_Query_thread(&provided);
     if (provided < MPI_THREAD_FUNNELED){
-        if (rank==0) fprintf(stderr,"Error: gpu_options.%s runs a thread beside MPI and needs MPI_THREAD_FUNNELED; "
-                                    "this MPI provides level %d. Set gpu_options.packed_max_dim to 0%s.\n",
+        if (rank==0) fprintf(stderr,"Error: execution.gpu_options.%s runs a thread beside MPI and needs MPI_THREAD_FUNNELED, "
+                                    "this MPI provides level %d. Set execution.gpu_options.packed_max_dim to 0%s.\n",
                              packed ? "packed_max_dim" : "warp_max_dim",provided,warp ? " and warp_max_dim to 0" : "");
         ccexFatal();
     }
@@ -636,7 +649,7 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
             if (warpLikely && !gcce && !packedLikely){
                 warpLikely = false;
                 if (rank==0) printf("[gpu-warp] no early start: cCCE with the packed kernel off - the card starts only if some rank "
-                                    "has a cluster of a warp dimension (A53)\n");
+                                    "has a cluster of a warp dimension\n");
             }
         }
         if (!packedLikely && !warpLikely) return;
@@ -647,7 +660,7 @@ void smallClusterWarmUp(const Config* cnf, QubitArray* qa, Pulse* pls, const cha
     // rank has one (a new memory, the early CUDA context kept)
     warmStart(cnf,packedLikely,warpLikely && !packedLikely ? warpMask(cnf,qdim) : 0);
 #else
-    if (rank==0) fprintf(stderr,"Error: gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
+    if (rank==0) fprintf(stderr,"Error: execution.gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
                          packed ? "packed_max_dim" : "warp_max_dim");
     ccexFatal();
 #endif
@@ -710,7 +723,7 @@ void smallClusterWarmUpAfterBath(const Config* cnf, BathArray* ba, DefectArray* 
     MPI_Allreduce(MPI_IN_PLACE,&count,1,MPI_LONG,MPI_SUM,MPI_COMM_WORLD);
     if (count >= cap){ warmStart(cnf,true,0); return; }
     if (rank==0) printf("[gpu-packed] no early start: one state, %.0f clusters of bath dimension 2 and 4 per rank in the bath "
-                        "read, fewer than %ld - the card starts only if the constructor finds more (A55)\n",
+                        "read, fewer than %ld - the card starts only if the constructor finds more\n",
                         double(count)/nprocess,packedMinPerRankState);
 #else
     (void)cnf; (void)ba; (void)dfa;
@@ -759,7 +772,7 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
             if (strcmp(cnf->gpu_packed_source,"given")){
                 if (rank==0) printf("[gpu-packed] off: the packed kernel is for method=CCE with one qubit and quantity=coherence\n");
             } else {
-                if (rank==0) fprintf(stderr,"Error: gpu_options.packed_max_dim supports method=CCE with one qubit and quantity=coherence\n");
+                if (rank==0) fprintf(stderr,"Error: execution.gpu_options.packed_max_dim supports method=CCE with one qubit and quantity=coherence\n");
                 ccexFatal();
             }
         } else if (!smallClusterPlan(cnf,pls,plan,ensemble,recursive)){
@@ -809,13 +822,13 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
         const char* cpuWhy = nullptr;
         const bool cpuTakes = cpuBatchTakesPacked(qa,cnf,pls,isGCCE,&cpuWhy);
         if (!cpuTakes){
-            if (rank==0) printf("[gpu-packed] the CPU batch (A30) does not take this run (%s): the packed kernel unless its "
-                                "cluster evaluations (clusters x states) are fewer than %ld per rank (A48)\n",
+            if (rank==0) printf("[gpu-packed] the CPU batch does not take this run (%s): the packed kernel unless its "
+                                "cluster evaluations (clusters x states) are fewer than %ld per rank\n",
                                 cpuWhy ? cpuWhy : "not every packed dimension",batchMinClustersPerRank);
         } else if (ensemble){
             packedOn = false;
-            if (rank==0) printf("[gpu-packed] off: the ensemble - the CPU batch (A30, %s) computes the clusters of bath dimension "
-                                "2 and 4 (the card saves nothing there; A48)\n",ccebatch::variant());
+            if (rank==0) printf("[gpu-packed] off: the ensemble - the CPU batch (%s) computes the clusters of bath dimension "
+                                "2 and 4 (the card saves nothing there)\n",ccebatch::variant());
         } else {
             const long cap = packedMinPerRankState*long(nprocess);
             long count = 0;
@@ -829,9 +842,9 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
             packedOn = count >= cap;
             if (rank==0){
                 if (packedOn) printf("[gpu-packed] on: one state, at least %ld evaluations of bath dimension 2 and 4 per rank per "
-                                     "state (A48 threshold; fewer go to the CPU batch, A30)\n",packedMinPerRankState);
+                                     "state (the threshold, fewer go to the CPU batch)\n",packedMinPerRankState);
                 else printf("[gpu-packed] off: one state, %.0f evaluations of bath dimension 2 and 4 per rank per state, fewer than "
-                            "%ld - the CPU batch (A30, %s) computes them (A48)\n",double(count)/nprocess,packedMinPerRankState,
+                            "%ld - the CPU batch (%s) computes them\n",double(count)/nprocess,packedMinPerRankState,
                             ccebatch::variant());
             }
         }
@@ -873,7 +886,7 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
                                     tag,packedOn && warpOn ? "packed and warp kernel" : packedOn ? "packed kernel" : "warp kernel");
             else if (total < threshold)
                 printf("%s off: %ld cluster evaluations (clusters x states) for the %s, fewer than the threshold %ld (%ld per rank "
-                       "x %d ranks; starting the card would cost more than it saves): every cluster on its usual path\n",tag,total,
+                       "x %d ranks, starting the card would cost more than it saves): every cluster on its usual path\n",tag,total,
                        packedOn && warpUsed ? "packed and warp kernels" : packedOn ? "packed kernel" : "warp kernel",
                        threshold,batchMinClustersPerRank,nprocess);
             else printf("%s off: the %d values of one cluster pass the 6 MiB of a window: every cluster on the CPU\n",
@@ -904,7 +917,7 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
     if (m->mem.nodeRank==0) m->feeder = std::thread([m]{ m->feed(); });
     impl = m;
     if (rank==0 && packedOn) printf("[gpu-packed] on: cCCE clusters of bath dimension %s on the GPU (%s, %s, %d intervals, %d distinct), "
-                        "window %d, %.1f MiB shared memory per rank; one feeder per node\n", m->maxDim==4 ? "2 and 4" : "2",
+                        "window %d, %.1f MiB shared memory per rank, one feeder per node\n", m->maxDim==4 ? "2 and 4" : "2",
                         ensemble ? "ensemble" : "single state", recursive ? "recursive" : "exact", plan.intervals, plan.distinct,
                         m->mem.layout.windowSize, m->mem.partBytes/1048576.0);
     if (rank==0 && warpOn){
@@ -917,7 +930,7 @@ SmallClusterBatch::SmallClusterBatch(QubitArray* qa, BathArray* ba, DefectArray*
     }
 #else
     (void)ba; (void)dfa; (void)localclusters; (void)order;
-    if (rank==0) fprintf(stderr,"Error: gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
+    if (rank==0) fprintf(stderr,"Error: execution.gpu_options.%s needs the GPU binary (bin/main_gpu.out, bash do_compile.sh gpu)\n",
                          packedOn ? "packed_max_dim" : "warp_max_dim");
     ccexFatal();
 #endif
@@ -943,7 +956,7 @@ void SmallClusterBatch::beginState(QubitArray* qa, Pulse* pls){
     }
     if (std::memcmp(p.pulse,m.wplan.pulse,sizeof p.pulse) || std::memcmp(p.psia,m.wplan.psia,sizeof p.psia) ||
         std::memcmp(p.psib,m.wplan.psib,sizeof p.psib) || std::memcmp(p.qpsi0,m.wplan.qpsi0,sizeof p.qpsi0)){
-        fprintf(stderr,"Error: the warp kernel (gpu_options.warp_max_dim): the pulses or the qubit states changed between states\n");
+        fprintf(stderr,"Error: the warp kernel (execution.gpu_options.warp_max_dim): the pulses or the qubit states changed between states\n");
         ccexFatal();
     }
 #else
@@ -1069,12 +1082,12 @@ void SmallClusterBatch::report(){
     double releasedMost[3] = {0,0,0};
     MPI_Reduce(released,releasedMost,3,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
     if (rank==0 && anyFlags[2])
-        printf("%s off: the GPU could not be opened (%s); backend=auto, so every cluster was computed on the CPU\n",
+        printf("%s off: the GPU could not be opened (%s), backend=auto, so every cluster was computed on the CPU\n",
                m.packed ? "[gpu-packed]" : "[gpu-warp]", *unavailable ? unavailable : "on another node");
-    if (rank==0) printf("%s clusters on the GPU %lld, on the CPU while the GPU started %lld, back to the CPU %lld; "
+    if (rank==0) printf("%s clusters on the GPU %lld, on the CPU while the GPU started %lld, back to the CPU %lld, "
                         "per rank: prepare %.3f s (max %.3f), "
-                        "wait for the GPU %.3f s (max %.3f); feeder: CUDA start %.3f s, page-lock %.3f s (%s)%s, first batch "
-                        "after %.3f s, %lld batches of %lld windows, stop %.3f s; shared memory allocated in %.3f s, release %.3f s (of which freeing it %.3f s)\n",
+                        "wait for the GPU %.3f s (max %.3f), feeder: CUDA start %.3f s, page-lock %.3f s (%s)%s, first batch "
+                        "after %.3f s, %lld batches of %lld windows, stop %.3f s, shared memory allocated in %.3f s, release %.3f s (of which freeing it %.3f s)\n",
                         m.packed ? "[gpu-packed]" : "[gpu-warp]", total[0], total[2], total[1], sum[0]/nprocess,
                         most[0], sum[1]/nprocess, most[1], slowest[0], slowest[1], anyFlags[0] ? "done" : "refused, pageable copies",
                         anyFlags[1] ? " early" : "", slowest[2], batches[0], batches[1], slowest[3], releasedMost[2], releasedMost[0], releasedMost[1]);

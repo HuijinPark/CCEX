@@ -1,3 +1,7 @@
+/**
+ * @file base_run.cpp
+ * @brief Adaptive refinement: running CCEX once, the input manifest and the probe cache.
+ */
 // Running CCEX once and keeping what came back: the launcher, the clock, SHA-256,
 // the input manifest that identifies a run, and the on-disk cache of raw probe curves.
 #include "base_run.h"
@@ -11,6 +15,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <map>
 #include <fcntl.h>
 #include <limits.h>
 #include <map>
@@ -373,10 +378,12 @@ NativeResult run_native(const std::vector<std::string>& command, const std::stri
 // ----------------------------------------------------------------------------
 namespace adaptive {
 namespace {
-// the input keys that name files, as paths into the input's blocks (A47); the order is the manifest's
+// the input keys that name files, as paths into the input's blocks (A47; the configuration block A64); the order is the
+// manifest's
 const std::vector<std::vector<const char*>> kInputFiles = {
-    {"gyrofile"}, {"Qubit", "file"}, {"bathfile"}, {"bath_state_file"}, {"Defect", "state_file"},
-    {"Defect", "axis_file"}, {"hamiltonian", "common", "hyperfine", "file"},
+    {"configuration", "gyrofile"}, {"Qubit", "file"}, {"configuration", "bathfile"}, {"configuration", "bath_state_file"},
+    {"configuration", "defect_state_file"},
+    {"configuration", "defect_axis_file"}, {"hamiltonian", "common", "hyperfine", "file"},
     {"hamiltonian", "common", "quadrupole", "file"},
     {"hamiltonian", "common", "quadrupole", "file_without_defect"}};
 
@@ -461,6 +468,12 @@ std::string resolved(const std::string& cwd, const std::string& name) {
 
 Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector<int>& states) {
     Value files = Value::object();
+    // configuration.path (A64): the folder the configuration block's relative names are in ("." when absent). The
+    // adaptive refinement refuses configuration.range, so a {k} in a name is the name.
+    std::string folder;
+    if (const Value* path = find_path(cfg, {"configuration", "path"}))
+        if (path->kind() == Value::Kind::String && path->as_string() != ".")
+            folder = path->as_string();
     for (const std::vector<const char*>& key : kInputFiles) {
         std::vector<std::string> paths;
         const Value* at = &cfg;
@@ -472,11 +485,12 @@ Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector
                 paths.push_back(given.as_string());
             } else {
                 for (std::size_t i = 0; i < given.size(); ++i)
-                    paths.push_back(given.at(i).as_string());
+                    if (!given.at(i).as_string().empty())   // A73: "" is a bath file without such a file, not a path
+                        paths.push_back(given.at(i).as_string());
             }
         }
         const std::string name(key.back());
-        if (name == "bath_state_file" || name == "state_file") {
+        if (name == "bath_state_file" || name == "defect_state_file") {
             std::vector<std::string> spread;
             for (const std::string& path : paths)
                 for (int state : states)
@@ -484,7 +498,9 @@ Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector
                         spread.push_back(path+std::to_string(state));
             paths = spread;
         }
-        for (const std::string& path : paths) {
+        for (std::string path : paths) {
+            if (!folder.empty() && std::string(key.front()) == "configuration" && !path.empty() && path[0] != '/')
+                path = folder+(folder.back() == '/' ? "" : "/")+path;
             const std::string here = resolved(cwd, path);
             struct stat info;
             const bool is_file = stat(here.c_str(), &info) == 0 && S_ISREG(info.st_mode);
@@ -497,24 +513,36 @@ Value input_manifest(const Value& cfg, const std::string& cwd, const std::vector
 Value identity(const Value& cfg, const std::string& cwd, const std::vector<int>& states,
                const std::string& binary_sha256, long long ranks) {
     // These choose where output goes or how bundles are drawn, not the dynamics of
-    // an explicit site list, so two runs that differ only here share probes: in the
-    // bundle block, all but its expansion limits (max_clusters, max_work).
-    static const std::set<std::string> ignored{"outfile", "adaptive", "profile", "savemode"};
+    // an explicit site list, so two runs that differ only here share probes: output.file,
+    // output.savemode, cluster.adaptive, execution.profile, and in cluster.bundle all but its
+    // expansion limits (max_clusters, max_work). (Top-level keys until A65.)
+    static const std::map<std::string, std::set<std::string>> ignored{
+        {"output", {"file", "savemode"}}, {"cluster", {"adaptive"}}, {"execution", {"profile"}}};
     static const std::set<std::string> ignoredBundle{"max_dim", "merge_cutoff", "connections", "connection_budget"};
     Value config = Value::object();
     for (const std::string& key : cfg.keys()) {
-        if (ignored.count(key) != 0)
-            continue;
-        if (key == "bundle" && cfg.at(key).kind() == Value::Kind::Object) {
-            Value kept = Value::object();
-            for (const std::string& inner : cfg.at(key).keys())
-                if (ignoredBundle.count(inner) == 0)
-                    kept.set(inner, cfg.at(key).at(inner));
-            if (!kept.keys().empty())
-                config.set(key, kept);
+        const auto skip = ignored.find(key);
+        if (skip == ignored.end() || cfg.at(key).kind() != Value::Kind::Object) {
+            config.set(key, cfg.at(key));
             continue;
         }
-        config.set(key, cfg.at(key));
+        Value kept = Value::object();
+        for (const std::string& inner : cfg.at(key).keys()) {
+            if (skip->second.count(inner) != 0)
+                continue;
+            if (key == "cluster" && inner == "bundle" && cfg.at(key).at(inner).kind() == Value::Kind::Object) {
+                Value bundle = Value::object();
+                for (const std::string& b : cfg.at(key).at(inner).keys())
+                    if (ignoredBundle.count(b) == 0)
+                        bundle.set(b, cfg.at(key).at(inner).at(b));
+                if (!bundle.keys().empty())
+                    kept.set(inner, bundle);
+                continue;
+            }
+            kept.set(inner, cfg.at(key).at(inner));
+        }
+        if (!kept.keys().empty())
+            config.set(key, kept);
     }
     Value out = Value::object();
     out.set("schema", Value::integer(static_cast<long long>(1)));

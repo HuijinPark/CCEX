@@ -7,8 +7,12 @@
         "alphams"        : 1,
         "betams"         : 0
     },
-    "gyrofile"      : "./inputfiles/gyro_13C",
-    "bathfile"      : ["./inputfiles/bath_Diamond_NV_natab_1"],
+    "configuration" : {
+        "gyrofile"      : "./inputfiles/gyro_13C",
+        "bathfile"      : ["./inputfiles/bath_Diamond_NV_natab_1"],
+        "nstate"        : 0,
+        "seed"          : 1
+    },
 
     "order"         : 2,
     "bfield"        : 300,
@@ -18,9 +22,5 @@
     "deltat"        : 0.08,
     "nstep"         : 30,
     "pulse"         : {"count": 1},
-
-    "nstate"        : 0,
-    "seed"          : 1,
-
-    "outfile"       : "./results/nstate0/raw/CCE2_Diamond_NV_natab"
+    "output"        : {"file": "./results/nstate0/raw/CCE2_Diamond_NV_natab"}
 }

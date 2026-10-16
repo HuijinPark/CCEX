@@ -1,3 +1,7 @@
+/**
+ * @file gpu_backend.h
+ * @brief The interface of the CUDA cCCE and gCCE paths for large clusters (no Eigen or MPI types cross it).
+ */
 #ifndef CCEX_GPU_BACKEND_H
 #define CCEX_GPU_BACKEND_H
 #include <cstddef>
@@ -15,6 +19,9 @@ struct GpuGcce;
 struct GpuOutOfMemory : std::runtime_error { using std::runtime_error::runtime_error; };
 bool gpuInitialize(int localRank, int localSize, char* description, int capacity);
 void gpuFinalize();
+// A68: "CUDA 12.8, sm_86" for the banner's Build line: the CUDA runtime this binary was compiled against (CUDART_VERSION)
+// and the architecture the kernels were built for (CCEX_CUDA_ARCH, passed by both builds)
+void gpuBuildDescription(char* out, int capacity);
 // the global memory of the smallest visible device, 0 without one (or with CUDA_VISIBLE_DEVICES hiding them all)
 std::size_t gpuDeviceMemorySmallest();
 void gpuSetCacheLimit(std::size_t bytes);

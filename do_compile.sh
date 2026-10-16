@@ -372,13 +372,20 @@ define COMPILE_RULES
 endef
 \$(eval \$(call COMPILE_RULES,\$(OBJ_DIR),))
 \$(eval \$(call COMPILE_RULES,\$(OBJ_GPU_DIR),-DCCEX_USE_CUDA))
+# A68: the banner's Build line. The preset from here; the commit from obj/ccex_build_commit.h, written when make starts
+# and only when it changes (so utilities.o, which includes it, is rebuilt then): git rev-parse --short HEAD, "-dirty"
+# when the tree differs from it, "unknown" outside git. Not in the Makefile itself, whose content is the build stamp.
+BUILD_COMMIT := \$(shell c=\$\$(git rev-parse --short HEAD 2>/dev/null) || c=unknown; if [ "\$\$c" != unknown ] && ! git diff --quiet HEAD -- 2>/dev/null; then c="\$\$c-dirty"; fi; echo "\$\$c")
+BUILD_COMMIT_LINE := \#define CCEX_BUILD_COMMIT "\$(BUILD_COMMIT)"
+\$(shell mkdir -p \$(OBJ_DIR); [ "\$\$(cat \$(OBJ_DIR)/ccex_build_commit.h 2>/dev/null)" = '\$(BUILD_COMMIT_LINE)' ] || echo '\$(BUILD_COMMIT_LINE)' > \$(OBJ_DIR)/ccex_build_commit.h)
+\$(OBJ_DIR)/utilities.o \$(OBJ_GPU_DIR)/utilities.o: CXXFLAGS += -I\$(OBJ_DIR) -DCCEX_BUILD_PRESET=\"$PRESET\"
 # A30: the batched small-cluster kernel writes out every fused multiply-add it needs; the compiler adds none
 \$(OBJ_DIR)/cce_batch_kernel.o \$(OBJ_GPU_DIR)/cce_batch_kernel.o: CXXFLAGS += -ffp-contract=off
 # A42: the small eigensolver's lanes must compute what one matrix alone computes: nothing fused
 \$(OBJ_DIR)/small_eigensolver.o \$(OBJ_GPU_DIR)/small_eigensolver.o: CXXFLAGS += -ffp-contract=off
 
 \$(OBJ_GPU_DIR)/gpu_backend.o: \$(SRC_DIR)/calculation/gpu/gpu_backend.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
-	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
+	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include -DCCEX_CUDA_ARCH=\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
 # A26: the batched small-cluster cCCE kernel (one thread per cluster)
@@ -438,6 +445,9 @@ FIXED_TEST_OBJS := \$(filter-out \$(OBJ_DIR)/main.o \$(OBJ_DIR)/simulator_cce.o,
 # check_gpu/data/small_cluster; it links the objects of main.out but main.o.
 \$(BIN_DIR)/test_cce_batch.out: test/code_verification/check_numerics/test_cce_batch.cpp \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) | \$(BIN_DIR) \$(OBJ_DIR)
 	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/test_cce_batch.test.d -MT \$@ \$< \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) \$(LIBRARY) -o \$@
+# A62: the column-block one-state cCCE evolution against the one-time-point path (1e-12 relative); links the objects of main.out but main.o
+\$(BIN_DIR)/test_cce_columns.out: test/code_verification/check_numerics/test_cce_columns.cpp \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) | \$(BIN_DIR) \$(OBJ_DIR)
+	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/test_cce_columns.test.d -MT \$@ \$< \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) \$(LIBRARY) -o \$@
 # A42: the small cCCE eigensolver (fixed-sweep Jacobi) against Eigen and lane against lane
 \$(BIN_DIR)/test_small_eigensolver.out: test/code_verification/check_numerics/test_small_eigensolver.cpp \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) | \$(BIN_DIR) \$(OBJ_DIR)
 	\$(CXX) \$(INCLUDE) \$(CXXFLAGS) -UNDEBUG -MMD -MP -MF \$(OBJ_DIR)/test_small_eigensolver.test.d -MT \$@ \$< \$(filter-out \$(OBJ_DIR)/main.o,\$(OBJS)) \$(LIBRARY) -o \$@
@@ -468,7 +478,7 @@ numeric-test: \$(BIN_DIR)/test_scaled_product.out \$(BIN_DIR)/test_hamiltonian_c
 	./\$(BIN_DIR)/test_scaled_product.out
 	./\$(BIN_DIR)/test_hamiltonian_check.out
 	./\$(BIN_DIR)/test_small_cluster_host.out test/gpu_verification/check_gpu/data/small_cluster/*.bin
-cpu-test: \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(CPU_TESTS) \$(BUNDLE_TESTS) test_partition_cache_format test_fixed_size test_cce_batch test_small_eigensolver))
+cpu-test: \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(CPU_TESTS) \$(BUNDLE_TESTS) test_partition_cache_format test_fixed_size test_cce_batch test_small_eigensolver test_cce_columns))
 	./\$(BIN_DIR)/test_cluster_log.out
 	./\$(BIN_DIR)/test_review_controls.out
 	\$(MPIRUN) -n 1 ./\$(BIN_DIR)/test_mpi_seed.out
@@ -482,6 +492,7 @@ cpu-test: \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(CPU_TESTS) \$(BUNDLE_TE
 	./\$(BIN_DIR)/test_fixed_size.out
 	./\$(BIN_DIR)/test_cce_batch.out test/gpu_verification/check_gpu/data/small_cluster/*.bin
 	./\$(BIN_DIR)/test_small_eigensolver.out test/gpu_verification/check_gpu/data/small_cluster/*.bin
+	./\$(BIN_DIR)/test_cce_columns.out
 gpu-test: numeric-test \$(addprefix \$(BIN_DIR)/,\$(addsuffix .out,\$(GPU_TESTS)))
 	./\$(BIN_DIR)/test_gcce_cuda.out
 	./\$(BIN_DIR)/test_cce_cuda.out

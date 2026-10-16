@@ -1,3 +1,7 @@
+/**
+ * @file gpu_batch_memory.h
+ * @brief The memory estimate that decides how many clusters and time points go to the GPU in one batch.
+ */
 #ifndef CCEX_GPU_BATCH_MEMORY_H
 #define CCEX_GPU_BATCH_MEMORY_H
 #include <stdexcept>

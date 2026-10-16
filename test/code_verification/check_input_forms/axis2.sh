@@ -21,10 +21,8 @@ source "$HERE/lib.sh"
 ORDER=(S1a S3 S4 S5)
 WANT=("${@:-${ORDER[@]}}")
 
-declare -A EXTRA=(
-  [S3]="-s $FIX/single_data/state_DiaP1_1ppm_ -S $FIX/single_data/stateEx_DiaP1_1ppm_ -N 1"
-  [S5]="-s $EX/tutorial/03_Diamond_multiNV_natab/NV2_13C2/state -N 1"
-)
+# S3 and S5 used to pass their state files and -N 1 on the command line as well; legacy.json holds the same keys
+# (bath_state_file, Defect.state_file, nstate 1), and the options were removed in A63
 
 # out_prefix <workdir> <name> : nstate>0 appends _state<n>, so glob for it
 out_prefix(){ local p; p=$(ls "$1/$2"*_noDiv 2>/dev/null | head -1); echo "${p%_noDiv}"; }
@@ -38,7 +36,7 @@ for sys in "${WANT[@]}"; do
 
     # run every variant once
     while IFS=$'\t' read -r name baseline mode desc; do
-        ( cd "$w" && run_ccex "$BIN_DEV" "$name.json" "proc_$name" ${EXTRA[$sys]:-} )
+        ( cd "$w" && run_ccex "$BIN_DEV" "$name.json" "proc_$name" )
         rc=$?
         if [ $rc -ne 0 ]; then
             echo "  FAIL  $name : exit=$rc"

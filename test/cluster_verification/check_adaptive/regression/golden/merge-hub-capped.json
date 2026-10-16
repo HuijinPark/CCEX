@@ -36,36 +36,44 @@
       }
      ]
     },
-    "backend": "cpu",
-    "bathfile": [
-     "test/cluster_verification/check_bundle/bath_hub_6"
-    ],
     "bfield": 300,
-    "bundle": {
-     "max_dim": 8,
-     "merge_cutoff": 1e+300
+    "cluster": {
+     "bundle": {
+      "max_dim": 8,
+      "merge_cutoff": 1e+300
+     },
+     "mode": "bundle"
     },
-    "cluster_mode": "bundle",
+    "configuration": {
+     "bathfile": [
+      "test/cluster_verification/check_bundle/bath_hub_6"
+     ],
+     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+     "nstate": 0,
+     "seed": 19
+    },
     "deltat": 0.2,
-    "gpu_options": {
-     "evolution_batch_steps": 4,
-     "min_dim": 8
+    "execution": {
+     "backend": "cpu",
+     "gpu_options": {
+      "evolution_batch_steps": 4,
+      "min_dim": 8
+     },
+     "profile": true
     },
-    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
     "method": "cCCE",
-    "nstate": 0,
     "nstep": 9,
     "order": 2,
-    "outfile": "bin/adaptive_ensemble",
-    "profile": true,
+    "output": {
+     "file": "bin/adaptive_ensemble",
+     "savemode": "coherence"
+    },
     "pulse": {
      "count": 16
     },
     "quantity": "coherence",
     "rbath": 15,
-    "rdip": 30,
-    "savemode": "coherence",
-    "seed": 19
+    "rdip": 30
    },
    "input_file_sha256": {
     "<REPO>/test/cluster_verification/check_bundle/bath_hub_6": "baa924325f82ef6d98e27bea0afbfa885a9154682b8e70d96a792c29851adf85",

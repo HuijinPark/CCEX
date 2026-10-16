@@ -1,3 +1,7 @@
+/**
+ * @file warp_cluster_gpu.h
+ * @brief The card side of the warp kernel.
+ */
 #ifndef CCEX_WARP_CLUSTER_GPU_H
 #define CCEX_WARP_CLUSTER_GPU_H
 // A40: the card side of the warp kernel (warp_cluster_gpu.cu), called by small_cluster_gpu.cu within a batch. CUDA only.

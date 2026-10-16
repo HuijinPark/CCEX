@@ -1,3 +1,7 @@
+/**
+ * @file cce_batch.h
+ * @brief Small cCCE clusters (bath dimension 2 and 4) evolved several at once on the CPU, one cluster per SIMD lane.
+ */
 #ifndef CCEX_CCE_BATCH_H
 #define CCEX_CCE_BATCH_H
 // A30: the time evolution of small cCCE clusters (bath dimension 2 and 4) on the CPU, several clusters at once - one

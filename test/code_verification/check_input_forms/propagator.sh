@@ -28,12 +28,13 @@ variant(){
     local case="$1" name="$2" edit="$3"
     mkdir -p "$W/$case"
     python3 - "$CASES/$case/ccein.json" "$W/$case/$name.json" <<PY
-import json, sys
-d = json.load(open(sys.argv[1]))
+import json, sys; from input_layout import flat, nest
+d = flat(json.load(open(sys.argv[1])))
+d["outfile"] = sys.argv[2][:-len(".json")]
 $edit
-json.dump(d, open(sys.argv[2], "w"), indent=1)
+json.dump(nest(d), open(sys.argv[2], "w"), indent=1)
 PY
-    ( cd "$CASES/$case" && run_ccex "$BIN_DEV" "$W/$case/$name.json" "$W/$case/$name.log" -o "$W/$case/$name" )
+    ( cd "$CASES/$case" && run_ccex "$BIN_DEV" "$W/$case/$name.json" "$W/$case/$name.log" )
 }
 
 for case in p1_cce2_single p1_manual_hahn; do
@@ -88,19 +89,19 @@ refuse(){
     echo "  PASS  F3 $name (exit=$rc)"; PASS=$((PASS+1))
 }
 refuse bad_value "current propagator options (fast) is not available" "d['propagator'] = 'fast'"
-refuse bad_number "propagator must be a string (eigen, expm or sparse) or an object" "d['propagator'] = 1"
-refuse bad_array "propagator must be a string (eigen, expm or sparse) or an object" "d['propagator'] = ['sparse']"
-refuse no_method "propagator.method must be a string" "d['propagator'] = {'min_dim': 4096}"
+refuse bad_number "execution.propagator must be a string (eigen, expm or sparse) or an object" "d['propagator'] = 1"
+refuse bad_array "execution.propagator must be a string (eigen, expm or sparse) or an object" "d['propagator'] = ['sparse']"
+refuse no_method "execution.propagator.method must be a string" "d['propagator'] = {'min_dim': 4096}"
 refuse bad_method "current propagator options (krylov) is not available" "d['propagator'] = {'method': 'krylov'}"
-refuse unknown_key "propagator has no key \"mindim\"" "d['propagator'] = {'method': 'sparse', 'mindim': 4096}"
-refuse min_dim_eigen "propagator.min_dim and propagator.tol belong to method sparse" "d['propagator'] = {'method': 'eigen', 'min_dim': 4096}"
-refuse tol_eigen "propagator.min_dim and propagator.tol belong to method sparse" "d['propagator'] = {'method': 'eigen', 'tol': 1e-12}"
-refuse min_dim_zero "propagator.min_dim must be a positive 32-bit integer" "d['propagator'] = {'method': 'sparse', 'min_dim': 0}"
-refuse min_dim_fraction "propagator.min_dim must be a positive 32-bit integer" "d['propagator'] = {'method': 'sparse', 'min_dim': 1.5}"
-refuse min_dim_string "propagator.min_dim must be a finite JSON number" "d['propagator'] = {'method': 'sparse', 'min_dim': '4096'}"
-refuse tol_zero "propagator.tol must be a number between 0 and 1" "d['propagator'] = {'method': 'sparse', 'tol': 0}"
-refuse tol_one "propagator.tol must be a number between 0 and 1" "d['propagator'] = {'method': 'sparse', 'tol': 1}"
-refuse tol_string "propagator.tol must be a finite JSON number" "d['propagator'] = {'method': 'sparse', 'tol': '1e-12'}"
+refuse unknown_key "execution.propagator has no key \"mindim\"" "d['propagator'] = {'method': 'sparse', 'mindim': 4096}"
+refuse min_dim_eigen "execution.propagator.min_dim and execution.propagator.tol belong to method sparse" "d['propagator'] = {'method': 'eigen', 'min_dim': 4096}"
+refuse tol_eigen "execution.propagator.min_dim and execution.propagator.tol belong to method sparse" "d['propagator'] = {'method': 'eigen', 'tol': 1e-12}"
+refuse min_dim_zero "execution.propagator.min_dim must be a positive 32-bit integer" "d['propagator'] = {'method': 'sparse', 'min_dim': 0}"
+refuse min_dim_fraction "execution.propagator.min_dim must be a positive 32-bit integer" "d['propagator'] = {'method': 'sparse', 'min_dim': 1.5}"
+refuse min_dim_string "execution.propagator.min_dim must be a finite JSON number" "d['propagator'] = {'method': 'sparse', 'min_dim': '4096'}"
+refuse tol_zero "execution.propagator.tol must be a number between 0 and 1" "d['propagator'] = {'method': 'sparse', 'tol': 0}"
+refuse tol_one "execution.propagator.tol must be a number between 0 and 1" "d['propagator'] = {'method': 'sparse', 'tol': 1}"
+refuse tol_string "execution.propagator.tol must be a finite JSON number" "d['propagator'] = {'method': 'sparse', 'tol': '1e-12'}"
 
 echo "propagator: $PASS passed, $FAIL failed"
 [ $FAIL -eq 0 ]

@@ -1,3 +1,7 @@
+/**
+ * @file reader.h
+ * @brief The readers of the bath, qubit, gyro, tensor and state files, and the frame rotation.
+ */
 #ifndef __CCEX_READER_H_
 #define __CCEX_READER_H_
 
@@ -10,7 +14,7 @@
 void readQubitfile(QubitArray* qa, Config* cnf);
 void readBathfiles(BathArray* ba, QubitArray* qa, Config* cnf);
 
-// Pure validation of the coordinate_frame_rotation input against the QubitArray.
+// Pure validation of the frame.rotation input against the QubitArray.
 // Opens no file and changes no state; call it once every option source is in and before
 // any reader runs, so that an unsupported combination fails before a file is touched.
 void validateCoordinateFrameRotationInputs(QubitArray* qa, Config* cnf);

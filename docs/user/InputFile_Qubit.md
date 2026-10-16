@@ -1,20 +1,18 @@
-# Qubit-related tags
-The `Qubit` block describes the qubits, in one of two forms (the keys before 2026-10-13 are in the table of
-[InputFile.md](InputFile.md#OldNames)):
+# Qubit tags
+The `Qubit` block describes the qubits, in one of two forms (old key names are in the table of
+[old names](InputFile.md#OldNames)):
 
-<b>Form 1.</b> [file](#tag_Qubit_file): one qubit, its position read from a file (`qubitfile` until 2026-10-13), with
+<b>Form 1.</b> [file](#tag_Qubit_file): one qubit, its position read from a file, with
 [spin](#tag_Qubit_spin), [zfs](#tag_Qubit_zfs), [alphams](#tag_Qubit_alphams) and [betams](#tag_Qubit_betams) beside it. <br>
 
-<b>Example:</b> ``` "Qubit" : {"file": "../bath/bath_Diamond_NV_natab_defect", "alphams": 1, "betams": 0} ```
+<b>Example:</b> ``` "Qubit" : {"file": "bath/bath_Diamond_NV_natab_defect", "alphams": 1, "betams": 0} ```
 
-<b>Form 2.</b> [qubit](#tag_qubit): one or more qubits written out; the number of qubits is the length of the list (the
-key `nqubit` was removed on 2026-10-13). Beside the list: [intmap](#tag_intmap), [alpha_state](#tag_alpha_state),
+<b>Form 2.</b> [qubit](#tag_qubit): one or more qubits written out; the number of qubits is the length of the list. Beside the list: [intmap](#tag_intmap), [alpha_state](#tag_alpha_state),
 [beta_state](#tag_beta_state) and [psi0](#tag_psi0). <br>
 
 A block with `file` and any of `qubit`, `intmap`, `alpha_state`, `beta_state`, `psi0` is refused: give one form. The
 Overhauser field of the bath on the qubits is
-[hamiltonian.common.qubit_bath_mean_field](InputFile_General.md#tag_qubit_bath_mean_field) (`Qubit.overhaus` until
-2026-10-13).
+[hamiltonian.common.qubit_bath_mean_field](InputFile_General.md#tag_qubit_bath_mean_field).
 
 <details>
 <summary><b>Example:</b> Click here to show example code</summary>
@@ -92,12 +90,11 @@ Qubit information, in one of the two forms above. Without a `Qubit` block (or wi
     ``` "Qubit" : { "qubit" : [ { "name" : "Q1", "spin" : 0.5, "gyro" : -17608.597050, "xyz" : [1.0, 2.0, 3.0], "detuning" : 0.0, "alphams" : 0.5, "betams" : -0.5 }, 
                                  { "name" : "Q2", "spin" : 1.0, "gyro" : -17608.597050, "xyz" : [4.0, 5.0, 6.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 } ] } ```
 
-<b>Related variable:</b> [QubitArray struct](#QubitArray), [Qubit struct](#Qubit)
-
 <a id="tag_Qubit_file"></a>
 ## Qubit.file
 <b>Description:</b><br>
-File path of the position of a single qubit (`qubitfile` until 2026-10-13). The qubit is named `q0`, its gyromagnetic
+File path of the position of a single qubit, relative to the working directory
+([configuration.path](InputFile_General.md#tag_configuration_path) does not apply to it). The qubit is named `q0`, its gyromagnetic
 ratio is the electron's, its detuning 0; [spin](#tag_Qubit_spin), [zfs](#tag_Qubit_zfs), [alphams](#tag_Qubit_alphams)
 and [betams](#tag_Qubit_betams) sit beside `file` in the block. An unreadable file stops the run. <br>
 
@@ -116,14 +113,12 @@ and [betams](#tag_Qubit_betams) sit beside `file` in the block. An unreadable fi
 
 <b>Example:</b> ``` "Qubit" : {"file": "filepath", "alphams": 1, "betams": 0} ```
 
-<b>Related variable:</b> [Config](#Config)::qubitfile
-
 <a id="tag_Qubit_zfs"></a>
 ## Qubit.zfs
 <b>Description:</b><br>
-The zero-field-splitting tensor of the qubit of [Qubit.file](#tag_Qubit_file), 3 × 3 (`qzfs` until 2026-10-13). It has no
+The zero-field-splitting tensor of the qubit of [Qubit.file](#tag_Qubit_file), 3 × 3. It has no
 `unit` or `tensor_frame` sub-key: the values are kHz and are read as written, never rotated by
-[coordinate_frame_rotation](InputFile_General.md#tag_coordinate_frame_rotation). (The `Qubit.qubit` form gives it as an
+[frame.rotation](InputFile_General.md#tag_coordinate_frame_rotation). (The `Qubit.qubit` form gives it as an
 [intmap](#tag_intmap) entry.) <br>
 
 <b>Data Type:</b> Double List (3 × 3)
@@ -134,12 +129,10 @@ The zero-field-splitting tensor of the qubit of [Qubit.file](#tag_Qubit_file), 3
 
 <b>Example:</b> ``` "Qubit" : {"file": "defect", "zfs": [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]]} ```
 
-<b>Related variable:</b> [QubitArray](#QubitArray)::intmap
-
 <a id="tag_Qubit_spin"></a>
 ## Qubit.spin
 <b>Description:</b><br>
-The spin quantum number of the qubit of [Qubit.file](#tag_Qubit_file) (`qspin` until 2026-10-13). It is also the S a
+The spin quantum number of the qubit of [Qubit.file](#tag_Qubit_file). It is also the S a
 hyperfine tensor file of format v3 has to name. <br>
 
 <b>Data Type:</b> Double
@@ -148,12 +141,10 @@ hyperfine tensor file of format v3 has to name. <br>
 
 <b>Example:</b> ``` "Qubit" : {"file": "defect", "spin": 1.0} ```
 
-<b>Related variable:</b> [Qubit](#Qubit)::spin
-
 <a id="tag_Qubit_alphams"></a>
 ## Qubit.alphams
 <b>Description:</b><br>
-The m_s value of the qubit level used as |0⟩ (alpha), with [Qubit.file](#tag_Qubit_file) (`qalphams` until 2026-10-13). <br>
+The m_s value of the qubit level used as |0⟩ (alpha), with [Qubit.file](#tag_Qubit_file). <br>
 
 <b>Data Type:</b> Double
 
@@ -161,20 +152,16 @@ The m_s value of the qubit level used as |0⟩ (alpha), with [Qubit.file](#tag_Q
 
 <b>Example:</b> ``` "Qubit" : {"file": "defect", "alphams": -1} ```
 
-<b>Related variable:</b> [Qubit](#Qubit)::alpha
-
 <a id="tag_Qubit_betams"></a>
 ## Qubit.betams
 <b>Description:</b><br>
-The m_s value of the qubit level used as |1⟩ (beta), with [Qubit.file](#tag_Qubit_file) (`qbetams` until 2026-10-13). <br>
+The m_s value of the qubit level used as |1⟩ (beta), with [Qubit.file](#tag_Qubit_file). <br>
 
 <b>Data Type:</b> Double
 
 <b>Default:</b> `0.0`
 
 <b>Example:</b> ``` "Qubit" : {"file": "defect", "betams": 0} ```
-
-<b>Related variable:</b> [Qubit](#Qubit)::beta
 
 <a id="tag_qubit"></a>
 ## qubit
@@ -189,8 +176,6 @@ number of qubits is the length of the list (at least one). <br>
 <b>Example:</b> 
     ``` "qubit" : [ { "name" : "Q1", "spin" : 0.5, "gyro" : -17608.597050, "xyz" : [1.0, 2.0, 3.0], "detuning" : 0.0, "alphams" : 0.5, "betams" : -0.5 }, 
                     { "name" : "Q2", "spin" : 1.0, "gyro" : -17608.597050, "xyz" : [4.0, 5.0, 6.0], "detuning" : 0.0, "alphams" : 0, "betams" : 1 } ] ```
-
-<b>Related variable:</b> [Qubit struct](#Qubit)
 
 <b>Sub-tags:</b>
 
@@ -212,8 +197,6 @@ Name of the qubit. <br>
 
 <b>Example:</b> ``` "name" : "Q1" ```
 
-<b>Related variable:</b> [Qubit](#Qubit)::name
-
 <b>Parent-tags:</b> [qubit](#tag_qubit)
 
 <a id="tag_spin"></a>
@@ -225,8 +208,6 @@ Spin number of the qubit. <br>
 <b>Default:</b> 1.0
 
 <b>Example:</b> ``` "spin" : 0.5 ```
-
-<b>Related variable:</b> [Qubit](#Qubit)::spin
 
 <b>Parent-tags:</b> [qubit](#tag_qubit)
 
@@ -242,15 +223,13 @@ Gyromagnetic ratio of the qubit. <br>
 
 <b>Example:</b> ``` "gyro" : -17608.597050 ```
 
-<b>Related variable:</b> [Qubit](#Qubit)::gyro
-
 <b>Parent-tags:</b> [qubit](#tag_qubit)
 
 <a id="tag_xyz"></a>
 ## xyz
 <b>Description:</b><br>
 x,y,z position of the qubit in cartesian coordinates. <br>
-<b>Data Type:</b> Double List
+<b>Data Type:</b> Double List, or `{"value": ..., "unit": ...}` with the unit `A` (angstrom) or `nm` ([Units](InputFile.md#Units))
 
 <b>Unit:</b> angstrom
 
@@ -258,23 +237,19 @@ x,y,z position of the qubit in cartesian coordinates. <br>
 
 <b>Example:</b> ``` "xyz" : [1.0, 2.0, 3.0] ```
 
-<b>Related variable:</b> [Qubit](#Qubit)::xyz
-
 <b>Parent-tags:</b> [qubit](#tag_qubit)
 
 <a id="tag_detuning"></a>
 ## detuning
 <b>Description:</b><br>
 Detuning frequency of the qubit. <br>
-<b>Data Type:</b> Double
+<b>Data Type:</b> Double (or `[x]`), or `{"value": ..., "unit": ...}` with the unit `Hz`, `kHz`, `MHz` or `GHz` ([Units](InputFile.md#Units))
 
 <b>Unit:</b> kHz
 
 <b>Default:</b> 0.0
 
 <b>Example:</b> ``` "detuning" : 0.0 ```
-
-<b>Related variable:</b> [Qubit](#Qubit)::detuning
 
 <b>Parent-tags:</b> [qubit](#tag_qubit)
 
@@ -293,8 +268,6 @@ alpha_state is an index that picks a state disagreeing with an alphams written i
 
 <b>Related-tags:</b> [betams](#tag_betams) [alpha_state](#tag_alpha_state)
 
-<b>Related variable:</b> [Qubit](#Qubit)::alphams [QubitArray](#QubitArray)::psia
-
 <b>Parent-tags:</b> [qubit](#tag_qubit)
 
 <a id="tag_betams"></a>
@@ -311,8 +284,6 @@ beta_state is an index that picks a state disagreeing with a betams written in t
 <b>Example:</b> ``` "betams" : 0.0 ```
 
 <b>Related-tags:</b> [alphams](#tag_alphams) [beta_state](#tag_beta_state)
-
-<b>Related variable:</b> [Qubit](#Qubit)::betams [QubitArray](#QubitArray)::psib
 
 <b>Parent-tags:</b> [qubit](#tag_qubit)
 
@@ -339,8 +310,6 @@ point-dipole tensor CCEX computes from their `xyz` and `gyro`. <br>
                      { ... } ] 
     ```
 
-<b>Related variable:</b> [QubitArray](#QubitArray)::intmap
-
 <b>Sub-tags:</b>
 
 - [between](#tag_between) : Interaction qubit pair
@@ -362,8 +331,6 @@ For zero-field splitting interactions, the qubit names must be identical. \(e.g.
 
 <b>Related tags:</b> [tensor](#tag_tensor)
 
-<b>Related variable:</b> [QubitArray](#QubitArray)::intmap
-
 <b>Parent-tags:</b> [intmap](#tag_intmap)
 
 <a id="tag_tensor"></a>
@@ -382,29 +349,24 @@ This tensor is used to calculate the interaction between qubits. <br>
 
 <b>Related tags:</b> [between](#tag_between)
 
-<b>Related variable:</b> [QubitArray](#QubitArray)::intmap
-
 <b>Parent-tags:</b> [intmap](#tag_intmap)
 
 <a id="tag_alpha_state"></a>
 ## alpha_state
 <b>Description:</b><br>
-The alpha state |α⟩ of the qubits, given explicitly instead of from the qubits' [alphams](#tag_alphams) (new
-2026-10-13; it replaces `alphaidx` and `psia`). An object with exactly one of: <br>
+The alpha state |α⟩ of the qubits, given explicitly instead of from the qubits' [alphams](#tag_alphams). An object with exactly one of: <br>
 
 - `"index"`: n, the n-th eigenstate of the qubit Hamiltonian (zero-field splitting, Zeeman, intmap) sorted by
-  **descending** energy, starting at 0 (`alphaidx` until 2026-10-13). That order changes with the field: an NV at 500 G
+  **descending** energy, starting at 0. That order changes with the field: an NV at 500 G
   along its axis orders m<sub>s</sub> = +1, −1, 0, so `alpha_state {"index": 2}`, `beta_state {"index": 1}` is the
   0 ↔ −1 transition, not +1 ↔ 0. To name a sublevel, write [alphams](#tag_alphams)/[betams](#tag_betams) instead. The run
-  log prints which m<sub>s</sub> state psia and psib mostly are, and the run stops when an index and an explicitly written
+  log prints which m<sub>s</sub> state |α⟩ and |β⟩ mostly are (the lines `psia is mostly`, `psib is mostly`), and the run stops when an index and an explicitly written
   alphams/betams name different states. An index outside 0 .. (dimension − 1) is refused.
-- `"vector"`: the state itself (`psia` until 2026-10-13), real numbers over the whole qubit space (kron of the qubits,
+- `"vector"`: the state itself, real numbers over the whole qubit space (kron of the qubits,
   the last one varying fastest), normalized when read.
 
 Both `index` and `vector` in one state, or neither, is refused. Each side is decided on its own: `beta_state` may be
-given another way or not at all, and a side that is not given is the product of the qubits' `alphams` (`betams`).
-(Before 2026-10-13 `psia` was used only together with `psib`, `alphaidx` only together with `betaidx`, and a vector won
-over an index; those rules are gone.) <br>
+given another way or not at all, and a side that is not given is the product of the qubits' `alphams` (`betams`). <br>
 <b>Data Type:</b> Object `{"index": n}` or `{"vector": [...]}`
 
 <b>Default:</b> - (the product of the qubits' alphams)
@@ -413,14 +375,12 @@ over an index; those rules are gone.) <br>
 
 <b>Related tags:</b> [beta_state](#tag_beta_state) [alphams](#tag_alphams) [psi0](#tag_psi0)
 
-<b>Related variable:</b> [QubitArray](#QubitArray)::_alphaidx [QubitArray](#QubitArray)::psia
-
 <b>Parent-tags:</b> [Qubit](#tag_Qubit)
 
 <a id="tag_beta_state"></a>
 ## beta_state
 <b>Description:</b><br>
-The beta state |β⟩ of the qubits, as [alpha_state](#tag_alpha_state) (it replaces `betaidx` and `psib`): `{"index": n}`
+The beta state |β⟩ of the qubits, as [alpha_state](#tag_alpha_state): `{"index": n}`
 or `{"vector": [...]}`, not both; not given, the product of the qubits' [betams](#tag_betams). <br>
 <b>Data Type:</b> Object `{"index": n}` or `{"vector": [...]}`
 
@@ -429,8 +389,6 @@ or `{"vector": [...]}`, not both; not given, the product of the qubits' [betams]
 <b>Example:</b> ``` "beta_state" : {"vector": [0.0, 1.0, 0.0]} ```
 
 <b>Related tags:</b> [alpha_state](#tag_alpha_state) [betams](#tag_betams)
-
-<b>Related variable:</b> [QubitArray](#QubitArray)::_betaidx [QubitArray](#QubitArray)::psib
 
 <b>Parent-tags:</b> [Qubit](#tag_Qubit)
 
@@ -446,8 +404,6 @@ If this tag is not provided, the initial state defaults to the normalized sum |p
 
 <b>Example:</b> ``` "psi0" : [1.0, 0.0, 0.0] ```
 
-<b>Related variable:</b> [QubitArray](#QubitArray)::psi0
-
 <b>Parent-tags:</b> [Qubit](#tag_Qubit)
 
 <a id="tag_intmap_unit"></a>
@@ -457,8 +413,7 @@ Frequency unit of the [tensor](#tag_tensor) in this Qubit.intmap entry. Each ent
 may choose its own unit. Supported values are <tt>"Hz"</tt>, <tt>"kHz"</tt>,
 <tt>"MHz"</tt>, and <tt>"GHz"</tt>, matched case-insensitively. The tensor is converted
 to the internal rad*kHz representation while parsing. <br>
-Omitting this key preserves the legacy behavior: the tensor numbers are interpreted as
-kHz. The code, not the input author, supplies the factor of 2π. <br>
+Without this key the tensor numbers are kHz. The code, not the input author, supplies the factor of 2π. <br>
 This key belongs to Qubit.intmap entries only. [Qubit.zfs](#tag_Qubit_zfs), read with the single-qubit
 [Qubit.file](#tag_Qubit_file) form, has no unit sub-key and is always kHz. <br>
 
@@ -475,15 +430,15 @@ This key belongs to Qubit.intmap entries only. [Qubit.zfs](#tag_Qubit_zfs), read
 <b>Description:</b><br>
 Which Cartesian basis the components of this [intmap](#tag_intmap) tensor are written
 in. Only meaningful together with
-[coordinate_frame_rotation](InputFile_General.md#tag_coordinate_frame_rotation). <br>
+[frame.rotation](InputFile_General.md#tag_coordinate_frame_rotation). <br>
 
 - <tt>"bath"</tt>  : the original bath Cartesian basis. The tensor is transformed as
-      T → R T R<sup>T</sup> along with the positions.
-    - <tt>"qubit"</tt> : the common computational basis, the one in which the reference
-      qubit's axis is +z. The tensor is left exactly as written.
+  T → R T R<sup>T</sup> along with the positions.
+- <tt>"qubit"</tt> : the common computational basis, the one in which the reference
+  qubit's axis is +z. The tensor is left exactly as written.
 
 <b><tt>"qubit"</tt> does not mean an individual qubit's local frame.</b> There is one
-computational frame for the whole run, fixed by `reference_qubit.` A qubit whose
+computational frame for the whole run, fixed by `frame.rotation.reference_qubit`. A qubit whose
 crystallographic orientation differs from the reference one is described by ITS OWN ZFS
 tensor expressed in that common frame; with <tt>"bath"</tt> the same global R
 transforms it, and the off-diagonal elements that appear are correct and must not be
@@ -493,8 +448,8 @@ The rule is the same for a self/ZFS entry (<tt>between: ["NV0","NV0"]</tt>) and 
 pair entry (<tt>between: ["NV0","NV1"]</tt>): the frame is taken from this key, never
 guessed from which kind of tensor it is. <br>
 With the rotation on and more than one qubit, every explicit intmap entry MUST carry it;
-omitting it is an error, not a default. With a single qubit the key stays optional and an
-input without it behaves exactly as before -- the tensor is left as written. <br>
+omitting it is an error, not a default. With a single qubit the key is optional, and without
+it the tensor is left as written. <br>
 An entry that is not given at all is either the zero tensor or, off the diagonal, the
 point-dipole tensor CCEX computes from the source qubit geometry; the latter is always
 transformed. <br>

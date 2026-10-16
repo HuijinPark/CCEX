@@ -1,3 +1,7 @@
+/**
+ * @file bath.h
+ * @brief The bath spins (BathSpin, BathArray) and their interactions.
+ */
 #ifndef __CCEX_BATH_H_
 #define __CCEX_BATH_H_
 
@@ -8,7 +12,7 @@
 
 /**
  * @struct BathSpin
- * @brief BathSpin structure contains each BathSpin's information
+ * @brief One bath spin: its species, spin, gyromagnetic ratio, position, interaction tensors and sampled state.
  * @note When you make this structure, 
  *       the following action would be done automatically.
  *       (1) state value would be allocated
@@ -21,20 +25,20 @@ typedef struct {
 
     /**
      * @brief the name of spin
-     * @details Read from the bath file(s) given by "bathfile" (or -I) (no default value)
+     * @details Read from the bath file(s) given by "configuration.bathfile" (no default value)
     */ 
     char name[MAX_CHARARRAY_LENGTH]; 
 
     /**
      * @brief Spin quantum number
-     * @details From the optional "gyrofile" when it lists the species, otherwise from the
+     * @details From the optional configuration.gyrofile when it lists the species, otherwise from the
      *          built-in isotope table (src/input/isotope_table.cpp); an unknown species is an error
     */
     float spin;    
 
     /**
      * @brief Gyromagnetic ratio (Unit : radkHz/Gauss)
-     * @details From the optional "gyrofile" when it lists the species, otherwise from the
+     * @details From the optional configuration.gyrofile when it lists the species, otherwise from the
      *          built-in isotope table; the file value wins when both exist
     */
     double gyro;   
@@ -55,7 +59,7 @@ typedef struct {
   
     /**
      * @brief Spin position (Unit : Angstrom)
-     * @details Read from the bath file(s) given by "bathfile" (no default value)
+     * @details Read from the bath file(s) given by configuration.bathfile (no default value)
      * @note The x,y,z position can be shifted per bath file by "bath_shift"
     */
     double xyz[3]; 
@@ -64,8 +68,8 @@ typedef struct {
     /* Spin state (Optional)*/
 
     /**
-     * @brief Spin sub-level m in the z-basis, a single number (used when "nstate" != 0, the sampled-state approach)
-     * @details Read from "bath_state_file" when given, otherwise drawn at random ("nstate" states, "seed" fixes them)
+     * @brief Spin sub-level m in the z-basis, a single number (used when configuration.nstate != 0, the sampled-state approach)
+     * @details Read from configuration.bath_state_file when given, otherwise drawn at random (configuration.nstate states, configuration.seed fixes them)
     */
     float state; 
 
@@ -81,14 +85,14 @@ typedef struct {
 
     /**
      * @brief The mean-field effect from zz-coupling with other bath spins (Unit : radkHz)
-     * @details Automatically set if &General -> "nstate" tag is non-zero (default : 0.0)
+     * @details Set when configuration.nstate is non-zero (default : 0.0)
      * @todo Add documentation for cce.in : &Bath -> "disorder" tag 
     */
     double disorder; 
 
     /**
      * @brief The transverse (x, y) part of the same static mean field, J[:,z] m_j summed over the other bath spins
-     *        (Unit : radkHz); set only with hamiltonian.common.bath_bath_mean_field "xyz", zero otherwise (2026-10-03)
+     *        (Unit : radkHz); set only with hamiltonian.common.bath_bath_mean_field "xyz", zero otherwise
     */
     double disorder_xy[2];
     bool disorder_vector;   /**< disorder_xy was set (vector_mean_field): a cluster also removes its members' x, y field */
@@ -118,7 +122,7 @@ typedef struct {
 
 /*!
  * @struct BathArray
- * @brief BathArray include all Bath spins' information
+ * @brief All bath spins of the run (read from the bath files), with the properties shared by the bath.
  */
 typedef struct {
 
@@ -155,8 +159,8 @@ void        BathArray_setBathHypfs(BathArray* ba, QubitArray* qa);
 
 void        BathArray_setBathDisorders(BathArray* ba, bool vector = false);
 /**
- * @brief The same disorders (and x, y parts) as BathArray_setBathDisorders, the spins split over the MPI ranks and gathered
- *        (improvements.md A13). Every rank calls it with the same bath and states. The couplings of a rank's spins do not
+ * @brief The same disorders (and x, y parts) as BathArray_setBathDisorders, the spins split over the MPI ranks and gathered.
+ *        Every rank calls it with the same bath and states. The couplings of a rank's spins do not
  *        depend on the states; they are kept in @p cache from the first call while they fit (cache.limit bytes) and reused.
  *        Each spin's sum runs over j in the same order with the same terms, so the values are the same bits.
  */

@@ -16,11 +16,11 @@ rm -rf "$W"; mkdir -p "$W/out"
 cp -r "$REG/Diamond_NV_natab_cce/inputfiles" "$W/"
 cd "$W"
 python3 - <<'PY'
-import json, re
-j = json.loads(re.sub(r"(?m)^\s*#.*$", "", open("inputfiles/ccein_nstate0.json").read()))
+import json, re; from input_layout import flat, nest
+j = flat(json.loads(re.sub(r"(?m)^\s*#.*$", "", open("inputfiles/ccein_nstate0.json").read())))
 plain = dict(j, outfile="./out/plain")
-open("plain.json", "w").write(json.dumps(plain, indent=1))
-lines = json.dumps(dict(j, outfile="./out/run#1!x"), indent=1).splitlines()
+open("plain.json", "w").write(json.dumps(nest(plain), indent=1))
+lines = json.dumps(nest(dict(j, outfile="./out/run#1!x")), indent=1).splitlines()
 lines.insert(1, '  "#note": "a key with # and ! inside a string",   # a comment after a value')
 lines.insert(2, '  ! a comment line of the other kind')
 open("commented.json", "w").write("# a comment line\n" + "\n".join(lines) + "\n")

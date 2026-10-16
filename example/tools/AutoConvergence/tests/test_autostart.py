@@ -1,4 +1,4 @@
-"""Automatic starts of --auto_conv (autoconv/autostart.py and the runner without candi_rdip, candi_rbath, pilot, pool and
+"""Automatic starts of the automatic convergence (autoconv/autostart.py and the runner without candi_rdip, candi_rbath, pilot, pool and
 deltat; plan "자동 시작값", 2026-10-08), against fake_ccex.py.
 
     cd example/tools/AutoConvergence && python -m unittest tests.test_autostart -v
@@ -42,8 +42,9 @@ def make_auto(tmp, ids=tuple(range(1, 31)), nspin=NSPIN, flat=False, species=("1
     fake.write_text(f"#!/bin/sh\nexec {PY} {HERE / 'fake_ccex.py'} \"$@\"\n"); fake.chmod(0o755)
     blk = dict(workdir="auto", configurations=dict(bathfile=str(data / "bath_{k}")), threshold_config=0.06, min_configurations=8)
     blk.update(block)
-    inp = dict(method="cCCE", quantity="coherence", order=2, Qubit=dict(file=str(data / "qubit")), gyrofile=str(data / "gyro"),
-               nstate=0, bfield=500, auto_convergence=nest(blk), **(base or {}))
+    conf = dict(gyrofile=str(data / "gyro"), nstate=0)       # the configuration block (A64; the bath pattern in it A65)
+    inp = dict(method="cCCE", quantity="coherence", order=2, Qubit=dict(file=str(data / "qubit")),
+               configuration=conf, bfield=500, auto_convergence=nest(blk, conf), **(base or {}))
     (tmp / "input.json").write_text(json.dumps(inp, indent=1))
     return tmp / "input.json", fake
 
@@ -173,12 +174,32 @@ class TestAutostartRuns(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmp)
 
+    def test_k_range_chooses_the_configurations(self):      # A65: the configuration block's k_range, else the files found
+        from autoconv.runner import Runner
+        inp, fake = make_auto(self.tmp)
+        j = json.loads(inp.read_text())
+        j["configuration"].update(path="data", bathfile=["bath_{k}"], k_range=[5, 26])   # path in front of the block's names
+        inp.write_text(json.dumps(j))
+        r = Runner(inp, fake)
+        r.resolve()
+        self.assertEqual(sorted(r.pilot + r.pool), list(range(5, 27)))
+        self.assertEqual(r.patterns["bathfile"], "data/bath_{k}")
+        child, _ = r.child(7, 0, 50, 30.0, 20.0, ())
+        self.assertEqual(child["configuration"]["bathfile"], [str(inp.parent / "data/bath_7")])
+        self.assertFalse({"k_range", "path"} & set(child["configuration"]))   # one configuration, absolute names
+        self.assertEqual(child["output"], {"file": "out"})
+        j["configuration"]["k_range"] = [5, 40]                  # a k without its bath file
+        inp.write_text(json.dumps(j))
+        r = Runner(inp, fake)
+        with self.assertRaisesRegex(Exception, "missing files"):
+            r.resolve()
+
     def test_bath_files_alone_converge(self):
         inp, fake = make_auto(self.tmp, num_candi_rdip=5, num_candi_rbath=3)
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
         s = summary(inp)
-        self.assertEqual(sorted(s["found_automatically"]), ["configurations.production", "configurations.test", "deltat", "rbath.candidates", "rdip.candidates"])
+        self.assertEqual(sorted(s["found_automatically"]), ["deltat", "rbath.candidates", "rdip.candidates", "sampling.production", "sampling.test"])
         self.assertEqual((len(s["test"]), len(s["test"]) + len(s["production_available"])), (10, 30))
         start = (inp.parent / "auto/result/summary.txt").read_text()          # section 0 and the window (summary.txt, 2026-10-10)
         for word in ("30 found", "13C spin 0.5", "300 spins at", "rdip candidates", "estimate", "150 points"):
@@ -244,7 +265,7 @@ class TestAutostartRuns(unittest.TestCase):
         code, out = call(inp, fake)
         self.assertEqual(code, 0, out)
         s = summary(inp)
-        self.assertEqual(sorted(s["found_automatically"]), ["configurations.production", "configurations.test", "deltat"])
+        self.assertEqual(sorted(s["found_automatically"]), ["deltat", "sampling.production", "sampling.test"])
         self.assertEqual(s["rdip"]["need"], 1)
         self.assertEqual(s["rdip"]["values"][:3], [10.0, 20.0, 30.0])
         j = json.loads(inp.read_text()); j["auto_convergence"]["rdip"]["num_candidates"] = 4; inp.write_text(json.dumps(j))
@@ -281,8 +302,8 @@ class TestAutostartRuns(unittest.TestCase):
         d = Path(self.tmp) / "states"; d.mkdir()
         inp, fake = make_auto(d, nspin=300)
         j = json.loads(inp.read_text())
-        j["nstate"] = 2
-        j["auto_convergence"]["configurations"]["statefile"] = str(d / "data/cfg{k}_state")
+        j["configuration"]["nstate"] = 2
+        j["configuration"]["bath_state_file"] = [str(d / "data/cfg{k}_state")]
         inp.write_text(json.dumps(j))
         for k in range(1, 31):
             if k != 5:                       # configuration 5 lacks its state files

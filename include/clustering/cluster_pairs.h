@@ -1,3 +1,7 @@
+/**
+ * @file cluster_pairs.h
+ * @brief The order-2 cluster list of CCE/gCCE made without the hash, shared out between the ranks.
+ */
 #ifndef __CCEX_CLUSTER_PAIRS_H_
 #define __CCEX_CLUSTER_PAIRS_H_
 

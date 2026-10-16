@@ -6,31 +6,40 @@
     "alphams": -1,
     "betams": 0
   },
-  "gyrofile": "../../inputs/p1_1ppm/DiaP1_gyro",
-  "bathfile": [
-    "../../inputs/p1_1ppm/bath_DiaP1_1ppm_1"
-  ],
+  "configuration": {
+    "gyrofile": "../../inputs/p1_1ppm/DiaP1_gyro",
+    "bathfile": [
+      "../../inputs/p1_1ppm/bath_DiaP1_1ppm_1"
+    ],
+    "bath_state_file": ["../../inputs/p1_1ppm/state_"],
+    "nstate": 1,
+    "seed": 19,
+    "defect_axis_file": ["../../inputs/p1_1ppm/avaax_nav4"],
+    "defect_state_file": ["../../inputs/p1_1ppm/exstate_"]
+  },
   "order": 2,
   "bfield": 500,
   "rbath": 400,
   "rdip": 620,
   "deltat": 0.01,
   "nstep": 200,
-  "add_subclusters": false,
-  "max_clusters_per_order": [
-    0,
-    0,
-    0
-  ],
+  "cluster": {
+    "selection": {
+      "add_subclusters": false,
+      "max_per_order": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
   "pulse": {"count": 1},
-  "savemode": "coherence",
+  "output": {"savemode": "coherence"},
   "Defect": {
-    "state_file": "../../inputs/p1_1ppm/exstate_",
-    "axis_file": "../../inputs/p1_1ppm/avaax_nav4",
     "species": [
       {
         "name": "P1",
-        "n_nuclear_spins": 1,
+        "n_onsite_spins": 1,
         "types": [
           "14N"
         ],
@@ -43,7 +52,7 @@
         "gyros": [
           1.9337792
         ],
-        "n_configurations": 4,
+        "n_axis_states": 4,
         "hyperfine": [
           [
             1,
@@ -170,8 +179,5 @@
         ]
       }
     ]
-  },
-  "seed": 19,
-  "nstate": 1,
-  "bath_state_file": "../../inputs/p1_1ppm/state_"
+  }
 }

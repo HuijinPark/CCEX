@@ -1,3 +1,7 @@
+/**
+ * @file cluster_pcce.h
+ * @brief pCCE: the partition of the bath spins and the clusters of partitions.
+ */
 #ifndef __CCEX_CLUSTER_PCCE_H_
 #define __CCEX_CLUSTER_PCCE_H_
 

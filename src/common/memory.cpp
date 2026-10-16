@@ -1,3 +1,7 @@
+/**
+ * @file memory.cpp
+ * @brief Allocation, copy and release of arrays of each type.
+ */
 #include <stdlib.h> 
 #include "../../include/common/memory.h"
 #include "../../include/common/utilities.h"

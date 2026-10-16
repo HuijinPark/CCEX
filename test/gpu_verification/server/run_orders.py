@@ -10,19 +10,15 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'check_gpu'))  # benchmark.py
-from benchmark import INPUTS, REPO, compare, FILE_KEYS, get, put
+from benchmark import INPUTS, REPO, compare, absolute_paths, get, put
 
 
 def prepare_config(source, directory, order, backend, batch):
     config = json.loads(source.read_text())
-    for key in FILE_KEYS:
-        if get(config, key):
-            config = put(config, {key: str((source.parent.parent / get(config, key)).resolve())})
-    config['bathfile'] = [str((source.parent.parent / p).resolve()) for p in config['bathfile']]
-    config.update(order=order, backend=backend, profile=True, savemode='coherence',
-                  outfile=str(directory / 'coherence'),
-                  gpu_options=dict(config.get('gpu_options', {}), evolution_batch_steps=batch, min_dim=256))
-    return config
+    config = absolute_paths(config, source.parent.parent)
+    config['order'] = order
+    return put(config, {'backend': backend, 'profile': True, 'savemode': 'coherence', 'outfile': str(directory / 'coherence'),
+                        'gpu_options': dict(get(config, 'gpu_options', {}), evolution_batch_steps=batch, min_dim=256)})
 
 
 def sample_resources():

@@ -1,3 +1,7 @@
+/**
+ * @file policy_merge.h
+ * @brief Adaptive refinement: the merge policy, which joins the bundle pair that lowers a local error the most.
+ */
 // Policy "merge" (the only one since 2026-10-10): probe pairs of bundles and take, one
 // step at a time, the merge that lowers a local error the most.
 #pragma once

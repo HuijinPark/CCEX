@@ -37,8 +37,9 @@ def main():
     if a.cuda:binaries['cuda']=a.cuda.resolve()
     if a.baseline:binaries['baseline']=a.baseline.resolve()
     original=json.loads((REPO/'test/gpu_verification/check_gpu/examples/pcce_ensemble.json').read_text())
-    original['gyrofile']=str(REPO/original['gyrofile'])
-    original['bathfile']=[str(REPO/name) for name in original['bathfile']]
+    bath=original['configuration']   # A64
+    bath['gyrofile']=str(REPO/bath['gyrofile'])
+    bath['bathfile']=[str(REPO/name) for name in bath['bathfile']]
     original=put(original,{'backend':'cpu','pcce.print_trials':True,'pcce.trials':5,'pcce.partition':'deterministic'})
     records=[]
     summary=dict(status='running',binary_sha256={k:sha(v) for k,v in binaries.items()},records=records)
@@ -81,10 +82,10 @@ def main():
             if a.baseline:run(f'k{size}/before',base,'baseline',reference=reference)
             run(f'k{size}/create',cold,ranks=2,event='stored',reference=reference)
             checksum=sha(cache)
-            variants=[{'nstate':0,'pulse.count':1,'order':2,'rdip':30},
-                      {'nstate':2,'pulse.count':4,'order':2,'rdip':30},
-                      {'nstate':0,'pulse.count':16,'order':1,'rdip':30},
-                      {'nstate':1,'pulse.count':1,'order':2,'rdip':7}]
+            variants=[{'configuration.nstate':0,'pulse.count':1,'order':2,'rdip':30},
+                      {'configuration.nstate':2,'pulse.count':4,'order':2,'rdip':30},
+                      {'configuration.nstate':0,'pulse.count':16,'order':1,'rdip':30},
+                      {'configuration.nstate':1,'pulse.count':1,'order':2,'rdip':7}]
             for index,changes in enumerate(variants):
                 cfg=put(base,changes)
                 ref=reference if index==0 else run(f'k{size}/v{index}/reference',cfg)
@@ -98,14 +99,14 @@ def main():
 
         base=put(original,{'pcce.partition_size':2})
         clean=(root/'partition-k2.cache').read_bytes()
-        mutations=[('seed',{'seed':73}),('sK',{'pcce.partition_size':3}),('trials',{'pcce.trials':7}),
+        mutations=[('seed',{'configuration.seed':73}),('sK',{'pcce.partition_size':3}),('trials',{'pcce.trials':7}),
                    ('iterations',{'pcce.max_iterations':11}),('initialization',{'pcce.kmeans_pp':False})]
-        bath=Path(original['bathfile'][0]).read_text().splitlines()
+        bath=Path(original['configuration']['bathfile'][0]).read_text().splitlines()
         for label,rows in [('reordered',[bath[0],*reversed(bath[1:])]),
                            ('coordinate',[bath[0],bath[1].replace('5.0','5.125'),*bath[2:]]),
                            ('remainder',['8.0 0 0 0',*bath[1:],'1.0 1.0 1.0 13C'])]:
             path=root/f'bath-{label}';path.write_text('\n'.join(rows)+'\n')
-            mutations.append((label,{'bathfile':[str(path)]}))
+            mutations.append((label,{'configuration.bathfile':[str(path)]}))
         for name,changes in mutations:
             cache=root/f'mismatch-{name}.cache';cache.write_bytes(clean)
             cfg=put(base,changes)
@@ -146,17 +147,17 @@ def main():
         active=put(base,{'pcce.cache.mode':'read','pcce.cache.file':str(cache)})
         for name,changes,message,extra in [
             ('missing',{'pcce.cache.file':str(root/'missing.cache')},'read mode requires a valid matching cache',()),
-            ('path-required',{'pcce.cache.file':None},'enabled cache requires pcce.cache.file',()),
+            ('path-required',{'pcce.cache.file':None},'enabled cache requires cluster.pcce.cache.file',()),
             ('mode-type',{'pcce.cache.mode':True},'pcce.cache.mode must be',()),
             ('bad-mode',{'pcce.cache.mode':'write'},'pcce.cache.mode must be',()),
             ('path-type',{'pcce.cache.file':3},'pcce.cache.file must be',()),
             ('empty-path',{'pcce.cache.file':''},'pcce.cache.file must be',()),
             ('long-path',{'pcce.cache.file':'a'*500},'pcce.cache.file must be',()),
-            ('legacy',{'pcce.partition':'legacy'},'enabled cache requires pcce.partition deterministic',()),
-            # the cache belongs to cluster_mode pcce: another cluster_mode refuses the pcce block (A47); -m changes the
-            # method only, and gCCE with pcce is not implemented
-            ('method',{'cluster_mode':'standard'},'the pcce block belongs to cluster_mode pcce',()),
-            ('cli-method',{},'method gCCE with cluster_mode "pcce" is not implemented yet',('-m','gCCE')),
+            ('legacy',{'pcce.partition':'legacy'},'enabled cache requires cluster.pcce.partition deterministic',()),
+            # the cache belongs to cluster.mode pcce: another mode refuses the cluster.pcce block (A47, A65); the cache stays
+            # with cCCE (gCCE with pcce runs, without the cache; until A63 checked with -m gCCE on the command line)
+            ('method',{'cluster_mode':'standard'},'the cluster.pcce block belongs to cluster.mode pcce',()),
+            ('gcce-method',{'method':'gCCE'},'enabled cache requires method cCCE with cluster.mode pcce',()),
             ('directory',{'pcce.cache.file':str(root)},'cache path must be a regular file',()),
             ('write-failure',{'pcce.cache.mode':'readwrite','pcce.cache.file':str(root/'absent-dir/p.cache')},'cannot create cache temporary file',()),
         ]:
@@ -170,7 +171,7 @@ def main():
         if a.baseline:
             # Compare the historical seed-zero C RNG stream, not the old bug
             # that ignored every explicitly requested seed.
-            cfg=put(base,{'pcce.partition':'legacy','nstate':2,'seed':0})
+            cfg=put(base,{'pcce.partition':'legacy','configuration.nstate':2,'configuration.seed':0})
             ref_legacy=run('legacy/before',cfg,'baseline',ranks=2)
             run('legacy/after',put(cfg,{'pcce.cache.mode':'off','pcce.cache.file':str(cache)}),ranks=2,reference=ref_legacy)
 

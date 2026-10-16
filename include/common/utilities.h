@@ -1,3 +1,7 @@
+/**
+ * @file utilities.h
+ * @brief Shared helpers: error stops, logging, complex and tensor types, maths and string utilities.
+ */
 #ifndef __CCEX_UTILITIES_UTILITIES_H_
 #define __CCEX_UTILITIES_UTILITIES_H_
 
@@ -208,7 +212,18 @@ void MPI_freeLocalClusters(int order, int**** localClusters);
 
 /* Print help and banner ---------------------------------------------------------*/
 void printBanner();
-void printHelp();
+// A68: rank 0's standard output between the two calls goes to a temporary file, and at logQuietEnd only its lines that
+// begin with "[" and a letter (the tagged lines the checks and tools read: [seed], [backend], ...), that hold a warning, a note or an error, or that name the
+// files read and their spin counts are printed.
+// For the read-in, report and clusters of a configuration of configuration.k_range after the first, which repeat what the
+// log already holds; not with -v. Nothing happens on the other ranks or when quiet is false. all: every line (a run that
+// stops while quiet, through exit or ccexFatal, prints all it held).
+void logQuietBegin(bool quiet);
+void logQuietEnd(bool all = false);
+// A76: rank 0's standard output between the two calls is printed at logAlignEnd with the ":" of each "label : value"
+// table in one column after its longest label (logAlignEnd in utilities.cpp)
+void logAlignBegin();
+void logAlignEnd();
 
 #endif // __CCEX_UTILITIES_UTILITIES_H_
 

@@ -1,7 +1,12 @@
+/**
+ * @file general.cpp
+ * @brief The Config structure: defaults, setters, getters and the checks of combined settings.
+ */
 #include "../../include/calculation/gpu/accelerator_defaults.h"
 #include "../../include/calculation/gpu/compute_backend.h"
 #include "../../include/clustering/bundle/bundle_defaults.h"
 #include "../../include/input/general.h"
+#include "../../include/calculation/superoperator.h"
 
 #include "../../include/common/memory.h"
 #include <string.h>
@@ -11,6 +16,8 @@
 Config* Config_init(){
     Config* cnf = (Config*)allocArray1d(1,sizeof(Config));
     cnf->method[0] = '\0';
+    cnf->jump_operators = NULL;
+    cnf->jump_operators_section[0] = '\0';
     cnf->quantity[0] = '\0';
     cnf->propagator[0] = '\0';
     cnf->sparse_min_dim = 4096;   // A2: propagator = sparse from this cluster dimension on
@@ -19,6 +26,9 @@ Config* Config_init(){
     cnf->evolution_isdefault = true;
     cnf->evolution_update[0] = '\0';           // not given; Config_validateEvolutionUpdate picks the default (A29)
     cnf->evolution_update_source[0] = '\0';
+    cnf->column_evolution = true;              // A62: on by default (job 17492; {"enabled": false} turns it off)
+    cnf->column_evolution_min_dim = 256;
+    cnf->column_evolution_columns = 64;
     strcpy(cnf->backend, "cpu");
     cnf->gpu_min_dim = 768;                    // A37 (idm4-gpu 699): the card wins from ~670-750 on every path; 256 until 2026-10-13
     cnf->gpu_batch_steps = 64;
@@ -38,6 +48,7 @@ Config* Config_init(){
     cnf->gpu_warp_max_dim = -1;                 // not given; Config_resolveWarpMaxDim picks the default (A40)
     cnf->gpu_warp_source[0] = '\0';
     cnf->profile = false;
+    cnf->cluster_only = false;
     cnf->cluster_contributions = false;
     cnf->cluster_contribution_max_mb = 256;
     cnf->nrdip_ladder = 0;
@@ -113,15 +124,15 @@ void Config_allocQd_tensorfile_woqubit(Config* cnf){
 }
 
 void Config_allocAvaaxfile(Config* cnf){
-    cnf->avaaxfile = allocChar1d(MAX_FILEPATH);
+    cnf->avaaxfile = allocChar2d(cnf->nbathfiles,MAX_FILEPATH);
 }
 
 void Config_allocStatefile(Config* cnf){
-    cnf->statefile = allocChar1d(MAX_FILEPATH);
+    cnf->statefile = allocChar2d(cnf->nbathfiles,MAX_FILEPATH);
 }
 
 void Config_allocExstatefile(Config* cnf){
-    cnf->exstatefile = allocChar1d(MAX_FILEPATH);
+    cnf->exstatefile = allocChar2d(cnf->nbathfiles,MAX_FILEPATH);
 }
 
 void Config_alloc_flines(Config* cnf, int size){
@@ -145,6 +156,8 @@ void Config_freeAll(Config* cnf){
     Config_freeQd_tensorfile(cnf);
     Config_freeQd_tensorfile_woqubit(cnf);
     Config_free_flines(cnf);
+    freeInt1d(&(cnf->bathfile_first));
+    if (cnf->jump_operators) JumpOperatorArray_freeAll(cnf->jump_operators);
     freeArray1d((void**)&(cnf));
 }
 
@@ -165,15 +178,15 @@ void Config_freeQubitfile(Config* cnf){
 }
 
 void Config_freeAvaaxfile(Config* cnf){
-    freeChar1d(&(cnf->avaaxfile));
+    freeChar2d(&(cnf->avaaxfile),cnf->nbathfiles);
 }
 
 void Config_freeStatefile(Config* cnf){
-    freeChar1d(&(cnf->statefile));
+    freeChar2d(&(cnf->statefile),cnf->nbathfiles);
 }
 
 void Config_freeExstatefile(Config* cnf){
-    freeChar1d(&(cnf->exstatefile));
+    freeChar2d(&(cnf->exstatefile),cnf->nbathfiles);
 }
 
 void Config_free_flines(Config* cnf){
@@ -278,15 +291,15 @@ double* Config_getBathadjust_i(Config* cnf,int i){
     return cnf->bathadjust[i];
 }
 
-char*   Config_getAvaaxfile(Config* cnf){
+char**  Config_getAvaaxfile(Config* cnf){
     return cnf->avaaxfile;
 }
 
-char*   Config_getStatefile(Config* cnf){
+char**  Config_getStatefile(Config* cnf){
     return cnf->statefile;
 }
 
-char*   Config_getExstatefile(Config* cnf){
+char**  Config_getExstatefile(Config* cnf){
     return cnf->exstatefile;
 }
 
@@ -363,11 +376,31 @@ int     Config_getQd_readmode(Config* cnf){
     return cnf->qd_readmode;
 }
 
+bool methodUsesPcceClusters(const char* m){
+    return !strcasecmp(m,"pcce") || !strcasecmp(m,"pgcce") || !strcasecmp(m,"pmecce") || !strcasecmp(m,"pmegcce");
+}
+
+const char* methodKernel(const char* m){
+    if (!strcasecmp(m,"gcce")   || !strcasecmp(m,"pgcce"))   return "gcce";
+    if (!strcasecmp(m,"mecce")  || !strcasecmp(m,"pmecce"))  return "mecce";
+    if (!strcasecmp(m,"megcce") || !strcasecmp(m,"pmegcce")) return "megcce";
+    return "cce";
+}
+
+const char* inputMethodName(const char* m){
+    for (const char* c : {"CCE", "pCCE", "dsj", "itb", "dsjitb"}) if (!strcasecmp(m,c)) return "cCCE";
+    if (!strcasecmp(m,"pgcce"))   return "gCCE";
+    if (!strcasecmp(m,"pmecce"))  return "meCCE";
+    if (!strcasecmp(m,"pmegcce")) return "megCCE";
+    return m;
+}
+
 // set 
 void Config_setMethod(Config* cnf, char* method){
 
-    const int opsize = 7;
-    char options[opsize][MAX_CHARARRAY_LENGTH] = {"gCCE","CCE","dsj","itb","dsjitb","pCCE"};
+    const int opsize = 12;   // 11 names; the empty 12th entry keeps accepting "" as before (opsize was 7 for 6 names)
+    char options[opsize][MAX_CHARARRAY_LENGTH] = {"gCCE","CCE","dsj","itb","dsjitb","pCCE","meCCE","megCCE","pgCCE",
+                                                  "pmeCCE","pmegCCE"};
 
     int idx = findIndexCharFix(options,0,opsize-1,method);
     if (idx == -1) {
@@ -388,7 +421,7 @@ void Config_setQuantity(Config* cnf, char* quantity){
 
     // "noise" used to be accepted, but nothing computes it: the run gave the coherence under that name (review 20261013-doxygen D22)
     if (strcasecmp(quantity,"noise") == 0) {
-        ccexRefusalPrint(stderr, "Error: quantity \"noise\" is not supported (no noise calculation exists); use coherence or dm\n");
+        ccexRefusalPrint(stderr, "Error: quantity \"noise\" is not supported (no noise calculation exists), use coherence or dm\n");
         ccexRefuse();
     }
 
@@ -471,26 +504,25 @@ void Config_setEvolution(Config* cnf, char* evolution){
 /**
  * Pick the evolution path once every option source has been applied.
  *
- * This CANNOT be decided while the input file is being parsed. main.cpp reads the file
- * from inside the getopt loop (case 'f'), so -m, -N and the rest are still to come:
- * `-f ccein.json -N 1` on a file with no "nstate" key would have been resolved against
- * nstate = 0 and frozen at matrix, even though the run does have a pure rho0. Call this
- * after the loop, before Config_report, so the reported value is the one that runs.
+ * This CANNOT be decided while the input file is being parsed: the readers run one after
+ * another, and the method and nstate the decision needs are only settled once all of them
+ * have run. Call this
+ * after the readers, before Config_report, so the reported value is the one that runs.
  *
  * An explicit "evolution" is never rewritten -- only checked against the one condition
  * that is fatal outside gCCE. calCoherenceGcce enforces the other two.
  */
 void Config_resolveEvolution(Config* cnf){
 
-    bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
+    bool isGCCE = !strcmp(methodKernel(cnf->method),"gcce");   // gCCE, pgCCE
 
     if (!cnf->evolution_isdefault){
         // Only calCoherenceGcce reads evolution. Any other method would ignore it and run
         // the density-matrix path anyway, so refuse rather than let the input claim
         // something the run does not do.
         if (strcasecmp(cnf->evolution,"matrix")!=0 && !isGCCE){
-            ccexRefusalPrint(stderr,"Error : evolution=%s is implemented for method=gCCE only "
-                           "(this run has method=%s).\n",cnf->evolution,cnf->method);
+            ccexRefusalPrint(stderr,"Error : execution.evolution=%s is implemented for method=gCCE only "
+                           "(this run has method=%s).\n",cnf->evolution,inputMethodName(cnf->method));
             ccexRefuse();
         }
         return;
@@ -503,34 +535,35 @@ void Config_resolveEvolution(Config* cnf){
 }
 
 /**
- * evolution_update = recursive (A16 b, A18) exists on the CPU time evolutions of cCCE (method CCE, pCCE, dsj, itb or
+ * evolution_update = recursive exists on the CPU time evolutions of cCCE (method CCE, pCCE, dsj, itb or
  * dsjitb: the single state, evolveSingleState, and the ensemble nstate = 0, evolveEnsembleRecursiveCce)
  * and of gCCE with propagator=eigen (evolution=vector, propagateStateGcce, and evolution=matrix,
- * calPropagatorGcceRecursive), and in the packed kernel (A26, small_cluster_batch.cpp). The GPU large-cluster path
+ * calPropagatorGcceRecursive), and in the packed kernel (small_cluster_batch.cpp). The GPU large-cluster path
  * (gpu_backend.cu: every cluster with backend cuda, those of gpu_options.min_dim and above with auto) computes every
  * phase with sin and cos as with exact, and gCCE with propagator=expm has no phases to carry over. Without the key
- * (A29, 2026-10-12) the run takes recursive where it exists and exact elsewhere, silently - per path since A36
- * (2026-10-12): in the GPU build with backend auto the clusters on the CPU (below min_dim) and the packed kernel run
+ * the run takes recursive where it exists and exact elsewhere, silently, per path: in the GPU build with backend auto the clusters on the CPU (below min_dim) and the packed kernel run
  * recursive and the clusters on the GPU exact; with backend cuda the value is recursive when the packed kernel is on
  * (the other clusters exact on the GPU), else exact. In the CPU build backend auto computes every cluster on the CPU.
  * A given recursive is refused where a cluster may reach a path without it (the input would claim something the run
- * does not do): gCCE expm, and a method the GPU takes with backend cuda, or auto in the GPU build (as before A36).
- * A given exact keeps the old bits. The one place this is decided. Call after Config_resolveEvolution and
+ * does not do): gCCE expm, and a method the GPU takes with backend cuda, or auto in the GPU build.
+ * A given exact keeps the bits of the exact phases. The one place this is decided. Call after Config_resolveEvolution and
  * Config_resolvePackedMaxDim (whether the packed kernel is on is part of the decision).
  */
 void Config_validateEvolutionUpdate(Config* cnf){
 
-    const bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
+    const bool isGCCE = !strcmp(methodKernel(cnf->method),"gcce");   // gCCE, pgCCE
     const bool eigen = (strcasecmp(cnf->propagator,"eigen")==0);
     char found[96] = "";                    // a CPU path without recursive
     if (isGCCE && !eigen)
-        snprintf(found,sizeof(found),"method=gCCE with propagator=%s",cnf->propagator);
+        snprintf(found,sizeof(found),"method=gCCE with execution.propagator=%s",cnf->propagator);
     else if (strcasecmp(cnf->propagator,"sparse")==0)   // A2: the Krylov path has no phases to carry over; its clusters
         snprintf(found,sizeof(found),"propagator=sparse");   // below min_dim run exact with it
+    else if (!strcmp(methodKernel(cnf->method),"mecce") || !strcmp(methodKernel(cnf->method),"megcce"))   // a matrix exponential per step
+        snprintf(found,sizeof(found),"method=%s",inputMethodName(cnf->method));
     // A36: may a cluster reach the GPU large-cluster path? The methods computeBackendInit sends to the GPU, with backend
     // cuda (refused there in the CPU build) or with auto in the GPU build
     const bool cuda = (strcasecmp(cnf->backend,"cuda")==0);
-    const bool gpuMethod = computeBackendMethodSupported(cnf);
+    const bool gpuMethod = computeBackendMethodSupported(cnf);   // gCCE itself: pgCCE runs on the CPU
 #ifdef CCEX_USE_CUDA
     const bool gpuLarge = gpuMethod && (cuda || !strcasecmp(cnf->backend,"auto"));
 #else
@@ -541,9 +574,9 @@ void Config_validateEvolutionUpdate(Config* cnf){
         const bool allOnGpu = gpuLarge && cuda && !packed;      // nothing on a path with recursive
         char path[128] = "supported path";
         if (found[0] != '\0') snprintf(path,sizeof(path),"%s",found);
-        else if (allOnGpu) snprintf(path,sizeof(path),"backend=cuda: every cluster on the GPU, exact there");
+        else if (allOnGpu) snprintf(path,sizeof(path),"execution.backend=cuda: every cluster on the GPU, exact there");
         else if (gpuLarge)
-            snprintf(path,sizeof(path),"%s: recursive; clusters on the GPU (backend=%s%s): exact",
+            snprintf(path,sizeof(path),"%s: recursive, clusters on the GPU (execution.backend=%s%s): exact",
                      cuda ? "packed kernel" : packed ? "clusters on the CPU and packed kernel" : "clusters on the CPU",
                      cnf->backend, cnf->gpu_warp_max_dim > 0 ? ", warp kernel included" : "");
         strcpy(cnf->evolution_update, found[0] == '\0' && !allOnGpu ? "recursive" : "exact");
@@ -553,27 +586,27 @@ void Config_validateEvolutionUpdate(Config* cnf){
     strcpy(cnf->evolution_update_source,"given");
     if (strcasecmp(cnf->evolution_update,"recursive")!=0) return;
     if (found[0] == '\0' && gpuLarge)
-        snprintf(found,sizeof(found),"backend=%s, whose clusters on the GPU are computed exact",cnf->backend);
+        snprintf(found,sizeof(found),"execution.backend=%s, whose clusters on the GPU are computed exact",cnf->backend);
     if (found[0] == '\0') return;
-    ccexRefusalPrint(stderr,"Error : evolution_update=recursive is implemented on the CPU and in the packed kernel for cCCE "
-                   "(single state and ensemble) and on the CPU for gCCE with propagator=eigen (evolution=vector or "
-                   "matrix); this run has %s. Use evolution_update=exact, or leave the key out (then each path takes "
+    ccexRefusalPrint(stderr,"Error : execution.evolution_update=recursive is implemented on the CPU and in the packed kernel for cCCE "
+                   "(single state and ensemble) and on the CPU for gCCE with execution.propagator=eigen (evolution=vector or "
+                   "matrix), this run has %s. Use execution.evolution_update=exact, or leave the key out (then each path takes "
                    "recursive where it has it).\n",found);
     ccexRefuse();
 }
 
 /**
- * propagator (A2, registration 2026-10-12): expm exists for gCCE only; sparse for the single-state cCCE (method CCE,
+ * propagator: expm exists for gCCE only; sparse for the single-state cCCE (method CCE,
  * pCCE, dsj, itb or dsjitb with nstate > 0) and gCCE with evolution = vector and one qubit, on backend = cpu with
  * evolution_update = exact, without the knight and hfmedi terms. Everything else would run another path than the one
- * asked for, so it is refused. Call after Config_resolveEvolution (main.cpp), when -m and -N have been applied.
+ * asked for, so it is refused. Call after Config_resolveEvolution (main.cpp), when the method and nstate are settled.
  */
 void Config_validatePropagator(const Config* cnf, int nqubit){
 
-    const bool isGCCE = (strcasecmp(cnf->method,"gcce")==0);
+    const bool isGCCE = !strcmp(methodKernel(cnf->method),"gcce");   // gCCE, pgCCE
     if (!isGCCE && strcasecmp(cnf->propagator,"expm")==0){
-        ccexRefusalPrint(stderr,"Error : propagator=expm is implemented for method=gCCE only (this run has method=%s); "
-                       "cCCE takes eigen or sparse.\n",cnf->method);
+        ccexRefusalPrint(stderr,"Error : execution.propagator=expm is implemented for method=gCCE only (this run has method=%s), "
+                       "cCCE takes eigen or sparse.\n",inputMethodName(cnf->method));
         ccexRefuse();
     }
     if (strcasecmp(cnf->propagator,"sparse")!=0){ return; }
@@ -581,11 +614,11 @@ void Config_validatePropagator(const Config* cnf, int nqubit){
     if (cnf->nstate == 0)
         snprintf(found,sizeof(found),"nstate=0 (the ensemble)");
     else if (isGCCE && strcasecmp(cnf->evolution,"vector")!=0)
-        snprintf(found,sizeof(found),"method=gCCE with evolution=%s",cnf->evolution);
+        snprintf(found,sizeof(found),"method=gCCE with execution.evolution=%s",cnf->evolution);
     else if (strcasecmp(cnf->backend,"cpu")!=0)
-        snprintf(found,sizeof(found),"backend=%s",cnf->backend);
+        snprintf(found,sizeof(found),"execution.backend=%s",cnf->backend);
     else if (strcasecmp(cnf->evolution_update,"recursive")==0)   // given; without the key sparse takes exact (A29)
-        snprintf(found,sizeof(found),"evolution_update=%s",cnf->evolution_update);
+        snprintf(found,sizeof(found),"execution.evolution_update=%s",cnf->evolution_update);
     else if (Config_getKnight((Config*)cnf) || Config_getHfmedi((Config*)cnf))
         snprintf(found,sizeof(found),"the %s term",Config_getKnight((Config*)cnf) ? "knight" : "hfmedi");
     else if (nqubit != 1)
@@ -593,14 +626,14 @@ void Config_validatePropagator(const Config* cnf, int nqubit){
     else if (!isGCCE && strcasecmp(cnf->quantity,"coherence")!=0)
         snprintf(found,sizeof(found),"quantity=%s",cnf->quantity);
     if (found[0] == '\0'){ return; }
-    ccexRefusalPrint(stderr,"Error : propagator=sparse is implemented on backend=cpu with evolution_update=exact for one sampled "
+    ccexRefusalPrint(stderr,"Error : execution.propagator=sparse is implemented on execution.backend=cpu with execution.evolution_update=exact for one sampled "
                    "state (nstate > 0) of the cCCE and of gCCE with evolution=vector, one qubit, without knight and "
-                   "hfmedi; this run has %s. Use propagator=eigen.\n",found);
+                   "hfmedi, this run has %s. Use execution.propagator=eigen.\n",found);
     ccexRefuse();
 }
 
 /**
- * gpu_options.packed_max_dim without the key (A26, user 2026-10-12): 4 in the GPU build (bin/main_gpu.out) with backend cuda
+ * gpu_options.packed_max_dim without the key: 4 in the GPU build (bin/main_gpu.out) with backend cuda
  * or auto and method CCE - the packed kernel takes the cCCE clusters of bath dimension 2 and 4 - and 0 otherwise: with
  * backend cpu, with another method, and always in the CPU build, where nothing goes to the GPU. A value given in the
  * input is kept as it is (an explicit nonzero one is checked in smallClusterWarmUp). Call once every source is in.
@@ -612,7 +645,7 @@ void Config_resolvePackedMaxDim(Config* cnf){
     const bool on = gpuBackend && strcasecmp(cnf->method,"cce")==0 && strcasecmp(cnf->quantity,"coherence")==0;
     cnf->gpu_packed_max_dim = on ? 4 : 0;
     snprintf(cnf->gpu_packed_source,sizeof(cnf->gpu_packed_source),"default (%s)",
-             on ? (strcasecmp(cnf->backend,"cuda") ? "backend=auto, method=CCE" : "backend=cuda, method=CCE")
+             on ? (strcasecmp(cnf->backend,"cuda") ? "execution.backend=auto, method=CCE" : "execution.backend=cuda, method=CCE")
                 : gpuBackend ? "not method=CCE with quantity=coherence" : "backend=cpu");
 #else
     cnf->gpu_packed_max_dim = 0;
@@ -621,10 +654,10 @@ void Config_resolvePackedMaxDim(Config* cnf){
 }
 
 /**
- * gpu_options.warp_max_dim without the key (A40, user 2026-10-13): 27, the largest total dimension the warp kernel has, in
+ * gpu_options.warp_max_dim without the key: 27, the largest total dimension the warp kernel has, in
  * the GPU build with backend cuda or auto and method CCE (quantity coherence) or gCCE; 0 otherwise - backend cpu, another
  * method, and always in the CPU build. Where the run is one the kernel does not take (warpClusterRun: gcce_refinement,
- * pulseiter, savemode allfull, ...), the default switches itself off in the run ([gpu-warp] off). A value given in the
+ * pulseiter, savemode cluster_density_matrix, ...), the default switches itself off in the run ([gpu-warp] off). A value given in the
  * input is kept (an explicit nonzero one is checked in smallClusterWarmUp). Call once every source is in.
  */
 void Config_resolveWarpMaxDim(Config* cnf){
@@ -636,8 +669,8 @@ void Config_resolveWarpMaxDim(Config* cnf){
     const bool on = gpuBackend && (cce || gcce);
     cnf->gpu_warp_max_dim = on ? 27 : 0;
     snprintf(cnf->gpu_warp_source,sizeof(cnf->gpu_warp_source),"default (%s)",
-             on ? (cce ? (strcasecmp(cnf->backend,"cuda") ? "backend=auto, method=CCE" : "backend=cuda, method=CCE")
-                       : (strcasecmp(cnf->backend,"cuda") ? "backend=auto, method=gCCE" : "backend=cuda, method=gCCE"))
+             on ? (cce ? (strcasecmp(cnf->backend,"cuda") ? "execution.backend=auto, method=CCE" : "execution.backend=cuda, method=CCE")
+                       : (strcasecmp(cnf->backend,"cuda") ? "execution.backend=auto, method=gCCE" : "execution.backend=cuda, method=gCCE"))
                 : gpuBackend ? "not method=CCE (coherence) or gCCE" : "backend=cpu");
 #else
     cnf->gpu_warp_max_dim = 0;
@@ -782,34 +815,34 @@ void Config_setBathadjust_i(Config* cnf, double* bathadjust, int i){
     copyDouble1d(cnf->bathadjust[i],bathadjust,3);
 }
 
-void Config_setAvaaxfile(Config* cnf, char* avaaxfile){
+void Config_setAvaaxfile_i(Config* cnf, char* avaaxfile, int i){
 
     if (cnf->avaaxfile == NULL){
         ccexRefusalPrint(stderr, "Error: the memory for avaaxfile should be allocated\n");
         ccexRefuse();
     }
 
-    copyBounded(cnf->avaaxfile,avaaxfile,MAX_FILEPATH,"avaaxfile");
+    copyBounded(cnf->avaaxfile[i],avaaxfile,MAX_FILEPATH,"avaaxfile");
 }
 
-void Config_setStatefile(Config* cnf, char* statefile){
+void Config_setStatefile_i(Config* cnf, char* statefile, int i){
 
     if (cnf->statefile == NULL){
         ccexRefusalPrint(stderr, "Error: the memory for statefile should be allocated\n");
         ccexRefuse();
     }
 
-    copyBounded(cnf->statefile,statefile,MAX_FILEPATH,"statefile");
+    copyBounded(cnf->statefile[i],statefile,MAX_FILEPATH,"statefile");
 }
 
-void Config_setExstatefile(Config* cnf, char* exstatefile){
+void Config_setExstatefile_i(Config* cnf, char* exstatefile, int i){
 
     if (cnf->exstatefile == NULL){
         ccexRefusalPrint(stderr, "Error: the memory for exstatefile should be allocated\n");
         ccexRefuse();
     }
 
-    copyBounded(cnf->exstatefile,exstatefile,MAX_FILEPATH,"exstatefile");
+    copyBounded(cnf->exstatefile[i],exstatefile,MAX_FILEPATH,"exstatefile");
 }
 
 void Config_set_nflines(Config* cnf, int nflines){
@@ -859,11 +892,11 @@ static void Config_setTensorFrame(char* dest, char* frame, const char* key){
 }
 
 void Config_setRot_hf_tensor_frame(Config* cnf, char* frame){
-    Config_setTensorFrame(cnf->rot_hf_tensor_frame,frame,"coordinate_frame_rotation.hf_tensor_frame");
+    Config_setTensorFrame(cnf->rot_hf_tensor_frame,frame,"frame.rotation.hf_tensor_frame");
 }
 
 void Config_setRot_qd_tensor_frame(Config* cnf, char* frame){
-    Config_setTensorFrame(cnf->rot_qd_tensor_frame,frame,"coordinate_frame_rotation.qd_tensor_frame");
+    Config_setTensorFrame(cnf->rot_qd_tensor_frame,frame,"frame.rotation.qd_tensor_frame");
 }
 
 // Only "bath" for now. "qubit" is refused rather than deferred: it would put the qubit
@@ -873,7 +906,7 @@ void Config_setRot_qd_tensor_frame(Config* cnf, char* frame){
 void Config_setRot_qubit_position_frame(Config* cnf, char* frame){
 
     if (strcasecmp(frame,"bath") != 0){
-        ccexRefusalPrint(stderr,"Error: coordinate_frame_rotation.qubit_position_frame must be \"bath\" (got \"%s\")\n",frame);
+        ccexRefusalPrint(stderr,"Error: frame.rotation.qubit_position_frame must be \"bath\" (got \"%s\")\n",frame);
         if (strcasecmp(frame,"qubit") == 0){
             ccexRefusalPrint(stderr,"\"qubit\" is not supported in this version: the bath files are read in the\n");
             ccexRefusalPrint(stderr,"source frame, so qubit positions already in the computational frame would be\n");
@@ -892,7 +925,7 @@ void Config_setDefect_axis_reference(Config* cnf, DefectAxisReference reference)
 /**
  * @brief With the rotation on, require the field to lie along the computational z axis
  * @details Mirrors Config_resolveEvolution in timing: it cannot run during the file
- *          parse, because -B is applied afterwards and would change the answer.
+ *          parse: it needs the field and the rotation, which different readers set.
  *
  *          Without the rotation this is a no-op, so an arbitrary field vector keeps
  *          working exactly as it always has. With the rotation on, the computational z
@@ -918,11 +951,11 @@ void Config_validateBfieldAlignment(Config* cnf){
     double tol = 1.0e-12 * ((bnorm > 1.0) ? bnorm : 1.0);
 
     if (bperp > tol){
-        ccexRefusalPrint(stderr,"Error: coordinate_frame_rotation requires bfield to be aligned\n");
+        ccexRefusalPrint(stderr,"Error: frame.rotation requires bfield to be aligned\n");
         ccexRefusalPrint(stderr,"with the computational z axis, which represents qubit_axis.\n");
         ccexRefusalPrint(stderr,"Current bfield: [%g, %g, %g]\n",bx,by,bz);
         ccexRefusalPrint(stderr,"  transverse component |B_perp| = %g  (tolerance %g)\n",bperp,tol);
-        ccexRefusalPrint(stderr,"Write the field as [0, 0, Bz]; Bz may be negative for the opposite\n");
+        ccexRefusalPrint(stderr,"Write the field as [0, 0, Bz], Bz may be negative for the opposite\n");
         ccexRefusalPrint(stderr,"direction along qubit_axis. A tilted field is not supported with the\n");
         ccexRefusalPrint(stderr,"coordinate frame rotation.\n");
         ccexRefuse();
@@ -996,7 +1029,7 @@ void Config_setQd_readmode(Config* cnf, int qd_readmode){
         qd_readmode != 3 &&
         qd_readmode != 4) {
         ccexRefusalPrint(stderr,
-                "Error: current qd_readmode (%d) is not available; "
+                "Error: current qd_readmode (%d) is not available, "
                 "supported values are 0, 2, 3 and 4\n",
                 qd_readmode);
         ccexRefuse();
@@ -1015,75 +1048,96 @@ void Config_setKnight(Config* cnf, bool knight){
 }
 
 
-void Config_report(Config* cnf){
+// The rows are named by their input keys (A76). Without -v the report is the run's summary: the rows below that are
+// always printed (the checks read evolution_update, propagator, column_evolution and gpu_options, with their "chosen
+// by"), those of the cluster mode in use, and the settings that are not their default; -v prints every row.
+void Config_report(Config* cnf, bool qubitBathMeanField){
 
     printTitle("Structure Config");
 
+    const bool pcce = methodUsesPcceClusters(cnf->method);
+    const bool bundle = !strcasecmp(cnf->cluster_mode,"adaptive");   // cluster.mode bundle
     printStructElementChar("method",Config_getMethod(cnf));
     printStructElementChar("quantity",Config_getQuantity(cnf));
     printStructElementChar("propagator",Config_getPropagator(cnf));
     if (strcasecmp(cnf->propagator,"sparse")==0){
-        printStructElementInt("sparse_min_dim",int(cnf->sparse_min_dim));
-        printStructElementDouble("sparse_tol",cnf->sparse_tol);
+        printStructElementInt("propagator.min_dim",int(cnf->sparse_min_dim));
+        printStructElementDouble("propagator.tol",cnf->sparse_tol);
     }
     printStructElementChar("evolution",Config_getEvolution(cnf));
     printStructElementChar("evolution_update",cnf->evolution_update);
     printStructElementChar("  chosen by",cnf->evolution_update_source);
+    if (cnf->column_evolution){                // A62: printed only when on
+        printStructElementInt("column_evolution.min_dim",cnf->column_evolution_min_dim);
+        printStructElementInt("column_evolution.columns",cnf->column_evolution_columns);
+    }
     printStructElementChar("backend",cnf->backend);
     printStructElementInt("gpu_options.min_dim",cnf->gpu_min_dim);
     printStructElementInt("gpu_options.evolution_batch_steps",cnf->gpu_batch_steps);
     printStructElementInt("gpu_options.cache_mb",cnf->gpu_cache_mb);
-    printStructElementDouble("probe_memory_gb",cnf->probe_memory_gb);
-    printStructElementInt("gcce_refinement",cnf->gcce_refinement);
-    printStructElementInt("gcce_refinement_max_sweeps",cnf->gcce_refinement_max_sweeps);
-    printStructElementInt("vector_mean_field",cnf->vector_mean_field);
-    printStructElementInt("pcce_detail_limit",cnf->pcce_detail_limit);
+    if (verbosity || bundle)
+        printStructElementDouble("cluster.adaptive.probe_memory_gb",cnf->probe_memory_gb);
+    if (verbosity || cnf->gcce_refinement){
+        printStructElementBool("gcce_refinement.enabled",cnf->gcce_refinement);
+        printStructElementInt("gcce_refinement.max_sweeps",cnf->gcce_refinement_max_sweeps);
+    }
+    if (verbosity || cnf->vector_mean_field || cnf->bath_mean_field_off)
+        printStructElementChar("hamiltonian.common.bath_bath_mean_field",
+                               cnf->bath_mean_field_off ? (char*)"off" : cnf->vector_mean_field ? (char*)"xyz" : (char*)"z");
     printStructElementInt("gpu_options.evolution_batch_size",cnf->gpu_batch_clusters);
     printStructElementInt("gpu_options.cluster_batch_mb",cnf->gpu_cluster_batch_mb);
     printStructElementInt("gpu_options.packed_max_dim",cnf->gpu_packed_max_dim);
     printStructElementChar("  chosen by",cnf->gpu_packed_source);
     printStructElementInt("gpu_options.warp_max_dim",cnf->gpu_warp_max_dim);
     printStructElementChar("  chosen by",cnf->gpu_warp_source);
-    printStructElementChar("pcce_partition",cnf->pcce_partition);
-    printStructElementChar("pcce_connections",cnf->pcce_connections);
-    printStructElementChar("pcce_cache_mode",cnf->pcce_cache_mode);
-    printStructElementChar("pcce_cache_file",cnf->pcce_cache_file);
-    printStructElementChar("cluster_mode",cnf->cluster_mode);
-    if(!strcasecmp(cnf->cluster_mode,"adaptive")) {
+    // cluster.mode as the input names it: the method carries pcce, dsj, itb, dsjitb inside (Config_setMethod)
+    const char* mode = bundle ? "bundle" : pcce ? "pcce" :
+        (!strcasecmp(cnf->method,"dsj") || !strcasecmp(cnf->method,"itb") || !strcasecmp(cnf->method,"dsjitb")) ? cnf->method : "standard";
+    printStructElementChar("cluster.mode",(char*)mode);
+    if (verbosity || pcce){
+        printStructElementInt("cluster.pcce.print_limit",cnf->pcce_detail_limit);
+        printStructElementChar("cluster.pcce.partition",cnf->pcce_partition);
+        printStructElementChar("cluster.pcce.connections",cnf->pcce_connections);
+        printStructElementChar("cluster.pcce.cache.mode",cnf->pcce_cache_mode);
+        printStructElementChar("cluster.pcce.cache.file",cnf->pcce_cache_file);
+    }
+    if (bundle) {
         if(cnf->bundle_max_dim)
-            printStructElementInt("bundle_max_dim",cnf->bundle_max_dim);
-        else printf("      %-18s:   %-21s\n","bundle_max_dim","auto (from cluster dimension)");
-        printStructElementInt("expansion_max_clusters",cnf->expansion_max_clusters);
-        printStructElementInt("expansion_max_work",cnf->expansion_max_work);
-        printStructElementDouble("bundle_merge_cutoff",cnf->bundle_merge_cutoff);
-        printStructElementChar("bundle_connections",cnf->bundle_connections);
+            printStructElementInt("cluster.bundle.max_dim",cnf->bundle_max_dim);
+        else printf("      %-18s : %-21s\n","cluster.bundle.max_dim","auto (from cluster dimension)");
+        printStructElementInt("cluster.bundle.max_clusters",cnf->expansion_max_clusters);
+        printStructElementInt("cluster.bundle.max_work",cnf->expansion_max_work);
+        printStructElementDouble("cluster.bundle.merge_cutoff",cnf->bundle_merge_cutoff);
+        printStructElementChar("cluster.bundle.connections",cnf->bundle_connections);
         if(!strcasecmp(cnf->bundle_connections,"auto"))
-            printStructElementDouble("bundle_connection_budget",cnf->bundle_connection_budget);
+            printStructElementDouble("cluster.bundle.connection_budget",cnf->bundle_connection_budget);
     }
     printStructElementInt("order",Config_getOrder(cnf));
     printStructElementFloat1d("bfield",Config_getBfield(cnf),3);
     printStructElementFloat("rbath",Config_getRbath(cnf));
-    if(!strcasecmp(cnf->cluster_mode,"adaptive") && !strcasecmp(cnf->bundle_connections,"checked"))
+    if (verbosity || Config_getRbathcut(cnf)!=0) printStructElementFloat("rbath[0] (inner)",Config_getRbathcut(cnf));
+    if(bundle && !strcasecmp(cnf->bundle_connections,"checked"))
         printStructElementChar("rdip","omitted (coherence-checked links)");
-    else if(!strcasecmp(cnf->cluster_mode,"adaptive") && !strcasecmp(cnf->bundle_connections,"auto") &&
+    else if(bundle && !strcasecmp(cnf->bundle_connections,"auto") &&
        !cnf->adaptive_rdip_is_set)printStructElementChar("rdip","unlimited");
     else printStructElementFloat("rdip",Config_getRdip(cnf));
+    if (verbosity || Config_getRdipcut(cnf)!=0) printStructElementFloat("rdip[0] (inner)",Config_getRdipcut(cnf));
     printStructElementFloat("deltat",Config_getDeltat(cnf));
     printStructElementInt("nstep",Config_getNstep(cnf));
-    printStructElementFloat("rbathcut",Config_getRbathcut(cnf));
-    printStructElementFloat("rdipcut",Config_getRdipcut(cnf));
-    printStructElementInt("nstate",Config_getNstate(cnf));
-    printStructElementInt("seed",Config_getSeed(cnf));
+    printStructElementInt("configuration.nstate",Config_getNstate(cnf));
+    if (cnf->seed_used) printStructElementInt("configuration.seed",Config_getSeed(cnf));
+    else printStructElementChar("configuration.seed","(not used)");
 
-    printStructElementChar("qubitfile",Config_getQubitfile(cnf));
-    printStructElementChar("gyrofile",Config_getGyrofile(cnf));
-    printStructElementInt("nbathfiles",Config_getNbathfiles(cnf));
+    if (verbosity || Config_getQubitfile(cnf)) printStructElementChar("Qubit.file",Config_getQubitfile(cnf));
+    printStructElementChar("configuration.gyrofile",Config_getGyrofile(cnf));
     for (int i = 0; i < Config_getNbathfiles(cnf); i++){
-        printStructElementChar("bathfiles",Config_getBathfiles_i(cnf,i));
-        printStructElementDouble1d("bathadjust",Config_getBathadjust_i(cnf,i),3);
+        printStructElementChar("configuration.bathfile",Config_getBathfiles_i(cnf,i));
+        const double* shift = Config_getBathadjust_i(cnf,i);
+        if (verbosity || shift[0]!=0 || shift[1]!=0 || shift[2]!=0)
+            printStructElementDouble1d("configuration.bath_shift",Config_getBathadjust_i(cnf,i),3);
     }
 
-    printStructElementBool("frame_rotation",Config_getRot_enabled(cnf));
+    printStructElementBool("frame.rotation",Config_getRot_enabled(cnf));
     if (Config_getRot_enabled(cnf)){
         printStructElementDouble1d("  bath_axis",Config_getRot_bath_axis(cnf),3);
         printStructElementDouble1d("  qubit_axis",Config_getRot_qubit_axis(cnf),3);
@@ -1093,30 +1147,51 @@ void Config_report(Config* cnf){
             Config_getRot_qubit_position_frame(cnf)[0] ? Config_getRot_qubit_position_frame(cnf) : (char*)"bath (default)");
     }
 
-    printStructElementChar("defect_axis_reference",
-        (Config_getDefect_axis_reference(cnf) == DEFECT_AXIS_REFERENCE_QUBIT_AXIS)
-        ? (char*)"qubit_axis" : (char*)"(none)");
-
-    printStructElementChar("avaaxfile",Config_getAvaaxfile(cnf));
-    printStructElementChar("statefile",Config_getStatefile(cnf));
-    printStructElementChar("exstatefile",Config_getExstatefile(cnf));
-
-
-    printStructElementInt("hf_readmode",Config_getHf_readmode(cnf));
-    if (Config_getHf_readmode(cnf)!=0){
-        printStructElementChar("hf_tensorfile",Config_getHf_tensorfile(cnf));
-        printStructElementInt("hf_ignore_oor",Config_getHf_ignore_oor(cnf));
+    {
+        const char* keys[3] = {"configuration.defect_axis_file", "configuration.bath_state_file", "configuration.defect_state_file"};
+        char** names[3] = {Config_getAvaaxfile(cnf), Config_getStatefile(cnf), Config_getExstatefile(cnf)};
+        for (int k = 0; k < 3; k++){
+            if (!names[k]){ if (verbosity) printStructElementChar((char*)keys[k],(char*)"(null)"); continue; }
+            for (int i = 0; i < Config_getNbathfiles(cnf); i++) printStructElementChar((char*)keys[k],names[k][i]);
+        }
     }
 
-    printStructElementInt("qd_readmode",Config_getQd_readmode(cnf));
-    if (Config_getQd_readmode(cnf)==2){
-        printStructElementChar("qd_tensorfile",Config_getQd_tensorfile(cnf));
-    }else if (Config_getQd_readmode(cnf)==3 || Config_getQd_readmode(cnf)==4 ){
-        printStructElementChar("qd_tensorfile",Config_getQd_tensorfile(cnf));
-        printStructElementChar("qd_tensorfile_woqubit",Config_getQd_tensorfile_woqubit(cnf));
-        printStructElementDouble1d("qd_cellpara",Config_getQd_cellpara(cnf),3);
+
+    // the value the run uses (QubitArray_getOverhaus, set from the input in option.cpp)
+    printStructElementBool("hamiltonian.common.qubit_bath_mean_field",qubitBathMeanField);
+
+    // hamiltonian.common.hyperfine {dipole, contact}: hf_readmode 0 point/false, 1 point/true, 2 dft/false, 3 dft/true
+    const int hf = Config_getHf_readmode(cnf);
+    if (verbosity || hf!=0){
+        printStructElementChar("hamiltonian.common.hyperfine.dipole",hf>=2 ? (char*)"dft" : (char*)"point");
+        printStructElementBool("hamiltonian.common.hyperfine.contact",hf==1 || hf==3);
+    }
+    if (hf!=0){
+        printStructElementChar("hamiltonian.common.hyperfine.file",Config_getHf_tensorfile(cnf));
+        printStructElementChar("hamiltonian.common.hyperfine.missing_row",
+                               Config_getHf_ignore_oor(cnf) ? (char*)"point_dipole" : (char*)"stop");
     }
 
-    printStructElementBool("hfmedi",Config_getHfmedi(cnf));
-    printStructElementBool("knight",Config_getKnight(cnf));
+    // hamiltonian.common.quadrupole: qd_readmode 0 off, 2 plain, 3 strained, 4 bubble
+    const int qd = Config_getQd_readmode(cnf);
+    if (verbosity || qd!=0)
+        printStructElementChar("hamiltonian.common.quadrupole",
+                               qd==2 ? (char*)"plain" : qd==3 ? (char*)"strained" : qd==4 ? (char*)"bubble" : (char*)"off");
+    if (qd==2){
+        printStructElementChar("hamiltonian.common.quadrupole.file",Config_getQd_tensorfile(cnf));
+    }else if (qd==3 || qd==4 ){
+        printStructElementChar("hamiltonian.common.quadrupole.file",Config_getQd_tensorfile(cnf));
+        printStructElementChar("hamiltonian.common.quadrupole.file_without_defect",Config_getQd_tensorfile_woqubit(cnf));
+        printStructElementDouble1d("hamiltonian.common.quadrupole.cell",Config_getQd_cellpara(cnf),3);
+    }
+
+    if (verbosity || Config_getHfmedi(cnf)) printStructElementBool("hamiltonian.cCCE.hfmedi",Config_getHfmedi(cnf));
+    if (verbosity || Config_getKnight(cnf)) printStructElementBool("hamiltonian.cCCE.knight",Config_getKnight(cnf));
+
+    if (cnf->jump_operators){
+        char section[MAX_CHARARRAY_LENGTH + 16];
+        snprintf(section,sizeof(section),"hamiltonian.%s",cnf->jump_operators_section);
+        printStructElementChar("jump_operators",section);
+        JumpOperatorArray_report(cnf->jump_operators);
+    }
 }

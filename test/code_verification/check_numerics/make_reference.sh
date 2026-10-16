@@ -19,8 +19,15 @@ else
   BIN="$WT/bin/main.out"
 fi
 OUT="$HERE/reference/$name"; LOG="$HERE/_work/logs-$name"; rm -rf "$OUT" "$LOG"; mkdir -p "$OUT" "$LOG"
+# -o DIR is an output folder since A63 (-o FILE, the output name, before): the input's copy out.json names the outputs
+new_cli=0; "${CCEX_MPI:-mpirun}" -n 1 "$BIN" -h 2>/dev/null | grep -q -- '-o DIR' && new_cli=1
 for d in "$HERE"/cases/*/; do n=$(basename "$d"); mkdir -p "$OUT/$n"
-  ( cd "$d" && timeout 900 "${CCEX_MPI:-mpirun}" -n "$NP" "$BIN" -f ccein.json -o "$OUT/$n/out" > "$LOG/$n.log" 2>&1 ) || echo "$n: exit $? under $name (see $LOG/$n.log)"
+  if [ $new_cli = 1 ]; then
+    mkdir -p "$LOG/$n"; cp "$d/ccein.json" "$LOG/$n/out.json"
+    ( cd "$d" && timeout 900 "${CCEX_MPI:-mpirun}" -n "$NP" "$BIN" -f "$LOG/$n/out.json" -o "$OUT/$n" > "$LOG/$n.log" 2>&1 ) || echo "$n: exit $? under $name (see $LOG/$n.log)"
+  else
+    ( cd "$d" && timeout 900 "${CCEX_MPI:-mpirun}" -n "$NP" "$BIN" -f ccein.json -o "$OUT/$n/out" > "$LOG/$n.log" 2>&1 ) || echo "$n: exit $? under $name (see $LOG/$n.log)"
+  fi
 done
 echo "reference/$name: $(ls "$OUT" | wc -l) cases"
 if [ "$what" != current ] && [ -z "${CCEX_KEEP_WORKTREE:-}" ]; then (cd "$REPO" && git worktree remove --force "$WT"); fi

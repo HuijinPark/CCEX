@@ -4,9 +4,11 @@
   "reference": "bin/main.cpu.out (backend=cpu)",
   "target": "bin/main.cuda.out (backend=auto, gpu_min_dim=1)",
   "meaning": "cCCE runs on CPU in both executables; gCCE compares CPU against CUDA.",
-  "nstate": {
-    "0": "ensemble",
-    "1": "single sampled bath state"
+  "configuration": {
+    "nstate": {
+      "0": "ensemble",
+      "1": "single sampled bath state"
+    }
   },
   "compared_outputs": [
     "_noDiv",
