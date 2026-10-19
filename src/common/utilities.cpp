@@ -1106,7 +1106,9 @@ static std::string buildLine(){
 #else
     std::string line = "Build : CPU";
 #endif
-#ifdef CCEX_BLAS_DIRECT
+#if defined(CCEX_BLAS_DIRECT) && defined(CCEX_BLAS_ACCELERATE)
+    const char* mkl = "Accelerate on";
+#elif defined(CCEX_BLAS_DIRECT)
     const char* mkl = "MKL on";
 #else
     const char* mkl = "MKL off";
@@ -1254,7 +1256,12 @@ void printBanner(){
     printf("      The CCEX code has compiled at '%s'\n", __DATE__);
     // A46: whether this build takes the large clusters to MKL (test/code_verification/check_numerics reads this line)
     logAlignBegin();   // A76: the two rows below in one column
-#ifdef CCEX_BLAS_DIRECT
+#if defined(CCEX_BLAS_DIRECT) && defined(CCEX_BLAS_ACCELERATE)
+    // macOS: Apple's Accelerate in MKL's place. The line keeps its words, which the checks read as "a library takes the
+    // large clusters" (check_numerics' compare.py, check_adaptive's regress.py)
+    printf("      MKL for large clusters : on (Apple Accelerate in its place; zgemm from dim %d, zheevd from dim %d)\n",
+           ccexBlas::gemmMin, ccexBlas::eigMin);
+#elif defined(CCEX_BLAS_DIRECT)
     printf("      MKL for large clusters : on (zgemm from dim %d, zheevd from dim %d)\n", ccexBlas::gemmMin, ccexBlas::eigMin);
 #else
     printf("      MKL for large clusters : off\n");

@@ -102,13 +102,14 @@ Every output file and its columns: [Output files](docs/user/OutputFiles.md); wha
 | `idm4` | the idm cluster: Intel 2023.2 module, mpiicpc with icpx |
 | `gpu` | idm4-gpu: OpenMPI + CUDA 12.8; also builds `bin/main_gpu.out` |
 | `nurion` | KISTI Nurion: intel/19.0.5 + impi/19.0.5 |
-| `mac` | macOS with an MPI wrapper (Homebrew open-mpi or mpich) |
+| `mac` | macOS with an MPI wrapper (Homebrew open-mpi or mpich): Apple clang `-O3 -mcpu=native` (Apple Silicon), Apple's Accelerate for the large clusters |
 | `generic` | any machine with an MPI C++ wrapper; `CXX`, `CXXFLAGS`, `CUDA_HOME`, `CUDA_ARCH` from the environment |
 
 - `do_compile.sh` writes the top-level `Makefile`, `obj/` and `bin/main.out` (and `bin/main_gpu.out` with CUDA).
 - CMake: `cmake -B build && cmake --build build -j 8` keeps everything in `build/` (`build/bin/main.out`).
 - Needs: a C++17 compiler behind an MPI wrapper; Eigen, uthash and SQLite are bundled in `external/`.
-- MKL: used for the large clusters when the build finds it; `CCEX_BLAS=off` (CMake `-DCCEX_BLAS=OFF`) leaves it out.
+- MKL: used for the large clusters when the build finds it (on macOS Apple's Accelerate in its place); `CCEX_BLAS=off`
+  (CMake `-DCCEX_BLAS=OFF`) leaves it out.
 - CUDA: the `gpu` preset, `generic` with `CUDA_HOME`, or CMake when it finds nvcc (`-DCCEX_CUDA=OFF` to skip).
 
 Every option, environment variable and the MKL details: [Getting started](docs/user/GettingStarted.md#Building).

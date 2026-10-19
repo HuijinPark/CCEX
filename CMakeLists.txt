@@ -6,13 +6,13 @@
 #
 # Options (-D on the configure line):
 #     CCEX_CUDA=AUTO|ON|OFF   the CUDA backend binary; AUTO builds it when a CUDA compiler is found
-#     CCEX_NATIVE=ON|OFF      -march=native on the CPU objects (ON)
+#     CCEX_NATIVE=ON|OFF      -march=native on the CPU objects, -mcpu=native on Apple Silicon (ON)
 #     CCEX_SANITIZE=ON|OFF    AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects (OFF)
-#     CCEX_BLAS=AUTO|MKL|OFF  large cCCE/gCCE clusters by Intel MKL (zgemm in the cCCE ensemble Hahn echo's
+#     CCEX_BLAS=AUTO|MKL|ACCELERATE|OFF  large cCCE/gCCE clusters by Intel MKL (zgemm in the cCCE ensemble Hahn echo's
 #                             recursive path from bath dimension 21, zheevd from 63: the bath dimension for cCCE, qubit
 #                             x bath for gCCE; include/common/blas_option.h), as do_compile.sh's CCEX_BLAS. AUTO (default): on when
-#                             oneAPI's MKLConfig.cmake is found (MKLROOT from setvars.sh or the intel module); MKL:
-#                             stop without it; OFF: never. lp64, sequential
+#                             oneAPI's MKLConfig.cmake is found (MKLROOT from setvars.sh or the intel module), on macOS
+#                             Apple's Accelerate; MKL, ACCELERATE (macOS): stop without it; OFF: never. lp64, sequential
 #     CCEX_BIN_DIR=<dir>      where the executables go (default <build>/bin); -DCCEX_BIN_DIR=$PWD/bin
 #                             puts them where do_compile.sh does and the checks look by default
 #     CMAKE_CUDA_ARCHITECTURES=<cc>   the card's compute capability, e.g. 86 or 120 (default: native)
@@ -33,9 +33,9 @@ cmake_minimum_required(VERSION 3.18)
 project(CCEX VERSION 2.0.0 LANGUAGES C CXX)
 
 set(CCEX_CUDA AUTO CACHE STRING "CUDA backend binary: AUTO, ON or OFF")
-option(CCEX_NATIVE "-march=native on the CPU objects" ON)
+option(CCEX_NATIVE "-march=native on the CPU objects (-mcpu=native on Apple Silicon)" ON)
 option(CCEX_SANITIZE "AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects" OFF)
-set(CCEX_BLAS AUTO CACHE STRING "Intel MKL for the large clusters: AUTO (when found), MKL (required) or OFF")
+set(CCEX_BLAS AUTO CACHE STRING "BLAS/LAPACK for the large clusters: AUTO (when found), MKL (required), ACCELERATE (macOS) or OFF")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -57,8 +57,19 @@ find_package(Threads REQUIRED)
 #      per MPI rank), set before the targets below so that the binaries and the unit tests get the same
 set(_ccex_blas_unit_libs)
 set(_ccex_mkl OFF)
+set(_ccex_accelerate OFF)
 string(TOUPPER "${CCEX_BLAS}" _ccex_blas)
-if(_ccex_blas STREQUAL "AUTO" OR _ccex_blas STREQUAL "MKL")
+# macOS: Apple's Accelerate in MKL's place (do_compile.sh's mac preset), on every Mac with the system: the same Fortran
+# zgemm_ and zheevd_ (src/common/blas_option.cpp). AUTO looked for MKL there too until 2026-10-19 and found Intel's macOS
+# MKL 2023 under /opt/intel, x86_64 only, which the arm64 link then refused.
+if(APPLE AND (_ccex_blas STREQUAL "AUTO" OR _ccex_blas STREQUAL "ACCELERATE"))
+  find_library(CCEX_ACCELERATE_FRAMEWORK Accelerate REQUIRED)
+  set(_ccex_accelerate ON)
+elseif(_ccex_blas STREQUAL "ACCELERATE")
+  message(FATAL_ERROR "CCEX: CCEX_BLAS=ACCELERATE: Apple's Accelerate is on macOS only")
+elseif(APPLE AND _ccex_blas STREQUAL "MKL")
+  message(FATAL_ERROR "CCEX: CCEX_BLAS=MKL: no MKL on macOS; ACCELERATE (the default here) or OFF")
+elseif(_ccex_blas STREQUAL "AUTO" OR _ccex_blas STREQUAL "MKL")
   set(MKL_INTERFACE lp64)
   set(MKL_INTERFACE_FULL intel_lp64)            # the name older MKLConfig.cmake (2023) reads
   set(MKL_THREADING sequential)
@@ -70,9 +81,14 @@ if(_ccex_blas STREQUAL "AUTO" OR _ccex_blas STREQUAL "MKL")
   endif()
   set(_ccex_mkl ${MKL_FOUND})
 elseif(NOT _ccex_blas STREQUAL "OFF")
-  message(FATAL_ERROR "CCEX: CCEX_BLAS=${CCEX_BLAS}: expected AUTO, MKL or OFF")
+  message(FATAL_ERROR "CCEX: CCEX_BLAS=${CCEX_BLAS}: expected AUTO, MKL, ACCELERATE or OFF")
 endif()
-if(_ccex_mkl)
+if(_ccex_accelerate)
+  add_compile_definitions(CCEX_BLAS_DIRECT CCEX_BLAS_ACCELERATE)
+  link_libraries(${CCEX_ACCELERATE_FRAMEWORK})
+  set(_ccex_blas_unit_libs -framework Accelerate)
+  message(STATUS "CCEX: Accelerate on (${CCEX_ACCELERATE_FRAMEWORK})")
+elseif(_ccex_mkl)
   add_compile_definitions(CCEX_BLAS_DIRECT)
   link_libraries(MKL::MKL)
   set(_mkl_lib ${MKL_ROOT}/lib/intel64)
@@ -131,7 +147,10 @@ set_source_files_properties(${CMAKE_SOURCE_DIR}/src/calculation/small_eigensolve
 
 set(CCEX_INCLUDE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/external/eigen ${CMAKE_SOURCE_DIR}/external/uthash/include)
 # the warnings the code trips on every compiler; -fpermissive is for the C idioms in src/
-set(CCEX_CXX_WARN -fpermissive -Wno-deprecated-declarations -Wno-writable-strings -Wno-unused-result -Wno-format-overflow -Wno-format-security)
+set(CCEX_CXX_WARN -fpermissive -Wno-deprecated-declarations -Wno-writable-strings -Wno-unused-result -Wno-format-security)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  list(APPEND CCEX_CXX_WARN -Wno-format-overflow)   # g++'s; clang does not know it and says so once per object
+endif()
 # -DCCEX_STRICT_WARNINGS=ON (the CI does it, D34): the suppressions above are dropped, the warnings come on, and the
 # kinds that are defects -- a printf/scanf format that does not match, a format that is not a literal, an
 # unsequenced write, an if that does not guard what its indentation says -- stop the build. The C idioms the
@@ -144,7 +163,11 @@ if(CCEX_STRICT_WARNINGS)
 endif()
 set(CCEX_CPU_OPT -O3 -g)
 if(CCEX_NATIVE)
-  list(APPEND CCEX_CPU_OPT -march=native)
+  if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+    list(APPEND CCEX_CPU_OPT -mcpu=native)    # Apple Silicon: the core's instruction set and scheduling (as the mac preset)
+  else()
+    list(APPEND CCEX_CPU_OPT -march=native)
+  endif()
 endif()
 # icpx defaults to -fp-model=fast; the idm4 preset keeps precise, so the CMake build does too
 if(CMAKE_CXX_COMPILER_ID MATCHES "IntelLLVM|Intel")
@@ -229,6 +252,8 @@ endforeach()
 set(_unit_libs ${MPI_CXX_LINK_FLAGS} ${MPI_CXX_LIBRARIES} ${_ccex_blas_unit_libs} -lpthread -ldl -lm)
 if(_ccex_mkl)
   list(APPEND _unit_flags -DCCEX_BLAS_DIRECT)
+elseif(_ccex_accelerate)
+  list(APPEND _unit_flags -DCCEX_BLAS_DIRECT -DCCEX_BLAS_ACCELERATE)
 endif()
 if(CCEX_SANITIZE)
   list(APPEND _unit_libs -fsanitize=address,undefined)

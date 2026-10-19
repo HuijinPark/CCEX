@@ -17,10 +17,23 @@
 #include <cstring>
 #include <set>
 #include <string>
+#ifdef __APPLE__
+#include <mach/mach.h>
+#endif
 
 namespace {
 
 double statusKb(const char* key){            // a line of /proc/self/status, kB; 0 when it cannot be read
+#ifdef __APPLE__
+    // macOS has no /proc: VmRSS is the task's resident size (until 2026-10-19 it read 0 there, so the estimate left out
+    // what the rank held and check_refusals' rj_memory_not_enough was accepted)
+    mach_task_basic_info_data_t info;
+    mach_msg_type_number_t count = MACH_TASK_BASIC_INFO_COUNT;
+    if (!strcmp(key,"VmRSS") &&
+        task_info(mach_task_self(),MACH_TASK_BASIC_INFO,(task_info_t)&info,&count) == KERN_SUCCESS)
+        return double(info.resident_size)/1024.0;
+    return 0;
+#endif
     double kb = 0;
     if (FILE* fp = fopen("/proc/self/status","r")){
         char line[256];
@@ -31,6 +44,16 @@ double statusKb(const char* key){            // a line of /proc/self/status, kB;
     return kb;
 }
 double memAvailableBytes(){                   // MemAvailable of /proc/meminfo; 0 when it cannot be read
+#ifdef __APPLE__
+    // macOS: the free and inactive pages, what psutil calls available there
+    vm_statistics64_data_t vm;
+    mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
+    vm_size_t page = 0;
+    if (host_page_size(mach_host_self(),&page) == KERN_SUCCESS &&
+        host_statistics64(mach_host_self(),HOST_VM_INFO64,(host_info64_t)&vm,&count) == KERN_SUCCESS)
+        return (double(vm.free_count) + double(vm.inactive_count))*double(page);
+    return 0;
+#endif
     double kb = 0;
     if (FILE* fp = fopen("/proc/meminfo","r")){
         char line[256];

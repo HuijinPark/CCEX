@@ -4,6 +4,9 @@
 #               (this line of development's own) shows no unexplained difference.
 set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$HERE/../../.." && pwd)"
+# macOS has no timeout(1) (GNU coreutils): the same limit by perl's alarm, which every Mac has; exported for the runs
+# started by xargs (check_rdip_ladder)
+command -v timeout >/dev/null 2>&1 || { timeout(){ perl -e 'alarm shift; exec @ARGV or die "timeout: $ARGV[0]: $!\n"' "$@"; }; export -f timeout; }
 # One run at a time per folder: a second run would delete the first one's work files (D29).
 # A script this run starts (check_refusals runs legacy.sh) inherits the lock and does not take it again.
 if [ "${CCEX_RUN_LOCK:-}" != "$HERE" ]; then

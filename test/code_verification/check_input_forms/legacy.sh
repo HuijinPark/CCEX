@@ -58,17 +58,21 @@ PY
 
 
 # --- the systems ------------------------------------------------------------
-declare -A SYSTEMS=(
-  [S1a]="NV natab, CCE-2, ensemble bath"
-  [S1b]="NV natab, CCE-2, sampled bath"
-  [S2a]="NV natab, gCCE-2"
-  [S2b]="NV + P1 10ppm, CCE-2, Defect n_nuclear_spins=0"
-  [S2c]="NV + P1 10ppm, gCCE-2, Defect n_nuclear_spins=0"
-  [S3]="P1 bath, Defect n_nuclear_spins=1 (14N), n_configurations=4, axis+state files"
-  [S4]="hBN VB, hyperfine dft+contact + quadrupole plain (DFT tensor files, vertex boundary)"
-  [S4b]="hBN VB, the same but with the MinDif/MaxDif axis-aligned boundary"
-  [S5]="2 NV, gCCE, explicit intmap self/ZFS tensors"
-)
+# a case, not an associative array: macOS's /bin/bash is 3.2, which has none (declare -A stopped this script there)
+system_name(){
+    case "$1" in
+    S1a) echo "NV natab, CCE-2, ensemble bath" ;;
+    S1b) echo "NV natab, CCE-2, sampled bath" ;;
+    S2a) echo "NV natab, gCCE-2" ;;
+    S2b) echo "NV + P1 10ppm, CCE-2, Defect n_nuclear_spins=0" ;;
+    S2c) echo "NV + P1 10ppm, gCCE-2, Defect n_nuclear_spins=0" ;;
+    S3) echo "P1 bath, Defect n_nuclear_spins=1 (14N), n_configurations=4, axis+state files" ;;
+    S4) echo "hBN VB, hyperfine dft+contact + quadrupole plain (DFT tensor files, vertex boundary)" ;;
+    S4b) echo "hBN VB, the same but with the MinDif/MaxDif axis-aligned boundary" ;;
+    S5) echo "2 NV, gCCE, explicit intmap self/ZFS tensors" ;;
+    *) echo "?" ;;
+    esac
+}
 ORDER=(S1a S1b S2a S2b S2c S3 S4 S4b S5)
 
 # a generator that fails has written no legacy.json; without this the stage still
@@ -77,7 +81,7 @@ not_written(){ echo "  FAIL  $sys : legacy.json not written"; FAIL=$((FAIL+1)); 
 WANT=("${@:-${ORDER[@]}}")
 
 for sys in "${WANT[@]}"; do
-    echo "=== $sys : ${SYSTEMS[$sys]:-?}"
+    echo "=== $sys : $(system_name "$sys")"
     case "$sys" in
       S1a) gen_reg S1a Diamond_NV_natab_cce   nstate0 || not_written ;;
       S1b) gen_reg S1b Diamond_NV_natab_cce   nstate1 || not_written ;;

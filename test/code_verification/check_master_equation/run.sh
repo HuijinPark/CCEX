@@ -98,8 +98,10 @@ mk meg_r0        "d['method']='megCCE'; d['deltat']=0.1; d['nstep']=20"
 mk meg_bath      "d['method']='megCCE'; d['deltat']=0.1; d['nstep']=20; $(MEJ megCCE "$JUMPS")"
 JUMPS_QZ="${JUMPS%]}, {'bath_name':'qubit','operator':'z','rate':$RATE}]"     # the bath jumps and a qubit S_z jump
 mk meg_bath_qz   "d['method']='megCCE'; d['deltat']=0.1; d['nstep']=20; $(MEJ megCCE "$JUMPS_QZ")"
-mk meg0_qz       "d['method']='megCCE'; d['order']=0; $(MEJ megCCE "[{'bath_name':'qubit','operator':'z','rate':$RATE}]")"
-mk meg0_qminus   "d['method']='megCCE'; d['order']=0; $(MEJ megCCE "[{'bath_name':'qubit','operator':'-','rate':$RATE}]")"
+# the jump lists in variables: macOS's bash 3.2 brace-expands a list written inside "$( ... )" ({a,b} -> a b)
+QZ="[{'bath_name':'qubit','operator':'z','rate':$RATE}]"; QMINUS="[{'bath_name':'qubit','operator':'-','rate':$RATE}]"
+mk meg0_qz       "d['method']='megCCE'; d['order']=0; $(MEJ megCCE "$QZ")"
+mk meg0_qminus   "d['method']='megCCE'; d['order']=0; $(MEJ megCCE "$QMINUS")"
 for c in gcce meg_r0 meg_bath meg_bath_qz meg0_qz meg0_qminus; do
     run_ccex "$BIN_DEV" "$W/$c.json" "$W/proc_$c" -v || { echo "  FAIL  $c : CCEX exit"; FAIL=$((FAIL+1)); }
 done

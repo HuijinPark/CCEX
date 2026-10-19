@@ -1,5 +1,42 @@
 # Changelog
 
+## Unreleased
+
+### Builds
+
+- **macOS (Apple Silicon).** The `mac` preset builds at `-O3 -mcpu=native` (it said `-O2`) and links Apple's Accelerate
+  for the large clusters in MKL's place: the same Fortran `zgemm_` and `zheevd_` (`src/common/blas_option.cpp`), with the
+  system on every Mac. `CCEX_BLAS=auto` (the default) takes it on macOS, `accelerate` insists, `off` leaves it out, and
+  `mkl` stops there (there is no MKL for Apple Silicon). CMake does the same (`-DCCEX_BLAS=AUTO|ACCELERATE|OFF`;
+  `CCEX_NATIVE` gives `-mcpu=native` on Apple Silicon). Until now CMake's AUTO found Intel's macOS MKL 2023 under
+  `/opt/intel`, x86_64 only, and the arm64 link failed. The run log says `MKL for large clusters : on (Apple Accelerate
+  in its place; ...)`, which the checks read as an external library, and `Accelerate on` in its `Build` line.
+  Measured on an M4 (4 ranks, median of three; h-BN cCCE3 ensemble Hahn with clusters to dimension 343, h-BN gCCE3 to
+  1029, P1 pCCE2 `partition_size` 4 to 256): 76.0 / 19.5 / 26.5 s with the old preset, 71.1 / 19.3 / 26.0 s at `-O3`,
+  32.8 / 14.6 / 18.3 s with Accelerate (2.3, 1.3 and 1.5 times faster). `-O3` gives the bits of `-O2`; with Accelerate
+  the curves agree with the run without it to the last printed digit or so (noDiv within 7.6e-9; a wiDiv element
+  diverged to 1.9e5 moved by 1.5e-9 relative), and the 25 cases of `check_numerics` give the same bits but one
+  non-finite element. `VECLIB_MAXIMUM_THREADS=1` changed nothing on 8 ranks and was slower on 4, so it is not set.
+- **The memory check on macOS** (A67) reads the rank's resident size (`task_info`) and the free and inactive pages
+  (`host_statistics64`, what psutil calls available) where Linux reads `/proc/self/status` and `/proc/meminfo`. Without
+  `/proc` both read 0: the estimate left out what the rank held and the node's memory was "unknown (not checked)", so
+  a run that does not fit was not stopped (`check_refusals`' `rj_memory_not_enough` was accepted).
+- The g++ warning `-Wno-format-overflow` is no longer given to clang (the `mac` preset, CMake with a compiler other
+  than g++), which said once per object that it does not know it.
+- `test_scaled_product` holds a component 2^-1200 below the other only where `long double` reaches that far (x87, quad;
+  it is zero where `long double` is `double`, as on Apple Silicon), and the sign of a NaN result only where `long double`
+  is x87's (clang -O3 on Apple Silicon gives the two assembly paths' NaNs different signs; every finite value keeps its
+  bits).
+- `check_numerics/run.sh`, `make_reference.sh` and `check_rdip_ladder/run.sh` run where `timeout` is missing (macOS),
+  with perl's `alarm` in its place (exported, for the runs `xargs` starts).
+- The checks run with macOS's `/bin/bash` 3.2: `check_input_forms/legacy.sh` names its systems with a `case` instead of
+  an associative array (`declare -A`, bash 4), and `check_master_equation` and `check_refusals` keep their jump-operator
+  lists in variables, because bash 3.2 brace-expands a list written inside `"$( ... )"` (`[{'a':1,'b':2}]` reached
+  Python as `['a':1]`). `check_refusals`' `write_full_*` (result files linked to `/dev/full`) are skipped where there
+  is no `/dev/full` (macOS), and `check_input_forms`' autoconv A10 (a tool writable by the owner's private group) where
+  there is no `getent` to tell a private group (macOS, whose primary group `staff` is every user's: it ran there and
+  failed, rightly refused).
+
 ## 2.0.0 — 2026-10-17 (changes since v1.2.2)
 
 ### Summary

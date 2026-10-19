@@ -1,6 +1,6 @@
 /**
  * @file blas_option.cpp
- * @brief The optional external BLAS/LAPACK (Intel MKL) calls; empty without CCEX_BLAS_DIRECT.
+ * @brief The optional external BLAS/LAPACK (Intel MKL; Apple's Accelerate on macOS) calls; empty without CCEX_BLAS_DIRECT.
  */
 // A46: the library calls of the external BLAS/LAPACK option (include/common/blas_option.h). Empty unless the build
 // defines CCEX_BLAS_DIRECT. A file of its own, so that the code around the call sites compiles as before.

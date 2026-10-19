@@ -6,6 +6,9 @@
 #                              Delete the older head-* folder when the new one replaces it.
 set -eu
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$HERE/../../.." && pwd)"; NP="${NP:-2}"
+# macOS has no timeout(1) (GNU coreutils): the same limit by perl's alarm, which every Mac has; exported for the runs
+# started by xargs (check_rdip_ladder)
+command -v timeout >/dev/null 2>&1 || { timeout(){ perl -e 'alarm shift; exec @ARGV or die "timeout: $ARGV[0]: $!\n"' "$@"; }; export -f timeout; }
 what="$1"
 if [ "$what" = current ]; then
   # date and time in the name: two references of one day sort by time, not by commit hash

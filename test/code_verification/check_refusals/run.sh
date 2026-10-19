@@ -473,6 +473,7 @@ CASE="$REPO/test/code_verification/check_numerics/cases/natab_cce2_hahn"
 write_fail(){
     local name="$1" savemode="$2" how="$3" want="$4"
     local outw="$WORK/write_failure/$name"
+    if [ "$how" = full ] && [ ! -e /dev/full ]; then echo "  SKIP  $name (no /dev/full here: macOS)"; return; fi
     rm -rf "${outw:?}"; mkdir -p "$outw"
     python3 - "$CASE/ccein.json" "$outw/ccein.json" "$savemode" "$outw/out" <<'PY'
 import json, sys; from input_layout import flat, nest
@@ -822,10 +823,20 @@ echo "=== master equation (meCCE, megCCE)"
 # CPU with a matrix exponential per step. The section belongs to its method; the branch's top-level key is refused with
 # the new place; what the ME kernels do not take is refused before the bath is read.
 MEJ(){ echo "d.setdefault('hamiltonian', {})['$1'] = {'jump_operators': $2}"; }   # MEJ <section> <python list>
-JUMP="$(MEJ meCCE "[{'bath_name':'e','operator':'-','rate':1e-4}]")"
+# the jump lists in variables: macOS's bash 3.2 brace-expands a list written inside "$( ... )" ({a,b} -> a b)
+J_E_MINUS="[{'bath_name':'e','operator':'-','rate':1e-4}]"
+J_E_Q="[{'bath_name':'e','operator':'q','rate':1e-4}]"
+J_E_PM="[{'bath_name':'e','operator':'+-','rate':1e-4}]"
+J_E_NEG="[{'bath_name':'e','operator':'z','rate':-1}]"
+J_NONAME="[{'operator':'z','rate':1e-4}]"
+J_QUBIT_Z="[{'bath_name':'qubit','operator':'z','rate':1e-4}]"
+J_E_P1X="[{'bath_name':'e','operator':'-','rate':1e-4},{'bath_name':'P1x','operator':'+','rate':1e-4}]"
+J_P1X_Z="[{'bath_name':'P1x','operator':'z','rate':1e-4}]"
+J_P1_Z="[{'bath_name':'P1','operator':'z','rate':1e-4}]"
+JUMP="$(MEJ meCCE "$J_E_MINUS")"
 reject_case p1_manual_hahn rj_me_section_gcce "hamiltonian.meCCE (jump_operators) belongs to method meCCE, this run is gCCE" "$JUMP"
 reject_case p1_cce2_single rj_me_section_other "hamiltonian.megCCE (jump_operators) belongs to method megCCE, this run is meCCE" \
-  "d['method']='meCCE'; $(MEJ megCCE "[{'bath_name':'e','operator':'-','rate':1e-4}]")"
+  "d['method']='meCCE'; $(MEJ megCCE "$J_E_MINUS")"
 # the run's method as the input writes it: the default cCCE, not the internal name CCE (an old name the reader refuses)
 reject_case p1_cce2_single rj_me_section_ccce "hamiltonian.meCCE (jump_operators) belongs to method meCCE, this run is cCCE" \
   "d.pop('method'); $JUMP"
@@ -834,22 +845,22 @@ reject_case p1_cce2_single rj_me_section_key "hamiltonian.meCCE has no key \"kni
 reject_case p1_cce2_single rj_old_jump_operators "${OLDK}jump_operators\" is now \"hamiltonian.meCCE.jump_operators\"" \
   "d['jump_operators'] = [{'bath_name':'e','operator':'-','rate':1e-4}]"
 reject_case p1_cce2_single rj_me_op "jump_operators[0].operator must be one of - + z x y" \
-  "d['method']='meCCE'; $(MEJ meCCE "[{'bath_name':'e','operator':'q','rate':1e-4}]")"
+  "d['method']='meCCE'; $(MEJ meCCE "$J_E_Q")"
 reject_case p1_cce2_single rj_me_old_notation "the old names +- and -+ are now - and +" \
-  "d['method']='meCCE'; $(MEJ meCCE "[{'bath_name':'e','operator':'+-','rate':1e-4}]")"
+  "d['method']='meCCE'; $(MEJ meCCE "$J_E_PM")"
 reject_case p1_cce2_single rj_me_rate "jump_operators[0].rate must be a finite number >= 0" \
-  "d['method']='meCCE'; $(MEJ meCCE "[{'bath_name':'e','operator':'z','rate':-1}]")"
+  "d['method']='meCCE'; $(MEJ meCCE "$J_E_NEG")"
 reject_case p1_cce2_single rj_me_name "jump_operators[0] needs bath_name, operator and rate" \
-  "d['method']='meCCE'; $(MEJ meCCE "[{'operator':'z','rate':1e-4}]")"
+  "d['method']='meCCE'; $(MEJ meCCE "$J_NONAME")"
 reject_case natab_manual_hahn rj_me_manual "method meCCE takes its pulses from pulse.count" \
   "d['method']='meCCE'; d['pulse']={'count':1,'name':'Manual','sequence':[['1/2','X',180],['1/2','I',0]]}"
 reject_case p1_cce2_single rj_me_recursive "this run has method=meCCE. Use execution.evolution_update=exact" \
   "d['method']='meCCE'; d['evolution_update']='recursive'"
 reject_case p1_cce2_single rj_me_qubit_jump "method meCCE does not take qubit jump operators" \
-  "d['method']='meCCE'; $(MEJ meCCE "[{'bath_name':'qubit','operator':'z','rate':1e-4}]")"
+  "d['method']='meCCE'; $(MEJ meCCE "$J_QUBIT_Z")"
 # meCCE with cluster_mode pcce (inside pmeCCE) projects the qubit out as well; the message names the method as written
 reject_case p1_pcce2_sk2 rj_pme_qubit_jump "method meCCE does not take qubit jump operators" \
-  "d['method']='meCCE'; $(MEJ meCCE "[{'bath_name':'qubit','operator':'z','rate':1e-4}]")"
+  "d['method']='meCCE'; $(MEJ meCCE "$J_QUBIT_Z")"
 # the method as the input writes it in every refusal a gCCE / meCCE / megCCE + pcce run (inside pgCCE, pmeCCE, pmegCCE) can
 # meet: the internal names must not reach the messages
 reject_case p1_pcce2_sk2 rj_pme_recursive "this run has method=meCCE" "d['method']='meCCE'; d['evolution_update']='recursive'"
@@ -910,13 +921,13 @@ reject S5 rj_me_qubit_jump_two "a qubit jump operator needs one qubit" \
 # (nstep and rbath small, so that a build without the check runs these in seconds)
 MEI="$REPO/test/code_verification/check_master_equation/inputs"
 reject_case p1_cce2_single rj_me_jump_name 'hamiltonian.meCCE.jump_operators[1].bath_name "P1x" names no bath spin of this run (bath spins, compared ignoring case: e)' \
-  "d = {'method': 'meCCE', 'quantity': 'coherence', 'Qubit': {'file': '$MEI/qubit_espin', 'spin': 0.5, 'alpha_state': {'ms': [0.5]}, 'beta_state': {'ms': [-0.5]}}, 'configuration': {'gyrofile': '$MEI/gyro_espin', 'bathfile': ['$MEI/bath_espin'], 'nstate': 0}, 'order': 2, 'bfield': 300, 'rbath': 500, 'rdip': 300, 'deltat': 0.04, 'nstep': 5, 'pulse': {'count': 1}}; $(MEJ meCCE "[{'bath_name':'e','operator':'-','rate':1e-4},{'bath_name':'P1x','operator':'+','rate':1e-4}]")"
+  "d = {'method': 'meCCE', 'quantity': 'coherence', 'Qubit': {'file': '$MEI/qubit_espin', 'spin': 0.5, 'alpha_state': {'ms': [0.5]}, 'beta_state': {'ms': [-0.5]}}, 'configuration': {'gyrofile': '$MEI/gyro_espin', 'bathfile': ['$MEI/bath_espin'], 'nstate': 0}, 'order': 2, 'bfield': 300, 'rbath': 500, 'rdip': 300, 'deltat': 0.04, 'nstep': 5, 'pulse': {'count': 1}}; $(MEJ meCCE "$J_E_P1X")"
 reject_case p1_manual_hahn rj_meg_jump_name 'hamiltonian.megCCE.jump_operators[0].bath_name "P1x" names no bath spin of this run (bath spins, compared ignoring case: P1)' \
-  "d['method']='megCCE'; d['nstep']=5; d['rbath']=200; $(MEJ megCCE "[{'bath_name':'P1x','operator':'z','rate':1e-4}]")"
+  "d['method']='megCCE'; d['nstep']=5; d['rbath']=200; $(MEJ megCCE "$J_P1X_Z")"
 # a bath_name that is the qubit's name and a bath spin's: the megCCE kernel takes it as a qubit jump and drops the bath
 # spins, so it is refused once the bath is read (the qubit of p1_gcce2_zfs named P1, as its bath spins)
 reject_case p1_gcce2_zfs rj_meg_jump_both_names 'hamiltonian.megCCE.jump_operators[0].bath_name "P1" names both the qubit and bath spins of this run' \
-  "d['method']='megCCE'; d['nstep']=5; d['Qubit']['qubit'][0]['name']='P1'; d['Qubit']['intmap'][0]['between']=['P1','P1']; $(MEJ megCCE "[{'bath_name':'P1','operator':'z','rate':1e-4}]")"
+  "d['method']='megCCE'; d['nstep']=5; d['Qubit']['qubit'][0]['name']='P1'; d['Qubit']['intmap'][0]['between']=['P1','P1']; $(MEJ megCCE "$J_P1_Z")"
 # the jump sections as they are read: one method's section only, and jump_operators a list
 reject_case p1_cce2_single rj_me_jump_both_sections "jump operators are given in both hamiltonian.meCCE and hamiltonian.megCCE" \
   "d['method']='meCCE'; d['hamiltonian'] = {'meCCE': {'jump_operators': [{'bath_name':'P1','operator':'-','rate':1e-4}]}, 'megCCE': {'jump_operators': [{'bath_name':'P1','operator':'-','rate':1e-4}]}}"

@@ -20,6 +20,9 @@
 # ---------------------------------------------------------------------------
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; REPO="$(cd "$HERE/../../.." && pwd)"
+# macOS has no timeout(1) (GNU coreutils): the same limit by perl's alarm, which every Mac has; exported for the runs
+# started by xargs (check_rdip_ladder)
+command -v timeout >/dev/null 2>&1 || { timeout(){ perl -e 'alarm shift; exec @ARGV or die "timeout: $ARGV[0]: $!\n"' "$@"; }; export -f timeout; }
 export PYTHONPATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)${PYTHONPATH:+:$PYTHONPATH}"   # input_layout.py (A64/A65)
 # One run at a time per folder: a second run would delete the first one's work files (D29; review 20261008-003400 R3).
 if [ "${CCEX_RUN_LOCK:-}" != "$HERE" ]; then

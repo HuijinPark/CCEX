@@ -27,14 +27,14 @@ cuSOLVER, cuBLAS, cudart; [GPU execution](../methods/gpu.md)); Eigen, uthash and
 | `idm4` | idm: module intel-23.2, `mpiicpc` with icpx |
 | `gpu` | idm4-gpu: OpenMPI + CUDA 12.8 (icpx when oneAPI is there, else gcc); also `bin/main_gpu.out`, compute capability 12.0 by default |
 | `nurion` | KISTI Nurion: intel/19.0.5 + impi/19.0.5 |
-| `mac` | macOS with an MPI wrapper (Homebrew open-mpi or mpich) |
+| `mac` | macOS with an MPI wrapper (Homebrew open-mpi or mpich): Apple clang `-O3 -mcpu=native` (Apple Silicon), Apple's Accelerate for the large clusters |
 | `generic` | any machine with an MPI C++ wrapper on `PATH`; `CXX` (default `mpicxx`), `CC`, `CXXFLAGS`, and for the GPU binary `CUDA_HOME` (or nvcc on `PATH`) and `CUDA_ARCH` from the environment |
 
 `do_compile.sh` also reads `CCEX_JOBS` (parallel compile jobs, default 5), `CCEX_BLAS` (below), `CXXFLAGS_EXTRA`,
 `LIBRARY_EXTRA`, and `CCEX_SANITIZE=1` (address and undefined-behaviour checks).
 
 **CMake options.** `-DCCEX_CUDA=OFF`, `-DCMAKE_CUDA_ARCHITECTURES=<cc>`, `-DMPI_CXX_COMPILER=<wrapper>`,
-`-DCCEX_NATIVE=OFF`, `-DCCEX_SANITIZE=ON`, `-DCCEX_BLAS=OFF|MKL`, `-DCCEX_BIN_DIR=<dir>` and
+`-DCCEX_NATIVE=OFF`, `-DCCEX_SANITIZE=ON`, `-DCCEX_BLAS=OFF|MKL|ACCELERATE`, `-DCCEX_BIN_DIR=<dir>` and
 `-DCCEX_STRICT_WARNINGS=ON` (warnings on, format, sequence-point and misleading-indentation ones as errors; the CI
 builds with it).
 
@@ -45,6 +45,11 @@ dimension 63 (the bath dimension for cCCE, the whole qubit × bath dimension for
 of the time and left P1 unchanged; the curves move in the last digits (up to 9e-8 at late times of h-BN gCCE).
 `CCEX_BLAS=off bash do_compile.sh <preset>` (CMake `-DCCEX_BLAS=OFF`) builds without it, `CCEX_BLAS=mkl`
 (`-DCCEX_BLAS=MKL`) stops when it is missing.
+
+**On macOS, Apple's Accelerate** takes MKL's place (there is no MKL for Apple Silicon): it comes with the system and has
+the same zgemm and zheevd, so `do_compile.sh mac` and CMake link it by default (`[build] Accelerate on`; the run log says
+`MKL for large clusters : on (Apple Accelerate in its place; ...)` and `Accelerate on` in its `Build` line).
+`CCEX_BLAS=off` (`-DCCEX_BLAS=OFF`) leaves it out, `CCEX_BLAS=accelerate` (`-DCCEX_BLAS=ACCELERATE`) insists on it.
 
 **The binary of a CMake build** is in `build/bin/`, so tell the tutorials (`export CCEX_BIN=<repository>/build/bin/main.out`,
 and `CCEX_GPU_BIN` for `08_GPU`) and the checks (`CCEX_BIN=$PWD/build/bin/main.out CCEX_BUILD_DIR=$PWD/build`; the
@@ -82,7 +87,15 @@ Eigen, uthash and SQLite come with the code (`external/`); nothing else has to b
   Without `$MKLROOT` the build prints `MKL off` and runs without it. With oneAPI (Intel MPI, `setvars.sh`) use
   `wsl-gnu` or `wsl-icpx` instead.
 - **macOS**: an MPI wrapper from Homebrew (`brew install open-mpi`, or `mpich`), then `bash do_compile.sh mac` (it uses
-  `mpicxx`, or `CXX`).
+  `mpicxx`, or `CXX`; Apple clang at `-O3 -mcpu=native` on Apple Silicon, Accelerate for the large clusters), or CMake
+  (`brew install cmake`). The checks under `test/` run there too, with the system's bash 3.2; where `timeout` is
+  missing they use perl instead. `check_numerics` holds a build to references recorded on WSL (x86): a Mac differs from
+  them in the last digits (Apple clang on arm64, where `long double` is `double`; below 1e-8 in noDiv), so record a
+  reference of its own on the Mac (`make_reference.sh current`) and compare later Mac builds against that one; keep it
+  out of commits, since the newest `head-*` folder decides for everyone.
+  Keep the checkout out of the folders iCloud Drive syncs (Desktop and Documents, when it keeps them): iCloud copies
+  files the build rewrites to `obj/<name> 2.d`, which make reads as two targets, and `make unit-env` (and the checks that
+  compile unit tests with it) then fails. A CMake build folder elsewhere (`cmake -B ~/build/ccex`) avoids it too.
 - **A cluster with environment modules**: load a compiler and an MPI (`module load ...`), then `bash do_compile.sh
   generic` with `CXX` set to the wrapper if it is not `mpicxx` (`CXX=mpiicpc bash do_compile.sh generic`), or add a
   preset to `do_compile.sh` for the machine as the `idm4`, `gpu` and `nurion` presets do (each loads its modules itself).

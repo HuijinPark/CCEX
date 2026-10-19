@@ -19,16 +19,28 @@ int main(){
     close((complex.power(2000)*complex.power(-2000)).value(),{1,0});
     close(ScaledComplex(std::complex<double>(0,0)).power(0).value(),{1,0});
     close((complex*ScaledComplex(std::complex<double>(0,0))).value(),{0,0});
-    ScaledComplex unequal;unequal.real=.5L;unequal.imag=std::ldexp(.5L,-1200);unequal.exponent=1201;
-    if(!std::isinf(unequal.value().real()) || unequal.value().imag()!=1)throw std::runtime_error("component exponents not preserved");
+    // a component 2^-1200 below the other: a long double holds it on x87 (80-bit), not where long double is double
+    // (Apple Silicon), where it is 0 before value() is called
+    if(std::numeric_limits<long double>::min_exponent<-1200){
+        ScaledComplex unequal;unequal.real=.5L;unequal.imag=std::ldexp(.5L,-1200);unequal.exponent=1201;
+        if(!std::isinf(unequal.value().real()) || unequal.value().imag()!=1)throw std::runtime_error("component exponents not preserved");
+    }
     std::cout<<"PASS scaled products retain finite results across underflow and overflow intermediates\n";
 
     // improvements.md A9 (after review 20261007g): assembleFactor, the step calculate() uses, against the old
     // always-normalized step, compared after EVERY step on normalized copies (components and exponent, signed zeros and
     // NaN classes included), over short deterministic sequences of edge values and a long random one.
+    // The sign of a NaN is compared where long double is x87's. Elsewhere (Apple Silicon: long double is double) clang -O3
+    // gives the two paths' NaNs different signs (measured 2026-10-19: every finite value and zero sign the same bits,
+    // -O0 the NaN signs too), so there a NaN equals a NaN.
+    constexpr bool nanSigns=std::numeric_limits<long double>::digits==64;
     auto sameLD=[](long double a,long double b){
-        if(std::isnan(a)||std::isnan(b))return std::isnan(a)&&std::isnan(b)&&std::signbit(a)==std::signbit(b);
+        if(std::isnan(a)||std::isnan(b))return std::isnan(a)&&std::isnan(b)&&(!nanSigns || std::signbit(a)==std::signbit(b));
         return a==b && std::signbit(a)==std::signbit(b);
+    };
+    auto sameOutput=[](std::complex<double> a,std::complex<double> b){   // the bits, or two NaNs where their signs are not compared
+        auto part=[](double x,double y){return (!nanSigns && std::isnan(x) && std::isnan(y)) || std::memcmp(&x,&y,sizeof x)==0;};
+        return part(a.real(),b.real()) && part(a.imag(),b.imag());
     };
     auto same=[&](ScaledComplex a,ScaledComplex b){
         a.normalize();b.normalize();
@@ -92,7 +104,7 @@ int main(){
             ++steps;
             // the final reconstruction: rank 0 multiplies by L0, the output is value()
             const auto ow=(oldWith*ScaledComplex(zero)).value(), nw=([&]{auto x=newWith;x.normalize();return x*ScaledComplex(zero);}()).value();
-            if(!same(oldWith,newWith)||!same(oldWithout,newWithout)||std::memcmp(&ow,&nw,sizeof ow)!=0){
+            if(!same(oldWith,newWith)||!same(oldWithout,newWithout)||!sameOutput(ow,nw)){
                 std::cerr<<name<<" step "<<k<<": raw "<<z<<" power "<<p<<" old "<<ow<<" new "<<nw<<"\n";
                 throw std::runtime_error("assembly step differs");
             }
@@ -170,4 +182,5 @@ int main(){
              <<" gathered values)\n";
     if(ScaledComplex::lazySafe && gcceShortcut<60000)throw std::runtime_error("the gCCE shortcut was hardly exercised");
     if(!ScaledComplex::lazySafe)std::cout<<"note: long double exponent range too narrow here, deferred normalization is off\n";
+    if(!nanSigns)std::cout<<"note: long double is not x87's here, the signs of NaN results are not compared\n";
 }

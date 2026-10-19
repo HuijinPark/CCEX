@@ -91,9 +91,10 @@ if ! CCEX_AUTOCONV_DIR="$L/tool" CCEX_PYTHON="${CCEX_PYTHON:-python3}" "$BIN_DEV
     echo "  PASS  A12 a symbolic link inside the tool is refused"; PASS=$((PASS+1))
 else echo "  FAIL  A12 (see $W/link.log)"; FAIL=$((FAIL+1)); fi
 # group-writable is allowed when the group is the owner's own private group (idm copies under umask 0002); checked only where
-# this user's primary group has no other members
+# this user's primary group has no other members; without getent (macOS, where the primary group is staff, every user's) it
+# cannot tell and skips
 G="$(id -gn)"; GID="$(id -g)"
-if [ -z "$(getent group "$G" | cut -d: -f4)" ] && [ "$(getent passwd | awk -F: -v g="$GID" -v u="$(id -u)" '$4==g && $3!=u' | wc -l)" -eq 0 ]; then
+if command -v getent >/dev/null 2>&1 && [ -z "$(getent group "$G" | cut -d: -f4)" ] && [ "$(getent passwd | awk -F: -v g="$GID" -v u="$(id -u)" '$4==g && $3!=u' | wc -l)" -eq 0 ]; then
     P="$W/private"; mkdir -p "$P"; cp -r "$REPO/example/tools/AutoConvergence" "$P/tool"; rm -rf "$P/tool/autoconv/__pycache__"
     chmod -R go-w "$P/tool"; chmod -R g+w "$P/tool"
     CCEX_AUTOCONV_DIR="$P/tool" CCEX_PYTHON="${CCEX_PYTHON:-python3}" "$BIN_DEV" -f on.json > private.log 2>&1 < /dev/null

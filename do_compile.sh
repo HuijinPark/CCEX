@@ -20,21 +20,24 @@
 #   idm4     idm: module intel-23.2, mpiicpc with icpx
 #   gpu      idm4-gpu: OpenMPI + CUDA 12.8, the C++ with icpx when oneAPI is there (else gcc); builds the GPU binary too
 #   nurion   KISTI Nurion: intel/19.0.5 + impi/19.0.5
-#   mac      macOS with an MPI wrapper (Homebrew open-mpi or mpich)
+#   mac      macOS with an MPI wrapper (Homebrew open-mpi or mpich): Apple clang at -O3 for this Mac's CPU,
+#            and Apple's Accelerate for the large clusters in MKL's place
 #
 # Every preset builds bin/main.out (CPU). A preset with CUDA also builds
 # bin/main_gpu.out, the same sources with -DCCEX_USE_CUDA and the CUDA kernels,
 # for "backend": "cuda" / "auto" in the input. Eigen, uthash and sqlite are in
-# external/; nothing else is needed. Intel MKL is used when it is found (CCEX_BLAS
-# below; every preset decides after its modules/setvars.sh, CCEX_BLAS=off turns it off).
+# external/; nothing else is needed. Intel MKL is used when it is found, on macOS
+# Apple's Accelerate (CCEX_BLAS below; every preset decides after its modules/setvars.sh,
+# CCEX_BLAS=off turns it off).
 # The old presets' EIGEN_USE_MKL_ALL was defined after Eigen was included and had no
 # effect, and no MKL symbol was linked (2026-09-24: ldd, and the 25-case numerics check
 # gave the same numbers without it); it was removed then.
 #
 #   CCEX_JOBS=N       make -jN (default 5: idm's login node is shared)
 #   CCEX_SANITIZE=1   -fsanitize=address,undefined on the CPU objects, the adaptive ones and SQLite
-#   CCEX_BLAS=auto|mkl|off   large cCCE/gCCE clusters by Intel MKL (zgemm, zheevd): auto (default) when
-#                     MKL is found, mkl insists (stops without it), off never; see below
+#   CCEX_BLAS=auto|mkl|accelerate|off   large cCCE/gCCE clusters by Intel MKL (zgemm, zheevd), on macOS by
+#                     Apple's Accelerate: auto (default) when found, mkl insists (stops without it), accelerate
+#                     likewise (macOS only), off never; see below
 
 if [ $# -ne 1 ]; then
     echo "usage: bash do_compile.sh <preset>" >&2
@@ -174,8 +177,16 @@ nurion)
     ;;
 
 mac)
+    # Apple clang behind the wrapper. Apple Silicon: -mcpu=native, this core's instruction set and scheduling
+    # (-march=native gives the instruction set only); an Intel Mac: -march=native, as the other presets. -O3 as
+    # the others (the preset said -O2 until 2026-10-19). The g++ warning -Wno-format-overflow is left out: clang
+    # does not know it and said so once per object.
     CXX="${CXX:-mpicxx}"
-    CXXFLAGS="-std=gnu++17 -O2 -g $WARN"
+    WARN="-fpermissive -Wno-deprecated-declarations -Wno-writable-strings -Wno-unused-result -Wno-format-security"
+    case "$(uname -m)" in
+    arm64) CXXFLAGS="-std=gnu++17 -O3 -g -mcpu=native $WARN" ;;
+    *)     CXXFLAGS="-std=gnu++17 -O3 -g -march=native $WARN" ;;
+    esac
     NOTE="mac: $CXX"
     ;;
 
@@ -195,12 +206,21 @@ esac
 # on when $MKLROOT (set by setvars.sh or an intel module, so decided here, after the preset) holds
 # the three libraries; mkl: the same, but stop when they are not there; off: never. MKL is linked
 # sequential (one thread per MPI rank); the binary then needs MKL's libraries at run time (rpath).
+# macOS: Apple's Accelerate in MKL's place, on every Mac with the system. It has the same Fortran zgemm_ and
+# zheevd_ (src/common/blas_option.cpp), and there is no MKL for Apple Silicon (Intel's macOS MKL ended with
+# oneAPI 2023 and was x86_64 only; CMake's AUTO found it under /opt/intel and linked it into an arm64 binary,
+# 2026-10-19). auto and accelerate take it there, mkl stops.
 BLAS_MODE="$(echo "${CCEX_BLAS:-auto}" | tr '[:upper:]' '[:lower:]')"
 MKL_LIB=""
 MKL_WHY=""
-case "$BLAS_MODE" in
-off) MKL_WHY="CCEX_BLAS=off" ;;
-auto|mkl)
+ACCELERATE=0
+case "$(uname -s):$BLAS_MODE" in
+Darwin:off) MKL_WHY="CCEX_BLAS=off" ;;
+Darwin:auto|Darwin:accelerate) ACCELERATE=1 ;;
+Darwin:mkl) echo "[build] CCEX_BLAS=mkl: no MKL on macOS; CCEX_BLAS=accelerate (the default here) or off" >&2; exit 1 ;;
+*:accelerate) echo "[build] CCEX_BLAS=accelerate: Apple's Accelerate is on macOS only" >&2; exit 1 ;;
+*:off) MKL_WHY="CCEX_BLAS=off" ;;
+*:auto|*:mkl)
     if [ -z "${MKLROOT:-}" ]; then
         MKL_WHY="MKLROOT is not set"
     else
@@ -213,9 +233,14 @@ auto|mkl)
         echo "[build] CCEX_BLAS=mkl: $MKL_WHY (source setvars.sh or load the intel module)" >&2; exit 1
     fi
     ;;
-*) echo "[build] CCEX_BLAS=$CCEX_BLAS: expected auto, mkl or off" >&2; exit 1 ;;
+*) echo "[build] CCEX_BLAS=$CCEX_BLAS: expected auto, mkl, accelerate or off" >&2; exit 1 ;;
 esac
-if [ -n "$MKL_LIB" ]; then
+if [ "$ACCELERATE" = 1 ]; then
+    LIBRARY_EXTRA="$LIBRARY_EXTRA -framework Accelerate"
+    CXXFLAGS="$CXXFLAGS -DCCEX_BLAS_DIRECT -DCCEX_BLAS_ACCELERATE"
+    NOTE="$NOTE, Accelerate on"
+    echo "[build] Accelerate on (Apple's BLAS/LAPACK for the large clusters)"
+elif [ -n "$MKL_LIB" ]; then
     LIBRARY_EXTRA="$LIBRARY_EXTRA -L$MKL_LIB -Wl,-rpath,$MKL_LIB -Wl,--no-as-needed -lmkl_intel_lp64 -lmkl_sequential -lmkl_core"
     CXXFLAGS="$CXXFLAGS -DCCEX_BLAS_DIRECT"
     NOTE="$NOTE, MKL on ($MKL_LIB)"
