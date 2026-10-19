@@ -431,8 +431,8 @@ HashCluster* findCluster(HashCluster* hashClusters, int order){
 Property* findProperty(HashCluster* hashClusters, int order, const char* id){
 
     HashCluster *c = findCluster(hashClusters,order);
-    
-    Property *p;
+
+    Property *p = NULL;   // NULL also when there is no cluster of this order at all (was left uninitialized)
     if (c != NULL){
         HASH_FIND_STR(c->prop, id, p);
     }

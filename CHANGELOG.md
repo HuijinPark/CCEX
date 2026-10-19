@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Fixed
+
+- `findProperty` (`src/clustering/cluster_hash.cpp`, the subcluster lookup of `solveTilde`, which sets the power of each
+  cluster in the product) returned an uninitialized pointer when there was no cluster of the asked order at all; it
+  returns NULL then, as for a cluster that is not in its order's table. The orders are grown from the lower ones, so no
+  run is known to have reached it; clang's `-Wsometimes-uninitialized` found it.
+
 ### Builds
 
 - **macOS (Apple Silicon).** The `mac` preset builds at `-O3 -mcpu=native` (it said `-O2`) and links Apple's Accelerate
