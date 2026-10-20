@@ -1,7 +1,7 @@
 # example/analysis/
 
 One Python tool that post-processes the coherence files CCEX writes (it does not
-run CCEX). This page is written so that a person or an AI can decide quickly what to
+run CCEX). This page is written so that a reader can decide quickly what to
 call and what to write themselves.
 
 | Tool | Answers | Entry point | Needs |

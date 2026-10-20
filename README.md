@@ -139,7 +139,7 @@ CMake build set `CCEX_BIN=$PWD/build/bin/main.out CCEX_BUILD_DIR=$PWD/build`. De
 
 `.github/workflows/ci.yml` runs the fast, machine-independent part on every push and pull request.
 
-## For contributors and AI agents
+## For contributors
 
 Where to look: [src/README.md](src/README.md) (what each source file does, how to add one),
 [test/README.md](test/README.md) (every check, what it answers and needs), [docs/README.md](docs/README.md) (the
