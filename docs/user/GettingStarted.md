@@ -63,7 +63,7 @@ through `test/unit_build_env.sh`).
 |---|---|---|
 | a C++17 compiler behind an MPI wrapper | `bin/main.out` | the recorded checks were run with g++ 13, icpx 2023.2 and icpx 2026.1, with Intel MPI and Open MPI 4.1.5 |
 | `make` or CMake 3.18 or newer | the build | `do_compile.sh` writes a Makefile; `CMakeLists.txt` asks for CMake 3.18 |
-| the CUDA toolkit (nvcc, cuSOLVER, cuBLAS) | `bin/main_gpu.out` only | the `gpu` preset uses CUDA 13.2 (12.8 miscompiles a kernel for the RTX PRO 6000, see `CHANGELOG.md`) |
+| the CUDA toolkit (nvcc, cuSOLVER, cuBLAS) | `bin/main_gpu.out` only | CUDA 13.2 or newer (12.8 miscompiles a kernel for the RTX PRO 6000, see `CHANGELOG.md`; CMake refuses an older nvcc); the `gpu` preset uses 13.2 |
 | Intel MKL | optional | used when the build finds it (below) |
 | Python 3 with numpy and matplotlib | the tutorials' `run.sh` (`example/tutorial/plot_coherence.py`) | |
 | scipy as well | the analyzer (`example/analysis/`) | |

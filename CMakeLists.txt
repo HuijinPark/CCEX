@@ -5,7 +5,8 @@
 #     cmake --build build -j 8           # -> build/bin/main.out
 #
 # Options (-D on the configure line):
-#     CCEX_CUDA=AUTO|ON|OFF   the CUDA backend binary; AUTO builds it when a CUDA compiler is found
+#     CCEX_CUDA=AUTO|ON|OFF   the CUDA backend binary; AUTO builds it when a CUDA compiler of 13.2 or newer is found,
+#                             ON stops on an older one
 #     CCEX_NATIVE=ON|OFF      -march=native on the CPU objects, -mcpu=native on Apple Silicon (ON)
 #     CCEX_SANITIZE=ON|OFF    AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects (OFF)
 #     CCEX_BLAS=AUTO|MKL|ACCELERATE|OFF  large cCCE/gCCE clusters by Intel MKL (zgemm in the cCCE ensemble Hahn echo's
@@ -103,12 +104,26 @@ else()
   message(STATUS "CCEX: MKL off (MKLConfig.cmake not found; source setvars.sh or set MKL_DIR)")
 endif()
 
-# ---- CUDA: AUTO means "when nvcc is found"
+# ---- CUDA: AUTO means "when nvcc is found", and only CUDA 13.2 or newer is taken: 12.8 miscompiles the pulse
+# kernel applyPulse for compute capability 12.0 (A97, CHANGELOG.md). AUTO leaves an older nvcc out with a
+# warning; ON stops on it.
+set(CCEX_CUDA_MIN 13.2)
 include(CheckLanguage)
 if(CCEX_CUDA STREQUAL "AUTO")
   check_language(CUDA)
   if(CMAKE_CUDA_COMPILER)
-    set(_ccex_cuda ON)
+    execute_process(COMMAND ${CMAKE_CUDA_COMPILER} --version OUTPUT_VARIABLE _ccex_nvcc ERROR_QUIET)
+    if(_ccex_nvcc MATCHES "release ([0-9]+\\.[0-9]+)")
+      set(_ccex_nvcc ${CMAKE_MATCH_1})
+    else()
+      set(_ccex_nvcc 0)
+    endif()
+    if(_ccex_nvcc VERSION_LESS CCEX_CUDA_MIN)
+      message(WARNING "CCEX: ${CMAKE_CUDA_COMPILER} is CUDA ${_ccex_nvcc}; the CUDA backend needs ${CCEX_CUDA_MIN} or newer, so main_gpu.out is not built (-DCMAKE_CUDA_COMPILER=<newer nvcc>, or -DCCEX_CUDA=OFF)")
+      set(_ccex_cuda OFF)
+    else()
+      set(_ccex_cuda ON)
+    endif()
   else()
     set(_ccex_cuda OFF)
   endif()
@@ -126,7 +141,10 @@ if(_ccex_cuda)
     set(CMAKE_CUDA_ARCHITECTURES native)
   endif()
   enable_language(CUDA)
-  find_package(CUDAToolkit REQUIRED)
+  if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS CCEX_CUDA_MIN)
+    message(FATAL_ERROR "CCEX: ${CMAKE_CUDA_COMPILER} is CUDA ${CMAKE_CUDA_COMPILER_VERSION}; the CUDA backend needs ${CCEX_CUDA_MIN} or newer (12.8 miscompiles applyPulse, see CHANGELOG.md). Give -DCMAKE_CUDA_COMPILER=<CUDA ${CCEX_CUDA_MIN} or newer>/bin/nvcc, or -DCCEX_CUDA=OFF")
+  endif()
+  find_package(CUDAToolkit ${CCEX_CUDA_MIN} REQUIRED)
   set(CMAKE_CUDA_STANDARD 17)
 endif()
 message(STATUS "CCEX: MPI ${MPI_CXX_COMPILER}; CUDA backend ${_ccex_cuda}")
