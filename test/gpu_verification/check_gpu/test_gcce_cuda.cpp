@@ -103,6 +103,8 @@ int main(){
             runCase(2,3,vectorMode,1,false);
             runCase(3,4,vectorMode,3,true);
             runCase(1,1,vectorMode,1,true);
+            // A97: q>=8 reaches applyPulse's loop body unrolled by 8, which CUDA 12.8 miscompiled for sm_120
+            runCase(9,2,vectorMode,1,false);
         }
     }catch (const std::exception& e){
         std::cerr<<"FAIL: "<<e.what()<<'\n'; gpuFinalize(); return 1;

@@ -40,10 +40,13 @@ into separate object directories: `bin/main.out` (CPU only, what every other
 preset builds) and `bin/main_gpu.out` (compiled with `-DCCEX_USE_CUDA` and linked
 with the CUDA kernels). MPI and the bundled Eigen headers are used; this build
 does not require Intel MKL. The CUDA half needs a toolkit with nvcc, cuSOLVER,
-cuBLAS and cudart. CUDA 12.8.1 and GCC 13.3 were tested.
+cuBLAS and cudart. CUDA 12.8.1 with GCC 13.3 (RTX 3050) and CUDA 13.2.2 with GCC
+11.5 (idm4-gpu) were tested. On idm4-gpu's compute capability 12.0, CUDA 12.8
+miscompiles the pulse kernel `applyPulse` (A97, see `CHANGELOG.md`), so the
+`gpu` preset uses 13.2.
 
 ```bash
-bash do_compile.sh gpu              # idm4-gpu: loads gcc, OpenMPI and CUDA 12.8 itself (icpx when oneAPI is installed)
+bash do_compile.sh gpu              # idm4-gpu: loads gcc, OpenMPI and CUDA 13.2 itself (icpx when oneAPI is installed)
 CCEX_JOBS=4 bash do_compile.sh gpu  # fewer parallel compiles on a shared node
 ```
 
@@ -63,7 +66,7 @@ toolkit. Switching preset cleans the objects before building; after changing onl
 
 Keep the chosen toolkit's shared libraries available when running the binary. On
 idm4-gpu that means loading the same three modules in the job script
-(`gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-12.8`): without them the binary stops
+(`gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-13.2`): without them the binary stops
 at start-up on the system's older libstdc++.
 
 gCCE eigen propagation can refine eigenpairs on both CPU and CUDA to resolve

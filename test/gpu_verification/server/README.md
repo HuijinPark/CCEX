@@ -1,7 +1,7 @@
 # CCE2 validation on `ssh gpu`
 
 These Slurm jobs target `idm4-gpu`, using its installed GCC 11.5.0, Open MPI
-4.1.5, CUDA 12.8 and Python 3.13.10 modules. The NVIDIA RTX PRO 6000 Blackwell
+4.1.5, CUDA 13.2 and Python 3.13.10 modules. The NVIDIA RTX PRO 6000 Blackwell
 Server Edition reports compute capability 12.0, so the CUDA build uses
 `CUDA_ARCH=120`. CPU and CUDA executables are both built on that server.
 
@@ -54,7 +54,7 @@ SbatchPath --dependency=afterok:N test/gpu_verification/server/measure.sbatch
 The build job requests two CPUs, 8 GiB RAM and 20 minutes. It requests no GPU;
 the scheduler warning about GPU invisibility is expected for this stage. It
 builds `bin/main.out` and `bin/main_gpu.out` with `bash do_compile.sh gpu` (the
-preset for this server: Open MPI and CUDA 12.8 from modules, icpx when oneAPI is
+preset for this server: Open MPI and CUDA 13.2 from modules, icpx when oneAPI is
 installed, `CUDA_ARCH=120`) and the two CUDA unit tests the measurement job runs,
 then compares both executables with `backend=cpu` on the eight cases. These are
 CPU compatibility checks, not GPU measurements. `environment.sh` loads the

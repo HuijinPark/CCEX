@@ -6,7 +6,7 @@ if ! type module >/dev/null 2>&1; then
     source /etc/profile.d/modules.sh
 fi
 module purge
-module load gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-12.8 python/python3.13.10
+module load gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-13.2 python/python3.13.10
 # do_compile.sh gpu builds the C++ with icpx when oneAPI is installed, so the binaries need
 # its runtime libraries; setvars.sh also puts Intel MPI first on PATH, which is undone here
 # (the binaries are built and run with the module's Open MPI).

@@ -25,7 +25,7 @@ cuSOLVER, cuBLAS, cudart; [GPU execution](../methods/gpu.md)); Eigen, uthash and
 | `wsl-gnu` (old name `wsl`) | WSL/Ubuntu with Intel oneAPI: Intel MPI's `mpicxx` with g++, `I_MPI_FABRICS=shm` |
 | `wsl-icpx` | the same with icpx behind Intel MPI (`apt install intel-oneapi-compiler-dpcpp-cpp`) |
 | `idm4` | idm: module intel-23.2, `mpiicpc` with icpx |
-| `gpu` | idm4-gpu: OpenMPI + CUDA 12.8 (icpx when oneAPI is there, else gcc); also `bin/main_gpu.out`, compute capability 12.0 by default |
+| `gpu` | idm4-gpu: OpenMPI + CUDA 13.2 (icpx when oneAPI is there, else gcc); also `bin/main_gpu.out`, compute capability 12.0 by default |
 | `nurion` | KISTI Nurion: intel/19.0.5 + impi/19.0.5 |
 | `mac` | macOS with an MPI wrapper (Homebrew open-mpi or mpich): Apple clang `-O3 -mcpu=native` (Apple Silicon), Apple's Accelerate for the large clusters |
 | `generic` | any machine with an MPI C++ wrapper on `PATH`; `CXX` (default `mpicxx`), `CC`, `CXXFLAGS`, and for the GPU binary `CUDA_HOME` (or nvcc on `PATH`) and `CUDA_ARCH` from the environment |
@@ -63,7 +63,7 @@ through `test/unit_build_env.sh`).
 |---|---|---|
 | a C++17 compiler behind an MPI wrapper | `bin/main.out` | the recorded checks were run with g++ 13, icpx 2023.2 and icpx 2026.1, with Intel MPI and Open MPI 4.1.5 |
 | `make` or CMake 3.18 or newer | the build | `do_compile.sh` writes a Makefile; `CMakeLists.txt` asks for CMake 3.18 |
-| the CUDA toolkit (nvcc, cuSOLVER, cuBLAS) | `bin/main_gpu.out` only | the `gpu` preset uses CUDA 12.8 |
+| the CUDA toolkit (nvcc, cuSOLVER, cuBLAS) | `bin/main_gpu.out` only | the `gpu` preset uses CUDA 13.2 (12.8 miscompiles a kernel for the RTX PRO 6000, see `CHANGELOG.md`) |
 | Intel MKL | optional | used when the build finds it (below) |
 | Python 3 with numpy and matplotlib | the tutorials' `run.sh` (`example/tutorial/plot_coherence.py`) | |
 | scipy as well | the analyzer (`example/analysis/`) | |

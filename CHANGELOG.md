@@ -8,6 +8,17 @@
   cluster in the product) returned an uninitialized pointer when there was no cluster of the asked order at all; it
   returns NULL then, as for a cluster that is not in its order's table. The orders are grown from the lower ones, so no
   run is known to have reached it; clang's `-Wsometimes-uninitialized` found it.
+- **GPU gCCE with a qubit dimension of 8 or more (A97).** Built with CUDA 12.8 for the RTX PRO 6000 (compute capability
+  12.0), the pulse kernel `applyPulse` (`src/calculation/gpu/gpu_backend.cu`) read through an address register that
+  `ptxas -O3` had just overwritten, and the gCCE run stopped with `an illegal memory access` (NV6 gCCE2 `dm`, on 1 rank
+  as on 16 ranks with MPS; the CPU binary ran it). The faulty instructions are in the loop body unrolled by 8, which only
+  a qubit dimension q >= 8 (the product of 2S+1 over the qubits) reaches: `test_gcce_cuda` passed for q = 3 to 7 and
+  failed for 8 and 9 on every repeat. The source is unchanged: CUDA 13.2.2 compiles it right (compute-sanitizer finds
+  no error, NV6 gives the CPU's outputs exactly, and 08_GPU's cCCE5, gCCE4 and pCCE2 agree with the 12.8 build to 1e-10,
+  the last printed digit). The `gpu` preset and `test/gpu_verification/server/environment.sh` load `cuda/cuda-13.2`
+  (`/usr/local/cuda-13.2` on idm4-gpu), and `test_gcce_cuda` has a q = 9 case, so `make gpu-test` catches it. Where 12.8
+  must stay, compiling `gpu_backend.cu` alone with `-Xptxas -O0`, or embedding only its PTX for the driver to compile,
+  also ran NV6 correctly.
 
 ### Builds
 

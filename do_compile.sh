@@ -18,7 +18,7 @@
 #   wsl-icpx the same with icpx behind Intel MPI's mpicxx (needs the oneAPI C++ compiler:
 #            apt install intel-oneapi-compiler-dpcpp-cpp); closer to idm's icpx build and faster
 #   idm4     idm: module intel-23.2, mpiicpc with icpx
-#   gpu      idm4-gpu: OpenMPI + CUDA 12.8, the C++ with icpx when oneAPI is there (else gcc); builds the GPU binary too
+#   gpu      idm4-gpu: OpenMPI + CUDA 13.2, the C++ with icpx when oneAPI is there (else gcc); builds the GPU binary too
 #   nurion   KISTI Nurion: intel/19.0.5 + impi/19.0.5
 #   mac      macOS with an MPI wrapper (Homebrew open-mpi or mpich): Apple clang at -O3 for this Mac's CPU,
 #            and Apple's Accelerate for the large clusters in MKL's place
@@ -141,13 +141,14 @@ idm4)
     ;;
 
 gpu)
-    # idm4-gpu: OpenMPI and CUDA 12.8 from modules; the C++ with icpx when oneAPI is
+    # idm4-gpu: OpenMPI and CUDA 13.2 from modules (A97: CUDA 12.8's ptxas miscompiles applyPulse
+    # on sm_120, see CHANGELOG); the C++ with icpx when oneAPI is
     # installed (/opt/intel/oneapi; there is no module for it), which is 15-28% faster
     # than gcc 11 on the CPU path (2026-09-24, 2 ranks: p1_cce4 26.6 s -> 19.1 s), and
     # gcc otherwise. The .cu keeps nvcc's g++ host: nvcc 12.8 takes icpx as host compiler
     # only from oneAPI 2024 on. RTX PRO 6000 Blackwell is compute capability 12.0. The
     # login node is the compute node, so keep CCEX_JOBS small while jobs are running.
-    load_modules gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-12.8
+    load_modules gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-13.2
     CXX="$(command -v mpicxx)"          # OpenMPI's wrapper, found before setvars.sh puts Intel MPI's first
     CC=gcc
     CXX_NAME=gcc
@@ -159,7 +160,7 @@ gpu)
             CXX_NAME=icpx
         fi
     fi
-    CUDA_HOME="${CUDA_HOME:-/usr/local/cuda-12.8}"
+    CUDA_HOME="${CUDA_HOME:-/usr/local/cuda-13.2}"
     CUDA_ARCH="${CUDA_ARCH:-120}"
     GPU=1
     CXXFLAGS="-std=gnu++17 -O3 -g -march=native $WARN"
