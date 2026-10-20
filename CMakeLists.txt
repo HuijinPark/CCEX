@@ -7,6 +7,8 @@
 # Options (-D on the configure line):
 #     CCEX_CUDA=AUTO|ON|OFF   the CUDA backend binary; AUTO builds it when a CUDA compiler of 13.2 or newer is found,
 #                             ON stops on an older one
+#     CCEX_CUDA_SPLIT_COMPILE=N  nvcc -split-compile threads for the CUDA files (5, do_compile.sh's CCEX_JOBS default;
+#                             0 every CPU, 1 off): the optimizer takes a file's kernels at once
 #     CCEX_NATIVE=ON|OFF      -march=native on the CPU objects, -mcpu=native on Apple Silicon (ON)
 #     CCEX_SANITIZE=ON|OFF    AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects (OFF)
 #     CCEX_BLAS=AUTO|MKL|ACCELERATE|OFF  large cCCE/gCCE clusters by Intel MKL (zgemm in the cCCE ensemble Hahn echo's
@@ -34,6 +36,7 @@ cmake_minimum_required(VERSION 3.18)
 project(CCEX VERSION 2.0.0 LANGUAGES C CXX)
 
 set(CCEX_CUDA AUTO CACHE STRING "CUDA backend binary: AUTO, ON or OFF")
+set(CCEX_CUDA_SPLIT_COMPILE 5 CACHE STRING "nvcc -split-compile threads for the CUDA files (0: every CPU, 1: off)")
 option(CCEX_NATIVE "-march=native on the CPU objects (-mcpu=native on Apple Silicon)" ON)
 option(CCEX_SANITIZE "AddressSanitizer and UBSan on the CPU, adaptive and SQLite objects" OFF)
 set(CCEX_BLAS AUTO CACHE STRING "BLAS/LAPACK for the large clusters: AUTO (when found), MKL (required), ACCELERATE (macOS) or OFF")
@@ -309,7 +312,7 @@ if(_ccex_cuda)
               ${CMAKE_SOURCE_DIR}/src/calculation/gpu/small_cluster_gpu.cu
               ${CMAKE_SOURCE_DIR}/src/calculation/gpu/warp_cluster_gpu.cu)
   target_include_directories(ccex_gpu_backend PRIVATE ${CMAKE_SOURCE_DIR}/include)
-  target_compile_options(ccex_gpu_backend PRIVATE -O3 -lineinfo)
+  target_compile_options(ccex_gpu_backend PRIVATE -O3 -lineinfo -split-compile=${CCEX_CUDA_SPLIT_COMPILE})
   # A68: the architecture in the Build line; "native" leaves it to the list nvcc compiled for (gpu_backend.cu)
   if(NOT CMAKE_CUDA_ARCHITECTURES STREQUAL "native")
     string(REPLACE ";" "," _ccex_arch "${CMAKE_CUDA_ARCHITECTURES}")

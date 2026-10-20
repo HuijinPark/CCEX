@@ -33,7 +33,7 @@
 # effect, and no MKL symbol was linked (2026-09-24: ldd, and the 25-case numerics check
 # gave the same numbers without it); it was removed then.
 #
-#   CCEX_JOBS=N       make -jN (default 5: idm's login node is shared)
+#   CCEX_JOBS=N       make -jN, and nvcc -split-compile=N for the CUDA files (default 5: idm's login node is shared)
 #   CCEX_SANITIZE=1   -fsanitize=address,undefined on the CPU objects, the adaptive ones and SQLite
 #   CCEX_BLAS=auto|mkl|accelerate|off   large cCCE/gCCE clusters by Intel MKL (zgemm, zheevd), on macOS by
 #                     Apple's Accelerate: auto (default) when found, mkl insists (stops without it), accelerate
@@ -341,6 +341,9 @@ CC  := $CC
 $MAKE_EXPORTS
 CXXFLAGS := $CXXFLAGS
 NVCC      := $NVCC
+# nvcc -split-compile: the optimizer takes a file's kernels in that many threads at once (warp_cluster_gpu.cu has 30),
+# as many as CCEX_JOBS; NVCC_SPLIT= on the make line turns it off
+NVCC_SPLIT ?= -split-compile=${CCEX_JOBS:-5}
 CUDA_HOME := ${CUDA_HOME:-}
 CUDA_ARCH := $CUDA_ARCH
 
@@ -425,18 +428,18 @@ BUILD_COMMIT_LINE := \#define CCEX_BUILD_COMMIT "\$(BUILD_COMMIT)"
 \$(OBJ_DIR)/small_eigensolver.o \$(OBJ_GPU_DIR)/small_eigensolver.o: CXXFLAGS += -ffp-contract=off
 
 \$(OBJ_GPU_DIR)/gpu_backend.o: \$(SRC_DIR)/calculation/gpu/gpu_backend.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
-	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include -DCCEX_CUDA_ARCH=\$(CUDA_ARCH) \\
+	\$(NVCC) -std=c++17 -O3 -lineinfo \$(NVCC_SPLIT) -I./include -DCCEX_CUDA_ARCH=\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
 # A26: the batched small-cluster cCCE kernel (one thread per cluster)
 \$(OBJ_GPU_DIR)/small_cluster_gpu.o: \$(SRC_DIR)/calculation/gpu/small_cluster_gpu.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
-	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
+	\$(NVCC) -std=c++17 -O3 -lineinfo \$(NVCC_SPLIT) -I./include \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
 
 # A40: the warp kernel (one cluster per warp; about 3.5 minutes of nvcc, the longest object of the build)
 \$(OBJ_GPU_DIR)/warp_cluster_gpu.o: \$(SRC_DIR)/calculation/gpu/warp_cluster_gpu.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
-	\$(NVCC) -std=c++17 -O3 -lineinfo -I./include \\
+	\$(NVCC) -std=c++17 -O3 -lineinfo \$(NVCC_SPLIT) -I./include \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
 
