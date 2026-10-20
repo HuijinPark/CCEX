@@ -24,6 +24,13 @@
 
 ### Builds
 
+- **idm4-gpu builds with Intel MPI, as idm4 does.** The `gpu` preset takes `mpiicpc` with icpx and MKL from the module
+  `intel/oneapi-2023.2` (oneAPI 2023.2, Intel MPI 2021.10, MKL 2023.2: the paths of idm4's `intel-23.2/icc-23.2`), with
+  GCC 11.5 and CUDA 13.2; it took Open MPI's `mpicxx` with icpx from `setvars.sh` before, and stops now with a message
+  when the module is not there. `test/gpu_verification/server/environment.sh` loads the same module, so the jobs'
+  `mpirun`, the one the checks take (the Intel MPI of `I_MPI_ROOT` first, `test/README.md`) and the binaries' MPI are
+  one; with the Open MPI binaries a check run in that environment needed `CCEX_MPI`. The module conflicts with
+  `gcc/openmpi-*` and `nvhpc`, so a job has one MPI.
 - **macOS (Apple Silicon).** The `mac` preset builds at `-O3 -mcpu=native` (it said `-O2`) and links Apple's Accelerate
   for the large clusters in MKL's place: the same Fortran `zgemm_` and `zheevd_` (`src/common/blas_option.cpp`), with the
   system on every Mac. `CCEX_BLAS=auto` (the default) takes it on macOS, `accelerate` insists, `off` leaves it out, and

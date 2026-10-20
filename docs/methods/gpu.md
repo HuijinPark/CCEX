@@ -46,7 +46,7 @@ miscompiles the pulse kernel `applyPulse` (A97, see `CHANGELOG.md`), so the
 `gpu` preset uses 13.2.
 
 ```bash
-bash do_compile.sh gpu              # idm4-gpu: loads gcc, OpenMPI and CUDA 13.2 itself (icpx when oneAPI is installed)
+bash do_compile.sh gpu              # idm4-gpu: loads gcc, intel/oneapi-2023.2 (mpiicpc with icpx, MKL) and CUDA 13.2 itself
 CCEX_JOBS=4 bash do_compile.sh gpu  # fewer parallel compiles on a shared node
 ```
 
@@ -66,7 +66,7 @@ toolkit. Switching preset cleans the objects before building; after changing onl
 
 Keep the chosen toolkit's shared libraries available when running the binary. On
 idm4-gpu that means loading the same three modules in the job script
-(`gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-13.2`): without them the binary stops
+(`gcc/gcc-11.5.0 intel/oneapi-2023.2 cuda/cuda-13.2`): without them the binary stops
 at start-up on the system's older libstdc++.
 
 gCCE eigen propagation can refine eigenpairs on both CPU and CUDA to resolve

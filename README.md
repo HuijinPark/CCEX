@@ -100,7 +100,7 @@ Every output file and its columns: [Output files](docs/user/OutputFiles.md); wha
 | `wsl-gnu` | WSL/Ubuntu with Intel oneAPI: g++ behind Intel MPI |
 | `wsl-icpx` | the same with icpx |
 | `idm4` | the idm cluster: Intel 2023.2 module, mpiicpc with icpx |
-| `gpu` | idm4-gpu: OpenMPI + CUDA 13.2; also builds `bin/main_gpu.out` |
+| `gpu` | idm4-gpu: module `intel/oneapi-2023.2` (mpiicpc with icpx, MKL) + CUDA 13.2; also builds `bin/main_gpu.out` |
 | `nurion` | KISTI Nurion: intel/19.0.5 + impi/19.0.5 |
 | `mac` | macOS with an MPI wrapper (Homebrew open-mpi or mpich): Apple clang `-O3 -mcpu=native` (Apple Silicon), Apple's Accelerate for the large clusters |
 | `generic` | any machine with an MPI C++ wrapper; `CXX`, `CXXFLAGS`, `CUDA_HOME`, `CUDA_ARCH` from the environment |

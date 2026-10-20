@@ -18,7 +18,7 @@
 #   wsl-icpx the same with icpx behind Intel MPI's mpicxx (needs the oneAPI C++ compiler:
 #            apt install intel-oneapi-compiler-dpcpp-cpp); closer to idm's icpx build and faster
 #   idm4     idm: module intel-23.2, mpiicpc with icpx
-#   gpu      idm4-gpu: OpenMPI + CUDA 13.2, the C++ with icpx when oneAPI is there (else gcc); builds the GPU binary too
+#   gpu      idm4-gpu: mpiicpc (Intel MPI) with icpx, MKL, CUDA 13.2 (module intel/oneapi-2023.2); builds the GPU binary too
 #   nurion   KISTI Nurion: intel/19.0.5 + impi/19.0.5
 #   mac      macOS with an MPI wrapper (Homebrew open-mpi or mpich): Apple clang at -O3 for this Mac's CPU,
 #            and Apple's Accelerate for the large clusters in MKL's place
@@ -143,31 +143,27 @@ idm4)
     ;;
 
 gpu)
-    # idm4-gpu: OpenMPI and CUDA 13.2 from modules (A97: CUDA 12.8's ptxas miscompiles applyPulse
-    # on sm_120, see CHANGELOG); the C++ with icpx when oneAPI is
-    # installed (/opt/intel/oneapi; there is no module for it), which is 15-28% faster
-    # than gcc 11 on the CPU path (2026-09-24, 2 ranks: p1_cce4 26.6 s -> 19.1 s), and
-    # gcc otherwise. The .cu keeps nvcc's g++ host: nvcc 12.8 takes icpx as host compiler
+    # idm4-gpu, as idm4: icpx behind Intel MPI's mpiicpc, and MKL, from the module intel/oneapi-2023.2
+    # (oneAPI 2023.2, Intel MPI 2021.10, MKL 2023.2: idm4's intel-23.2/icc-23.2 for this server); GCC 11.5
+    # (libstdc++, and nvcc's host compiler) and CUDA 13.2 (A97: CUDA 12.8's ptxas miscompiles applyPulse
+    # on sm_120, see CHANGELOG) from modules too. icpx is 15-28% faster than gcc 11 on the CPU path
+    # (2026-09-24, 2 ranks: p1_cce4 26.6 s -> 19.1 s). Until 2026-10-20 the preset took Open MPI's mpicxx,
+    # with icpx from setvars.sh. The .cu keeps nvcc's g++ host: nvcc 12.8 takes icpx as host compiler
     # only from oneAPI 2024 on. RTX PRO 6000 Blackwell is compute capability 12.0. The
     # login node is the compute node, so keep CCEX_JOBS small while jobs are running.
-    load_modules gcc/gcc-11.5.0 gcc/openmpi-4.1.5 cuda/cuda-13.2
-    CXX="$(command -v mpicxx)"          # OpenMPI's wrapper, found before setvars.sh puts Intel MPI's first
-    CC=gcc
-    CXX_NAME=gcc
-    if [ -r /opt/intel/oneapi/setvars.sh ]; then
-        . /opt/intel/oneapi/setvars.sh > /dev/null 2>&1
-        if command -v icpx >/dev/null 2>&1; then
-            MAKE_EXPORTS="export OMPI_CXX := $(command -v icpx)"   # the full path: a later make need not source setvars.sh
-            CC="$(command -v icx)"
-            CXX_NAME=icpx
-        fi
+    load_modules gcc/gcc-11.5.0 intel/oneapi-2023.2 cuda/cuda-13.2
+    if ! command -v mpiicpc >/dev/null 2>&1 || ! command -v icpx >/dev/null 2>&1; then
+        echo "[gpu] no mpiicpc/icpx: the preset needs the module intel/oneapi-2023.2 (oneAPI 2023.2, Intel MPI, MKL)" >&2
+        exit 1
     fi
+    CXX="$(command -v mpiicpc)"
+    MAKE_EXPORTS="export I_MPI_CXX := $(command -v icpx)"   # the full path: a later make need not load the module
+    CC="$(command -v icx)"
     CUDA_HOME="${CUDA_HOME:-/usr/local/cuda-13.2}"
     CUDA_ARCH="${CUDA_ARCH:-120}"
     GPU=1
-    CXXFLAGS="-std=gnu++17 -O3 -g -march=native $WARN"
-    [ "$CXX_NAME" = icpx ] && CXXFLAGS="$CXXFLAGS -fp-model=precise"
-    NOTE="gpu: $CXX_NAME + OpenMPI + CUDA $CUDA_HOME, arch $CUDA_ARCH"
+    CXXFLAGS="-std=gnu++17 -O3 -g -march=native $WARN -fp-model=precise"
+    NOTE="gpu: mpiicpc (Intel MPI) with icpx + CUDA $CUDA_HOME, arch $CUDA_ARCH"
     ;;
 
 nurion)
