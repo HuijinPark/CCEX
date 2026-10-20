@@ -16,8 +16,9 @@
   failed for 8 and 9 on every repeat. The source is unchanged: CUDA 13.2.2 compiles it right (compute-sanitizer finds
   no error, NV6 gives the CPU's outputs exactly, and 08_GPU's cCCE5, gCCE4 and pCCE2 agree with the 12.8 build to 1e-10,
   the last printed digit). The `gpu` preset and `test/gpu_verification/server/environment.sh` load `cuda/cuda-13.2`
-  (`/usr/local/cuda-13.2` on idm4-gpu), CMake takes only nvcc 13.2 or newer (`CCEX_CUDA=AUTO` leaves an older one out
-  with a warning, `ON` stops), and `test_gcce_cuda` has a q = 9 case, so `make gpu-test` catches it. Where 12.8
+  (`/usr/local/cuda-13.2` on idm4-gpu), `do_compile.sh` and CMake take only nvcc 13.2 or newer (an older one found on
+  `PATH` by `generic` or by CMake's `CCEX_CUDA=AUTO` is left out with a warning; one named by the `gpu` preset,
+  `CUDA_HOME`, `NVCC` or `CCEX_CUDA=ON` stops the build), and `test_gcce_cuda` has a q = 9 case, so `make gpu-test` catches it. Where 12.8
   must stay, compiling `gpu_backend.cu` alone with `-Xptxas -O0`, or embedding only its PTX for the driver to compile,
   also ran NV6 correctly.
 

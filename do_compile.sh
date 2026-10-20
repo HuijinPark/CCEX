@@ -8,7 +8,7 @@
 #   generic  any machine with an MPI C++ wrapper on PATH. Taken from the environment:
 #            CXX (default mpicxx), CC (default cc), CXXFLAGS (default below),
 #            CXXFLAGS_EXTRA, LIBRARY_EXTRA, and for the GPU binary CUDA_HOME
-#            (or nvcc on PATH), CUDA_ARCH (compute capability without the dot,
+#            (or nvcc on PATH; CUDA 13.2 or newer), CUDA_ARCH (compute capability without the dot,
 #            e.g. 86) and NVCC. Examples:
 #                bash do_compile.sh generic
 #                CXX=mpic++ bash do_compile.sh generic
@@ -48,6 +48,7 @@ PRESET="$1"
 
 # what every preset may set; the template reads these
 GPU=0
+CUDA_FROM_PATH=0                      # generic took the toolkit from the nvcc on PATH, not from CUDA_HOME
 MAKE_EXPORTS=""                       # a line the Makefile needs, e.g. which compiler an MPI wrapper calls
 CC="${CC:-cc}"
 NVCC="${NVCC:-}"
@@ -76,6 +77,7 @@ generic)
     CXXFLAGS="${CXXFLAGS:--std=gnu++17 -O3 -g -march=native $WARN}"
     if [ -z "${CUDA_HOME:-}" ] && command -v nvcc >/dev/null 2>&1; then
         CUDA_HOME="$(dirname "$(dirname "$(command -v nvcc)")")"
+        CUDA_FROM_PATH=1
     fi
     if [ -n "${CUDA_HOME:-}" ]; then
         GPU=1
@@ -311,6 +313,22 @@ if [ "${CCEX_SANITIZE:-0}" = "1" ]; then
 fi
 if [ "$GPU" = "1" ]; then
     NVCC="${NVCC:-$CUDA_HOME/bin/nvcc}"
+    # A97: CUDA 12.8 miscompiles the pulse kernel applyPulse for compute capability 12.0 (CHANGELOG.md), so the
+    # GPU binary takes CUDA 13.2 or newer, as CMake does. An older nvcc that generic only found on PATH is left out
+    # with a warning (bin/main.out is still built); one named by the preset, CUDA_HOME or NVCC stops the build.
+    NVCC_VERSION="$("$NVCC" --version 2>/dev/null | sed -n 's/.*release \([0-9][0-9]*\.[0-9][0-9]*\).*/\1/p')"
+    if ! awk -v v="$NVCC_VERSION" 'BEGIN { n = split(v, a, "."); exit !(n == 2 && (a[1] > 13 || (a[1] == 13 && a[2] >= 2))) }'; then
+        if [ "$CUDA_FROM_PATH" = 1 ]; then
+            echo "[build] $NVCC is CUDA ${NVCC_VERSION:-unknown}; the GPU binary needs 13.2 or newer: bin/main.out only" >&2
+            GPU=0
+        else
+            echo "[build] $NVCC is CUDA ${NVCC_VERSION:-unknown}; the GPU binary needs CUDA 13.2 or newer (12.8 miscompiles" >&2
+            echo "        applyPulse, see CHANGELOG.md): set CUDA_HOME to a newer toolkit" >&2
+            exit 1
+        fi
+    fi
+fi
+if [ "$GPU" = "1" ]; then
     TARGETS='$(TARGET) $(TARGET_GPU)'
 else
     TARGETS='$(TARGET)'
