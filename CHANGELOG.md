@@ -657,7 +657,37 @@ field of gCCE, the density-matrix `nan`, the pCCE partition) or from points wher
 
 #### On the GPU node
 
-The comparison of the released code on the GPU node will be added. An earlier development build of 2.0.0 was measured
+The released code (job 17715), built as the `gpu` preset builds it after 2.0.0 (CUDA 13.2, Intel MPI 2021.10, icpx
+2023.2; see Unreleased), on the GPU node (Xeon 6731P + one RTX PRO 6000, 32 ranks and 16 for the 6 NV, CUDA MPS): v1.2.2
+(CPU only, built with icpx 2023.2 and the same MPI) against 2.0.0 `main.out` (CPU) and `main_gpu.out` (GPU,
+`backend auto`) on 23 of A97's 27 inputs: its four P1 production inputs (CR0 and CR60, cCCE2 and gCCE2, 30 states) were
+not at hand. Three runs per build in the order AB BA AB, the median in seconds with start-up; the last column as in the
+table after it.
+
+| Case | v1.2.2 (s) | 2.0.0 CPU (s) | 2.0.0 GPU (s) | Largest coherence difference to v1.2.2 |
+|---|---|---|---|---|
+| h-BN gCCE3, density matrix, 1 state | 79.1 | 10.5 (7.5×) | 10.9 (7.3×) | |
+| P1 pCCE2, sK 3, 10 states | 63.6 | 2.4 (26.1×) | 2.5 (25.0×) | |
+| multi-NV (6 NV) gCCE2, density matrix | 52.4 | 29.4 (1.8×) | 14.8 (3.5×) | 2e-6 |
+| h-BN gCCE2, density matrix, 10 states | 24.8 | 7.2 (3.4×) | 7.7 (3.2×) | |
+| P1 pCCE2, sK 2, 10 states | 7.4 | 1.2 (6.1×) | 1.3 (5.6×) | |
+| P1 cCCE2, 10 states | 3.1 | 1.0 (3.1×) | 1.1 (2.7×) | 1e-6 |
+| natural ¹³C cCCE2 Hahn, 10 states | 2.9 | 1.2 (2.4×) | 1.3 (2.3×) | 8e-5 |
+| tutorial-size inputs (12 cases) | 0.8–1.9 | 0.8–1.3 | 1.0–1.5 | |
+| 08_GPU cCCE5 (one cluster of dimension 1024) | | 10.4 | 1.9 (5.3× the CPU) | |
+| 08_GPU gCCE4 | | 34.6 | 3.1 (11.3× the CPU) | |
+| 08_GPU pCCE2 | | 1.0 | 1.2 | |
+
+Geometric mean of the speed-up over the 19 inputs that v1.2.2 runs: 2.0× CPU / 1.8× GPU. The GPU gives the CPU's
+coherence to the printed digits but in cCCE5, gCCE4 and h-BN gCCE3, which differ by 1e-10 (relative where the h-BN curve
+diverges). Against the 2.0.0 build (CUDA 12.8, Open MPI 4.1.5; A97, the same inputs), the outputs are the same bytes but
+for cCCE5 on the GPU (1e-10) and the points where h-BN gCCE2 and gCCE3 diverge (2e-11 relative at most; the 6 NV's
+1.14 GB not kept), and the times are within 0.2 s or 5% but for the 6 NV: with CUDA 12.8 its GPU run stopped
+(Unreleased, Fixed), and its CPU run took 29.4 s against 22.4 s in all three runs (the GPU run in one of three, 22.1 s
+against 14.8 s), the cluster done at 11.1 s in both; the rest is mostly rank 0 writing the 1.14 GB of the `dm` files,
+the slower write with Intel MPI of Unreleased, Builds.
+
+An earlier development build of 2.0.0 was measured
 there (Xeon 6731P + one RTX PRO 6000, 32 ranks, one run each): v1.2.2 (CPU only) against 2.0.0 `main.out` (CPU) and
 `main_gpu.out` (GPU, `backend auto`), both built with icpx 2023.2 and OpenMPI 4.1.5, on the inputs of the 2.0.0 checks
 and the v1.2.2 examples. One run per build, so small differences in time are within the noise. Times in seconds; the
