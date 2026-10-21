@@ -1,0 +1,36 @@
+{
+  "method": "cCCE",
+  "quantity": "coherence",
+  "Qubit": {
+    "qubit": [{"file": "../../inputs/vp_10ppm/bath_DiaVp_10ppm_Defect"}],
+    "alpha_state": {"ms": [-1]},
+    "beta_state": {"ms": [0]}
+  },
+  "configuration": {
+    "gyrofile": "../../inputs/vp_10ppm/DiaVp_gyro",
+    "bathfile": [
+      "../../inputs/vp_10ppm/bath_DiaVp_10ppm_1"
+    ],
+    "bath_state_file": ["../../inputs/vp_10ppm/state_"],
+    "s_range": [1, 1],
+    "seed": 19
+  },
+  "order": 2,
+  "bfield": 500,
+  "rbath": 200,
+  "rdip": 330,
+  "deltat": 3e-05,
+  "nstep": 200,
+  "cluster": {
+    "selection": {
+      "add_subclusters": false,
+      "max_per_order": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "pulse": {"count": 1},
+  "output": {"savemode": "coherence"}
+}

@@ -1,0 +1,89 @@
+{
+  "method": "gCCE",
+  "quantity": "coherence",
+  "configuration": {
+    "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
+    "bathfile": [
+      "../../inputs/hbn/bath_hBN_VB_flat_1"
+    ],
+    "bath_state_file": ["../../inputs/hbn/state_"],
+    "s_range": [1, 1],
+    "seed": 19
+  },
+  "order": 2,
+  "bfield": 0,
+  "rbath": 14,
+  "rdip": 8,
+  "deltat": 1e-08,
+  "nstep": 50,
+  "Qubit": {
+    "qubit": [
+      {
+        "name": "VB",
+        "spin": 1.0,
+        "gyro": -17608.59705,
+        "xyz": [
+          33.94003,
+          45.72817,
+          7.5
+        ]
+      }
+    ],
+    "intmap": [
+      {
+        "between": [
+          "VB",
+          "VB"
+        ],
+        "unit": "MHz",
+        "tensor": [
+          [
+            -1080,
+            0,
+            0
+          ],
+          [
+            0,
+            -1180,
+            0
+          ],
+          [
+            0,
+            0,
+            2320
+          ]
+        ]
+      }
+    ],
+    "alpha_state": {
+      "vector": [
+        1,
+        0,
+        1
+      ]
+    },
+    "beta_state": {
+      "vector": [
+        0,
+        1,
+        0
+      ]
+    }
+  },
+  "pulse": {"count": 1},
+  "hamiltonian": {
+    "common": {
+      "qubit_bath_mean_field": true,
+      "hyperfine": {
+        "dipole": "dft",
+        "contact": true,
+        "file": "../../inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
+        "missing_row": "stop"
+      },
+      "quadrupole": {
+        "structure": "plain",
+        "file": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE"
+      }
+    }
+  }
+}

@@ -1,0 +1,855 @@
+{
+ "returncode": 0,
+ "summaries": {
+  "summary.json": {
+   "cached_probe_clusters": 64,
+   "dimension_limits": {
+    "bundle_max_dim": 8
+   },
+   "final_bundles": [
+    [
+     0,
+     1,
+     2
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     5
+    ]
+   ],
+   "final_directory": "<OUT>/0009-run",
+   "input": {
+    "Qubit": {
+     "alpha_state": {
+      "ms": [
+       1
+      ]
+     },
+     "beta_state": {
+      "ms": [
+       0
+      ]
+     },
+     "qubit": [
+      {
+       "gyro": -17608.59705,
+       "name": "NV",
+       "spin": 1,
+       "xyz": [
+        0,
+        0,
+        0
+       ]
+      }
+     ]
+    },
+    "bfield": 300,
+    "cluster": {
+     "bundle": {
+      "max_dim": 8,
+      "merge_cutoff": 1e+300
+     },
+     "mode": "bundle"
+    },
+    "configuration": {
+     "bathfile": [
+      "test/cluster_verification/check_bundle/bath_6"
+     ],
+     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+     "seed": 19
+    },
+    "deltat": 0.2,
+    "execution": {
+     "backend": "cpu",
+     "gpu_options": {
+      "evolution_batch_steps": 4,
+      "min_dim": 8
+     },
+     "profile": true
+    },
+    "method": "cCCE",
+    "nstep": 9,
+    "order": 2,
+    "output": {
+     "file": "bin/adaptive_ensemble",
+     "savemode": "coherence"
+    },
+    "pulse": {
+     "count": 16
+    },
+    "quantity": "coherence",
+    "rbath": 15,
+    "rdip": 30
+   },
+   "input_file_sha256": {
+    "<REPO>/test/cluster_verification/check_bundle/bath_6": "7860fc92298dc8cc559e0df50fb73070cbadf1bfe0b4a8ae3631d00887273738",
+    "<REPO>/test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C": "2cc0c11066852f97d67ab00dc004790909ed564b2af9f8305791e5ef1625da4d"
+   },
+   "limitations": [
+    "Local oracle errors and successive curves are checks, not rigorous global error bounds.",
+    "A greedy merge search cannot undo a poor initial partition.",
+    "One fixed partition and all requested time points/states are used per input."
+   ],
+   "raw_cache": {
+    "loaded_clusters": 0,
+    "path": "<WORK>/cache/grow.sqlite",
+    "stored_clusters": 63
+   },
+   "raw_nonfinite_values": 0,
+   "raw_zero_values": 0,
+   "rounds": [
+    {
+     "accepted": {
+      "actual_graph_scaled_error": 2732.675705812256,
+      "local_after": 2732.675705812256,
+      "local_before": 2852712.7370350338,
+      "pair": [
+       1,
+       2
+      ],
+      "score": 44530.938458269084,
+      "sites": [
+       1,
+       2
+      ],
+      "verification_merge": false
+     },
+     "bundles": 6,
+     "coverage": {
+      "candidate_patches": 21,
+      "checked_patches": 21,
+      "coverage_limited": false,
+      "max_inverse_log10_amplification": 1.2756812321800226,
+      "whole_bath_oracle": true,
+      "work_blocked": 0
+     },
+     "finite_and_cce_bound": false,
+     "global_change": null,
+     "iteration": 0,
+     "max_local_scaled_error": 2852712.7370350338,
+     "patches": [
+      {
+       "bundles": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+       ],
+       "max_abs_error": 2.8435269428983068,
+       "scaled_error": 2852712.7370350338,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        2
+       ],
+       "max_abs_error": 3.0365371037605176,
+       "scaled_error": 2850697.648334176,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        3
+       ],
+       "max_abs_error": 0.00039841876712047683,
+       "scaled_error": 828.2431217765507,
+       "worst_state_step": [
+        0,
+        5
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        4
+       ],
+       "max_abs_error": 0.00027948978240675284,
+       "scaled_error": 581.2882569986706,
+       "worst_state_step": [
+        0,
+        5
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        3
+       ],
+       "max_abs_error": 0.0006729631661683075,
+       "scaled_error": 338.5086275580091,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        4
+       ],
+       "max_abs_error": 0.0004551431925999145,
+       "scaled_error": 228.97662601356922,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        3
+       ],
+       "max_abs_error": 0.00021317642775972083,
+       "scaled_error": 176.4627371195444,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        4
+       ],
+       "max_abs_error": 0.00015345672439149327,
+       "scaled_error": 127.05162629033254,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        3,
+        4
+       ],
+       "max_abs_error": 0.00011461353677786456,
+       "scaled_error": 108.41251970635206,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        2,
+        3,
+        4
+       ],
+       "max_abs_error": 5.5235553555952774e-05,
+       "scaled_error": 43.97567948122161,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        3,
+        4
+       ],
+       "max_abs_error": 4.483238179296416e-05,
+       "scaled_error": 38.134485519007214,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        5
+       ],
+       "max_abs_error": 2.750416563982887e-06,
+       "scaled_error": 5.434285613208693,
+       "worst_state_step": [
+        0,
+        5
+       ]
+      },
+      {
+       "bundles": [
+        3,
+        4,
+        5
+       ],
+       "max_abs_error": 5.679993252599129e-06,
+       "scaled_error": 4.388331094753031,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        5
+       ],
+       "max_abs_error": 4.722200110732176e-06,
+       "scaled_error": 2.375445482542789,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        5
+       ],
+       "max_abs_error": 1.433739485879868e-06,
+       "scaled_error": 1.1870123238774755,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        3,
+        5
+       ],
+       "max_abs_error": 7.768305399714224e-08,
+       "scaled_error": 0.03887746220579198,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        4,
+        5
+       ],
+       "max_abs_error": 5.346812988078951e-09,
+       "scaled_error": 0.005515127902901118,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        2,
+        3,
+        5
+       ],
+       "max_abs_error": 9.151534956916067e-09,
+       "scaled_error": 0.0046135877622266565,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        4,
+        5
+       ],
+       "max_abs_error": 4.46414298671323e-09,
+       "scaled_error": 0.00355463321105537,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        3,
+        5
+       ],
+       "max_abs_error": 3.915396728669031e-09,
+       "scaled_error": 0.003117127676636813,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        2,
+        4,
+        5
+       ],
+       "max_abs_error": 2.085712606640626e-09,
+       "scaled_error": 0.0020651578476364113,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      }
+     ],
+     "whole_bath_error": {
+      "max_abs_error": 2.8435269428983068,
+      "scaled_error": 2852712.7370350338,
+      "worst_state_step": [
+       0,
+       6
+      ]
+     }
+    },
+    {
+     "accepted": {
+      "actual_graph_scaled_error": 1756.347555722263,
+      "local_after": 1756.347555722263,
+      "local_before": 2732.675705812256,
+      "pair": [
+       2,
+       3
+      ],
+      "score": 15.255127345156144,
+      "sites": [
+       3,
+       4
+      ],
+      "verification_merge": false
+     },
+     "bundles": 5,
+     "coverage": {
+      "candidate_patches": 11,
+      "checked_patches": 11,
+      "coverage_limited": false,
+      "max_inverse_log10_amplification": 0.956760924135017,
+      "whole_bath_oracle": true,
+      "work_blocked": 0
+     },
+     "finite_and_cce_bound": true,
+     "global_change": {
+      "max_abs_error": 2.8432592968593213,
+      "scaled_error": 1628540.1419644752,
+      "worst_state_step": [
+       0,
+       3
+      ]
+     },
+     "iteration": 1,
+     "max_local_scaled_error": 2732.675705812256,
+     "patches": [
+      {
+       "bundles": [
+        0,
+        1,
+        2,
+        3,
+        4
+       ],
+       "max_abs_error": 0.0014742553121195072,
+       "scaled_error": 2732.675705812256,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        3
+       ],
+       "max_abs_error": 0.001438163528723097,
+       "scaled_error": 1265.692460092266,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        2
+       ],
+       "max_abs_error": 0.00018689440359710615,
+       "scaled_error": 175.46614731079742,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        3
+       ],
+       "max_abs_error": 0.00012558466322821417,
+       "scaled_error": 117.9248776427981,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        3
+       ],
+       "max_abs_error": 0.00011461353677786456,
+       "scaled_error": 108.41251970635206,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      },
+      {
+       "bundles": [
+        2,
+        3,
+        4
+       ],
+       "max_abs_error": 5.679993252599129e-06,
+       "scaled_error": 4.388331094753031,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        4
+       ],
+       "max_abs_error": 3.0927268761782387e-06,
+       "scaled_error": 3.690448719606247,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        4
+       ],
+       "max_abs_error": 7.768305399714224e-08,
+       "scaled_error": 0.03887746220579198,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        4
+       ],
+       "max_abs_error": 2.623066220630411e-08,
+       "scaled_error": 0.01488484009782084,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        3,
+        4
+       ],
+       "max_abs_error": 2.455320879228383e-08,
+       "scaled_error": 0.013933491313481641,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        3,
+        4
+       ],
+       "max_abs_error": 5.346812988078951e-09,
+       "scaled_error": 0.005515127902901118,
+       "worst_state_step": [
+        0,
+        6
+       ]
+      }
+     ],
+     "whole_bath_error": {
+      "max_abs_error": 0.001474255312119618,
+      "scaled_error": 2732.6757058124617,
+      "worst_state_step": [
+       0,
+       8
+      ]
+     }
+    },
+    {
+     "accepted": {
+      "actual_graph_scaled_error": 0.11628275521199634,
+      "local_after": 0.11628275521199634,
+      "local_before": 1756.347555722263,
+      "pair": [
+       0,
+       1
+      ],
+      "score": 3.4301392050137713,
+      "sites": [
+       0,
+       1,
+       2
+      ],
+      "verification_merge": false
+     },
+     "bundles": 4,
+     "coverage": {
+      "candidate_patches": 5,
+      "checked_patches": 5,
+      "coverage_limited": false,
+      "max_inverse_log10_amplification": 0.6378406160900113,
+      "whole_bath_oracle": true,
+      "work_blocked": 0
+     },
+     "finite_and_cce_bound": true,
+     "global_change": {
+      "max_abs_error": 0.0006330549800456482,
+      "scaled_error": 1167.0531052267552,
+      "worst_state_step": [
+       0,
+       8
+      ]
+     },
+     "iteration": 2,
+     "max_local_scaled_error": 1756.556604978996,
+     "patches": [
+      {
+       "bundles": [
+        0,
+        1,
+        2
+       ],
+       "max_abs_error": 0.0017148199682561552,
+       "scaled_error": 1756.556604978996,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "max_abs_error": 0.0017145128311016331,
+       "scaled_error": 1756.347555722263,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        1,
+        3
+       ],
+       "max_abs_error": 3.0927268761782387e-06,
+       "scaled_error": 3.690448719606247,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        1,
+        2,
+        3
+       ],
+       "max_abs_error": 1.7369799190444721e-07,
+       "scaled_error": 0.1531361985567239,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      },
+      {
+       "bundles": [
+        0,
+        2,
+        3
+       ],
+       "max_abs_error": 3.632150389250225e-08,
+       "scaled_error": 0.02817354723448165,
+       "worst_state_step": [
+        0,
+        8
+       ]
+      }
+     ],
+     "whole_bath_error": {
+      "max_abs_error": 0.0017145128311015223,
+      "scaled_error": 1756.3475557221495,
+      "worst_state_step": [
+       0,
+       7
+      ]
+     }
+    },
+    {
+     "bundles": 3,
+     "coverage": {
+      "candidate_patches": 1,
+      "checked_patches": 1,
+      "coverage_limited": false,
+      "max_inverse_log10_amplification": 0.5567546356591724,
+      "whole_bath_oracle": true,
+      "work_blocked": 0
+     },
+     "finite_and_cce_bound": true,
+     "global_change": {
+      "max_abs_error": 0.0017146262287077402,
+      "scaled_error": 1762.6349853936206,
+      "worst_state_step": [
+       0,
+       7
+      ]
+     },
+     "iteration": 3,
+     "max_local_scaled_error": 0.11628275521199634,
+     "patches": [
+      {
+       "bundles": [
+        0,
+        1,
+        2
+       ],
+       "max_abs_error": 1.1351299758254954e-07,
+       "scaled_error": 0.11628275521199634,
+       "worst_state_step": [
+        0,
+        7
+       ]
+      }
+     ],
+     "whole_bath_error": {
+      "max_abs_error": 1.1351299758253634e-07,
+      "scaled_error": 0.11628275521198282,
+      "worst_state_step": [
+       0,
+       7
+      ]
+     }
+    }
+   ],
+   "runs": [
+    {
+     "directory": "<OUT>/0001-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0002-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0003-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0004-plan",
+     "mode": "plan",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0005-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0006-plan",
+     "mode": "plan",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0007-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0008-plan",
+     "mode": "plan",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0009-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    }
+   ],
+   "settings": {
+    "atol": 1e-08,
+    "binary": "<BINARY>",
+    "cache_mb": 256,
+    "cwd": "<REPO>",
+    "hub_candidates": false,
+    "input": "<INPUTS>/cache-first-0.json",
+    "max_candidates": 16,
+    "max_patches": 64,
+    "max_probes": 4096,
+    "max_rounds": 8,
+    "max_total_work": 8000000000000.0,
+    "merge_priority": "gain-per-cost",
+    "mpiexec": "mpirun",
+    "neighbors": 8,
+    "output": "<OUT>",
+    "policy": "merge",
+    "prefer_physical": false,
+    "probe_batch_clusters": 0,
+    "ranks": 1,
+    "raw_cache": "<WORK>/cache/grow.sqlite",
+    "rtol": 2e-06,
+    "timeout": 600
+   },
+   "status": "validated_full_bath_model"
+  }
+ }
+}

@@ -1,0 +1,38 @@
+{
+  "method": "gCCE",
+  "quantity": "dm",
+  "configuration": {
+    "gyrofile": "../../inputs/arbitrary/gyro_13C",
+    "bathfile": [
+      "../../inputs/arbitrary/bath"
+    ],
+    "bath_state_file": ["../../inputs/arbitrary/state_"],
+    "s_range": [1, 1],
+    "seed": 19
+  },
+  "order": 1,
+  "bfield": 500,
+  "rbath": 500,
+  "rdip": 100,
+  "deltat": 0.001,
+  "nstep": 200,
+  "Qubit": {
+    "qubit": [
+      {
+        "name": "qubit1",
+        "spin": 1.0,
+        "gyro": -17608.59705,
+        "xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "detuning": 0.0
+      }
+    ],
+    "alpha_state": {"ms": [0]},
+    "beta_state": {"ms": [1]}
+  },
+  "pulse": {"count": 1},
+  "output": {"savemode": "cluster_density_matrix"}
+}

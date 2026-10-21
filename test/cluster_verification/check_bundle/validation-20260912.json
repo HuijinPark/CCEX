@@ -1,0 +1,610 @@
+{
+  "status": "passed_local_and_server",
+  "mode": "adaptive",
+  "algorithm": "coupling-bound-v1",
+  "supported": {
+    "method": [
+      "cce",
+      "gcce"
+    ],
+    "group_order": [
+      1,
+      2
+    ],
+    "quantity": "coherence",
+    "backend": [
+      "cpu",
+      "cuda",
+      "auto"
+    ]
+  },
+  "limits": [
+    "No resonance-based weighting yet",
+    "No automatic convergence/optimality certification",
+    "Explicit merge cutoff and dimension caps required",
+    "No adaptive partition cache"
+  ],
+  "tests": {
+    "partition_checks": 13257,
+    "partition_asan_ubsan": "passed",
+    "integration_executions": 117,
+    "integration_max_abs_error": 0,
+    "subset_oracles": [
+      {
+        "case": "unequal-cce-p1",
+        "independent_subset_product_max_abs_error": 2.0283937142953054e-10
+      },
+      {
+        "case": "unequal-cce-p4",
+        "independent_subset_product_max_abs_error": 1.5928660995078363e-10
+      },
+      {
+        "case": "unequal-gcce-p1",
+        "independent_subset_product_max_abs_error": 1.573087495383733e-10
+      },
+      {
+        "case": "unequal-gcce-p4",
+        "independent_subset_product_max_abs_error": 1.6685752911720926e-10
+      }
+    ],
+    "sampled_accuracy": [
+      {
+        "case": "unequal-cce-p1",
+        "adaptive_max_abs_error": 1.7000000296363282e-09,
+        "conventional_order2_max_abs_error": 0.033824950522548435,
+        "note": "Sampled output error against full six-spin Hamiltonian, not an error bound for larger baths."
+      },
+      {
+        "case": "unequal-cce-p4",
+        "adaptive_max_abs_error": 1.000000082740371e-10,
+        "conventional_order2_max_abs_error": 0.09081254922173645,
+        "note": "Sampled output error against full six-spin Hamiltonian, not an error bound for larger baths."
+      },
+      {
+        "case": "unequal-gcce-p1",
+        "adaptive_max_abs_error": 8.009993759470577e-09,
+        "conventional_order2_max_abs_error": 0.03374594110971513,
+        "note": "Sampled output error against full six-spin Hamiltonian, not an error bound for larger baths."
+      },
+      {
+        "case": "unequal-gcce-p4",
+        "adaptive_max_abs_error": 2.4129857011461212e-08,
+        "conventional_order2_max_abs_error": 0.09071555599257454,
+        "note": "Sampled output error against full six-spin Hamiltonian, not an error bound for larger baths."
+      }
+    ],
+    "real_bath_executions": 15,
+    "real_baths": [
+      {
+        "case": "nv13c-cce",
+        "sites": 222,
+        "groups": 178,
+        "group_size_counts": {
+          "1": 134,
+          "2": 44
+        },
+        "nonempty_propagated_terms": 388,
+        "dimensions": {
+          "2": 103,
+          "4": 156,
+          "8": 110,
+          "16": 19
+        },
+        "config": {
+          "method": "cce",
+          "quantity": "coherence",
+          "qubitfile": "/tmp/ccex-adaptive-20260912/fixtures/nv13c-qubitfile",
+          "gyrofile": "/tmp/ccex-adaptive-20260912/fixtures/nv13c-gyrofile",
+          "bathfile": [
+            "/tmp/ccex-adaptive-20260912/fixtures/nv13c-bath"
+          ],
+          "order": 2,
+          "bfield": 300,
+          "rbath": 30,
+          "rdip": 8,
+          "deltat": 0.04,
+          "nstep": 33,
+          "alphams": 1,
+          "betams": 0,
+          "npulse": 4,
+          "nstate": 0,
+          "seed": 73,
+          "profile": true,
+          "savemode": "normal",
+          "backend": "cpu",
+          "gpu_min_dim": 256,
+          "gpu_batch_steps": 64,
+          "gpu_batch_clusters": 8,
+          "gpu_cluster_batch_mb": 64,
+          "gpu_cache_mb": 64,
+          "cluster_mode": "adaptive",
+          "adaptive_group_max_dim": 4,
+          "adaptive_cluster_max_dim": 48,
+          "adaptive_merge_cutoff": 1.0
+        },
+        "max_backend_abs_error": 9.999999439624929e-11
+      },
+      {
+        "case": "nv13c-gcce",
+        "sites": 222,
+        "groups": 178,
+        "group_size_counts": {
+          "1": 134,
+          "2": 44
+        },
+        "nonempty_propagated_terms": 388,
+        "dimensions": {
+          "6": 103,
+          "12": 156,
+          "24": 110,
+          "48": 19
+        },
+        "config": {
+          "method": "gcce",
+          "quantity": "coherence",
+          "qubitfile": "/tmp/ccex-adaptive-20260912/fixtures/nv13c-qubitfile",
+          "gyrofile": "/tmp/ccex-adaptive-20260912/fixtures/nv13c-gyrofile",
+          "bathfile": [
+            "/tmp/ccex-adaptive-20260912/fixtures/nv13c-bath"
+          ],
+          "order": 2,
+          "bfield": 300,
+          "rbath": 30,
+          "rdip": 8,
+          "deltat": 0.04,
+          "nstep": 33,
+          "alphams": 1,
+          "betams": 0,
+          "npulse": 4,
+          "nstate": 0,
+          "seed": 73,
+          "profile": true,
+          "savemode": "normal",
+          "backend": "cpu",
+          "gpu_min_dim": 256,
+          "gpu_batch_steps": 64,
+          "gpu_batch_clusters": 8,
+          "gpu_cluster_batch_mb": 64,
+          "gpu_cache_mb": 64,
+          "cluster_mode": "adaptive",
+          "adaptive_group_max_dim": 4,
+          "adaptive_cluster_max_dim": 48,
+          "adaptive_merge_cutoff": 1.0
+        },
+        "max_backend_abs_error": 0
+      },
+      {
+        "case": "pl6-bath1",
+        "sites": 788,
+        "groups": 608,
+        "group_size_counts": {
+          "1": 428,
+          "2": 180
+        },
+        "nonempty_propagated_terms": 3268,
+        "dimensions": {
+          "2": 426,
+          "4": 1296,
+          "8": 1220,
+          "16": 326
+        },
+        "config": {
+          "method": "cce",
+          "quantity": "coherence",
+          "gyrofile": "/tmp/ccex-adaptive-20260912/fixtures/pl6-gyrofile",
+          "bathfile": [
+            "/tmp/ccex-adaptive-20260912/fixtures/pl6-bath-realization-1"
+          ],
+          "order": 2,
+          "bfield": 57,
+          "rbath": 40,
+          "rdip": 10,
+          "deltat": 0.07301875,
+          "nstep": 33,
+          "npulse": 4,
+          "nstate": 0,
+          "Qubit": {
+            "nqubit": 1,
+            "qubit": [
+              {
+                "name": "PL6",
+                "spin": 1.0,
+                "gyro": -17608.59705,
+                "xyz": [
+                  75.2885,
+                  150.80677,
+                  155.1967
+                ],
+                "alphams": 1,
+                "betams": 0,
+                "detuning": 0.0
+              }
+            ],
+            "intmap": [
+              {
+                "between": [
+                  "PL6",
+                  "PL6"
+                ],
+                "tensor": [
+                  [
+                    -455000,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    -455000,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    910000
+                  ]
+                ]
+              }
+            ]
+          },
+          "seed": 1788434958,
+          "profile": true,
+          "savemode": "normal",
+          "gpu_batch_steps": 64,
+          "backend": "cpu",
+          "gpu_min_dim": 256,
+          "gpu_batch_clusters": 8,
+          "gpu_cluster_batch_mb": 64,
+          "gpu_cache_mb": 64,
+          "cluster_mode": "adaptive",
+          "adaptive_group_max_dim": 4,
+          "adaptive_cluster_max_dim": 48,
+          "adaptive_merge_cutoff": 1.0
+        },
+        "max_backend_abs_error": 0
+      },
+      {
+        "case": "pl6-bath2",
+        "sites": 765,
+        "groups": 584,
+        "group_size_counts": {
+          "2": 181,
+          "1": 403
+        },
+        "nonempty_propagated_terms": 3093,
+        "dimensions": {
+          "2": 402,
+          "4": 1178,
+          "8": 1179,
+          "16": 334
+        },
+        "config": {
+          "method": "cce",
+          "quantity": "coherence",
+          "gyrofile": "/tmp/ccex-adaptive-20260912/fixtures/pl6-gyrofile",
+          "bathfile": [
+            "/tmp/ccex-adaptive-20260912/fixtures/pl6-bath-realization-2"
+          ],
+          "order": 2,
+          "bfield": 57,
+          "rbath": 40,
+          "rdip": 10,
+          "deltat": 0.07301875,
+          "nstep": 33,
+          "npulse": 4,
+          "nstate": 0,
+          "Qubit": {
+            "nqubit": 1,
+            "qubit": [
+              {
+                "name": "PL6",
+                "spin": 1.0,
+                "gyro": -17608.59705,
+                "xyz": [
+                  75.2885,
+                  150.80677,
+                  155.1967
+                ],
+                "alphams": 1,
+                "betams": 0,
+                "detuning": 0.0
+              }
+            ],
+            "intmap": [
+              {
+                "between": [
+                  "PL6",
+                  "PL6"
+                ],
+                "tensor": [
+                  [
+                    -455000,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    -455000,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    910000
+                  ]
+                ]
+              }
+            ]
+          },
+          "seed": 1788434958,
+          "profile": true,
+          "savemode": "normal",
+          "gpu_batch_steps": 64,
+          "backend": "cpu",
+          "gpu_min_dim": 256,
+          "gpu_batch_clusters": 8,
+          "gpu_cluster_batch_mb": 64,
+          "gpu_cache_mb": 64,
+          "cluster_mode": "adaptive",
+          "adaptive_group_max_dim": 4,
+          "adaptive_cluster_max_dim": 48,
+          "adaptive_merge_cutoff": 1.0
+        },
+        "max_backend_abs_error": 0
+      },
+      {
+        "case": "pl6-bath3",
+        "sites": 768,
+        "groups": 601,
+        "group_size_counts": {
+          "1": 434,
+          "2": 167
+        },
+        "nonempty_propagated_terms": 3179,
+        "dimensions": {
+          "2": 430,
+          "4": 1344,
+          "8": 1162,
+          "16": 243
+        },
+        "config": {
+          "method": "cce",
+          "quantity": "coherence",
+          "gyrofile": "/tmp/ccex-adaptive-20260912/fixtures/pl6-gyrofile",
+          "bathfile": [
+            "/tmp/ccex-adaptive-20260912/fixtures/pl6-bath-realization-3"
+          ],
+          "order": 2,
+          "bfield": 57,
+          "rbath": 40,
+          "rdip": 10,
+          "deltat": 0.07301875,
+          "nstep": 33,
+          "npulse": 4,
+          "nstate": 0,
+          "Qubit": {
+            "nqubit": 1,
+            "qubit": [
+              {
+                "name": "PL6",
+                "spin": 1.0,
+                "gyro": -17608.59705,
+                "xyz": [
+                  75.2885,
+                  150.80677,
+                  155.1967
+                ],
+                "alphams": 1,
+                "betams": 0,
+                "detuning": 0.0
+              }
+            ],
+            "intmap": [
+              {
+                "between": [
+                  "PL6",
+                  "PL6"
+                ],
+                "tensor": [
+                  [
+                    -455000,
+                    0,
+                    0
+                  ],
+                  [
+                    0,
+                    -455000,
+                    0
+                  ],
+                  [
+                    0,
+                    0,
+                    910000
+                  ]
+                ]
+              }
+            ]
+          },
+          "seed": 1788434958,
+          "profile": true,
+          "savemode": "normal",
+          "gpu_batch_steps": 64,
+          "backend": "cpu",
+          "gpu_min_dim": 256,
+          "gpu_batch_clusters": 8,
+          "gpu_cluster_batch_mb": 64,
+          "gpu_cache_mb": 64,
+          "cluster_mode": "adaptive",
+          "adaptive_group_max_dim": 4,
+          "adaptive_cluster_max_dim": 48,
+          "adaptive_merge_cutoff": 1.0
+        },
+        "max_backend_abs_error": 0
+      }
+    ],
+    "memory_bridge": {
+      "status": "passed",
+      "instrumented": [
+        "adaptive_partition.cpp",
+        "cluster_adaptive.cpp"
+      ],
+      "mpi_leak_detection": false,
+      "records": [
+        {
+          "case": "unequal-cce-p1-cpu",
+          "comparison": {
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 18
+          }
+        },
+        {
+          "case": "unequal-gcce-p1-cpu",
+          "comparison": {
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 18
+          }
+        },
+        {
+          "case": "full-gcce-s1-p4-cpu",
+          "comparison": {
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 18
+          }
+        },
+        {
+          "case": "p1-adaptive-cpu",
+          "comparison": {
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 18
+          }
+        }
+      ]
+    }
+  },
+  "source_sha256": {
+    "src/cluster_adaptive.cpp": "82ac880aaa07b520e3867dcfd2420f7f607b845864f47f0793724a92f52179fb",
+    "src/output.cpp": "617c79588b004f744d8959942a5638706a704d59c811591db0da8c9397f27a40",
+    "src/cluster_hash.cpp": "5fb65492433a9785af3be5b89e931fde44c32b89ccd5259c8c54abffdfe4fcdd",
+    "src/simulator.cpp": "74793efa97f104d5bb00714f7e89dc16db2f0a7d60fa941c982502be43477e24",
+    "src/qubit.cpp": "09befae5336ed83abf00df1cdbeac4cd87dad53dcbb89f9d9f80fd1fff4918e1",
+    "src/adaptive_partition.cpp": "706dbf34aea72d3ee94de662998896a95902bbad49fb9de05125aeab5729793f",
+    "src/reader.cpp": "ddbae833e8d6bdd30b378dcfa9df7c3cec7254ce4c6c69f4a07f9e7a753323e8",
+    "src/compute_backend.cpp": "1627117593776c5c6e0259d5a2d1b0e04724b8d5117beeb065ac2de247369a34",
+    "src/option.cpp": "b9fd598f7fd8b07e965007f12d849a3267d5ade693a5d99439e4ce0f9e91d745",
+    "src/gpu_backend.cu": "6c32a952418aac4d96006d28fbcfc379b54d10bf26c30628c4fd7913d521162d",
+    "src/memory.cpp": "2a4f5b2ec3cf325824aaeda7fc12a2fc41fe6b3f17730af9865735a6a5e261ce",
+    "src/cluster_dsjitb.cpp": "0df39f7b22b33047405d22071a68c7ee97daea1425630378841653ffd541ecce",
+    "src/pcce_partition_cache.cpp": "25965294327ad6d476d0a7339205c8015e8bfe917eddfa76693c987adcdb4ca5",
+    "src/defect.cpp": "a94e264e74e0f14efb273b1899f062de58544806e776c186ae3fe34b395d354b",
+    "src/pulse.cpp": "71d1ffb38d3c040917fe76b83d5ad64400d5d0f254e25c0eb9c635fb31c57a4f",
+    "src/json.cpp": "ff06c219b486e5bca778c2f078100aa21a97583a96cde647c6c0acff1623d492",
+    "src/simulator_hamiltonian.cpp": "7ffaf54a9e458b29ec7e40b74ead595c83ac93193464eac01e6ad180db01ad1f",
+    "src/general.cpp": "8017630ce27f9400cdef3c41cdf09511f77002380b367074aceb1d25f39926bf",
+    "src/simulator_cce.cpp": "69b7a44b90fa921de2a385649dbf44f4165fb825c56e44a741b4f02c7b41cfb2",
+    "src/utilities.cpp": "11db83075f1a10af072029115b12b6acf889a3c49cafe3a035915b56a4a199e2",
+    "src/hamiltonian.cpp": "46c307bf95e0259789b5e3e3a3f5325c4fc7dfce2a2be93019a665ef0428ef0d",
+    "src/bath.cpp": "a5b7678d329d302d08e1f153b1140db60c8fad2a149f913f70f8a6c6e98e4cde",
+    "src/cluster.cpp": "badc550dd69d9b8687e61eb9ec05f08b3edf21bdd3c4f2043b70080c171bab48",
+    "src/simulator_gcce.cpp": "6ad6c800cc0bbe84cc7ee87415860c15518391809d32c8d7458c2280586e8d30",
+    "src/cluster_pcce.cpp": "ba793e3615f9f6b2e8d693b9c511ebe007330aadcac68cd282fccd571f4c6f04",
+    "src/.DS_Store": "c3b173a66e84a7f0adb318d69d22b33aab10b049d26bdaa3badd1f5434d328bf",
+    "include/pulse.h": "85c352cb98f25966acce3f91f575680fc91308651a67ccfe2a4d84d47b0272a4",
+    "include/compute_backend.h": "e5994a0f568ce4abc103ee21d9d3f695c9db37352467f7b79efc2486879c3187",
+    "include/bath.h": "5398193d9acff5c1dda92d230184fc1d14216d8260a9729ea34937762c8df147",
+    "include/cluster_pcce.h": "5f2b7ca872dbf0321ea7766272a4eacb1e8eaf513e846e8b9e495bf43df0f3b8",
+    "include/cluster_adaptive.h": "833dbdd689fb1a4f2878da0c218d9694a3045ebd537672de0bdac6a82d793ca8",
+    "include/general.h": "516faa2218d16d70cfad4964ba385232b744dafcacd2f0c4de706497a66eee86",
+    "include/cluster_hash.h": "37fce89aec204ce2a42bcb381fada8ec8ae00a0f7efcfd5896bfe21f40291783",
+    "include/output.h": "acb4338253b6be507eefc806f6d4fb96ece1886ac08b9c54ff0bd5f59d4dfa08",
+    "include/defect.h": "39f648d2d88607175cc3499ac79013bca9389feeeed00d1c144a3bca1d6ba309",
+    "include/memory.h": "de0f960429e18635e3e4083de71ea23f99eb95afac1f50e152eedd516419c461",
+    "include/hamiltonian.h": "1c74188352ba8146d0a7cf27d7aba83de2187d8fee9e7c82ce129be46c831aa3",
+    "include/option.h": "5b50464ffb02928904a863beba8a7b2ec1dfb7fb7da3957901a4411674a0171b",
+    "include/qubit.h": "6383c7c1e138b8ab00403fc7bdec7380117cc8ef04942156ff35bb8e56ac01e0",
+    "include/pcce_cycle.h": "23705ac2148100682f032c2e4b1fab71780b6836724f80887078e380494c4a8b",
+    "include/cluster.h": "c4921a08027e6932bc3ac3c73a80327fd41fefea24566a5e5abf871cb96dd911",
+    "include/simulator.h": "b6bf22f8408b8db8265399ef52939f44289852a4c02b23d1f1af73cc195d003c",
+    "include/utilities.h": "887b1190ced9b92d3263f2dd5e780a09dae535c8bcb3e404b4d243e5886d2d42",
+    "include/cluster_dsjitb.h": "6d8f1d131428307ce8995f57d961f740912a85116cec311060874656debfb373",
+    "include/pcce_partition_cache.h": "cdab7cf5b9700c18a4280696dfbae43d79580a989280179688767501a8f76c20",
+    "include/json.h": "c01a8ca5609bb2c956dd1ae836d5d926ec68153ecebc5a75ea0febc2e076da8d",
+    "include/scaled_product.h": "fcd9e482271fe54d950c6b8fd57915e351c67778463e8478e14ec8b769e90b3d",
+    "include/eigen_refinement.h": "7dd5caed2d7e0846116a0251c5eea2cfc5133c5a79b4e7b28da3646730cb800c",
+    "include/adaptive_partition.h": "2058d6680198fd4c1b83e1244649570136e63b97aff58c91bc07d98426a89662",
+    "include/gpu_backend.h": "8de1ed15d01c89484ee56ad05c361bb801cc43c1ca728b641730a54e38bc8c33",
+    "include/compensated.h": "efe1fc51444ab6962d9947c0257e195b1621bdb1068e265a37219156b5d44a57",
+    "include/reader.h": "6e7ec4f3b75423d0e24ff31114ff1c6989aa724a68746ac3f593deca51c9a4ec",
+    "include/.DS_Store": "b8ce725c4e29279a4c4726dd3c05d2739df216b6d97d1a8ad2fe08a3e1529b4d",
+    "main.cpp": "2239cac7f70ee8eefaa95992c3249436154cdf98caab65642c72ac56cfc055a2",
+    "Makefile.accel": "cca663cddfd5c636bc645cde65c5e9bdb1af2488fec4de65935c9bca2a770252"
+  },
+  "binary_sha256": {
+    "bin/main.cpu.out": "a39b18d5ce5da656e21da9fb3ea2458430681e6b98fdc77981250ff0f49362af",
+    "bin/main.cuda.out": "53ae6fa44bbfc7cb4e20a6fd1eda30cb472e19fd0f2448bdeb2eb293213541ef"
+  },
+  "unchanged_source_sha256": {
+    "src/cluster_pcce.cpp": "ba793e3615f9f6b2e8d693b9c511ebe007330aadcac68cd282fccd571f4c6f04",
+    "include/cluster_pcce.h": "5f2b7ca872dbf0321ea7766272a4eacb1e8eaf513e846e8b9e495bf43df0f3b8",
+    "src/pcce_partition_cache.cpp": "25965294327ad6d476d0a7339205c8015e8bfe917eddfa76693c987adcdb4ca5",
+    "src/cluster_dsjitb.cpp": "0df39f7b22b33047405d22071a68c7ee97daea1425630378841653ffd541ecce",
+    "src/simulator.cpp": "74793efa97f104d5bb00714f7e89dc16db2f0a7d60fa941c982502be43477e24",
+    "src/gpu_backend.cu": "6c32a952418aac4d96006d28fbcfc379b54d10bf26c30628c4fd7913d521162d"
+  },
+  "environment": {
+    "time_utc": "2026-09-11T19:57:18.522809+00:00",
+    "hostname": "CQML-JW",
+    "python": "3.12.3",
+    "environment": {},
+    "cpu": "Architecture:                         x86_64\nCPU op-mode(s):                       32-bit, 64-bit\nAddress sizes:                        46 bits physical, 48 bits virtual\nByte Order:                           Little Endian\nCPU(s):                               28\nOn-line CPU(s) list:                  0-27\nVendor ID:                            GenuineIntel\nModel name:                           Intel(R) Core(TM) i7-14700K\nCPU family:                           6\nModel:                                183\nThread(s) per core:                   2\nCore(s) per socket:                   14\nSocket(s):                            1\nStepping:                             1\nBogoMIPS:                             6835.19\nFlags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves avx_vnni vnmi umip waitpkg gfni vaes vpclmulqdq rdpid movdiri movdir64b fsrm md_clear serialize flush_l1d arch_capabilities\nVirtualization:                       VT-x\nHypervisor vendor:                    Microsoft\nVirtualization type:                  full\nL1d cache:                            672 KiB (14 instances)\nL1i cache:                            448 KiB (14 instances)\nL2 cache:                             28 MiB (14 instances)\nL3 cache:                             33 MiB (1 instance)\nNUMA node(s):                         1\nNUMA node0 CPU(s):                    0-27\nVulnerability Gather data sampling:   Not affected\nVulnerability Itlb multihit:          Not affected\nVulnerability L1tf:                   Not affected\nVulnerability Mds:                    Not affected\nVulnerability Meltdown:               Not affected\nVulnerability Mmio stale data:        Not affected\nVulnerability Reg file data sampling: Mitigation; Clear Register File\nVulnerability Retbleed:               Mitigation; Enhanced IBRS\nVulnerability Spec rstack overflow:   Not affected\nVulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:             Mitigation; Enhanced / Automatic IBRS; IBPB conditional; RSB filling; PBRSB-eIBRS SW sequence; BHI BHI_DIS_S\nVulnerability Srbds:                  Not affected\nVulnerability Tsx async abort:        Not affected",
+    "memory": "total        used        free      shared  buff/cache   available\nMem:     25196359680  2151571456 21302427648     3887104  2068058112 23044788224\nSwap:     8589934592           0  8589934592",
+    "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "cuda": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2025 NVIDIA Corporation\nBuilt on Fri_Feb_21_20:23:50_PST_2025\nCuda compilation tools, release 12.8, V12.8.93\nBuild cuda_12.8.r12.8/compiler.35583870_0",
+    "mpi": "Intel(R) MPI Library for Linux* OS, Version 2021.18.0 Build 20260327 (id: 821f207)\nCopyright 2003-2026, Intel Corporation.",
+    "gpu": "index, name, memory.total [MiB], memory.used [MiB], driver_version, compute_cap\n0, NVIDIA GeForce RTX 3050, 8192 MiB, 2845 MiB, 577.00, 8.6",
+    "binary_sha256": {
+      "bin/main.cpu.out": "a39b18d5ce5da656e21da9fb3ea2458430681e6b98fdc77981250ff0f49362af",
+      "bin/main.cuda.out": "53ae6fa44bbfc7cb4e20a6fd1eda30cb472e19fd0f2448bdeb2eb293213541ef"
+    }
+  },
+  "server": {
+    "root": "<server-home>/tmp/ccex-adaptive-20260912",
+    "host": "gpu",
+    "job": 462,
+    "dependency": null,
+    "status": "COMPLETED",
+    "source_archive": {
+      "sha256": "593629beba2e9d93ea79447c5f2a7a71eaeb5576e040bd197421f77441a0e1e8",
+      "bytes": 6562224,
+      "files": 4270
+    },
+    "validation_status": "passed",
+    "verified_job": 462,
+    "results": "test/gpu/server-review-20260912.json",
+    "archive_sha256": "ca2254daa4a658a96aabe30a344555501a6f012fbc1fe4788352a9d8ac98c994",
+    "initial_job": 461,
+    "initial_job_status": "FAILED",
+    "initial_failure": "baseline header lookup escaped into parent checkout",
+    "retry_job": 462,
+    "initial_dependency": "afterany:460",
+    "checks": {
+      "job": 462,
+      "status": "passed",
+      "pure_checks": 13257,
+      "sanitizers": "ASan/UBSan passed",
+      "integration_executions": 117,
+      "integration_max_abs_error": 1.000000082740371e-10,
+      "independent_oracle_max_abs_error": 2.0283937142953054e-10,
+      "bath_executions": 15,
+      "bath_max_abs_error": 9.999999439624929e-11
+    }
+  },
+  "local_archive": {
+    "path": "test/adaptive/archive/adaptive-local-20260912.tar.gz",
+    "sha256": "06bfaf8032fa5410c9d00114984b9724858eea85e36bd1711d64b468b0d815b3",
+    "bytes": 1629363,
+    "files": 809
+  }
+}

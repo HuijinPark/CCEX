@@ -1,0 +1,51 @@
+{
+  "method": "cCCE",
+  "cluster": {
+    "mode": "pcce",
+    "pcce": {
+      "partition_size": 2,
+      "trials": 8,
+      "max_iterations": 20,
+      "kmeans_pp": true,
+      "partition": "deterministic",
+      "cache": {"mode": "readwrite", "file": "bin/pcce_ensemble.partition"}
+    }
+  },
+  "quantity": "coherence",
+  "configuration": {
+    "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+    "bathfile": [
+      "test/gpu_verification/check_gpu/examples/bath_pcce_6"
+    ],
+    "seed": 19
+  },
+  "Qubit": {
+    "qubit": [
+      {
+        "name": "NV",
+        "spin": 1,
+        "gyro": -17608.59705,
+        "xyz": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "alpha_state": {"ms": [1]},
+    "beta_state": {"ms": [0]}
+  },
+  "order": 2,
+  "rbath": 15,
+  "rdip": 30,
+  "bfield": 300,
+  "pulse": {"count": 1},
+  "nstep": 9,
+  "deltat": 0.02,
+  "execution": {
+    "backend": "auto",
+    "gpu_options": {"evolution_batch_steps": 4, "min_dim": 256},
+    "profile": true
+  },
+  "output": {"file": "bin/pcce_cached_ensemble", "savemode": "coherence"}
+}

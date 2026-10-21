@@ -1,0 +1,58 @@
+example/tools/SpinTensorReader/examples/01.hBN_VB_QE/./../../main.py:108: SyntaxWarning: invalid escape sequence '\.'
+  p = re.compile('[0-9\.]+')
+example/tools/SpinTensorReader/spHamilReader/base/pyform.py:27: SyntaxWarning: invalid escape sequence '\S'
+  print("\n    <\Summary> %s\n"%self.summary)
+example/tools/SpinTensorReader/spHamilReader/base/pyform.py:50: SyntaxWarning: invalid escape sequence '\S'
+  print("\n    <\Summary> %s\n"%self.summary)
+example/tools/SpinTensorReader/spHamilReader/base/pyform.py:112: SyntaxWarning: invalid escape sequence '\w'
+  inf = re.findall('\w+',res[0])
+example/tools/SpinTensorReader/spHamilReader/base/pyform.py:160: SyntaxWarning: invalid escape sequence '\['
+  opt = re.search('\[[\S ]+\]',sentance)
+example/tools/SpinTensorReader/spHamilReader/base/pyform.py:162: SyntaxWarning: invalid escape sequence '\/'
+  opt = re.findall('[^\/ \]\[]+',opt.group())
+example/tools/SpinTensorReader/spHamilReader/base/pyform.py:169: SyntaxWarning: invalid escape sequence '\w'
+  _default = re.search('[\w0-9.]+',i).group()
+example/tools/SpinTensorReader/spHamilReader/spin_database/loadisotopes.py:44: SyntaxWarning: invalid escape sequence '\s'
+  all_spins = pd.read_csv(filepath, sep='\s+', header=None, comment='%',
+	Input argument : 
+
+	 [1] tool    : QE
+	 [2] fposcar : ./QE_POSCAR_flat
+	 [3] dfname  : VB
+
+
+	 opt. --A       : ./QE_Hyper_flat.out
+	 opt. --Q       : ./QE_EFG_flat.out
+	 opt. --D       : []
+	 opt. --dfpos   : []
+	 opt. --ignoreatm : []
+	 opt. --spin    : 1.0
+	 opt. --addhfcore : True
+	 opt. --version : v2
+	 opt. --rangeformat : vertex
+	 opt. --ccein   : []
+	 opt. --JT      : []
+	 opt. --addspins : []
+	 opt. --cceindiag : []
+
+	=========================================
+	 START TO WRITE SPIN TENSOR FILES 
+	=========================================
+
+
+	Read hyperfine tensor from ./QE_Hyper_flat.out ...
+
+
+	Read efg tensor from ./QE_EFG_flat.out ...
+
+    ____________________________________________________________
+
+    memory_usage_percent  :    11.600 %
+
+    Current memory KB     :   125.816 KB
+
+    Wall clock time       : 0:00:00.039119(s)
+
+    ============================================================
+        JOB DONE    
+    ============================================================

@@ -1,0 +1,26 @@
+{
+    "method"        : "cCCE",
+    "quantity"      : "coherence",
+
+    "Qubit"         : {
+        "qubit"         : [{"file": "./inputfiles/bath_Diamond_NV_natab_defect"}],
+        "alpha_state"    : {"ms": [1]},
+        "beta_state"     : {"ms": [0]}
+    },
+    "configuration" : {
+        "gyrofile"      : "./inputfiles/gyro_13C",
+        "bathfile"      : ["./inputfiles/bath_Diamond_NV_natab_1"],
+        "s_range"       : [1, 1],
+        "seed"          : 1
+    },
+
+    "order"         : 2,
+    "bfield"        : 300,
+    "rbath"         : 30,
+    "rdip"          : 8,
+
+    "deltat"        : 0.08,
+    "nstep"         : 30,
+    "pulse"         : {"count": 1},
+    "output"        : {"file": "./results/nstate1/raw/CCE2_Diamond_NV_natab"}
+}

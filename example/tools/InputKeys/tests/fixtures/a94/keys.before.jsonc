@@ -1,0 +1,25 @@
+{
+    // A94 (2026-10-16): the keys of the input key review, written as before A94
+    "method"        : "gCCE",
+    "Qubit"         : {"file": "defect", "spin": 1.0, "name": "NV"},   // the qubit of a defect file
+    "configuration" : {
+        "k_range"   : [1, 3],
+        "bathfile"  : ["cfg_{k}"],
+        "nstate"    : 4,               // four sampled states
+        "seed"      : 11
+    },
+    "order"         : 2,
+    "bfield"        : 500,
+    "rbath"         : 30,
+    "rdip"          : 10,
+    "deltat"        : 0.001,
+    "nstep"         : 10,
+    "pulse"         : {"count": 1, "bath": {"count": 1, "sequence": [["1/2", "X", 180.0], ["1/2", "I", 0.0]], "defect": "P1",
+                                            "energy_shift": [0.0], "spin": 0.5, "alphams": 0.5, "betams": -0.5}},
+    "hamiltonian"   : {
+        "gCCE"      : {},
+        "megCCE"    : {"jump_operators": []}   // none yet
+    },
+    "Defect"        : {"species": [{"name": "P1", "n_axis_states": 1, "axis": [1, 1, 1],
+                                    "zfs": {"D": 0.0, "E": 0.0, "unit": "mhz"}, "detuning": [[1, "e", 1.0]]}]}
+}

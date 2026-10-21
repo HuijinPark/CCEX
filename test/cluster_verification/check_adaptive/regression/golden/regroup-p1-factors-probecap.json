@@ -1,0 +1,423 @@
+{
+ "returncode": 2,
+ "summaries": {
+  "summary.json": {
+   "cached_probe_clusters": 0,
+   "dimension_limits": {
+    "bundle_max_dim": 4
+   },
+   "final_bundles": [
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     2,
+     4
+    ]
+   ],
+   "final_directory": "<OUT>/0001-run",
+   "input": {
+    "Defect": {
+     "species": [
+      {
+       "detuning": {
+        "unit": "MHz",
+        "values": [
+         [
+          1,
+          "e",
+          84.946496
+         ],
+         [
+          2,
+          "e",
+          84.946496
+         ],
+         [
+          3,
+          "e",
+          84.946496
+         ],
+         [
+          4,
+          "e",
+          0.0
+         ],
+         [
+          5,
+          "e",
+          0.0
+         ],
+         [
+          6,
+          "e",
+          0.0
+         ],
+         [
+          7,
+          "e",
+          -84.946496
+         ],
+         [
+          8,
+          "e",
+          -84.946496
+         ],
+         [
+          9,
+          "e",
+          -84.946496
+         ],
+         [
+          10,
+          "e",
+          114.0264
+         ],
+         [
+          11,
+          "e",
+          0.0
+         ],
+         [
+          12,
+          "e",
+          -114.0264
+         ]
+        ]
+       },
+       "n_axis_states": 12,
+       "n_onsite_spins": 0,
+       "name": "P1"
+      }
+     ]
+    },
+    "Qubit": {
+     "alpha_state": {
+      "ms": [
+       -1
+      ]
+     },
+     "beta_state": {
+      "ms": [
+       0
+      ]
+     },
+     "qubit": [
+      {
+       "file": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect"
+      }
+     ]
+    },
+    "bfield": 292,
+    "cluster": {
+     "bundle": {
+      "max_dim": 4,
+      "merge_cutoff": 0
+     },
+     "mode": "bundle"
+    },
+    "configuration": {
+     "bathfile": [
+      "test/cluster_verification/check_adaptive/regression/inputs/bath_p1_6"
+     ],
+     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1",
+     "s_range": [
+      1,
+      5
+     ],
+     "seed": 1
+    },
+    "deltat": 0.0005,
+    "execution": {
+     "backend": "cpu"
+    },
+    "method": "cCCE",
+    "nstep": 30,
+    "order": 2,
+    "output": {
+     "file": "bin/adaptive_ensemble",
+     "savemode": "coherence"
+    },
+    "pulse": {
+     "count": 1
+    },
+    "quantity": "coherence",
+    "rbath": 38,
+    "rdip": 100
+   },
+   "input_file_sha256": {
+    "<INPUTS>/bath_p1_6": "c973839d638f70ff792eb0a9cdf9bf39e88ef82c8d57fe1d8bdcbfeb569b56c3",
+    "<REPO>/test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/bath_DiaP1_10ppm_defect": "aa5cb80e8459ddd955b9e7a7af19056bd0dc54257b756faf0c8d495be9826da4",
+    "<REPO>/test/code_verification/check_input_forms/inputs/Diamond_NV_P1_10ppm_cce/inputfiles/gyro_P1": "38e3766771b459bd88af71a11bb03066109e6a3b9c57f7e48ccba233bc9909a1"
+   },
+   "limitations": [
+    "Physical (every |L| <= 1.01) is not accurate: a physical curve can still be far from the answer.",
+    "Each change is checked against direct solutions of its region and of three neighbouring regions only, never against the whole bath.",
+    "D was designed on twelve-site P1 subsystems with ten stored states; elsewhere it is untested."
+   ],
+   "raw_nonfinite_values": 0,
+   "raw_zero_values": 0,
+   "regroup": {
+    "algorithm": "regroup-D-v1",
+    "changes": 0,
+    "connections": "distance",
+    "culprit_factors": "factors",
+    "epsilon": 0.0001,
+    "ledger": {
+     "factor_passes": 1,
+     "max_probe_dimension": 0,
+     "max_total_work": 8000000000000.0,
+     "probes_calculated": 0,
+     "spent": 2246400.0,
+     "spent_by": {
+      "candidate": 0.0,
+      "culprit": 374400.0,
+      "initial_run": 1872000.0,
+      "neighbour_direct": 0.0,
+      "outside": 0.0,
+      "region_direct": 0.0,
+      "rerun": 0.0
+     }
+    },
+    "limit": 1.01,
+    "max_candidates": 256,
+    "max_changes": 8,
+    "max_regions": 64,
+    "neighbours": 3,
+    "regions_examined": 1,
+    "rollbacks": 0,
+    "rounds": [
+     {
+      "U": 3,
+      "accepted": null,
+      "culprits": [
+       [
+        [
+         0,
+         3
+        ],
+        [
+         1,
+         5
+        ]
+       ],
+       [
+        [
+         0,
+         3
+        ],
+        [
+         2,
+         4
+        ]
+       ],
+       [
+        [
+         1,
+         5
+        ],
+        [
+         2,
+         4
+        ]
+       ]
+      ],
+      "edges": [
+       [
+        0,
+        1
+       ],
+       [
+        0,
+        2
+       ],
+       [
+        1,
+        2
+       ]
+      ],
+      "excess": 0.09569485039477699,
+      "factors": [
+       {
+        "cause": null,
+        "g": 1.6260084985917944
+       },
+       {
+        "cause": null,
+        "g": 0.10034281141352965
+       },
+       {
+        "cause": null,
+        "g": 0.00046972589373185604
+       }
+      ],
+      "regions": [
+       {
+        "accepted": null,
+        "candidates": 9,
+        "culprit": [
+         [
+          0,
+          3
+         ],
+         [
+          1,
+          5
+         ]
+        ],
+        "neighbours": [],
+        "refused": "budget_limited",
+        "region": [
+         [
+          0,
+          3
+         ],
+         [
+          1,
+          5
+         ],
+         [
+          2,
+          4
+         ]
+        ],
+        "rejected": {
+         "budget_limited": 9
+        },
+        "skipped": false
+       },
+       {
+        "culprit": [
+         [
+          0,
+          3
+         ],
+         [
+          2,
+          4
+         ]
+        ],
+        "region": [
+         [
+          0,
+          3
+         ],
+         [
+          1,
+          5
+         ],
+         [
+          2,
+          4
+         ]
+        ],
+        "skipped": true
+       },
+       {
+        "culprit": [
+         [
+          1,
+          5
+         ],
+         [
+          2,
+          4
+         ]
+        ],
+        "region": [
+         [
+          0,
+          3
+         ],
+         [
+          1,
+          5
+         ],
+         [
+          2,
+          4
+         ]
+        ],
+        "skipped": true
+       }
+      ],
+      "round": 0,
+      "s": 4,
+      "t": 18,
+      "units": [
+       [
+        0,
+        3
+       ],
+       [
+        1,
+        5
+       ],
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    ],
+    "states": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "stop": "budget_limited"
+   },
+   "rounds": [],
+   "runs": [
+    {
+     "directory": "<OUT>/0001-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0002-factors",
+     "mode": "factors",
+     "returncode": 0,
+     "timeout": false
+    }
+   ],
+   "settings": {
+    "atol": 0.001,
+    "binary": "<BINARY>",
+    "cache_mb": 256,
+    "cwd": "<REPO>",
+    "hub_candidates": false,
+    "input": "<INPUTS>/regroup-p1-0.json",
+    "max_candidates": 16,
+    "max_patches": 64,
+    "max_probes": 5,
+    "max_rounds": 8,
+    "max_total_work": 8000000000000.0,
+    "merge_priority": "gain-per-cost",
+    "mpiexec": "mpirun",
+    "neighbors": 8,
+    "output": "<OUT>",
+    "policy": "merge",
+    "prefer_physical": false,
+    "probe_batch_clusters": 0,
+    "ranks": 1,
+    "raw_cache": null,
+    "regroup": true,
+    "regroup_factors": "factors",
+    "regroup_max_candidates": 256,
+    "regroup_max_regions": 64,
+    "rtol": 0.0,
+    "timeout": 600
+   },
+   "status": "budget_limited"
+  }
+ }
+}

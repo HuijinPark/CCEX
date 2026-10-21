@@ -1,0 +1,1169 @@
+{
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 3050 8GB",
+    "driver": "577.00",
+    "cuda": "12.8.1 (nvcc 12.8.93)",
+    "cpu": "Intel Core i7-14700K",
+    "compiler": "GCC 13.3.0",
+    "mpi": "Intel MPI 2021.18",
+    "os": "WSL2 Linux 6.6.87.2",
+    "precision": "complex double",
+    "timing_note": "One run per case, includes startup; no physical multi-GPU measurement"
+  },
+  "tolerance": {
+    "atol": 1e-08,
+    "rtol": 2e-06,
+    "small_system_oracle_max_abs": 3e-11
+  },
+  "options_passed": 13,
+  "independent_cuda_cases_passed": 8,
+  "cpu_eigen_vs_expm_nv13c_ensemble_max_abs": 3.691630584351721e-06,
+  "cpu_legacy_comparison": [
+    {
+      "case": "Diamond_NV_P1_10ppm_cce_nstate0",
+      "reference": {
+        "wall_s": 0.36486878897994757,
+        "profiles": []
+      },
+      "target": {
+        "wall_s": 0.3146312669850886,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "55",
+            "build_s": "0.000153924",
+            "setup_s": "0.000154160",
+            "evolution_s": "0.001707142"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "16",
+            "clusters": "133",
+            "build_s": "0.008582216",
+            "setup_s": "0.004834191",
+            "evolution_s": "0.032623470"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 80,
+      "speedup": 1.1596711047705246
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_cce_nstate1",
+      "reference": {
+        "wall_s": 0.31451342499349266,
+        "profiles": []
+      },
+      "target": {
+        "wall_s": 0.3144294989760965,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "55",
+            "build_s": "0.000157197",
+            "setup_s": "0.000147815",
+            "evolution_s": "0.000874474"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "16",
+            "clusters": "133",
+            "build_s": "0.008717628",
+            "setup_s": "0.004680764",
+            "evolution_s": "0.026922604"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 80,
+      "speedup": 1.0002669152152373
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "reference": {
+        "wall_s": 1.0162382799899206,
+        "profiles": []
+      },
+      "target": {
+        "wall_s": 1.0161498229717836,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006195",
+            "setup_s": "0.000028568",
+            "evolution_s": "0.000022701"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.000891316",
+            "setup_s": "0.000608383",
+            "evolution_s": "0.006916828"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.080635357",
+            "setup_s": "0.024423900",
+            "evolution_s": "0.597285845"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 80,
+      "speedup": 1.000087051157356
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+      "reference": {
+        "wall_s": 0.4149082900257781,
+        "profiles": []
+      },
+      "target": {
+        "wall_s": 0.41489419201388955,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000004830",
+            "setup_s": "0.000025536",
+            "evolution_s": "0.000012101"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.000930905",
+            "setup_s": "0.000640235",
+            "evolution_s": "0.001089936"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.074010131",
+            "setup_s": "0.022738293",
+            "evolution_s": "0.020050010"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 80,
+      "speedup": 1.0000339797764344
+    },
+    {
+      "case": "Diamond_NV_natab_cce_nstate0",
+      "reference": {
+        "wall_s": 0.31450622610282153,
+        "profiles": []
+      },
+      "target": {
+        "wall_s": 0.31462233199272305,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "2",
+            "clusters": "191",
+            "build_s": "0.000167570",
+            "setup_s": "0.000152856",
+            "evolution_s": "0.002488995"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "370",
+            "build_s": "0.001078310",
+            "setup_s": "0.000938928",
+            "evolution_s": "0.008456761"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60,
+      "speedup": 0.9996309674231764
+    },
+    {
+      "case": "Diamond_NV_natab_cce_nstate1",
+      "reference": {
+        "wall_s": 0.3146738481009379,
+        "profiles": []
+      },
+      "target": {
+        "wall_s": 0.3147192889591679,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "2",
+            "clusters": "191",
+            "build_s": "0.000161965",
+            "setup_s": "0.000136154",
+            "evolution_s": "0.001069651"
+          },
+          {
+            "rank": "0",
+            "method": "cce",
+            "backend": "cpu",
+            "dim": "4",
+            "clusters": "370",
+            "build_s": "0.001196529",
+            "setup_s": "0.001006984",
+            "evolution_s": "0.004468322"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60,
+      "speedup": 0.999855614638746
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate0",
+      "reference": {
+        "wall_s": 0.3649478480219841,
+        "profiles": []
+      },
+      "target": {
+        "wall_s": 0.36514145496767014,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000009356",
+            "setup_s": "0.000025124",
+            "evolution_s": "0.000017641"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.000960289",
+            "setup_s": "0.000825737",
+            "evolution_s": "0.008369164"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.006354205",
+            "setup_s": "0.004030780",
+            "evolution_s": "0.035293306"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60,
+      "speedup": 0.9994697754991879
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate1",
+      "reference": {
+        "wall_s": 0.3147191309835762,
+        "profiles": []
+      },
+      "target": {
+        "wall_s": 0.31480213010217994,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000007005",
+            "setup_s": "0.000025867",
+            "evolution_s": "0.000008500"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.000785614",
+            "setup_s": "0.000716363",
+            "evolution_s": "0.001405830"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.005879656",
+            "setup_s": "0.004121349",
+            "evolution_s": "0.005464987"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60,
+      "speedup": 0.9997363451175606
+    }
+  ],
+  "gpu_regression": [
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "reference": {
+        "wall_s": 1.0166556009789929,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000007706",
+            "setup_s": "0.000037177",
+            "evolution_s": "0.000027123"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.001016748",
+            "setup_s": "0.000660572",
+            "evolution_s": "0.006928693"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.080738009",
+            "setup_s": "0.024694559",
+            "evolution_s": "0.590466384"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 1.8687102179974318,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006710",
+            "setup_s": "0.011242715",
+            "evolution_s": "0.027379539"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.001452253",
+            "setup_s": "0.036575866",
+            "evolution_s": "0.108159937"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.048132569",
+            "setup_s": "0.511960622",
+            "evolution_s": "0.577364978"
+          }
+        ]
+      },
+      "max_abs_error": 1.000000082740371e-10,
+      "rms_error": 1.1180340812564418e-11,
+      "values": 80,
+      "speedup": 0.5440413345994719
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+      "reference": {
+        "wall_s": 0.4153338730102405,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000005796",
+            "setup_s": "0.000028155",
+            "evolution_s": "0.000009497"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.000873038",
+            "setup_s": "0.000609574",
+            "evolution_s": "0.001060706"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.072666752",
+            "setup_s": "0.022593795",
+            "evolution_s": "0.019684588"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 1.1171445220243186,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006550",
+            "setup_s": "0.011363346",
+            "evolution_s": "0.024601745"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "12",
+            "clusters": "55",
+            "build_s": "0.001275087",
+            "setup_s": "0.034948811",
+            "evolution_s": "0.010972981"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "48",
+            "clusters": "133",
+            "build_s": "0.047555403",
+            "setup_s": "0.451156536",
+            "evolution_s": "0.034268908"
+          }
+        ]
+      },
+      "max_abs_error": 1.41421367938565e-10,
+      "rms_error": 3.872983532288405e-11,
+      "values": 80,
+      "speedup": 0.3717816852000813
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate0",
+      "reference": {
+        "wall_s": 0.3649335450027138,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006787",
+            "setup_s": "0.000026904",
+            "evolution_s": "0.000017466"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.000858434",
+            "setup_s": "0.000748747",
+            "evolution_s": "0.008157620"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.006152203",
+            "setup_s": "0.003881798",
+            "evolution_s": "0.034525024"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 1.570816141902469,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006908",
+            "setup_s": "0.011067711",
+            "evolution_s": "0.026617948"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.001745365",
+            "setup_s": "0.079313855",
+            "evolution_s": "0.235613423"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.009253328",
+            "setup_s": "0.239626783",
+            "evolution_s": "0.492269416"
+          }
+        ]
+      },
+      "max_abs_error": 4.174857949739728e-06,
+      "rms_error": 5.417180073676574e-07,
+      "values": 60,
+      "speedup": 0.23232097969195192
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate1",
+      "reference": {
+        "wall_s": 0.3148594400845468,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000005345",
+            "setup_s": "0.000026670",
+            "evolution_s": "0.000008430"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.000780836",
+            "setup_s": "0.000688280",
+            "evolution_s": "0.001394448"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.005658138",
+            "setup_s": "0.003910502",
+            "evolution_s": "0.005340088"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.966784788062796,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000007013",
+            "setup_s": "0.011414173",
+            "evolution_s": "0.024345528"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "6",
+            "clusters": "191",
+            "build_s": "0.001455010",
+            "setup_s": "0.070487548",
+            "evolution_s": "0.034842252"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "12",
+            "clusters": "370",
+            "build_s": "0.007963214",
+            "setup_s": "0.233765673",
+            "evolution_s": "0.068456608"
+          }
+        ]
+      },
+      "max_abs_error": 2.0124199366120098e-07,
+      "rms_error": 2.619501861431531e-08,
+      "values": 60,
+      "speedup": 0.3256768662190572
+    }
+  ],
+  "gpu_large_four_p1_sites_20_steps": [
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "reference": {
+        "wall_s": 9.739523755968548,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006994",
+            "setup_s": "0.000024859",
+            "evolution_s": "0.000013603"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "768",
+            "clusters": "1",
+            "build_s": "0.547124813",
+            "setup_s": "0.310059648",
+            "evolution_s": "8.566791227"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 4.675866945995949,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000007728",
+            "setup_s": "0.010495725",
+            "evolution_s": "0.025731932"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "768",
+            "clusters": "1",
+            "build_s": "0.558465103",
+            "setup_s": "0.172505328",
+            "evolution_s": "3.390784189"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 40,
+      "speedup": 2.082934323935099
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+      "reference": {
+        "wall_s": 1.217849034932442,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000007391",
+            "setup_s": "0.000023575",
+            "evolution_s": "0.000006633"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "768",
+            "clusters": "1",
+            "build_s": "0.562131798",
+            "setup_s": "0.318759312",
+            "evolution_s": "0.024607371"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 1.2674991600215435,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006814",
+            "setup_s": "0.011530072",
+            "evolution_s": "0.025705819"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "768",
+            "clusters": "1",
+            "build_s": "0.562708631",
+            "setup_s": "0.152960965",
+            "evolution_s": "0.006500019"
+          }
+        ]
+      },
+      "max_abs_error": 1.000000082740371e-10,
+      "rms_error": 3.1622779218164064e-11,
+      "values": 40,
+      "speedup": 0.9608282777179453
+    }
+  ],
+  "mpi_two_ranks_shared_gpu_batch7_threshold16": [
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "reference": {
+        "wall_s": 0.724100060062483,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000004863",
+            "setup_s": "0.000017794",
+            "evolution_s": "0.000020726"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "28",
+            "build_s": "0.000507865",
+            "setup_s": "0.000331979",
+            "evolution_s": "0.003482068"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "67",
+            "build_s": "0.044115993",
+            "setup_s": "0.012239740",
+            "evolution_s": "0.293643900"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006725",
+            "setup_s": "0.000027809",
+            "evolution_s": "0.000022163"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "27",
+            "build_s": "0.000458683",
+            "setup_s": "0.000298764",
+            "evolution_s": "0.003254796"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "66",
+            "build_s": "0.042979933",
+            "setup_s": "0.011748744",
+            "evolution_s": "0.288833339"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 2.1187491019954905,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000005492",
+            "setup_s": "0.000018039",
+            "evolution_s": "0.000025975"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "28",
+            "build_s": "0.000544767",
+            "setup_s": "0.000344355",
+            "evolution_s": "0.003712404"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "48",
+            "clusters": "67",
+            "build_s": "0.028223670",
+            "setup_s": "0.641939670",
+            "evolution_s": "0.862028755"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006031",
+            "setup_s": "0.000031207",
+            "evolution_s": "0.000022895"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "27",
+            "build_s": "0.000492735",
+            "setup_s": "0.000316871",
+            "evolution_s": "0.003432204"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "48",
+            "clusters": "66",
+            "build_s": "0.027889593",
+            "setup_s": "0.627132862",
+            "evolution_s": "0.872551920"
+          }
+        ]
+      },
+      "max_abs_error": 1.000000082740371e-10,
+      "rms_error": 1.1180340812564418e-11,
+      "values": 80,
+      "speedup": 0.34175828529225455
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+      "reference": {
+        "wall_s": 0.3648195279529318,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000004481",
+            "setup_s": "0.000017514",
+            "evolution_s": "0.000009475"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "28",
+            "build_s": "0.000440819",
+            "setup_s": "0.000306187",
+            "evolution_s": "0.000537053"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "67",
+            "build_s": "0.039702227",
+            "setup_s": "0.011075113",
+            "evolution_s": "0.009883262"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006445",
+            "setup_s": "0.000028732",
+            "evolution_s": "0.000010242"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "27",
+            "build_s": "0.000428797",
+            "setup_s": "0.000297973",
+            "evolution_s": "0.000522324"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "48",
+            "clusters": "66",
+            "build_s": "0.037477280",
+            "setup_s": "0.011081946",
+            "evolution_s": "0.009742730"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 1.266790668014437,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000004810",
+            "setup_s": "0.000021802",
+            "evolution_s": "0.000009909"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "28",
+            "build_s": "0.000461608",
+            "setup_s": "0.000303633",
+            "evolution_s": "0.000545862"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "48",
+            "clusters": "67",
+            "build_s": "0.026680998",
+            "setup_s": "0.529886093",
+            "evolution_s": "0.194356120"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000007914",
+            "setup_s": "0.000031567",
+            "evolution_s": "0.000011674"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "27",
+            "build_s": "0.000464324",
+            "setup_s": "0.000297874",
+            "evolution_s": "0.000524119"
+          },
+          {
+            "rank": "1",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "48",
+            "clusters": "66",
+            "build_s": "0.026116268",
+            "setup_s": "0.530616975",
+            "evolution_s": "0.189149469"
+          }
+        ]
+      },
+      "max_abs_error": 1.41421367938565e-10,
+      "rms_error": 4.0311290785868055e-11,
+      "values": 80,
+      "speedup": 0.28798722406500565
+    }
+  ],
+  "full_density_one_p1_site_three_pulses_batch2": [
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "reference": {
+        "wall_s": 0.26465457607991993,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006469",
+            "setup_s": "0.000030372",
+            "evolution_s": "0.000006529"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "1",
+            "build_s": "0.000031294",
+            "setup_s": "0.000020481",
+            "evolution_s": "0.000033604"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.5151667729951441,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000008464",
+            "setup_s": "0.011856931",
+            "evolution_s": "0.025482680"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "12",
+            "clusters": "1",
+            "build_s": "0.000041383",
+            "setup_s": "0.001189064",
+            "evolution_s": "0.000728354"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 918,
+      "speedup": 0.5137260202967603
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+      "reference": {
+        "wall_s": 0.26495106192305684,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006185",
+            "setup_s": "0.000032461",
+            "evolution_s": "0.000007075"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cpu",
+            "dim": "12",
+            "clusters": "1",
+            "build_s": "0.000030068",
+            "setup_s": "0.000021596",
+            "evolution_s": "0.000004653"
+          }
+        ]
+      },
+      "target": {
+        "wall_s": 0.5155506030423567,
+        "profiles": [
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "3",
+            "clusters": "1",
+            "build_s": "0.000006960",
+            "setup_s": "0.011019704",
+            "evolution_s": "0.027840743"
+          },
+          {
+            "rank": "0",
+            "method": "gcce",
+            "backend": "cuda",
+            "dim": "12",
+            "clusters": "1",
+            "build_s": "0.000035319",
+            "setup_s": "0.001167495",
+            "evolution_s": "0.003088772"
+          }
+        ]
+      },
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 918,
+      "speedup": 0.5139186344842447
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+    // two NVs written out, the states per qubit (before A93)
+    "method"        : "gCCE",
+    "Qubit"         : {
+        "qubit"         : [
+            {"name": "NV1", "spin": 1.0, "xyz": [0, 0, 0], "alphams": -1, "betams": 0},
+            {
+                "name"     : "NV2",
+                "spin"     : 1.0,
+                "xyz"      : [0, 0, 20],
+                // the beta level of NV2
+                "betams"   : 0      // ms 0
+            }
+        ],
+        "intmap"        : [{"between": ["NV1", "NV1"], "tensor": [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]]}]
+    },
+    "bfield"        : 500
+}

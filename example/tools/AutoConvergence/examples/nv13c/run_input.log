@@ -1,0 +1,30 @@
+[auto] runner <repo>/example/tools/AutoConvergence/autoconv (python python3), binary <repo>/bin/main.out
+[auto] the input, the source files or the decision code changed: earlier decisions moved to decisions.4.jsonl
+status: truncation-unresolved (rbath: rbath has not converged up to 50 A (the bath files cover up to 53.51 A): make larger baths, covering at least 62.5 A around the qubit)
+core-hours: 0.040
+
+0. start
+  configurations: test 6 [1, 2, 3, 4, 5, 6], production 64 (given)
+  rbath candidates [25, 30, 35, 40] (given)
+  rdip candidates [4, 6, 8, 10, 12] (given)
+  states: files data/cfg{k}_state
+  launcher: mpirun -n 4 (input)
+
+1. time window                                  (1_window.png)
+  T2 fit: T2 1.093 ms, n 2.14;  T_d (|L| = 0.01) 2.23 ms
+  fit points: the peaks (7 points, t = 0 and the points higher than both neighbours; 1_window_fit.png)
+  T2 here is a convergence measure from this fit, not the exact T2 of the system
+  time points: 101 per run, fixed (whether they are enough is not checked)
+  window = 1.5 x T_d = 3.35 ms, 101 points
+  revival: none;  slow configurations: 2 points above 0.01 after T_d (max 0.011)
+
+2. rdip  (rbath 40 Å, reference rdip 15 Å)      (2_rdip.png)
+  rdip          4       6       8      10      12
+  |ΔA/A|  12.73 %  4.04 %  1.44 %  0.63 %  0.25 %
+  chosen 8 (threshold 2 %)
+
+3. rbath  (rdip 10 Å, reference rbath 50 Å)     (3_rbath.png)
+  rbath       25      30      35      40
+  |ΔA/A|  7.49 %  3.34 %  7.11 %  8.19 %
+  not converged (threshold 2 %)
+  rdip rechecked at rbath 50: 10 still passes (1.15 %)

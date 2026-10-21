@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+"""
+Axis (2) : write the new-form inputs next to the legacy input they must match.
+
+Each variant is a copy of the system's legacy ccein with ONE thing changed, so a
+failure names the key that caused it. The manifest that comes out says, per
+variant, which baseline it is compared against and how:
+
+    byte  the two inputs must mean exactly the same number to the parser, so the
+          raw output has to be byte-identical
+    num   a unit conversion or a constructed tensor sits between them; the two
+          reach the same value by different arithmetic, so the comparison reports
+          the largest deviation instead of demanding byte identity
+    differ  the variant must NOT match its baseline: the key has to be read at all
+
+Nothing here stores an expected coherence. Every check is legacy-vs-new inside
+one binary, and axis (1) is what ties the legacy side back to v1.1.0.
+"""
+import json, sys, os, copy; from input_layout import flat, nest
+
+sysname, work = sys.argv[1], sys.argv[2]
+legacy = flat(json.load(open(f"{work}/legacy.json")))
+rows = []
+
+def emit(name, d, baseline="legacy", mode="byte", desc=""):
+    d = copy.deepcopy(d)
+    d["outfile"] = f"./{name}"
+    json.dump(nest(d), open(f"{work}/{name}.json", "w"), indent=4)
+    rows.append((name, baseline, mode, desc))
+
+# ---------------------------------------------------------------- rotation keys
+ROT_OFF = {"enabled": False, "qubit_axis": [1.0,1.0,1.0]}
+ROT_ID  = {"enabled": True,  "qubit_axis": [0.0,0.0,1.0]}
+ROT_111 = {"enabled": True,  "qubit_axis": [1.0,1.0,1.0]}
+
+def with_rot(section, key="coordinate_frame_rotation", **extra):
+    d = copy.deepcopy(legacy); d[key] = dict(section); d[key].update(extra); return d
+
+# The baseline every variant is measured against is the legacy run itself, which
+# axis (1) already showed is byte-identical to v1.1.0.
+emit("base", legacy, desc="legacy input, unchanged")
+
+emit("rot_disabled", with_rot(ROT_OFF), "base", "byte",
+     'coordinate_frame_rotation.enabled=false must be a no-op')
+
+# The bare identity variant is only valid where no further key is REQUIRED. S4 reads
+# DFT tensor files, so hamiltonian.common.hyperfine.frame and quadrupole.frame have to be stated; S5 writes
+# Qubit.intmap tensors, so each entry's frame has to be (A90). Both refusals are the point of those keys, and each of
+# those systems emits its own identity case below with them supplied.
+if sysname == "S4":
+    pass
+elif sysname == "S5":
+    pass
+else:
+    d = with_rot(ROT_ID)
+    # with the rotation on every Defect species states its frame (A90): "qubit", the default it had until then
+    for sp in d.get("Defect", {}).get("species", []):
+        sp["frame"] = "qubit"
+    emit("rot_identity", d, "base", "byte",
+         'identity rotation (qubit_axis=[0,0,1]) must be a no-op')
+
+# ---------------------------------------------------------------- per system
+if sysname == "S1a":
+    # frame.rotation is on when the block is given (A65): without "enabled" it is the block with "enabled": true. (The
+    # old name bath_coordinate_rotation, an alias until A65, is refused now: ../check_rotation, ../check_refusals.)
+    emit("rot111_newname", with_rot(ROT_111), "base", "num",
+         '[111] rotation : moves the bath, so it is NOT expected to match the baseline')
+    emit("rot111_noenabled", with_rot({k: v for k, v in ROT_111.items() if k != "enabled"}),
+         "rot111_newname", "byte",
+         'frame.rotation without "enabled" == "enabled": true (on when given, A65)')
+
+elif sysname == "S3":
+    df = legacy["Defect"]["species"][0]
+    hypf_rows = df["hyperfine"]; efg_rows = df["efg"]
+    gyro = df["gyros"][0];  eq = df["quadrupole_moments"][0]
+    navaax = df["n_configurations"]
+
+    def mk(**defect_changes):
+        d = copy.deepcopy(legacy)
+        nd = d["Defect"]["species"][0]
+        # frame "qubit" (coordinate_frame until A90) was the legacy default, so stating it must not move a number
+        # (with the rotation off it is not used, A90)
+        nd["frame"] = "qubit"
+        nd.update(defect_changes)
+        return d
+
+    emit("df_frame_only", mk(), "base", "byte",
+         'Defect.species[].frame="qubit" is the legacy default')
+
+    # canonical units : the scale factor is exactly 1, so byte identity is required
+    emit("df_gyro_canon", mk(gyros={"values":[gyro], "unit":"radkHz/G"}),
+         "df_frame_only", "byte", 'gyros {values,unit=radkHz/G} == legacy array')
+    emit("df_eq_canon",   mk(quadrupole_moments={"values":[eq], "unit":"1e-30 m^2"}),
+         "df_frame_only", "byte", 'quadrupole_moments {values,unit=1e-30 m^2} == legacy array')
+    emit("df_hypf_canon", mk(hyperfine={"values":hypf_rows, "unit":"MHz"}),
+         "df_frame_only", "byte", 'hyperfine {values,unit=MHz} == legacy array')
+    emit("df_efg_canon",  mk(efg={"values":efg_rows, "unit":"Hartree/Bohr^2"}),
+         "df_frame_only", "byte", 'efg {values,unit=Hartree/Bohr^2} == legacy array')
+
+    # a different unit for the same physical quantity : conversion, so compare numerically
+    S_GYRO = 2.0*3.141592653589793*1.0e-1          # MHz/T   -> radkHz/G
+    S_EQ   = 1.0e-1                                 # mbarn   -> 1e-30 m^2
+    S_HF   = 1.0e3                                  # GHz     -> MHz
+    hartree_to_ev = 27.211386; bohr_to_m = 0.5291772e-10
+    S_EFG  = 1.0e20*bohr_to_m*bohr_to_m/hartree_to_ev   # V/A^2 -> Hartree/Bohr^2
+
+    def scaled(rows_, s):
+        return [[r[0], r[1], [v/s for v in r[2]]] for r in rows_]
+
+    emit("df_gyro_mhzt", mk(gyros={"values":[gyro/S_GYRO], "unit":"MHz/T"}),
+         "df_frame_only", "num", 'gyros in MHz/T == the same gyro in radkHz/G')
+    emit("df_eq_mbarn",  mk(quadrupole_moments={"values":[eq/S_EQ], "unit":"mbarn"}),
+         "df_frame_only", "num", 'quadrupole_moments in mbarn == the same eQ in 1e-30 m^2')
+    emit("df_hypf_ghz",  mk(hyperfine={"values":scaled(hypf_rows,S_HF), "unit":"GHz"}),
+         "df_frame_only", "num", 'hyperfine in GHz == the same tensors in MHz')
+    emit("df_efg_va2",   mk(efg={"values":scaled(efg_rows,S_EFG), "unit":"V/angstrom^2"}),
+         "df_frame_only", "num", 'efg in V/angstrom^2 == the same tensors in a.u.')
+
+    # detuning : absent from this fixture, so add it in both forms at once
+    det_rows = [[i, "e", 0.35*i] for i in range(1, navaax+1)]   # arbitrary, fixed
+    d_leg = copy.deepcopy(legacy); d_leg["Defect"]["species"][0]["detuning"] = det_rows
+    emit("df_det_legacy", d_leg, "base", "num",
+         'detuning added (legacy array) : changes the physics, its own baseline')
+    emit("df_det_object", mk(detuning={"values":det_rows, "unit":"MHz"}),
+         "df_det_legacy", "byte", 'detuning {values,unit=MHz} == legacy indexed array')
+    emit("df_det_ghz", mk(detuning={"values":[[r[0],r[1],r[2]/1.0e3] for r in det_rows],
+                                    "unit":"GHz"}),
+         "df_det_legacy", "num", 'detuning in GHz == the same values in MHz')
+
+    # defect_axis_reference changed no number and was removed on 2026-10-15 (A65): refused, ../check_rotation
+
+elif sysname == "S4":
+    # With the rotation ON but R = I, "file" and "qubit" must both reduce to the
+    # unrotated answer. This pins the PARSING and the no-op path; the [111] case for
+    # these same keys is what test/code_verification/check_rotation/run.sh [13,14,15] and its A/B section do.
+    def with_tensor_frames(frame):
+        d = with_rot(ROT_ID)
+        for block in ("hyperfine", "quadrupole"):
+            d["hamiltonian"]["common"][block]["frame"] = frame
+        return d
+    emit("tf_file_identity", with_tensor_frames("file"),
+         "base", "byte", 'identity rotation with hyperfine/quadrupole.frame="file"')
+    emit("tf_qubit_identity", with_tensor_frames("qubit"),
+         "base", "byte", 'identity rotation with hyperfine/quadrupole.frame="qubit"')
+
+elif sysname == "S5":
+    def with_intmap_frame(frame):
+        d = copy.deepcopy(legacy)
+        for e in d["Qubit"]["intmap"]:
+            e["frame"] = frame
+        return d
+    emit("intmap_qubit_frame", with_intmap_frame("qubit"), "base", "byte",
+         'intmap frame="qubit", rotation off : the frame is not used, nothing changes')
+
+    # The identity case needs the frame of every explicit intmap entry (A90; with nqubit > 1 also before). Refusing it
+    # without them is what ../check_refusals covers; here it is supplied and must be a no-op.
+    d = with_intmap_frame("file")
+    d["coordinate_frame_rotation"] = dict(ROT_ID)
+    emit("rot_identity", d, "base", "byte",
+         'identity rotation (intmap frames given) must be a no-op')
+    emit("intmap_file_frame", with_intmap_frame("file"), "base", "byte",
+         'intmap frame="file", rotation off : same')
+
+    # [111] about the first qubit (the origin since A90; reference_qubit chose it until then, a translation)
+    d = with_intmap_frame("file")
+    d["coordinate_frame_rotation"] = dict(ROT_111)
+    emit("rot111", d, "rot111", "num", '[111] rotation about the first qubit')
+
+    # A qubit's detuning has to be read, not ignored for the default 0 (D18, 2026-10-02): x != 0 must change the result
+    # ("differ"); its unit form must be byte-identical to the number in kHz ([x] was a second form until A94, refused now).
+    def with_detuning(value):
+        d = copy.deepcopy(legacy); d["Qubit"]["qubit"][0]["detuning"] = value; return d
+    emit("qdet_number", with_detuning(1000.0), "base", "differ",
+         'qubit detuning 1000 kHz : read, so the result moves')
+    # A94 (G21): [x] is refused (check_refusals); {"value", "unit"} is the other form of the number
+    emit("qdet_unit", with_detuning({"value": 1.0, "unit": "MHz"}), "qdet_number", "byte",
+         'qubit detuning {"value": 1, "unit": "MHz"} == 1000 (kHz)')
+
+    # hamiltonian.common.qubit_bath_mean_field (Qubit.overhaus until A47) true has to change the result. (Qubit.overhaus
+    # could be written 1 for true; the switches of A47 are true or false only, so ovh_one went with it.)
+    def with_overhaus(value):
+        d = copy.deepcopy(legacy); d.setdefault("hamiltonian", {}).setdefault("common", {})["qubit_bath_mean_field"] = value
+        return d
+    emit("ovh_true", with_overhaus(True), "base", "differ",
+         'hamiltonian.common.qubit_bath_mean_field true : read, so the result moves')
+
+    # A key nobody reads inside a block is reported, not refused, unless it is one or two letters from
+    # a key of the same block that is absent (D24): a note on a qubit must not stop the run, and must
+    # not change it (the first version judged it against every block's keys and refused it as "nstep").
+    d = copy.deepcopy(legacy); d["Qubit"]["qubit"][0]["notes"] = "annotation"
+    emit("qubit_note", d, "base", "byte", 'an unread "notes" key in a qubit is reported and changes nothing')
+
+with open(f"{work}/manifest.tsv", "w") as fh:
+    for r in rows:
+        fh.write("\t".join(r) + "\n")
+print(f"    {len(rows)} variants")

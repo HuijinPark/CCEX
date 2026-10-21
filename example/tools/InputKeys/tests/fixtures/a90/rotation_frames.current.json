@@ -1,0 +1,19 @@
+{
+    # an NV with a DFT hyperfine file and a P1 / NV defect bath, written in the cubic crystal frame (A65 keys, before A90)
+    "method"        : "cCCE",
+    "Qubit"         : {"qubit": [{"file": "defect"}], "intmap": [{"between": ["q0", "q0"], "tensor": [[-960000, 0, 0], [0, -960000, 0], [0, 0, 1920000]], "unit": "kHz", "frame": "qubit"}]},
+    "configuration" : {"gyrofile": "gyro", "bathfile": ["bath"]},
+    "hamiltonian"   : {"common": {"hyperfine": {"dipole": "dft", "contact": false, "file": "Afile", "frame": "file"},   # DFT tensors
+                                  "quadrupole": {"structure": "plain", "file": "Qfile", "frame": "qubit"}}},
+    "Defect"        : {"species": [
+                          {"name": "P1", "n_onsite_spins": 0, "n_axis_states": 12, "frame": "qubit"},
+                          {
+                              "name"          : "NV_0",
+                              "n_axis_states" : 3,
+                              "frame"            : "file"   # the crystal frame
+                          }]},
+    "order"         : 2,
+    "bfield"        : 500,
+    # the rotation: the NV axis [1,1,1] becomes z
+    "frame"         : {"rotation": {"qubit_axis": [1, 1, 1]}}
+}

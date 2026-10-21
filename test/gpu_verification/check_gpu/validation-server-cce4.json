@@ -1,0 +1,640 @@
+{
+  "checked_at": "2026-09-08T14:46:05+09:00",
+  "job": "352",
+  "slurm_state": "FAILED",
+  "exit_code": "1:0",
+  "start": "2026-09-08T13:38:22+09:00",
+  "end": "2026-09-08T14:37:21+09:00",
+  "elapsed_s": 3539,
+  "remote_root": "<server-home>/tmp/ccex-cce2-20260907T164410Z/server-results/order4-352",
+  "local_raw_results": "/tmp/ccex-server-cce2/order4-352-final",
+  "summary": {
+    "order": 4,
+    "ranks": 32,
+    "gpu_batch_steps": 4,
+    "repeats": 1,
+    "precision": "complex double",
+    "atol": 1e-08,
+    "rtol": 2e-06,
+    "memory_note": "Two-second whole-node samples, not per-process RSS or an exact peak",
+    "cases": [
+      {
+        "case": "Diamond_NV_P1_10ppm_cce_nstate0",
+        "backends": {
+          "cpu": {
+            "wall_s": 37.1466660250444,
+            "sampled_peak": {
+              "host_used_bytes": 5622370304,
+              "gpu_used_mib": 0
+            },
+            "cluster_counts_by_dimension": {
+              "4": 46,
+              "16": 284,
+              "64": 764,
+              "256": 1402
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 80
+          },
+          "cuda": {
+            "wall_s": 68.47047749394551,
+            "sampled_peak": {
+              "host_used_bytes": 27649212416,
+              "gpu_used_mib": 20694
+            },
+            "cluster_counts_by_dimension": {
+              "4": 46,
+              "16": 284,
+              "64": 764,
+              "256": 1402
+            },
+            "max_abs_error": 2.0126393193071664e-07,
+            "rms_error": 2.7449315260829182e-08,
+            "values": 80,
+            "speedup": 0.5425209138979509
+          },
+          "auto": {
+            "wall_s": 60.65713860502001,
+            "sampled_peak": {
+              "host_used_bytes": 27599659008,
+              "gpu_used_mib": 20744
+            },
+            "cluster_counts_by_dimension": {
+              "4": 46,
+              "16": 284,
+              "64": 764,
+              "256": 1402
+            },
+            "max_abs_error": 2.713612472878153e-08,
+            "rms_error": 3.1520800023962303e-09,
+            "values": 80,
+            "speedup": 0.6124038634089166
+          }
+        }
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_cce_nstate1",
+        "backends": {
+          "cpu": {
+            "wall_s": 40.00176761695184,
+            "sampled_peak": {
+              "host_used_bytes": 5604052992,
+              "gpu_used_mib": 0
+            },
+            "cluster_counts_by_dimension": {
+              "4": 46,
+              "16": 284,
+              "64": 764,
+              "256": 1402
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 80
+          },
+          "cuda": {
+            "wall_s": 64.59732909302693,
+            "sampled_peak": {
+              "host_used_bytes": 28306526208,
+              "gpu_used_mib": 20622
+            },
+            "cluster_counts_by_dimension": {
+              "4": 46,
+              "16": 284,
+              "64": 764,
+              "256": 1402
+            },
+            "max_abs_error": 1.746424940193332e-09,
+            "rms_error": 3.2882366592013663e-10,
+            "values": 80,
+            "speedup": 0.6192480119316558
+          },
+          "auto": {
+            "wall_s": 57.97553442895878,
+            "sampled_peak": {
+              "host_used_bytes": 27998593024,
+              "gpu_used_mib": 20638
+            },
+            "cluster_counts_by_dimension": {
+              "4": 46,
+              "16": 284,
+              "64": 764,
+              "256": 1402
+            },
+            "max_abs_error": 8.000000106811456e-10,
+            "rms_error": 1.3784048582468687e-10,
+            "values": 80,
+            "speedup": 0.6899766946688284
+          }
+        }
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+        "backends": {
+          "cpu": {
+            "wall_s": 654.5061883510789,
+            "sampled_peak": {
+              "host_used_bytes": 8824258560,
+              "gpu_used_mib": 0
+            },
+            "cluster_counts_by_dimension": {
+              "3": 32,
+              "12": 46,
+              "48": 284,
+              "192": 764,
+              "768": 1402
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 80
+          },
+          "cuda": {
+            "wall_s": 1077.6663954829564,
+            "sampled_peak": {
+              "host_used_bytes": 32887734272,
+              "gpu_used_mib": 23604
+            },
+            "cluster_counts_by_dimension": {
+              "3": 32,
+              "12": 46,
+              "48": 284,
+              "192": 764,
+              "768": 1402
+            },
+            "max_abs_error": 2.5423744551607285e-06,
+            "rms_error": 3.2539769004536626e-07,
+            "values": 80,
+            "speedup": 0.6073365478356239
+          },
+          "auto": {
+            "wall_s": 1053.7849452609662,
+            "sampled_peak": {
+              "host_used_bytes": 32661946368,
+              "gpu_used_mib": 23602
+            },
+            "cluster_counts_by_dimension": {
+              "3": 32,
+              "12": 46,
+              "48": 284,
+              "192": 764,
+              "768": 1402
+            },
+            "max_abs_error": 3.0876100047820515e-07,
+            "rms_error": 4.7350948073776995e-08,
+            "values": 80,
+            "speedup": 0.6211003405338958
+          }
+        }
+      },
+      {
+        "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+        "backends": {
+          "cpu": {
+            "wall_s": 99.98772065795492,
+            "sampled_peak": {
+              "host_used_bytes": 8252022784,
+              "gpu_used_mib": 0
+            },
+            "cluster_counts_by_dimension": {
+              "3": 32,
+              "12": 46,
+              "48": 284,
+              "192": 764,
+              "768": 1402
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 80
+          },
+          "cuda": {
+            "wall_s": 125.89769333298318,
+            "sampled_peak": {
+              "host_used_bytes": 35105787904,
+              "gpu_used_mib": 21838
+            },
+            "cluster_counts_by_dimension": {
+              "3": 32,
+              "12": 46,
+              "48": 284,
+              "192": 764,
+              "768": 1402
+            },
+            "max_abs_error": 7.373601561686369e-09,
+            "rms_error": 1.1379806688057778e-09,
+            "values": 80,
+            "speedup": 0.7941981938739757
+          },
+          "auto": {
+            "wall_s": 113.39413065393455,
+            "sampled_peak": {
+              "host_used_bytes": 34892935168,
+              "gpu_used_mib": 21836
+            },
+            "cluster_counts_by_dimension": {
+              "3": 32,
+              "12": 46,
+              "48": 284,
+              "192": 764,
+              "768": 1402
+            },
+            "max_abs_error": 3.466987178338057e-09,
+            "rms_error": 6.798896997147419e-10,
+            "values": 80,
+            "speedup": 0.8817715703743574
+          }
+        }
+      },
+      {
+        "case": "Diamond_NV_natab_cce_nstate0",
+        "backends": {
+          "cpu": {
+            "wall_s": 0.8522544099250808,
+            "sampled_peak": {
+              "host_used_bytes": 4613500928,
+              "gpu_used_mib": 0
+            },
+            "cluster_counts_by_dimension": {
+              "2": 123,
+              "4": 552,
+              "8": 1394,
+              "16": 2103
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 60
+          },
+          "cuda": {
+            "wall_s": 16.73943151300773,
+            "sampled_peak": {
+              "host_used_bytes": 26010292224,
+              "gpu_used_mib": 20274
+            },
+            "cluster_counts_by_dimension": {
+              "2": 123,
+              "4": 552,
+              "8": 1394,
+              "16": 2103
+            },
+            "max_abs_error": 1.000000082740371e-10,
+            "rms_error": 1.8257420094131125e-11,
+            "values": 60,
+            "speedup": 0.05091298406775752
+          },
+          "auto": {
+            "wall_s": 6.719429246033542,
+            "sampled_peak": {
+              "host_used_bytes": 11419111424,
+              "gpu_used_mib": 17906
+            },
+            "cluster_counts_by_dimension": {
+              "2": 123,
+              "4": 552,
+              "8": 1394,
+              "16": 2103
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 60,
+            "speedup": 0.12683434540636973
+          }
+        }
+      },
+      {
+        "case": "Diamond_NV_natab_cce_nstate1",
+        "backends": {
+          "cpu": {
+            "wall_s": 0.8635014890460297,
+            "sampled_peak": {
+              "host_used_bytes": 4615266304,
+              "gpu_used_mib": 0
+            },
+            "cluster_counts_by_dimension": {
+              "2": 123,
+              "4": 552,
+              "8": 1394,
+              "16": 2103
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 60
+          },
+          "cuda": {
+            "wall_s": 16.72700255503878,
+            "sampled_peak": {
+              "host_used_bytes": 26287169536,
+              "gpu_used_mib": 20274
+            },
+            "cluster_counts_by_dimension": {
+              "2": 123,
+              "4": 552,
+              "8": 1394,
+              "16": 2103
+            },
+            "max_abs_error": 1.41421367938565e-10,
+            "rms_error": 6.055300987190698e-11,
+            "values": 60,
+            "speedup": 0.05162320542516518
+          },
+          "auto": {
+            "wall_s": 6.699811839032918,
+            "sampled_peak": {
+              "host_used_bytes": 11407527936,
+              "gpu_used_mib": 17906
+            },
+            "cluster_counts_by_dimension": {
+              "2": 123,
+              "4": 552,
+              "8": 1394,
+              "16": 2103
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 60,
+            "speedup": 0.12888443881592226
+          }
+        }
+      },
+      {
+        "case": "Diamond_NV_natab_gcce_nstate0",
+        "backends": {
+          "cpu": {
+            "wall_s": 1.1197316400939599,
+            "sampled_peak": {
+              "host_used_bytes": 4616826880,
+              "gpu_used_mib": 0
+            },
+            "cluster_counts_by_dimension": {
+              "3": 32,
+              "6": 123,
+              "12": 552,
+              "24": 1394,
+              "48": 2103
+            },
+            "max_abs_error": 0.0,
+            "rms_error": 0.0,
+            "values": 60
+          }
+        }
+      }
+    ],
+    "status": "failed",
+    "current_case": "Diamond_NV_natab_gcce_nstate0",
+    "current_backend": "cuda",
+    "error": "ValueError: coherence_wiDiv: |CPU-target|=5.03e-07 exceeds tolerance"
+  },
+  "local_rechecks": [
+    {
+      "case": "Diamond_NV_P1_10ppm_cce_nstate0",
+      "backend": "cuda",
+      "status": "passed",
+      "max_abs_error": 2.0126393193071664e-07,
+      "rms_error": 2.7449315260829182e-08,
+      "values": 80
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_cce_nstate0",
+      "backend": "auto",
+      "status": "passed",
+      "max_abs_error": 2.713612472878153e-08,
+      "rms_error": 3.1520800023962303e-09,
+      "values": 80
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_cce_nstate1",
+      "backend": "cuda",
+      "status": "passed",
+      "max_abs_error": 1.746424940193332e-09,
+      "rms_error": 3.2882366592013663e-10,
+      "values": 80
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_cce_nstate1",
+      "backend": "auto",
+      "status": "passed",
+      "max_abs_error": 8.000000106811456e-10,
+      "rms_error": 1.3784048582468687e-10,
+      "values": 80
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "backend": "cuda",
+      "status": "passed",
+      "max_abs_error": 2.5423744551607285e-06,
+      "rms_error": 3.2539769004536626e-07,
+      "values": 80
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate0",
+      "backend": "auto",
+      "status": "passed",
+      "max_abs_error": 3.0876100047820515e-07,
+      "rms_error": 4.7350948073776995e-08,
+      "values": 80
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+      "backend": "cuda",
+      "status": "passed",
+      "max_abs_error": 7.373601561686369e-09,
+      "rms_error": 1.1379806688057778e-09,
+      "values": 80
+    },
+    {
+      "case": "Diamond_NV_P1_10ppm_gcce_nstate1",
+      "backend": "auto",
+      "status": "passed",
+      "max_abs_error": 3.4669871783380573e-09,
+      "rms_error": 6.798896997147419e-10,
+      "values": 80
+    },
+    {
+      "case": "Diamond_NV_natab_cce_nstate0",
+      "backend": "cuda",
+      "status": "passed",
+      "max_abs_error": 1.000000082740371e-10,
+      "rms_error": 1.8257420094131125e-11,
+      "values": 60
+    },
+    {
+      "case": "Diamond_NV_natab_cce_nstate0",
+      "backend": "auto",
+      "status": "passed",
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60
+    },
+    {
+      "case": "Diamond_NV_natab_cce_nstate1",
+      "backend": "cuda",
+      "status": "passed",
+      "max_abs_error": 1.41421367938565e-10,
+      "rms_error": 6.055300987190698e-11,
+      "values": 60
+    },
+    {
+      "case": "Diamond_NV_natab_cce_nstate1",
+      "backend": "auto",
+      "status": "passed",
+      "max_abs_error": 0.0,
+      "rms_error": 0.0,
+      "values": 60
+    }
+  ],
+  "failing_points": [
+    {
+      "file": "coherence_wiDiv",
+      "time_ms": 0.8,
+      "column": 1,
+      "cpu": [
+        0.0587180358,
+        0.0651835323
+      ],
+      "cuda": [
+        0.0587175395,
+        0.0651834486
+      ],
+      "abs_error": 5.033084342624645e-07,
+      "relative_error": 5.736961183341965e-06,
+      "allowed_error": 1.8546168369550345e-07,
+      "tolerance_ratio": 2.713813571803928
+    },
+    {
+      "file": "coherence_wiDiv",
+      "time_ms": 0.88,
+      "column": 1,
+      "cpu": [
+        0.0196731095,
+        0.042347601
+      ],
+      "cuda": [
+        0.0196730357,
+        0.0423478111
+      ],
+      "abs_error": 2.2268464248970512e-07,
+      "relative_error": 4.768997614194921e-06,
+      "allowed_error": 1.0338844784777592e-07,
+      "tolerance_ratio": 2.1538638709188773
+    },
+    {
+      "file": "coherence_wiDiv",
+      "time_ms": 1.28,
+      "column": 1,
+      "cpu": [
+        0.0340826833,
+        -0.0014238981
+      ],
+      "cuda": [
+        0.0340827744,
+        -0.0014238976
+      ],
+      "abs_error": 9.110137211022792e-08,
+      "relative_error": 2.670622260727934e-06,
+      "allowed_error": 7.822482793609032e-08,
+      "tolerance_ratio": 1.1646094279000234
+    },
+    {
+      "file": "coherence_wiDiv",
+      "time_ms": 1.36,
+      "column": 1,
+      "cpu": [
+        0.0105945596,
+        -0.0057735693
+      ],
+      "cuda": [
+        0.0105946138,
+        -0.0057735899
+      ],
+      "abs_error": 5.798275605757783e-08,
+      "relative_error": 4.805624062822879e-06,
+      "allowed_error": 3.4131207643203825e-08,
+      "tolerance_ratio": 1.6988193521808568
+    },
+    {
+      "file": "coherence_wiDiv",
+      "time_ms": 1.44,
+      "column": 1,
+      "cpu": [
+        0.0233130938,
+        -0.0032849386
+      ],
+      "cuda": [
+        0.0233132175,
+        -0.003284959
+      ],
+      "abs_error": 1.253708498815784e-07,
+      "relative_error": 5.325097845855718e-06,
+      "allowed_error": 5.708677793747915e-08,
+      "tolerance_ratio": 2.196145139227918
+    },
+    {
+      "file": "coherence_wiDiv",
+      "time_ms": 1.68,
+      "column": 1,
+      "cpu": [
+        -0.0019582698,
+        0.0047372393
+      ],
+      "cuda": [
+        -0.0019582754,
+        0.0047372114
+      ],
+      "abs_error": 2.8456457966862272e-08,
+      "relative_error": 5.551356178476048e-06,
+      "allowed_error": 2.0252074286710282e-08,
+      "tolerance_ratio": 1.4051132523020533
+    },
+    {
+      "file": "coherence_wiDiv",
+      "time_ms": 1.76,
+      "column": 1,
+      "cpu": [
+        0.0063098487,
+        -0.0002065987
+      ],
+      "cuda": [
+        0.0063097839,
+        -0.0002065877
+      ],
+      "abs_error": 6.572701118977923e-08,
+      "relative_error": 1.0410995748518915e-05,
+      "allowed_error": 2.2626460096120903e-08,
+      "tolerance_ratio": 2.90487380308542
+    },
+    {
+      "file": "coherence_wiDiv",
+      "time_ms": 2.0,
+      "column": 1,
+      "cpu": [
+        0.0142556687,
+        0.001905412
+      ],
+      "cuda": [
+        0.0142557316,
+        0.0019054154
+      ],
+      "abs_error": 6.299182486660896e-08,
+      "relative_error": 4.379772064893662e-06,
+      "allowed_error": 3.8764887274168396e-08,
+      "tolerance_ratio": 1.624971186452658
+    }
+  ],
+  "not_run": [
+    {
+      "case": "Diamond_NV_natab_gcce_nstate0",
+      "backend": "auto"
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate1",
+      "backend": "cpu"
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate1",
+      "backend": "cuda"
+    },
+    {
+      "case": "Diamond_NV_natab_gcce_nstate1",
+      "backend": "auto"
+    }
+  ],
+  "cause": "Numerical comparison tolerance exceeded; underlying cause not yet established"
+}

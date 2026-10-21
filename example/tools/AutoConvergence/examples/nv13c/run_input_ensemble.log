@@ -1,0 +1,47 @@
+[auto] runner <repo>/example/tools/AutoConvergence/autoconv (python python3), binary <repo>/bin/main.out
+[auto] the input, the source files or the decision code changed: earlier decisions moved to decisions.4.jsonl
+status: sampling-unresolved (production: SE of the area 2.66% > target 2.00% with 64 stable configurations (the production holds 64): about 114 needed (50 more); add 76 more bath files (data/config_{k}) to configurations.production and call again)
+result: T2 1.069 ms, n 1.99 (A 0.9471 ms, sampling error 2.66 %)
+        rbath 40 Å, rdip 8 Å, 64 configurations x ensemble, window 2.95 ms
+coherence: coherence_mean.txt
+core-hours: 0.053
+
+WARNINGS
+  combination recheck fail: rbath 40, rdip 8 vs rbath 50, rdip 15 on configurations [7, 8, 9]: area differs by 2.74 %
+
+0. start
+  configurations: test 6 [1, 2, 3, 4, 5, 6], production 64 (given)
+  rbath candidates [25, 30, 35, 40] (given)
+  rdip candidates [4, 6, 8, 10, 12] (given)
+  states: ensemble (nstate 0)
+  launcher: mpirun -n 4 (input)
+
+1. time window                                  (1_window.png)
+  T2 fit: T2 1.084 ms, n 2.56;  T_d (|L| = 0.01) 1.97 ms
+  fit points: the peaks (5 points, t = 0 and the points higher than both neighbours; 1_window_fit.png)
+  T2 here is a convergence measure from this fit, not the exact T2 of the system
+  time points: 101 per run, fixed (whether they are enough is not checked)
+  window = 1.5 x T_d = 2.95 ms, 101 points
+  revival: none;  slow configurations: 3 points above 0.01 after T_d (max 0.019)
+  found again at rbath 50, rdip 15: T_d 1.93 ms -> kept
+
+2. rdip  (rbath 40 Å, reference rdip 15 Å)      (2_rdip.png)
+  rdip          4       6       8      10      12
+  |ΔA/A|  12.22 %  3.30 %  1.35 %  0.59 %  0.23 %
+  chosen 8 (threshold 2 %)
+
+3. rbath  (rdip 8 Å, reference rbath 50 Å)      (3_rbath.png)
+  rbath        25      30      35      40
+  |ΔA/A|  18.08 %  7.58 %  2.03 %  0.79 %
+  chosen 40 (threshold 2 %)
+  rdip rechecked at rbath 50: 8 still passes (1.51 %)
+
+5. configurations  (production)                 (5_configurations.png)
+  estimate from the test: 21 needed -> 35 -> 64 computed
+  configurations       2      10      15      20      25      35      40      45      50      60      64
+  σA/A            3.76 %  4.11 %  3.65 %  2.98 %  2.45 %  2.59 %  2.74 %  2.43 %  2.47 %  2.43 %  2.66 %
+  not enough (threshold 2 %)
+
+6. converged coherence                          (6_converged_coherence.png)
+  T2 1.069 ms, n 1.99, A 0.9471 ms, σA/A 2.66 %
+  window check: decay 2.3 ms inside 2.95 ms

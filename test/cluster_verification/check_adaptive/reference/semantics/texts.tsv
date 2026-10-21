@@ -1,0 +1,59 @@
+repr	0000000000000000	0.0
+repr	8000000000000000	-0.0
+repr	3fb999999999999a	0.1
+repr	3fe0000000000000	0.5
+repr	3ff0000000000000	1.0
+repr	bff0000000000000	-1.0
+repr	4000000000000000	2.0
+repr	430c6bf526340000	1000000000000000.0
+repr	4341c37937e08000	1e+16
+repr	3f1a36e2eb1c432d	0.0001
+repr	3ee4f8b588e368f1	1e-05
+repr	0000000000000001	5e-324
+repr	7fe1ccf385ebc8a0	1e+308
+repr	7fefffffffffffff	1.7976931348623157e+308
+repr	3fd5555555555555	0.3333333333333333
+repr	3fe5555555555555	0.6666666666666666
+repr	4341c37937e08001	1.0000000000000002e+16
+repr	437b69b4ba630f35	1.2345678901234568e+17
+repr	54b249ad2594c37d	1e+100
+repr	7ff0000000000000	inf
+repr	fff0000000000000	-inf
+repr	7ff8000000000000	nan
+repr	3f847ae147ae147b	0.01
+repr	0000000000000002	1e-323
+repr	400921fb54442d18	3.141592653589793
+repr	41d26580b487e6b4	1234567890.123456
+repr	0010000000000000	2.2250738585072014e-308
+repr	4340000000000000	9007199254740992.0
+dumps_compact	{}	{}
+dumps_default	{}	{}
+dumps_compact	{"a": 1}	{"a":1}
+dumps_default	{"a": 1}	{"a": 1}
+dumps_compact	{"b": 1, "a": 2}	{"a":2,"b":1}
+dumps_default	{"b": 1, "a": 2}	{"b": 1, "a": 2}
+dumps_compact	{"a": 0.1, "b": "x"}	{"a":0.1,"b":"x"}
+dumps_default	{"a": 0.1, "b": "x"}	{"a": 0.1, "b": "x"}
+dumps_compact	[1, 2, 3]	[1,2,3]
+dumps_default	[1, 2, 3]	[1, 2, 3]
+dumps_compact	[]	[]
+dumps_default	[]	[]
+dumps_compact	{"z": [1, {"y": 2.5}], "a": null, "m": true}	{"a":null,"m":true,"z":[1,{"y":2.5}]}
+dumps_default	{"z": [1, {"y": 2.5}], "a": null, "m": true}	{"z": [1, {"y": 2.5}], "a": null, "m": true}
+dumps_compact	{"k": 1000000000000000000, "f": 1e+16, "neg": -0.0}	{"f":1e+16,"k":1000000000000000000,"neg":-0.0}
+dumps_default	{"k": 1000000000000000000, "f": 1e+16, "neg": -0.0}	{"k": 1000000000000000000, "f": 1e+16, "neg": -0.0}
+dumps_compact	{"\ud0a4": "\uac12", "emoji": "\ud83d\ude00", "tab": "a\tb"}	{"emoji":"\ud83d\ude00","tab":"a\tb","\ud0a4":"\uac12"}
+dumps_default	{"\ud0a4": "\uac12", "emoji": "\ud83d\ude00", "tab": "a\tb"}	{"\ud0a4": "\uac12", "emoji": "\ud83d\ude00", "tab": "a\tb"}
+dumps_compact	{"nested": {"deep": {"deeper": [1.5, "x"]}}}	{"nested":{"deep":{"deeper":[1.5,"x"]}}}
+dumps_default	{"nested": {"deep": {"deeper": [1.5, "x"]}}}	{"nested": {"deep": {"deeper": [1.5, "x"]}}}
+sha256	{}	44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+sha256	{"a": 1}	015abd7f5cc57a2dd94b7590f04ad8084273905ee33ec5cebeae62276a97f862
+sha256	{"b": 1, "a": 2}	d3626ac30a87e6f7a6428233b3c68299976865fa5508e4267c5415c76af7a772
+sha256	{"a": 0.1, "b": "x"}	40a97a3ea18271660e934cc064e4a5f1c34c6a95f5475ea88245604bd21a686a
+sha256	[1, 2, 3]	a615eeaee21de5179de080de8c3052c8da901138406ba71c38c032845f7d54f4
+sha256_text	''	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+sha256_text	'a'	ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb
+sha256_text	'abc'	ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+sha256_text	'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'	44f8354494a5ba03ba1792a8d3e9c534c47a9181980fde7a3f44b06ef2ae7c7f
+sha256_text	'한글'	bd87f9bb68b67d2fa1cb82b6751820e946d5b1316d25d5fd96512fb4be44a2a8
+sha256_text	'\x00\x01'	b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2

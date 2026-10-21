@@ -1,0 +1,114 @@
+int	'7'	7	
+float	'7'	401c000000000000	
+int	' 7 '	7	
+float	' 7 '	401c000000000000	
+int	'\t7\n'	7	
+float	'\t7\n'	401c000000000000	
+int	'1_000'	1000	
+float	'1_000'	408f400000000000	
+int	'1_000_000'	1000000	
+float	'1_000_000'	412e848000000000	
+int	'007'	7	
+float	'007'	401c000000000000	
+int	'+7'	7	
+float	'+7'	401c000000000000	
+int	'-7'	-7	
+float	'-7'	c01c000000000000	
+int	'-0'	0	
+float	'-0'	8000000000000000	
+int	'0'	0	
+float	'0'	0000000000000000	
+int	''	ValueError	invalid literal for int() with base 10: ''
+float	''	ValueError	could not convert string to float: ''
+int	'1__0'	ValueError	invalid literal for int() with base 10: '1__0'
+float	'1__0'	ValueError	could not convert string to float: '1__0'
+int	'1_'	ValueError	invalid literal for int() with base 10: '1_'
+float	'1_'	ValueError	could not convert string to float: '1_'
+int	'_1'	ValueError	invalid literal for int() with base 10: '_1'
+float	'_1'	ValueError	could not convert string to float: '_1'
+int	'0x10'	ValueError	invalid literal for int() with base 10: '0x10'
+float	'0x10'	ValueError	could not convert string to float: '0x10'
+int	'7.0'	ValueError	invalid literal for int() with base 10: '7.0'
+float	'7.0'	401c000000000000	
+int	'  '	ValueError	invalid literal for int() with base 10: '  '
+float	'  '	ValueError	could not convert string to float: '  '
+int	'+-7'	ValueError	invalid literal for int() with base 10: '+-7'
+float	'+-7'	ValueError	could not convert string to float: '+-7'
+int	'7 7'	ValueError	invalid literal for int() with base 10: '7 7'
+float	'7 7'	ValueError	could not convert string to float: '7 7'
+int	'٧'	ValueError	invalid literal for int() with base 10: '\u0667'
+float	'٧'	ValueError	could not convert string to float: '\u0667'
+int	'１２３'	ValueError	invalid literal for int() with base 10: '\uff11\uff12\uff13'
+float	'１２３'	ValueError	could not convert string to float: '\uff11\uff12\uff13'
+int	'1.5'	ValueError	invalid literal for int() with base 10: '1.5'
+float	'1.5'	3ff8000000000000	
+int	' 1.5 '	ValueError	invalid literal for int() with base 10: ' 1.5 '
+float	' 1.5 '	3ff8000000000000	
+int	'1_0.5'	ValueError	invalid literal for int() with base 10: '1_0.5'
+float	'1_0.5'	4025000000000000	
+int	'.5'	ValueError	invalid literal for int() with base 10: '.5'
+float	'.5'	3fe0000000000000	
+int	'5.'	ValueError	invalid literal for int() with base 10: '5.'
+float	'5.'	4014000000000000	
+int	'1e3'	ValueError	invalid literal for int() with base 10: '1e3'
+float	'1e3'	408f400000000000	
+int	'1E3'	ValueError	invalid literal for int() with base 10: '1E3'
+float	'1E3'	408f400000000000	
+int	'1e400'	ValueError	invalid literal for int() with base 10: '1e400'
+float	'1e400'	7ff0000000000000	
+int	'1e-400'	ValueError	invalid literal for int() with base 10: '1e-400'
+float	'1e-400'	0000000000000000	
+int	'-1e400'	ValueError	invalid literal for int() with base 10: '-1e400'
+float	'-1e400'	fff0000000000000	
+int	'inf'	ValueError	invalid literal for int() with base 10: 'inf'
+float	'inf'	7ff0000000000000	
+int	'INF'	ValueError	invalid literal for int() with base 10: 'INF'
+float	'INF'	7ff0000000000000	
+int	'Infinity'	ValueError	invalid literal for int() with base 10: 'Infinity'
+float	'Infinity'	7ff0000000000000	
+int	'-Infinity'	ValueError	invalid literal for int() with base 10: '-Infinity'
+float	'-Infinity'	fff0000000000000	
+int	'nan'	ValueError	invalid literal for int() with base 10: 'nan'
+float	'nan'	7ff8000000000000	
+int	'NAN'	ValueError	invalid literal for int() with base 10: 'NAN'
+float	'NAN'	7ff8000000000000	
+int	'+nan'	ValueError	invalid literal for int() with base 10: '+nan'
+float	'+nan'	7ff8000000000000	
+int	'infinity'	ValueError	invalid literal for int() with base 10: 'infinity'
+float	'infinity'	7ff0000000000000	
+int	'-nan'	ValueError	invalid literal for int() with base 10: '-nan'
+float	'-nan'	7ff8000000000000	
+int	'-NAN'	ValueError	invalid literal for int() with base 10: '-NAN'
+float	'-NAN'	7ff8000000000000	
+int	' -nan '	ValueError	invalid literal for int() with base 10: ' -nan '
+float	' -nan '	7ff8000000000000	
+int	'-inf'	ValueError	invalid literal for int() with base 10: '-inf'
+float	'-inf'	fff0000000000000	
+int	'+inf'	ValueError	invalid literal for int() with base 10: '+inf'
+float	'+inf'	7ff0000000000000	
+int	'0x1p3'	ValueError	invalid literal for int() with base 10: '0x1p3'
+float	'0x1p3'	ValueError	could not convert string to float: '0x1p3'
+int	'1d3'	ValueError	invalid literal for int() with base 10: '1d3'
+float	'1d3'	ValueError	could not convert string to float: '1d3'
+int	'1e'	ValueError	invalid literal for int() with base 10: '1e'
+float	'1e'	ValueError	could not convert string to float: '1e'
+int	'e3'	ValueError	invalid literal for int() with base 10: 'e3'
+float	'e3'	ValueError	could not convert string to float: 'e3'
+int	'--1'	ValueError	invalid literal for int() with base 10: '--1'
+float	'--1'	ValueError	could not convert string to float: '--1'
+int	'999999999999999999'	999999999999999999	
+float	'999999999999999999'	43abc16d674ec800	
+int	'9223372036854775807'	9223372036854775807	
+float	'9223372036854775807'	43e0000000000000	
+int	'𝟙'	ValueError	invalid literal for int() with base 10: '\U0001d7d9'
+float	'𝟙'	ValueError	could not convert string to float: '\U0001d7d9'
+int	'𝟎'	ValueError	invalid literal for int() with base 10: '\U0001d7ce'
+float	'𝟎'	ValueError	could not convert string to float: '\U0001d7ce'
+int	'𝟿'	ValueError	invalid literal for int() with base 10: '\U0001d7ff'
+float	'𝟿'	ValueError	could not convert string to float: '\U0001d7ff'
+int	'𝟘𝟙'	ValueError	invalid literal for int() with base 10: '\U0001d7d8\U0001d7d9'
+float	'𝟘𝟙'	ValueError	could not convert string to float: '\U0001d7d8\U0001d7d9'
+int	'٧٨'	ValueError	invalid literal for int() with base 10: '\u0667\u0668'
+float	'٧٨'	ValueError	could not convert string to float: '\u0667\u0668'
+int	'๓'	ValueError	invalid literal for int() with base 10: '\u0e53'
+float	'๓'	ValueError	could not convert string to float: '\u0e53'

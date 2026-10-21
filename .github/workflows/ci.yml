@@ -1,0 +1,266 @@
+# .github/workflows/ci.yml
+# The fast, machine-independent checks on every push and pull request, split into jobs that run at the same time (user
+# 2026-10-13: one job took over 40 minutes): unit (a CMake build of the CPU binary, a second build whose defect warnings stop
+# it, the numeric and CPU regression unit tests with the bundle unit tests, the refinement driver's unit tests, the pCCE
+# partition unit tests), python (the Python unit tests; no build), checks (the closed-form coherence of one 13C, the
+# coordinate-rotation suite, the vector mean field), refusals (the refusals, about 7 minutes, alone so no job waits
+# for them; user 2026-10-16), forms (the input-form stages in three parts) and ladder (the
+# rdip ladder check in two parts). The CMake builds keep their objects in ccache between runs. Not here, because they need
+# a particular machine or a long run: check_numerics (exact against references recorded on one machine), the adaptive
+# regression and in-process suites, and anything with CUDA (test/README.md says how to run them).
+# The make job builds with do_compile.sh, the Makefile path the servers use (D30): the generic preset with Open MPI, its
+# unit tests, a rerun that must not rebuild and the closed form (the refusals ran here too until 2026-10-16: the same
+# check twice).
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
+      CCEX_BUILD_DIR: ${{ github.workspace }}/build
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ccache libopenmpi-dev openmpi-bin python3-numpy
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-portable-${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
+          restore-keys: ccache-portable-
+
+      - name: Build (CMake, CPU only, portable flags, ccache)
+        run: |
+          cmake -B build -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          cmake --build build --target ccex -j "$(nproc)"
+          ccache -s | head -5
+
+      - name: Warnings that are defects (format, sequence point, misleading indentation) stop a second build
+        run: |
+          cmake -B build-strict -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF -DCCEX_STRICT_WARNINGS=ON \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          cmake --build build-strict --target ccex -j "$(nproc)"
+
+      - name: Numeric unit tests
+        run: cmake --build build --target numeric-test
+
+      - name: CPU regression tests (cluster log, MPI seed, review controls, host lifetimes, bundle partition)
+        run: cmake --build build --target cpu-test -j "$(nproc)"
+
+      - name: Refinement driver unit tests
+        run: sh test/cluster_verification/check_adaptive/verify.sh unit
+
+      - name: pCCE partition unit tests
+        run: |
+          for c in check_partition check_partition_search check_partition_cycle; do
+            python3 test/cluster_verification/check_pcce/$c.py --output "$RUNNER_TEMP/$c"
+          done
+
+  # The Python unit tests need no build (the automatic convergence's tests run a stand-in for main.out).
+  python:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3-numpy python3-scipy python3-matplotlib python3-pytest \
+            python3-pytest-xdist
+
+      - name: Python unit tests
+        run: |
+          (cd test/cluster_verification/check_pcce && python3 -m unittest test_partition_log test_profile_parser)
+          python3 test/gpu_verification/server/test_run_orders.py   # the server runner's guards, no GPU or Slurm (review b467fe R3)
+          python3 test/gpu_verification/check_gpu/test_check_warp_spread.py   # the warp curve verdict's strict reading (review 20261013-180049 G1)
+          python3 test/gpu_verification/gpu_benchmarks/test_backend_check.py   # min_dim/gpu_sharing accept cpu-batch on backend=cpu (G3)
+          (cd example/tools/AutoConvergence && python3 -m pytest -q -n auto tests)   # auto_convergence setup driver
+          python3 -m unittest discover -s example/tools/InputKeys/tests   # the input-key converter (review 20261013-180049 C1)
+          python3 -m unittest discover -s example/tools/StateFiles/tests  # the state and axis file writer (A94; its CCEX run is skipped without a build)
+
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
+      CCEX_BUILD_DIR: ${{ github.workspace }}/build
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ccache libopenmpi-dev openmpi-bin python3-numpy
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-portable-${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
+          restore-keys: ccache-portable-
+
+      - name: Build (CMake, CPU only, portable flags, ccache)
+        run: |
+          cmake -B build -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          cmake --build build --target ccex -j "$(nproc)"
+          ccache -s | head -5
+
+      - name: Closed form (one 13C, free induction and Hahn echo)
+        run: bash test/code_verification/check_analytic/run.sh
+
+      - name: Coordinate rotation
+        run: bash test/code_verification/check_rotation/run.sh
+
+      - name: Vector mean field (same binary, z vs vector curve)
+        run: bash test/code_verification/check_mean_field/run.sh
+
+  # The refusals (about 7 minutes on a runner) in a job of their own, so that no job waits for them after another check.
+  refusals:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
+      CCEX_BUILD_DIR: ${{ github.workspace }}/build
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ccache libopenmpi-dev openmpi-bin python3-numpy
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-portable-${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
+          restore-keys: ccache-portable-
+
+      - name: Build (CMake, CPU only, portable flags, ccache)
+        run: |
+          cmake -B build -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          cmake --build build --target ccex -j "$(nproc)"
+          ccache -s | head -5
+
+      - name: Refusals
+        run: bash test/code_verification/check_refusals/run.sh
+
+  # The input-form stages in three parts (check_input_forms/run.sh takes the stages to run).
+  forms:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        stages: ["legacy axis2 errcorr",
+                 "gyro comments nodiv allfull evolution_update",
+                 "gpu_options propagator tensor_format cli autoconv"]
+    env:
+      CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
+      CCEX_BUILD_DIR: ${{ github.workspace }}/build
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ccache libopenmpi-dev openmpi-bin python3-numpy python3-scipy python3-matplotlib \
+            python3-pandas python3-psutil
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-portable-${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
+          restore-keys: ccache-portable-
+
+      - name: Build (CMake, CPU only, portable flags, ccache)
+        run: |
+          cmake -B build -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          cmake --build build --target ccex -j "$(nproc)"
+          ccache -s | head -5
+
+      - name: Input forms (${{ matrix.stages }})
+        run: bash test/code_verification/check_input_forms/run.sh ${{ matrix.stages }}
+
+  # The rdip ladder check runs many order-2 cases (cCCE, gCCE by three paths, pCCE2) - 27 minutes one run at a time on a runner
+  # with the portable build (run 38243036431; 96 % of it the four h-BN gCCE2 ensemble/matrix and pCCE2 cases). CCEX_QUICK now
+  # takes the h-BN gCCE cases at rbath 9 (every rung still has its own pairs; about 1.5 min for all parts locally, 2026-10-13),
+  # and the check runs in two parts (CCEX_LADDER_PART, the long h-BN cases shared), two runs at a time in each.
+  ladder:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        part: [1, 2]
+    env:
+      CCEX_BIN: ${{ github.workspace }}/build/bin/main.out
+      CCEX_BUILD_DIR: ${{ github.workspace }}/build
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+      OMPI_MCA_hwloc_base_binding_policy: none   # two mpiruns at a time: unbound, or both bind to cores 0 and 1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake g++ ccache libopenmpi-dev openmpi-bin python3-numpy
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ccache-portable-${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
+          restore-keys: ccache-portable-
+
+      - name: Build (CMake, CPU only, portable flags, ccache)
+        run: |
+          cmake -B build -DCCEX_CUDA=OFF -DCCEX_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
+          cmake --build build --target ccex -j "$(nproc)"
+          ccache -s | head -5
+
+      - name: rdip ladder, part ${{ matrix.part }} of 2 (same binary, rungs vs separate runs, refusals; quick sizes)
+        run: CCEX_QUICK=1 CCEX_JOBS=2 CCEX_LADDER_PART=${{ matrix.part }}/2 bash test/code_verification/check_rdip_ladder/run.sh
+
+  make:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      OMPI_MCA_rmaps_base_oversubscribe: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends g++ libopenmpi-dev openmpi-bin python3-numpy
+
+      - name: Build (do_compile.sh generic, Open MPI)
+        run: CXX=mpicxx bash do_compile.sh generic
+
+      - name: Numeric and CPU unit tests (Makefile targets)
+        run: make numeric-test cpu-test MPIRUN=mpirun
+
+      - name: A rerun keeps the build
+        run: |
+          before=$(stat -c %Y bin/main.out)
+          CXX=mpicxx bash do_compile.sh generic
+          [ "$(stat -c %Y bin/main.out)" = "$before" ] || { echo "do_compile.sh rebuilt an unchanged tree"; exit 1; }
+
+      - name: Closed form on the Makefile build
+        run: bash test/code_verification/check_analytic/run.sh

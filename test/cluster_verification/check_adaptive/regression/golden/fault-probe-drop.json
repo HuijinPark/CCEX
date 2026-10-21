@@ -1,0 +1,123 @@
+{
+ "returncode": 1,
+ "summaries": {
+  "summary.json": {
+   "dimension_limits": {
+    "bundle_max_dim": 8
+   },
+   "error": "missing MPI probe response",
+   "input": {
+    "Qubit": {
+     "alpha_state": {
+      "ms": [
+       1
+      ]
+     },
+     "beta_state": {
+      "ms": [
+       0
+      ]
+     },
+     "qubit": [
+      {
+       "gyro": -17608.59705,
+       "name": "NV",
+       "spin": 1,
+       "xyz": [
+        0,
+        0,
+        0
+       ]
+      }
+     ]
+    },
+    "bfield": 300,
+    "cluster": {
+     "bundle": {
+      "max_dim": 8,
+      "merge_cutoff": 1.0
+     },
+     "mode": "bundle"
+    },
+    "configuration": {
+     "bathfile": [
+      "test/cluster_verification/check_bundle/bath_6"
+     ],
+     "gyrofile": "test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C",
+     "seed": 19
+    },
+    "deltat": 0.005,
+    "execution": {
+     "backend": "cpu",
+     "gpu_options": {
+      "evolution_batch_steps": 4,
+      "min_dim": 8
+     },
+     "profile": true
+    },
+    "method": "cCCE",
+    "nstep": 9,
+    "order": 2,
+    "output": {
+     "file": "bin/adaptive_ensemble",
+     "savemode": "coherence"
+    },
+    "pulse": {
+     "count": 1
+    },
+    "quantity": "coherence",
+    "rbath": 15,
+    "rdip": 30
+   },
+   "input_file_sha256": {
+    "<REPO>/test/cluster_verification/check_bundle/bath_6": "7860fc92298dc8cc559e0df50fb73070cbadf1bfe0b4a8ae3631d00887273738",
+    "<REPO>/test/code_verification/check_input_forms/inputs/Diamond_NV_natab_cce/inputfiles/gyro_13C": "2cc0c11066852f97d67ab00dc004790909ed564b2af9f8305791e5ef1625da4d"
+   },
+   "limitations": [
+    "Local oracle errors and successive curves are checks, not rigorous global error bounds.",
+    "A greedy merge search cannot undo a poor initial partition.",
+    "One fixed partition and all requested time points/states are used per input."
+   ],
+   "rounds": [],
+   "runs": [
+    {
+     "directory": "<OUT>/0001-run",
+     "mode": "run",
+     "returncode": 0,
+     "timeout": false
+    },
+    {
+     "directory": "<OUT>/0002-probe",
+     "mode": "probe",
+     "returncode": 0,
+     "timeout": false
+    }
+   ],
+   "settings": {
+    "atol": 1e-07,
+    "binary": "<BINARY>",
+    "cache_mb": 256,
+    "cwd": "<REPO>",
+    "hub_candidates": false,
+    "input": "<INPUTS>/fault-probe-drop-0.json",
+    "max_candidates": 16,
+    "max_patches": 64,
+    "max_probes": 4096,
+    "max_rounds": 8,
+    "max_total_work": 8000000000000.0,
+    "merge_priority": "gain-per-cost",
+    "mpiexec": "<TOOLS>/fault_mpiexec.py",
+    "neighbors": 8,
+    "output": "<OUT>",
+    "policy": "merge",
+    "prefer_physical": false,
+    "probe_batch_clusters": 0,
+    "ranks": 1,
+    "raw_cache": null,
+    "rtol": 1e-05,
+    "timeout": 600
+   },
+   "status": "failed"
+  }
+ }
+}

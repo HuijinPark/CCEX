@@ -1,0 +1,39 @@
+{
+  "method": "gCCE",
+  "quantity": "dm",
+  "Qubit": {
+    "qubit": [{"file": "../../inputs/hbn/bath_hBN_VB_flat_Defect"}],
+    "alpha_state": {"ms": [1]},
+    "beta_state": {"ms": [0]}
+  },
+  "configuration": {
+    "gyrofile": "../../inputs/hbn/hBN_natab_gyro",
+    "bathfile": [
+      "../../inputs/hbn/bath_hBN_VB_flat_1"
+    ],
+    "bath_state_file": ["../../inputs/hbn/state_"],
+    "s_range": [1, 1],
+    "seed": 19
+  },
+  "order": 2,
+  "bfield": 500,
+  "rbath": 5,
+  "rdip": 3,
+  "deltat": 0.0001,
+  "nstep": 10,
+  "pulse": {"count": 1},
+  "hamiltonian": {
+    "common": {
+      "hyperfine": {
+        "dipole": "dft",
+        "contact": true,
+        "file": "../../inputs/hbn/hBN_VB_flat_ATensor_HSE_CellPBE_v3",
+        "missing_row": "stop"
+      },
+      "quadrupole": {
+        "structure": "plain",
+        "file": "../../inputs/hbn/hBN_VB_flat_QTensor_HSE_CellPBE"
+      }
+    }
+  }
+}
