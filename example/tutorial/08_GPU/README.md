@@ -29,21 +29,22 @@ Input: [`ccein.jsonc`](cCCE5_Hahn_backends/ccein.jsonc)
 ## gCCE4_Hahn_backends
 
 - **What it shows:** gCCE4 Hahn echo of the NV (spin 1 with its zero-field splitting) in four P1: the cluster of all
-  four has dimension 768 with the qubit. Measured on a GPU server (32 ranks + RTX PRO 6000): cpu 35.5 s,
-  auto 2.1 s, cuda 6.2 s, both GPU curves within 1.0e-10 of cpu; WSL, 4 ranks + RTX 3050: 40.9 / 16.8 / 16.8 s.
+  four has dimension 768 with the qubit. Measured on a GPU server (32 ranks + RTX PRO 6000, CUDA 13.2, MPS, median of
+  three runs): cpu 33.8 s, auto 2.1 s, cuda 4.7 s (5.8 s without MPS), both GPU curves within 1.0e-10 of cpu; WSL,
+  4 ranks + RTX 3050: 40.9 / 16.8 / 16.8 s.
 - **Keys that matter:** `method` gCCE, `execution.backend`, `gpu_options.min_dim` 256, `evolution_batch_steps` 64.
 - **How to run:** on a GPU node, `NP=32 bash run.sh` (CPU part alone: 85 s on 4 ranks, WSL).
 - **Expected result:** no `expected.png` yet (the run needs a GPU node).
 - **What to change next:** `cuda` sends every cluster, the qubit alone included, to the GPU and was slower than `auto`
-  here (6.2 s against 2.1 s).
+  here (4.7 s against 2.1 s).
 
 Input: [`ccein.jsonc`](gCCE4_Hahn_backends/ccein.jsonc)
 
 ## pCCE2_Hahn_backends
 
 - **What it shows:** pCCE2 (partitions of two P1) on the five P1: the pair of partitions is one cluster of dimension
-  256, on the GPU under `auto` too (`min_dim` 256). Measured on the same server (32 ranks): cpu 0.43 s, auto 0.44 s,
-  cuda 4.2 s, difference 0.
+  256, on the GPU under `auto` too (`min_dim` 256). Measured on the same server (32 ranks, MPS): cpu 0.22 s,
+  auto 0.29 s, cuda 2.8 s (3.8 s without MPS), difference 0.
 - **Keys that matter:** `cluster.mode` pcce, `cluster.pcce.partition_size` 2, `execution.backend`.
 - **How to run:** on a GPU node, `NP=32 bash run.sh` (CPU part alone: 1 s on 4 ranks, WSL).
 - **Expected result:** no `expected.png` yet (the run needs a GPU node).
