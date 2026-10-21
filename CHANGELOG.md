@@ -30,8 +30,9 @@
   when the module is not there. `test/gpu_verification/server/environment.sh` loads the same module, so the jobs'
   `mpirun`, the one the checks take (the Intel MPI of `I_MPI_ROOT` first, `test/README.md`) and the binaries' MPI are
   one; with the Open MPI binaries a check run in that environment needed `CCEX_MPI`. The module conflicts with
-  `gcc/openmpi-*` and `nvhpc`, so a job has one MPI. Intel MPI reduces gCCE's density matrices faster there:
-  `MPI_Reduce` with `MPI_PROD` of 729 × 729 complex numbers on 16 ranks took 1.55 ms against 12.98 ms with Open MPI
+  `gcc/openmpi-*` and `nvhpc`, so a job has one MPI. Intel MPI reduces gCCE's density matrices faster there (one
+  node, a 32-core Xeon 6731P, one rank per core): `MPI_Reduce` with `MPI_PROD` of 729 × 729 complex numbers on 16
+  ranks took 1.55 ms against 12.98 ms with Open MPI
   4.1.5 and 14.00 ms with 5.0.10, and NV6 gCCE2 `dm` (16 ranks with MPS) spent 0.41 s in it on rank 0 against
   1.1-1.3 s, with the same outputs (job 17695). Rank 0 then wrote the 1.14 GB of the two `dm` files in 17.1 s instead
   of 9.7 s in 11 of 21 such runs with Intel MPI and in none of 9 with Open MPI: the same instructions at a lower rate
@@ -39,8 +40,9 @@
   share of transparent huge pages; `I_MPI_PIN=off` did not change it (jobs 17695-17697). The cause is not known. A
   `coherence` run writes a few numbers per step, so its write is short.
 - **The CUDA files compile with `nvcc -split-compile`.** `warp_cluster_gpu.cu` instantiates 30 kernels (2.17 million
-  SASS instructions), and nvcc optimized them one after another: with CUDA 13.2 the file took 1217 s on idm4-gpu,
-  nearly all of a 1331 s build at `CCEX_JOBS=32` (job 17690). `do_compile.sh` gives the three CUDA files
+  SASS instructions), and nvcc optimized them one after another: with CUDA 13.2 the file took 1217 s on idm4-gpu
+  (a 32-core Xeon 6731P), nearly all of a 1331 s build at `CCEX_JOBS=32` (job 17690). `do_compile.sh` gives the
+  three CUDA files
   `-split-compile=$CCEX_JOBS` (default 5; the make variable `NVCC_SPLIT`, which `NVCC_SPLIT=` on the make line
   empties), CMake `-split-compile=${CCEX_CUDA_SPLIT_COMPILE}` (default 5; 1 is off). At 32 the file takes 284 s and
   the build 301 s (job 17692). The machine code differs (every kernel of the three files), the results do not: NV6
@@ -632,7 +634,8 @@ against the CPU path (relative 1.3e-6, 1.6e-5 on the diverging CR60 curve).
 
 ### Compared with v1.2.2
 
-Same inputs and node (Xeon Gold 6530, 64 ranks), median of 3 runs. v1.2.2 built with icpx 2023.2 without MKL; 2.0.0 (a
+Same inputs and node (one node, two 32-core Xeon Gold 6530; 64 ranks, one per core), median of 3 runs. v1.2.2 built
+with icpx 2023.2 without MKL; 2.0.0 (a
 development build, commit 7b33ca7d5) built with `do_compile.sh idm4`, MKL on, so the times include the effect of MKL.
 Wall time of each run in seconds, start-up included.
 
@@ -658,7 +661,8 @@ field of gCCE, the density-matrix `nan`, the pCCE partition) or from points wher
 #### On the GPU node
 
 The released code (job 17715), built as the `gpu` preset builds it after 2.0.0 (CUDA 13.2, Intel MPI 2021.10, icpx
-2023.2; see Unreleased), on the GPU node (Xeon 6731P + one RTX PRO 6000, 32 ranks and 16 for the 6 NV, CUDA MPS): v1.2.2
+2023.2; see Unreleased), on the GPU node (one node, a 32-core Xeon 6731P + one RTX PRO 6000; 32 ranks and 16 for the
+6 NV, one per core; CUDA MPS): v1.2.2
 (CPU only, built with icpx 2023.2 and the same MPI) against 2.0.0 `main.out` (CPU) and `main_gpu.out` (GPU,
 `backend auto`) on 23 of A97's 27 inputs: its four P1 production inputs (CR0 and CR60, cCCE2 and gCCE2, 30 states) were
 not at hand. Three runs per build in the order AB BA AB, the median in seconds with start-up; the last column as in the
