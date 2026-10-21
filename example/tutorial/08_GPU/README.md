@@ -7,7 +7,7 @@ cCCE also send clusters of bath dimension 2 and 4 to a packed kernel (`gpu_optio
 [GPU execution](../../../docs/methods/gpu.md) has the details and `test/gpu_verification/check_gpu/` the checks. Each folder has one input with
 `backend` cpu; `run.sh` runs it with `bin/main.out`, then with `backend` auto and cuda (`set_input_keys.py`) with
 `bin/main_gpu.out` when that exists (`bash do_compile.sh gpu` on the GPU server makes both; `CCEX_GPU_BIN` names another GPU
-binary, e.g. a laptop card: `CUDA_HOME=/usr/local/cuda-12.8 CUDA_ARCH=86 bash do_compile.sh generic`). Without it
+binary, e.g. a laptop card: `CUDA_HOME=/usr/local/cuda-13.2 CUDA_ARCH=86 bash do_compile.sh generic`). Without it
 `auto` runs on the CPU and `cuda` is skipped. With many ranks on one GPU, start CUDA MPS in the job
 (`test/gpu_verification/server/mps.sh`). Every key not written in an input has its default (`main.out -e`).
 

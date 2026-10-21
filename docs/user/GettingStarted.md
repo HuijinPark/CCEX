@@ -30,7 +30,8 @@ cuSOLVER, cuBLAS, cudart; [GPU execution](../methods/gpu.md)); Eigen, uthash and
 | `mac` | macOS with an MPI wrapper (Homebrew open-mpi or mpich): Apple clang `-O3 -mcpu=native` (Apple Silicon), Apple's Accelerate for the large clusters |
 | `generic` | any machine with an MPI C++ wrapper on `PATH`; `CXX` (default `mpicxx`), `CC`, `CXXFLAGS`, and for the GPU binary `CUDA_HOME` (or nvcc on `PATH`) and `CUDA_ARCH` from the environment |
 
-`do_compile.sh` also reads `CCEX_JOBS` (parallel compile jobs, default 5), `CCEX_BLAS` (below), `CXXFLAGS_EXTRA`,
+`do_compile.sh` also reads `CCEX_JOBS` (parallel compile jobs, and nvcc `-split-compile` threads per CUDA file;
+default 5), `CCEX_BLAS` (below), `CXXFLAGS_EXTRA`,
 `LIBRARY_EXTRA`, and `CCEX_SANITIZE=1` (address and undefined-behaviour checks).
 
 **CMake options.** `-DCCEX_CUDA=OFF`, `-DCMAKE_CUDA_ARCHITECTURES=<cc>`, `-DMPI_CXX_COMPILER=<wrapper>`,

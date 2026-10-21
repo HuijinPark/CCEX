@@ -106,6 +106,9 @@ Orders 4 and 5 have not been run.
 
 `make gpu-test` (not one of these jobs) passed 84/0 in idm4-gpu job 692 on 2026-10-12.
 
+With CUDA 13.2 and Intel MPI (2026-10-21, job 17708, in a two-CPU step) `build.sbatch` passed in 788 s, at most
+4.9 GB of memory with the page cache, so its 20 minutes and 8 GiB still hold; `make gpu-test` passed 203/0.
+
 ## Removed jobs
 
 The other 19 jobs here were one-off experiments of 2026-09-08..16, and all of them

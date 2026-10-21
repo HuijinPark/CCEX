@@ -45,7 +45,10 @@
   empties), CMake `-split-compile=${CCEX_CUDA_SPLIT_COMPILE}` (default 5; 1 is off). At 32 the file takes 284 s and
   the build 301 s (job 17692). The machine code differs (every kernel of the three files), the results do not: NV6
   gCCE2 `dm` on 1 rank and on 16 ranks with MPS gives the CPU binary's outputs exactly, 08_GPU's cCCE5, gCCE4 and
-  pCCE2 those of the build without it, and `make gpu-test` passes 203 of 203 (jobs 17692, 17694).
+  pCCE2 those of the build without it, and `make gpu-test` passes 203 of 203 (jobs 17692, 17694). With 2 threads,
+  what `test/gpu_verification/server/build.sbatch` gives on its two CPUs, that job took 788 s (the build 765 s; at most
+  4.9 GB of memory with the page cache), within its 20 minutes and 8 GiB; the default 5 built in 393 s on five CPUs.
+  The machine code also depends on the number of threads, and both builds gave the outputs above exactly (job 17708).
 - **macOS (Apple Silicon).** The `mac` preset builds at `-O3 -mcpu=native` (it said `-O2`) and links Apple's Accelerate
   for the large clusters in MKL's place: the same Fortran `zgemm_` and `zheevd_` (`src/common/blas_option.cpp`), with the
   system on every Mac. `CCEX_BLAS=auto` (the default) takes it on macOS, `accelerate` insists, `off` leaves it out, and
