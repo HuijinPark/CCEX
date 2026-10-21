@@ -437,7 +437,8 @@ BUILD_COMMIT_LINE := \#define CCEX_BUILD_COMMIT "\$(BUILD_COMMIT)"
 	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=compute_\$(CUDA_ARCH) -c \$< -o \$@
 
-# A40: the warp kernel (one cluster per warp; about 3.5 minutes of nvcc, the longest object of the build)
+# A40: the warp kernel (one cluster per warp; the longest object of the build: 1217 s of nvcc 13.2 on idm4-gpu,
+# 284 s with -split-compile=32)
 \$(OBJ_GPU_DIR)/warp_cluster_gpu.o: \$(SRC_DIR)/calculation/gpu/warp_cluster_gpu.cu \$(wildcard ./include/calculation/gpu/*.h) | \$(OBJ_GPU_DIR)
 	\$(NVCC) -std=c++17 -O3 -lineinfo \$(NVCC_SPLIT) -I./include \\
 	    -gencode arch=compute_\$(CUDA_ARCH),code=sm_\$(CUDA_ARCH) \\

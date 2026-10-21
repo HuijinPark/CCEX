@@ -58,8 +58,8 @@ preset for this server: `mpiicpc` with icpx, MKL and CUDA 13.2 from modules,
 `CUDA_ARCH=120`) and the two CUDA unit tests the measurement job runs,
 then compares both executables with `backend=cpu` on the eight cases. These are
 CPU compatibility checks, not GPU measurements. `environment.sh` loads the
-modules and, when oneAPI is installed, its runtime libraries, with Open MPI kept
-first on `PATH`. `mps.sh`, sourced after it by the measurement, order and `min_dim` jobs, starts CUDA MPS for the job
+same modules, so the jobs' `mpirun` is the Intel MPI the binaries are built
+with. `mps.sh`, sourced after it by the measurement, order and `min_dim` jobs, starts CUDA MPS for the job
 (the ranks then share the GPU at once instead of taking turns: GPU runs of 32 ranks took 0.49-0.62 of the time in
 job 698, curves byte-identical) and stops it when the job ends, keeping the job's exit status even when the stop
 fails (`bash test_mps.sh` checks it without a GPU, with a stand-in control command); `CCEX_MPS=0` leaves it off. `gpu_sharing.sbatch`

@@ -30,7 +30,22 @@
   when the module is not there. `test/gpu_verification/server/environment.sh` loads the same module, so the jobs'
   `mpirun`, the one the checks take (the Intel MPI of `I_MPI_ROOT` first, `test/README.md`) and the binaries' MPI are
   one; with the Open MPI binaries a check run in that environment needed `CCEX_MPI`. The module conflicts with
-  `gcc/openmpi-*` and `nvhpc`, so a job has one MPI.
+  `gcc/openmpi-*` and `nvhpc`, so a job has one MPI. Intel MPI reduces gCCE's density matrices faster there:
+  `MPI_Reduce` with `MPI_PROD` of 729 × 729 complex numbers on 16 ranks took 1.55 ms against 12.98 ms with Open MPI
+  4.1.5 and 14.00 ms with 5.0.10, and NV6 gCCE2 `dm` (16 ranks with MPS) spent 0.41 s in it on rank 0 against
+  1.1-1.3 s, with the same outputs (job 17695). Rank 0 then wrote the 1.14 GB of the two `dm` files in 17.1 s instead
+  of 9.7 s in 11 of 21 such runs with Intel MPI and in none of 9 with Open MPI: the same instructions at a lower rate
+  (2.33 against 4.18 per cycle) through the whole write, with no other task on its core, the same clock and the same
+  share of transparent huge pages; `I_MPI_PIN=off` did not change it (jobs 17695-17697). The cause is not known. A
+  `coherence` run writes a few numbers per step, so its write is short.
+- **The CUDA files compile with `nvcc -split-compile`.** `warp_cluster_gpu.cu` instantiates 30 kernels (2.17 million
+  SASS instructions), and nvcc optimized them one after another: with CUDA 13.2 the file took 1217 s on idm4-gpu,
+  nearly all of a 1331 s build at `CCEX_JOBS=32` (job 17690). `do_compile.sh` gives the three CUDA files
+  `-split-compile=$CCEX_JOBS` (default 5; the make variable `NVCC_SPLIT`, which `NVCC_SPLIT=` on the make line
+  empties), CMake `-split-compile=${CCEX_CUDA_SPLIT_COMPILE}` (default 5; 1 is off). At 32 the file takes 284 s and
+  the build 301 s (job 17692). The machine code differs (every kernel of the three files), the results do not: NV6
+  gCCE2 `dm` on 1 rank and on 16 ranks with MPS gives the CPU binary's outputs exactly, 08_GPU's cCCE5, gCCE4 and
+  pCCE2 those of the build without it, and `make gpu-test` passes 203 of 203 (jobs 17692, 17694).
 - **macOS (Apple Silicon).** The `mac` preset builds at `-O3 -mcpu=native` (it said `-O2`) and links Apple's Accelerate
   for the large clusters in MKL's place: the same Fortran `zgemm_` and `zheevd_` (`src/common/blas_option.cpp`), with the
   system on every Mac. `CCEX_BLAS=auto` (the default) takes it on macOS, `accelerate` insists, `off` leaves it out, and
