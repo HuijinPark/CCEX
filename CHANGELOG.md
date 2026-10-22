@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.1 — 2026-10-22 (changes since 2.0.0)
 
 ### Fixed
 
@@ -661,7 +661,7 @@ field of gCCE, the density-matrix `nan`, the pCCE partition) or from points wher
 #### On the GPU node
 
 The released code (job 17715), built as the `gpu` preset builds it after 2.0.0 (CUDA 13.2, Intel MPI 2021.10, icpx
-2023.2; see Unreleased), on the GPU node (one node with 32 cores, one Xeon 6731P, and one
+2023.2; see 2.0.1), on the GPU node (one node with 32 cores, one Xeon 6731P, and one
 RTX PRO 6000; 32 ranks and 16 for the 6 NV, one per core; CUDA MPS): v1.2.2
 (CPU only, built with icpx 2023.2 and the same MPI) against 2.0.0 `main.out` (CPU) and `main_gpu.out` (GPU,
 `backend auto`) on 23 of A97's 27 inputs: its four P1 production inputs (CR0 and CR60, cCCE2 and gCCE2, 30 states) were
@@ -687,9 +687,9 @@ coherence to the printed digits but in cCCE5, gCCE4 and h-BN gCCE3, which differ
 diverges). Against the 2.0.0 build (CUDA 12.8, Open MPI 4.1.5; A97, the same inputs), the outputs are the same bytes but
 for cCCE5 on the GPU (1e-10) and the points where h-BN gCCE2 and gCCE3 diverge (2e-11 relative at most; the 6 NV's
 1.14 GB not kept), and the times are within 0.2 s or 5% but for the 6 NV: with CUDA 12.8 its GPU run stopped
-(Unreleased, Fixed), and its CPU run took 29.4 s against 22.4 s in all three runs (the GPU run in one of three, 22.1 s
+(2.0.1, Fixed), and its CPU run took 29.4 s against 22.4 s in all three runs (the GPU run in one of three, 22.1 s
 against 14.8 s), the cluster done at 11.1 s in both; the rest is mostly rank 0 writing the 1.14 GB of the `dm` files,
-the slower write with Intel MPI of Unreleased, Builds.
+the slower write with Intel MPI of 2.0.1, Builds.
 
 An earlier development build of 2.0.0 was measured
 there (Xeon 6731P + one RTX PRO 6000, 32 ranks, one run each): v1.2.2 (CPU only) against 2.0.0 `main.out` (CPU) and
